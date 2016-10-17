@@ -1,0 +1,40 @@
+% evergreens
+\newcommand{\der}{\,\vdash}
+\newcommand{\Der}{\,\Vdash}
+
+% space-preserving paragraph headings (for lipics)
+\newcommand{\subheading}[1]{\subparagraph{#1.}} %Alt: \subsection{#1}
+% \newcommand{\paradot}[1]{\subparagraph{#1.}}
+\newcommand{\paradot}[1]{\subsection*{#1.}}
+
+% Inference rules
+\newcommand{\rulename}[1]{\ensuremath{\mbox{\sc#1}}}
+\newcommand{\ru}[2]{\dfrac{\begin{array}[b]{@{}c@{}} #1 \end{array}}{#2}}
+\newcommand{\rux}[3]{\ru{#1}{#2}~#3}
+\newcommand{\nru}[3]{#1\ \ru{#2}{#3}}
+\newcommand{\nrux}[4]{#1\ \ru{#2}{#3}\ #4}
+\newcommand{\dstack}[2]{\begin{array}[b]{c}#1\\#2\end{array}}
+\newcommand{\dru}[3]{\ru{\dstack{#1}{#2}}{#3}}
+\newcommand{\drux}[4]{\ru{\dstack{#1}{#2}}{#3}\ #4}
+\newcommand{\tru}[4]{\dru{\dstack{#1}{#2}}{#3}{#4}}
+\newcommand{\trux}[5]{\dru{\dstack{#1}{#2}}{#3}{#4}\ #5}
+\newcommand{\qru}[5]{\tru{\dstack{#1}{#2}}{#3}{#4}{#5}}
+\newcommand{\ndru}[4]{#1\ \ru{\dstack{#2}{#3}}{#4}}
+\newcommand{\ndrux}[5]{#1\ \ru{\dstack{#2}{#3}}{#4}\ #5}
+
+% Centered math environment
+\newenvironment{mathc}{%
+  \begin{center}%
+  \(%
+}{\)%
+  \end{center}%
+}
+
+% Symbols and names
+\DeclareMathOperator{\J}{\mathbf{J}}
+\DeclareMathOperator{\type}{\mathbf{type}}
+\newcommand{\Id}[3]{\mathbf{Id}_{#1}\,#2\ #3}
+\newcommand{\app}[3]{#2\ @^{#1}\ #3}
+\newcommand\infers{\rightrightarrows}
+\newcommand\checks{\leftleftarrows}
+\DeclareMathOperator{\refl}{\mathbf{refl}}

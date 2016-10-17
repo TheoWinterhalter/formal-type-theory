@@ -1,0 +1,101 @@
+\documentclass{amsart}
+
+\usepackage[utf8]{inputenc}
+\usepackage{times}
+\usepackage{amsmath, amssymb, amsfonts, stmaryrd}
+\usepackage{amsthm}
+\usepackage{hyperref}
+
+% Meta comment
+\newcommand\meta[1]{\noindent\textcolor{blue}{\emph{#1}}}
+
+% Include the macro file
+\input{macros}
+
+\begin{document}
+
+\title{Reflection in MLTT}
+
+\author{Andrej Bauer}
+\address{Andrej Bauer\\University of Ljubljana\\Slovenia}
+\email{Andrej.Bauer@andrej.com}
+
+\author{Théo Winterhalter}
+\address{Théo Winterhalter\\École normale supérieure de Cachan\\France}
+\email{theo.winterhalter@gmail.com}
+
+\begin{abstract}
+  We verify that we can translate from MLTT + reflection to MLTT (or something).
+\end{abstract}
+
+\maketitle
+
+\section{MLTT Rules}
+
+We use MLTT with $\Pi$-types and identity types (we can later add either UIP
+or the $\J$ eliminator) presented in a bidirectionnal typing fashion.
+
+\paradot{Context Wellformedness}
+
+\begin{mathc}
+  \ru{}{\der \cdot}
+  \qquad
+  \ru{\Gamma \der T\ \type \qquad
+      x \notin \Gamma
+    }{\der \Gamma, x : T}
+  \qquad
+  \ru{\der \Gamma \qquad
+      (x : T) \in \Gamma
+    }{\Gamma \der x : T}
+\end{mathc}
+
+\paradot{Type formation}
+
+\begin{mathc}
+  \ru{\Gamma \der T\ \type \qquad
+      \Gamma \der t,t' : T
+    }{\Gamma \der \Id{T}{t}{t'}\ \type}
+  \qquad
+  \ru{\Gamma \der A\ \type \qquad
+      \Gamma, x:A \der B\ \type
+    }{\Gamma \der \Pi x:A.B\ \type}
+\end{mathc}
+
+\paradot{Term Typing}
+
+\begin{mathc}
+  \ru{\Gamma \der \Pi x:A.B\ \type \qquad
+      \Gamma, x:A \der t \checks B
+    }{\Gamma \der \lambda (x:A.B).t \infers \Pi x:A.B}
+  \qquad
+  \ru{\Gamma \der t \checks \Pi x:A.B \qquad
+      \Gamma \der t' \checks A
+    }{\Gamma \der \app{x:A.B}{t}{t'} \infers B[t'/x]}
+\end{mathc}
+
+\begin{mathc}
+  \ru{\Gamma \der t \checks T
+      }{\Gamma \der \refl_t \infers \Id{T}{t}{t}}
+  \qquad
+  \ru{\Gamma \der t \infers A \qquad
+      \Gamma \der B\ \type \qquad
+      \Gamma \der A \equiv B
+    }{\Gamma \der t \checks B}
+\end{mathc}
+
+\paradot{Judgmental Equality}
+
+\begin{mathc}
+  \ru{\Gamma, x:U \der t:V \qquad
+      \Gamma \der u : U
+    }{\Gamma \der \app{x:U.V}{(\lambda (x:U.V).t)}{u} = t[u/x] : V[u/x]}
+\end{mathc}
+
+\begin{mathc}
+  \ru{\Gamma \der t : \Pi x:U.V
+    }{\Gamma \der t \equiv \lambda (x:U.V).\app{x:U.V}{t}{x} : \Pi x:U.V}
+\end{mathc}
+%
+And so on... (Should we use $t : T$, $t \infers T$ or $t \checks T$?)
+
+\end{document}
