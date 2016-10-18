@@ -40,6 +40,22 @@
   \end{center}%
 }
 
+% proof by cases
+\newenvironment{caselist}{%
+  \begin{list}{{\it Case}}{}%
+}{\end{list}%
+}
+\newenvironment{subcaselist}{%
+  \begin{list}{{\it Subcase}}{}%
+}{\end{list}%
+}
+\newenvironment{subsubcaselist}{%
+  \begin{list}{{\it Subsubcase}}{}%
+}{\end{list}%
+}
+
+\newcommand{\nextcase}{\item~}
+
 % Symbols and names
 \DeclareMathOperator{\J}{\mathbf{J}}
 \DeclareMathOperator{\type}{\mathbf{type}}
@@ -51,3 +67,4 @@
 \newcommand\barG{\overline{\Gamma}}
 \newcommand\bart{\overline{t}}
 \newcommand\barT{\overline{T}}
+\newcommand\barA{\overline{A}}

@@ -6,6 +6,17 @@
 \usepackage{amsthm}
 \usepackage{hyperref}
 
+% Add some colors
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\hypersetup{
+ linktocpage,
+ colorlinks,
+ citecolor=BlueViolet,
+ filecolor=red,
+ linkcolor=Blue,
+ urlcolor=BrickRed
+}
+
 % Meta comment
 \newcommand\meta[1]{\noindent\textcolor{blue}{\emph{#1}}}
 
@@ -102,6 +113,14 @@ And so on... (Should we use $t : T$, $t \infers T$ or $t \checks T$?)
 (Actually, it is not an algorithm so... Remark: It could be turned into one
 by simply asking for reflection when all else fails.)
 
+To get the extensional MLTT we simply add the following reflection rule.
+%
+\begin{mathc}
+  \ru{\Gamma \der p : \Id{T}{t}{t'}
+    }{\Gamma \der t \equiv t' : T}
+\end{mathc}
+
+
 \section{The Theorem we Want to Prove}
 
 Should the theorem be like:
@@ -115,5 +134,43 @@ Should the theorem be like:
 \end{theorem}
 %
 Where we have yet to define the translations sets $\den{\_}$.
+
+\begin{proof}
+  By induction on the derivation.
+  \begin{caselist}
+    \nextcase
+    \begin{mathc}
+      \ru{\Gamma \der A\ \type \qquad
+          \Gamma, x:A \der B\ \type
+        }{\Gamma \der \Pi x:A.B\ \type}
+    \end{mathc}
+    Assuming context extension and translation commute, it works.
+
+    \nextcase
+    \begin{mathc}
+      \ru{\Gamma \der T\ \type \qquad
+          \Gamma \der t,t' : T
+        }{\Gamma \der \Id{T}{t}{t'}\ \type}
+    \end{mathc}
+    Same here.
+
+    \nextcase
+    \begin{mathc}
+      \ru{\Gamma \der \Pi x:A.B\ \type \qquad
+          \Gamma, x:A \der t \checks B
+        }{\Gamma \der \lambda (x:A.B).t \infers \Pi x:A.B}
+    \end{mathc}
+    We get $\der \barG, x : \barA \in \den{\dere \Gamma, x:A}$ and thus
+    $\der \barG \in \den{\dere \Gamma}$ (with the same assumption as above).
+    However it is not clear we can do it with any $\barG$ to get some
+    corresponding $\barA$... It is also not clear how to get this very
+    $\barA$ inside the $\Pi$-type.
+    \meta{Work to do...}
+  \end{caselist}
+\end{proof}
+
+\meta{Just an idea like that: Why not translating to OTT instead of ITT? This
+way, it might reveal clearer what is an irrelevant equality since they would
+compute more...}
 
 \end{document}
