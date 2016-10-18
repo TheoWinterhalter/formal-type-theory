@@ -88,7 +88,7 @@ or the $\J$ eliminator) presented in a bidirectionnal typing fashion.
 
 \begin{mathc}
   \ru{\Gamma \der t \checks T
-      }{\Gamma \der \refl_t \infers \Id{T}{t}{t}}
+    }{\Gamma \der \refl_t \infers \Id{T}{t}{t}}
   \qquad
   \ru{\Gamma \der t \infers A \qquad
       \Gamma \der B\ \type \qquad
@@ -134,6 +134,8 @@ Should the theorem be like:
 \end{theorem}
 %
 Where we have yet to define the translations sets $\den{\_}$.
+We also have to tell explicitely how the theorem works on other judgments.
+\meta{Also, we could use the bidirectionality for something...}
 
 \begin{proof}
   By induction on the derivation.
@@ -186,6 +188,24 @@ Where we have yet to define the translations sets $\den{\_}$.
     \end{mathc}
     \meta{What liberty do we have in providing a translation of $B[u/x]$? The
     ideal would that it has to be of the form $\barB[\baru/x]$.}
+
+    \nextcase
+    \begin{mathc}
+      \ru{\Gamma \dere t \checks T
+        }{\Gamma \dere \refl_t \infers \Id{T}{t}{t}}
+    \end{mathc}
+    It seems to work under the same \meta{assumptions} as before (commutation
+    between context extension and translation ; inversion of translation of
+    types).
+
+    \nextcase
+    \begin{mathc}
+      \ru{\Gamma \dere t \infers A \qquad
+          \Gamma \dere B\ \type \qquad
+          \Gamma \dere A \equiv B
+        }{\Gamma \dere t \checks B}
+    \end{mathc}
+    \meta{We need to know how to translate equalities to conclude...}
   \end{caselist}
 \end{proof}
 
