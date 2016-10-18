@@ -12,6 +12,8 @@
 % Include the macro file
 \input{macros}
 
+\newtheorem{theorem}{Theorem}[section]
+
 \begin{document}
 
 \title{Reflection in MLTT}
@@ -97,5 +99,21 @@ or the $\J$ eliminator) presented in a bidirectionnal typing fashion.
 \end{mathc}
 %
 And so on... (Should we use $t : T$, $t \infers T$ or $t \checks T$?)
+(Actually, it is not an algorithm so... Remark: It could be turned into one
+by simply asking for reflection when all else fails.)
+
+\section{The Theorem we Want to Prove}
+
+Should the theorem be like:
+
+\begin{theorem}
+  If $\Gamma \dere t : T$, then there exists
+  $\der \barG \in \den{\dere \Gamma}$ and for any such $\barG$ there exists
+  $\barT$ such that $\barG \der \barT\ \type \in \den{\Gamma \dere T}$
+  and for any such $\barT$ there exists $\bart$ such that
+  $\barG \der \bart : \barT \in \den{\Gamma \dere t : T}$.
+\end{theorem}
+%
+Where we have yet to define the translations sets $\den{\_}$.
 
 \end{document}

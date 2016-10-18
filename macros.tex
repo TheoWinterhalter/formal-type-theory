@@ -2,7 +2,17 @@
 \newcommand{\der}{\,\vdash}
 \newcommand{\Der}{\,\Vdash}
 
-% space-preserving paragraph headings (for lipics)
+%specific judgments
+\newcommand{\dere}{\der_\mathbf{E}}
+
+% semantic brackets
+\def\lv{\mathopen{{[\kern-0.14em[}}}    % opening [[ value delimiter
+\def\rv{\mathclose{{]\kern-0.14em]}}}   % closing ]] value delimiter
+\newcommand{\den}[1]{\lv #1 \rv}
+\newcommand{\Den}[3][]{\den{#2}^{#1}_{#3}}
+\newcommand{\dent}[2]{\llparenthesis#1\rrparenthesis_{#2}}
+
+% space-preserving paragraph headings
 \newcommand{\subheading}[1]{\subparagraph{#1.}} %Alt: \subsection{#1}
 % \newcommand{\paradot}[1]{\subparagraph{#1.}}
 \newcommand{\paradot}[1]{\subsection*{#1.}}
@@ -38,3 +48,6 @@
 \newcommand\infers{\rightrightarrows}
 \newcommand\checks{\leftleftarrows}
 \DeclareMathOperator{\refl}{\mathbf{refl}}
+\newcommand\barG{\overline{\Gamma}}
+\newcommand\bart{\overline{t}}
+\newcommand\barT{\overline{T}}
