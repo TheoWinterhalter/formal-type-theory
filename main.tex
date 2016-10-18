@@ -108,6 +108,43 @@ or the $\J$ eliminator) presented in a bidirectionnal typing fashion.
   \ru{\Gamma \der t : \Pi x:U.V
     }{\Gamma \der t \equiv \lambda (x:U.V).\app{x:U.V}{t}{x} : \Pi x:U.V}
 \end{mathc}
+
+\begin{mathc}
+  \ru{\Gamma \der t : T
+    }{\Gamma \der t \equiv t : T}
+  \qquad
+  \ru{\Gamma \der t' \equiv t : T
+    }{\Gamma \der t \equiv t' : T}
+  \qquad
+  \ru{\Gamma \der t_1 \equiv t_2 : T \qquad
+      \Gamma \der t_2 \equiv t_3 : T
+    }{\Gamma \der t_1 \equiv t_3 : T}
+\end{mathc}
+
+\begin{mathc}
+  \ru{\Gamma \der T\ \type
+    }{\Gamma \der T \equiv T}
+  \qquad
+  \ru{\Gamma \der T' \equiv T
+    }{\Gamma \der T \equiv T'}
+  \qquad
+  \ru{\Gamma \der T_1 \equiv T_2 \qquad
+      \Gamma \der T_2 \equiv T_3
+    }{\Gamma \der T_1 \equiv T_3}
+\end{mathc}
+
+\begin{mathc}
+  \ru{\Gamma \der U \equiv U' \qquad
+     \Gamma, x:U \der V \equiv V'
+   }{\Gamma \der \Pi x:U.V \equiv \Pi x:U'.V'}
+\end{mathc}
+
+\begin{mathc}
+  \ru{\Gamma \der U \equiv U' \qquad
+      \Gamma, x:U \der V\ \type \qquad
+      \Gamma, x:U \der t \equiv t' : V
+    }{\Gamma \der \lambda (x:U.V).t \equiv \lambda (x:U'.V').t' : \Pi x:U.V}
+\end{mathc}
 %
 And so on... (Should we use $t : T$, $t \infers T$ or $t \checks T$?)
 (Actually, it is not an algorithm so... Remark: It could be turned into one
