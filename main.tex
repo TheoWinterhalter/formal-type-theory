@@ -101,7 +101,7 @@ or the $\J$ eliminator) presented in a bidirectionnal typing fashion.
 \begin{mathc}
   \ru{\Gamma, x:U \der t:V \qquad
       \Gamma \der u : U
-    }{\Gamma \der \app{x:U.V}{(\lambda (x:U.V).t)}{u} = t[u/x] : V[u/x]}
+    }{\Gamma \der \app{x:U.V}{(\lambda (x:U.V).t)}{u} \equiv t[u/x] : V[u/x]}
 \end{mathc}
 
 \begin{mathc}
@@ -116,8 +116,8 @@ by simply asking for reflection when all else fails.)
 To get the extensional MLTT we simply add the following reflection rule.
 %
 \begin{mathc}
-  \ru{\Gamma \der p : \Id{T}{t}{t'}
-    }{\Gamma \der t \equiv t' : T}
+  \ru{\Gamma \dere p : \Id{T}{t}{t'}
+    }{\Gamma \dere t \equiv t' : T}
 \end{mathc}
 
 
@@ -206,6 +206,32 @@ We also have to tell explicitely how the theorem works on other judgments.
         }{\Gamma \dere t \checks B}
     \end{mathc}
     \meta{We need to know how to translate equalities to conclude...}
+    \meta{Assuming it gives us an equivalence (provided the context and the two
+    involved types) we can conclude.}
+
+    \nextcase
+    \begin{mathc}
+      \ru{\Gamma, x:U \dere t:V \qquad
+          \Gamma \dere u : U
+        }{\Gamma \dere \app{x:U.V}{(\lambda (x:U.V).t)}{u} \equiv
+          t[u/x] : V[u/x]}
+    \end{mathc}
+    \meta{The same problem with translations of $V[u/x]$.}
+
+    \nextcase
+    \begin{mathc}
+      \ru{\Gamma \dere t : \Pi x:U.V
+        }{\Gamma \dere t \equiv \lambda (x:U.V).\app{x:U.V}{t}{x} : \Pi x:U.V}
+    \end{mathc}
+    \meta{TODO}
+
+    \nextcase
+    \begin{mathc}
+      \ru{\Gamma \dere p : \Id{T}{t}{t'}
+        }{\Gamma \dere t \equiv t' : T}
+    \end{mathc}
+    We get exactly what we want from the induction hypothesis (\meta{assuming}
+    that for terms we require a proof term of equality).
   \end{caselist}
 \end{proof}
 
