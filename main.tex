@@ -145,6 +145,24 @@ or the $\J$ eliminator) presented in a bidirectionnal typing fashion.
       \Gamma, x:U \der t \equiv t' : V
     }{\Gamma \der \lambda (x:U.V).t \equiv \lambda (x:U'.V').t' : \Pi x:U.V}
 \end{mathc}
+
+\begin{mathc}
+  \ru{\Gamma \der t \equiv t' : \Pi x:U.V \qquad
+      \Gamma \der u \equiv u' : U
+    }{\Gamma \der \app{x:U.V}{t}{u} \equiv \app{x:U'.V'}{t'}{u'} : V[u/x]}
+\end{mathc}
+
+\begin{mathc}
+  \ru{\Gamma \der T \equiv T' \qquad
+      \Gamma \der t \equiv t' : T \qquad
+      \Gamma \der u \equiv u' : T
+    }{\Gamma \der \Id{T}{t}{u} \equiv \Id{T'}{t'}{u'}}
+\end{mathc}
+
+\begin{mathc}
+  \ru{\Gamma \der t \equiv t' : T \qquad
+    }{\Gamma \der \refl{t} \equiv \refl{t'} : \Id{T}{t}{t}}
+\end{mathc}
 %
 And so on... (Should we use $t : T$, $t \infers T$ or $t \checks T$?)
 (Actually, it is not an algorithm so... Remark: It could be turned into one
