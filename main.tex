@@ -140,32 +140,52 @@ Where we have yet to define the translations sets $\den{\_}$.
   \begin{caselist}
     \nextcase
     \begin{mathc}
-      \ru{\Gamma \der A\ \type \qquad
-          \Gamma, x:A \der B\ \type
-        }{\Gamma \der \Pi x:A.B\ \type}
+      \ru{\Gamma \dere A\ \type \qquad
+          \Gamma, x:A \dere B\ \type
+        }{\Gamma \dere \Pi x:A.B\ \type}
     \end{mathc}
-    Assuming context extension and translation commute, it works.
+    \meta{Assuming} context extension and translation commute, it works.
 
     \nextcase
     \begin{mathc}
-      \ru{\Gamma \der T\ \type \qquad
-          \Gamma \der t,t' : T
-        }{\Gamma \der \Id{T}{t}{t'}\ \type}
+      \ru{\Gamma \dere T\ \type \qquad
+          \Gamma \dere t,t' : T
+        }{\Gamma \dere \Id{T}{t}{t'}\ \type}
     \end{mathc}
     Same here.
 
     \nextcase
     \begin{mathc}
-      \ru{\Gamma \der \Pi x:A.B\ \type \qquad
-          \Gamma, x:A \der t \checks B
-        }{\Gamma \der \lambda (x:A.B).t \infers \Pi x:A.B}
+      \ru{\Gamma \dere \Pi x:A.B\ \type \qquad
+          \Gamma, x:A \dere t \checks B
+        }{\Gamma \dere \lambda (x:A.B).t \infers \Pi x:A.B}
     \end{mathc}
-    We get $\der \barG, x : \barA \in \den{\dere \Gamma, x:A}$ and thus
-    $\der \barG \in \den{\dere \Gamma}$ (with the same assumption as above).
-    However it is not clear we can do it with any $\barG$ to get some
-    corresponding $\barA$... It is also not clear how to get this very
-    $\barA$ inside the $\Pi$-type.
-    \meta{Work to do...}
+    By first induction hypothesis, we have $\der \barG \in \den{\dere \Gamma}$.
+    Now given such $\barG$, using the same induction hypothesis we have
+    $\barG \der \Pi x:\barA.\barB\ \type
+    \in \den{\Gamma \dere \Pi x:A.B\ \type}$
+    (\meta{assuming} translation of types preserves shapes).
+    Now given such $\Pi x:\barA.\barB$, we in particular have
+    $\barG \der \barA\ \type \in \den{\Gamma \dere A\ \type}$
+    (\meta{assuming} we have some ind of inversion linked with the previous
+    assumption). The same goes for $\barB$.
+
+    Now, we have $\der \barG, x:\barA \in \den{\dere \Gamma, x:A}$.
+    Thus by second induction hypothesis with our choice of $\barA$ and
+    $\barB$, we have $\bart$ such that
+    $\barG, x:\barA \der \bart \checks \barB \in
+    \den{\Gamma, x:A \dere t \checks B}$.
+    Thus $\barG \der \lambda (x:\barA.\barB).\bart \infers \Pi x:\barA.\barB
+    \in \den{\Gamma \dere \lambda (x:A.B).t \infers \Pi x:A.B}$.
+
+    \nextcase
+    \begin{mathc}
+      \ru{\Gamma \dere t \checks \Pi x:A.B \qquad
+          \Gamma \dere u \checks A
+        }{\Gamma \dere \app{x:A.B}{t}{u} \infers B[u/x]}
+    \end{mathc}
+    \meta{What liberty do we have in providing a translation of $B[u/x]$? The
+    ideal would that it has to be of the form $\barB[\baru/x]$.}
   \end{caselist}
 \end{proof}
 
