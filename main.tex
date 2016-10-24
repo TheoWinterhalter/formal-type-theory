@@ -202,6 +202,47 @@ The theorem could now be like.
   \end{enumerate}
 \end{theorem}
 
+\meta{Furthermore, the notion of \emph{translation} preserves the shape of
+types.}
+
+\begin{proof}
+  By induction on the derivation.
+  \meta{We will focus on the (hopefully) hard cases.}
+  \begin{caselist}
+    \nextcase
+    \begin{mathc}
+      \ru{\Gamma \dere A\ \type \qquad
+          \Gamma, x:A \dere B\ \type
+        }{\Gamma \dere \Pi x:A.B\ \type}
+    \end{mathc}
+    \meta{TODO}
+
+    \nextcase
+    \begin{mathc}
+      \ru{\Gamma \dere t \checks \Pi x:A.B \qquad
+          \Gamma \dere u \checks A
+        }{\Gamma \dere \app{x:A.B}{t}{u} \infers B[u/x]}
+    \end{mathc}
+    \meta{TODO}
+
+    \nextcase
+    \begin{mathc}
+      \ru{\Gamma \dere t \infers A \qquad
+          \Gamma \dere B\ \type \qquad
+          \Gamma \dere A \equiv B
+        }{\Gamma \dere t \checks B}
+    \end{mathc}
+    \meta{TODO}
+
+    \nextcase
+    \begin{mathc}
+      \ru{\Gamma \dere p : \Id{T}{t}{t'}
+        }{\Gamma \dere t \equiv t' : T}
+    \end{mathc}
+    \meta{TODO}
+  \end{caselist}
+\end{proof}
+
 \newpage
 \hrulefill
 OLD STUFF BELOW
