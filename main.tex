@@ -183,6 +183,11 @@ The theorem could now be like.
 \begin{theorem}
   \leavevmode
   \begin{enumerate}
+    \item If $\Gamma \dere A\ \type$ then $\Gamma$ has a translation $\barG$,
+    and for any such $\barG$, $A$ has a translation $\barA$ such that
+    $\barG \der \barA\ \type$. Furthermore, if $\barA'$ is provided as another
+    translation of $A$, we also get an isomporphism between $\barA$ and
+    $\barA'$.
     \item If $\Gamma \dere t \infers T$ then $\Gamma$ has a translation $\barG$,
     and for any such $\barG$, $t$ and $T$ have translations $\bart$ and $\barT$
     such that $\barG \der \bart : \barT$. Besides, if $\barT'$ is another
@@ -215,7 +220,26 @@ types.}
           \Gamma, x:A \dere B\ \type
         }{\Gamma \dere \Pi x:A.B\ \type}
     \end{mathc}
-    \meta{TODO}
+    By first induction hypothesis, we get a $\barG$ translation of $\Gamma$,
+    now assume we take any such $\barG$.
+    By first induction hypothesis again, we get $\barA$ such that
+    $\barG \der \barA\ \type$.
+    Now, $\barG, x:\barA$ is a valid translation of $\Gamma, x:A$ so,
+    by second induction hypothesis, we get $\barB$ such that
+    $\barG, x:\barA \der \barB\ \type$.
+    From that we deduce $\barG \der \Pi x:\barA.\barB\ \type$ which is a valid
+    translation of our goal.
+
+    Finally, assume we are given a translation of $\Pi x:A.B$, by definition
+    it has to be a $\Pi$-type as well. It is thus some $\Pi x:\barA'.\barB'$
+    where $\barA'$ and $\barB'$ are respective translations of $A$ and $B$.
+    By first induction hypothesis, we get $f$ an isomorphism between $\barA$
+    and $\barA'$. By the second, we get $g$ an iso between $\barB$ and $\barB'$.
+    As such,
+    \begin{equation*}
+    \lambda (e:(\Pi x:\barA.\barB).\Pi x:\barA'.\barB'). g \circ e \circ f^{-1}
+    \end{equation*}
+    is what we are looking for.
 
     \nextcase
     \begin{mathc}
