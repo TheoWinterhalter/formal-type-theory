@@ -243,6 +243,24 @@ types.}
 
     \nextcase
     \begin{mathc}
+      \ru{\Gamma \der T\ \type \qquad
+          \Gamma \der t,t' \checks T
+        }{\Gamma \der \Id{T}{t}{t'}\ \type}
+    \end{mathc}
+    By IH1, we can translate the context and take such a $\barG$.
+    By IH1, we also get $\barT$ a translation of $T$ such that
+    $\barG \der \barT\ \type$.
+    We can thus use IH2 and IH3 to get $\bart$ and $\bart'$ such that
+    $\barG \der \bart, \bart' : \barT$.
+    This way, we get $\barG \der \Id{\barT}{\bart}{\bart'}\ \type$.
+
+    Now assume we are given a translation of $\Id{T}{t}{t'}$, this means that
+    we are given some $\Id{\barT'}{\baru}{\barv}$.
+    By IH1, we get an isomporphism between $\barT$ and $\barT'$.
+    \meta{Now we need to know what we can deduce for the terms...}
+
+    \nextcase
+    \begin{mathc}
       \ru{\Gamma \dere t \checks \Pi x:A.B \qquad
           \Gamma \dere u \checks A
         }{\Gamma \dere \app{x:A.B}{t}{u} \infers B[u/x]}
@@ -274,7 +292,10 @@ types.}
       \ru{\Gamma \dere p : \Id{T}{t}{t'}
         }{\Gamma \dere t \equiv t' : T}
     \end{mathc}
-    \meta{TODO}
+    \meta{Shouldn't we add as a premise that $T$ is an hSet?}
+    By IH we deduce a translation of $\Gamma$ and now assume we have some such
+    $\barG$. Now assume we aslo have $\barT$ a translation of $T$.
+    \meta{How to proceed without translations of $t$ and $t'$?}
 
     \nextcase
     \begin{mathc}
