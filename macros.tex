@@ -1,3 +1,54 @@
+%%% Type theory judgements
+
+% Generic entities
+\newcommand{\G}{\Gamma} % a context
+\newcommand{\D}{\Delta} % another context
+\newcommand{\T}{T} % a type
+\newcommand{\U}{U} % another type
+\newcommand{\x}{x} % a term variable
+\newcommand{\y}{y} % another term variable
+\newcommand{\z}{z} % a third term variable
+\newcommand{\e}{e} % a term
+\newcommand{\sbs}{\sigma} % a substitution
+
+\newcommand{\rulename}[1]{\text{\textsc{#1}}}
+
+%% Syntax
+\newcommand{\bnf}{\ \mathrel{{:}{:}{=}}\ }
+\newcommand{\bnfor}{\ \mid\ \ }
+
+%% Contexts
+\newcommand{\ctxempty}{\bullet} % empty context
+\newcommand{\ctxextend}[3]{#1,\, #2\, {:}\, #3} % extended context
+
+\newcommand{\ctxdom}[1]{\mathsf{dom}(#1)} % the domain of a context
+
+%% Substitution
+\newcommand{\sbempty}{1} % empty substitution
+\newcommand{\sbextend}[3]{#1,#2{\mapsto}#3} % extended substitution
+\newcommand{\subst}[2]{#1[#2]} % substitution operation
+
+% Type formers
+\newcommand{\Prod}[2]{\mathop{\textstyle\prod_{(#1 {:} #2)}}} % dependent product
+\newcommand{\Id}[3]{\mathsf{Id}_{#1}(#2,#3)} % Identity type
+
+% Terms
+\newcommand{\lam}[3]{\lambda #1 {:} #2.{#3}\,.\,} % $\lambda$-abstraction
+\newcommand{\app}[5]{#1\mathbin{@^{#2{:}#3.#4}} #5} % application
+\newcommand{\refl}[1]{{\mathsf{refl}_{#1}}\ }    % reflexivity
+
+% Judgments
+\newcommand{\isctx}[1]{#1\ \mathsf{ctx}} % well formed context
+\newcommand{\istype}[2]{#1 \vdash #2 \ \mathsf{type}} % well formed type
+\newcommand{\isterm}[3]{#1 \vdash #2 : #3} % well formed term
+\newcommand{\issubst}[3]{#1 : #2 \to #3} % well formed substitution
+
+\newcommand{\eqctx}[2]{#1 \equiv #2 : \mathsf{ctx}}
+\newcommand{\eqtype}[3]{#1 \vdash #2 \equiv #3 : \mathsf{type}} % equal types
+\newcommand{\eqterm}[4]{#1 \vdash #2 \equiv #3 : #4} % equal terms
+
+%%% Other macros by Theo
+
 % evergreens
 \newcommand{\der}{\,\vdash}
 \newcommand{\Der}{\,\Vdash}
@@ -18,7 +69,7 @@
 \newcommand{\paradot}[1]{\subsection*{#1.}}
 
 % Inference rules
-\newcommand{\rulename}[1]{\ensuremath{\mbox{\sc#1}}}
+%\newcommand{\rulename}[1]{\ensuremath{\mbox{\sc#1}}}
 \newcommand{\ru}[2]{\dfrac{\begin{array}[b]{@{}c@{}} #1 \end{array}}{#2}}
 \newcommand{\rux}[3]{\ru{#1}{#2}~#3}
 \newcommand{\nru}[3]{#1\ \ru{#2}{#3}}
@@ -31,14 +82,6 @@
 \newcommand{\qru}[5]{\tru{\dstack{#1}{#2}}{#3}{#4}{#5}}
 \newcommand{\ndru}[4]{#1\ \ru{\dstack{#2}{#3}}{#4}}
 \newcommand{\ndrux}[5]{#1\ \ru{\dstack{#2}{#3}}{#4}\ #5}
-
-% Centered math environment
-\newenvironment{mathc}{%
-  \begin{center}%
-  \(%
-}{\)%
-  \end{center}%
-}
 
 % proof by cases
 \newenvironment{caselist}{%
@@ -59,11 +102,11 @@
 % Symbols and names
 \DeclareMathOperator{\J}{\mathbf{J}}
 \DeclareMathOperator{\type}{\mathbf{type}}
-\newcommand{\Id}[3]{\mathbf{Id}_{#1}\,#2\ #3}
-\newcommand{\app}[3]{#2\ @^{#1}\ #3}
+%\newcommand{\Id}[3]{\mathbf{Id}_{#1}\,#2\ #3}
+%\newcommand{\app}[3]{#2\ @^{#1}\ #3}
 \newcommand\infers{\rightrightarrows}
 \newcommand\checks{\leftleftarrows}
-\DeclareMathOperator{\refl}{\mathbf{refl}}
+%\DeclareMathOperator{\refl}{\mathbf{refl}}
 \newcommand\barG{\overline{\Gamma}}
 \newcommand\bart{\overline{t}}
 \newcommand\barT{\overline{T}}
@@ -72,3 +115,8 @@
 \newcommand\baru{\overline{u}}
 \newcommand\barv{\overline{v}}
 \newcommand\barp{\overline{p}}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

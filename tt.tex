@@ -1,0 +1,422 @@
+\section{Type theory}
+\label{sec:type-theory}
+
+In this section we give the formulation of type theory that we shall work with.
+
+\subsection{Syntax}
+\label{sec:syntax}
+
+\begin{align*}
+  \text{Context $\G$}
+    \bnf   {}& \ctxempty                         && \text{empty context} \\
+    \bnfor {}& \ctxextend{\G}{\x}{\T}            && \text{context $\G$ extended with $\x : \T$} \\
+  \\
+  \text{Type $\T$}
+    \bnf   {}& \Prod{x}{\T_1} \T_2               && \text{product}\\
+    \bnfor {}& \Id{\T}{\e_1}{\e_2}               && \text{identity type} \\
+    \bnfor {}& \subst{\T}{\sbs}                  && \text{substitution $\sbs$ applied to $\T$} \\
+  \\
+  \text{Term $\e$}
+    \bnf   {}& \x                                && \text{variable} \\
+    \bnfor {}& \lam{\x}{\T_1}{\T_2} \e           && \text{$\lambda$-abstraction} \\
+    \bnfor {}& \app{\e_1}{\x}{\T_1}{\T_2}{\e_2}  && \text{application} \\
+    \bnfor {}& \refl{\T} \e                      && \text{reflexivity} \\
+    \bnfor {}& \subst{\e}{\sbs}                  && \text{substitution $\sbs$ applied to $\e$} \\
+  \\
+  \text{Substitution $\sbs$}
+    \bnf   {}& \sbempty                          && \text{empty substitution} \\
+    \bnfor {}& \sbextend{\sbs}{\x}{\e}           && \text{substitution $\sbs$ extended with $\x \mapsto \e$}
+\end{align*}
+%
+Note that $\lambda$-abstraction and application are tagged with extra types not usually
+seen in type theory. An abstraction $\lam{\x}{\T_1}{\T_2} \e$ speficies not only the type
+$\T_1$ of $\x$ but also the type $\T_2$ of $e$, where $\x$ is bound in $\T_2$ and $\e$.
+Similarly, an application $\app{\e_1}{\x}{\T_1}{\T_2}{\e_2}$ specifies that $\e_1$ and
+$\e_2$ have types $\Prod{\x}{\T_1} \T_2$ and $\T_2$, respectively. This is necessary
+because in the presence of exotic equalities (think ``$\mathsf{nat} \to \mathsf{bool}
+\equiv \mathsf{nat} \to \mathsf{nat}$'') we must be \emph{very} careful about
+$\beta$-reductions.
+
+\subsection{Judgments}
+\label{sec:judgments}
+
+\begin{align*}
+& \isctx{\G}                  && \text{$\G$ is a context} \\
+& \istype{\G}{\T}             && \text{$T$ is a type in context $\G$} \\
+& \isterm{\G}{\e}{\T}         && \text{$\e$ is a term of type $\T$ in context $\G$} \\
+& \issubst{\sbs}{\G}{\D}      && \text{$\sbs$ is a substitution from context $\G$ to context $\D$} \\
+& \eqctx{\G}{\D}              && \text{$\G$ and $\D$ are equal contexts} \\
+& \eqtype{\G}{\T_1}{\T_2}     && \text{$T_1$ and $T_2$ are equal types in context $\G$} \\
+& \eqterm{\G}{\e_1}{\e_2}{\T} && \text{$e_1$ and $e_2$ are equal terms of type $\T$ in context $\G$}
+\end{align*}
+
+\subsection{Contexts \fbox{$\isctx{\G}$}}
+\label{sec:contexts}
+
+\begin{mathpar}
+  \infer[\rulename{ctx-empty}]
+  { }
+  {\isctx{\ctxempty}}
+
+  \infer[\rulename{ctx-extend}]
+  {\isctx{\G} \\
+   \istype{\G}{\T} \\
+   x \not\in \mathrm{dom}(\G)
+  }
+  {\isctx{(\ctxextend{\G}{\x}{\T})}}
+\end{mathpar}
+
+The \emph{domain} $\ctxdom{\G}$ is defined by $\ctxdom{\ctxempty} = \emptyset$ and
+$\ctxdom{\ctxextend{\G}{\x}{\T}} = \ctxdom{\G} \cup \{x\}$.
+
+\subsection{Substitutions \fbox{$\issubst{\sbs}{\G}{\D}$}}
+\label{sec:subst}
+
+\begin{mathpar}
+  \infer[\rulename{subst-empty}]
+  {\isctx{\G}}
+  {\issubst{\sbempty}{\G}{\ctxempty}}
+
+  \infer[\rulename{subst-extend}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\T} \\
+   \isterm{\G}{\e}{\subst{\T}{\sbs}}
+  }
+  {\issubst{(\sbextend{\sbs}{\x}{\e})}{\G}{(\ctxextend{\G}{\x}{\T})}}
+\end{mathpar}
+
+\subsection{Types \fbox{$\istype{\G}{\T}$}}
+
+\paragraph{General rules}
+
+\begin{mathpar}
+  \infer[\rulename{ty-ctx-conv}]
+  {\istype{\G}{\T} \\
+    \eqctx{\G}{\D}
+  }
+  {\istype{\D}{\T}}
+
+  \infer[\rulename{ty-subst}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\T}
+  }
+  {\istype{\G}{\subst{\T}{\sbs}}}
+\end{mathpar}
+
+\paragraph{Type formers}
+
+\begin{mathpar}
+  \infer[\rulename{ty-prod}]
+  {\istype{\G}{\T_1} \\
+   \istype{\ctxextend{\G}{\x}{\T_1}}{\T_2}
+  }
+  {\istype{\G}{\Prod{\x}{\T_1}{\T_2}}}
+
+  \infer[\rulename{ty-id}]
+  {\istype{\G}{\T}\\
+   \isterm{\G}{\e_1}{\T}\\
+   \isterm{\G}{\e_2}{\T}
+  }
+  {\istype{\G}{\Id{\T}{\e_1}{\e_2}}}
+\end{mathpar}
+
+\subsection{Terms \fbox{$\isterm{\G}{\e}{\T}$}}
+
+\paragraph{General rules}
+\begin{mathpar}
+  \infer[\rulename{term-ty-conv}]
+  {\isterm{\G}{\e}{\T_1} \\
+   \eqtype{\G}{\T_1}{\T_2}
+  }
+  {\isterm{\G}{\e}{\T_2}}
+
+  \infer[\rulename{term-ctx-conv}]
+  {\isterm{\G}{\x}{\T} \\
+   \eqctx{\G}{\D}
+  }
+  {\isterm{\D}{\x}{\T}}
+
+  \infer[\rulename{term-subst}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\D}{\e}{\T}
+  }
+  {\isterm{\G}{\subst{\e}{\sbs}}{\subst{\T}{\sbs}}}
+\end{mathpar}
+
+\paragraph{Variables}
+
+\begin{mathpar}
+  \infer[\rulename{term-var-eq}]
+  {\isctx{\G} \\
+   \x \not\in \ctxdom{\G}
+  }
+  {\isterm{\ctxextend{\G}{\x}{\T}}{\x}{\T}}
+
+  \infer[\rulename{term-var-neq}]
+  {\isterm{\G}{\x}{\T_1} \\
+   \y \not\in \ctxdom{\G} \\
+   \istype{\G}{T_2}
+  }
+  {\isterm{\ctxextend{\G}{\y}{\T_2}}{\x}{\T_1}}
+  \end{mathpar}
+
+\paragraph{Abstraction and application}
+
+\begin{mathpar}
+  \infer[\rulename{term-abs}]
+  {\isterm{\ctxextend{\G}{\x}{\T_1}}{\e}{\T_2}}
+  {\isterm{\G}{(\lam{\x}{\T_1}{\T_2}{\e})}{\Prod{\x}{\T_1}{\T_2}}}
+
+  \infer[\rulename{term-app}]
+  {\isterm{\G}{\e_1}{\Prod{x}{\T_1} \T_2} \\
+   \isterm{\G}{\e_2}{\T_1}
+  }
+  {\isterm{\G}{\app{\e_1}{\x}{\T_1}{\T_2}{\e_2}}{\subst{\T_2}{\x}{\e_2}}}
+\end{mathpar}
+
+\paragraph{Reflexivity}
+
+\begin{mathpar}
+  \infer[\rulename{term-refl}]
+  {\isterm{\G}{\e}{\T}}
+  {\isterm{\G}{\refl{\T} \e}{\Id{\T}{\e}{\e}}}
+\end{mathpar}
+
+\subsection{Context equality \fbox{$\eqctx{\G}{\D}$}}
+\label{sec:cont-equal}
+
+\begin{mathpar}
+  \infer[\rulename{eq-ctx-empty}]
+  { }
+  {\eqctx{\ctxempty}{\ctxempty}}
+
+  \infer[\rulename{eq-ctx-extend}]
+  {\eqctx{\G}{\D} \\
+   \eqtype{\G}{\T_1}{\T_2} \\
+   x \not\in \ctxdom{\G}
+  }
+  {\eqctx{(\ctxextend{\G}{\x}{\T_1})}{(\ctxextend{\D}{\x}{\T_2})}}
+
+\end{mathpar}
+
+\goodbreak
+
+\subsection{Type equality \fbox{$\eqtype{\G}{\T_1}{\T_2}$}}
+\label{sec:type-equality}
+
+\paragraph{General rules}
+
+\begin{mathpar}
+  \infer[\rulename{eq-ty-conv}]
+  {\eqtype{\G}{\T_1}{\T_2}\\
+    \eqctx{\G}{\D}}
+  {\eqtype{\D}{\T_1}{\T_2}}
+
+  \infer[\rulename{eq-ty-refl}]
+  {\istype{\G}{\T}}
+  {\eqtype{\G}{\T}{\T}}
+
+  \infer[\rulename{eq-ty-sym}]
+  {\eqtype{\G}{\T_2}{\T_1}}
+  {\eqtype{\G}{\T_1}{\T_2}}
+
+  \infer[\rulename{eq-ty-trans}]
+  {\eqtype{\G}{\T_1}{\T_2}\\
+   \eqtype{\G}{\T_2}{\T_3}}
+  {\eqtype{\G}{\T_1}{\T_3}}
+\end{mathpar}
+
+\paragraph{Substitution}
+
+\begin{mathpar}
+  \infer[\rulename{eq-subst-prod}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\T_1} \\
+   \istype{\ctxextend{\D}{\x}{\T_1}}{\T_2} \\
+   \y \not\in \ctxdom{\G}
+  }
+  {\eqtype{\G}
+   {\subst{(\Prod{\x}{\T_1}{\T_2})}{\sbs}}
+   {\Prod{\y}{\subst{\T_1}{\sbs}}{\subst{\T_2}{\sbextend{\sbs}{\x}{\y}}}}
+  }
+
+  \infer[\rulename{eq-subst-id}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\T} \\
+   \isterm{\D}{\e_1}{\T} \\
+   \isterm{\D}{\e_2}{\T}
+  }
+  {\eqtype{\G}
+   {\subst{(\Id{\T}{\e_1}{\e_2})}{\sbs}}
+   {\Id{\subst{\T}{\sbs}}{\subst{\e_1}{\sbs}}{\subst{\e_e}{\sbs}}}
+  }
+\end{mathpar}
+
+\paragraph{Congruence rules}
+
+\begin{mathpar}
+  \infer[\rulename{cong-prod}]
+  {\eqtype{\G}{\T_1}{\U_1}\\
+   \eqtype{\ctxextend{\G}{\x}{\T_1}}{\T_2}{\U_2}}
+  {\eqtype{\G}{\Prod{\x}{\T_1}{\T_2}}{\Prod{\x}{\U_1}{\U_2}}}
+
+  \infer[\rulename{cong-id}]
+  {\eqtype{\G}{\T}{\U}\\
+   \eqterm{\G}{\e_1}{\e'_1}{\T}\\
+   \eqterm{\G}{\e_2}{\e'_2}{\T}
+  }
+  {\eqtype{\G}{\Id{\T}{\e_1}{\e_2}}
+              {\Id{\U}{\e'_1}{\e'_2}}}
+
+  \infer[\rulename{cong-ty-subst}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \eqtype{\D}{\T_1}{\T_2}
+  }
+  {\eqtype{\G}{\subst{\T_1}{\sbs}}{\subst{\T_2}{\sbs}}}
+\end{mathpar}
+
+\goodbreak
+
+\subsection{Term equality \fbox{$\eqterm{\G}{\e_1}{\e_2}{\T}$}}
+
+\paragraph{General rules}
+
+\begin{mathpar}
+  \infer[\rulename{eq-ty-conv}]
+  {\eqterm{\G}{\e_1}{\e_2}{\T_1}\\
+    \eqtype{\G}{\T_1}{\T_2}}
+  {\eqterm{\G}{\e_1}{\e_2}{\T_2}}
+
+  \infer[\rulename{eq-ctx-conv}]
+  {\eqterm{\G}{\e_1}{\e_2}{\T}\\
+    \eqctx{\G}{\D}}
+  {\eqterm{\D}{\e_1}{\e_2}{\T}}
+
+  \infer[\rulename{eq-refl}]
+  {\isterm{\G}{\e}{\T}}
+  {\eqterm{\G}{\e}{\e}{\T}}
+
+  \infer[\rulename{eq-sym}]
+  {\eqterm{\G}{\e_2}{\e_1}{\T}}
+  {\eqterm{\G}{\e_1}{\e_2}{\T}}
+
+  \infer[\rulename{eq-trans}]
+  {\eqterm{\G}{\e_1}{\e_2}{\T}\\
+   \eqterm{\G}{\e_2}{\e_3}{\T}}
+  {\eqterm{\G}{\e_1}{\e_3}{\T}}
+\end{mathpar}
+
+\paragraph{Substitutions}
+
+\begin{mathpar}
+  \infer[\rulename{eq-term-app}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \y \not\in \ctxdom{\G} \\\\
+   \istype{\ctxextend{\D}{\x}{\T_1}}{\T_2} \\
+   \isterm{\D}{\e_1}{\Prod{\x}{\T_1}{\T_2}} \\
+   \isterm{\D}{\e_2}{\T_1}
+  }
+  {\eqterm{\G}
+   {\subst{(\app{\e_1}{\x}{\T_1}{\T_2}{\e_2})}{\sbs}}
+   {\app{(\subst{\e_1}{\sbs})}{\y}{(\subst{\T_1}{\sbs})}{(\subst{\T_2}{\sbextend{\sbs}{\x}{\y}})}{(\subst{\e_2}{\sbs})}}
+   {}
+  }
+
+  \infer[\rulename{eq-term-refl}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\D}{\e}{\T}
+  }
+  {\eqterm{\G}
+   {\subst{(\refl{\T}{\e})}{\sbs}}
+   {\refl{\subst{\T}{\sbs}}{\subst{\e}{\sbs}}}
+   {\Id{\subst{\T}{\sbs}}{\subst{\e}{\sbs}}{\subst{\e}{\sbs}}}
+  }
+
+\end{mathpar}
+
+
+\paragraph{Equality reflection}
+%
+\begin{mathpar}
+  \infer[\rulename{eq-reflection}]
+  {\isterm{\G}{\e}{\Id{\T}{\e_1}{\e_2}} \\
+   \isterm{\G}{\e'}{\textsf{UIP}(\T)}
+  }
+  {\eqterm{\G}{\e_1}{\e_2}{\T}}
+\end{mathpar}
+
+\paragraph{Computation}
+
+\begin{mathpar}
+\infer[\rulename{prod-beta}]
+  {\eqtype{\G}{\T_1}{\U_1}\\
+    \eqtype{\ctxextend{\G}{\x}{\T_1}}{\T_2}{\U_2}\\\\
+    \isterm{\ctxextend{\G}{\x}{\T_1}}{\e_1}{\T_2}\\
+    \isterm{\G}{\e_2}{\U_1}}
+  {\eqterm{\G}{\bigl(\app{(\lam{\x}{\T_1}{\T_2}{\e_1})}{\x}{\U_1}{\U_2}{\e_2}\bigr)}
+              {\subst{\e_1}{\x}{\e_2}}
+              {\subst{\T_2}{\x}{\e_2}}}
+\end{mathpar}
+
+\paragraph{Extensionality}
+
+%
+\begin{mathpar}
+  % \infer[\rulename{uip}]
+  % {\isterm{\G}{\e'_1}{\Id{\T}{\e_1}{\e_2}} \\
+  %   \isterm{\G}{\e'_2}{\Id{\T}{\e_1}{\e_2}}
+  % }
+  % {\eqterm{\G}{\e'_1}{e'_2}{\Id{\T}{\e_1}{\e_2}}}
+
+  \infer[\rulename{prod-eta}]
+  {\isterm{\G}{\e_1}{\Prod{\x}{\T}{\U}}\\
+   \isterm{\G}{\e_2}{\Prod{\x}{\T}{\U}}\\\\
+   \eqterm{\ctxextend{\G}{\x}{\T}}{(\app{\e_1}{\x}{\T}{\U}{\x})}
+          {(\app{\e_2}{\x}{\T}{\U}{\x})}{\U}
+  }
+  {\eqterm{\G}{\e_1}{\e_2}{\Prod{\x}{\T}{\U}}}
+\end{mathpar}
+
+\paragraph{Congruence rules}
+
+\begin{mathpar}
+
+  \infer[\rulename{cong-abs}]
+  {\eqtype{\G}{\T_1}{\U_1}\\
+    \eqtype{\ctxextend{\G}{\x}{\T_1}}{\T_2}{\U_2}\\
+    \eqterm{\ctxextend{\G}{\x}{\T_1}}{\e_1}{\e_2}{\T_2}}
+  {\eqterm{\G}{(\lam{\x}{\T_1}{\T_2}{\e_1})}
+              {(\lam{\x}{\U_1}{\U_2}{\e_2})}
+              {\Prod{\x}{\T_1}{\T_2}}}
+
+  \infer[\rulename{cong-app}]
+  {\eqtype{\G}{\T_1}{\U_1}\\
+   \eqtype{\ctxextend{\G}{\x}{\T_1}}{\T_2}{\U_2}\\\\
+   \eqterm{\G}{\e_1}{\e'_1}{\Prod{\x}{\T_1}{\T_2}}\\
+   \eqterm{\G}{\e_2}{\e'_2}{\T_1}}
+  {\eqterm
+    {\G}
+    {(\app{\e_1}{\x}{\T_1}{\T_2}{\e_2})}
+    {(\app{\e'_1}{\x}{\U_1}{\U_2}{\e'_2})}
+    {\subst{\T_2}{\sbextend{\sbempty}\x}{\e_2}}
+  }
+
+  \infer[\rulename{cong-refl}]
+  {\eqterm{\G}{\e_1}{\e_2}{\T_1}\\
+    \eqtype{\G}{\T_1}{\T_2}}
+  {\eqterm{\G}{\refl{\T_1} \e_1}{\refl{\T_2} \e_2}{\Id{\T_1}{\e_1}{\e_1}}}
+
+
+  \infer[\rulename{cong-term-subst}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \eqterm{\D}{\e_1}{\e_2}{\T}
+  }
+  {\eqterm{\G}{\subst{\e_1}{\sbs}}{\subst{\e_2}{\sbs}}{\subst{\T}{\sbs}}}
+
+\end{mathpar}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
