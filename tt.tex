@@ -154,7 +154,8 @@ $\ctxdom{\ctxextend{\G}{\x}{\T}} = \ctxdom{\G} \cup \{x\}$.
 \begin{mathpar}
   \infer[\rulename{term-var-eq}]
   {\isctx{\G} \\
-   \x \not\in \ctxdom{\G}
+   \x \not\in \ctxdom{\G} \\
+   \istype{\G}{\T}\\
   }
   {\isterm{\ctxextend{\G}{\x}{\T}}{\x}{\T}}
 
