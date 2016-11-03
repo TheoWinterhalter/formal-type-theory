@@ -28,7 +28,6 @@ In this section we give the formulation of type theory that we shall work with.
     \bnfor {}& \sbextend{\sbs}{\x}{\uu}   && \text{substitution $\sbs$ extended with $\x \mapsto \uu$}
 \end{align*}
 
-
 \subsection{Judgments}
 \label{sec:judgments}
 
@@ -128,10 +127,10 @@ $\ctxdom{\ctxextend{\G}{\x}{\A}} = \ctxdom{\G} \cup \{x\}$.
   {\isterm{\G}{\uu}{\B}}
 
   \infer[\rl{term-ctx-conv}]
-  {\isterm{\G}{\x}{\A} \\
+  {\isterm{\G}{\uu}{\A} \\
    \eqctx{\G}{\D}
   }
-  {\isterm{\D}{\x}{\A}}
+  {\isterm{\D}{\uu}{\A}}
 
   \infer[\rl{term-subst}]
   {\issubst{\sbs}{\G}{\D} \\
@@ -145,7 +144,8 @@ $\ctxdom{\ctxextend{\G}{\x}{\A}} = \ctxdom{\G} \cup \{x\}$.
 \begin{mathpar}
   \infer[\rl{term-var}]
   {\isctx{\G} \\
-   \x \not\in \ctxdom{\G}
+   \x \not\in \ctxdom{\G} \\
+   \istype{\G}{\T}\\
   }
   {\isterm
      {\ctxextend{\G} {\x}{\A}}
