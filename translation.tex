@@ -2,6 +2,71 @@
 \section{Translation}
 \label{sec:translation}
 
+We need the following translations:
+%
+\begin{align}
+  \isctx{\G}
+  &\quad\leadsto\quad
+  \isctx{\G'}
+  \\
+  \G', (\istype{\G}{\A}) 
+  &\quad\leadsto\quad
+  \istype{\G'}{\A'}
+  \\
+  \label{lbl:ty-path}
+  % the following is needed if we ever need to construct an equivalence given A',B' and A \equiv B
+  (\istype{\G'}{\A'}), (\istype{\G}{\A})
+  &\quad\leadsto\quad
+  (\istype{\G'}{\A''}), (\G' \vdash \A' \simeq \A'')
+  \\
+  (\G', A'), (\isterm{\G}{\uu}{\A})
+  &\quad\leadsto\quad
+  \isterm{\G'}{\uu'}{\A'}
+  \\
+  % the following is needed if we ever need to construct an equivalence given u', v' and u \equiv v
+  % (which happens if we need to construct an equivalence given A',B' and A \equiv B)
+  \label{lbl:term-path}
+  (\isterm{\G'}{\uu'}{\A'}), (\isterm{\G}{\uu}{\A})
+  &\quad\leadsto\quad
+  (\isterm{\G'}{\uu''}{\A'}), (\G' \vdash \uu' \simeq \uu'' : \A')
+  \\
+  \G', (\issubst{\sbs}{\G}{\D})
+  &\quad\leadsto\quad
+  \issubst{\sbs'}{\G'}{\D'}
+  \\
+  (\issubst{\sbs'}{\G'}{\D'}), (\issubst{\sbs}{\G}{\D})
+  &\quad\leadsto\quad
+  (\issubst{\sbs''}{\G'}{\D''}), (\sbs' \simeq \sbs'')
+  \\
+  \G', (\eqctx{\G}{\D})
+  &\quad\leadsto\quad
+  (\isctx{\D'}), (\G' \simeq \D')
+  \\
+  \label{lbl:eq-ty-path}
+  \G', \B', (\eqtype{\G}{\A}{\B})
+  &\quad\leadsto\quad
+  (\istype{\G'}{\A'}), (\G',\A') \simeq (\G',\B')
+  \\
+  \label{lbl:eq-term-path}
+  \G', \A', \vv', (\eqterm{\G}{\uu}{\vv}{\A})
+  &\quad\leadsto\quad
+  (\isterm{\G'}{\A'}{\uu'}), (\G',\A',\uu') \simeq (\G',\A',\vv')
+\end{align}
+%
+Remarks:
+%
+\begin{itemize}
+\item \eqref{lbl:ty-path} must be implemented via~\eqref{lbl:eq-ty-path}
+\item \eqref{lbl:term-path} must be implemented via~\eqref{lbl:eq-term-path}
+\end{itemize}
+
+
+
+
+
+\newpage
+\hrulefill
+
 An \emph{isomorphism} between $\A$ and $\B$ is given by terms $f : \A \to \B$ and
 $g : \B \to \A$ together with terms of type $\Prod{x}{\A} \Id{\A}{g \, (f \, x)}{x}$ and
 $\Prod{y}{\B} \Id{\B}{f \, (g \, y)}{y}$. We indicate that such an equivalence is given by
