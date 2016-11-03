@@ -2,8 +2,71 @@
 \section{Translation}
 \label{sec:translation}
 
+An \emph{isomorphism} between $\A$ and $\B$ is given by terms $f : \A \to \B$ and
+$g : \B \to \A$ together with terms of type $\Prod{x}{\A} \Id{\A}{g \, (f \, x)}{x}$ and
+$\Prod{y}{\B} \Id{\B}{f \, (g \, y)}{y}$. We indicate that such an equivalence is given by
+writing $\Iso{\A}{\B}$, while keeping in mind that this is meta-notation. (The point here
+is that since we do not necessarily have dependent sums, we cannot easily define the type
+of isomorphisms.)
+  
+We construct a translation $\tran{\derives{\DD}{\JJ}}$ such that:
+%
+\begin{itemize}
+\item $\tran{\derives{\DD}{\isctx{\G}}}$ is a derivation of the form $\derives{\DD'}{\isctx{\JJ'}}$,
+\item $\tran{\derives{\DD}{\istype{\G}{\A}}}$ is a derivation of the form $\derives{\DD'}{\istype{\G'}{\A'}}$,
+\item $\tran{\derives{\DD}{\isterm{\G}{\uu}{\A}}}$ is a derivation of the form $\derives{\DD'}{\isterm{\G'}{\uu'}{\A'}}$,
+\item $\tran{\derives{\DD}{\issubst{\sbs}{\G}{\D}}}$ is a derivation of the form $\derives{\DD}{\issubst{\sbs'}{\G'}{\D'}}$,
+\item $\tran{\derives{\DD}{\eqctx{\G}{\D}}}$ is a derivation of the form
+  $\derives{\DD'}{\issubst{\sbs}{\G'}{\D'}}$ such that $\sbs$ is an isomorphism of
+  contexts (TODO: define this),
+\item $\tran{\derives{\DD}{\eqtype{\G}{\A}{\B}}}$ is an isomorphism $\Iso{\A}{\B}$,
+\item $\tran{\derives{\DD}{\eqterm{\G}{\uu}{\vv}{\A}}}$ is a derivation of the form
+  $\derives{\DD'}{\isterm{\G}{p}{\Id{\A}{\uu'}{\vv'}}}$.
+\end{itemize}
+%
+We construct an auxiliary function $\conn{\derives{\DD}{\JJ}}{\derives{\EE}{\JJ}}$, such that:
+%
+\begin{itemize}
+\item specify things here
+\end{itemize}
 
-We define a translation $\tran{\A}$.
+\subsection{Construction of $\tran{{-}}$}
+\label{sec:construction-tran}
+
+\Case{ctx-empty}
+%
+The derivation
+% 
+\begin{equation*}
+  \infer{ }{\isctx{\ctxempty}}
+\end{equation*}
+%
+is translated into
+% 
+\begin{equation*}
+  \infer{ }{\isctx{\ctxempty}}
+\end{equation*}
+
+
+\Case{ctx-extend}
+
+Consider the derivation
+%
+% 
+\begin{equation*}
+  \infer{
+    \inferrule*{\DD}{\isctx{\G}} \\
+    \inferrule*{\EE}{\istype{\G}{\A}} \\
+    x \not\in \ctxdom{\G}
+  }
+  {\isctx{(\ctxextend{\G}{\x}{\A})}}
+\end{equation*}
+%
+
+
+
+
+
 
 %%% Local Variables:
 %%% mode: latex
