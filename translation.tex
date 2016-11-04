@@ -9,7 +9,7 @@ We need the following translations:
   &\quad\leadsto\quad
   \isctx{\G'}
   \\
-  \G', (\istype{\G}{\A}) 
+  \G', (\istype{\G}{\A})
   &\quad\leadsto\quad
   \istype{\G'}{\A'}
   \\
@@ -45,12 +45,12 @@ We need the following translations:
   \label{lbl:eq-ty-path}
   \G', \B', (\eqtype{\G}{\A}{\B})
   &\quad\leadsto\quad
-  (\istype{\G'}{\A'}), (\G',\A') \simeq (\G',\B')
+  (\istype{\G'}{\A'}), (\G' \vdash \A' \simeq \B')
   \\
   \label{lbl:eq-term-path}
   \G', \A', \vv', (\eqterm{\G}{\uu}{\vv}{\A})
   &\quad\leadsto\quad
-  (\isterm{\G'}{\A'}{\uu'}), (\G',\A',\uu') \simeq (\G',\A',\vv')
+  (\isterm{\G'}{\A'}{\uu'}), (\G' \vdash \uu' \simeq \vv' : \A')
 \end{align}
 %
 Remarks:
@@ -73,11 +73,11 @@ $\Prod{y}{\B} \Id{\B}{f \, (g \, y)}{y}$. We indicate that such an equivalence i
 writing $\Iso{\A}{\B}$, while keeping in mind that this is meta-notation. (The point here
 is that since we do not necessarily have dependent sums, we cannot easily define the type
 of isomorphisms.)
-  
+
 We construct a translation $\tran{\derives{\DD}{\JJ}}$ such that:
 %
 \begin{itemize}
-\item $\tran{\derives{\DD}{\isctx{\G}}}$ is a derivation of the form $\derives{\DD'}{\isctx{\JJ'}}$,
+\item $\tran{\derives{\DD}{\isctx{\G}}}$ is a derivation of the form $\derives{\DD'}{\isctx{\G'}}$,
 \item $\tran{\derives{\DD}{\istype{\G}{\A}}}$ is a derivation of the form $\derives{\DD'}{\istype{\G'}{\A'}}$,
 \item $\tran{\derives{\DD}{\isterm{\G}{\uu}{\A}}}$ is a derivation of the form $\derives{\DD'}{\isterm{\G'}{\uu'}{\A'}}$,
 \item $\tran{\derives{\DD}{\issubst{\sbs}{\G}{\D}}}$ is a derivation of the form $\derives{\DD}{\issubst{\sbs'}{\G'}{\D'}}$,
@@ -101,13 +101,13 @@ We construct an auxiliary function $\conn{\derives{\DD}{\JJ}}{\derives{\EE}{\JJ}
 \Case{ctx-empty}
 %
 The derivation
-% 
+%
 \begin{equation*}
   \infer{ }{\isctx{\ctxempty}}
 \end{equation*}
 %
 is translated into
-% 
+%
 \begin{equation*}
   \infer{ }{\isctx{\ctxempty}}
 \end{equation*}
@@ -117,7 +117,7 @@ is translated into
 
 Consider the derivation
 %
-% 
+%
 \begin{equation*}
   \infer{
     \inferrule*{\DD}{\isctx{\G}} \\
