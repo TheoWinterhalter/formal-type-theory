@@ -255,6 +255,40 @@ and the \meta{magic} fact that
 %
 we can conclude.
 
+\Case{term-ty-conv}
+
+Consider
+%
+\begin{equation*}
+  \infer{
+    \isterm{\G}{\uu}{\A} \\
+    \eqtype{\G}{\A}{\B}
+  }
+  {\isterm{\G}{\uu}{\B}}
+\end{equation*}
+%
+This time we have to prove~\eqref{lbl:term-ctr} and~\eqref{lbl:term-path}.
+First, for~\eqref{lbl:term-ctr}, assume $\G'$ and $\B'$ respective translations
+of $\G$ and $\B$. From that and~\eqref{lbl:eq-ty-path} we get
+$\istype{\G'}{\A'}$ and some equivalence $\G' \vdash \A' \simeq \B'$.
+From $\G'$, $\A'$ and~\eqref{lbl:term-ctr}, we get $\isterm{\G'}{\uu'}{\A'}$.
+We take the direct map from the equivalence $\f$ and finally
+conclude $\isterm{\G'}{\app{\f}{\_}{\A'}{\B'}{\uu'}}{\B'}$.
+
+Now, for~\eqref{lbl:term-path}, assume another translation
+$\isterm{\G'}{\uu''}{\B'}$.
+Using $\g$, the inverse of $\f$, we get
+$\isterm{\G'}{\app{\g}{\_}{\B'}{\A'}{\uu''}}{\A'}$ which is a valid translation
+thanks to the remarks. Thus, using~\eqref{lbl:term-path}, we get an equivalence
+$\G' \vdash \app{\g}{\_}{\B'}{\A'}{\uu''} \simeq \uu' : \A'$.
+From it we deduce the equivalence
+$\G' \vdash \app{\f}{\_}{\A'}{\B'}{(\app{\g}{\_}{\B'}{\A'}{\uu''})}
+\simeq \app{\f}{\_}{\A'}{\B'}{\uu'} : \A'$.
+Since $\f$ and $\g$ are inverses, we have
+$\G' \vdash \app{\f}{\_}{\A'}{\B'}{(\app{\g}{\_}{\B'}{\A'}{\uu''})}
+\simeq \uu'' : \A'$ and so
+$\G' \vdash \uu'' \simeq \app{\f}{\_}{\A'}{\B'}{\uu'} : \A'$.
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
