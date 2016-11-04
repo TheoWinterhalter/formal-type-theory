@@ -5,10 +5,12 @@
 We need the following translations:
 %
 \begin{align}
+  \label{lbl:ctx-ctr}
   \isctx{\G}
   &\quad\leadsto\quad
   \isctx{\G'}
   \\
+  \label{lbl:ty-ctr}
   \G', (\istype{\G}{\A})
   &\quad\leadsto\quad
   \istype{\G'}{\A'}
@@ -38,6 +40,7 @@ We need the following translations:
   &\quad\leadsto\quad
   (\issubst{\sbs''}{\G'}{\D''}), (\sbs' \simeq \sbs'')
   \\
+  \label{lbl:eq-ctx-path}
   \G', (\eqctx{\G}{\D})
   &\quad\leadsto\quad
   (\isctx{\D'}), (\G' \simeq \D')
@@ -127,7 +130,56 @@ Consider the derivation
   {\isctx{(\ctxextend{\G}{\x}{\A})}}
 \end{equation*}
 %
+By~\eqref{lbl:ctx-ctr} on $\derives{\DD}{\isctx{\G}}$, we get
+$\derives{\DD'}{\isctx{\G'}}$.
+By~\eqref{lbl:ty-ctr} on $\derives{\EE}{\istype{\G}{\A}}$ and $\G'$, we get
+$\derives{\EE'}{\istype{\G'}{\A'}}$.
+Since $\ctxdom{\G} = \ctxdom{\G'}$, we have $x \notin \ctxdom{\G'}$ and thus
+%
+\begin{equation*}
+  \infer{
+    \inferrule*{\DD'}{\isctx{\G'}} \\
+    \inferrule*{\EE'}{\istype{\G'}{\A'}} \\
+    x \not\in \ctxdom{\G'}
+  }
+  {\isctx{(\ctxextend{\G'}{\x}{\A'})}}
+\end{equation*}
 
+
+\Case{ty-ctx-conv}
+
+Consider the derivation
+%
+%
+\begin{equation*}
+  \infer{
+    \inferrule*{\DD}{\istype{\G}{\A}} \\
+    \inferrule*{\EE}{\eqctx{\G}{\D}}
+  }
+  {\istype{\D}{\A}}
+\end{equation*}
+%
+We need to prove~\eqref{lbl:ty-ctr} and~\eqref{lbl:ty-path}.
+First assume we have $\D'$ a translation of $\D$.
+From $\derives{\EE}{\eqctx{\G}{\D}}$ and $\D'$, we
+apply~\eqref{lbl:eq-ctx-path} (\meta{in the symmetric version}) and we deduce
+$\G'$ a translation of $\G$ such that $\G' \simeq \D'$ (meaning that in
+particular we have some morphism $f$ from $\G'$ to $\D'$).
+From $\G'$ and $\derives{\DD}{\istype{\G}{\A}}$, we apply~\eqref{lbl:ty-ctr}
+to get $\derives{\DD'}{\istype{\G'}{\A'}}$.
+We can finally build the translation:
+%
+\begin{equation*}
+  \infer{
+    \inferrule*{\DD'}{\istype{\G'}{\A'}} \\
+    \issubst{f}{\D'}{\G'}
+  }
+  {\istype{\D'}{\subst{\A'}{f}}}
+\end{equation*}
+%
+\meta{We need to specify who is $f$ (and its derivation) and how it applies.}
+%
+\meta{TODO}
 
 
 
