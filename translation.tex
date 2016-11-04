@@ -56,8 +56,15 @@ We need the following translations:
 Remarks:
 %
 \begin{itemize}
-\item \eqref{lbl:ty-path} must be implemented via~\eqref{lbl:eq-ty-path}
-\item \eqref{lbl:term-path} must be implemented via~\eqref{lbl:eq-term-path}
+\item \eqref{lbl:ty-path} must give the same result as~\eqref{lbl:eq-ty-path} applied to
+  the reflexivity case. This is so that we can use the result of~\eqref{lbl:eq-ty-path} as
+  if it were obtain through conversion.
+\item \eqref{lbl:term-path} must give the same result as~\eqref{lbl:eq-term-path} applied
+  to the reflexivity case, for similar reasons.
+\item We will need to know that all the equivalences generated from the derivations of a
+  given equation are equal (propositionally pointwise). This is where UIP will come into
+  play, since such equivalences are compositions of structural acrobatics and transports
+  along paths used in $\rl{eq-reflection}$.
 \end{itemize}
 
 
