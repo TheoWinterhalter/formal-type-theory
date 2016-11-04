@@ -223,6 +223,38 @@ $\G' \vdash \Prod{\x}{\subst{\A''}{\g}}{\subst{\B''}{\g'}}
 which gives the expected conclusion by transitivity.
 (\meta{We should write it in a better way.})
 
+\Case{ty-id}
+
+Consider
+%
+\begin{equation*}
+  \infer{
+    \istype{\G}{\A} \\
+    \isterm{\G}{\uu}{\A} \\
+    \isterm{\G}{\vv}{\A}
+  }
+  {\istype{\G}{\Id{\A}{\uu}{\vv}}}
+\end{equation*}
+%
+First, let us handle~\eqref{lbl:ty-ctr}. Assume $\G'$ a translation of $\G$.
+From~\eqref{lbl:ty-ctr}, we get $\istype{\G'}{\A'}$ and
+from~\eqref{lbl:term-ctr} using $\G'$ and $\A'$, we get
+$\isterm{\G'}{\uu'}{\A'}$ and $\isterm{\G'}{\vv'}{\A'}$.
+We finally have $\istype{\G'}{\Id{\A'}{\uu'}{\vv'}}$.
+
+\sloppy
+Now, let us prove~\eqref{lbl:ty-path} by assuming $\istype{\G'}{\C''}$ another
+translation of $\istype{\G}{\Id{\A}{\uu}{\vv}}$.
+Using the same trick as before, \eqref{lbl:ty-path} and~\eqref{lbl:term-path},
+and the \meta{magic} fact that
+%
+\begin{equation*}
+  \G' \vdash \Id{\subst{\A''}{\g}}{\subst{\uu''}{\g}}{\subst{\vv''}{\g}}
+  \simeq \subst{(\Id{\A''}{\uu''}{\vv''})}{\g},
+\end{equation*}
+%
+we can conclude.
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
