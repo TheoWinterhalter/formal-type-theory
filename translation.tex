@@ -289,6 +289,32 @@ $\G' \vdash \app{\f}{\_}{\A'}{\B'}{(\app{\g}{\_}{\B'}{\A'}{\uu''})}
 \simeq \uu'' : \A'$ and so
 $\G' \vdash \uu'' \simeq \app{\f}{\_}{\A'}{\B'}{\uu'} : \A'$.
 
+\Case{term-ctx-conv}
+
+%
+\begin{equation*}
+  \infer{
+    \isterm{\G}{\uu}{\A} \\
+    \eqctx{\G}{\D}
+  }
+  {\isterm{\D}{\uu}{\A}}
+\end{equation*}
+%
+\eqref{lbl:term-ctr}: Assume $\D'$ and $\A'$.
+By~\eqref{lbl:eq-ctx-path}, we have $\G'$ and $\G' \simeq \D'$.
+Then\footnote{Assuming $\subst{\A'}{\g}$ is a suitable translation!},
+by~\eqref{lbl:term-ctr}, $\isterm{\G'}{\uu'}{\subst{\A'}{\g}}$ and thus
+$\isterm{\D'}{\subst{\uu'}{\f}}{\A'}$ (where $\f$ and $\g$ are the equivalence
+$\G' \simeq \D'$). \meta{(How do we get rid of $\subst{\subst{\A'}{\g}}{\f}$
+in favor of $\A'$? Probably by conversion in the target.)}
+
+\eqref{lbl:term-path}: Moreover assume $\isterm{\D'}{\uu''}{\A'}$.
+Thus, $\isterm{\G'}{\subst{\uu''}{\g}}{\subst{\A'}{\g}}$.
+We deduce form~\eqref{lbl:term-path} that
+$\G' \vdash \subst{\uu''}{\g} \simeq \uu' : \subst{\A'}{\g}$.
+And finally
+$\G' \vdash \uu'' \simeq \subst{\uu'}{\f} : \A'$.
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
