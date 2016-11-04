@@ -21,6 +21,7 @@ We need the following translations:
   &\quad\leadsto\quad
   (\istype{\G'}{\A''}), (\G' \vdash \A' \simeq \A'')
   \\
+  \label{lbl:term-ctr}
   (\G', A'), (\isterm{\G}{\uu}{\A})
   &\quad\leadsto\quad
   \isterm{\G'}{\uu'}{\A'}
@@ -151,25 +152,76 @@ We can finally build the translation:
 \begin{equation*}
   \infer{
     \inferrule*{\DD'}{\istype{\G'}{\A'}} \\
-    \issubst{f}{\D'}{\G'}
+    \issubst{\f}{\D'}{\G'}
   }
   {\istype{\D'}{\subst{\A'}{f}}}
 \end{equation*}
 %
-\meta{We need to specify who is $f$ (and its derivation) and how it applies.}
+\meta{We need to specify who is $\f$ (and its derivation) and how it applies.}
 
 Now, let's extend our proof to match~\eqref{lbl:ty-path}.
 Assume we are given $\istype{\D'}{\A''}$, let's build an equivalence
-$\D' \vdash \subst{\A'}{f} \simeq \A''$.
-Since $\G' \simeq \D'$, we have an inverse to $f$, say $g$.
-For this we deduce $\istype{\G'}{\subst{\A''}{g}}$.
+$\D' \vdash \subst{\A'}{\f} \simeq \A''$.
+Since $\G' \simeq \D'$, we have an inverse to $\f$, say $\g$.
+For this we deduce $\istype{\G'}{\subst{\A''}{\g}}$.
 Using this, together with $\istype{\G'}{\A'}$, we can apply~\eqref{lbl:ty-path}
-to get some isomorphism $\G' \vdash \A' \simeq \subst{\A''}{g}$.
+to get some isomorphism $\G' \vdash \A' \simeq \subst{\A''}{\g}$.
 From this we can build an isomorphism
-$\D' \vdash \subst{\A'}{f} \simeq \subst{\subst{\A''}{g}}{f}$.
-But as we said, $g$ and $f$ are inverses, so
-$\D' \vdash \subst{\subst{\A''}{g}}{f} \simeq \A''$, hence
-$\D' \vdash \subst{\A'}{f} \simeq \A''$.
+$\D' \vdash \subst{\A'}{\f} \simeq \subst{\subst{\A''}{\g}}{\f}$.
+But as we said, $\g$ and $\f$ are inverses, so
+$\D' \vdash \subst{\subst{\A''}{\g}}{\f} \simeq \A''$, hence
+$\D' \vdash \subst{\A'}{\f} \simeq \A''$.
+
+\Case{ty-subst}
+\meta{TODO}
+
+\Case{ty-prod}
+
+Consider
+%
+\begin{equation*}
+  \infer{
+    \inferrule*{\DD}{\istype{\G}{\A}} \\
+    \inferrule*{\EE}{\istype{\ctxextend{\G}{\x}{\A}}{\B}}
+  }
+  {\istype{\G}{\Prod{\x}{\A}{\B}}}
+\end{equation*}
+%
+We prove~\eqref{lbl:ty-ctr} and then~\eqref{lbl:ty-path}.
+Assume $\G'$, from~\eqref{lbl:ty-ctr}, we get $\istype{\G'}{\A'}$ and then
+using $\ctxextend{\G'}{\x}{\A'}$
+(well-formed since $x \notin \ctxdom{\G} = \ctxdom{\G'}$)
+we get $\istype{\ctxextend{\G'}{\x}{\A'}}{\B'}$.
+Finally we reconstruct $\istype{\G'}{\Prod{\x}{\A'}{\B'}}$.
+
+Now, to prove~\eqref{lbl:ty-path}, assume $\istype{\G'}{\C''}$
+is some translation of $\istype{\G}{\Prod{\x}{\A}{\B}}$.
+If we invert on the translation, $\C''$ is actually an arbitrary number
+(possibly zero) of context morphisms applied to a $\Pi$-type translation
+$\istype{\G''}{\Prod{\x}{\A''}{\B''}}$.
+To simplify matters, we assume we only have one such context morphism
+$\G' \simeq \G''$ with $\issubst{\f}{\G''}{\G'}$ and $\issubst{\g}{\G'}{\G''}$
+which is the composition of all the substitutions (in case we have none, this
+would result in the identity morphism). It is indeed admissible as we can show
+an equivalence between the two types (the one with one, and the one with an
+arbitrary number of substitutions in its head).
+By inversion, $\istype{\G''}{\A''}$, and thus $\istype{\G'}{\subst{\A''}{\g}}$
+so by~\eqref{lbl:ty-path}, we have $\G' \vdash \subst{\A''}{\g} \simeq \A'$,
+in particular, we can extend $\f$ and $\g$ into $\f'$ and $\g'$ to get an
+isomorphism $\ctxextend{\G'}{\x}{\A'} \simeq \ctxextend{\G''}{\x}{\A''}$.
+By inversion, we also have $\istype{\ctxextend{\G''}{\x}{\A''}}{\B''}$,
+and thus $\istype{\ctxextend{\G'}{\x}{\A'}}{\subst{\B''}{\g'}}$,
+so by~\eqref{lbl:ty-path}, we have
+$\ctxextend{\G'}{\x}{\A'} \vdash \subst{\B''}{\g'} \simeq \B'$.
+
+We can derive from that
+$\G' \vdash \Prod{\x}{\subst{\A''}{\g}}{\subst{\B''}{\g'}}
+\simeq \Prod{\x}{\A'}{\B'}$.
+However, \meta{magically},
+$\G' \vdash \Prod{\x}{\subst{\A''}{\g}}{\subst{\B''}{\g'}}
+\simeq \subst{(\Prod{\x}{\A''}{\B''})}{\g}$,
+which gives the expected conclusion by transitivity.
+(\meta{We should write it in a better way.})
 
 %%% Local Variables:
 %%% mode: latex
