@@ -83,6 +83,7 @@ Remarks:
   $\isterm{\G''}{\subst{\uu'}{\theta}}{\subst{\A'}{\theta}}$.
   This means that we can always assume the type we get as input
   for~\eqref{lbl:term-ctr} to be of the same shape as the original type.
+  The same goes for~\eqref{lbl:term-path}.
 \end{itemize}
 
 
@@ -411,9 +412,30 @@ induction hypothesis...}
 \end{equation*}
 
 \eqref{lbl:term-ctr}: Assume $\G'$ and $\Prod{\x}{\A'}{\B'}$ are respective
-translations of $\G$ and $\Prod{\x}{\A}{\B}$.
-\meta{We cannot do that without actually unfolding some context isomorphisms...
-It would be nice to have a systematic way to deal with that...}
+translations of $\G$ and $\Prod{\x}{\A}{\B}$ (thanks to one of the remarks).
+We can thus extend $\G'$ with $\istype{\G'}{\A'}$ and we have
+$\istype{\ctxextend{\G'}{\x}{\A'}}{\B'}$.
+This implies that, by~\eqref{lbl:term-ctr}, we have
+$\isterm{\ctxextend{\G'}{\x}{\A'}}{\uu'}{\B'}$
+and so
+$\isterm{\G'}{(\lam{\x}{\A'}{\B'}{\uu'})}{\Prod{\x}{\A'}{\B'}}$.
+
+\eqref{lbl:term-path}; Assume, moreover, that
+$\isterm{\G'}{\vv'}{\Prod{\x}{\A'}{\B'}}$ is another translation.
+We get $\isterm{\ctxextend{\G'}{\x}{\A'}}{\app{\vv'}{\x}{\A'}{\B'}{\x}}{\B'}$.
+It is a translation of $\isterm{\ctxextend{\G}{\x}{\A}}{\uu}{\B}$
+\meta{(why?)}.
+Then, by~\eqref{lbl:term-path},
+$\ctxextend{\G'}{\x}{\A'} \vdash \app{\vv'}{\x}{\A'}{\B'}{\x} \simeq
+\uu' : \B'$.
+Thus,
+$\G' \vdash \lam{\x}{\A'}{\B'}{\app{\vv'}{\x}{\A'}{\B'}{\x}} \simeq
+\lam{\x}{\A'}{\B'}{\uu'} : \Prod{\x}{\A'}{\B'}$.
+Since $\G' \vdash \lam{\x}{\A'}{\B'}{\app{\vv'}{\x}{\A'}{\B'}{\x}} \simeq
+\vv' : \Prod{\x}{\A'}{\B'}$ \meta{(by $\eta$ for propositional equality)},
+we conclude
+$\G' \vdash \vv' \simeq \lam{\x}{\A'}{\B'}{\uu'} : \Prod{\x}{\A'}{\B'}$.
+
 
 %%% Local Variables:
 %%% mode: latex
