@@ -479,6 +479,43 @@ translation.
 \meta{Here, we probably have to use the UIP legacy somehow...}
 
 
+\Case{eq-ctx-empty}
+
+\begin{equation*}
+  \infer
+  { }
+  {\eqctx{\ctxempty}{\ctxempty}}
+\end{equation*}
+%
+We have to prove~\eqref{lbl:eq-ctx-path}.
+Assume we have a translation of $\ctxempty$, this has to be $\ctxempty$
+by definition. Obviously $\ctxempty$ is a valid translation of the other
+context, and we return the trivial isomorphism.
+
+
+\Case{eq-ctx-extend}
+
+\begin{equation*}
+  \infer
+  {\eqctx{\G}{\D} \\
+   \eqtype{\G}{\A}{\B} \\
+   x \not\in \ctxdom{\G}
+  }
+  {\eqctx{(\ctxextend{\G}{\x}{\A})}{(\ctxextend{\D}{\x}{\B})}}
+\end{equation*}
+%
+\eqref{lbl:eq-ctx-path}:
+Assume $\ctxextend{\G'}{\x}{\A'}$ is a translation of $\ctxextend{\G}{\x}{\A}$.
+In particular we have $\G'$ a translation for $\G$ and $\istype{\G'}{\A'}$
+a translation of $\istype{\G}{\A}$.
+From~\eqref{lbl:eq-ctx-path}, we get $\D'$ a translation of $\D$ and
+an isomorphism $\G' \simeq \D'$.
+By~\eqref{lbl:eq-ty-path}, we get $\B'$ such that $\G' \vdash \A' \simeq \B'$.
+Calling $\theta$ the isomorphism from $\D'$ to $\G'$, we have
+$\istype{\D'}{\subst{\B'}{\theta}}$.
+All this allows to extend the isomorphism to
+$(\ctxextend{\G'}{\x}{\A'}) \simeq (\ctxextend{\D'}{\x}{\subst{\B'}{\theta}})$.
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
