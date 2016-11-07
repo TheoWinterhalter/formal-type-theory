@@ -299,7 +299,7 @@ $\G' \vdash \uu'' \simeq \app{\f}{\_}{\A'}{\B'}{\uu'} : \A'$.
   }
   {\isterm{\D}{\uu}{\A}}
 \end{equation*}
-%
+
 \eqref{lbl:term-ctr}: Assume $\D'$ and $\A'$.
 By~\eqref{lbl:eq-ctx-path}, we have $\G'$ and $\G' \simeq \D'$.
 Then\footnote{Assuming $\subst{\A'}{\g}$ is a suitable translation!},
@@ -360,6 +360,38 @@ context isomorphisms. We apply all of their inverses in the right order to
 discover $\x$ in an equivalent context, and at an equivalent type.
 This is probably one of the times where we require the produced equivalences
 to be equal.}
+
+
+\Case{term-var-skip}
+
+\begin{equation*}
+  \infer{
+    \isterm{\G}{\x}{\A} \\
+    \y \not\in \ctxdom{\G} \\
+    \istype{\G}{\B}
+  }{
+    \isterm
+      {\ctxextend{\G}{\y}{\B}}
+      {\x}
+      {\A}
+  }
+\end{equation*}
+
+\eqref{lbl:term-ctr}: Assume $\ctxextend{\G'}{\y}{\B'}$ and $\A'$
+respective translations of $\ctxextend{\G}{\y}{\B}$ and $\A$.
+By definition of a context translation, $\G'$ is a translation of $\G$.
+Thus, by~\eqref{lbl:term-ctr} on $\isterm{\G}{\x}{\A}$, we have
+$\isterm{\G'}{\uu'}{\A'}$ a translation.
+We still have $\y \notin \ctxdom{\G'}$.
+And since $\B'$ is a translation of $\B$ in translated context $\G'$,
+we have $\istype{\G'}{\B'}$, from that we conclude
+$\isterm{\ctxextend{\G'}{\y}{\B'}}{\uu'}{\A'}$.
+
+\eqref{lbl:term-path}: Assume, moreover, that
+$\isterm{\ctxextend{\G'}{\y}{\B'}}{\uu''}{\A'}$
+is another translation, let's build a path.
+\meta{Here it is unclear how to remove $\y$ from the context to use the
+induction hypothesis...}
 
 %%% Local Variables:
 %%% mode: latex
