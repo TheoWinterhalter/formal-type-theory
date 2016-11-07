@@ -315,6 +315,52 @@ $\G' \vdash \subst{\uu''}{\g} \simeq \uu' : \subst{\A'}{\g}$.
 And finally
 $\G' \vdash \uu'' \simeq \subst{\uu'}{\f} : \A'$.
 
+\Case{term-subst}
+
+\meta{TODO}
+
+\Case{term-var}
+
+%
+\begin{equation*}
+  \infer{
+    \isctx{\G} \\
+    \x \not\in \ctxdom{\G} \\
+    \istype{\G}{\A} \\
+  }{
+    \isterm
+      {\ctxextend{\G} {\x}{\A}}
+      {\x}
+      {\A}
+  }
+\end{equation*}
+
+\eqref{lbl:term-ctr}: Assume $\ctxextend{\G'}{\x}{\A'}$ a translation of
+$\ctxextend{\G}{\x}{\A}$ and $\A''$ a translation of $\A$.
+By definition of a translation of contexts, $\G'$ is a translation of
+$\G$ and $\A'$ a translation of $\A$.
+\meta{Besides}, we have $\isctx{\G'}$ and $\istype{\G'}{\A''}$.
+Since, for $\A'$ is also a translation of $\A$, we have $\istype{\G'}{\A'}$
+\meta{(we need some strengthening by saying that $\x$ should not appear in
+$\A'$)}, we can apply~\eqref{lbl:ty-path} twice to get an equivalence
+$\G' \vdash \A' \simeq \A''$.
+Thanks to the rule \rl{term-var}, we have
+$\isterm{\ctxextend{\G'}{\x}{\A'}}{\x}{\A'}$
+and then
+$\isterm{\ctxextend{\G'}{\x}{\A'}}{\app{\f}{\_}{\A'}{\A''}{\x}}{\A''}$
+where $\f$ is one of the underlying maps of the equivalence.
+
+\eqref{lbl:term-path}: Assume, moreover, that
+$\isterm{\ctxextend{\G'}{\x}{\A'}}{\uu'}{\A''}$
+is another translation. Let's build an equivalence between it and the one we
+produced.
+\meta{This is where things start to be complicated. We can indeed say that
+any translation of $\x$ has to be $\x$ transported along isomorphisms and
+context isomorphisms. We apply all of their inverses in the right order to
+discover $\x$ in an equivalent context, and at an equivalent type.
+This is probably one of the times where we require the produced equivalences
+to be equal.}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
