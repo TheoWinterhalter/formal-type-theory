@@ -1,74 +1,74 @@
-% evergreens
-\newcommand{\der}{\,\vdash}
-\newcommand{\Der}{\,\Vdash}
+%%% Type theory
 
-%specific judgments
-\newcommand{\dere}{\der_\mathbf{E}}
+% Generic entities
+\newcommand{\G}{\Gamma} % a context
+\newcommand{\D}{\Delta} % another context
+\newcommand{\A}{A} % a type
+\newcommand{\B}{B} % another type
+\newcommand{\C}{C} % yet another type
+\newcommand{\x}{x} % a term variable
+\newcommand{\y}{y} % another term variable
+\newcommand{\uu}{u} % a term
+\newcommand{\vv}{v} % another term
+\newcommand{\ww}{w} % yet another term
+\newcommand{\sbs}{\sigma} % a substitution
+\newcommand{\f}{f} % a morphism
+\newcommand{\g}{g} % another morphism
 
-% semantic brackets
-\def\lv{\mathopen{{[\kern-0.14em[}}}    % opening [[ value delimiter
-\def\rv{\mathclose{{]\kern-0.14em]}}}   % closing ]] value delimiter
-\newcommand{\den}[1]{\lv #1 \rv}
-\newcommand{\Den}[3][]{\den{#2}^{#1}_{#3}}
-\newcommand{\dent}[2]{\llparenthesis#1\rrparenthesis_{#2}}
+\newcommand{\rl}[1]{\text{\textsc{#1}}}
 
-% space-preserving paragraph headings
-\newcommand{\subheading}[1]{\subparagraph{#1.}} %Alt: \subsection{#1}
-% \newcommand{\paradot}[1]{\subparagraph{#1.}}
-\newcommand{\paradot}[1]{\subsection*{#1.}}
+%% Syntax
+\newcommand{\bnf}{\ \mathrel{{:}{:}{=}}\ }
+\newcommand{\bnfor}{\ \mid\ \ }
 
-% Inference rules
-\newcommand{\rulename}[1]{\ensuremath{\mbox{\sc#1}}}
-\newcommand{\ru}[2]{\dfrac{\begin{array}[b]{@{}c@{}} #1 \end{array}}{#2}}
-\newcommand{\rux}[3]{\ru{#1}{#2}~#3}
-\newcommand{\nru}[3]{#1\ \ru{#2}{#3}}
-\newcommand{\nrux}[4]{#1\ \ru{#2}{#3}\ #4}
-\newcommand{\dstack}[2]{\begin{array}[b]{c}#1\\#2\end{array}}
-\newcommand{\dru}[3]{\ru{\dstack{#1}{#2}}{#3}}
-\newcommand{\drux}[4]{\ru{\dstack{#1}{#2}}{#3}\ #4}
-\newcommand{\tru}[4]{\dru{\dstack{#1}{#2}}{#3}{#4}}
-\newcommand{\trux}[5]{\dru{\dstack{#1}{#2}}{#3}{#4}\ #5}
-\newcommand{\qru}[5]{\tru{\dstack{#1}{#2}}{#3}{#4}{#5}}
-\newcommand{\ndru}[4]{#1\ \ru{\dstack{#2}{#3}}{#4}}
-\newcommand{\ndrux}[5]{#1\ \ru{\dstack{#2}{#3}}{#4}\ #5}
+%% Contexts
+\newcommand{\ctxempty}{\bullet} % empty context
+\newcommand{\ctxextend}[3]{#1,\, #2\, {:}\, #3} % extended context
 
-% Centered math environment
-\newenvironment{mathc}{%
-  \begin{center}%
-  \(%
-}{\)%
-  \end{center}%
-}
+\newcommand{\ctxdom}[1]{\mathsf{dom}(#1)} % the domain of a context
 
-% proof by cases
-\newenvironment{caselist}{%
-  \begin{list}{{\it Case}}{}%
-}{\end{list}%
-}
-\newenvironment{subcaselist}{%
-  \begin{list}{{\it Subcase}}{}%
-}{\end{list}%
-}
-\newenvironment{subsubcaselist}{%
-  \begin{list}{{\it Subsubcase}}{}%
-}{\end{list}%
-}
+%% Substitution
+\newcommand{\sbunit}[1]{\mathsf{1}_{#1}} % empty substitution
+\newcommand{\sbextend}[3]{#1,#2{\mapsto}#3} % extended substitution
+\newcommand{\subst}[2]{#1[#2]} % substitution operation
 
-\newcommand{\nextcase}{\item~}
+% Type formers
+\newcommand{\Prod}[2]{\mathop{\textstyle\prod_{(#1 {:} #2)}}} % dependent product
+\newcommand{\Id}[3]{\mathsf{Id}_{#1}(#2,#3)} % Identity type
 
-% Symbols and names
-\DeclareMathOperator{\J}{\mathbf{J}}
-\DeclareMathOperator{\type}{\mathbf{type}}
-\newcommand{\Id}[3]{\mathbf{Id}_{#1}\,#2\ #3}
-\newcommand{\app}[3]{#2\ @^{#1}\ #3}
-\newcommand\infers{\rightrightarrows}
-\newcommand\checks{\leftleftarrows}
-\DeclareMathOperator{\refl}{\mathbf{refl}}
-\newcommand\barG{\overline{\Gamma}}
-\newcommand\bart{\overline{t}}
-\newcommand\barT{\overline{T}}
-\newcommand\barA{\overline{A}}
-\newcommand\barB{\overline{B}}
-\newcommand\baru{\overline{u}}
-\newcommand\barv{\overline{v}}
-\newcommand\barp{\overline{p}}
+% Terms
+\newcommand{\lam}[3]{\lambda #1 {:} #2.{#3}\,.\,} % $\lambda$-abstraction
+\newcommand{\app}[5]{#1\mathbin{@^{#2{:}#3.#4}} #5} % application
+\newcommand{\refl}[1]{{\mathsf{refl}_{#1}}\ }    % reflexivity
+
+% Judgments
+\newcommand{\isctx}[1]{#1\ \mathsf{ctx}} % well formed context
+\newcommand{\istype}[2]{#1 \vdash #2 \ \mathsf{type}} % well formed type
+\newcommand{\isterm}[3]{#1 \vdash #2 : #3} % well formed term
+\newcommand{\issubst}[3]{#1 : #2 \to #3} % well formed substitution
+
+\newcommand{\eqctx}[2]{#1 \equiv #2 : \mathsf{ctx}}
+\newcommand{\eqtype}[3]{#1 \vdash #2 \equiv #3 : \mathsf{type}} % equal types
+\newcommand{\eqterm}[4]{#1 \vdash #2 \equiv #3 : #4} % equal terms
+
+%%%% Translation
+
+\newcommand{\defeq}{\mathrel{{:}{\equiv}}}
+
+\newcommand{\Iso}[2]{#1 \cong #2}
+
+\newcommand{\JJ}{\mathcal{J}} % any judgment
+
+\newcommand{\DD}{\mathcal{D}} % a derivation
+\newcommand{\EE}{\mathcal{E}} % another derivation
+\newcommand{\derives}[2]{#1 \mathbin{{:}{:}} #2} % a derivation with its conclusion
+
+\newcommand{\tran}[1]{\langle\!\langle #1 \rangle\!\rangle} % direct translation
+\newcommand{\conn}[2]{\tran{#1} \rightleftharpoons \tran{#2}} % path between translations
+
+\newcommand{\Case}[1]{\subsubsection{Case $\rl{#1}$}}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

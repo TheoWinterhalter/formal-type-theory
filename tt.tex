@@ -1,0 +1,478 @@
+\section{Type theory}
+\label{sec:type-theory}
+
+In this section we give the formulation of type theory that we shall work with.
+
+\subsection{Syntax}
+\label{sec:syntax}
+
+\begin{align*}
+  \text{Context $\G$, $\D$}
+    \bnf   {}& \ctxempty                  && \text{empty context} \\
+    \bnfor {}& \ctxextend{\G}{\x}{\A}     && \text{context $\G$ extended with $\x : \A$} \\
+  \\
+  \text{Type $\A$, $\B$, $\C$}
+    \bnf   {}& \Prod{x}{\A} \B            && \text{product}\\
+    \bnfor {}& \Id{\A}{\uu}{\vv}          && \text{identity type} \\
+    \bnfor {}& \subst{\A}{\sbs}           && \text{substitution $\sbs$ applied to $\A$} \\
+  \\
+  \text{Term $\uu$, $\vv$, $\ww$}
+    \bnf   {}& \x                         && \text{variable} \\
+    \bnfor {}& \lam{\x}{\A}{\B} \uu       && \text{$\lambda$-abstraction} \\
+    \bnfor {}& \app{\uu}{\x}{\A}{\B}{\vv} && \text{application} \\
+    \bnfor {}& \refl{\A} \uu              && \text{reflexivity} \\
+    \bnfor {}& \subst{\uu}{\sbs}          && \text{substitution $\sbs$ applied to $\uu$} \\
+  \\
+  \text{Substitution $\sbs$}
+    \bnf   {}& \sbunit{\Gamma}            && \text{identity substitution on context $\Gamma$} \\
+    \bnfor {}& \sbextend{\sbs}{\x}{\uu}   && \text{substitution $\sbs$ extended with $\x \mapsto \uu$}
+\end{align*}
+
+\subsection{Judgments}
+\label{sec:judgments}
+
+\begin{align*}
+& \isctx{\G}                    && \text{$\G$ is a context} \\
+& \istype{\G}{\A}               && \text{$\A$ is a type in context $\G$} \\
+& \isterm{\G}{\uu}{\A}          && \text{$\uu$ is a term of type $\A$ in context $\G$} \\
+& \issubst{\sbs}{\G}{\D}        && \text{$\sbs$ is a substitution from context $\G$ to context $\D$} \\
+& \eqctx{\G}{\D}                && \text{$\G$ and $\D$ are equal contexts} \\
+& \eqtype{\G}{\A}{\B}           && \text{$\A$ and $\B$ are equal types in context $\G$} \\
+& \eqterm{\G}{\uu}{\vv}{\A}     && \text{$\uu$ and $\vv$ are equal terms of type $\A$ in context $\G$}
+\end{align*}
+
+\subsection{Contexts \fbox{$\isctx{\G}$}}
+\label{sec:contexts}
+
+\begin{mathpar}
+  \infer[\rl{ctx-empty}]
+  { }
+  {\isctx{\ctxempty}}
+
+  \infer[\rl{ctx-extend}]
+  {\isctx{\G} \\
+   \istype{\G}{\A} \\
+   x \not\in \mathrm{dom}(\G)
+  }
+  {\isctx{(\ctxextend{\G}{\x}{\A})}}
+\end{mathpar}
+
+The \emph{domain} $\ctxdom{\G}$ is defined by $\ctxdom{\ctxempty} = \emptyset$ and
+$\ctxdom{\ctxextend{\G}{\x}{\A}} = \ctxdom{\G} \cup \{x\}$.
+
+\subsection{Substitutions \fbox{$\issubst{\sbs}{\G}{\D}$}}
+\label{sec:subst}
+
+\begin{mathpar}
+  \infer[\rl{subst-unit}]
+  {\isctx{\G}}
+  {\issubst{\sbunit{\G}}{\G}{\G}}
+
+  \infer[\rl{subst-extend}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A} \\
+   \isterm{\G}{\uu}{\subst{\A}{\sbs}} \\
+   \x \not\in \ctxdom{\D}
+  }
+  {\issubst
+     {(\sbextend{\sbs}{\x}{\uu})}
+     {\G}
+     {(\ctxextend{\D}{\x}{\A})}
+  }
+\end{mathpar}
+
+\subsection{Types \fbox{$\istype{\G}{\A}$}}
+
+\subsubsection*{General rules}
+
+\begin{mathpar}
+  \infer[\rl{ty-ctx-conv}]
+  {\istype{\G}{\A} \\
+    \eqctx{\G}{\D}
+  }
+  {\istype{\D}{\A}}
+
+  \infer[\rl{ty-subst}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A}
+  }
+  {\istype{\G}{\subst{\A}{\sbs}}}
+\end{mathpar}
+
+\subsubsection*{Type formers}
+
+\begin{mathpar}
+  \infer[\rl{ty-prod}]
+  {\istype{\G}{\A} \\
+   \istype{\ctxextend{\G}{\x}{\A}}{\B}
+  }
+  {\istype{\G}{\Prod{\x}{\A}{\B}}}
+
+  \infer[\rl{ty-id}]
+  {\istype{\G}{\A}\\
+   \isterm{\G}{\uu}{\A}\\
+   \isterm{\G}{\vv}{\A}
+  }
+  {\istype{\G}{\Id{\A}{\uu}{\vv}}}
+\end{mathpar}
+
+\subsection{Terms \fbox{$\isterm{\G}{\uu}{\A}$}}
+
+\subsubsection*{General rules}
+\begin{mathpar}
+  \infer[\rl{term-ty-conv}]
+  {\isterm{\G}{\uu}{\A} \\
+   \eqtype{\G}{\A}{\B}
+  }
+  {\isterm{\G}{\uu}{\B}}
+
+  \infer[\rl{term-ctx-conv}]
+  {\isterm{\G}{\uu}{\A} \\
+   \eqctx{\G}{\D}
+  }
+  {\isterm{\D}{\uu}{\A}}
+
+  \infer[\rl{term-subst}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\D}{\uu}{\A}
+  }
+  {\isterm{\G}{\subst{\uu}{\sbs}}{\subst{\A}{\sbs}}}
+\end{mathpar}
+
+\subsubsection*{Variables}
+
+\begin{mathpar}
+  \infer[\rl{term-var}]
+  {\isctx{\G} \\
+   \x \not\in \ctxdom{\G} \\
+   \istype{\G}{\A}\\
+  }
+  {\isterm
+     {\ctxextend{\G} {\x}{\A}}
+     {\x}
+     {\A}
+  }
+
+  \infer[\rl{term-var-skip}]
+  {\isterm{\G}{\x}{\A} \\
+   \y \not\in \ctxdom{\G} \\
+   \istype{\G}{\B}
+  }
+  {\isterm
+     {\ctxextend{\G}{\y}{\B}}
+     {\x}
+     {\A}
+  }
+  \end{mathpar}
+
+\subsubsection*{Abstraction and application}
+
+\begin{mathpar}
+  \infer[\rl{term-abs}]
+  {\isterm{\ctxextend{\G}{\x}{\A}}{\uu}{\B}}
+  {\isterm{\G}{(\lam{\x}{\A}{\B}{\uu})}{\Prod{\x}{\A}{\B}}}
+
+  \infer[\rl{term-app}]
+  {\isterm{\G}{\uu}{\Prod{\x}{\A} \B} \\
+   \isterm{\G}{\vv}{\A}
+  }
+  {\isterm
+     {\G}
+     {\app{\uu}{\x}{\A}{\B}{\vv}}
+     {\subst{\B}{\sbextend{\sbunit{\G}}{\x}{\vv}}}
+  }
+\end{mathpar}
+
+\subsubsection*{Reflexivity}
+
+\begin{mathpar}
+  \infer[\rl{term-refl}]
+  {\isterm{\G}{\uu}{\A}}
+  {\isterm{\G}{\refl{\A} \uu}{\Id{\A}{\uu}{\uu}}}
+\end{mathpar}
+
+\subsection{Context equality \fbox{$\eqctx{\G}{\D}$}}
+\label{sec:cont-equal}
+
+\begin{mathpar}
+  \infer[\rl{eq-ctx-empty}]
+  { }
+  {\eqctx{\ctxempty}{\ctxempty}}
+
+  \infer[\rl{eq-ctx-extend}]
+  {\eqctx{\G}{\D} \\
+   \eqtype{\G}{\A}{\B} \\
+   x \not\in \ctxdom{\G}
+  }
+  {\eqctx{(\ctxextend{\G}{\x}{\A})}{(\ctxextend{\D}{\x}{\B})}}
+
+\end{mathpar}
+
+\goodbreak
+
+\subsection{Type equality \fbox{$\eqtype{\G}{\A}{\B}$}}
+\label{sec:type-equality}
+
+\subsubsection*{General rules}
+
+\begin{mathpar}
+  \infer[\rl{eq-ty-conv}]
+  {\eqtype{\G}{\A}{\B}\\
+    \eqctx{\G}{\D}}
+  {\eqtype{\D}{\A}{\B}}
+
+  \infer[\rl{eq-ty-refl}]
+  {\istype{\G}{\A}}
+  {\eqtype{\G}{\A}{\A}}
+
+  \infer[\rl{eq-ty-sym}]
+  {\eqtype{\G}{\B}{\A}}
+  {\eqtype{\G}{\A}{\B}}
+
+  \infer[\rl{eq-ty-trans}]
+  {\eqtype{\G}{\A}{\B}\\
+   \eqtype{\G}{\B}{\C}}
+  {\eqtype{\G}{\A}{\C}}
+\end{mathpar}
+
+\subsubsection*{Substitution}
+
+\begin{mathpar}
+  \infer[\rl{eq-subst-prod}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A} \\
+   \istype{\ctxextend{\D}{\x}{\A}}{\B} \\
+   \y \not\in \ctxdom{\G}
+  }
+  {\eqtype{\G}
+   {\subst{(\Prod{\x}{\A}{\B})}{\sbs}}
+   {\Prod{\y}{\subst{\A}{\sbs}}{\subst{\B}{\sbextend{\sbs}{\x}{\y}}}}
+  }
+
+  \infer[\rl{eq-subst-id}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A} \\
+   \isterm{\D}{\uu}{\A} \\
+   \isterm{\D}{\vv}{\A}
+  }
+  {\eqtype{\G}
+   {\subst{(\Id{\A}{\uu}{\vv})}{\sbs}}
+   {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\vv}{\sbs}}}
+  }
+\end{mathpar}
+
+\subsubsection*{Congruence rules}
+
+\begin{mathpar}
+  \infer[\rl{cong-prod}]
+  {\eqtype{\G}{\A_1}{\B_1}\\
+   \eqtype{\ctxextend{\G}{\x}{\A_1}}{\A_2}{\B_2}}
+  {\eqtype{\G}{\Prod{\x}{\A_1}{\A_2}}{\Prod{\x}{\B_1}{\B_2}}}
+
+  \infer[\rl{cong-id}]
+  {\eqtype{\G}{\A}{\B}\\
+   \eqterm{\G}{\uu_1}{\vv_1}{\A}\\
+   \eqterm{\G}{\uu_2}{\vv_2}{\A}
+  }
+  {\eqtype{\G}{\Id{\A}{\uu_1}{\uu_2}}
+              {\Id{\B}{\vv_1}{\vv_2}}}
+
+  \infer[\rl{cong-ty-subst}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \eqtype{\D}{\A}{\B}
+  }
+  {\eqtype{\G}{\subst{\A}{\sbs}}{\subst{\B}{\sbs}}}
+\end{mathpar}
+
+\goodbreak
+
+\subsection{Term equality \fbox{$\eqterm{\G}{\uu_1}{\uu_2}{\A}$}}
+
+\subsubsection*{General rules}
+
+\begin{mathpar}
+  \infer[\rl{eq-ty-conv}]
+  {\eqterm{\G}{\uu}{\vv}{\A}\\
+    \eqtype{\G}{\A}{\B}}
+  {\eqterm{\G}{\uu}{\vv}{\B}}
+
+  \infer[\rl{eq-ctx-conv}]
+  {\eqterm{\G}{\uu}{\vv}{\A}\\
+    \eqctx{\G}{\D}}
+  {\eqterm{\D}{\uu}{\vv}{\A}}
+
+  \infer[\rl{eq-refl}]
+  {\isterm{\G}{\uu}{\A}}
+  {\eqterm{\G}{\uu}{\uu}{\A}}
+
+  \infer[\rl{eq-sym}]
+  {\eqterm{\G}{\vv}{\uu}{\A}}
+  {\eqterm{\G}{\uu}{\vv}{\A}}
+
+  \infer[\rl{eq-trans}]
+  {\eqterm{\G}{\uu}{\vv}{\A}\\
+   \eqterm{\G}{\vv}{\ww}{\A}}
+  {\eqterm{\G}{\uu}{\ww}{\A}}
+\end{mathpar}
+
+\subsubsection*{Substitutions}
+
+\begin{mathpar}
+  \infer[\rl{eq-subst-var-unit}]
+  {\isterm{\G}{\x}{\A}}
+  {\eqterm{\G}
+     {\subst{\x}{\sbunit{\G}}}
+     {\x}
+     {\A}
+  }
+
+  \infer[\rl{eq-subst-var}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A} \\
+   \isterm{\G}{\uu}{\subst{\A}{\sbs}} \\
+   \x \not\in \ctxdom{\D}
+  }
+  {\eqterm{\G}
+     {\subst{\x}{\sbextend{\sbs}{\x}{\uu}}}
+     {\uu}
+     {\subst{\A}{\sbs}}
+  }
+
+  \infer[\rl{eq-subst-var-skip}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\D}{\y}{\A} \\
+   \istype{\D}{\B} \\
+   \isterm{\G}{\uu}{\subst{\B}{\sbs}} \\
+   \x \not\in \ctxdom{\D}
+  }
+  {\eqterm{\G}
+     {\subst{\y}{\sbextend{\sbs}{\x}{\uu}}}
+     {\subst{\y}{\sbs}}
+     {\subst{\A}{\sbs}}
+  }
+
+  \infer[\rl{eq-subst-abs}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\ctxextend{\D}{\x}{\A}}{\uu}{\B} \\
+   \y \not\in \ctxdom{\G}
+  }
+  {\eqterm{\G}
+    {\subst{(\lam{\x}{\A}{\B} \uu)}{\sbs}}
+    {(\lam{\y}{(\subst{\A}{\sbs})}{(\subst{\B}{\sbextend{\sbs}{\x}{\y}})} \subst{\uu}{\sbextend{\sbs}{\x}{\y}})}
+    {\Prod{\y}{\subst{\A}{\sbs}}{\subst{\B}{\sbextend{\sbs}{\x}{\y}}}}
+  }
+
+  \infer[\rl{eq-subst-app}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \y \not\in \ctxdom{\G} \\\\
+   \istype{\ctxextend{\D}{\x}{\A}}{\B} \\
+   \isterm{\D}{\uu}{\Prod{\x}{\A}{\B}} \\
+   \isterm{\D}{\vv}{\A}
+  }
+  {\eqterm{\G}
+   {\subst{(\app{\uu}{\x}{\A}{\B}{\vv})}{\sbs}}
+   {\app{(\subst{\uu}{\sbs})}{\y}{(\subst{\A}{\sbs})}{(\subst{\B}{\sbextend{\sbs}{\x}{\y}})}{(\subst{\vv}{\sbs})}}
+   {\subst
+      {(\subst{\B}{\sbextend{\sbunit{\G}}{\x}{\vv}})}
+      {\sbs}}
+  }
+
+  \infer[\rl{eq-subst-refl}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\D}{\uu}{\A}
+  }
+  {\eqterm{\G}
+   {\subst{(\refl{\A}{\uu})}{\sbs}}
+   {\refl{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}}
+   {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\uu}{\sbs}}}
+  }
+\end{mathpar}
+
+\subsubsection*{Equality reflection}
+%
+\begin{mathpar}
+  \infer[\rl{eq-reflection}]
+  {\isterm{\G}{\ww_1}{\Id{\A}{\uu}{\vv}} \\
+   \isterm{\G}{\ww_2}{\textsf{UIP}(\A)}
+  }
+  {\eqterm{\G}{\uu}{\vv}{\A}}
+\end{mathpar}
+%
+Here $\mathsf{UIP}(\A)$ is an abbreviation for
+%
+$
+  \Prod{\x, \y}{\A}
+  \Prod{p, q}{\Id{\A}{\x}{\y}}
+  \Id{\Id{\A}{\x}{\y}}{p}{q}
+$.
+
+\subsubsection*{Computation and Extensionality}
+
+\begin{mathpar}
+\infer[\rl{prod-beta}]
+  {\eqtype{\G}{\A_1}{\B_1}\\
+    \eqtype{\ctxextend{\G}{\x}{\A_1}}{\A_2}{\B_2}\\\\
+    \isterm{\ctxextend{\G}{\x}{\A_1}}{\uu}{\A_2}\\
+    \isterm{\G}{\vv}{\B_1}}
+  {\eqterm{\G}{\bigl(\app{(\lam{\x}{\A_1}{\A_2}{\uu})}{\x}{\B_1}{\B_2}{\vv}\bigr)}
+              {\subst{\uu}{\sbextend{\sbunit{\G}}{\x}{\vv}}}
+              {\subst{\B_2}{\sbextend{\sbunit{\G}}{\x}{\vv}}}}
+
+  % \infer[\rl{uip}]
+  % {\isterm{\G}{\vv_1}{\Id{\A}{\uu}{\vv}} \\
+  %   \isterm{\G}{\vv_2}{\Id{\A}{\uu}{\vv}}
+  % }
+  % {\eqterm{\G}{\vv_1}{e'_2}{\Id{\A}{\uu}{\vv}}}
+
+  \infer[\rl{prod-eta}]
+  {\isterm{\G}{\uu}{\Prod{\x}{\A}{\B}}\\
+   \isterm{\G}{\vv}{\Prod{\x}{\A}{\B}}\\\\
+   \eqterm{\ctxextend{\G}{\x}{\A}}{(\app{\uu}{\x}{\A}{\B}{\x})}
+          {(\app{\vv}{\x}{\A}{\B}{\x})}{\B}
+  }
+  {\eqterm{\G}{\uu}{\vv}{\Prod{\x}{\A}{\B}}}
+\end{mathpar}
+
+\subsubsection*{Congruence rules}
+
+\begin{mathpar}
+
+  \infer[\rl{cong-abs}]
+  {\eqtype{\G}{\A_1}{\B_1}\\
+    \eqtype{\ctxextend{\G}{\x}{\A_1}}{\A_2}{\B_2}\\
+    \eqterm{\ctxextend{\G}{\x}{\A_1}}{\uu_1}{\uu_2}{\A_2}}
+  {\eqterm{\G}{(\lam{\x}{\A_1}{\A_2}{\uu_1})}
+              {(\lam{\x}{\B_1}{\B_2}{\uu_2})}
+              {\Prod{\x}{\A_1}{\A_2}}}
+
+  \infer[\rl{cong-app}]
+  {\eqtype{\G}{\A_1}{\B_1}\\
+   \eqtype{\ctxextend{\G}{\x}{\A_1}}{\A_2}{\B_2}\\\\
+   \eqterm{\G}{\uu_1}{\vv_1}{\Prod{\x}{\A_1}{\A_2}}\\
+   \eqterm{\G}{\uu_2}{\vv_2}{\A_1}}
+  {\eqterm
+    {\G}
+    {(\app{\uu_1}{\x}{\A_1}{\A_2}{\uu_2})}
+    {(\app{\vv_1}{\x}{\B_1}{\B_2}{\vv_2})}
+    {\subst{\A_2}{\sbextend{\sbunit{\G}}{\x}{\uu_2}}}
+  }
+
+  \infer[\rl{cong-refl}]
+  {\eqterm{\G}{\uu_1}{\uu_2}{\A_1}\\
+    \eqtype{\G}{\A_1}{\A_2}}
+  {\eqterm{\G}{\refl{\A_1} \uu_1}{\refl{\A_2} \uu_2}{\Id{\A_1}{\uu_1}{\uu_1}}}
+
+
+  \infer[\rl{cong-term-subst}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \eqterm{\D}{\uu_1}{\uu_2}{\A}
+  }
+  {\eqterm{\G}{\subst{\uu_1}{\sbs}}{\subst{\uu_2}{\sbs}}{\subst{\A}{\sbs}}}
+
+\end{mathpar}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
