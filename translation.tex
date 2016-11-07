@@ -650,6 +650,88 @@ $\G' \vdash \uu_2' \simeq \app{\f}{\_}{\B'}{\A'}{\vv_2'} : \A'$.
 This is enough to get $\istype{\G'}{\Id{\A'}{\uu_1'}{\uu_2'}}$ and
 $\G' \vdash \Id{\A'}{\uu_1'}{\uu_2'} \simeq \Id{\B'}{\vv_1'}{\vv_2'}$.
 
+
+\Case{cong-ty-subst}
+
+\meta{TODO}
+
+
+\Case{eq-ty-conv}
+
+\begin{equation*}
+  \infer
+  {\eqterm{\G}{\uu}{\vv}{\A}\\
+    \eqtype{\G}{\A}{\B}}
+  {\eqterm{\G}{\uu}{\vv}{\B}}
+\end{equation*}
+%
+\eqref{lbl:eq-term-path}:
+Assume $\G'$ and $\B'$ and $\vv'$.
+By~\eqref{lbl:eq-ty-path}, we get $\istype{\G'}{\A'}$ and
+$\G' \vdash \A' \simeq \B'$ with underlying $\f$ from $\B'$ to $\A'$.
+So, $\isterm{\G'}{\app{\f}{\_}{\B'}{\A'}{\vv'}}$ and
+by~\eqref{lbl:eq-term-path}, we get $\isterm{\G'}{\uu'}{\A'}$ and
+$\G' \vdash \uu' \simeq \app{\f}{\_}{\B'}{\A'}{\vv'} : \A'$.
+So $\isterm{\G'}{\app{\f^{-1}}{\_}{\A'}{\B'}{\uu'}}{\B'}$
+and $\G' \vdash \app{\f^{-1}}{\_}{\A'}{\B'}{\uu'} \simeq \vv' : \B'$.
+
+
+\Case{eq-ctx-conv}
+
+\begin{equation*}
+  \infer
+  {\eqterm{\G}{\uu}{\vv}{\A}\\
+    \eqctx{\G}{\D}}
+  {\eqterm{\D}{\uu}{\vv}{\A}}
+\end{equation*}
+%
+\eqref{lbl:eq-term-path}:
+Assume $\D'$ and $\A'$ and $\vv'$.
+By~\eqref{lbl:eq-ctx-path}, $\isctx{\G'}$ and $\G' \simeq \D'$ witnessed
+by $\issubst{\theta}{\G'}{\D'}$.
+Thus $\isterm{\G'}{\subst{\vv'}{\theta}}{\subst{\A'}{\theta}}$.
+So by~\eqref{lbl:eq-term-path}, we have
+$\isterm{\G'}{\uu'}{\subst{\A'}{\theta}}$
+and $\G' \vdash \uu' \simeq \subst{\vv'}{\theta} : \subst{\A'}{\theta}$.
+We thus deduce $\isterm{\D'}{\subst{\uu'}{\theta^{-1}}}{\A'}$ and
+$\D' \vdash \subst{\uu'}{\theta^{-1}} \simeq \vv' : \A'$.
+
+
+\Case{eq-refl}
+
+\begin{equation*}
+  \infer
+  {\isterm{\G}{\uu}{\A}}
+  {\eqterm{\G}{\uu}{\uu}{\A}}
+\end{equation*}
+%
+\eqref{lbl:eq-term-path}:
+Assume $\G'$ and $\uu'$ and $\A'$.
+We simply return $\uu'$ and the identity path.
+
+
+\Case{eq-sym}
+
+\begin{equation*}
+  \infer
+  {\eqterm{\G}{\vv}{\uu}{\A}}
+  {\eqterm{\G}{\uu}{\vv}{\A}}
+\end{equation*}
+%
+\eqref{lbl:eq-term-path} directly follows from its mirrored counterpart.
+
+
+\Case{eq-trans}
+
+\begin{equation*}
+  \infer
+  {\eqterm{\G}{\uu}{\vv}{\A}\\
+   \eqterm{\G}{\vv}{\ww}{\A}}
+  {\eqterm{\G}{\uu}{\ww}{\A}}
+\end{equation*}
+%
+\eqref{lbl:eq-term-path} works exactly like $\rl{eq-ty-trans}$.
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
