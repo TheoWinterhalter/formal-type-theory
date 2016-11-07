@@ -84,6 +84,8 @@ Remarks:
   This means that we can always assume the type we get as input
   for~\eqref{lbl:term-ctr} to be of the same shape as the original type.
   The same goes for~\eqref{lbl:term-path}.
+\item Same thing for~\eqref{lbl:eq-ty-path}, we can assume that the given type
+  is always of the same shape as the untranslated one.
 \end{itemize}
 
 
@@ -579,6 +581,30 @@ $\istype{\G'}{\B'}$ and $\G' \vdash \B' \simeq \C'$.
 Then, by~\eqref{lbl:eq-ty-path} again, on $\eqtype{\G}{\A}{\B}$,
 we get $\istype{\G'}{\A'}$ and $\G' \vdash \A' \simeq \B'$.
 By transitivity, we get $\G' \vdash \A' \simeq \C'$.
+
+
+\Case{eq-subst-prod}
+
+\meta{TODO}
+
+
+\Case{eq-subst-id}
+
+\meta{TODO}
+
+
+\Case{cong-prod}
+
+\begin{equation*}
+  \infer
+  {\eqtype{\G}{\A_1}{\B_1}\\
+   \eqtype{\ctxextend{\G}{\x}{\A_1}}{\A_2}{\B_2}}
+  {\eqtype{\G}{\Prod{\x}{\A_1}{\A_2}}{\Prod{\x}{\B_1}{\B_2}}}
+\end{equation*}
+%
+\eqref{lbl:eq-ty-path}:
+Assume $\G'$ and \meta{...same thing, we want to be able to work with a
+$\Pi$-type directly.}
 
 %%% Local Variables:
 %%% mode: latex
