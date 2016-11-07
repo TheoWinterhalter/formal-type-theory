@@ -393,6 +393,20 @@ is another translation, let's build a path.
 \meta{Here it is unclear how to remove $\y$ from the context to use the
 induction hypothesis...}
 
+
+\Case{term-abs}
+
+\begin{equation*}
+  \infer
+  {\isterm{\ctxextend{\G}{\x}{\A}}{\uu}{\B}}
+  {\isterm{\G}{(\lam{\x}{\A}{\B}{\uu})}{\Prod{\x}{\A}{\B}}}
+\end{equation*}
+
+\eqref{lbl:term-ctr}: Assume $\G'$ and $\Prod{\x}{\A'}{\B'}$ are respective
+translations of $\G$ and $\Prod{\x}{\A}{\B}$.
+\meta{We cannot do that without actually unfolding some context isomorphisms...
+It would be nice to have a systematic way to deal with that...}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
