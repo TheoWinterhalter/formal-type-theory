@@ -437,6 +437,25 @@ we conclude
 $\G' \vdash \vv' \simeq \lam{\x}{\A'}{\B'}{\uu'} : \Prod{\x}{\A'}{\B'}$.
 
 
+\Case{term-app}
+
+\begin{equation*}
+  \infer{
+    \isterm{\G}{\uu}{\Prod{\x}{\A} \B} \\
+    \isterm{\G}{\vv}{\A}
+  }{
+    \isterm
+      {\G}
+      {\app{\uu}{\x}{\A}{\B}{\vv}}
+      {\subst{\B}{\sbextend{\sbunit{\G}}{\x}{\vv}}}
+  }
+\end{equation*}
+
+\eqref{lbl:term-ctr}:
+Assume $\G'$ and \meta{TODO: We need to know more about how substituted types
+are translated!}
+
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
