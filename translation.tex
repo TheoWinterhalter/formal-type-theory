@@ -456,6 +456,29 @@ Assume $\G'$ and \meta{TODO: We need to know more about how substituted types
 are translated!}
 
 
+\Case{term-refl}
+
+\begin{equation*}
+  \infer
+  {\isterm{\G}{\uu}{\A}}
+  {\isterm{\G}{\refl{\A} \uu}{\Id{\A}{\uu}{\uu}}}
+\end{equation*}
+
+\eqref{lbl:term-ctr}:
+Assume $\G'$ and $\Id{\A'}{\uu'}{\uu''}$ respective translations of $\G$ and
+$\Id{\A}{\uu}{\uu}$.
+In particular, $\isterm{\G'}{\uu'}{\A'}$ and $\isterm{\G'}{\uu''}{\A'}$
+are both translations of $\isterm{\G}{\uu}{\A}$, so by
+using~\eqref{lbl:term-path} twice and transitivity, we get a path
+$\G' \vdash \uu' \simeq \uu'' : \A'$, say $\p$.
+We deduce $\isterm{\G'}{\p}{\Id{\A'}{\uu'}{\uu''}}$.
+
+\eqref{lbl:term-path}:
+Assume, moreover, that $\isterm{\G'}{\q}{\Id{\A'}{\uu'}{\uu''}}$ is another
+translation.
+\meta{Here, we probably have to use the UIP legacy somehow...}
+
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
