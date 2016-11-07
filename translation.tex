@@ -516,6 +516,70 @@ $\istype{\D'}{\subst{\B'}{\theta}}$.
 All this allows to extend the isomorphism to
 $(\ctxextend{\G'}{\x}{\A'}) \simeq (\ctxextend{\D'}{\x}{\subst{\B'}{\theta}})$.
 
+
+\Case{eq-ty-conv}
+
+\begin{equation*}
+  \infer
+  {\eqtype{\G}{\A}{\B}\\
+    \eqctx{\G}{\D}}
+  {\eqtype{\D}{\A}{\B}}
+\end{equation*}
+%
+We only have to prove~\eqref{lbl:eq-ty-path}.
+Assume we are given $\D'$ and $\B'$.
+By~\eqref{lbl:eq-ctx-path}, we get $\G'$ and $\G' \simeq \D'$
+with underlying $\issubst{\theta}{\G'}{\D'}$.
+From that we get $\istype{\G'}{\subst{\B'}{\theta}}$ and
+then, by~\eqref{lbl:eq-ty-path}, we get $\istype{\G'}{\A'}$
+and $\G' \vdash \A' \simeq \subst{B'}{\theta}$.
+We thus deduce $\istype{\D'}{\subst{\A'}{\theta^{-1}}}$
+and $\D' \vdash \subst{\A'}{\theta^{-1}} \simeq \B'$.
+
+
+\Case{eq-ty-refl}
+
+\begin{equation*}
+  \infer
+  {\istype{\G}{\A}}
+  {\eqtype{\G}{\A}{\A}}
+\end{equation*}
+%
+\eqref{lbl:eq-ty-path}:
+Assume $\G'$ and $\A'$.
+We simply return $\A'$ and the identity isomorphism.
+
+
+\Case{eq-ty-sym}
+
+\begin{equation*}
+  \infer
+  {\eqtype{\G}{\B}{\A}}
+  {\eqtype{\G}{\A}{\B}}
+\end{equation*}
+%
+\eqref{lbl:eq-ty-path}:
+Assume $\G'$ and $\B'$.
+We just use the reverse~\eqref{lbl:eq-ty-path}.
+
+
+\Case{eq-ty-trans}
+
+\begin{equation*}
+  \infer
+  {\eqtype{\G}{\A}{\B}\\
+   \eqtype{\G}{\B}{\C}}
+  {\eqtype{\G}{\A}{\C}}
+\end{equation*}
+%
+\eqref{lbl:eq-ty-path}:
+Assume $\G'$ and $\C'$.
+By~\eqref{lbl:eq-ty-path} on $\eqtype{\G}{\B}{\C}$, we get
+$\istype{\G'}{\B'}$ and $\G' \vdash \B' \simeq \C'$.
+Then, by~\eqref{lbl:eq-ty-path} again, on $\eqtype{\G}{\A}{\B}$,
+we get $\istype{\G'}{\A'}$ and $\G' \vdash \A' \simeq \B'$.
+By transitivity, we get $\G' \vdash \A' \simeq \C'$.
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
