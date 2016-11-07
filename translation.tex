@@ -622,6 +622,34 @@ This \meta{should be} enough to conclude
 $\istype{\G'}{\Prod{\x}{\A_1'}{\A_2'}}$ and
 $\G' \vdash \Prod{\x}{\A_1'}{\A_2'} \simeq \Prod{\x}{\B_1'}{\B_2'}$.
 
+
+\Case{cong-id}
+
+\begin{equation*}
+  \infer
+  {\eqtype{\G}{\A}{\B}\\
+   \eqterm{\G}{\uu_1}{\vv_1}{\A}\\
+   \eqterm{\G}{\uu_2}{\vv_2}{\A}
+  }
+  {\eqtype{\G}{\Id{\A}{\uu_1}{\uu_2}}
+              {\Id{\B}{\vv_1}{\vv_2}}}
+\end{equation*}
+%
+\eqref{lbl:eq-ty-path}:
+Assume $\G'$ and $\Id{\B'}{\vv_1'}{\vv_2'}$.
+By inversion, $\istype{\G'}{\B'}$ and $\isterm{\G'}{\vv_1'}{\B'}$
+and $\isterm{\G'}{\vv_2'}{\B'}$.
+By~\eqref{lbl:eq-ty-path}, $\istype{\G'}{\A'}$ and $\G' \vdash \A' \simeq \B'$
+with $\f$ the underlying map from $\B'$ to $\A'$.
+Then $\isterm{\G'}{\app{\f}{\_}{\B'}{\A'}{\vv_1'}}{\A'}$ and
+$\isterm{\G'}{\app{\f}{\_}{\B'}{\A'}{\vv_2'}}{\A'}$.
+We deduce from~\eqref{lbl:eq-term-path} that
+$\isterm{\G'}{\uu_1'}{\A'}$ and $\isterm{\G'}{\uu_2'}{\A'}$ and
+$\G' \vdash \uu_1' \simeq \app{\f}{\_}{\B'}{\A'}{\vv_1'} : \A'$ and
+$\G' \vdash \uu_2' \simeq \app{\f}{\_}{\B'}{\A'}{\vv_2'} : \A'$.
+This is enough to get $\istype{\G'}{\Id{\A'}{\uu_1'}{\uu_2'}}$ and
+$\G' \vdash \Id{\A'}{\uu_1'}{\uu_2'} \simeq \Id{\B'}{\vv_1'}{\vv_2'}$.
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "main"
