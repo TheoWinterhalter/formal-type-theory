@@ -603,8 +603,24 @@ By transitivity, we get $\G' \vdash \A' \simeq \C'$.
 \end{equation*}
 %
 \eqref{lbl:eq-ty-path}:
-Assume $\G'$ and \meta{...same thing, we want to be able to work with a
-$\Pi$-type directly.}
+Assume $\G'$ and $\istype{\G'}{\Prod{\x}{\B_1'}{\B_2'}}$.
+In particular, by inversion, $\istype{\G'}{\B_1'}$.
+So, by~\eqref{lbl:eq-ty-path}, $\istype{\G'}{\A_1'}$ and
+$\G' \vdash \A_1' \simeq \B_1'$.
+By inversion, we also have $\istype{\ctxextend{\G'}{\x}{\B_1'}}{\B_2'}$.
+Naming $\f$ the underlying map of the isomorphism from $\A_1'$ to $\B_1'$,
+we have
+$\istype
+  {\ctxextend{\G'}{\x}{\A_1'}}
+  {\subst{\B_2'}{\sbextend{\sbunit{\G'}}{\x}{\app{\f}{\_}{\A_1'}{\B_1'}{\x}}}}$.
+\meta{(Why is that a valid translation?)}
+From that and~\eqref{lbl:eq-ty-path} we get
+$\istype{\ctxextend{\G'}{\x}{\A_1'}}{\A_2'}$ and
+$\ctxextend{\G'}{\x}{\A_1'} \vdash \A_2' \simeq
+\subst{\B_2'}{\sbextend{\sbunit{\G'}}{\x}{\app{\f}{\_}{\A_1'}{\B_1'}{\x}}}$.
+This \meta{should be} enough to conclude
+$\istype{\G'}{\Prod{\x}{\A_1'}{\A_2'}}$ and
+$\G' \vdash \Prod{\x}{\A_1'}{\A_2'} \simeq \Prod{\x}{\B_1'}{\B_2'}$.
 
 %%% Local Variables:
 %%% mode: latex
