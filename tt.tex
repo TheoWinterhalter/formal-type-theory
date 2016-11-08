@@ -93,7 +93,7 @@ Next, given a context $\G$ of the form
     {\A_1}
 \end{equation*}
 %
-we define the \emph{weakening substitution} 
+we define the \emph{weakening substitution}
 %
 \begin{equation*}
   \issubst{\sbweak{\G}{\y}{\B}}{(\ctxextend{\G}{\y}{\B})}{\G}
@@ -289,6 +289,12 @@ so that we need not worry about whether $\A$ and $\subst{\A}{\sbid{\G}}$ are equ
    {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\vv}{\sbs}}}
   }
 \end{mathpar}
+%
+Note: $\rl{eq-subst-prod}$ is also BROKEN VERY MUCH.
+You can't apply $\sbextend{\sbs}{\x}{\A}{\var{0}}$ to $\B$ because you
+need a substitution in $\ctxextend{\G}{\_}{\A} \to \ctxextend{\D}{\_}{\A}$
+and $\issubst{\sbs}{\G}{\D}$. We cannot extend the domain of a substitution.
+We need something like the $q$ of Hofmann.
 
 \subsubsection*{Congruence rules}
 
