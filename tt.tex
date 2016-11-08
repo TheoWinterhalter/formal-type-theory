@@ -430,13 +430,11 @@ Here $\mathsf{UIP}(\A)$ is an abbreviation for what is written traditionally as
 
 \begin{mathpar}
 \infer[\rl{prod-beta}]
-  {\eqtype{\G}{\A_1}{\B_1}\\
-    \eqtype{\ctxextend{\G}{\x}{\A_1}}{\A_2}{\B_2}\\\\
-    \isterm{\ctxextend{\G}{\x}{\A_1}}{\uu}{\A_2}\\
-    \isterm{\G}{\vv}{\B_1}}
-  {\eqterm{\G}{\bigl(\app{(\lam{\x}{\A_1}{\A_2}{\uu})}{\x}{\B_1}{\B_2}{\vv}\bigr)}
-              {\subst{\uu}{\sbextend{\sbid{\G}}{\x}{\B_1}{\vv}}}
-              {\subst{\B_2}{\sbextend{\sbunit{\G}}{\x}{\vv}}}}
+  {\isterm{\ctxextend{\G}{\x}{\A}}{\uu}{\B}\\
+    \isterm{\G}{\vv}{\A}}
+  {\eqterm{\G}{\bigl(\app{(\lam{\x}{\A}{\B}{\uu})}{\x}{\A}{\B}{\vv}\bigr)}
+              {\subst{\uu}{\sbextend{\sbid{\G}}{\x}{\A}{\vv}}}
+              {\subst{\B}{\sbextend{\sbid{\G}}{\x}{\A}{\vv}}}}
 
   % \infer[\rl{uip}]
   % {\isterm{\G}{\vv_1}{\Id{\A}{\uu}{\vv}} \\
@@ -447,11 +445,22 @@ Here $\mathsf{UIP}(\A)$ is an abbreviation for what is written traditionally as
   \infer[\rl{prod-eta}]
   {\isterm{\G}{\uu}{\Prod{\x}{\A}{\B}}\\
    \isterm{\G}{\vv}{\Prod{\x}{\A}{\B}}\\\\
-   \eqterm{\ctxextend{\G}{\x}{\A}}{(\app{\uu}{\x}{\A}{\B}{\x})}
-          {(\app{\vv}{\var{0}}{\A}{\B}{\var{0}})}{\B}
+   \eqterm
+      {\ctxextend{\G}{\x}{\A}}
+      {(\app
+          {\subst{\uu}{\sbweak{\G}{\x}{\A}}}
+          {\x}
+          {\subst{\A}{\sbweak{\G}{\x}{\A}}}
+          {\B}
+          {\var{0}})
+      }
+      {(\app{\subst{\vv}{\sbweak{\G}{\x}{\A}}}{\x}{\A}{\B}{\var{0}})}
+      {\B}
   }
   {\eqterm{\G}{\uu}{\vv}{\Prod{\x}{\A}{\B}}}
 \end{mathpar}
+
+Note: $\rl{prod-eta}$ IS BROKEN VERY MUCH.
 
 \subsubsection*{Congruence rules}
 
