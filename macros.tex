@@ -12,6 +12,7 @@
 \newcommand{\vv}{v} % another term
 \newcommand{\ww}{w} % yet another term
 \newcommand{\sbs}{\sigma} % a substitution
+\newcommand{\sbt}{\theta} % another substitution
 \newcommand{\f}{f} % a morphism
 \newcommand{\g}{g} % another morphism
 \newcommand{\p}{p} % a path
@@ -30,8 +31,11 @@
 \newcommand{\ctxdom}[1]{\mathsf{dom}(#1)} % the domain of a context
 
 %% Substitution
-\newcommand{\sbunit}[1]{\mathsf{1}_{#1}} % empty substitution
-\newcommand{\sbextend}[3]{#1,#2{\mapsto}#3} % extended substitution
+
+\newcommand{\sbunit}[1]{\mathsf{\star}_{#1}} % empty substitution
+\newcommand{\sbid}[1]{\mathsf{1}_{#1}} % identity substitution
+\newcommand{\sbextend}[4]{#1,#2{:}#3{\mapsto}#4} % extended substitution
+\newcommand{\sbweak}[3]{\mathsf{w}_{(\ctxextend{#1}{#2}{#3})}} % weakening substitution
 \newcommand{\subst}[2]{#1[#2]} % substitution operation
 
 % Type formers

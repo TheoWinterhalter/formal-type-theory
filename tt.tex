@@ -8,24 +8,24 @@ In this section we give the formulation of type theory that we shall work with.
 
 \begin{align*}
   \text{Context $\G$, $\D$}
-    \bnf   {}& \ctxempty                  && \text{empty context} \\
-    \bnfor {}& \ctxextend{\G}{\x}{\A}     && \text{context $\G$ extended with $\x : \A$} \\
+    \bnf   {}& \ctxempty                    && \text{empty context} \\
+    \bnfor {}& \ctxextend{\G}{\x}{\A}       && \text{context $\G$ extended with $\x : \A$} \\
   \\
   \text{Type $\A$, $\B$, $\C$}
-    \bnf   {}& \Prod{x}{\A} \B            && \text{product}\\
-    \bnfor {}& \Id{\A}{\uu}{\vv}          && \text{identity type} \\
-    \bnfor {}& \subst{\A}{\sbs}           && \text{substitution $\sbs$ applied to $\A$} \\
+    \bnf   {}& \Prod{x}{\A} \B              && \text{product}\\
+    \bnfor {}& \Id{\A}{\uu}{\vv}            && \text{identity type} \\
+    \bnfor {}& \subst{\A}{\sbs}             && \text{substitution $\sbs$ applied to $\A$} \\
   \\
   \text{Term $\uu$, $\vv$, $\ww$}
-    \bnf   {}& \x                         && \text{variable} \\
-    \bnfor {}& \lam{\x}{\A}{\B} \uu       && \text{$\lambda$-abstraction} \\
-    \bnfor {}& \app{\uu}{\x}{\A}{\B}{\vv} && \text{application} \\
-    \bnfor {}& \refl{\A} \uu              && \text{reflexivity} \\
-    \bnfor {}& \subst{\uu}{\sbs}          && \text{substitution $\sbs$ applied to $\uu$} \\
+    \bnf   {}& \x                           && \text{variable} \\
+    \bnfor {}& \lam{\x}{\A}{\B} \uu         && \text{$\lambda$-abstraction} \\
+    \bnfor {}& \app{\uu}{\x}{\A}{\B}{\vv}   && \text{application} \\
+    \bnfor {}& \refl{\A} \uu                && \text{reflexivity} \\
+    \bnfor {}& \subst{\uu}{\sbs}            && \text{substitution $\sbs$ applied to $\uu$} \\
   \\
   \text{Substitution $\sbs$}
-    \bnf   {}& \sbunit{\Gamma}            && \text{identity substitution on context $\Gamma$} \\
-    \bnfor {}& \sbextend{\sbs}{\x}{\uu}   && \text{substitution $\sbs$ extended with $\x \mapsto \uu$}
+    \bnf   {}& \sbunit{\Gamma}              && \text{identity substitution on context $\Gamma$} \\
+    \bnfor {}& \sbextend{\sbs}{\x}{\A}{\uu} && \text{substitution $\sbs$ extended with $\x \mapsto \uu$}
 \end{align*}
 
 \subsection{Judgments}
@@ -66,7 +66,7 @@ $\ctxdom{\ctxextend{\G}{\x}{\A}} = \ctxdom{\G} \cup \{x\}$.
 \begin{mathpar}
   \infer[\rl{subst-unit}]
   {\isctx{\G}}
-  {\issubst{\sbunit{\G}}{\G}{\G}}
+  {\issubst{\sbunit{\G}}{\G}{\ctxempty}}
 
   \infer[\rl{subst-extend}]
   {\issubst{\sbs}{\G}{\D} \\
@@ -75,11 +75,43 @@ $\ctxdom{\ctxextend{\G}{\x}{\A}} = \ctxdom{\G} \cup \{x\}$.
    \x \not\in \ctxdom{\D}
   }
   {\issubst
-     {(\sbextend{\sbs}{\x}{\uu})}
+     {(\sbextend{\sbs}{\x}{\A}{\uu})}
      {\G}
      {(\ctxextend{\D}{\x}{\A})}
   }
 \end{mathpar}
+%
+We define the \emph{identity substitution} $\sbid{\G}$ recursively by
+%
+\begin{align*}
+  \sbid{\ctxempty} &= \sbunit{\ctxempty}
+  &
+  \sbid{(\ctxextend{\G}{\x}{\A})} &= (\sbextend{\sbid{\G}}{\x}{\A}{\x}).
+\end{align*}
+%
+Next, given a context $\G$ of the form
+%
+\begin{equation*}
+  \x_1 : \A_1, \ldots, \x_n : \A_n,
+\end{equation*}
+%
+we define the \emph{weakening substitution} 
+%
+\begin{equation*}
+  \issubst{\sbweak{\G}{\y}{\B}}{(\ctxextend{\G}{\y}{\B})}{\G}
+\end{equation*}
+%
+to be
+%
+\begin{equation*}
+  \sbextend
+    {\sbextend
+      {\sbunit{(\ctxextend{\G}{\y}{\B})}}
+      {\x_1}{\A_1}{\x_1, \ldots}}
+    {\x_n}{\A_n}{\x_n}.
+\end{equation*}
+%
+This could be defined by recursion.
 
 \subsection{Types \fbox{$\istype{\G}{\A}$}}
 
@@ -150,7 +182,7 @@ $\ctxdom{\ctxextend{\G}{\x}{\A}} = \ctxdom{\G} \cup \{x\}$.
   {\isterm
      {\ctxextend{\G} {\x}{\A}}
      {\x}
-     {\A}
+     {\subst{\A}{\sbweak{\G}{\x}{\A}}}
   }
 
   \infer[\rl{term-var-skip}]
@@ -161,7 +193,7 @@ $\ctxdom{\ctxextend{\G}{\x}{\A}} = \ctxdom{\G} \cup \{x\}$.
   {\isterm
      {\ctxextend{\G}{\y}{\B}}
      {\x}
-     {\A}
+     {\subst{\A}{\sbweak{\G}{\y}{\B}}}
   }
   \end{mathpar}
 
@@ -179,7 +211,7 @@ $\ctxdom{\ctxextend{\G}{\x}{\A}} = \ctxdom{\G} \cup \{x\}$.
   {\isterm
      {\G}
      {\app{\uu}{\x}{\A}{\B}{\vv}}
-     {\subst{\B}{\sbextend{\sbunit{\G}}{\x}{\vv}}}
+     {\subst{\B}{\sbextend{\sbid{\G}}{\x}{\A}{\vv}}}
   }
 \end{mathpar}
 
@@ -246,7 +278,7 @@ $\ctxdom{\ctxextend{\G}{\x}{\A}} = \ctxdom{\G} \cup \{x\}$.
   }
   {\eqtype{\G}
    {\subst{(\Prod{\x}{\A}{\B})}{\sbs}}
-   {\Prod{\y}{\subst{\A}{\sbs}}{\subst{\B}{\sbextend{\sbs}{\x}{\y}}}}
+   {\Prod{\y}{\subst{\A}{\sbs}}{\subst{\B}{\sbextend{\sbs}{\x}{\A}{\y}}}}
   }
 
   \infer[\rl{eq-subst-id}]
@@ -318,14 +350,6 @@ $\ctxdom{\ctxextend{\G}{\x}{\A}} = \ctxdom{\G} \cup \{x\}$.
 \subsubsection*{Substitutions}
 
 \begin{mathpar}
-  \infer[\rl{eq-subst-var-unit}]
-  {\isterm{\G}{\x}{\A}}
-  {\eqterm{\G}
-     {\subst{\x}{\sbunit{\G}}}
-     {\x}
-     {\A}
-  }
-
   \infer[\rl{eq-subst-var}]
   {\issubst{\sbs}{\G}{\D} \\
    \istype{\D}{\A} \\
@@ -333,7 +357,7 @@ $\ctxdom{\ctxextend{\G}{\x}{\A}} = \ctxdom{\G} \cup \{x\}$.
    \x \not\in \ctxdom{\D}
   }
   {\eqterm{\G}
-     {\subst{\x}{\sbextend{\sbs}{\x}{\uu}}}
+     {\subst{\x}{\sbextend{\sbs}{\x}{\A}{\uu}}}
      {\uu}
      {\subst{\A}{\sbs}}
   }
@@ -341,12 +365,14 @@ $\ctxdom{\ctxextend{\G}{\x}{\A}} = \ctxdom{\G} \cup \{x\}$.
   \infer[\rl{eq-subst-var-skip}]
   {\issubst{\sbs}{\G}{\D} \\
    \isterm{\D}{\y}{\A} \\
-   \istype{\D}{\B} \\
    \isterm{\G}{\uu}{\subst{\B}{\sbs}} \\
    \x \not\in \ctxdom{\D}
   }
   {\eqterm{\G}
-     {\subst{\y}{\sbextend{\sbs}{\x}{\uu}}}
+     {\subst
+        {(\subst{\y}{\sbweak{\D}{\x}{\B}})}
+        {\sbextend{\sbs}{\x}{\B}{\uu}}
+     }
      {\subst{\y}{\sbs}}
      {\subst{\A}{\sbs}}
   }
