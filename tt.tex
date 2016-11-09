@@ -8,24 +8,24 @@ In this section we give the formulation of type theory that we shall work with.
 
 \begin{align*}
   \text{Context $\G$, $\D$}
-    \bnf   {}& \ctxempty                    && \text{empty context} \\
-    \bnfor {}& \ctxextend{\G}{\x}{\A}       && \text{context $\G$ extended with $\A$} \\
+    \bnf   {}& \ctxempty                && \text{empty context} \\
+    \bnfor {}& \ctxextend{\G}{\A}       && \text{context $\G$ extended with $\A$} \\
   \\
   \text{Type $\A$, $\B$, $\C$}
-    \bnf   {}& \Prod{x}{\A} \B              && \text{product}\\
-    \bnfor {}& \Id{\A}{\uu}{\vv}            && \text{identity type} \\
-    \bnfor {}& \subst{\A}{\sbs}             && \text{substitution $\sbs$ applied to $\A$} \\
+    \bnf   {}& \Prod{\A} \B             && \text{product}\\
+    \bnfor {}& \Id{\A}{\uu}{\vv}        && \text{identity type} \\
+    \bnfor {}& \subst{\A}{\sbs}         && \text{substitution $\sbs$ applied to $\A$} \\
   \\
   \text{Term $\uu$, $\vv$, $\ww$}
-    \bnf   {}& \var{k}                      && \text{the $k$-th variable} \\
-    \bnfor {}& \lam{\x}{\A}{\B} \uu         && \text{$\lambda$-abstraction} \\
-    \bnfor {}& \app{\uu}{\x}{\A}{\B}{\vv}   && \text{application} \\
-    \bnfor {}& \refl{\A} \uu                && \text{reflexivity} \\
-    \bnfor {}& \subst{\uu}{\sbs}            && \text{substitution $\sbs$ applied to $\uu$} \\
+    \bnf   {}& \var{k}                  && \text{the $k$-th variable} \\
+    \bnfor {}& \lam{\A}{\B} \uu         && \text{$\lambda$-abstraction} \\
+    \bnfor {}& \app{\uu}{\A}{\B}{\vv}   && \text{application} \\
+    \bnfor {}& \refl{\A} \uu            && \text{reflexivity} \\
+    \bnfor {}& \subst{\uu}{\sbs}        && \text{substitution $\sbs$ applied to $\uu$} \\
   \\
   \text{Substitution $\sbs$}
-    \bnf   {}& \sbunit{\G}                  && \text{unique substitution $\G \to \ctxempty$} \\
-    \bnfor {}& \sbextend{\sbs}{\x}{\A}{\uu} && \text{substitution $\sbs$ extended with $\uu$ of type $\subst{\A}{\sbs}$}
+    \bnf   {}& \sbunit{\G}              && \text{unique substitution $\G \to \ctxempty$} \\
+    \bnfor {}& \sbextend{\sbs}{\A}{\uu} && \text{substitution $\sbs$ extended with $\uu$ of type $\subst{\A}{\sbs}$}
 \end{align*}
 
 \subsection{Judgments}
@@ -53,7 +53,7 @@ In this section we give the formulation of type theory that we shall work with.
   {\isctx{\G} \\
    \istype{\G}{\A}
   }
-  {\isctx{(\ctxextend{\G}{\x}{\A})}}
+  {\isctx{(\ctxextend{\G}{\A})}}
 \end{mathpar}
 
 \subsection{Substitutions \fbox{$\issubst{\sbs}{\G}{\D}$}}
@@ -70,9 +70,9 @@ In this section we give the formulation of type theory that we shall work with.
    \isterm{\G}{\uu}{\subst{\A}{\sbs}}
   }
   {\issubst
-     {(\sbextend{\sbs}{\x}{\A}{\uu})}
+     {(\sbextend{\sbs}{\A}{\uu})}
      {\G}
-     {(\ctxextend{\D}{\x}{\A})}
+     {(\ctxextend{\D}{\A})}
   }
 \end{mathpar}
 %
@@ -81,28 +81,27 @@ We define the \emph{identity substitution} $\sbid{\G}$ recursively by
 \begin{align*}
   \sbid{\ctxempty} &= \sbunit{\ctxempty}
   &
-  \sbid{(\ctxextend{\G}{\x}{\A})} &= (\sbextend{\sbid{\G}}{\x}{\A}{\var{0}}).
+  \sbid{(\ctxextend{\G}{\A})} &= (\sbextend{\sbid{\G}}{\A}{\var{0}}).
 \end{align*}
 %
 Next, given a context $\G$ of the form
 %
 \begin{equation*}
   \ctxextend
-    {\ctxextend{\ctxempty}{\x_n}{\A_n, \ldots}}
-    {\x_1}
+    {\ctxextend{\ctxempty}{\A_n, \ldots}}
     {\A_1}
 \end{equation*}
 %
 we define the \emph{weakening substitution}
 %
 \begin{equation*}
-  \issubst{\sbweak{\G}{\y}{\B}}{(\ctxextend{\G}{\y}{\B})}{\G}
+  \issubst{\sbweak{\G}{\B}}{(\ctxextend{\G}{\B})}{\G}
 \end{equation*}
 %
 to be
 %
 \begin{equation*}
-  \sbunit{\ctxextend{\G}{\y}{\B}},
+  \sbunit{\ctxextend{\G}{\B}},
   (\A_n, \var{n}),
   \ldots
   (\A_1, \var{1})
@@ -133,9 +132,9 @@ This could be defined by recursion.
 \begin{mathpar}
   \infer[\rl{ty-prod}]
   {\istype{\G}{\A} \\
-   \istype{\ctxextend{\G}{\x}{\A}}{\B}
+   \istype{\ctxextend{\G}{\A}}{\B}
   }
-  {\istype{\G}{\Prod{\x}{\A}{\B}}}
+  {\istype{\G}{\Prod{\A}{\B}}}
 
   \infer[\rl{ty-id}]
   {\istype{\G}{\A}\\
@@ -176,9 +175,9 @@ This could be defined by recursion.
    \istype{\G}{\A}
   }
   {\isterm
-     {\ctxextend{\G} {\x}{\A}}
+     {\ctxextend{\G}{\A}}
      {\var{0}}
-     {\subst{\A}{\sbweak{\G}{\x}{\A}}}
+     {\subst{\A}{\sbweak{\G}{\A}}}
   }
 
   \infer[\rl{term-var-skip}]
@@ -186,9 +185,9 @@ This could be defined by recursion.
    \istype{\G}{\B}
   }
   {\isterm
-     {\ctxextend{\G}{\y}{\B}}
+     {\ctxextend{\G}{\B}}
      {\var{k+1}}
-     {\subst{\A}{\sbweak{\G}{\y}{\B}}}
+     {\subst{\A}{\sbweak{\G}{\B}}}
   }
   \end{mathpar}
 
@@ -196,17 +195,17 @@ This could be defined by recursion.
 
 \begin{mathpar}
   \infer[\rl{term-abs}]
-  {\isterm{\ctxextend{\G}{\x}{\A}}{\uu}{\B}}
-  {\isterm{\G}{(\lam{\x}{\A}{\B}{\uu})}{\Prod{\x}{\A}{\B}}}
+  {\isterm{\ctxextend{\G}{\A}}{\uu}{\B}}
+  {\isterm{\G}{(\lam{\A}{\B}{\uu})}{\Prod{\A}{\B}}}
 
   \infer[\rl{term-app}]
-  {\isterm{\G}{\uu}{\Prod{\x}{\A} \B} \\
+  {\isterm{\G}{\uu}{\Prod{\A} \B} \\
    \isterm{\G}{\vv}{\A}
   }
   {\isterm
      {\G}
-     {\app{\uu}{\x}{\A}{\B}{\vv}}
-     {\subst{\B}{\sbextend{\sbid{\G}}{\x}{\A}{\vv}}}
+     {\app{\uu}{\A}{\B}{\vv}}
+     {\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}}}
   }
 \end{mathpar}
 %
@@ -234,7 +233,7 @@ so that we need not worry about whether $\A$ and $\subst{\A}{\sbid{\G}}$ are equ
   {\eqctx{\G}{\D} \\
    \eqtype{\G}{\A}{\B}
   }
-  {\eqctx{(\ctxextend{\G}{\x}{\A})}{(\ctxextend{\D}{\x}{\B})}}
+  {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\D}{\B})}}
 
 \end{mathpar}
 
@@ -271,16 +270,16 @@ so that we need not worry about whether $\A$ and $\subst{\A}{\sbid{\G}}$ are equ
   \infer[\rl{eq-subst-prod}]
   {\issubst{\sbs}{\G}{\D} \\
    \istype{\D}{\A} \\
-   \istype{\ctxextend{\D}{\x}{\A}}{\B}
+   \istype{\ctxextend{\D}{\A}}{\B}
   }
   {\eqtype{\G}
-   {\subst{(\Prod{\x}{\A}{\B})}{\sbs}}
-   {\Prod{\y}
+   {\subst{(\Prod{\A}{\B})}{\sbs}}
+   {\Prod
      {\subst{\A}{\sbs}}
      {\subst{\B}
        {\sbextend
-         {\sbs \circ \sbweak{\G}{\_}{\subst{\A}{\sbs}}}
-         {\_}{\A}{\var{0}}}}
+         {\sbs \circ \sbweak{\G}{\subst{\A}{\sbs}}}
+         {\A}{\var{0}}}}
    }
   }
 
@@ -297,8 +296,8 @@ so that we need not worry about whether $\A$ and $\subst{\A}{\sbid{\G}}$ are equ
 \end{mathpar}
 %
 Note: $\rl{eq-subst-prod}$ is also BROKEN VERY MUCH.
-You can't apply $\sbextend{\sbs}{\x}{\A}{\var{0}}$ to $\B$ because you
-need a substitution in $\ctxextend{\G}{\_}{\A} \to \ctxextend{\D}{\_}{\A}$
+You can't apply $\sbextend{\sbs}{\A}{\var{0}}$ to $\B$ because you
+need a substitution in $\ctxextend{\G}{\A} \to \ctxextend{\D}{\A}$
 and $\issubst{\sbs}{\G}{\D}$. We cannot extend the domain of a substitution.
 We need something like the $q$ of Hofmann.
 Remark: We could actually use composition of substitutions instead.
@@ -307,9 +306,9 @@ In our case, for $\B$, we would need the following substitution:
 %
 \begin{equation*}
   \issubst
-    {\sbextend{\sbs \circ \sbweak{\G}{\_}{\subst{\A}{\sbs}}}{\_}{\A}{\var{0}}}
-    {\ctxextend{\G}{\_}{\subst{\A}{\sbs}}}
-    {\ctxextend{\D}{\_}{\A}}.
+    {\sbextend{\sbs \circ \sbweak{\G}{\subst{\A}{\sbs}}}{\A}{\var{0}}}
+    {\ctxextend{\G}{\subst{\A}{\sbs}}}
+    {\ctxextend{\D}{\A}}.
 \end{equation*}
 
 \subsubsection*{Congruence rules}
@@ -317,8 +316,8 @@ In our case, for $\B$, we would need the following substitution:
 \begin{mathpar}
   \infer[\rl{cong-prod}]
   {\eqtype{\G}{\A_1}{\B_1}\\
-   \eqtype{\ctxextend{\G}{\x}{\A_1}}{\A_2}{\B_2}}
-  {\eqtype{\G}{\Prod{\x}{\A_1}{\A_2}}{\Prod{\x}{\B_1}{\B_2}}}
+   \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}}
+  {\eqtype{\G}{\Prod{\A_1}{\A_2}}{\Prod{\B_1}{\B_2}}}
 
   \infer[\rl{cong-id}]
   {\eqtype{\G}{\A}{\B}\\
@@ -375,7 +374,7 @@ In our case, for $\B$, we would need the following substitution:
    \isterm{\G}{\uu}{\subst{\A}{\sbs}}
   }
   {\eqterm{\G}
-     {\subst{\var{0}}{\sbextend{\sbs}{\x}{\A}{\uu}}}
+     {\subst{\var{0}}{\sbextend{\sbs}{\A}{\uu}}}
      {\uu}
      {\subst{\A}{\sbs}}
   }
@@ -388,7 +387,7 @@ In our case, for $\B$, we would need the following substitution:
   {\eqterm{\G}
      {\subst
         {\var{k+1}}
-        {\sbextend{\sbs}{\x}{\B}{\uu}}
+        {\sbextend{\sbs}{\B}{\uu}}
      }
      {\subst{\var{k}}{\sbs}}
      {\subst{\A}{\sbs}}
@@ -396,30 +395,30 @@ In our case, for $\B$, we would need the following substitution:
 
   \infer[\rl{eq-subst-abs}]
   {\issubst{\sbs}{\G}{\D} \\
-   \isterm{\ctxextend{\D}{\x}{\A}}{\uu}{\B}
+   \isterm{\ctxextend{\D}{\A}}{\uu}{\B}
   }
   {\eqterm{\G}
-    {\subst{(\lam{\x}{\A}{\B} \uu)}{\sbs}}
-    {(\lam{\y}{\subst{\A}{\sbs}}{\subst{\B}{\sbextend{\sbs}{\y}{\A}{\var{0}}}}
-          \subst{\uu}{\sbextend{\sbs}{\y}{\A}{\var{0}}})}
-    {\Prod{\y}{\subst{\A}{\sbs}}{\subst{\B}{\sbextend{\sbs}{\y}{\A}{\var{0}}}}}
+    {\subst{(\lam{\A}{\B} \uu)}{\sbs}}
+    {(\lam{\subst{\A}{\sbs}}{\subst{\B}{\sbextend{\sbs}{\A}{\var{0}}}}
+          \subst{\uu}{\sbextend{\sbs}{\A}{\var{0}}})}
+    {\Prod{\subst{\A}{\sbs}}{\subst{\B}{\sbextend{\sbs}{\A}{\var{0}}}}}
   }
 
   \infer[\rl{eq-subst-app}]
   {\issubst{\sbs}{\G}{\D} \\
-   \istype{\ctxextend{\D}{\x}{\A}}{\B} \\
-   \isterm{\D}{\uu}{\Prod{\x}{\A}{\B}} \\
+   \istype{\ctxextend{\D}{\A}}{\B} \\
+   \isterm{\D}{\uu}{\Prod{\A}{\B}} \\
    \isterm{\D}{\vv}{\A}
   }
   {\eqterm{\G}
-   {\subst{(\app{\uu}{\x}{\A}{\B}{\vv})}{\sbs}}
+   {\subst{(\app{\uu}{\A}{\B}{\vv})}{\sbs}}
    {\app
       {\subst{\uu}{\sbs}}
-      {\y}{\subst{\A}{\sbs}}
-      {\subst{\B}{\sbextend{\sbs}{\y}{\A}{\var{0}}}}
+      {\subst{\A}{\sbs}}
+      {\subst{\B}{\sbextend{\sbs}{\A}{\var{0}}}}
       {\subst{\vv}{\sbs}}}
    {\subst
-     {(\subst{\B} {\sbextend{\sbid{\G}}{\x}{\A}{\vv}})}
+     {(\subst{\B} {\sbextend{\sbid{\G}}{\A}{\vv}})}
      {\sbs}
    }
   }
@@ -452,11 +451,11 @@ Here $\mathsf{UIP}(\A)$ is an abbreviation for what is written traditionally as
 
 \begin{mathpar}
 \infer[\rl{prod-beta}]
-  {\isterm{\ctxextend{\G}{\x}{\A}}{\uu}{\B}\\
+  {\isterm{\ctxextend{\G}{\A}}{\uu}{\B}\\
     \isterm{\G}{\vv}{\A}}
-  {\eqterm{\G}{\bigl(\app{(\lam{\x}{\A}{\B}{\uu})}{\x}{\A}{\B}{\vv}\bigr)}
-              {\subst{\uu}{\sbextend{\sbid{\G}}{\x}{\A}{\vv}}}
-              {\subst{\B}{\sbextend{\sbid{\G}}{\x}{\A}{\vv}}}}
+  {\eqterm{\G}{\bigl(\app{(\lam{\A}{\B}{\uu})}{\A}{\B}{\vv}\bigr)}
+              {\subst{\uu}{\sbextend{\sbid{\G}}{\A}{\vv}}}
+              {\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}}}}
 
   % \infer[\rl{uip}]
   % {\isterm{\G}{\vv_1}{\Id{\A}{\uu}{\vv}} \\
@@ -465,41 +464,39 @@ Here $\mathsf{UIP}(\A)$ is an abbreviation for what is written traditionally as
   % {\eqterm{\G}{\vv_1}{e'_2}{\Id{\A}{\uu}{\vv}}}
 
   \infer[\rl{prod-eta}]
-  {\isterm{\G}{\uu}{\Prod{\x}{\A}{\B}}\\
-   \isterm{\G}{\vv}{\Prod{\x}{\A}{\B}}\\\\
+  {\isterm{\G}{\uu}{\Prod{\A}{\B}}\\
+   \isterm{\G}{\vv}{\Prod{\A}{\B}}\\\\
    \eqterm
-      {\ctxextend{\G}{\x}{\A}}
+      {\ctxextend{\G}{\A}}
       {(\app
-          {\subst{\uu}{\sbweak{\G}{\x}{\A}}}
-          {\x}
-          {\subst{\A}{\sbweak{\G}{\x}{\A}}}
+          {\subst{\uu}{\sbweak{\G}{\A}}}
+          {\subst{\A}{\sbweak{\G}{\A}}}
           {\subst
             {\B}
             {\sbextend
-              {\sbweak{\G}{\x}{\A} \circ
-               \sbweak{\G}{\_}{\subst{\A}{\sbweak{\G}{\x}{\A}}}}
-              {\_}{\A}{\var{0}}
+              {\sbweak{\G}{\A} \circ
+               \sbweak{\G}{\subst{\A}{\sbweak{\G}{\A}}}}
+              {\A}{\var{0}}
             }
           }
           {\var{0}})
       }
       {(\app
-          {\subst{\vv}{\sbweak{\G}{\x}{\A}}}
-          {\x}
-          {\subst{\A}{\sbweak{\G}{\x}{\A}}}
+          {\subst{\vv}{\sbweak{\G}{\A}}}
+          {\subst{\A}{\sbweak{\G}{\A}}}
           {\subst
             {\B}
             {\sbextend
-              {\sbweak{\G}{\x}{\A} \circ
-               \sbweak{\G}{\_}{\subst{\A}{\sbweak{\G}{\x}{\A}}}}
-              {\_}{\A}{\var{0}}
+              {\sbweak{\G}{\A} \circ
+               \sbweak{\G}{\subst{\A}{\sbweak{\G}{\A}}}}
+              {\A}{\var{0}}
             }
           }
           {\var{0}})
       }
       {\B}
   }
-  {\eqterm{\G}{\uu}{\vv}{\Prod{\x}{\A}{\B}}}
+  {\eqterm{\G}{\uu}{\vv}{\Prod{\A}{\B}}}
 \end{mathpar}
 
 Note: $\rl{prod-eta}$ IS BROKEN VERY MUCH.
@@ -512,22 +509,22 @@ This raises the problem of readability...
 
   \infer[\rl{cong-abs}]
   {\eqtype{\G}{\A_1}{\B_1}\\
-    \eqtype{\ctxextend{\G}{\x}{\A_1}}{\A_2}{\B_2}\\
-    \eqterm{\ctxextend{\G}{\x}{\A_1}}{\uu_1}{\uu_2}{\A_2}}
-  {\eqterm{\G}{(\lam{\x}{\A_1}{\A_2}{\uu_1})}
-              {(\lam{\x}{\B_1}{\B_2}{\uu_2})}
-              {\Prod{\x}{\A_1}{\A_2}}}
+    \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}\\
+    \eqterm{\ctxextend{\G}{\A_1}}{\uu_1}{\uu_2}{\A_2}}
+  {\eqterm{\G}{(\lam{\A_1}{\A_2}{\uu_1})}
+              {(\lam{\B_1}{\B_2}{\uu_2})}
+              {\Prod{\A_1}{\A_2}}}
 
   \infer[\rl{cong-app}]
   {\eqtype{\G}{\A_1}{\B_1}\\
-   \eqtype{\ctxextend{\G}{\x}{\A_1}}{\A_2}{\B_2}\\\\
-   \eqterm{\G}{\uu_1}{\vv_1}{\Prod{\x}{\A_1}{\A_2}}\\
+   \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}\\\\
+   \eqterm{\G}{\uu_1}{\vv_1}{\Prod{\A_1}{\A_2}}\\
    \eqterm{\G}{\uu_2}{\vv_2}{\A_1}}
   {\eqterm
     {\G}
-    {(\app{\uu_1}{\x}{\A_1}{\A_2}{\uu_2})}
-    {(\app{\vv_1}{\x}{\B_1}{\B_2}{\vv_2})}
-    {\subst{\A_2}{\sbextend{\sbunit{\G}}{\x}{\uu_2}}}
+    {(\app{\uu_1}{\A_1}{\A_2}{\uu_2})}
+    {(\app{\vv_1}{\B_1}{\B_2}{\vv_2})}
+    {\subst{\A_2}{\sbextend{\sbunit{\G}}{\uu_2}}}
   }
 
   \infer[\rl{cong-refl}]

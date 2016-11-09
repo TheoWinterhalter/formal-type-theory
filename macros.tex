@@ -26,7 +26,7 @@
 
 %% Contexts
 \newcommand{\ctxempty}{\bullet} % empty context
-\newcommand{\ctxextend}[3]{#1, #3} % extended context
+\newcommand{\ctxextend}[2]{#1, #2} % extended context
 
 %\newcommand{\ctxdom}[1]{\mathsf{dom}(#1)} % the domain of a context
 
@@ -34,18 +34,18 @@
 
 \newcommand{\sbunit}[1]{\mathsf{\star}_{#1}} % empty substitution
 \newcommand{\sbid}[1]{\mathsf{1}_{#1}} % identity substitution
-\newcommand{\sbextend}[4]{#1,(#3,#4)} % extended substitution
-\newcommand{\sbweak}[3]{\mathsf{\omega}_{(\ctxextend{#1}{#2}{#3})}} % weakening substitution
+\newcommand{\sbextend}[3]{#1,(#2,#3)} % extended substitution
+\newcommand{\sbweak}[2]{\mathsf{\omega}_{(\ctxextend{#1}{#2})}} % weakening substitution
 \newcommand{\subst}[2]{#1[#2]} % substitution operation
 
 % Type formers
-\newcommand{\Prod}[2]{\mathop{\textstyle\prod_{#2}}} % dependent product
+\newcommand{\Prod}[1]{\mathop{\textstyle\prod_{#1}}} % dependent product
 \newcommand{\Id}[3]{\mathsf{Id}_{#1}(#2,#3)} % Identity type
 
 % Terms
 \newcommand{\var}[1]{\mathsf{x}_{#1}} % the first de Bruijn index
-\newcommand{\lam}[3]{\lambda #2 . #3 .} % $\lambda$-abstraction
-\newcommand{\app}[5]{#1\mathbin{@^{#3.#4}} #5} % application
+\newcommand{\lam}[2]{\lambda #1 . #2 .} % $\lambda$-abstraction
+\newcommand{\app}[4]{#1\mathbin{@^{#2.#3}} #4} % application
 \newcommand{\refl}[1]{{\mathsf{refl}_{#1}}\ }    % reflexivity
 
 % Judgments
