@@ -124,13 +124,13 @@ By~\eqref{lbl:ctx-ctr} on $\derives{\DD}{\isctx{\G}}$, we get
 $\derives{\DD'}{\isctx{\G'}}$.
 By~\eqref{lbl:ty-ctr} on $\derives{\EE}{\istype{\G}{\A}}$ and $\G'$, we get
 $\derives{\EE'}{\istype{\G'}{\A'}}$.
-Since $\ctxdom{\G} = \ctxdom{\G'}$, we have $x \notin \ctxdom{\G'}$ and thus
+% Since $\ctxdom{\G} = \ctxdom{\G'}$, we have $x \notin \ctxdom{\G'}$ and thus
 %
 \begin{equation*}
   \infer{
     \inferrule*{\DD'}{\isctx{\G'}} \\
     \inferrule*{\EE'}{\istype{\G'}{\A'}} \\
-    x \not\in \ctxdom{\G'}
+    % x \not\in \ctxdom{\G'}
   }
   {\isctx{(\ctxextend{\G'}{\x}{\A'})}}
 \end{equation*}
@@ -200,7 +200,7 @@ Consider
 We prove~\eqref{lbl:ty-ctr} and then~\eqref{lbl:ty-path}.
 Assume $\G'$, from~\eqref{lbl:ty-ctr}, we get $\istype{\G'}{\A'}$ and then
 using $\ctxextend{\G'}{\x}{\A'}$
-(well-formed since $x \notin \ctxdom{\G} = \ctxdom{\G'}$)
+% (well-formed since $x \notin \ctxdom{\G} = \ctxdom{\G'}$)
 we get $\istype{\ctxextend{\G'}{\x}{\A'}}{\B'}$.
 Finally we reconstruct $\istype{\G'}{\Prod{\x}{\A'}{\B'}}$.
 
@@ -335,7 +335,7 @@ $\G' \vdash \uu'' \simeq \subst{\uu'}{\f} : \A'$.
 \begin{equation*}
   \infer{
     \isctx{\G} \\
-    \x \not\in \ctxdom{\G} \\
+    % \x \not\in \ctxdom{\G} \\
     \istype{\G}{\A} \\
   }{
     \isterm
@@ -377,7 +377,7 @@ to be equal.}
 \begin{equation*}
   \infer{
     \isterm{\G}{\x}{\A} \\
-    \y \not\in \ctxdom{\G} \\
+    % \y \not\in \ctxdom{\G} \\
     \istype{\G}{\B}
   }{
     \isterm
@@ -392,7 +392,7 @@ respective translations of $\ctxextend{\G}{\y}{\B}$ and $\A$.
 By definition of a context translation, $\G'$ is a translation of $\G$.
 Thus, by~\eqref{lbl:term-ctr} on $\isterm{\G}{\x}{\A}$, we have
 $\isterm{\G'}{\uu'}{\A'}$ a translation.
-We still have $\y \notin \ctxdom{\G'}$.
+% We still have $\y \notin \ctxdom{\G'}$.
 And since $\B'$ is a translation of $\B$ in translated context $\G'$,
 we have $\istype{\G'}{\B'}$, from that we conclude
 $\isterm{\ctxextend{\G'}{\y}{\B'}}{\uu'}{\A'}$.
@@ -500,7 +500,7 @@ context, and we return the trivial isomorphism.
   \infer
   {\eqctx{\G}{\D} \\
    \eqtype{\G}{\A}{\B} \\
-   x \not\in \ctxdom{\G}
+  %  x \not\in \ctxdom{\G}
   }
   {\eqctx{(\ctxextend{\G}{\x}{\A})}{(\ctxextend{\D}{\x}{\B})}}
 \end{equation*}
