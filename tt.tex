@@ -295,6 +295,15 @@ You can't apply $\sbextend{\sbs}{\x}{\A}{\var{0}}$ to $\B$ because you
 need a substitution in $\ctxextend{\G}{\_}{\A} \to \ctxextend{\D}{\_}{\A}$
 and $\issubst{\sbs}{\G}{\D}$. We cannot extend the domain of a substitution.
 We need something like the $q$ of Hofmann.
+Remark: We could actually use composition of substitutions instead.
+In our case, for $\B$, we would need the following substitution:
+%
+\begin{equation*}
+  \issubst
+    {\sbextend{\sbs \circ \sbweak{\G}{\_}{\subst{\A}{\sbs}}}{\_}{\A}{\var{0}}}
+    {\ctxextend{\G}{\_}{\subst{\A}{\sbs}}}
+    {\ctxextend{\D}{\_}{\A}}.
+\end{equation*}
 
 \subsubsection*{Congruence rules}
 
