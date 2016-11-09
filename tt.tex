@@ -399,9 +399,21 @@ In our case, for $\B$, we would need the following substitution:
   }
   {\eqterm{\G}
     {\subst{(\lam{\A}{\B} \uu)}{\sbs}}
-    {(\lam{\subst{\A}{\sbs}}{\subst{\B}{\sbextend{\sbs}{\A}{\var{0}}}}
-          \subst{\uu}{\sbextend{\sbs}{\A}{\var{0}}})}
-    {\Prod{\subst{\A}{\sbs}}{\subst{\B}{\sbextend{\sbs}{\A}{\var{0}}}}}
+    {(\lam
+      {\subst{\A}{\sbs}}
+      {\subst
+        {\B}
+        {\sbextend{\sbs \circ \sbweak{\G}{\subst{\A}{\sbs}}}{\A}{\var{0}}}
+      }
+      \subst{\uu}{\sbextend{\sbs}{\A}{\var{0}}})
+    }
+    {\Prod
+      {\subst{\A}{\sbs}}
+      {\subst
+        {\B}
+        {\sbextend{\sbs \circ \sbweak{\G}{\subst{\A}{\sbs}}}{\A}{\var{0}}}
+      }
+    }
   }
 
   \infer[\rl{eq-subst-app}]
@@ -415,10 +427,13 @@ In our case, for $\B$, we would need the following substitution:
    {\app
       {\subst{\uu}{\sbs}}
       {\subst{\A}{\sbs}}
-      {\subst{\B}{\sbextend{\sbs}{\A}{\var{0}}}}
+      {\subst
+        {\B}
+        {\sbextend{\sbs \circ \sbweak{\G}{\subst{\A}{\sbs}}}{\A}{\var{0}}}
+      }
       {\subst{\vv}{\sbs}}}
    {\subst
-     {(\subst{\B} {\sbextend{\sbid{\G}}{\A}{\vv}})}
+     {(\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}})}
      {\sbs}
    }
   }
@@ -524,7 +539,7 @@ This raises the problem of readability...
     {\G}
     {(\app{\uu_1}{\A_1}{\A_2}{\uu_2})}
     {(\app{\vv_1}{\B_1}{\B_2}{\vv_2})}
-    {\subst{\A_2}{\sbextend{\sbunit{\G}}{\uu_2}}}
+    {\subst{\A_2}{\sbextend{\sbid{\G}}{\A_1}{\uu_2}}}
   }
 
   \infer[\rl{cong-refl}]
