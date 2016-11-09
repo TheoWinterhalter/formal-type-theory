@@ -275,7 +275,13 @@ so that we need not worry about whether $\A$ and $\subst{\A}{\sbid{\G}}$ are equ
   }
   {\eqtype{\G}
    {\subst{(\Prod{\x}{\A}{\B})}{\sbs}}
-   {\Prod{\y}{\subst{\A}{\sbs}}{\subst{\B}{\sbextend{\sbs}{\x}{\A}{\var{0}}}}}
+   {\Prod{\y}
+     {\subst{\A}{\sbs}}
+     {\subst{\B}
+       {\sbextend
+         {\sbs \circ \sbweak{\G}{\_}{\subst{\A}{\sbs}}}
+         {\_}{\A}{\var{0}}}}
+   }
   }
 
   \infer[\rl{eq-subst-id}]
@@ -296,6 +302,7 @@ need a substitution in $\ctxextend{\G}{\_}{\A} \to \ctxextend{\D}{\_}{\A}$
 and $\issubst{\sbs}{\G}{\D}$. We cannot extend the domain of a substitution.
 We need something like the $q$ of Hofmann.
 Remark: We could actually use composition of substitutions instead.
+(We still have to decide how to add them to the type theory.)
 In our case, for $\B$, we would need the following substitution:
 %
 \begin{equation*}
@@ -466,16 +473,38 @@ Here $\mathsf{UIP}(\A)$ is an abbreviation for what is written traditionally as
           {\subst{\uu}{\sbweak{\G}{\x}{\A}}}
           {\x}
           {\subst{\A}{\sbweak{\G}{\x}{\A}}}
-          {\B}
+          {\subst
+            {\B}
+            {\sbextend
+              {\sbweak{\G}{\x}{\A} \circ
+               \sbweak{\G}{\_}{\subst{\A}{\sbweak{\G}{\x}{\A}}}}
+              {\_}{\A}{\var{0}}
+            }
+          }
           {\var{0}})
       }
-      {(\app{\subst{\vv}{\sbweak{\G}{\x}{\A}}}{\x}{\A}{\B}{\var{0}})}
+      {(\app
+          {\subst{\vv}{\sbweak{\G}{\x}{\A}}}
+          {\x}
+          {\subst{\A}{\sbweak{\G}{\x}{\A}}}
+          {\subst
+            {\B}
+            {\sbextend
+              {\sbweak{\G}{\x}{\A} \circ
+               \sbweak{\G}{\_}{\subst{\A}{\sbweak{\G}{\x}{\A}}}}
+              {\_}{\A}{\var{0}}
+            }
+          }
+          {\var{0}})
+      }
       {\B}
   }
   {\eqterm{\G}{\uu}{\vv}{\Prod{\x}{\A}{\B}}}
 \end{mathpar}
 
 Note: $\rl{prod-eta}$ IS BROKEN VERY MUCH.
+Our salvation is brought by applying the solution for $\rl{eq-subst-prod}$.
+This raises the problem of readability...
 
 \subsubsection*{Congruence rules}
 
