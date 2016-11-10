@@ -1,0 +1,758 @@
+\section{Type theory is well formed}
+\label{sec:type-theory-well}
+
+\begin{theorem}
+  Type theory is well formed in the following sense:
+  %
+  \begin{enumerate}
+  \item \label{sane-istype}  if $\istype{\G}{\A}$ then $\isctx{\G}$,
+  \item \label{sane-isterm}  if $\isterm{\G}{\uu}{\A}$ then $\istype{\G}{\A}$,
+  \item \label{sane-issubst} if $\issubst{\sbs}{\G}{\D}$ then $\isctx{\G}$ and $\isctx{\D}$,
+  \item \label{sane-eqctx}   if $\eqctx{\G}{\D}$ then $\isctx{\G}$ and $\isctx{\D}$,
+  \item \label{sane-eqtype}  if $\eqtype{\G}{\A}{\B}$ then $\istype{\G}{\A}$ and $\istype{\G}{\B}$,
+  \item \label{sane-eqterm}  if $\eqterm{\G}{\uu}{\vv}{\A}$ then $\isterm{\G}{\uu}{\A}$ and $\isterm{\G}{\uu}{\A}$.
+  \end{enumerate}
+\end{theorem}
+
+The rest of this section contains the proof, which proceeds by structural induction on the
+derivation.
+
+\subsection{Contexts \fbox{$\isctx{\G}$}}
+
+The rules $\rl{ctx-empty}$ and $\rl{ctx-extend}$ need not be considered.
+
+\subsection{Substitutions \fbox{$\issubst{\sbs}{\G}{\D}$}}
+
+This section proves clause \eqref{sane-issubst} of the theorem.
+
+\subsubsection*{Rule $\rl{subst-id}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{subst-id}]
+  {\isctx{\G}}
+  {\issubst{\sbid{\G}}{\G}{\G}}
+\end{equation*}
+%
+By induction on the premise, $\isctx{\G}$ follows.
+
+\subsubsection*{Rule $\rl{subst-compose}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{subst-compose}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \issubst{\sbt}{\D}{\E}
+  }
+  {\issubst{\sbcomp{\sbt}{\sbs}}{\G}{\E}}  
+\end{equation*}
+%
+By induction on the left premise $\isctx{\G}$ follows, and by induction on the right
+premise $\isctx{\E}$.
+
+\subsubsection*{Rule $\rl{subst-extend}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{subst-extend}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A} \\
+   \isterm{\G}{\uu}{\subst{\A}{\sbs}}
+  }
+  {\issubst
+     {(\sbextend{\sbs}{\A}{\uu})}
+     {\G}
+     {(\ctxextend{\D}{\A})}
+  }  
+\end{equation*}
+%
+
+
+\subsubsection*{Rule $\rl{subst-weak}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{subst-weak}]
+  {\istype{\G}{\A}}
+  {\issubst
+     {\sbweak{\G}{\A}}
+     {\ctxextend{\G}{\A}}
+     {\G}
+  }  
+\end{equation*}
+
+\subsection{Types \fbox{$\istype{\G}{\A}$}}
+
+\subsubsection*{General rules}
+
+\subsubsection*{Rule $\rl{ty-ctx-conv}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{ty-ctx-conv}]
+  {\istype{\G}{\A} \\
+    \eqctx{\G}{\D}
+  }
+  {\istype{\D}{\A}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{ty-subst}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{ty-subst}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A}
+  }
+  {\istype{\G}{\subst{\A}{\sbs}}}  
+\end{equation*}
+
+\subsubsection*{Type formers}
+
+\subsubsection*{Rule $\rl{ty-prod}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{ty-prod}]
+  {\istype{\G}{\A} \\
+   \istype{\ctxextend{\G}{\A}}{\B}
+  }
+  {\istype{\G}{\Prod{\A}{\B}}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{ty-id}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{ty-id}]
+  {\istype{\G}{\A}\\
+   \isterm{\G}{\uu}{\A}\\
+   \isterm{\G}{\vv}{\A}
+  }
+  {\istype{\G}{\Id{\A}{\uu}{\vv}}}  
+\end{equation*}
+
+\subsection{Terms \fbox{$\isterm{\G}{\uu}{\A}$}}
+
+\subsubsection*{Rule $\rl{term-ty-conv}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{term-ty-conv}]
+  {\isterm{\G}{\uu}{\A} \\
+   \eqtype{\G}{\A}{\B}
+  }
+  {\isterm{\G}{\uu}{\B}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{term-ctx-conv}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{term-ctx-conv}]
+  {\isterm{\G}{\uu}{\A} \\
+   \eqctx{\G}{\D}
+  }
+  {\isterm{\D}{\uu}{\A}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{term-subst}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{term-subst}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\D}{\uu}{\A}
+  }
+  {\isterm{\G}{\subst{\uu}{\sbs}}{\subst{\A}{\sbs}}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{term-var}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{term-var}]
+  {\isctx{\G} \\
+   \istype{\G}{\A}
+  }
+  {\isterm
+     {\ctxextend{\G}{\A}}
+     {\var{0}}
+     {\subst{\A}{\sbweak{\G}{\A}}}
+  }  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{term-var-skip}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{term-var-skip}]
+  {\isterm{\G}{\var{k}}{\A} \\
+   \istype{\G}{\B}
+  }
+  {\isterm
+     {\ctxextend{\G}{\B}}
+     {\var{k+1}}
+     {\subst{\A}{\sbweak{\G}{\B}}}
+  }  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{term-abs}$}
+
+Consider a derivation ending with
+%
+  \begin{equation*}
+    \infer[\rl{term-abs}]
+  {\isterm{\ctxextend{\G}{\A}}{\uu}{\B}}
+  {\isterm{\G}{(\lam{\A}{\B}{\uu})}{\Prod{\A}{\B}}}  
+  \end{equation*}
+
+\subsubsection*{Rule $\rl{term-app}$}
+
+Consider a derivation ending with
+%
+  \begin{equation*}
+    \infer[\rl{term-app}]
+  {\isterm{\G}{\uu}{\Prod{\A} \B} \\
+   \isterm{\G}{\vv}{\A}
+  }
+  {\isterm
+     {\G}
+     {\app{\uu}{\A}{\B}{\vv}}
+     {\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}}}
+  }  
+  \end{equation*}
+
+\subsubsection*{Rule $\rl{term-refl}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{term-refl}]
+  {\isterm{\G}{\uu}{\A}}
+  {\isterm{\G}{\refl{\A} \uu}{\Id{\A}{\uu}{\uu}}}  
+\end{equation*}
+
+\subsection{Context equality \fbox{$\eqctx{\G}{\D}$}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-ctx-empty}]
+  { }
+  {\eqctx{\ctxempty}{\ctxempty}}
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-ctx-extend}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-ctx-extend}]
+  {\eqctx{\G}{\D} \\
+   \eqtype{\G}{\A}{\B}
+  }
+  {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\D}{\B})}}  
+\end{equation*}
+
+\subsection{Type equality \fbox{$\eqtype{\G}{\A}{\B}$}}
+
+\subsubsection*{Rule $\rl{eq-ty-conv}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-ty-conv}]
+  {\eqtype{\G}{\A}{\B}\\
+    \eqctx{\G}{\D}}
+  {\eqtype{\D}{\A}{\B}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-ty-refl}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-ty-refl}]
+  {\istype{\G}{\A}}
+  {\eqtype{\G}{\A}{\A}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-ty-sym}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-ty-sym}]
+  {\eqtype{\G}{\B}{\A}}
+  {\eqtype{\G}{\A}{\B}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-ty-trans}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-ty-trans}]
+  {\eqtype{\G}{\A}{\B}\\
+   \eqtype{\G}{\B}{\C}}
+  {\eqtype{\G}{\A}{\C}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-ty-subst-id}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-ty-subst-id}]
+  {\istype{\G}{\A}}
+  {\eqtype{\G}
+     {\subst{\A}{\sbid{\G}}}
+     {\A}
+  }  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-ty-subst-compose}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-ty-subst-compose}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \issubst{\sbt}{\D}{\E} \\
+   \istype{\E}{\A}
+  }
+  {\eqtype{\G}
+    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
+    {\subst{(\subst{\A}{\sbs})}{\sbt}}
+  }  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-ty-subst-prod}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-ty-subst-prod}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A} \\
+   \istype{\ctxextend{\D}{\A}}{\B}
+  }
+  {\eqtype{\G}
+   {\subst{(\Prod{\A}{\B})}{\sbs}}
+   {\Prod
+     {\subst{\A}{\sbs}}
+     {\subst{\B}{\sbshift{\sbs}{\G}{\A}}}
+   }
+  }  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-ty-subst-id}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-ty-subst-id}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A} \\
+   \isterm{\D}{\uu}{\A} \\
+   \isterm{\D}{\vv}{\A}
+  }
+  {\eqtype{\G}
+   {\subst{(\Id{\A}{\uu}{\vv})}{\sbs}}
+   {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\vv}{\sbs}}}
+  }  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{cong-prod}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{cong-prod}]
+  {\eqtype{\G}{\A_1}{\B_1}\\
+   \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}}
+  {\eqtype{\G}{\Prod{\A_1}{\A_2}}{\Prod{\B_1}{\B_2}}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{cong-id}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{cong-id}]
+  {\eqtype{\G}{\A}{\B}\\
+   \eqterm{\G}{\uu_1}{\vv_1}{\A}\\
+   \eqterm{\G}{\uu_2}{\vv_2}{\A}
+  }
+  {\eqtype{\G}{\Id{\A}{\uu_1}{\uu_2}}
+              {\Id{\B}{\vv_1}{\vv_2}}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{cong-ty-subst}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{cong-ty-subst}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \eqtype{\D}{\A}{\B}
+  }
+  {\eqtype{\G}{\subst{\A}{\sbs}}{\subst{\B}{\sbs}}}  
+\end{equation*}
+
+\goodbreak
+
+\subsection{Term equality \fbox{$\eqterm{\G}{\uu_1}{\uu_2}{\A}$}}
+
+
+
+\subsubsection*{Rule $\rl{eq-ty-conv}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-ty-conv}]
+  {\eqterm{\G}{\uu}{\vv}{\A}\\
+    \eqtype{\G}{\A}{\B}}
+  {\eqterm{\G}{\uu}{\vv}{\B}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-ctx-conv}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-ctx-conv}]
+  {\eqterm{\G}{\uu}{\vv}{\A}\\
+    \eqctx{\G}{\D}}
+  {\eqterm{\D}{\uu}{\vv}{\A}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-refl}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-refl}]
+  {\isterm{\G}{\uu}{\A}}
+  {\eqterm{\G}{\uu}{\uu}{\A}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-sym}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-sym}]
+  {\eqterm{\G}{\vv}{\uu}{\A}}
+  {\eqterm{\G}{\uu}{\vv}{\A}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-trans}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-trans}]
+  {\eqterm{\G}{\uu}{\vv}{\A}\\
+   \eqterm{\G}{\vv}{\ww}{\A}}
+  {\eqterm{\G}{\uu}{\ww}{\A}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-subst-id}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-subst-id}]
+  {\isterm{\G}{\uu}{\A}}
+  {\eqterm{\G}
+     {\subst{\uu}{\sbid{\G}}}
+     {\uu}
+     {\A}
+  }  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-subst-compose}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-subst-compose}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \issubst{\sbt}{\D}{\E} \\
+   \isterm{\E}{\uu}{\A}
+  }
+  {\eqterm{\G}
+    {\subst{\uu}{\sbcomp{\sbs}{\sbt}}}
+    {\subst{(\subst{\uu}{\sbs})}{\sbt}}
+    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
+  }  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-subst-weak}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-subst-weak}]
+  {\isterm{\G}{\var{k}}{\A} \\
+   \istype{\G}{\B}   
+  }
+  {\eqterm{\ctxextend{\G}{\B}}
+   {\subst{\var{k}}{\sbweak{\G}{\B}}}
+   {\var{k+1}}
+   {\subst{\A}{\sbweak{\G}{\B}}}
+  }  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-subst-extend-zero}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-subst-extend-zero}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A} \\
+   \isterm{\G}{\uu}{\subst{\A}{\sbs}}
+  }
+  {\eqterm{\G}
+     {\subst{\var{0}}{\sbextend{\sbs}{\A}{\uu}}}
+     {\uu}
+     {\subst{\A}{\sbs}}
+  }  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-subst-extend-succ}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-subst-extend-succ}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\D}{\var{k}}{\A} \\
+   \isterm{\G}{\uu}{\subst{\B}{\sbs}}
+  }
+  {\eqterm{\G}
+     {\subst
+        {\var{k+1}}
+        {\sbextend{\sbs}{\B}{\uu}}
+     }
+     {\subst{\var{k}}{\sbs}}
+     {\subst{\A}{\sbs}}
+  }  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-subst-abs}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-subst-abs}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\ctxextend{\D}{\A}}{\uu}{\B}
+  }
+  {\eqterm{\G}
+    {\subst{(\lam{\A}{\B} \uu)}{\sbs}}
+    {(\lam
+      {\subst{\A}{\sbs}}
+      {\subst
+        {\B}
+        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
+      }
+      \subst{\uu}{\sbextend{\sbs}{\A}{\var{0}}})
+    }
+    {\Prod
+      {\subst{\A}{\sbs}}
+      {\subst
+        {\B}
+        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
+      }
+    }
+  }  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-subst-app}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-subst-app}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\ctxextend{\D}{\A}}{\B} \\
+   \isterm{\D}{\uu}{\Prod{\A}{\B}} \\
+   \isterm{\D}{\vv}{\A}
+  }
+  {\eqterm{\G}
+   {\subst{(\app{\uu}{\A}{\B}{\vv})}{\sbs}}
+   {\app
+      {\subst{\uu}{\sbs}}
+      {\subst{\A}{\sbs}}
+      {\subst
+        {\B}
+        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
+      }
+      {\subst{\vv}{\sbs}}}
+   {\subst
+     {(\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}})}
+     {\sbs}
+   }
+  }  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-subst-refl}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-subst-refl}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\D}{\uu}{\A}
+  }
+  {\eqterm{\G}
+   {\subst{(\refl{\A}{\uu})}{\sbs}}
+   {\refl{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}}
+   {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\uu}{\sbs}}}
+  }  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{eq-reflection}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{eq-reflection}]
+  {\isterm{\G}{\ww_1}{\Id{\A}{\uu}{\vv}} \\
+   \isterm{\G}{\ww_2}{\textsf{UIP}(\A)}
+  }
+  {\eqterm{\G}{\uu}{\vv}{\A}}  
+\end{equation*}
+
+
+\subsubsection*{Rule $\rl{prod-beta}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+\infer[\rl{prod-beta}]
+  {\isterm{\ctxextend{\G}{\A}}{\uu}{\B}\\
+    \isterm{\G}{\vv}{\A}}
+  {\eqterm{\G}{\bigl(\app{(\lam{\A}{\B}{\uu})}{\A}{\B}{\vv}\bigr)}
+              {\subst{\uu}{\sbextend{\sbid{\G}}{\A}{\vv}}}
+              {\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}}}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{prod-eta}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{prod-eta}]
+  {\isterm{\G}{\uu}{\Prod{\A}{\B}}\\
+   \isterm{\G}{\vv}{\Prod{\A}{\B}}\\\\
+   \eqterm
+      {\ctxextend{\G}{\A}}
+      {(\app
+          {\subst{\uu}{\sbweak{\G}{\A}}}
+          {\subst{\A}{\sbweak{\G}{\A}}}
+          {\subst
+            {\B}
+            {\sbshift
+              {\sbweak{\G}{\A}}
+              {\ctxextend{\G}{\A}}
+              {\A}
+            }
+          }
+          {\var{0}})
+      }
+      {(\app
+          {\subst{\vv}{\sbweak{\G}{\A}}}
+          {\subst{\A}{\sbweak{\G}{\A}}}
+          {\subst
+            {\B}
+            {\sbshift
+              {\sbweak{\G}{\A}}
+              {\ctxextend{\G}{\A}}
+              {\A}
+            }
+          }
+          {\var{0}})
+      }
+      {\B}
+  }
+  {\eqterm{\G}{\uu}{\vv}{\Prod{\A}{\B}}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{cong-abs}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{cong-abs}]
+  {\eqtype{\G}{\A_1}{\B_1}\\
+    \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}\\
+    \eqterm{\ctxextend{\G}{\A_1}}{\uu_1}{\uu_2}{\A_2}}
+  {\eqterm{\G}{(\lam{\A_1}{\A_2}{\uu_1})}
+              {(\lam{\B_1}{\B_2}{\uu_2})}
+              {\Prod{\A_1}{\A_2}}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{cong-app}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{cong-app}]
+  {\eqtype{\G}{\A_1}{\B_1}\\
+   \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}\\\\
+   \eqterm{\G}{\uu_1}{\vv_1}{\Prod{\A_1}{\A_2}}\\
+   \eqterm{\G}{\uu_2}{\vv_2}{\A_1}}
+  {\eqterm
+    {\G}
+    {(\app{\uu_1}{\A_1}{\A_2}{\uu_2})}
+    {(\app{\vv_1}{\B_1}{\B_2}{\vv_2})}
+    {\subst{\A_2}{\sbextend{\sbid{\G}}{\A_1}{\uu_2}}}
+  }  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{cong-refl}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{cong-refl}]
+  {\eqterm{\G}{\uu_1}{\uu_2}{\A_1}\\
+    \eqtype{\G}{\A_1}{\A_2}}
+  {\eqterm{\G}{\refl{\A_1} \uu_1}{\refl{\A_2} \uu_2}{\Id{\A_1}{\uu_1}{\uu_1}}}  
+\end{equation*}
+
+\subsubsection*{Rule $\rl{cong-term-subst}$}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \infer[\rl{cong-term-subst}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \eqterm{\D}{\uu_1}{\uu_2}{\A}
+  }
+  {\eqterm{\G}{\subst{\uu_1}{\sbs}}{\subst{\uu_2}{\sbs}}{\subst{\A}{\sbs}}}  
+\end{equation*}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
