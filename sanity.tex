@@ -5,9 +5,9 @@
   Type theory is well formed in the following sense:
   %
   \begin{enumerate}
+  \item \label{sane-issubst} if $\issubst{\sbs}{\G}{\D}$ then $\isctx{\G}$ and $\isctx{\D}$,
   \item \label{sane-istype}  if $\istype{\G}{\A}$ then $\isctx{\G}$,
   \item \label{sane-isterm}  if $\isterm{\G}{\uu}{\A}$ then $\istype{\G}{\A}$,
-  \item \label{sane-issubst} if $\issubst{\sbs}{\G}{\D}$ then $\isctx{\G}$ and $\isctx{\D}$,
   \item \label{sane-eqctx}   if $\eqctx{\G}{\D}$ then $\isctx{\G}$ and $\isctx{\D}$,
   \item \label{sane-eqtype}  if $\eqtype{\G}{\A}{\B}$ then $\istype{\G}{\A}$ and $\istype{\G}{\B}$,
   \item \label{sane-eqterm}  if $\eqterm{\G}{\uu}{\vv}{\A}$ then $\isterm{\G}{\uu}{\A}$ and $\isterm{\G}{\uu}{\A}$.
@@ -35,7 +35,7 @@ Consider a derivation ending with
   {\issubst{\sbid{\G}}{\G}{\G}}
 \end{equation*}
 %
-By induction on the premise, $\isctx{\G}$ follows.
+By the premise we have $\isctx{\G}$.
 
 \subsubsection*{Rule $\rl{subst-compose}$}
 
@@ -49,8 +49,8 @@ Consider a derivation ending with
   {\issubst{\sbcomp{\sbt}{\sbs}}{\G}{\E}}  
 \end{equation*}
 %
-By induction on the left premise $\isctx{\G}$ follows, and by induction on the right
-premise $\isctx{\E}$.
+By induction hypothesis on the left premise $\isctx{\G}$ follows, and by induction
+hypothesis on the right premise $\isctx{\E}$.
 
 \subsubsection*{Rule $\rl{subst-extend}$}
 
@@ -69,7 +69,9 @@ Consider a derivation ending with
   }  
 \end{equation*}
 %
-
+Then $\isctx{\G}$ and by induction hypothesis on the left premise, while
+$\isctx{(\ctxextend{\D}{\A})}$ follows using the induction hypothesis on the middle
+premise and $\rl{ctx-extend}$.
 
 \subsubsection*{Rule $\rl{subst-weak}$}
 
@@ -84,10 +86,13 @@ Consider a derivation ending with
      {\G}
   }  
 \end{equation*}
+%
+First, $\isctx{\G}$ follows by induction hypothesis on the premise, and then
+$\isctx{\ctxextend{\G}{\A}}$ by an application of $\rl{ctx-extend}$.
 
 \subsection{Types \fbox{$\istype{\G}{\A}$}}
 
-\subsubsection*{General rules}
+In this section we prove clause \eqref{sane-istype}.
 
 \subsubsection*{Rule $\rl{ty-ctx-conv}$}
 
@@ -100,6 +105,8 @@ Consider a derivation ending with
   }
   {\istype{\D}{\A}}  
 \end{equation*}
+%
+By induction hypothesis on the right premise we obtain $\isctx{\D}$.
 
 \subsubsection*{Rule $\rl{ty-subst}$}
 
@@ -112,8 +119,8 @@ Consider a derivation ending with
   }
   {\istype{\G}{\subst{\A}{\sbs}}}  
 \end{equation*}
-
-\subsubsection*{Type formers}
+%
+By induction hypothesis on the left premise we obtain $\isctx{\G}$.
 
 \subsubsection*{Rule $\rl{ty-prod}$}
 
@@ -121,11 +128,12 @@ Consider a derivation ending with
 %
 \begin{equation*}
   \infer[\rl{ty-prod}]
-  {\istype{\G}{\A} \\
-   \istype{\ctxextend{\G}{\A}}{\B}
-  }
-  {\istype{\G}{\Prod{\A}{\B}}}  
+  { \istype{\G}{\A} \\
+    \istype{\ctxextend{\G}{\A}}{\B}}
+  {\istype{\G}{\Prod{\A}{\B}}}
 \end{equation*}
+%
+By induction hypothesis on the left premise we obtain $\isctx{\G}$.
 
 \subsubsection*{Rule $\rl{ty-id}$}
 
@@ -139,8 +147,12 @@ Consider a derivation ending with
   }
   {\istype{\G}{\Id{\A}{\uu}{\vv}}}  
 \end{equation*}
+%
+By induction hypothesis on the left premise we obtain $\isctx{\G}$.
 
 \subsection{Terms \fbox{$\isterm{\G}{\uu}{\A}$}}
+
+In this section we prove clause \eqref{sane-isterm}.
 
 \subsubsection*{Rule $\rl{term-ty-conv}$}
 
@@ -153,6 +165,9 @@ Consider a derivation ending with
   }
   {\isterm{\G}{\uu}{\B}}  
 \end{equation*}
+%
+By induction hypothesis on the right premise we obtain $\istype{\G}{\B}$.
+
 
 \subsubsection*{Rule $\rl{term-ctx-conv}$}
 
@@ -165,6 +180,10 @@ Consider a derivation ending with
   }
   {\isterm{\D}{\uu}{\A}}  
 \end{equation*}
+%
+By induction hypothesis on the left premise we obtain $\istype{\G}{\A}$, and then we apply
+$\rl{ty-ctx-conv}$ using the right premise.
+
 
 \subsubsection*{Rule $\rl{term-subst}$}
 
@@ -177,6 +196,9 @@ Consider a derivation ending with
   }
   {\isterm{\G}{\subst{\uu}{\sbs}}{\subst{\A}{\sbs}}}  
 \end{equation*}
+%
+By induction hypothesis on the right premise we obtain $\istype{\D}{\A}$, and then we
+apply $\rl{ty-subst}$ using the left premise.
 
 \subsubsection*{Rule $\rl{term-var}$}
 
@@ -193,6 +215,9 @@ Consider a derivation ending with
      {\subst{\A}{\sbweak{\G}{\A}}}
   }  
 \end{equation*}
+%
+We apply $\rl{ty-subst}$ to the right premise and to $\rl{subst-weak}$ applied to the
+right premise.
 
 \subsubsection*{Rule $\rl{term-var-skip}$}
 
@@ -209,32 +234,66 @@ Consider a derivation ending with
      {\subst{\A}{\sbweak{\G}{\B}}}
   }  
 \end{equation*}
+%
+By induction hypothesis on the left premise we obtain $\istype{\G}{\A}$. We
+apply $\rl{ty-subst}$ to it and to $\rl{subst-weak}$ applied to the
+right premise.
+
 
 \subsubsection*{Rule $\rl{term-abs}$}
 
 Consider a derivation ending with
 %
-  \begin{equation*}
-    \infer[\rl{term-abs}]
-  {\isterm{\ctxextend{\G}{\A}}{\uu}{\B}}
+\begin{equation*}
+  \infer[\rl{term-abs}]
+  {\istype{\G}{\A} \\
+   \isterm{\ctxextend{\G}{\A}}{\uu}{\B}}
   {\isterm{\G}{(\lam{\A}{\B}{\uu})}{\Prod{\A}{\B}}}  
-  \end{equation*}
+\end{equation*}
+%
+By induction hypothesis on the right premise we obtain $\istype{\ctxextend{\G}{\A}}{\B}$,
+after which we apply $\rl{ty-prod}$ to it and to the left premise.
+
 
 \subsubsection*{Rule $\rl{term-app}$}
 
 Consider a derivation ending with
 %
-  \begin{equation*}
-    \infer[\rl{term-app}]
-  {\isterm{\G}{\uu}{\Prod{\A} \B} \\
+\begin{equation*}
+  \infer[\rl{term-app}]
+  {\istype{\ctxextend{\G}{\A}}{\B} \\
+   \isterm{\G}{\uu}{\Prod{\A} \B} \\
    \isterm{\G}{\vv}{\A}
   }
   {\isterm
-     {\G}
-     {\app{\uu}{\A}{\B}{\vv}}
-     {\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}}}
-  }  
-  \end{equation*}
+    {\G}
+    {\app{\uu}{\A}{\B}{\vv}}
+    {\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}}}
+  }
+\end{equation*}
+%
+We first argue that we may apply $\rl{subst-extend}$ as follows:
+%
+\begin{equation*}
+  \inferrule*
+  {
+   \inferrule*{\isctx{\G}}{\issubst{\sbid{\G}}{\G}{\G}}
+   \\
+   \istype{\G}{\A} \\
+   \inferrule*
+      {\isterm{\G}{\vv}{\A} \\
+       \eqtype{\G}{\A}{\subst{\A}{\sbid{\G}}}
+      }
+      {\isterm{\G}{\vv}{\subst{\A}{\sbid{\G}}}}
+  }
+  {\issubst
+   {\sbextend{\sbid{\G}}{\A}{\vv}}
+   {\G}
+   {\ctxextend{\G}{\A}}
+  }
+\end{equation*}
+%
+The left premise of this derivation follows by $\rl{ctx-id}$, which in turn is justified by
 
 \subsubsection*{Rule $\rl{term-refl}$}
 

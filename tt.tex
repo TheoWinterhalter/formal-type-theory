@@ -17,15 +17,17 @@ In this section we give the formulation of type theory that we shall work with.
     \bnfor {}& \subst{\A}{\sbs}         && \text{substitution $\sbs$ applied to $\A$} \\
   \\
   \text{Term $\uu$, $\vv$, $\ww$}
-    \bnf   {}& \var{k}                  && \text{the $k$-th variable} \\
+    \bnf   {}& \var{k}                  && \text{the $k$-th variable index (a la de Bruijn)} \\
     \bnfor {}& \lam{\A}{\B} \uu         && \text{$\lambda$-abstraction} \\
     \bnfor {}& \app{\uu}{\A}{\B}{\vv}   && \text{application} \\
     \bnfor {}& \refl{\A} \uu            && \text{reflexivity} \\
     \bnfor {}& \subst{\uu}{\sbs}        && \text{substitution $\sbs$ applied to $\uu$} \\
   \\
-  \text{Substitution $\sbs$}
-    \bnf   {}& \sbunit{\G}              && \text{unique substitution $\G \to \ctxempty$} \\
-    \bnfor {}& \sbextend{\sbs}{\A}{\uu} && \text{substitution $\sbs$ extended with $\uu$ of type $\subst{\A}{\sbs}$}
+  \text{Substitution $\sbs$, $\sbt$}
+    \bnf   {}& \sbid{\G}                && \text{identity substitution $\G \to \G$} \\
+    \bnfor {}& \sbcomp{\sbs}{\sbt}      && \text{composition of substitutions} \\
+    \bnfor {}& \sbextend{\sbs}{\A}{\uu} && \text{substitution $\sbs$ extended with $\uu$ of type $\subst{\A}{\sbs}$} \\
+    \bnfor {}& \sbweak{\G}{\A}          && \text{weakening substitution $\ctxextend{\G}{\A} \to \G$}
 \end{align*}
 
 \subsection{Judgments}
@@ -33,9 +35,9 @@ In this section we give the formulation of type theory that we shall work with.
 
 \begin{align*}
 & \isctx{\G}                    && \text{$\G$ is a context} \\
+& \issubst{\sbs}{\G}{\D}        && \text{$\sbs$ is a substitution from context $\G$ to context $\D$} \\
 & \istype{\G}{\A}               && \text{$\A$ is a type in context $\G$} \\
 & \isterm{\G}{\uu}{\A}          && \text{$\uu$ is a term of type $\A$ in context $\G$} \\
-& \issubst{\sbs}{\G}{\D}        && \text{$\sbs$ is a substitution from context $\G$ to context $\D$} \\
 & \eqctx{\G}{\D}                && \text{$\G$ and $\D$ are equal contexts} \\
 & \eqtype{\G}{\A}{\B}           && \text{$\A$ and $\B$ are equal types in context $\G$} \\
 & \eqterm{\G}{\uu}{\vv}{\A}     && \text{$\uu$ and $\vv$ are equal terms of type $\A$ in context $\G$}
@@ -50,8 +52,7 @@ In this section we give the formulation of type theory that we shall work with.
   {\isctx{\ctxempty}}
 
   \infer[\rl{ctx-extend}]
-  {\isctx{\G} \\
-   \istype{\G}{\A}
+  {\istype{\G}{\A}
   }
   {\isctx{(\ctxextend{\G}{\A})}}
 \end{mathpar}
@@ -60,9 +61,15 @@ In this section we give the formulation of type theory that we shall work with.
 \label{sec:subst}
 
 \begin{mathpar}
-  \infer[\rl{subst-unit}]
+  \infer[\rl{subst-id}]
   {\isctx{\G}}
-  {\issubst{\sbunit{\G}}{\G}{\ctxempty}}
+  {\issubst{\sbid{\G}}{\G}{\G}}
+
+  \infer[\rl{subst-compose}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \issubst{\sbt}{\D}{\E}
+  }
+  {\issubst{\sbcomp{\sbt}{\sbs}}{\G}{\E}}
 
   \infer[\rl{subst-extend}]
   {\issubst{\sbs}{\G}{\D} \\
@@ -74,40 +81,30 @@ In this section we give the formulation of type theory that we shall work with.
      {\G}
      {(\ctxextend{\D}{\A})}
   }
+
+  \infer[\rl{subst-weak}]
+  {\istype{\G}{\A}}
+  {\issubst
+     {\sbweak{\G}{\A}}
+     {\ctxextend{\G}{\A}}
+     {\G}
+  }
 \end{mathpar}
-%
-We define the \emph{identity substitution} $\sbid{\G}$ recursively by
-%
-\begin{align*}
-  \sbid{\ctxempty} &= \sbunit{\ctxempty}
-  &
-  \sbid{(\ctxextend{\G}{\A})} &= (\sbextend{\sbid{\G}}{\A}{\var{0}}).
-\end{align*}
-%
-Next, given a context $\G$ of the form
+
+We let $\sbshift{\sbs}{\G}{\A}$ stand for
+$\sbextend{\sbcomp{\sbs}{\sbweak{\G}{\A}}}{\A}{\var{0}}$. Then we have the derivable rule
 %
 \begin{equation*}
-  \ctxextend
-    {\ctxextend{\ctxempty}{\A_n, \ldots}}
-    {\A_1}
+  \infer
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A}
+  }
+  {\issubst
+      {(\sbshift{\sbs}{\G}{\A})}
+      {\ctxextend{\G}{\subst{\A}{\sbs}}}
+      {\ctxextend{\D}{\A}}
+  }
 \end{equation*}
-%
-we define the \emph{weakening substitution}
-%
-\begin{equation*}
-  \issubst{\sbweak{\G}{\B}}{(\ctxextend{\G}{\B})}{\G}
-\end{equation*}
-%
-to be
-%
-\begin{equation*}
-  \sbunit{\ctxextend{\G}{\B}},
-  (\A_n, \var{n}),
-  \ldots
-  (\A_1, \var{1})
-\end{equation*}
-%
-This could be defined by recursion.
 
 \subsection{Types \fbox{$\istype{\G}{\A}$}}
 
@@ -194,12 +191,21 @@ This could be defined by recursion.
 \subsubsection*{Abstraction and application}
 
 \begin{mathpar}
+  % Remark: we want \istype{\G}{\A} as a premise because in order to form the
+  % product type we need it, and we do not want to resort to inversion on the
+  % extended context.
   \infer[\rl{term-abs}]
-  {\isterm{\ctxextend{\G}{\A}}{\uu}{\B}}
+  { \istype{\G}{\A} \\
+    \isterm{\ctxextend{\G}{\A}}{\uu}{\B}
+  }
   {\isterm{\G}{(\lam{\A}{\B}{\uu})}{\Prod{\A}{\B}}}
 
+  % Remark: we want \istype{\ctxextend{\G}{\A}}{\B} because we need to
+  % know that \B is a type in \ctxextend{\G}{\A} and we want to avoid
+  % inversion on ty-prod.
   \infer[\rl{term-app}]
-  {\isterm{\G}{\uu}{\Prod{\A} \B} \\
+  {\istype{\ctxextend{\G}{\A}}{\B} \\
+   \isterm{\G}{\uu}{\Prod{\A} \B} \\
    \isterm{\G}{\vv}{\A}
   }
   {\isterm
@@ -208,9 +214,6 @@ This could be defined by recursion.
      {\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}}}
   }
 \end{mathpar}
-%
-Note: In $\rl{term-app}$ it would be more accurate to apply $\sbid{\G}$ to $\A$ somewhere
-so that we need not worry about whether $\A$ and $\subst{\A}{\sbid{\G}}$ are equal.
 
 
 \subsubsection*{Reflexivity}
@@ -267,7 +270,24 @@ so that we need not worry about whether $\A$ and $\subst{\A}{\sbid{\G}}$ are equ
 \subsubsection*{Substitution}
 
 \begin{mathpar}
-  \infer[\rl{eq-subst-prod}]
+  \infer[\rl{eq-ty-subst-id}]
+  {\istype{\G}{\A}}
+  {\eqtype{\G}
+     {\subst{\A}{\sbid{\G}}}
+     {\A}
+  }
+
+  \infer[\rl{eq-ty-subst-compose}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \issubst{\sbt}{\D}{\E} \\
+   \istype{\E}{\A}
+  }
+  {\eqtype{\G}
+    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
+    {\subst{(\subst{\A}{\sbs})}{\sbt}}
+  }
+
+  \infer[\rl{eq-ty-subst-prod}]
   {\issubst{\sbs}{\G}{\D} \\
    \istype{\D}{\A} \\
    \istype{\ctxextend{\D}{\A}}{\B}
@@ -276,14 +296,11 @@ so that we need not worry about whether $\A$ and $\subst{\A}{\sbid{\G}}$ are equ
    {\subst{(\Prod{\A}{\B})}{\sbs}}
    {\Prod
      {\subst{\A}{\sbs}}
-     {\subst{\B}
-       {\sbextend
-         {\sbs \circ \sbweak{\G}{\subst{\A}{\sbs}}}
-         {\A}{\var{0}}}}
+     {\subst{\B}{\sbshift{\sbs}{\G}{\A}}}
    }
   }
 
-  \infer[\rl{eq-subst-id}]
+  \infer[\rl{eq-ty-subst-id}]
   {\issubst{\sbs}{\G}{\D} \\
    \istype{\D}{\A} \\
    \isterm{\D}{\uu}{\A} \\
@@ -294,22 +311,6 @@ so that we need not worry about whether $\A$ and $\subst{\A}{\sbid{\G}}$ are equ
    {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\vv}{\sbs}}}
   }
 \end{mathpar}
-%
-Note: $\rl{eq-subst-prod}$ is also BROKEN VERY MUCH.
-You can't apply $\sbextend{\sbs}{\A}{\var{0}}$ to $\B$ because you
-need a substitution in $\ctxextend{\G}{\A} \to \ctxextend{\D}{\A}$
-and $\issubst{\sbs}{\G}{\D}$. We cannot extend the domain of a substitution.
-We need something like the $q$ of Hofmann.
-Remark: We could actually use composition of substitutions instead.
-(We still have to decide how to add them to the type theory.)
-In our case, for $\B$, we would need the following substitution:
-%
-\begin{equation*}
-  \issubst
-    {\sbextend{\sbs \circ \sbweak{\G}{\subst{\A}{\sbs}}}{\A}{\var{0}}}
-    {\ctxextend{\G}{\subst{\A}{\sbs}}}
-    {\ctxextend{\D}{\A}}.
-\end{equation*}
 
 \subsubsection*{Congruence rules}
 
@@ -368,7 +369,36 @@ In our case, for $\B$, we would need the following substitution:
 \subsubsection*{Substitutions}
 
 \begin{mathpar}
-  \infer[\rl{eq-subst-var-zero}]
+  \infer[\rl{eq-subst-id}]
+  {\isterm{\G}{\uu}{\A}}
+  {\eqterm{\G}
+     {\subst{\uu}{\sbid{\G}}}
+     {\uu}
+     {\A}
+  }
+
+  \infer[\rl{eq-subst-compose}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \issubst{\sbt}{\D}{\E} \\
+   \isterm{\E}{\uu}{\A}
+  }
+  {\eqterm{\G}
+    {\subst{\uu}{\sbcomp{\sbs}{\sbt}}}
+    {\subst{(\subst{\uu}{\sbs})}{\sbt}}
+    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
+  }
+
+  \infer[\rl{eq-subst-weak}]
+  {\isterm{\G}{\var{k}}{\A} \\
+   \istype{\G}{\B}   
+  }
+  {\eqterm{\ctxextend{\G}{\B}}
+   {\subst{\var{k}}{\sbweak{\G}{\B}}}
+   {\var{k+1}}
+   {\subst{\A}{\sbweak{\G}{\B}}}
+  }
+
+  \infer[\rl{eq-subst-extend-zero}]
   {\issubst{\sbs}{\G}{\D} \\
    \istype{\D}{\A} \\
    \isterm{\G}{\uu}{\subst{\A}{\sbs}}
@@ -379,7 +409,7 @@ In our case, for $\B$, we would need the following substitution:
      {\subst{\A}{\sbs}}
   }
 
-  \infer[\rl{eq-subst-var-succ}]
+  \infer[\rl{eq-subst-extend-succ}]
   {\issubst{\sbs}{\G}{\D} \\
    \isterm{\D}{\var{k}}{\A} \\
    \isterm{\G}{\uu}{\subst{\B}{\sbs}}
@@ -403,7 +433,7 @@ In our case, for $\B$, we would need the following substitution:
       {\subst{\A}{\sbs}}
       {\subst
         {\B}
-        {\sbextend{\sbs \circ \sbweak{\G}{\subst{\A}{\sbs}}}{\A}{\var{0}}}
+        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
       }
       \subst{\uu}{\sbextend{\sbs}{\A}{\var{0}}})
     }
@@ -411,7 +441,7 @@ In our case, for $\B$, we would need the following substitution:
       {\subst{\A}{\sbs}}
       {\subst
         {\B}
-        {\sbextend{\sbs \circ \sbweak{\G}{\subst{\A}{\sbs}}}{\A}{\var{0}}}
+        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
       }
     }
   }
@@ -429,7 +459,7 @@ In our case, for $\B$, we would need the following substitution:
       {\subst{\A}{\sbs}}
       {\subst
         {\B}
-        {\sbextend{\sbs \circ \sbweak{\G}{\subst{\A}{\sbs}}}{\A}{\var{0}}}
+        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
       }
       {\subst{\vv}{\sbs}}}
    {\subst
@@ -488,10 +518,10 @@ Here $\mathsf{UIP}(\A)$ is an abbreviation for what is written traditionally as
           {\subst{\A}{\sbweak{\G}{\A}}}
           {\subst
             {\B}
-            {\sbextend
-              {\sbweak{\G}{\A} \circ
-               \sbweak{\G}{\subst{\A}{\sbweak{\G}{\A}}}}
-              {\A}{\var{0}}
+            {\sbshift
+              {\sbweak{\G}{\A}}
+              {\ctxextend{\G}{\A}}
+              {\A}
             }
           }
           {\var{0}})
@@ -501,10 +531,10 @@ Here $\mathsf{UIP}(\A)$ is an abbreviation for what is written traditionally as
           {\subst{\A}{\sbweak{\G}{\A}}}
           {\subst
             {\B}
-            {\sbextend
-              {\sbweak{\G}{\A} \circ
-               \sbweak{\G}{\subst{\A}{\sbweak{\G}{\A}}}}
-              {\A}{\var{0}}
+            {\sbshift
+              {\sbweak{\G}{\A}}
+              {\ctxextend{\G}{\A}}
+              {\A}
             }
           }
           {\var{0}})
@@ -514,9 +544,8 @@ Here $\mathsf{UIP}(\A)$ is an abbreviation for what is written traditionally as
   {\eqterm{\G}{\uu}{\vv}{\Prod{\A}{\B}}}
 \end{mathpar}
 
-Note: $\rl{prod-eta}$ IS BROKEN VERY MUCH.
-Our salvation is brought by applying the solution for $\rl{eq-subst-prod}$.
-This raises the problem of readability...
+The rule $\rl{prod-eta}$ is optional. We may prefer not to keep it around, as it amounts
+to function extensionality.
 
 \subsubsection*{Congruence rules}
 

@@ -3,6 +3,7 @@
 % Generic entities
 \newcommand{\G}{\Gamma} % a context
 \newcommand{\D}{\Delta} % another context
+\newcommand{\E}{\Xi} % another context
 \newcommand{\A}{A} % a type
 \newcommand{\B}{B} % another type
 \newcommand{\C}{C} % yet another type
@@ -32,11 +33,13 @@
 
 %% Substitution
 
-\newcommand{\sbunit}[1]{\mathsf{\star}_{#1}} % empty substitution
-\newcommand{\sbid}[1]{\mathsf{1}_{#1}} % identity substitution
-\newcommand{\sbextend}[3]{#1,(#2,#3)} % extended substitution
-\newcommand{\sbweak}[2]{\mathsf{\omega}_{(\ctxextend{#1}{#2})}} % weakening substitution
-\newcommand{\subst}[2]{#1[#2]} % substitution operation
+\newcommand{\sbid}[1]{\mathsf{1}_{#1}}         % identity substitution
+\newcommand{\sbcomp}[2]{#1 \circ #2}           % composition of substitutions
+\newcommand{\sbextend}[3]{#1,(#2,#3)}          % extended substitution
+\newcommand{\sbweak}[2]{\mathsf{w}_{(#1, #2)}} % weakening substitution
+\newcommand{\sbshift}[3]{#1 {\mid}_{#2} #3}    % shifted substitution
+\newcommand{\subst}[2]{#1[#2]}                 % substitution operation
+
 
 % Type formers
 \newcommand{\Prod}[1]{\mathop{\textstyle\prod_{#1}}} % dependent product
@@ -54,8 +57,8 @@
 \newcommand{\isterm}[3]{#1 \vdash #2 : #3} % well formed term
 \newcommand{\issubst}[3]{#1 : #2 \to #3} % well formed substitution
 
-\newcommand{\eqctx}[2]{#1 \equiv #2 : \mathsf{ctx}}
-\newcommand{\eqtype}[3]{#1 \vdash #2 \equiv #3 : \mathsf{type}} % equal types
+\newcommand{\eqctx}[2]{#1 \equiv #2}
+\newcommand{\eqtype}[3]{#1 \vdash #2 \equiv #3} % equal types
 \newcommand{\eqterm}[4]{#1 \vdash #2 \equiv #3 : #4} % equal terms
 
 %%%% Translation
