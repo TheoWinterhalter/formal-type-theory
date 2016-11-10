@@ -92,7 +92,8 @@ In this section we give the formulation of type theory that we shall work with.
 \end{mathpar}
 
 We let $\sbshift{\sbs}{\G}{\A}$ stand for
-$\sbextend{\sbcomp{\sbs}{\sbweak{\G}{\A}}}{\A}{\var{0}}$. Then we have the derivable rule
+$\sbextend{\sbcomp{\sbs}{\sbweak{\G}{\subst{\A}{\sbs}}}}{\A}{\var{0}}$.
+Then we have the derivable rule
 %
 \begin{equation*}
   \infer
@@ -238,6 +239,18 @@ $\sbextend{\sbcomp{\sbs}{\sbweak{\G}{\A}}}{\A}{\var{0}}$. Then we have the deriv
   }
   {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\D}{\B})}}
 
+  \infer[\rl{eq-ctx-refl}]
+  {\isctx{\G}}
+  {\eqctx{\G}{\G}}
+
+  \infer[\rl{eq-ctx-sym}]
+  {\eqctx{\D}{\G}}
+  {\eqctx{\G}{\D}}
+
+  \infer[\rl{eq-ctx-trans}]
+  {\eqctx{\G}{\D} \\
+   \eqctx{\D}{\E}}
+  {\eqctx{\G}{\E}}
 \end{mathpar}
 
 \goodbreak
@@ -390,7 +403,7 @@ $\sbextend{\sbcomp{\sbs}{\sbweak{\G}{\A}}}{\A}{\var{0}}$. Then we have the deriv
 
   \infer[\rl{eq-subst-weak}]
   {\isterm{\G}{\var{k}}{\A} \\
-   \istype{\G}{\B}   
+   \istype{\G}{\B}
   }
   {\eqterm{\ctxextend{\G}{\B}}
    {\subst{\var{k}}{\sbweak{\G}{\B}}}
