@@ -67,7 +67,8 @@ Consider a derivation ending with
   \showSubstZero
 \end{equation*}
 %
-\meta{TO DO}
+By induction hypothesis $\isctx{\G}$ and $\istype{\G}{\A}$. We get
+$\isctx{(\ctxextend{\G}{\A})}$ by {\rlCtxExtend}.
 
 
 \subsubsection*{Rule {\rlSubstWeak}}
@@ -90,7 +91,9 @@ Consider a derivation ending with
   \showSubstShift
 \end{equation*}
 %
-\meta{TO DO}
+By induction hypothesis $\isctx{\G}$ and $\isctx{\D}$. Then $\isctx{(\ctxextend{\D}{\A})}$
+by {\rlCtxExtend}, while $\isctx{(\ctxextend{\G}{\subst{\A}{\sbs}})}$ by {\rlTySubst} and
+{\rlCtxExtend}.
 
 \subsection{Types \fbox{$\istype{\G}{\A}$}}
 
@@ -148,7 +151,7 @@ Consider a derivation ending with
   \showTermTyConv
 \end{equation*}
 %
-By induction hypothesis on the right premise we obtain $\istype{\G}{\B}$.
+By induction hypothesis on the right premise we obtain $\isctx{\G}$ and $\istype{\G}{\B}$.
 
 
 \subsubsection*{Rule {\rlTermCtxConv}}
@@ -159,6 +162,7 @@ Consider a derivation ending with
   \showTermCtxConv
 \end{equation*}
 %
+By induction hypothesis on the right premise we obtain $\isctx{\D}$.
 By induction hypothesis on the left premise we obtain $\istype{\G}{\A}$, and then we apply
 {\rlTyCtxConv} using the right premise.
 
@@ -171,6 +175,7 @@ Consider a derivation ending with
   \showTermSubst
 \end{equation*}
 %
+By induction hypothesis on the left premise we obtain $\isctx{\G}$.
 By induction hypothesis on the right premise we obtain $\istype{\D}{\A}$, and then we
 apply {\rlTySubst} using the left premise.
 
@@ -181,6 +186,9 @@ Consider a derivation ending with
 \begin{equation*}
   \showTermVar
 \end{equation*}
+%
+By induction hypothesis we get $\isctx{\G}$, which we may extend to
+$\isctx{(\ctxextend{\G}{\A})}$ by {\rlCtxExtend}.
 %
 We apply {\rlSubstWeak} to the premise to obtain
 $\issubst{\sbweak{\G}{\A}}{\ctxextend{\G}{\A}}{\G}$. Then we apply {\rlTySubst} to it
@@ -193,6 +201,9 @@ Consider a derivation ending with
 \begin{equation*}
   \showTermVarSkip
 \end{equation*}
+%
+By induction hypothesis on the right premise we get $\isctx{\G}$, which we may extend to
+$\isctx{(\ctxextend{\G}{\B})}$ by {\rlCtxExtend}.
 %
 By induction hypothesis on the left premise we obtain $\istype{\G}{\A}$. We
 apply {\rlTySubst} to it and to {\rlSubstWeak} applied to the
@@ -207,6 +218,8 @@ Consider a derivation ending with
   \showTermAbs
 \end{equation*}
 %
+By induction hypothesis on the left premise we obtain $\isctx{\G}$.
+%
 By induction hypothesis on the right premise we obtain $\istype{\ctxextend{\G}{\A}}{\B}$,
 after which we apply {\rlTyProd} to it and to the left premise.
 
@@ -219,31 +232,10 @@ Consider a derivation ending with
   \showTermApp
 \end{equation*}
 %
-% We first argue that we may apply {\rlSubstExtend} as follows:
-% %
-% \begin{equation*}
-%   \inferrule*
-%   {
-%    \inferrule*{\isctx{\G}}{\issubst{\sbid{\G}}{\G}{\G}}
-%    \\
-%    \istype{\G}{\A} \\
-%    \inferrule*
-%       {\isterm{\G}{\vv}{\A} \\
-%        \eqtype{\G}{\A}{\subst{\A}{\sbid{\G}}}
-%       }
-%       {\isterm{\G}{\vv}{\subst{\A}{\sbid{\G}}}}
-%   }
-%   {\issubst
-%    {(\sbextend{\sbid{\G}}{\A}{\vv})}
-%    {\G}
-%    {\ctxextend{\G}{\A}}
-%   }
-% \end{equation*}
-% %
-% The left premise of this derivation follows by \meta{BROKEN:CtxId}, which in turn is
-% justified by \meta{\{something missing: several solutions like strengthening
-% the theorem/program, adding $\istype{\G}{\A}$ as a premise to {\rlTermApp} or
-% devise a way to call the induction hypothesis on its result. \}}
+By induction hypothesis on the right premise we obtain $\isctx{\G}$.
+%
+By {\rlSubstZero} we have $\issubst{\sbzero{\G}{\A}{\vv}}{\G}{\ctxextend{\G}{\A}}$, which
+allows us to concluding by an application of {\rlTySubst} to the left premise.
 
 \subsubsection*{Rule {\rlTermRefl}}
 
@@ -253,9 +245,9 @@ Consider a derivation ending with
   \showTermRefl
 \end{equation*}
 %
-By induction hypothesis on the premise we obtain $\istype{\G}{\A}$
-and then by using {\rlTyId} on it and on the premise itself twice,
-we conclude $\istype{\G}{\Id{\A}{\uu}{\uu}}$.
+By induction hypothesis on the premise we obtain $\isctx{\G}$ and $\istype{\G}{\A}$ and
+then by using {\rlTyId} on it and on the premise itself twice, we conclude
+$\istype{\G}{\Id{\A}{\uu}{\uu}}$.
 
 \subsection{Context equality \fbox{$\eqctx{\G}{\D}$}}
 
