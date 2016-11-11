@@ -216,9 +216,9 @@ Consider a derivation ending with
   }
 \end{equation*}
 %
-We apply $\rl{subst-weak}$ to the right premise to obtain
-$\issubst{\sbweak{\G}{\A}}{\ctxextend{\G}{\A}}{\G}$. Then we apply to it and to the right
-premise the rule $\rl{ty-subst}$.
+We apply $\rl{subst-weak}$ to the premise to obtain
+$\issubst{\sbweak{\G}{\A}}{\ctxextend{\G}{\A}}{\G}$. Then we apply $\rl{ty-subst}$ to it
+and to the premise.
 
 \subsubsection*{Rule $\rl{term-var-skip}$}
 
@@ -338,12 +338,11 @@ Consider a derivation ending with
   {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\D}{\B})}}
 \end{equation*}
 %
-By induction hypothesis on the right premise we obtain
-$\istype{\G}{\A}$ and $\istype{\G}{\B}$.
-Now, using $\rl{ty-ctx-conv}$ with the left premise and the $\istype{\G}{\B}$
-we obtained, we obtain $\istype{\D}{\B}$.
-From this, we conclude, using $\rl{ctx-extend}$, that
-$\isctx{\ctxextend{\G}{\A}}$ and $\isctx{\ctxextend{\D}{\B}}$.
+By induction hypothesis on the right premise we obtain $\istype{\G}{\A}$ and
+$\istype{\G}{\B}$. Now, using $\rl{ty-ctx-conv}$ with the left premise and the
+$\istype{\G}{\B}$, we get $\istype{\D}{\B}$. From this, we conclude
+$\isctx{\ctxextend{\G}{\A}}$ and $\isctx{\ctxextend{\D}{\B}}$ by applying
+$\rl{ctx-extend}$.
 
 \subsubsection*{Rule $\rl{eq-ctx-refl}$}
 
@@ -453,9 +452,8 @@ Consider a derivation ending with
   }
 \end{equation*}
 %
-We have $\istype{\G}{\A}$ as premise.
-Then, using $\rl{ty-subst}$ on $\issubst{\sbid{\G}}{\G}{\G}$ (that we get from
-$\rl{subst-id}$ and the induction hypothesis on the premise), we conclude
+We have $\istype{\G}{\A}$ as premise. We derive $\issubst{\sbid{\G}}{\G}{\G}$ from the
+induction hypothesis by $\rl{subst-id}$, and use it in $\rl{ty-subst}$ to conclude
 $\istype{\G}{\subst{\A}{\sbid{\G}}}$.
 
 \subsubsection*{Rule $\rl{eq-ty-subst-compose}$}
@@ -474,12 +472,10 @@ Consider a derivation ending with
   }
 \end{equation*}
 %
-Using $\rl{ty-subst}$ applied to the right premise and to
-$\issubst{\sbcomp{\sbs}{\sbt}}{\G}{\E}$, which we get from the two first
-premises and $\rl{subst-compose}$, we obtain
-$\istype{\G}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}$.
-Using $\rl{ty-subst}$ twice on the premises we conclude
-$\istype{\G}{\subst{(\subst{\A}{\sbs})}{\sbt}}$.
+We use the first two premises and $\rl{subst-compose}$ to derive
+$\issubst{\sbcomp{\sbs}{\sbt}}{\G}{\E}$, which we then use in $\rl{ty-subst}$ to obtain
+$\istype{\G}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}$. Similarly, we apply $\rl{ty-subst}$ twice
+on the premises to conclude $\istype{\G}{\subst{(\subst{\A}{\sbs})}{\sbt}}$.
 
 \subsubsection*{Rule $\rl{eq-ty-subst-prod}$}
 
@@ -529,10 +525,10 @@ Consider a derivation ending with
   }
 \end{equation*}
 %
-Use $\rl{ty-id}$ followed by $\rl{ty-subst}$ to get
-$\istype{\G}{\subst{(\Id{\A}{\uu}{\vv})}{\sbs}}$.
-Use $\rl{ty-subst}$ and $\rl{term-subst}$ on the last three premises and
-then $\rl{ty-id}$ to get
+We apply $\rl{ty-id}$ and $\rl{ty-subst}$ to the premises to get
+$\istype{\G}{\subst{(\Id{\A}{\uu}{\vv})}{\sbs}}$. Then we apply $\rl{ty-subst}$ and
+$\rl{term-subst}$ on the last three premises and put the results together using
+$\rl{ty-id}$ to get
 $\istype{\G}{\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\vv}{\sbs}}}$.
 
 \subsubsection*{Rule $\rl{cong-prod}$}
@@ -563,11 +559,9 @@ Consider a derivation ending with
               {\Id{\B}{\vv_1}{\vv_2}}}
 \end{equation*}
 %
-\sloppy
-Use $\rl{ty-id}$ on the induction hypotheses to get
-$\istype{\G}{\Id{\A}{\uu_1}{\uu_2}}$.
-We get $\istype{\G}{\Id{\B}{\vv_1}{\vv_2}}$ the same way, but
-using $\rl{term-ty-conv}$ on the last two induction hypotheses.
+We apply $\rl{ty-id}$ to the induction hypotheses to get
+$\istype{\G}{\Id{\A}{\uu_1}{\uu_2}}$. We obtain $\istype{\G}{\Id{\B}{\vv_1}{\vv_2}}$ in
+the same way, but use $\rl{term-ty-conv}$ on the last two induction hypotheses beforehand.
 
 \subsubsection*{Rule $\rl{cong-ty-subst}$}
 
