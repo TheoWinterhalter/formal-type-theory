@@ -1,21 +1,46 @@
 \section{Type theory is well formed}
 \label{sec:type-theory-well}
 
-\begin{theorem}
-  Type theory is well formed in the following sense:
+\begin{problem}
+  \leavevmode
   %
   \begin{enumerate}
-  \item \label{sane-issubst} if $\issubst{\sbs}{\G}{\D}$ then $\isctx{\G}$ and $\isctx{\D}$,
-  \item \label{sane-istype}  if $\istype{\G}{\A}$ then $\isctx{\G}$,
-  \item \label{sane-isterm}  if $\isterm{\G}{\uu}{\A}$ then $\istype{\G}{\A}$,
-  \item \label{sane-eqctx}   if $\eqctx{\G}{\D}$ then $\isctx{\G}$ and $\isctx{\D}$,
-  \item \label{sane-eqtype}  if $\eqtype{\G}{\A}{\B}$ then $\istype{\G}{\A}$ and $\istype{\G}{\B}$,
-  \item \label{sane-eqterm}  if $\eqterm{\G}{\uu}{\vv}{\A}$ then $\isterm{\G}{\uu}{\A}$ and $\isterm{\G}{\vv}{\A}$.
+  \item \label{sane-issubst} Given $\issubst{\sbs}{\G}{\D}$ construct
+    \begin{enumerate}
+    \item $\isctx{\G}$,
+    \item $\isctx{\D}$,
+    \end{enumerate}
+  \item \label{sane-istype}  given $\istype{\G}{\A}$ construct $\isctx{\G}$,
+  \item \label{sane-isterm}  given $\isterm{\G}{\uu}{\A}$ construct
+    \begin{enumerate}
+    \item $\isctx{\G}$,
+    \item $\istype{\G}{\A}$,
+    \end{enumerate}
+  \item \label{sane-eqctx}   given $\eqctx{\G}{\D}$ construct
+    \begin{enumerate}
+    \item $\isctx{\G}$,
+    \item $\isctx{\D}$,
+    \end{enumerate}
+  \item \label{sane-eqtype}  given $\eqtype{\G}{\A}{\B}$ construct
+    \begin{enumerate}
+    \item $\isctx{\G}$,
+    \item $\istype{\G}{\A}$,
+    \item $\istype{\G}{\B}$,
+    \end{enumerate}
+  \item \label{sane-eqterm}  given $\eqterm{\G}{\uu}{\vv}{\A}$ construct
+    \begin{enumerate}
+    \item $\isctx{\G}$,
+    \item $\istype{\G}{\A}$,
+    \item $\istype{\G}{\B}$,
+    \item $\isterm{\G}{\uu}{\A}$,
+    \item $\isterm{\G}{\vv}{\A}$.
+    \end{enumerate}
   \end{enumerate}
-\end{theorem}
-
-The rest of this section contains the proof, which proceeds by structural induction on the
+\end{problem}
+%
+The rest of this section contains the construction, which proceeds by structural induction on the
 derivation.
+
 
 \subsection{Contexts \fbox{$\isctx{\G}$}}
 
