@@ -47,48 +47,22 @@ In this section we give the formulation of type theory that we shall work with.
 \label{sec:contexts}
 
 \begin{mathpar}
-  \infer[\rl{ctx-empty}]
-  { }
-  {\isctx{\ctxempty}}
+  {\label{rul:ctx-empty} \showCtxEmpty}
 
-  \infer[\rl{ctx-extend}]
-  {\istype{\G}{\A}
-  }
-  {\isctx{(\ctxextend{\G}{\A})}}
+  {\label{rul:ctx-extend} \showCtxExtend}
 \end{mathpar}
 
 \subsection{Substitutions \fbox{$\issubst{\sbs}{\G}{\D}$}}
 \label{sec:subst}
 
 \begin{mathpar}
-  \infer[\rl{subst-id}]
-  {\isctx{\G}}
-  {\issubst{\sbid{\G}}{\G}{\G}}
+  {\label{rul:subst-id} \showSubstId}
 
-  \infer[\rl{subst-compose}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \issubst{\sbt}{\D}{\E}
-  }
-  {\issubst{\sbcomp{\sbt}{\sbs}}{\G}{\E}}
+  {\label{rul:subst-compose} \showSubstCompose}
 
-  \infer[\rl{subst-extend}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\D}{\A} \\
-   \isterm{\G}{\uu}{\subst{\A}{\sbs}}
-  }
-  {\issubst
-     {(\sbextend{\sbs}{\A}{\uu})}
-     {\G}
-     {(\ctxextend{\D}{\A})}
-  }
+  {\label{rul:subst-extend} \showSubstExtend}
 
-  \infer[\rl{subst-weak}]
-  {\istype{\G}{\A}}
-  {\issubst
-     {\sbweak{\G}{\A}}
-     {\ctxextend{\G}{\A}}
-     {\G}
-  }
+  {\label{rul:subst-weak} \showSubstWeak}
 \end{mathpar}
 
 We let $\sbshift{\sbs}{\G}{\A}$ stand for
@@ -112,81 +86,36 @@ Then we have the derivable rule
 \subsubsection*{General rules}
 
 \begin{mathpar}
-  \infer[\rl{ty-ctx-conv}]
-  {\istype{\G}{\A} \\
-    \eqctx{\G}{\D}
-  }
-  {\istype{\D}{\A}}
+  {\label{rul:ty-ctx-conv} \showTyCtxConv}
 
-  \infer[\rl{ty-subst}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\D}{\A}
-  }
-  {\istype{\G}{\subst{\A}{\sbs}}}
+  {\label{rul:ty-subst} \showTySubst}
 \end{mathpar}
 
 \subsubsection*{Type formers}
 
 \begin{mathpar}
-  \infer[\rl{ty-prod}]
-  {\istype{\G}{\A} \\
-   \istype{\ctxextend{\G}{\A}}{\B}
-  }
-  {\istype{\G}{\Prod{\A}{\B}}}
+  {\label{rul:ty-prod} \showTyProd}
 
-  \infer[\rl{ty-id}]
-  {\istype{\G}{\A}\\
-   \isterm{\G}{\uu}{\A}\\
-   \isterm{\G}{\vv}{\A}
-  }
-  {\istype{\G}{\Id{\A}{\uu}{\vv}}}
+  {\label{rul:ty-id} \showTyId}
 \end{mathpar}
 
 \subsection{Terms \fbox{$\isterm{\G}{\uu}{\A}$}}
 
 \subsubsection*{General rules}
 \begin{mathpar}
-  \infer[\rl{term-ty-conv}]
-  {\isterm{\G}{\uu}{\A} \\
-   \eqtype{\G}{\A}{\B}
-  }
-  {\isterm{\G}{\uu}{\B}}
+  {\label{rul:term-ty-conv} \showTermTyConv}
 
-  \infer[\rl{term-ctx-conv}]
-  {\isterm{\G}{\uu}{\A} \\
-   \eqctx{\G}{\D}
-  }
-  {\isterm{\D}{\uu}{\A}}
+  {\label{rul:term-ctx-conv} \showTermCtxConv}
 
-  \infer[\rl{term-subst}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \isterm{\D}{\uu}{\A}
-  }
-  {\isterm{\G}{\subst{\uu}{\sbs}}{\subst{\A}{\sbs}}}
+  {\label{rul:term-subst} \showTermSubst}
 \end{mathpar}
 
 \subsubsection*{Variables}
 
 \begin{mathpar}
-  \infer[\rl{term-var}]
-  {
-   \istype{\G}{\A}
-  }
-  {\isterm
-     {\ctxextend{\G}{\A}}
-     {\var{0}}
-     {\subst{\A}{\sbweak{\G}{\A}}}
-  }
+  {\label{rul:term-var} \showTermVar}
 
-  \infer[\rl{term-var-skip}]
-  {\isterm{\G}{\var{k}}{\A} \\
-   \istype{\G}{\B}
-  }
-  {\isterm
-     {\ctxextend{\G}{\B}}
-     {\var{k+1}}
-     {\subst{\A}{\sbweak{\G}{\B}}}
-  }
+  {\label{rul:term-var-skip} \showTermVarSkip}
   \end{mathpar}
 
 \subsubsection*{Abstraction and application}
@@ -195,49 +124,28 @@ Then we have the derivable rule
   % Remark: we want \istype{\G}{\A} as a premise because in order to form the
   % product type we need it, and we do not want to resort to inversion on the
   % extended context.
-  \infer[\rl{term-abs}]
-  { \istype{\G}{\A} \\
-    \isterm{\ctxextend{\G}{\A}}{\uu}{\B}
-  }
-  {\isterm{\G}{(\lam{\A}{\B}{\uu})}{\Prod{\A}{\B}}}
+  {\label{rul:term-abs} \showTermAbs}
 
   % Remark: we want \istype{\ctxextend{\G}{\A}}{\B} because we need to
   % know that \B is a type in \ctxextend{\G}{\A} and we want to avoid
   % inversion on ty-prod.
-  \infer[\rl{term-app}]
-  {\istype{\ctxextend{\G}{\A}}{\B} \\
-   \isterm{\G}{\uu}{\Prod{\A} \B} \\
-   \isterm{\G}{\vv}{\A}
-  }
-  {\isterm
-     {\G}
-     {\app{\uu}{\A}{\B}{\vv}}
-     {\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}}}
-  }
+  {\label{rul:term-app} \showTermApp}
 \end{mathpar}
 
 
 \subsubsection*{Reflexivity}
 
 \begin{mathpar}
-  \infer[\rl{term-refl}]
-  {\isterm{\G}{\uu}{\A}}
-  {\isterm{\G}{\refl{\A} \uu}{\Id{\A}{\uu}{\uu}}}
+  {\label{rul:term-refl} \showTermRefl}
 \end{mathpar}
 
 \subsection{Context equality \fbox{$\eqctx{\G}{\D}$}}
 \label{sec:cont-equal}
 
 \begin{mathpar}
-  \infer[\rl{eq-ctx-empty}]
-  { }
-  {\eqctx{\ctxempty}{\ctxempty}}
+  {\label{rul:eq-ctx-empty} \showEqCtxEmpty}
 
-  \infer[\rl{eq-ctx-extend}]
-  {
-   \eqtype{\G}{\A}{\B}
-  }
-  {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\G}{\B})}}
+  {\label{rul:eq-ctx-extend} \showEqCtxExtend}
 \end{mathpar}
 
 \goodbreak
@@ -248,91 +156,35 @@ Then we have the derivable rule
 \subsubsection*{General rules}
 
 \begin{mathpar}
-  \infer[\rl{eq-ty-conv}]
-  {\eqtype{\G}{\A}{\B}\\
-    \eqctx{\G}{\D}}
-  {\eqtype{\D}{\A}{\B}}
+  {\label{rul:eq-ty-ctx-conv} \showEqTyCtxConv}
 
-  \infer[\rl{eq-ty-refl}]
-  {\istype{\G}{\A}}
-  {\eqtype{\G}{\A}{\A}}
+  {\label{rul:eq-ty-refl} \showEqTyRefl}
 
-  \infer[\rl{eq-ty-sym}]
-  {\eqtype{\G}{\B}{\A}}
-  {\eqtype{\G}{\A}{\B}}
+  {\label{rul:eq-ty-sym} \showEqTySym}
 
-  \infer[\rl{eq-ty-trans}]
-  {\eqtype{\G}{\A}{\B}\\
-   \eqtype{\G}{\B}{\C}}
-  {\eqtype{\G}{\A}{\C}}
+  {\label{rul:eq-ty-trans} \showEqTyTrans}
 \end{mathpar}
 
 \subsubsection*{Substitution}
 
 \begin{mathpar}
-  \infer[\rl{eq-ty-subst-id}]
-  {\istype{\G}{\A}}
-  {\eqtype{\G}
-     {\subst{\A}{\sbid{\G}}}
-     {\A}
-  }
+  {\label{rul:eq-ty-subst-id} \showEqTySubstId}
 
-  \infer[\rl{eq-ty-subst-compose}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \issubst{\sbt}{\D}{\E} \\
-   \istype{\E}{\A}
-  }
-  {\eqtype{\G}
-    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
-    {\subst{(\subst{\A}{\sbs})}{\sbt}}
-  }
+  {\label{rul:eq-ty-subst-compose} \showEqTySubstCompose}
 
-  \infer[\rl{eq-ty-subst-prod}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\D}{\A} \\
-   \istype{\ctxextend{\D}{\A}}{\B}
-  }
-  {\eqtype{\G}
-   {\subst{(\Prod{\A}{\B})}{\sbs}}
-   {\Prod
-     {\subst{\A}{\sbs}}
-     {\subst{\B}{\sbshift{\sbs}{\G}{\A}}}
-   }
-  }
+  {\label{rul:eq-ty-subst-prod} \showEqTySubstProd}
 
-  \infer[\rl{eq-ty-subst-id}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\D}{\A} \\
-   \isterm{\D}{\uu}{\A} \\
-   \isterm{\D}{\vv}{\A}
-  }
-  {\eqtype{\G}
-   {\subst{(\Id{\A}{\uu}{\vv})}{\sbs}}
-   {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\vv}{\sbs}}}
-  }
+  {\label{rul:eq-ty-subst-id} \showEqTySubstId}
 \end{mathpar}
 
 \subsubsection*{Congruence rules}
 
 \begin{mathpar}
-  \infer[\rl{cong-prod}]
-  {\eqtype{\G}{\A_1}{\B_1}\\
-   \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}}
-  {\eqtype{\G}{\Prod{\A_1}{\A_2}}{\Prod{\B_1}{\B_2}}}
+  {\label{rul:cong-prod} \showCongProd}
 
-  \infer[\rl{cong-id}]
-  {\eqtype{\G}{\A}{\B}\\
-   \eqterm{\G}{\uu_1}{\vv_1}{\A}\\
-   \eqterm{\G}{\uu_2}{\vv_2}{\A}
-  }
-  {\eqtype{\G}{\Id{\A}{\uu_1}{\uu_2}}
-              {\Id{\B}{\vv_1}{\vv_2}}}
+  {\label{rul:cong-id} \showCongId}
 
-  \infer[\rl{cong-ty-subst}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \eqtype{\D}{\A}{\B}
-  }
-  {\eqtype{\G}{\subst{\A}{\sbs}}{\subst{\B}{\sbs}}}
+  {\label{rul:cong-ty-subst} \showCongTySubst}
 \end{mathpar}
 
 \goodbreak
@@ -342,151 +194,41 @@ Then we have the derivable rule
 \subsubsection*{General rules}
 
 \begin{mathpar}
-  \infer[\rl{eq-ty-conv}]
-  {\eqterm{\G}{\uu}{\vv}{\A}\\
-    \eqtype{\G}{\A}{\B}}
-  {\eqterm{\G}{\uu}{\vv}{\B}}
+  {\label{rul:eq-ty-conv} \showEqTyConv}
 
-  \infer[\rl{eq-ctx-conv}]
-  {\eqterm{\G}{\uu}{\vv}{\A}\\
-    \eqctx{\G}{\D}}
-  {\eqterm{\D}{\uu}{\vv}{\A}}
+  {\label{rul:eq-ctx-conv} \showEqCtxConv}
 
-  \infer[\rl{eq-refl}]
-  {\isterm{\G}{\uu}{\A}}
-  {\eqterm{\G}{\uu}{\uu}{\A}}
+  {\label{rul:eq-refl} \showEqRefl}
 
-  \infer[\rl{eq-sym}]
-  {\eqterm{\G}{\vv}{\uu}{\A}}
-  {\eqterm{\G}{\uu}{\vv}{\A}}
+  {\label{rul:eq-sym} \showEqSym}
 
-  \infer[\rl{eq-trans}]
-  {\eqterm{\G}{\uu}{\vv}{\A}\\
-   \eqterm{\G}{\vv}{\ww}{\A}}
-  {\eqterm{\G}{\uu}{\ww}{\A}}
+  {\label{rul:eq-trans} \showEqTrans}
 \end{mathpar}
 
 \subsubsection*{Substitutions}
 
 \begin{mathpar}
-  \infer[\rl{eq-subst-id}]
-  {\isterm{\G}{\uu}{\A}}
-  {\eqterm{\G}
-     {\subst{\uu}{\sbid{\G}}}
-     {\uu}
-     {\A}
-  }
+  {\label{rul:eq-subst-id} \showEqSubstId}
 
-  \infer[\rl{eq-subst-compose}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \issubst{\sbt}{\D}{\E} \\
-   \isterm{\E}{\uu}{\A}
-  }
-  {\eqterm{\G}
-    {\subst{\uu}{\sbcomp{\sbs}{\sbt}}}
-    {\subst{(\subst{\uu}{\sbs})}{\sbt}}
-    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
-  }
+  {\label{rul:eq-subst-compose} \showEqSubstCompose}
 
-  \infer[\rl{eq-subst-weak}]
-  {\isterm{\G}{\var{k}}{\A} \\
-   \istype{\G}{\B}
-  }
-  {\eqterm{\ctxextend{\G}{\B}}
-   {\subst{\var{k}}{\sbweak{\G}{\B}}}
-   {\var{k+1}}
-   {\subst{\A}{\sbweak{\G}{\B}}}
-  }
+  {\label{rul:eq-subst-weak} \showEqSubstWeak}
 
-  \infer[\rl{eq-subst-extend-zero}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\D}{\A} \\
-   \isterm{\G}{\uu}{\subst{\A}{\sbs}}
-  }
-  {\eqterm{\G}
-     {\subst{\var{0}}{\sbextend{\sbs}{\A}{\uu}}}
-     {\uu}
-     {\subst{\A}{\sbs}}
-  }
+  {\label{rul:eq-subst-extend-zero} \showEqSubstExtendZero}
 
-  \infer[\rl{eq-subst-extend-succ}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \isterm{\D}{\var{k}}{\A} \\
-   \isterm{\G}{\uu}{\subst{\B}{\sbs}}
-  }
-  {\eqterm{\G}
-     {\subst
-        {\var{k+1}}
-        {\sbextend{\sbs}{\B}{\uu}}
-     }
-     {\subst{\var{k}}{\sbs}}
-     {\subst{\A}{\sbs}}
-  }
+  {\label{rul:eq-subst-extend-succ} \showEqSubstExtendSucc}
 
-  \infer[\rl{eq-subst-abs}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \isterm{\ctxextend{\D}{\A}}{\uu}{\B}
-  }
-  {\eqterm{\G}
-    {\subst{(\lam{\A}{\B} \uu)}{\sbs}}
-    {(\lam
-      {\subst{\A}{\sbs}}
-      {\subst
-        {\B}
-        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
-      }
-      \subst{\uu}{\sbextend{\sbs}{\A}{\var{0}}})
-    }
-    {\Prod
-      {\subst{\A}{\sbs}}
-      {\subst
-        {\B}
-        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
-      }
-    }
-  }
+  {\label{rul:eq-subst-abs} \showEqSubstAbs}
 
-  \infer[\rl{eq-subst-app}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\ctxextend{\D}{\A}}{\B} \\
-   \isterm{\D}{\uu}{\Prod{\A}{\B}} \\
-   \isterm{\D}{\vv}{\A}
-  }
-  {\eqterm{\G}
-   {\subst{(\app{\uu}{\A}{\B}{\vv})}{\sbs}}
-   {\app
-      {\subst{\uu}{\sbs}}
-      {\subst{\A}{\sbs}}
-      {\subst
-        {\B}
-        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
-      }
-      {\subst{\vv}{\sbs}}}
-   {\subst
-     {(\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}})}
-     {\sbs}
-   }
-  }
+  {\label{rul:eq-subst-app} \showEqSubstApp}
 
-  \infer[\rl{eq-subst-refl}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \isterm{\D}{\uu}{\A}
-  }
-  {\eqterm{\G}
-   {\subst{(\refl{\A}{\uu})}{\sbs}}
-   {\refl{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}}
-   {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\uu}{\sbs}}}
-  }
+  {\label{rul:eq-subst-refl} \showEqSubstRefl}
 \end{mathpar}
 
 \subsubsection*{Equality reflection}
 %
 \begin{mathpar}
-  \infer[\rl{eq-reflection}]
-  {\isterm{\G}{\ww_1}{\Id{\A}{\uu}{\vv}} \\
-   \isterm{\G}{\ww_2}{\textsf{UIP}(\A)}
-  }
-  {\eqterm{\G}{\uu}{\vv}{\A}}
+  {\label{rul:eq-reflection} \showEqReflection}
 \end{mathpar}
 %
 Here $\mathsf{UIP}(\A)$ is an abbreviation for what is written traditionally as
@@ -495,53 +237,9 @@ Here $\mathsf{UIP}(\A)$ is an abbreviation for what is written traditionally as
 \subsubsection*{Computation and Extensionality}
 
 \begin{mathpar}
-\infer[\rl{prod-beta}]
-  {\isterm{\ctxextend{\G}{\A}}{\uu}{\B}\\
-    \isterm{\G}{\vv}{\A}}
-  {\eqterm{\G}{\bigl(\app{(\lam{\A}{\B}{\uu})}{\A}{\B}{\vv}\bigr)}
-              {\subst{\uu}{\sbextend{\sbid{\G}}{\A}{\vv}}}
-              {\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}}}}
+  {\label{rul:prod-beta} \showProdBeta}
 
-  % \infer[\rl{uip}]
-  % {\isterm{\G}{\vv_1}{\Id{\A}{\uu}{\vv}} \\
-  %   \isterm{\G}{\vv_2}{\Id{\A}{\uu}{\vv}}
-  % }
-  % {\eqterm{\G}{\vv_1}{e'_2}{\Id{\A}{\uu}{\vv}}}
-
-  \infer[\rl{prod-eta}]
-  {\isterm{\G}{\uu}{\Prod{\A}{\B}}\\
-   \isterm{\G}{\vv}{\Prod{\A}{\B}}\\\\
-   \eqterm
-      {\ctxextend{\G}{\A}}
-      {(\app
-          {\subst{\uu}{\sbweak{\G}{\A}}}
-          {\subst{\A}{\sbweak{\G}{\A}}}
-          {\subst
-            {\B}
-            {\sbshift
-              {\sbweak{\G}{\A}}
-              {\ctxextend{\G}{\A}}
-              {\A}
-            }
-          }
-          {\var{0}})
-      }
-      {(\app
-          {\subst{\vv}{\sbweak{\G}{\A}}}
-          {\subst{\A}{\sbweak{\G}{\A}}}
-          {\subst
-            {\B}
-            {\sbshift
-              {\sbweak{\G}{\A}}
-              {\ctxextend{\G}{\A}}
-              {\A}
-            }
-          }
-          {\var{0}})
-      }
-      {\B}
-  }
-  {\eqterm{\G}{\uu}{\vv}{\Prod{\A}{\B}}}
+  {\label{rul:prod-eta} \showProdEta}
 \end{mathpar}
 
 The rule $\rl{prod-eta}$ is optional. We may prefer not to keep it around, as it amounts
@@ -550,41 +248,14 @@ to function extensionality.
 \subsubsection*{Congruence rules}
 
 \begin{mathpar}
+  {\label{rul:cong-abs} \showCongAbs}
 
-  \infer[\rl{cong-abs}]
-  {\eqtype{\G}{\A_1}{\B_1}\\
-    \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}\\
-    \eqterm{\ctxextend{\G}{\A_1}}{\uu_1}{\uu_2}{\A_2}}
-  {\eqterm{\G}{(\lam{\A_1}{\A_2}{\uu_1})}
-              {(\lam{\B_1}{\B_2}{\uu_2})}
-              {\Prod{\A_1}{\A_2}}}
+  {\label{rul:cong-app} \showCongApp}
 
-  \infer[\rl{cong-app}]
-  {\eqtype{\G}{\A_1}{\B_1}\\
-   \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}\\\\
-   \eqterm{\G}{\uu_1}{\vv_1}{\Prod{\A_1}{\A_2}}\\
-   \eqterm{\G}{\uu_2}{\vv_2}{\A_1}}
-  {\eqterm
-    {\G}
-    {(\app{\uu_1}{\A_1}{\A_2}{\uu_2})}
-    {(\app{\vv_1}{\B_1}{\B_2}{\vv_2})}
-    {\subst{\A_2}{\sbextend{\sbid{\G}}{\A_1}{\uu_2}}}
-  }
+  {\label{rul:cong-refl} \showCongRefl}
 
-  \infer[\rl{cong-refl}]
-  {\eqterm{\G}{\uu_1}{\uu_2}{\A_1}\\
-    \eqtype{\G}{\A_1}{\A_2}}
-  {\eqterm{\G}{\refl{\A_1} \uu_1}{\refl{\A_2} \uu_2}{\Id{\A_1}{\uu_1}{\uu_1}}}
-
-
-  \infer[\rl{cong-term-subst}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \eqterm{\D}{\uu_1}{\uu_2}{\A}
-  }
-  {\eqterm{\G}{\subst{\uu_1}{\sbs}}{\subst{\uu_2}{\sbs}}{\subst{\A}{\sbs}}}
-
+  {\label{rul:cong-term-subst} \showCongTermSubst}
 \end{mathpar}
-
 
 %%% Local Variables:
 %%% mode: latex

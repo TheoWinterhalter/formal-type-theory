@@ -1,0 +1,665 @@
+% All the inference rules are defined here as macros.
+
+\newcommand{\referTo}[2]{\hyperref[#2]{$\rl{#1}$}}
+
+%%%% Contexts
+
+
+\newcommand{\refCtxEmpty}{\referTo{ctx-empty}{rul:ctx-empty}}
+\newcommand{\showCtxEmpty}{%
+  \infer[\rl{ctx-empty}] % CtxEmpty
+  { }
+  {\isctx{\ctxempty}}
+}
+
+
+\newcommand{\refCtxExtend}{\referTo{ctx-extend}{rul:ctx-extend}}
+\newcommand{\showCtxExtend}{%
+  \infer[\rl{ctx-extend}] % CtxExtend
+  {\istype{\G}{\A}
+  }
+  {\isctx{(\ctxextend{\G}{\A})}}
+}
+
+
+%%%% Substitutions
+
+
+\newcommand{\refSubstId}{\referTo{subst-id}{rul:subst-id}}
+\newcommand{\showSubstId}{%
+  \infer[\rl{subst-id}] % SubstId
+  {\isctx{\G}}
+  {\issubst{\sbid{\G}}{\G}{\G}}
+}
+
+
+\newcommand{\refSubstCompose}{\referTo{subst-compose}{rul:subst-compose}}
+\newcommand{\showSubstCompose}{%
+  \infer[\rl{subst-compose}] % SubstCompose
+  {\issubst{\sbs}{\G}{\D} \\
+    \issubst{\sbt}{\D}{\E}
+  }
+  {\issubst{\sbcomp{\sbt}{\sbs}}{\G}{\E}}
+}
+
+
+\newcommand{\refSubstExtend}{\referTo{subst-extend}{rul:subst-extend}}
+\newcommand{\showSubstExtend}{%
+  \infer[\rl{subst-extend}] % SubstExtend
+  {\issubst{\sbs}{\G}{\D} \\
+    \istype{\D}{\A} \\
+    \isterm{\G}{\uu}{\subst{\A}{\sbs}}
+  }
+  {\issubst
+    {(\sbextend{\sbs}{\A}{\uu})}
+    {\G}
+    {(\ctxextend{\D}{\A})}
+  }
+}
+
+
+\newcommand{\refSubstWeak}{\referTo{subst-weak}{rul:subst-weak}}
+\newcommand{\showSubstWeak}{%
+  \infer[\rl{subst-weak}] % SubstWeak
+  {\istype{\G}{\A}}
+  {\issubst
+    {\sbweak{\G}{\A}}
+    {\ctxextend{\G}{\A}}
+    {\G}
+  }
+}
+
+
+%%%% Types
+
+
+\newcommand{\refTyCtxConv}{\referTo{ty-ctx-conv}{rul:ty-ctx-conv}}
+\newcommand{\showTyCtxConv}{%
+  \infer[\rl{ty-ctx-conv}] % TyCtxConv
+  {\istype{\G}{\A} \\
+    \eqctx{\G}{\D}
+  }
+  {\istype{\D}{\A}}
+}
+
+
+\newcommand{\refTySubst}{\referTo{ty-subst}{rul:ty-subst}}
+\newcommand{\showTySubst}{%
+  \infer[\rl{ty-subst}] % TySubst
+  {\issubst{\sbs}{\G}{\D} \\
+    \istype{\D}{\A}
+  }
+  {\istype{\G}{\subst{\A}{\sbs}}}
+}
+
+
+\newcommand{\refTyProd}{\referTo{ty-prod}{rul:ty-prod}}
+\newcommand{\showTyProd}{%
+  \infer[\rl{ty-prod}] % TyProd
+  {\istype{\G}{\A} \\
+    \istype{\ctxextend{\G}{\A}}{\B}
+  }
+  {\istype{\G}{\Prod{\A}{\B}}}
+}
+
+
+\newcommand{\refTyId}{\referTo{ty-id}{rul:ty-id}}
+\newcommand{\showTyId}{%
+  \infer[\rl{ty-id}] % TyId
+  {\istype{\G}{\A}\\
+    \isterm{\G}{\uu}{\A}\\
+    \isterm{\G}{\vv}{\A}
+  }
+  {\istype{\G}{\Id{\A}{\uu}{\vv}}}
+}
+
+
+%%%% Terms
+
+
+\newcommand{\refTermTyConv}{\referTo{term-ty-conv}{rul:term-ty-conv}}
+\newcommand{\showTermTyConv}{%
+  \infer[\rl{term-ty-conv}] % TermTyConv
+  {\isterm{\G}{\uu}{\A} \\
+    \eqtype{\G}{\A}{\B}
+  }
+  {\isterm{\G}{\uu}{\B}}
+}
+
+
+\newcommand{\refTermCtxConv}{\referTo{term-ctx-conv}{rul:term-ctx-conv}}
+\newcommand{\showTermCtxConv}{%
+  \infer[\rl{term-ctx-conv}] % TermCtxConv
+  {\isterm{\G}{\uu}{\A} \\
+    \eqctx{\G}{\D}
+  }
+  {\isterm{\D}{\uu}{\A}}
+}
+
+
+\newcommand{\refTermSubst}{\referTo{term-subst}{rul:term-subst}}
+\newcommand{\showTermSubst}{%
+  \infer[\rl{term-subst}] % TermSubst
+  {\issubst{\sbs}{\G}{\D} \\
+    \isterm{\D}{\uu}{\A}
+  }
+  {\isterm{\G}{\subst{\uu}{\sbs}}{\subst{\A}{\sbs}}}
+}
+
+
+\newcommand{\refTermVar}{\referTo{term-var}{rul:term-var}}
+\newcommand{\showTermVar}{%
+  \infer[\rl{term-var}] % TermVar
+  {
+    \istype{\G}{\A}
+  }
+  {\isterm
+    {\ctxextend{\G}{\A}}
+    {\var{0}}
+    {\subst{\A}{\sbweak{\G}{\A}}}
+  }
+}
+
+
+\newcommand{\refTermVarSkip}{\referTo{term-var-skip}{rul:term-var-skip}}
+\newcommand{\showTermVarSkip}{%
+  \infer[\rl{term-var-skip}] % TermVarSkip
+  {\isterm{\G}{\var{k}}{\A} \\
+    \istype{\G}{\B}
+  }
+  {\isterm
+    {\ctxextend{\G}{\B}}
+    {\var{k+1}}
+    {\subst{\A}{\sbweak{\G}{\B}}}
+  }
+}
+
+
+
+% Remark: we want \istype{\G}{\A} as a premise because in order to form the
+% product type we need it, and we do not want to resort to inversion on the
+% extended context.
+
+\newcommand{\refTermAbs}{\referTo{term-abs}{rul:term-abs}}
+\newcommand{\showTermAbs}{%
+  \infer[\rl{term-abs}] % TermAbs
+  { \istype{\G}{\A} \\
+    \isterm{\ctxextend{\G}{\A}}{\uu}{\B}
+  }
+  {\isterm{\G}{(\lam{\A}{\B}{\uu})}{\Prod{\A}{\B}}}
+}
+
+
+% Remark: we want \istype{\ctxextend{\G}{\A}}{\B} because we need to
+% know that \B is a type in \ctxextend{\G}{\A} and we want to avoid
+% inversion on ty-prod.
+
+\newcommand{\refTermApp}{\referTo{term-app}{rul:term-app}}
+\newcommand{\showTermApp}{%
+  \infer[\rl{term-app}] % TermApp
+  {\istype{\ctxextend{\G}{\A}}{\B} \\
+    \isterm{\G}{\uu}{\Prod{\A} \B} \\
+    \isterm{\G}{\vv}{\A}
+  }
+  {\isterm
+    {\G}
+    {\app{\uu}{\A}{\B}{\vv}}
+    {\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}}}
+  }
+}
+
+
+\newcommand{\refTermRefl}{\referTo{term-refl}{rul:term-refl}}
+\newcommand{\showTermRefl}{%
+  \infer[\rl{term-refl}] % TermRefl
+  {\isterm{\G}{\uu}{\A}}
+  {\isterm{\G}{\refl{\A} \uu}{\Id{\A}{\uu}{\uu}}}
+}
+
+
+%%%% Context equality
+
+
+\newcommand{\refEqCtxEmpty}{\referTo{eq-ctx-empty}{rul:eq-ctx-empty}}
+\newcommand{\showEqCtxEmpty}{%
+  \infer[\rl{eq-ctx-empty}] % EqCtxEmpty
+  { }
+  {\eqctx{\ctxempty}{\ctxempty}}
+}
+
+
+\newcommand{\refEqCtxExtend}{\referTo{eq-ctx-extend}{rul:eq-ctx-extend}}
+\newcommand{\showEqCtxExtend}{%
+  \infer[\rl{eq-ctx-extend}] % EqCtxExtend
+  {
+    \eqtype{\G}{\A}{\B}
+  }
+  {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\G}{\B})}}
+}
+
+
+%%%% Type equality
+
+
+\newcommand{\refEqTyCtxConv}{\referTo{eq-ty-ctx-conv}{rul:eq-ty-ctx-conv}}
+\newcommand{\showEqTyCtxConv}{%
+  \infer[\rl{eq-ty-ctx-conv}] % EqTyCtxConv
+  {\eqtype{\G}{\A}{\B}\\
+    \eqctx{\G}{\D}}
+  {\eqtype{\D}{\A}{\B}}
+}
+
+
+\newcommand{\refEqTyRefl}{\referTo{eq-ty-refl}{rul:eq-ty-refl}}
+\newcommand{\showEqTyRefl}{%
+  \infer[\rl{eq-ty-refl}] % EqTyRefl
+  {\istype{\G}{\A}}
+  {\eqtype{\G}{\A}{\A}}
+}
+
+
+\newcommand{\refEqTySym}{\referTo{eq-ty-sym}{rul:eq-ty-sym}}
+\newcommand{\showEqTySym}{%
+  \infer[\rl{eq-ty-sym}] % EqTySym
+  {\eqtype{\G}{\B}{\A}}
+  {\eqtype{\G}{\A}{\B}}
+}
+
+
+\newcommand{\refEqTyTrans}{\referTo{eq-ty-trans}{rul:eq-ty-trans}}
+\newcommand{\showEqTyTrans}{%
+  \infer[\rl{eq-ty-trans}] % EqTyTrans
+  {\eqtype{\G}{\A}{\B}\\
+    \eqtype{\G}{\B}{\C}}
+  {\eqtype{\G}{\A}{\C}}
+}
+
+% XXX: REMOVE THIS WHEN WE ARE SURE WE DON'T NEED THE IDENTITY SUBSTITUTION
+% \newcommand{\refEqTySubstId}{\referTo{eq-ty-subst-id}{rul:eq-ty-subst-id}}
+% \newcommand{\showEqTySubstId}{%
+%   \infer[\rl{eq-ty-subst-identity}] % EqTySubstId
+%   {\istype{\G}{\A}}
+%   {\eqtype{\G}
+%     {\subst{\A}{\sbid{\G}}}
+%     {\A}
+%   }
+% }
+
+
+\newcommand{\refEqTySubstCompose}{\referTo{eq-ty-subst-compose}{rul:eq-ty-subst-compose}}
+\newcommand{\showEqTySubstCompose}{%
+  \infer[\rl{eq-ty-subst-compose}] % EqTySubstCompose
+  {\issubst{\sbs}{\G}{\D} \\
+    \issubst{\sbt}{\D}{\E} \\
+    \istype{\E}{\A}
+  }
+  {\eqtype{\G}
+    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
+    {\subst{(\subst{\A}{\sbs})}{\sbt}}
+  }
+}
+
+
+\newcommand{\refEqTySubstProd}{\referTo{eq-ty-subst-prod}{rul:eq-ty-subst-prod}}
+\newcommand{\showEqTySubstProd}{%
+  \infer[\rl{eq-ty-subst-prod}] % EqTySubstProd
+  {\issubst{\sbs}{\G}{\D} \\
+    \istype{\D}{\A} \\
+    \istype{\ctxextend{\D}{\A}}{\B}
+  }
+  {\eqtype{\G}
+    {\subst{(\Prod{\A}{\B})}{\sbs}}
+    {\Prod
+      {\subst{\A}{\sbs}}
+      {\subst{\B}{\sbshift{\sbs}{\G}{\A}}}
+    }
+  }
+}
+
+
+\newcommand{\refEqTySubstId}{\referTo{eq-ty-subst-id}{rul:eq-ty-subst-id}}
+\newcommand{\showEqTySubstId}{%
+  \infer[\rl{eq-ty-subst-id}] % EqTySubstId
+  {\issubst{\sbs}{\G}{\D} \\
+    \istype{\D}{\A} \\
+    \isterm{\D}{\uu}{\A} \\
+    \isterm{\D}{\vv}{\A}
+  }
+  {\eqtype{\G}
+    {\subst{(\Id{\A}{\uu}{\vv})}{\sbs}}
+    {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\vv}{\sbs}}}
+  }
+}
+
+
+\newcommand{\refCongProd}{\referTo{cong-prod}{rul:cong-prod}}
+\newcommand{\showCongProd}{%
+  \infer[\rl{cong-prod}] % CongProd
+  {\eqtype{\G}{\A_1}{\B_1}\\
+    \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}}
+  {\eqtype{\G}{\Prod{\A_1}{\A_2}}{\Prod{\B_1}{\B_2}}}
+}
+
+
+\newcommand{\refCongId}{\referTo{cong-id}{rul:cong-id}}
+\newcommand{\showCongId}{%
+  \infer[\rl{cong-id}] % CongId
+  {\eqtype{\G}{\A}{\B}\\
+    \eqterm{\G}{\uu_1}{\vv_1}{\A}\\
+    \eqterm{\G}{\uu_2}{\vv_2}{\A}
+  }
+  {\eqtype{\G}{\Id{\A}{\uu_1}{\uu_2}}
+    {\Id{\B}{\vv_1}{\vv_2}}}
+}
+
+
+\newcommand{\refCongTySubst}{\referTo{cong-ty-subst}{rul:cong-ty-subst}}
+\newcommand{\showCongTySubst}{%
+  \infer[\rl{cong-ty-subst}] % CongTySubst
+  {\issubst{\sbs}{\G}{\D} \\
+    \eqtype{\D}{\A}{\B}
+  }
+  {\eqtype{\G}{\subst{\A}{\sbs}}{\subst{\B}{\sbs}}}
+}
+
+
+%%%% Term equality
+
+
+\newcommand{\refEqTyConv}{\referTo{eq-ty-conv}{rul:eq-ty-conv}}
+\newcommand{\showEqTyConv}{%
+  \infer[\rl{eq-ty-conv}] % EqTyConv
+  {\eqterm{\G}{\uu}{\vv}{\A}\\
+    \eqtype{\G}{\A}{\B}}
+  {\eqterm{\G}{\uu}{\vv}{\B}}
+}
+
+
+\newcommand{\refEqCtxConv}{\referTo{eq-ctx-conv}{rul:eq-ctx-conv}}
+\newcommand{\showEqCtxConv}{%
+  \infer[\rl{eq-ctx-conv}] % EqCtxConv
+  {\eqterm{\G}{\uu}{\vv}{\A}\\
+    \eqctx{\G}{\D}}
+  {\eqterm{\D}{\uu}{\vv}{\A}}
+}
+
+
+\newcommand{\refEqRefl}{\referTo{eq-refl}{rul:eq-refl}}
+\newcommand{\showEqRefl}{%
+  \infer[\rl{eq-refl}] % EqRefl
+  {\isterm{\G}{\uu}{\A}}
+  {\eqterm{\G}{\uu}{\uu}{\A}}
+}
+
+
+\newcommand{\refEqSym}{\referTo{eq-sym}{rul:eq-sym}}
+\newcommand{\showEqSym}{%
+  \infer[\rl{eq-sym}] % EqSym
+  {\eqterm{\G}{\vv}{\uu}{\A}}
+  {\eqterm{\G}{\uu}{\vv}{\A}}
+}
+
+
+\newcommand{\refEqTrans}{\referTo{eq-trans}{rul:eq-trans}}
+\newcommand{\showEqTrans}{%
+  \infer[\rl{eq-trans}] % EqTrans
+  {\eqterm{\G}{\uu}{\vv}{\A}\\
+    \eqterm{\G}{\vv}{\ww}{\A}}
+  {\eqterm{\G}{\uu}{\ww}{\A}}
+}
+
+
+\newcommand{\refEqSubstId}{\referTo{eq-subst-id}{rul:eq-subst-id}}
+\newcommand{\showEqSubstId}{%
+  \infer[\rl{eq-subst-id}] % EqSubstId
+  {\isterm{\G}{\uu}{\A}}
+  {\eqterm{\G}
+    {\subst{\uu}{\sbid{\G}}}
+    {\uu}
+    {\A}
+  }
+}
+
+
+\newcommand{\refEqSubstCompose}{\referTo{eq-subst-compose}{rul:eq-subst-compose}}
+\newcommand{\showEqSubstCompose}{%
+  \infer[\rl{eq-subst-compose}] % EqSubstCompose
+  {\issubst{\sbs}{\G}{\D} \\
+    \issubst{\sbt}{\D}{\E} \\
+    \isterm{\E}{\uu}{\A}
+  }
+  {\eqterm{\G}
+    {\subst{\uu}{\sbcomp{\sbs}{\sbt}}}
+    {\subst{(\subst{\uu}{\sbs})}{\sbt}}
+    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
+  }
+}
+
+
+\newcommand{\refEqSubstWeak}{\referTo{eq-subst-weak}{rul:eq-subst-weak}}
+\newcommand{\showEqSubstWeak}{%
+  \infer[\rl{eq-subst-weak}] % EqSubstWeak
+  {\isterm{\G}{\var{k}}{\A} \\
+    \istype{\G}{\B}
+  }
+  {\eqterm{\ctxextend{\G}{\B}}
+    {\subst{\var{k}}{\sbweak{\G}{\B}}}
+    {\var{k+1}}
+    {\subst{\A}{\sbweak{\G}{\B}}}
+  }
+}
+
+
+\newcommand{\refEqSubstExtendZero}{\referTo{eq-subst-extend-zero}{rul:eq-subst-extend-zero}}
+\newcommand{\showEqSubstExtendZero}{%
+  \infer[\rl{eq-subst-extend-zero}] % EqSubstExtendZero
+  {\issubst{\sbs}{\G}{\D} \\
+    \istype{\D}{\A} \\
+    \isterm{\G}{\uu}{\subst{\A}{\sbs}}
+  }
+  {\eqterm{\G}
+    {\subst{\var{0}}{\sbextend{\sbs}{\A}{\uu}}}
+    {\uu}
+    {\subst{\A}{\sbs}}
+  }
+}
+
+
+\newcommand{\refEqSubstExtendSucc}{\referTo{eq-subst-extend-succ}{rul:eq-subst-extend-succ}}
+\newcommand{\showEqSubstExtendSucc}{%
+  \infer[\rl{eq-subst-extend-succ}] % EqSubstExtendSucc
+  {\issubst{\sbs}{\G}{\D} \\
+    \isterm{\D}{\var{k}}{\A} \\
+    \isterm{\G}{\uu}{\subst{\B}{\sbs}}
+  }
+  {\eqterm{\G}
+    {\subst
+      {\var{k+1}}
+      {\sbextend{\sbs}{\B}{\uu}}
+    }
+    {\subst{\var{k}}{\sbs}}
+    {\subst{\A}{\sbs}}
+  }
+}
+
+
+\newcommand{\refEqSubstAbs}{\referTo{eq-subst-abs}{rul:eq-subst-abs}}
+\newcommand{\showEqSubstAbs}{%
+  \infer[\rl{eq-subst-abs}] % EqSubstAbs
+  {\issubst{\sbs}{\G}{\D} \\
+    \isterm{\ctxextend{\D}{\A}}{\uu}{\B}
+  }
+  {\eqterm{\G}
+    {\subst{(\lam{\A}{\B} \uu)}{\sbs}}
+    {(\lam
+      {\subst{\A}{\sbs}}
+      {\subst
+        {\B}
+        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
+      }
+      \subst{\uu}{\sbextend{\sbs}{\A}{\var{0}}})
+    }
+    {\Prod
+      {\subst{\A}{\sbs}}
+      {\subst
+        {\B}
+        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
+      }
+    }
+  }
+}
+
+
+\newcommand{\refEqSubstApp}{\referTo{eq-subst-app}{rul:eq-subst-app}}
+\newcommand{\showEqSubstApp}{%
+  \infer[\rl{eq-subst-app}] % EqSubstApp
+  {\issubst{\sbs}{\G}{\D} \\
+    \istype{\ctxextend{\D}{\A}}{\B} \\
+    \isterm{\D}{\uu}{\Prod{\A}{\B}} \\
+    \isterm{\D}{\vv}{\A}
+  }
+  {\eqterm{\G}
+    {\subst{(\app{\uu}{\A}{\B}{\vv})}{\sbs}}
+    {\app
+      {\subst{\uu}{\sbs}}
+      {\subst{\A}{\sbs}}
+      {\subst
+        {\B}
+        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
+      }
+      {\subst{\vv}{\sbs}}}
+    {\subst
+      {(\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}})}
+      {\sbs}
+    }
+  }
+}
+
+
+\newcommand{\refEqSubstRefl}{\referTo{eq-subst-refl}{rul:eq-subst-refl}}
+\newcommand{\showEqSubstRefl}{%
+  \infer[\rl{eq-subst-refl}] % EqSubstRefl
+  {\issubst{\sbs}{\G}{\D} \\
+    \isterm{\D}{\uu}{\A}
+  }
+  {\eqterm{\G}
+    {\subst{(\refl{\A}{\uu})}{\sbs}}
+    {\refl{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}}
+    {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\uu}{\sbs}}}
+  }
+}
+
+
+% 
+
+
+\newcommand{\refEqReflection}{\referTo{eq-reflection}{rul:eq-reflection}}
+\newcommand{\showEqReflection}{%
+  \infer[\rl{eq-reflection}] % EqReflection
+  {\isterm{\G}{\ww_1}{\Id{\A}{\uu}{\vv}} \\
+    \isterm{\G}{\ww_2}{\textsf{UIP}(\A)}
+  }
+  {\eqterm{\G}{\uu}{\vv}{\A}}
+}
+
+
+\newcommand{\refProdBeta}{\referTo{prod-beta}{rul:prod-beta}}
+\newcommand{\showProdBeta}{%
+  \infer[\rl{prod-beta}] % ProdBeta
+  {\isterm{\ctxextend{\G}{\A}}{\uu}{\B}\\
+    \isterm{\G}{\vv}{\A}}
+  {\eqterm{\G}{\bigl(\app{(\lam{\A}{\B}{\uu})}{\A}{\B}{\vv}\bigr)}
+    {\subst{\uu}{\sbextend{\sbid{\G}}{\A}{\vv}}}
+    {\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}}}}
+}
+
+
+\newcommand{\refProdEta}{\referTo{prod-eta}{rul:prod-eta}}
+\newcommand{\showProdEta}{%
+  \infer[\rl{prod-eta}] % ProdEta
+  {\isterm{\G}{\uu}{\Prod{\A}{\B}}\\
+    \isterm{\G}{\vv}{\Prod{\A}{\B}}\\\\
+    \eqterm
+    {\ctxextend{\G}{\A}}
+    {(\app
+      {\subst{\uu}{\sbweak{\G}{\A}}}
+      {\subst{\A}{\sbweak{\G}{\A}}}
+      {\subst
+        {\B}
+        {\sbshift
+          {\sbweak{\G}{\A}}
+          {\ctxextend{\G}{\A}}
+          {\A}
+        }
+      }
+      {\var{0}})
+    }
+    {(\app
+      {\subst{\vv}{\sbweak{\G}{\A}}}
+      {\subst{\A}{\sbweak{\G}{\A}}}
+      {\subst
+        {\B}
+        {\sbshift
+          {\sbweak{\G}{\A}}
+          {\ctxextend{\G}{\A}}
+          {\A}
+        }
+      }
+      {\var{0}})
+    }
+    {\B}
+  }
+  {\eqterm{\G}{\uu}{\vv}{\Prod{\A}{\B}}}
+}
+
+
+\newcommand{\refCongAbs}{\referTo{cong-abs}{rul:cong-abs}}
+\newcommand{\showCongAbs}{%
+  \infer[\rl{cong-abs}] % CongAbs
+  {\eqtype{\G}{\A_1}{\B_1}\\
+    \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}\\
+    \eqterm{\ctxextend{\G}{\A_1}}{\uu_1}{\uu_2}{\A_2}}
+  {\eqterm{\G}{(\lam{\A_1}{\A_2}{\uu_1})}
+    {(\lam{\B_1}{\B_2}{\uu_2})}
+    {\Prod{\A_1}{\A_2}}}
+}
+
+
+\newcommand{\refCongApp}{\referTo{cong-app}{rul:cong-app}}
+\newcommand{\showCongApp}{%
+  \infer[\rl{cong-app}] % CongApp
+  {\eqtype{\G}{\A_1}{\B_1}\\
+    \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}\\\\
+    \eqterm{\G}{\uu_1}{\vv_1}{\Prod{\A_1}{\A_2}}\\
+    \eqterm{\G}{\uu_2}{\vv_2}{\A_1}}
+  {\eqterm
+    {\G}
+    {(\app{\uu_1}{\A_1}{\A_2}{\uu_2})}
+    {(\app{\vv_1}{\B_1}{\B_2}{\vv_2})}
+    {\subst{\A_2}{\sbextend{\sbid{\G}}{\A_1}{\uu_2}}}
+  }
+}
+
+
+\newcommand{\refCongRefl}{\referTo{cong-refl}{rul:cong-refl}}
+\newcommand{\showCongRefl}{%
+  \infer[\rl{cong-refl}] % CongRefl
+  {\eqterm{\G}{\uu_1}{\uu_2}{\A_1}\\
+    \eqtype{\G}{\A_1}{\A_2}}
+  {\eqterm{\G}{\refl{\A_1} \uu_1}{\refl{\A_2} \uu_2}{\Id{\A_1}{\uu_1}{\uu_1}}}
+}
+
+
+\newcommand{\refCongTermSubst}{\referTo{cong-term-subst}{rul:cong-term-subst}}
+\newcommand{\showCongTermSubst}{%
+  \infer[\rl{cong-term-subst}] % CongTermSubst
+  {\issubst{\sbs}{\G}{\D} \\
+    \eqterm{\D}{\uu_1}{\uu_2}{\A}
+  }
+  {\eqterm{\G}{\subst{\uu_1}{\sbs}}{\subst{\uu_2}{\sbs}}{\subst{\A}{\sbs}}}
+}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
