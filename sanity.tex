@@ -206,7 +206,7 @@ Consider a derivation ending with
 %
 \begin{equation*}
   \infer[\rl{term-var}]
-  {\isctx{\G} \\
+  {
    \istype{\G}{\A}
   }
   {\isterm
@@ -216,8 +216,9 @@ Consider a derivation ending with
   }
 \end{equation*}
 %
-We apply $\rl{ty-subst}$ to the right premise and to $\rl{subst-weak}$ applied to the
-right premise.
+We apply $\rl{subst-weak}$ to the right premise to obtain
+$\issubst{\sbweak{\G}{\A}}{\ctxextend{\G}{\A}}{\G}$. Then we apply to it and to the right
+premise the rule $\rl{ty-subst}$.
 
 \subsubsection*{Rule $\rl{term-var-skip}$}
 
