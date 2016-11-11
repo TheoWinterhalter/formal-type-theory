@@ -19,133 +19,96 @@ derivation.
 
 \subsection{Contexts \fbox{$\isctx{\G}$}}
 
-The rules $\rl{ctx-empty}$ and $\rl{ctx-extend}$ need not be considered.
+The rules {\rlCtxEmpty} and {\rlCtxExtend} need not be considered.
 
 \subsection{Substitutions \fbox{$\issubst{\sbs}{\G}{\D}$}}
 
 This section proves clause \eqref{sane-issubst} of the theorem.
 
-\subsubsection*{Rule $\rl{subst-id}$}
+\subsubsection*{Rule {\rlSubstId}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{subst-id}]
-  {\isctx{\G}}
-  {\issubst{\sbid{\G}}{\G}{\G}}
+  \showSubstId
 \end{equation*}
 %
 By the premise we have $\isctx{\G}$.
 
-\subsubsection*{Rule $\rl{subst-compose}$}
+\subsubsection*{Rule {\rlSubstCompose}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{subst-compose}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \issubst{\sbt}{\D}{\E}
-  }
-  {\issubst{\sbcomp{\sbt}{\sbs}}{\G}{\E}}
+  \showSubstCompose
 \end{equation*}
 %
 By induction hypothesis on the left premise $\isctx{\G}$ follows, and by induction
 hypothesis on the right premise $\isctx{\E}$.
 
-\subsubsection*{Rule $\rl{subst-extend}$}
+\subsubsection*{Rule {\rlSubstExtend}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{subst-extend}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\D}{\A} \\
-   \isterm{\G}{\uu}{\subst{\A}{\sbs}}
-  }
-  {\issubst
-     {(\sbextend{\sbs}{\A}{\uu})}
-     {\G}
-     {(\ctxextend{\D}{\A})}
-  }
+  \showSubstExtend
 \end{equation*}
 %
 Then $\isctx{\G}$ by induction hypothesis on the left premise, while
 $\isctx{(\ctxextend{\D}{\A})}$ follows by the induction hypothesis on the middle
-premise and an application of $\rl{ctx-extend}$.
+premise and an application of {\rlCtxExtend}.
 
-\subsubsection*{Rule $\rl{subst-weak}$}
+\subsubsection*{Rule {\rlSubstWeak}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{subst-weak}]
-  {\istype{\G}{\A}}
-  {\issubst
-     {\sbweak{\G}{\A}}
-     {\ctxextend{\G}{\A}}
-     {\G}
-  }
+  \showSubstWeak
 \end{equation*}
 %
 First, $\isctx{\G}$ follows by induction hypothesis on the premise, and then
-$\isctx{\ctxextend{\G}{\A}}$ by an application of $\rl{ctx-extend}$.
+$\isctx{\ctxextend{\G}{\A}}$ by an application of {\rlCtxExtend}.
 
 \subsection{Types \fbox{$\istype{\G}{\A}$}}
 
 In this section we prove clause \eqref{sane-istype}.
 
-\subsubsection*{Rule $\rl{ty-ctx-conv}$}
+\subsubsection*{Rule {\rlTyCtxConv}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{ty-ctx-conv}]
-  {\istype{\G}{\A} \\
-    \eqctx{\G}{\D}
-  }
-  {\istype{\D}{\A}}
+  \showTyCtxConv
 \end{equation*}
 %
 By induction hypothesis on the right premise we obtain $\isctx{\D}$.
 
-\subsubsection*{Rule $\rl{ty-subst}$}
+\subsubsection*{Rule {\rlTySubst}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{ty-subst}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\D}{\A}
-  }
-  {\istype{\G}{\subst{\A}{\sbs}}}
+  \showTySubst
 \end{equation*}
 %
 By induction hypothesis on the left premise we obtain $\isctx{\G}$.
 
-\subsubsection*{Rule $\rl{ty-prod}$}
+\subsubsection*{Rule {\rlTyProd}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{ty-prod}]
-  { \istype{\G}{\A} \\
-    \istype{\ctxextend{\G}{\A}}{\B}}
-  {\istype{\G}{\Prod{\A}{\B}}}
+  \showTyProd
 \end{equation*}
 %
 By induction hypothesis on the left premise we obtain $\isctx{\G}$.
 
-\subsubsection*{Rule $\rl{ty-id}$}
+\subsubsection*{Rule {\rlTyId}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{ty-id}]
-  {\istype{\G}{\A}\\
-   \isterm{\G}{\uu}{\A}\\
-   \isterm{\G}{\vv}{\A}
-  }
-  {\istype{\G}{\Id{\A}{\uu}{\vv}}}
+  \showTyId
 \end{equation*}
 %
 By induction hypothesis on the left premise we obtain $\isctx{\G}$.
@@ -154,126 +117,86 @@ By induction hypothesis on the left premise we obtain $\isctx{\G}$.
 
 In this section we prove clause \eqref{sane-isterm}.
 
-\subsubsection*{Rule $\rl{term-ty-conv}$}
+\subsubsection*{Rule {\rlTermTyConv}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{term-ty-conv}]
-  {\isterm{\G}{\uu}{\A} \\
-   \eqtype{\G}{\A}{\B}
-  }
-  {\isterm{\G}{\uu}{\B}}
+  \showTermTyConv
 \end{equation*}
 %
 By induction hypothesis on the right premise we obtain $\istype{\G}{\B}$.
 
 
-\subsubsection*{Rule $\rl{term-ctx-conv}$}
+\subsubsection*{Rule {\rlTermCtxConv}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{term-ctx-conv}]
-  {\isterm{\G}{\uu}{\A} \\
-   \eqctx{\G}{\D}
-  }
-  {\isterm{\D}{\uu}{\A}}
+  \showTermCtxConv
 \end{equation*}
 %
 By induction hypothesis on the left premise we obtain $\istype{\G}{\A}$, and then we apply
-$\rl{ty-ctx-conv}$ using the right premise.
+{\rlTyCtxConv} using the right premise.
 
 
-\subsubsection*{Rule $\rl{term-subst}$}
+\subsubsection*{Rule {\rlTermSubst}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{term-subst}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \isterm{\D}{\uu}{\A}
-  }
-  {\isterm{\G}{\subst{\uu}{\sbs}}{\subst{\A}{\sbs}}}
+  \showTermSubst
 \end{equation*}
 %
 By induction hypothesis on the right premise we obtain $\istype{\D}{\A}$, and then we
-apply $\rl{ty-subst}$ using the left premise.
+apply {\rlTySubst} using the left premise.
 
-\subsubsection*{Rule $\rl{term-var}$}
+\subsubsection*{Rule {\rlTermVar}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{term-var}]
-  {
-   \istype{\G}{\A}
-  }
-  {\isterm
-     {\ctxextend{\G}{\A}}
-     {\var{0}}
-     {\subst{\A}{\sbweak{\G}{\A}}}
-  }
+  \showTermVar
 \end{equation*}
 %
-We apply $\rl{subst-weak}$ to the premise to obtain
-$\issubst{\sbweak{\G}{\A}}{\ctxextend{\G}{\A}}{\G}$. Then we apply $\rl{ty-subst}$ to it
+We apply {\rlSubstWeak} to the premise to obtain
+$\issubst{\sbweak{\G}{\A}}{\ctxextend{\G}{\A}}{\G}$. Then we apply {\rlTySubst} to it
 and to the premise.
 
-\subsubsection*{Rule $\rl{term-var-skip}$}
+\subsubsection*{Rule {\rlTermVarSkip}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{term-var-skip}]
-  {\isterm{\G}{\var{k}}{\A} \\
-   \istype{\G}{\B}
-  }
-  {\isterm
-     {\ctxextend{\G}{\B}}
-     {\var{k+1}}
-     {\subst{\A}{\sbweak{\G}{\B}}}
-  }
+  \showTermVarSkip
 \end{equation*}
 %
 By induction hypothesis on the left premise we obtain $\istype{\G}{\A}$. We
-apply $\rl{ty-subst}$ to it and to $\rl{subst-weak}$ applied to the
+apply {\rlTySubst} to it and to {\rlSubstWeak} applied to the
 right premise.
 
 
-\subsubsection*{Rule $\rl{term-abs}$}
+\subsubsection*{Rule {\rlTermAbs}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{term-abs}]
-  {\istype{\G}{\A} \\
-   \isterm{\ctxextend{\G}{\A}}{\uu}{\B}}
-  {\isterm{\G}{(\lam{\A}{\B}{\uu})}{\Prod{\A}{\B}}}
+  \showTermAbs
 \end{equation*}
 %
 By induction hypothesis on the right premise we obtain $\istype{\ctxextend{\G}{\A}}{\B}$,
-after which we apply $\rl{ty-prod}$ to it and to the left premise.
+after which we apply {\rlTyProd} to it and to the left premise.
 
 
-\subsubsection*{Rule $\rl{term-app}$}
+\subsubsection*{Rule {\rlTermApp}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{term-app}]
-  {\istype{\ctxextend{\G}{\A}}{\B} \\
-   \isterm{\G}{\uu}{\Prod{\A} \B} \\
-   \isterm{\G}{\vv}{\A}
-  }
-  {\isterm
-    {\G}
-    {\app{\uu}{\A}{\B}{\vv}}
-    {\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}}}
-  }
+  \showTermApp
 \end{equation*}
 %
-We first argue that we may apply $\rl{subst-extend}$ as follows:
+We first argue that we may apply {\rlSubstExtend} as follows:
 %
 \begin{equation*}
   \inferrule*
@@ -294,54 +217,46 @@ We first argue that we may apply $\rl{subst-extend}$ as follows:
   }
 \end{equation*}
 %
-The left premise of this derivation follows by $\rl{ctx-id}$, which in turn is
+The left premise of this derivation follows by \meta{BROKEN:CtxId}, which in turn is
 justified by \meta{\{something missing: several solutions like strengthening
-the theorem/program, adding $\istype{\G}{\A}$ as a premise to $\rl{term-app}$ or
+the theorem/program, adding $\istype{\G}{\A}$ as a premise to {\rlTermApp} or
 devise a way to call the induction hypothesis on its result. \}}
 
-\subsubsection*{Rule $\rl{term-refl}$}
+\subsubsection*{Rule {\rlTermRefl}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{term-refl}]
-  {\isterm{\G}{\uu}{\A}}
-  {\isterm{\G}{\refl{\A} \uu}{\Id{\A}{\uu}{\uu}}}
+  \showTermRefl
 \end{equation*}
 %
 By induction hypothesis on the premise we obtain $\istype{\G}{\A}$
-and then by using $\rl{ty-id}$ on it and on the premise itself twice,
+and then by using {\rlTyId} on it and on the premise itself twice,
 we conclude $\istype{\G}{\Id{\A}{\uu}{\uu}}$.
 
 \subsection{Context equality \fbox{$\eqctx{\G}{\D}$}}
 
 In this section we prove clause~\eqref{sane-eqctx}.
 
-\subsubsection*{Rule $\rl{eq-ctx-empty}$}
+\subsubsection*{Rule {\rlEqCtxEmpty}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-ctx-empty}]
-  { }
-  {\eqctx{\ctxempty}{\ctxempty}}
+  \showEqCtxEmpty
 \end{equation*}
 %
-By $\rl{ctx-empty}$, $\isctx{\ctxempty}$ holds.
+By {\rlCtxEmpty}, $\isctx{\ctxempty}$ holds.
 
-\subsubsection*{Rule $\rl{eq-ctx-extend}$}
+\subsubsection*{Rule {\rlEqCtxExtend}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-ctx-extend}]
-  {
-   \eqtype{\G}{\A}{\B}
-  }
-  {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\G}{\B})}}
+  \showEqCtxExtend
 \end{equation*}
 %
-We apply $\rl{ctx-extend}$ twice to the induction hypotheses to conclude
+We apply {\rlCtxExtend} twice to the induction hypotheses to conclude
 $\isctx{\ctxextend{\G}{\A}}$ and $\isctx{\ctxextend{\D}{\B}}$.
 
 
@@ -349,201 +264,145 @@ $\isctx{\ctxextend{\G}{\A}}$ and $\isctx{\ctxextend{\D}{\B}}$.
 
 In this section we prove clause~\eqref{sane-eqtype}.
 
-\subsubsection*{Rule $\rl{eq-ty-conv}$}
+\subsubsection*{Rule {\rlEqTyConv}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-ty-conv}]
-  {\eqtype{\G}{\A}{\B}\\
-    \eqctx{\G}{\D}}
-  {\eqtype{\D}{\A}{\B}}
+  \showEqTyConv
 \end{equation*}
 %
 By induction hypothesis on the left premise we obtain $\istype{\G}{\A}$
 and $\istype{\G}{\B}$.
-Using $\rl{ty-ctx-conv}$ on both combined with the right premise we obtain
+Using {\rlTyCtxConv} on both combined with the right premise we obtain
 $\istype{\D}{\A}$ and $\istype{\D}{\B}$.
 
-\subsubsection*{Rule $\rl{eq-ty-refl}$}
+\subsubsection*{Rule {\rlEqTyRefl}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-ty-refl}]
-  {\istype{\G}{\A}}
-  {\eqtype{\G}{\A}{\A}}
+  \showEqTyRefl
 \end{equation*}
 %
 We have $\istype{\G}{\A}$ as premise.
 
-\subsubsection*{Rule $\rl{eq-ty-sym}$}
+\subsubsection*{Rule {\rlEqTySym}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-ty-sym}]
-  {\eqtype{\G}{\B}{\A}}
-  {\eqtype{\G}{\A}{\B}}
+  \showEqTySym
 \end{equation*}
 %
 By induction hypothesis on the premise, we conclude.
 
-\subsubsection*{Rule $\rl{eq-ty-trans}$}
+\subsubsection*{Rule {\rlEqTyTrans}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-ty-trans}]
-  {\eqtype{\G}{\A}{\B}\\
-   \eqtype{\G}{\B}{\C}}
-  {\eqtype{\G}{\A}{\C}}
+  \showEqTyTrans
 \end{equation*}
 %
 By induction hypothesis on the premises, we conclude.
 
-\subsubsection*{Rule $\rl{eq-ty-subst-id}$}
+\subsubsection*{Rule {\rlEqTySubstId}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-ty-subst-id}]
-  {\istype{\G}{\A}}
-  {\eqtype{\G}
-     {\subst{\A}{\sbid{\G}}}
-     {\A}
-  }
+  \showEqTySubstId
 \end{equation*}
 %
 We have $\istype{\G}{\A}$ as premise. We derive $\issubst{\sbid{\G}}{\G}{\G}$ from the
-induction hypothesis by $\rl{subst-id}$, and use it in $\rl{ty-subst}$ to conclude
+induction hypothesis by {\rlSubstId}, and use it in {\rlTySubst} to conclude
 $\istype{\G}{\subst{\A}{\sbid{\G}}}$.
 
-\subsubsection*{Rule $\rl{eq-ty-subst-compose}$}
+\subsubsection*{Rule {\rlEqTySubstCompose}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-ty-subst-compose}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \issubst{\sbt}{\D}{\E} \\
-   \istype{\E}{\A}
-  }
-  {\eqtype{\G}
-    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
-    {\subst{(\subst{\A}{\sbs})}{\sbt}}
-  }
+  \showEqTySubstCompose
 \end{equation*}
 %
-We use the first two premises and $\rl{subst-compose}$ to derive
-$\issubst{\sbcomp{\sbs}{\sbt}}{\G}{\E}$, which we then use in $\rl{ty-subst}$ to obtain
-$\istype{\G}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}$. Similarly, we apply $\rl{ty-subst}$ twice
+We use the first two premises and {\rlSubstCompose} to derive
+$\issubst{\sbcomp{\sbs}{\sbt}}{\G}{\E}$, which we then use in {\rlTySubst} to obtain
+$\istype{\G}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}$. Similarly, we apply {\rlTySubst} twice
 on the premises to conclude $\istype{\G}{\subst{(\subst{\A}{\sbs})}{\sbt}}$.
 
-\subsubsection*{Rule $\rl{eq-ty-subst-prod}$}
+\subsubsection*{Rule {\rlEqTySubstProd}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-ty-subst-prod}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\D}{\A} \\
-   \istype{\ctxextend{\D}{\A}}{\B}
-  }
-  {\eqtype{\G}
-   {\subst{(\Prod{\A}{\B})}{\sbs}}
-   {\Prod
-     {\subst{\A}{\sbs}}
-     {\subst{\B}{\sbshift{\sbs}{\G}{\A}}}
-   }
-  }
+  \showEqTySubstProd
 \end{equation*}
 %
-Using $\rl{ty-prod}$ and $\rl{ty-subst}$ we get
+Using {\rlTyProd} and {\rlTySubst} we get
 $\istype{\G}{\subst{(\Prod{\A}{\B})}{\sbs}}$.
-An application of $\rl{ty-subst}$ yields $\istype{\G}{\subst{\A}{\sbs}}$
+An application of {\rlTySubst} yields $\istype{\G}{\subst{\A}{\sbs}}$
 and a slightly more complicated one
 $\istype{\ctxextend{\G}{\subst{\A}{\sbs}}}{\subst{\B}{\sbshift{\sbs}{\G}{\A}}}$.
-We now apply $\rl{ty-prod}$ to conclude
+We now apply {\rlTyProd} to conclude
 $\istype
   {\G}
   {\Prod
     {\subst{\A}{\sbs}}
     {\subst{\B}{\sbshift{\sbs}{\G}{\A}}}}$.
 
-\subsubsection*{Rule $\rl{eq-ty-subst-id}$}
+\subsubsection*{Rule {\rlEqTySubstId}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-ty-subst-id}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\D}{\A} \\
-   \isterm{\D}{\uu}{\A} \\
-   \isterm{\D}{\vv}{\A}
-  }
-  {\eqtype{\G}
-   {\subst{(\Id{\A}{\uu}{\vv})}{\sbs}}
-   {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\vv}{\sbs}}}
-  }
+  \showEqTySubstId
 \end{equation*}
 %
-We apply $\rl{ty-id}$ and $\rl{ty-subst}$ to the premises to get
-$\istype{\G}{\subst{(\Id{\A}{\uu}{\vv})}{\sbs}}$. Then we apply $\rl{ty-subst}$ and
-$\rl{term-subst}$ on the last three premises and put the results together using
-$\rl{ty-id}$ to get
+We apply {\rlTyId} and {\rlTySubst} to the premises to get
+$\istype{\G}{\subst{(\Id{\A}{\uu}{\vv})}{\sbs}}$. Then we apply {\rlTySubst} and
+{\rlTermSubst} on the last three premises and put the results together using
+{\rlTyId} to get
 $\istype{\G}{\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\vv}{\sbs}}}$.
 
-\subsubsection*{Rule $\rl{cong-prod}$}
+\subsubsection*{Rule {\rlCongProd}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{cong-prod}]
-  {\eqtype{\G}{\A_1}{\B_1}\\
-   \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}}
-  {\eqtype{\G}{\Prod{\A_1}{\A_2}}{\Prod{\B_1}{\B_2}}}
+  \showCongProd
 \end{equation*}
 %
 The induction hypotheses yield $\istype{\G}{\A_1}$ and
 $\istype{\ctxextend{\G}{\A_1}}{\A_2}$, as well as $\istype{\G}{\B_1}$ and
 $\istype{\ctxextend{\G}{\A_1}}{\B_2}$. We may conclude $\istype{\G}{\Prod{A_1} A_2}$ and
-$\istype{\G}{\Prod{B_1} B_2}$ by $\rl{ty-prod}$, provided we derive
+$\istype{\G}{\Prod{B_1} B_2}$ by {\rlTyProd}, provided we derive
 $\istype{\ctxextend{\G}{\B_1}}{\B_2}$. To do so, we first derive
-$\eqctx{\ctxextend{\G}{\A_1}}{\ctxextend{\G}{\B_1}}$ by $\rl{eq-ctx-extend}$ and then
-apply $\rl{ty-ctx-conv}$ to $\istype{\ctxextend{\G}{\A_1}}{\B_2}$.
+$\eqctx{\ctxextend{\G}{\A_1}}{\ctxextend{\G}{\B_1}}$ by {\rlEqCtxExtend} and then
+apply {\rlTyCtxConv} to $\istype{\ctxextend{\G}{\A_1}}{\B_2}$.
 
-\subsubsection*{Rule $\rl{cong-id}$}
+\subsubsection*{Rule {\rlCongId}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{cong-id}]
-  {\eqtype{\G}{\A}{\B}\\
-   \eqterm{\G}{\uu_1}{\vv_1}{\A}\\
-   \eqterm{\G}{\uu_2}{\vv_2}{\A}
-  }
-  {\eqtype{\G}{\Id{\A}{\uu_1}{\uu_2}}
-              {\Id{\B}{\vv_1}{\vv_2}}}
+  \showCongId
 \end{equation*}
 %
-We apply $\rl{ty-id}$ to the induction hypotheses to get
+We apply {\rlTyId} to the induction hypotheses to get
 $\istype{\G}{\Id{\A}{\uu_1}{\uu_2}}$. We obtain $\istype{\G}{\Id{\B}{\vv_1}{\vv_2}}$ in
-the same way, but use $\rl{term-ty-conv}$ on the last two induction hypotheses beforehand.
+the same way, but use {\rlTermTyConv} on the last two induction hypotheses beforehand.
 
-\subsubsection*{Rule $\rl{cong-ty-subst}$}
+\subsubsection*{Rule {\rlCongTySubst}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{cong-ty-subst}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \eqtype{\D}{\A}{\B}
-  }
-  {\eqtype{\G}{\subst{\A}{\sbs}}{\subst{\B}{\sbs}}}
+  \showCongTySubst
 \end{equation*}
 %
-We apply $\rl{ty-subst}$ on the left premise and the induction hypothesis
+We apply {\rlTySubst} on the left premise and the induction hypothesis
 applied to the right premise to conclude.
 
 \goodbreak
@@ -554,374 +413,203 @@ This section proves clause \eqref{sane-eqterm}.
 
 
 
-\subsubsection*{Rule $\rl{eq-ty-conv}$}
+\subsubsection*{Rule {\rlEqTyConv}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-ty-conv}]
-  {\eqterm{\G}{\uu}{\vv}{\A}\\
-    \eqtype{\G}{\A}{\B}}
-  {\eqterm{\G}{\uu}{\vv}{\B}}
+  \showEqTyConv
 \end{equation*}
 %
 By induction hypothesis on the left premise we obtain $\isterm{\G}{\uu}{\A}$
-and $\isterm{\G}{\vv}{\A}$. Then using $\rl{term-ty-conv}$ on both and on the
+and $\isterm{\G}{\vv}{\A}$. Then using {\rlTermTyConv} on both and on the
 right premise, we conclude $\isterm{\G}{\uu}{\B}$ and $\isterm{\G}{\vv}{\B}$.
 
-\subsubsection*{Rule $\rl{eq-ctx-conv}$}
+\subsubsection*{Rule {\rlEqCtxConv}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-ctx-conv}]
-  {\eqterm{\G}{\uu}{\vv}{\A}\\
-    \eqctx{\G}{\D}}
-  {\eqterm{\D}{\uu}{\vv}{\A}}
+  \showEqCtxConv
 \end{equation*}
 %
 By induction hypothesis on the left premise we obtain $\isterm{\G}{\uu}{\A}$
-and $\isterm{\G}{\vv}{\A}$. Then using $\rl{term-ctx-conv}$ on both and on the
+and $\isterm{\G}{\vv}{\A}$. Then using {\rlTermCtxConv} on both and on the
 right premise, we conclude $\isterm{\D}{\uu}{\A}$ and $\isterm{\D}{\vv}{\A}$.
 
-\subsubsection*{Rule $\rl{eq-refl}$}
+\subsubsection*{Rule {\rlEqRefl}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-refl}]
-  {\isterm{\G}{\uu}{\A}}
-  {\eqterm{\G}{\uu}{\uu}{\A}}
+  \showEqRefl
 \end{equation*}
 %
 We have $\isterm{\G}{\uu}{\A}$ as a premise.
 
-\subsubsection*{Rule $\rl{eq-sym}$}
+\subsubsection*{Rule {\rlEqSym}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-sym}]
-  {\eqterm{\G}{\vv}{\uu}{\A}}
-  {\eqterm{\G}{\uu}{\vv}{\A}}
+  \showEqSym
 \end{equation*}
 %
 We conclude immediately using the induction hypothesis.
 
-\subsubsection*{Rule $\rl{eq-trans}$}
+\subsubsection*{Rule {\rlEqTrans}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-trans}]
-  {\eqterm{\G}{\uu}{\vv}{\A}\\
-   \eqterm{\G}{\vv}{\ww}{\A}}
-  {\eqterm{\G}{\uu}{\ww}{\A}}
+  \showEqTrans
 \end{equation*}
 %
 We conclude immediately using the induction hypotheses.
 
-\subsubsection*{Rule $\rl{eq-subst-id}$}
+\subsubsection*{Rule {\rlEqSubstId}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-subst-id}]
-  {\isterm{\G}{\uu}{\A}}
-  {\eqterm{\G}
-     {\subst{\uu}{\sbid{\G}}}
-     {\uu}
-     {\A}
-  }
+  \showEqSubstId
 \end{equation*}
 %
 We have $\isterm{\G}{\uu}{\A}$ as a premise.
 Moreover, \meta{\{how do we get it?\}}, $\isctx{\G}$ and so
-$\issubst{\sbid{\G}}{\G}{\G}$. Then, applying $\rl{term-subst}$ on it and
+$\issubst{\sbid{\G}}{\G}{\G}$. Then, applying {\rlTermSubst} on it and
 the premise, we get
 $\isterm{\G}{\subst{\uu}{\sbid{\G}}}{\subst{\A}{\sbid{\G}}}$.
-Similarly, using $\rl{eq-ty-subst-id}$ on the induction hypothesis yielding
+Similarly, using {\rlEqTySubstId} on the induction hypothesis yielding
 $\istype{\G}{\A}$, we derive $\eqtype{\G}{\subst{\A}{\sbid{\G}}}{\A}$.
-With $\rl{term-ty-conv}$ we conclude
+With {\rlTermTyConv} we conclude
 $\isterm{\G}{\subst{\uu}{\sbid{\G}}}{\A}$.
 
-\subsubsection*{Rule $\rl{eq-subst-compose}$}
+\subsubsection*{Rule {\rlEqSubstCompose}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-subst-compose}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \issubst{\sbt}{\D}{\E} \\
-   \isterm{\E}{\uu}{\A}
-  }
-  {\eqterm{\G}
-    {\subst{\uu}{\sbcomp{\sbs}{\sbt}}}
-    {\subst{(\subst{\uu}{\sbs})}{\sbt}}
-    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
-  }
+  \showEqSubstCompose
 \end{equation*}
 %
-Using $\rl{subst-compose}$ to the first two premises we get
-$\issubst{\sbcomp{\sbs}{\sbt}}{\G}{\E}$. Then applying $\rl{term-subst}$
+Using {\rlSubstCompose} to the first two premises we get
+$\issubst{\sbcomp{\sbs}{\sbt}}{\G}{\E}$. Then applying {\rlTermSubst}
 to it and the right premise yields
 $\isterm{\G}{\subst{\uu}{\sbcomp{\sbs}{\sbt}}}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}$.
 %
-Applying $\rl{term-subst}$ twice on the premises yields
+Applying {\rlTermSubst} twice on the premises yields
 $\isterm{\G}{\subst{(\subst{\uu}{\sbs})}{\sbt}}{\subst{(\subst{\A}{\sbs})}{\sbt}}$. It
-remains to apply $\rl{term-ty-conv}$, for which we need
+remains to apply {\rlTermTyConv}, for which we need
 $\eqtype{\G}{\subst{(\subst{\A}{\sbs})}{\sbt}}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}$. By
 induction hypothesis on the right premise we get $\istype{\E}{\A}$, to which we apply
-$\rl{eq-ty-subst-compose}$ and finally $\rl{eq-ty-sym}$.
+{\rlEqTySubstCompose} and finally {\rlEqTySym}.
 
 
 
-\subsubsection*{Rule $\rl{eq-subst-weak}$}
+\subsubsection*{Rule {\rlEqSubstWeak}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-subst-weak}]
-  {\isterm{\G}{\var{k}}{\A} \\
-   \istype{\G}{\B}
-  }
-  {\eqterm{\ctxextend{\G}{\B}}
-   {\subst{\var{k}}{\sbweak{\G}{\B}}}
-   {\var{k+1}}
-   {\subst{\A}{\sbweak{\G}{\B}}}
-  }
+  \showEqSubstWeak
 \end{equation*}
 
-\subsubsection*{Rule $\rl{eq-subst-extend-zero}$}
+\subsubsection*{Rule {\rlEqSubstExtendZero}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-subst-extend-zero}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\D}{\A} \\
-   \isterm{\G}{\uu}{\subst{\A}{\sbs}}
-  }
-  {\eqterm{\G}
-     {\subst{\var{0}}{\sbextend{\sbs}{\A}{\uu}}}
-     {\uu}
-     {\subst{\A}{\sbs}}
-  }
+  \showEqSubstExtendZero
 \end{equation*}
 
-\subsubsection*{Rule $\rl{eq-subst-extend-succ}$}
+\subsubsection*{Rule {\rlEqSubstExtendSucc}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-subst-extend-succ}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \isterm{\D}{\var{k}}{\A} \\
-   \isterm{\G}{\uu}{\subst{\B}{\sbs}}
-  }
-  {\eqterm{\G}
-     {\subst
-        {\var{k+1}}
-        {\sbextend{\sbs}{\B}{\uu}}
-     }
-     {\subst{\var{k}}{\sbs}}
-     {\subst{\A}{\sbs}}
-  }
+  \showEqSubstExtendSucc
 \end{equation*}
 
-\subsubsection*{Rule $\rl{eq-subst-abs}$}
+\subsubsection*{Rule {\rlEqSubstAbs}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-subst-abs}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \isterm{\ctxextend{\D}{\A}}{\uu}{\B}
-  }
-  {\eqterm{\G}
-    {\subst{(\lam{\A}{\B} \uu)}{\sbs}}
-    {(\lam
-      {\subst{\A}{\sbs}}
-      {\subst
-        {\B}
-        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
-      }
-      \subst{\uu}{\sbextend{\sbs}{\A}{\var{0}}})
-    }
-    {\Prod
-      {\subst{\A}{\sbs}}
-      {\subst
-        {\B}
-        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
-      }
-    }
-  }
+  \showEqSubstAbs
 \end{equation*}
 
-\subsubsection*{Rule $\rl{eq-subst-app}$}
+\subsubsection*{Rule {\rlEqSubstApp}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-subst-app}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\ctxextend{\D}{\A}}{\B} \\
-   \isterm{\D}{\uu}{\Prod{\A}{\B}} \\
-   \isterm{\D}{\vv}{\A}
-  }
-  {\eqterm{\G}
-   {\subst{(\app{\uu}{\A}{\B}{\vv})}{\sbs}}
-   {\app
-      {\subst{\uu}{\sbs}}
-      {\subst{\A}{\sbs}}
-      {\subst
-        {\B}
-        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
-      }
-      {\subst{\vv}{\sbs}}}
-   {\subst
-     {(\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}})}
-     {\sbs}
-   }
-  }
+  \showEqSubstApp
 \end{equation*}
 
-\subsubsection*{Rule $\rl{eq-subst-refl}$}
+\subsubsection*{Rule {\rlEqSubstRefl}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-subst-refl}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \isterm{\D}{\uu}{\A}
-  }
-  {\eqterm{\G}
-   {\subst{(\refl{\A}{\uu})}{\sbs}}
-   {\refl{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}}
-   {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\uu}{\sbs}}}
-  }
+  \showEqSubstRefl
 \end{equation*}
 
-\subsubsection*{Rule $\rl{eq-reflection}$}
+\subsubsection*{Rule {\rlEqReflection}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{eq-reflection}]
-  {\isterm{\G}{\ww_1}{\Id{\A}{\uu}{\vv}} \\
-   \isterm{\G}{\ww_2}{\textsf{UIP}(\A)}
-  }
-  {\eqterm{\G}{\uu}{\vv}{\A}}
+  \showEqReflection
 \end{equation*}
 
 
-\subsubsection*{Rule $\rl{prod-beta}$}
+\subsubsection*{Rule {\rlProdBeta}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-\infer[\rl{prod-beta}]
-  {\isterm{\ctxextend{\G}{\A}}{\uu}{\B}\\
-    \isterm{\G}{\vv}{\A}}
-  {\eqterm{\G}{\bigl(\app{(\lam{\A}{\B}{\uu})}{\A}{\B}{\vv}\bigr)}
-              {\subst{\uu}{\sbextend{\sbid{\G}}{\A}{\vv}}}
-              {\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}}}}
+  \showProdBeta
 \end{equation*}
 
-\subsubsection*{Rule $\rl{prod-eta}$}
+\subsubsection*{Rule {\rlProdEta}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{prod-eta}]
-  {\isterm{\G}{\uu}{\Prod{\A}{\B}}\\
-   \isterm{\G}{\vv}{\Prod{\A}{\B}}\\\\
-   \eqterm
-      {\ctxextend{\G}{\A}}
-      {(\app
-          {\subst{\uu}{\sbweak{\G}{\A}}}
-          {\subst{\A}{\sbweak{\G}{\A}}}
-          {\subst
-            {\B}
-            {\sbshift
-              {\sbweak{\G}{\A}}
-              {\ctxextend{\G}{\A}}
-              {\A}
-            }
-          }
-          {\var{0}})
-      }
-      {(\app
-          {\subst{\vv}{\sbweak{\G}{\A}}}
-          {\subst{\A}{\sbweak{\G}{\A}}}
-          {\subst
-            {\B}
-            {\sbshift
-              {\sbweak{\G}{\A}}
-              {\ctxextend{\G}{\A}}
-              {\A}
-            }
-          }
-          {\var{0}})
-      }
-      {\B}
-  }
-  {\eqterm{\G}{\uu}{\vv}{\Prod{\A}{\B}}}
+  \showProdEta
 \end{equation*}
 
-\subsubsection*{Rule $\rl{cong-abs}$}
+\subsubsection*{Rule {\rlCongAbs}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{cong-abs}]
-  {\eqtype{\G}{\A_1}{\B_1}\\
-    \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}\\
-    \eqterm{\ctxextend{\G}{\A_1}}{\uu_1}{\uu_2}{\A_2}}
-  {\eqterm{\G}{(\lam{\A_1}{\A_2}{\uu_1})}
-              {(\lam{\B_1}{\B_2}{\uu_2})}
-              {\Prod{\A_1}{\A_2}}}
+  \showCongAbs
 \end{equation*}
 
-\subsubsection*{Rule $\rl{cong-app}$}
+\subsubsection*{Rule {\rlCongApp}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{cong-app}]
-  {\eqtype{\G}{\A_1}{\B_1}\\
-   \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}\\\\
-   \eqterm{\G}{\uu_1}{\vv_1}{\Prod{\A_1}{\A_2}}\\
-   \eqterm{\G}{\uu_2}{\vv_2}{\A_1}}
-  {\eqterm
-    {\G}
-    {(\app{\uu_1}{\A_1}{\A_2}{\uu_2})}
-    {(\app{\vv_1}{\B_1}{\B_2}{\vv_2})}
-    {\subst{\A_2}{\sbextend{\sbid{\G}}{\A_1}{\uu_2}}}
-  }
+  \showCongApp
 \end{equation*}
 
-\subsubsection*{Rule $\rl{cong-refl}$}
+\subsubsection*{Rule {\rlCongRefl}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{cong-refl}]
-  {\eqterm{\G}{\uu_1}{\uu_2}{\A_1}\\
-    \eqtype{\G}{\A_1}{\A_2}}
-  {\eqterm{\G}{\refl{\A_1} \uu_1}{\refl{\A_2} \uu_2}{\Id{\A_1}{\uu_1}{\uu_1}}}
+  \showCongRefl
 \end{equation*}
 
-\subsubsection*{Rule $\rl{cong-term-subst}$}
+\subsubsection*{Rule {\rlCongTermSubst}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \infer[\rl{cong-term-subst}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \eqterm{\D}{\uu_1}{\uu_2}{\A}
-  }
-  {\eqterm{\G}{\subst{\uu_1}{\sbs}}{\subst{\uu_2}{\sbs}}{\subst{\A}{\sbs}}}
+  \showCongTermSubst
 \end{equation*}
 
 %%% Local Variables:
