@@ -19,47 +19,31 @@ derivation.
 
 \subsection{Contexts \fbox{$\isctx{\G}$}}
 
-The rules {\rlCtxEmpty} and {\rlCtxExtend} need not be considered.
+\subsubsection*{Rule {\rlCtxEmpty}}
+
+We need not consider this rule.
+% But do not delete this without understanding what verify.sh does.
+
+\subsubsection*{Rule {\rlCtxExtend}}
+
+We need not consider this rule.
+% But do not delete this without understanding what verify.sh does.
 
 \subsection{Substitutions \fbox{$\issubst{\sbs}{\G}{\D}$}}
 
 This section proves clause \eqref{sane-issubst} of the theorem.
 
-\subsubsection*{Rule {\rlSubstId}}
 
-\meta{GO AWAY}
+\subsubsection*{Rule {\rlSubstZero}}
+
 Consider a derivation ending with
 %
 \begin{equation*}
-  \showSubstId
+  \showSubstZero
 \end{equation*}
 %
-By the premise we have $\isctx{\G}$.
+\meta{TO DO}
 
-\subsubsection*{Rule {\rlSubstCompose}}
-
-\meta{GO AWAY}
-Consider a derivation ending with
-%
-\begin{equation*}
-  \showSubstCompose
-\end{equation*}
-%
-By induction hypothesis on the left premise $\isctx{\G}$ follows, and by induction
-hypothesis on the right premise $\isctx{\E}$.
-
-\subsubsection*{Rule {\rlSubstExtend}}
-
-\meta{GO AWAY}
-Consider a derivation ending with
-%
-\begin{equation*}
-  \showSubstExtend
-\end{equation*}
-%
-Then $\isctx{\G}$ by induction hypothesis on the left premise, while
-$\isctx{(\ctxextend{\D}{\A})}$ follows by the induction hypothesis on the middle
-premise and an application of {\rlCtxExtend}.
 
 \subsubsection*{Rule {\rlSubstWeak}}
 
@@ -72,15 +56,6 @@ Consider a derivation ending with
 First, $\isctx{\G}$ follows by induction hypothesis on the premise, and then
 $\isctx{\ctxextend{\G}{\A}}$ by an application of {\rlCtxExtend}.
 
-\subsubsection*{Rule {\rlSubstZero}}
-
-Consider a derivation ending with
-%
-\begin{equation*}
-  \showSubstZero
-\end{equation*}
-%
-\meta{TO DO}
 
 \subsubsection*{Rule {\rlSubstShift}}
 
@@ -219,31 +194,31 @@ Consider a derivation ending with
   \showTermApp
 \end{equation*}
 %
-We first argue that we may apply {\rlSubstExtend} as follows:
-%
-\begin{equation*}
-  \inferrule*
-  {
-   \inferrule*{\isctx{\G}}{\issubst{\sbid{\G}}{\G}{\G}}
-   \\
-   \istype{\G}{\A} \\
-   \inferrule*
-      {\isterm{\G}{\vv}{\A} \\
-       \eqtype{\G}{\A}{\subst{\A}{\sbid{\G}}}
-      }
-      {\isterm{\G}{\vv}{\subst{\A}{\sbid{\G}}}}
-  }
-  {\issubst
-   {(\sbextend{\sbid{\G}}{\A}{\vv})}
-   {\G}
-   {\ctxextend{\G}{\A}}
-  }
-\end{equation*}
-%
-The left premise of this derivation follows by \meta{BROKEN:CtxId}, which in turn is
-justified by \meta{\{something missing: several solutions like strengthening
-the theorem/program, adding $\istype{\G}{\A}$ as a premise to {\rlTermApp} or
-devise a way to call the induction hypothesis on its result. \}}
+% We first argue that we may apply {\rlSubstExtend} as follows:
+% %
+% \begin{equation*}
+%   \inferrule*
+%   {
+%    \inferrule*{\isctx{\G}}{\issubst{\sbid{\G}}{\G}{\G}}
+%    \\
+%    \istype{\G}{\A} \\
+%    \inferrule*
+%       {\isterm{\G}{\vv}{\A} \\
+%        \eqtype{\G}{\A}{\subst{\A}{\sbid{\G}}}
+%       }
+%       {\isterm{\G}{\vv}{\subst{\A}{\sbid{\G}}}}
+%   }
+%   {\issubst
+%    {(\sbextend{\sbid{\G}}{\A}{\vv})}
+%    {\G}
+%    {\ctxextend{\G}{\A}}
+%   }
+% \end{equation*}
+% %
+% The left premise of this derivation follows by \meta{BROKEN:CtxId}, which in turn is
+% justified by \meta{\{something missing: several solutions like strengthening
+% the theorem/program, adding $\istype{\G}{\A}$ as a premise to {\rlTermApp} or
+% devise a way to call the induction hypothesis on its result. \}}
 
 \subsubsection*{Rule {\rlTermRefl}}
 
@@ -287,12 +262,12 @@ $\isctx{\ctxextend{\G}{\A}}$ and $\isctx{\ctxextend{\D}{\B}}$.
 
 In this section we prove clause~\eqref{sane-eqtype}.
 
-\subsubsection*{Rule {\rlEqTyConv}}
+\subsubsection*{Rule {\rlEqTyCtxConv}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \showEqTyConv
+  \showEqTyCtxConv
 \end{equation*}
 %
 By induction hypothesis on the left premise we obtain $\istype{\G}{\A}$
@@ -329,32 +304,6 @@ Consider a derivation ending with
 \end{equation*}
 %
 By induction hypothesis on the premises, we conclude.
-
-\subsubsection*{Rule {\rlEqTySubstId}}
-
-Consider a derivation ending with
-%
-\begin{equation*}
-  \showEqTySubstId
-\end{equation*}
-%
-We have $\istype{\G}{\A}$ as premise. We derive $\issubst{\sbid{\G}}{\G}{\G}$ from the
-induction hypothesis by {\rlSubstId}, and use it in {\rlTySubst} to conclude
-$\istype{\G}{\subst{\A}{\sbid{\G}}}$.
-
-\subsubsection*{Rule {\rlEqTySubstCompose}}
-
-\meta{GO AWAY}
-Consider a derivation ending with
-%
-\begin{equation*}
-  \showEqTySubstCompose
-\end{equation*}
-%
-We use the first two premises and {\rlSubstCompose} to derive
-$\issubst{\sbcomp{\sbs}{\sbt}}{\G}{\E}$, which we then use in {\rlTySubst} to obtain
-$\istype{\G}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}$. Similarly, we apply {\rlTySubst} twice
-on the premises to conclude $\istype{\G}{\subst{(\subst{\A}{\sbs})}{\sbt}}$.
 
 
 \subsubsection*{Rule {\rlEqTyWeakNat}}
@@ -503,43 +452,6 @@ Consider a derivation ending with
 %
 We conclude immediately using the induction hypotheses.
 
-\subsubsection*{Rule {\rlEqSubstId}}
-
-Consider a derivation ending with
-%
-\begin{equation*}
-  \showEqSubstId
-\end{equation*}
-%
-We have $\isterm{\G}{\uu}{\A}$ as a premise.
-Moreover, \meta{\{how do we get it?\}}, $\isctx{\G}$ and so
-$\issubst{\sbid{\G}}{\G}{\G}$. Then, applying {\rlTermSubst} on it and
-the premise, we get
-$\isterm{\G}{\subst{\uu}{\sbid{\G}}}{\subst{\A}{\sbid{\G}}}$.
-Similarly, using {\rlEqTySubstId} on the induction hypothesis yielding
-$\istype{\G}{\A}$, we derive $\eqtype{\G}{\subst{\A}{\sbid{\G}}}{\A}$.
-With {\rlTermTyConv} we conclude
-$\isterm{\G}{\subst{\uu}{\sbid{\G}}}{\A}$.
-
-\subsubsection*{Rule {\rlEqSubstCompose}}
-
-Consider a derivation ending with
-%
-\begin{equation*}
-  \showEqSubstCompose
-\end{equation*}
-%
-Using {\rlSubstCompose} to the first two premises we get
-$\issubst{\sbcomp{\sbs}{\sbt}}{\G}{\E}$. Then applying {\rlTermSubst}
-to it and the right premise yields
-$\isterm{\G}{\subst{\uu}{\sbcomp{\sbs}{\sbt}}}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}$.
-%
-Applying {\rlTermSubst} twice on the premises yields
-$\isterm{\G}{\subst{(\subst{\uu}{\sbs})}{\sbt}}{\subst{(\subst{\A}{\sbs})}{\sbt}}$. It
-remains to apply {\rlTermTyConv}, for which we need
-$\eqtype{\G}{\subst{(\subst{\A}{\sbs})}{\sbt}}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}$. By
-induction hypothesis on the right premise we get $\istype{\E}{\A}$, to which we apply
-{\rlEqTySubstCompose} and finally {\rlEqTySym}.
 
 
 
@@ -576,16 +488,6 @@ Consider a derivation ending with
 \meta{TO DO}
 
 
-\subsubsection*{Rule {\rlEqSubstZeroSucc}}
-
-Consider a derivation ending with
-%
-\begin{equation*}
-  \showEqSubstZeroSucc
-\end{equation*}
-%
-\meta{TO DO}
-
 
 \subsubsection*{Rule {\rlEqSubstShiftZero}}
 
@@ -608,24 +510,6 @@ Consider a derivation ending with
 %
 \meta{TO DO}
 
-
-
-
-\subsubsection*{Rule {\rlEqSubstExtendZero}}
-
-Consider a derivation ending with
-%
-\begin{equation*}
-  \showEqSubstExtendZero
-\end{equation*}
-
-\subsubsection*{Rule {\rlEqSubstExtendSucc}}
-
-Consider a derivation ending with
-%
-\begin{equation*}
-  \showEqSubstExtendSucc
-\end{equation*}
 
 \subsubsection*{Rule {\rlEqSubstAbs}}
 

@@ -25,39 +25,6 @@
 
 %%%% Substitutions
 
-% GO AWAY
-\newcommand{\rlSubstId}{\referTo{subst-id}{rul:subst-id}}
-\newcommand{\showSubstId}{%
-  \infer[\rulename{subst-id}] % SubstId
-  {\isctx{\G}}
-  {\issubst{\sbid{\G}}{\G}{\G}}
-}
-
-% GO AWAY
-\newcommand{\rlSubstCompose}{\referTo{subst-compose}{rul:subst-compose}}
-\newcommand{\showSubstCompose}{%
-  \infer[\rulename{subst-compose}] % SubstCompose
-  {\issubst{\sbs}{\G}{\D} \\
-    \issubst{\sbt}{\D}{\E}
-  }
-  {\issubst{\sbcomp{\sbt}{\sbs}}{\G}{\E}}
-}
-
-% GO AWAY
-\newcommand{\rlSubstExtend}{\referTo{subst-extend}{rul:subst-extend}}
-\newcommand{\showSubstExtend}{%
-  \infer[\rulename{subst-extend}] % SubstExtend
-  {\issubst{\sbs}{\G}{\D} \\
-    \istype{\D}{\A} \\
-    \isterm{\G}{\uu}{\subst{\A}{\sbs}}
-  }
-  {\issubst
-    {(\sbextend{\sbs}{\A}{\uu})}
-    {\G}
-    {(\ctxextend{\D}{\A})}
-  }
-}
-
 \newcommand{\rlSubstZero}{\referTo{subst-zero}{rul:subst-zero}}
 \newcommand{\showSubstZero}{%
   \infer[\rulename{subst-zero}] % SubstZero
@@ -296,31 +263,6 @@
   {\eqtype{\G}{\A}{\C}}
 }
 
-% XXX: REMOVE THIS WHEN WE ARE SURE WE DON'T NEED THE IDENTITY SUBSTITUTION
-% \newcommand{\rlEqTySubstId}{\referTo{eq-ty-subst-id}{rul:eq-ty-subst-id}}
-% \newcommand{\showEqTySubstId}{%
-%   \infer[\rulename{eq-ty-subst-identity}] % EqTySubstId
-%   {\istype{\G}{\A}}
-%   {\eqtype{\G}
-%     {\subst{\A}{\sbid{\G}}}
-%     {\A}
-%   }
-% }
-
-% GO AWAY
-\newcommand{\rlEqTySubstCompose}{\referTo{eq-ty-subst-compose}{rul:eq-ty-subst-compose}}
-\newcommand{\showEqTySubstCompose}{%
-  \infer[\rulename{eq-ty-subst-compose}] % EqTySubstCompose
-  {\issubst{\sbs}{\G}{\D} \\
-    \issubst{\sbt}{\D}{\E} \\
-    \istype{\E}{\A}
-  }
-  {\eqtype{\G}
-    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
-    {\subst{(\subst{\A}{\sbs})}{\sbt}}
-  }
-}
-
 
 \newcommand{\rlEqTyWeakNat}{\referTo{eq-ty-weak-nat}{rul:eq-ty-weak-nat}}
 \newcommand{\showEqTyWeakNat}{%
@@ -446,32 +388,6 @@
 }
 
 
-\newcommand{\rlEqSubstId}{\referTo{eq-subst-id}{rul:eq-subst-id}}
-\newcommand{\showEqSubstId}{%
-  \infer[\rulename{eq-subst-id}] % EqSubstId
-  {\isterm{\G}{\uu}{\A}}
-  {\eqterm{\G}
-    {\subst{\uu}{\sbid{\G}}}
-    {\uu}
-    {\A}
-  }
-}
-
-
-\newcommand{\rlEqSubstCompose}{\referTo{eq-subst-compose}{rul:eq-subst-compose}}
-\newcommand{\showEqSubstCompose}{%
-  \infer[\rulename{eq-subst-compose}] % EqSubstCompose
-  {\issubst{\sbs}{\G}{\D} \\
-    \issubst{\sbt}{\D}{\E} \\
-    \isterm{\E}{\uu}{\A}
-  }
-  {\eqterm{\G}
-    {\subst{\uu}{\sbcomp{\sbs}{\sbt}}}
-    {\subst{(\subst{\uu}{\sbs})}{\sbt}}
-    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
-  }
-}
-
 
 \newcommand{\rlEqSubstWeak}{\referTo{eq-subst-weak}{rul:eq-subst-weak}}
 \newcommand{\showEqSubstWeak}{%
@@ -546,39 +462,6 @@
   }
 }
 
-
-
-\newcommand{\rlEqSubstExtendZero}{\referTo{eq-subst-extend-zero}{rul:eq-subst-extend-zero}}
-\newcommand{\showEqSubstExtendZero}{%
-  \infer[\rulename{eq-subst-extend-zero}] % EqSubstExtendZero
-  {\issubst{\sbs}{\G}{\D} \\
-    \istype{\D}{\A} \\
-    \isterm{\G}{\uu}{\subst{\A}{\sbs}}
-  }
-  {\eqterm{\G}
-    {\subst{\var{0}}{\sbextend{\sbs}{\A}{\uu}}}
-    {\uu}
-    {\subst{\A}{\sbs}}
-  }
-}
-
-
-\newcommand{\rlEqSubstExtendSucc}{\referTo{eq-subst-extend-succ}{rul:eq-subst-extend-succ}}
-\newcommand{\showEqSubstExtendSucc}{%
-  \infer[\rulename{eq-subst-extend-succ}] % EqSubstExtendSucc
-  {\issubst{\sbs}{\G}{\D} \\
-    \isterm{\D}{\var{k}}{\A} \\
-    \isterm{\G}{\uu}{\subst{\B}{\sbs}}
-  }
-  {\eqterm{\G}
-    {\subst
-      {\var{k+1}}
-      {\sbextend{\sbs}{\B}{\uu}}
-    }
-    {\subst{\var{k}}{\sbs}}
-    {\subst{\A}{\sbs}}
-  }
-}
 
 
 \newcommand{\rlEqSubstAbs}{\referTo{eq-subst-abs}{rul:eq-subst-abs}}
