@@ -666,14 +666,15 @@ Using $\rl{subst-compose}$ to the first two premises we get
 $\issubst{\sbcomp{\sbs}{\sbt}}{\G}{\E}$. Then applying $\rl{term-subst}$
 to it and the right premise yields
 $\isterm{\G}{\subst{\uu}{\sbcomp{\sbs}{\sbt}}}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}$.
-Applying $\rl{term-subst}$ twice on the premises in turn yields
-$\isterm{\G}{\subst{(\subst{\uu}{\sbs})}{\sbt}}{\subst{(\subst{\A}{\sbs})}{\sbt}}$.
-The induction hypothesis on the right premise gives us $\istype{\E}{\A}$,
-then appplying $\rl{eq-ty-subst-compose}$ on it and the two other premises
-returns
-$\eqtype{\G}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}{\subst{(\subst{\A}{\sbs})}{\sbt}}$.
-We finally conclude with $\rl{term-ty-conv}$ that
-$\isterm{\G}{\subst{(\subst{\uu}{\sbs})}{\sbt}}{\subst{(\subst{\A}{\sbs})}{\sbt}}$.
+%
+Applying $\rl{term-subst}$ twice on the premises yields
+$\isterm{\G}{\subst{(\subst{\uu}{\sbs})}{\sbt}}{\subst{(\subst{\A}{\sbs})}{\sbt}}$. It
+remains to apply $\rl{term-ty-conv}$, for which we need
+$\eqtype{\G}{\subst{(\subst{\A}{\sbs})}{\sbt}}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}$. By
+induction hypothesis on the right premise we get $\istype{\E}{\A}$, to which we apply
+$\rl{eq-ty-subst-compose}$ and finally $\rl{eq-ty-sym}$.
+
+
 
 \subsubsection*{Rule $\rl{eq-subst-weak}$}
 
