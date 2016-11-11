@@ -10,7 +10,7 @@
   \item \label{sane-isterm}  if $\isterm{\G}{\uu}{\A}$ then $\istype{\G}{\A}$,
   \item \label{sane-eqctx}   if $\eqctx{\G}{\D}$ then $\isctx{\G}$ and $\isctx{\D}$,
   \item \label{sane-eqtype}  if $\eqtype{\G}{\A}{\B}$ then $\istype{\G}{\A}$ and $\istype{\G}{\B}$,
-  \item \label{sane-eqterm}  if $\eqterm{\G}{\uu}{\vv}{\A}$ then $\isterm{\G}{\uu}{\A}$ and $\isterm{\G}{\uu}{\A}$.
+  \item \label{sane-eqterm}  if $\eqterm{\G}{\uu}{\vv}{\A}$ then $\isterm{\G}{\uu}{\A}$ and $\isterm{\G}{\vv}{\A}$.
   \end{enumerate}
 \end{theorem}
 
@@ -293,7 +293,10 @@ We first argue that we may apply $\rl{subst-extend}$ as follows:
   }
 \end{equation*}
 %
-The left premise of this derivation follows by $\rl{ctx-id}$, which in turn is justified by
+The left premise of this derivation follows by $\rl{ctx-id}$, which in turn is
+justified by \meta{\{something missing: several solutions like strengthening
+the theorem/program, adding $\istype{\G}{\A}$ as a premise to $\rl{term-app}$ or
+devise a way to call the induction hypothesis on its result. \}}
 
 \subsubsection*{Rule $\rl{term-refl}$}
 
@@ -546,7 +549,7 @@ Consider a derivation ending with
 \end{equation*}
 Note: To type $\istype{\ctxextend{\G}{\B_1}}{\B_2}$, we need
 $\eqctx{\G}{\G}$ which is derivable from $\isctx{\G}$.
-This in turn we don't have (same kind of trouble as $\rl{term-app}$).
+\meta{This in turn we don't have (same kind of trouble as $\rl{term-app}$).}
 
 \subsubsection*{Rule $\rl{cong-id}$}
 
@@ -587,6 +590,8 @@ applied to the right premise to conclude.
 
 \subsection{Term equality \fbox{$\eqterm{\G}{\uu_1}{\uu_2}{\A}$}}
 
+This section proves clause \eqref{sane-eqterm}.
+
 
 
 \subsubsection*{Rule $\rl{eq-ty-conv}$}
@@ -599,6 +604,10 @@ Consider a derivation ending with
     \eqtype{\G}{\A}{\B}}
   {\eqterm{\G}{\uu}{\vv}{\B}}
 \end{equation*}
+%
+By induction hypothesis on the left premise we obtain $\isterm{\G}{\uu}{\A}$
+and $\isterm{\G}{\vv}{\A}$. Then using $\rl{term-ty-conv}$ on both and on the
+right premise, we conclude $\isterm{\G}{\uu}{\B}$ and $\isterm{\G}{\vv}{\B}$.
 
 \subsubsection*{Rule $\rl{eq-ctx-conv}$}
 
@@ -610,6 +619,10 @@ Consider a derivation ending with
     \eqctx{\G}{\D}}
   {\eqterm{\D}{\uu}{\vv}{\A}}
 \end{equation*}
+%
+By induction hypothesis on the left premise we obtain $\isterm{\G}{\uu}{\A}$
+and $\isterm{\G}{\vv}{\A}$. Then using $\rl{term-ctx-conv}$ on both and on the
+right premise, we conclude $\isterm{\D}{\uu}{\A}$ and $\isterm{\D}{\vv}{\A}$.
 
 \subsubsection*{Rule $\rl{eq-refl}$}
 
@@ -620,6 +633,8 @@ Consider a derivation ending with
   {\isterm{\G}{\uu}{\A}}
   {\eqterm{\G}{\uu}{\uu}{\A}}
 \end{equation*}
+%
+We have $\isterm{\G}{\uu}{\A}$ as a premise.
 
 \subsubsection*{Rule $\rl{eq-sym}$}
 
@@ -630,6 +645,8 @@ Consider a derivation ending with
   {\eqterm{\G}{\vv}{\uu}{\A}}
   {\eqterm{\G}{\uu}{\vv}{\A}}
 \end{equation*}
+%
+We conclude immediately using the induction hypothesis.
 
 \subsubsection*{Rule $\rl{eq-trans}$}
 
@@ -641,6 +658,8 @@ Consider a derivation ending with
    \eqterm{\G}{\vv}{\ww}{\A}}
   {\eqterm{\G}{\uu}{\ww}{\A}}
 \end{equation*}
+%
+We conclude immediately using the induction hypotheses.
 
 \subsubsection*{Rule $\rl{eq-subst-id}$}
 
@@ -655,6 +674,16 @@ Consider a derivation ending with
      {\A}
   }
 \end{equation*}
+%
+We have $\isterm{\G}{\uu}{\A}$ as a premise.
+Moreover, \meta{\{how do we get it?\}}, $\isctx{\G}$ and so
+$\issubst{\sbid{\G}}{\G}{\G}$. Then, applying $\rl{term-subst}$ on it and
+the premise, we get
+$\isterm{\G}{\subst{\uu}{\sbid{\G}}}{\subst{\A}{\sbid{\G}}}$.
+Similarly, using $\rl{eq-ty-subst-id}$ on the induction hypothesis yielding
+$\istype{\G}{\A}$, we derive $\eqtype{\G}{\subst{\A}{\sbid{\G}}}{\A}$.
+With $\rl{term-ty-conv}$ we conclude
+$\isterm{\G}{\subst{\uu}{\sbid{\G}}}{\A}$.
 
 \subsubsection*{Rule $\rl{eq-subst-compose}$}
 
@@ -672,6 +701,19 @@ Consider a derivation ending with
     {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
   }
 \end{equation*}
+%
+Using $\rl{subst-compose}$ to the first two premises we get
+$\issubst{\sbcomp{\sbs}{\sbt}}{\G}{\E}$. Then applying $\rl{term-subst}$
+to it and the right premise yields
+$\isterm{\G}{\subst{\uu}{\sbcomp{\sbs}{\sbt}}}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}$.
+Applying $\rl{term-subst}$ twice on the premises in turn yields
+$\isterm{\G}{\subst{(\subst{\uu}{\sbs})}{\sbt}}{\subst{(\subst{\A}{\sbs})}{\sbt}}$.
+The induction hypothesis on the right premise gives us $\istype{\E}{\A}$,
+then appplying $\rl{eq-ty-subst-compose}$ on it and the two other premises
+returns
+$\eqtype{\G}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}{\subst{(\subst{\A}{\sbs})}{\sbt}}$.
+We finally conclude with $\rl{term-ty-conv}$ that
+$\isterm{\G}{\subst{(\subst{\uu}{\sbs})}{\sbt}}{\subst{(\subst{\A}{\sbs})}{\sbt}}$.
 
 \subsubsection*{Rule $\rl{eq-subst-weak}$}
 
