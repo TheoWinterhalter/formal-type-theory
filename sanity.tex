@@ -1,6 +1,12 @@
 \section{Type theory is well formed}
 \label{sec:type-theory-well}
 
+% We want the following construction to be just a simple structural recursion on the derivation.
+% It should not use any admissibility results, or nested forms of induction.
+% The reasons for this are:
+% * this is a sanity theorem showing that type theory contains no garbage, and as such should come *before* other results
+% * in the anticipated translation of ETT to ITT we will suffer each time we use an inner induction (really?)
+
 \begin{problem}
   \leavevmode
   %
