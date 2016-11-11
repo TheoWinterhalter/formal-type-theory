@@ -238,19 +238,6 @@ Then we have the derivable rule
    \eqtype{\G}{\A}{\B}
   }
   {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\G}{\B})}}
-
-  \infer[\rl{eq-ctx-refl}]
-  {\isctx{\G}}
-  {\eqctx{\G}{\G}}
-
-  \infer[\rl{eq-ctx-sym}]
-  {\eqctx{\D}{\G}}
-  {\eqctx{\G}{\D}}
-
-  \infer[\rl{eq-ctx-trans}]
-  {\eqctx{\G}{\D} \\
-   \eqctx{\D}{\E}}
-  {\eqctx{\G}{\E}}
 \end{mathpar}
 
 \goodbreak

@@ -288,7 +288,7 @@ We first argue that we may apply $\rl{subst-extend}$ as follows:
       {\isterm{\G}{\vv}{\subst{\A}{\sbid{\G}}}}
   }
   {\issubst
-   {\sbextend{\sbid{\G}}{\A}{\vv}}
+   {(\sbextend{\sbid{\G}}{\A}{\vv})}
    {\G}
    {\ctxextend{\G}{\A}}
   }
@@ -340,44 +340,6 @@ Consider a derivation ending with
 %
 We apply $\rl{ctx-extend}$ twice to the induction hypotheses to conclude
 $\isctx{\ctxextend{\G}{\A}}$ and $\isctx{\ctxextend{\D}{\B}}$.
-
-
-\subsubsection*{Rule $\rl{eq-ctx-refl}$}
-
-Consider a derivation ending with
-%
-\begin{equation*}
-  \infer[]
-  {\isctx{\G}}
-  {\eqctx{\G}{\G}}
-\end{equation*}
-%
-We have $\isctx{\G}$ as a premise.
-
-\subsubsection*{Rule $\rl{eq-ctx-sym}$}
-
-Consider a derivation ending with
-%
-\begin{equation*}
-  \infer[]
-  {\eqctx{\D}{\G}}
-  {\eqctx{\G}{\D}}
-\end{equation*}
-%
-We conclude by induction hypothesis.
-
-\subsubsection*{Rule $\rl{eq-ctx-trans}$}
-
-Consider a derivation ending with
-%
-\begin{equation*}
-  \infer[]
-  {\eqctx{\G}{\D} \\
-   \eqctx{\D}{\E}}
-  {\eqctx{\G}{\E}}
-\end{equation*}
-%
-We conclude by induction hypotheses.
 
 
 \subsection{Type equality \fbox{$\eqtype{\G}{\A}{\B}$}}
