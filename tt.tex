@@ -24,10 +24,12 @@ In this section we give the formulation of type theory that we shall work with.
     \bnfor {}& \subst{\uu}{\sbs}        && \text{substitution $\sbs$ applied to $\uu$} \\
   \\
   \text{Substitution $\sbs$, $\sbt$}
-    \bnf   {}& \sbid{\G}                && \text{identity substitution $\G \to \G$} \\
-    \bnfor {}& \sbcomp{\sbs}{\sbt}      && \text{composition of substitutions} \\
-    \bnfor {}& \sbextend{\sbs}{\A}{\uu} && \text{substitution $\sbs$ extended with $\uu$ of type $\subst{\A}{\sbs}$} \\
-    \bnfor {}& \sbweak{\G}{\A}          && \text{weakening substitution $\ctxextend{\G}{\A} \to \G$}
+    \bnf   {}& \sbid{\G}                && \text{identity substitution $\G \to \G$ \meta{GO AWAY}} \\
+    \bnfor {}& \sbcomp{\sbs}{\sbt}      && \text{composition of substitutions \meta{GO AWAY}} \\
+    \bnfor {}& \sbextend{\sbs}{\A}{\uu} && \text{substitution $\sbs$ extended with $\uu$ of type $\subst{\A}{\sbs}$ \meta{GO AWAY}} \\
+    \bnfor {}& \sbzero{\G}{\A}{\uu}     && \text{substitute $u$ for the $0$-th index} \\
+    \bnfor {}& \sbweak{\G}{\A}          && \text{weakening substitution $\ctxextend{\G}{\A} \to \G$} \\
+    \bnfor {}& \sbshift{\G}{\A}{\sbs}   && \text{shift substitution}
 \end{align*}
 
 \subsection{Judgments}
@@ -56,22 +58,18 @@ In this section we give the formulation of type theory that we shall work with.
 \label{sec:subst}
 
 \begin{mathpar}
-  {\label{rul:subst-id} \showSubstId}
+  {\label{rul:subst-id} \showSubstId \meta{GO AWAY}}
 
-  {\label{rul:subst-compose} \showSubstCompose}
+  {\label{rul:subst-compose} \showSubstCompose \meta{GO AWAY}}
 
-  {\label{rul:subst-extend} \showSubstExtend}
+  {\label{rul:subst-extend} \showSubstExtend \meta{GO AWAY}}
+
+  {\label{rul:subst-zero} \showSubstZero}
 
   {\label{rul:subst-weak} \showSubstWeak}
-\end{mathpar}
 
-We let $\sbshift{\sbs}{\G}{\A}$ stand for
-$\sbextend{\sbcomp{\sbs}{\sbweak{\G}{\subst{\A}{\sbs}}}}{\A}{\var{0}}$.
-Then we have the derivable rule
-%
-\begin{equation*}
  {\label{rul:subst-shift} \showSubstShift}
-\end{equation*}
+\end{mathpar}
 
 \subsection{Types \fbox{$\istype{\G}{\A}$}}
 
@@ -160,9 +158,11 @@ Then we have the derivable rule
 \subsubsection*{Substitution}
 
 \begin{mathpar}
-  {\label{rul:eq-ty-subst-id} \showEqTySubstId}
+  % XXX We used to have here the other EqTySubstId
 
-  {\label{rul:eq-ty-subst-compose} \showEqTySubstCompose}
+  {\label{rul:eq-ty-subst-compose} \showEqTySubstCompose \meta{GO AWAY}}
+
+  {\label{rul:eq-ty-weak-nat} \showEqTyWeakNat}
 
   {\label{rul:eq-ty-subst-prod} \showEqTySubstProd}
 
@@ -200,15 +200,25 @@ Then we have the derivable rule
 \subsubsection*{Substitutions}
 
 \begin{mathpar}
-  {\label{rul:eq-subst-id} \showEqSubstId}
+  {\label{rul:eq-subst-id} \showEqSubstId \meta{GO AWAY}}
 
-  {\label{rul:eq-subst-compose} \showEqSubstCompose}
+  {\label{rul:eq-subst-compose} \showEqSubstCompose \meta{GO AWAY}}
 
+  {\label{rul:eq-subst-extend-zero} \showEqSubstExtendZero \meta{GO AWAY}}
+
+  {\label{rul:eq-subst-extend-succ} \showEqSubstExtendSucc \meta{GO AWAY}}
+\end{mathpar}
+
+\begin{mathpar}
   {\label{rul:eq-subst-weak} \showEqSubstWeak}
 
-  {\label{rul:eq-subst-extend-zero} \showEqSubstExtendZero}
+  {\label{rul:eq-subst-zero-zero} \showEqSubstZeroZero}
 
-  {\label{rul:eq-subst-extend-succ} \showEqSubstExtendSucc}
+  {\label{rul:eq-subst-zero-succ} \showEqSubstZeroSucc}
+
+  {\label{rul:eq-subst-shift-zero} \showEqSubstShiftZero}
+
+  {\label{rul:eq-subst-shift-succ} \showEqSubstShiftSucc}
 
   {\label{rul:eq-subst-abs} \showEqSubstAbs}
 

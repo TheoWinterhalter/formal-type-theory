@@ -27,6 +27,7 @@ This section proves clause \eqref{sane-issubst} of the theorem.
 
 \subsubsection*{Rule {\rlSubstId}}
 
+\meta{GO AWAY}
 Consider a derivation ending with
 %
 \begin{equation*}
@@ -37,6 +38,7 @@ By the premise we have $\isctx{\G}$.
 
 \subsubsection*{Rule {\rlSubstCompose}}
 
+\meta{GO AWAY}
 Consider a derivation ending with
 %
 \begin{equation*}
@@ -48,6 +50,7 @@ hypothesis on the right premise $\isctx{\E}$.
 
 \subsubsection*{Rule {\rlSubstExtend}}
 
+\meta{GO AWAY}
 Consider a derivation ending with
 %
 \begin{equation*}
@@ -68,6 +71,16 @@ Consider a derivation ending with
 %
 First, $\isctx{\G}$ follows by induction hypothesis on the premise, and then
 $\isctx{\ctxextend{\G}{\A}}$ by an application of {\rlCtxExtend}.
+
+\subsubsection*{Rule {\rlSubstZero}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showSubstZero
+\end{equation*}
+%
+\meta{TO DO}
 
 \subsubsection*{Rule {\rlSubstShift}}
 
@@ -331,6 +344,7 @@ $\istype{\G}{\subst{\A}{\sbid{\G}}}$.
 
 \subsubsection*{Rule {\rlEqTySubstCompose}}
 
+\meta{GO AWAY}
 Consider a derivation ending with
 %
 \begin{equation*}
@@ -341,6 +355,18 @@ We use the first two premises and {\rlSubstCompose} to derive
 $\issubst{\sbcomp{\sbs}{\sbt}}{\G}{\E}$, which we then use in {\rlTySubst} to obtain
 $\istype{\G}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}$. Similarly, we apply {\rlTySubst} twice
 on the premises to conclude $\istype{\G}{\subst{(\subst{\A}{\sbs})}{\sbt}}$.
+
+
+\subsubsection*{Rule {\rlEqTyWeakNat}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqTyWeakNat
+\end{equation*}
+%
+\meta{TO DO}
+
 
 \subsubsection*{Rule {\rlEqTySubstProd}}
 
@@ -524,6 +550,66 @@ Consider a derivation ending with
 \begin{equation*}
   \showEqSubstWeak
 \end{equation*}
+%
+\meta{TO DO}
+
+
+\subsubsection*{Rule {\rlEqSubstZeroZero}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqSubstZeroZero
+\end{equation*}
+%
+\meta{TO DO}
+
+
+\subsubsection*{Rule {\rlEqSubstZeroSucc}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqSubstZeroSucc
+\end{equation*}
+%
+\meta{TO DO}
+
+
+\subsubsection*{Rule {\rlEqSubstZeroSucc}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqSubstZeroSucc
+\end{equation*}
+%
+\meta{TO DO}
+
+
+\subsubsection*{Rule {\rlEqSubstShiftZero}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqSubstShiftZero
+\end{equation*}
+%
+\meta{TO DO}
+
+
+\subsubsection*{Rule {\rlEqSubstShiftSucc}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqSubstShiftSucc
+\end{equation*}
+%
+\meta{TO DO}
+
+
+
 
 \subsubsection*{Rule {\rlEqSubstExtendZero}}
 

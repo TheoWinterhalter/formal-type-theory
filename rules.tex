@@ -25,7 +25,7 @@
 
 %%%% Substitutions
 
-
+% GO AWAY
 \newcommand{\rlSubstId}{\referTo{subst-id}{rul:subst-id}}
 \newcommand{\showSubstId}{%
   \infer[\rulename{subst-id}] % SubstId
@@ -33,7 +33,7 @@
   {\issubst{\sbid{\G}}{\G}{\G}}
 }
 
-
+% GO AWAY
 \newcommand{\rlSubstCompose}{\referTo{subst-compose}{rul:subst-compose}}
 \newcommand{\showSubstCompose}{%
   \infer[\rulename{subst-compose}] % SubstCompose
@@ -43,7 +43,7 @@
   {\issubst{\sbcomp{\sbt}{\sbs}}{\G}{\E}}
 }
 
-
+% GO AWAY
 \newcommand{\rlSubstExtend}{\referTo{subst-extend}{rul:subst-extend}}
 \newcommand{\showSubstExtend}{%
   \infer[\rulename{subst-extend}] % SubstExtend
@@ -58,6 +58,12 @@
   }
 }
 
+\newcommand{\rlSubstZero}{\referTo{subst-zero}{rul:subst-zero}}
+\newcommand{\showSubstZero}{%
+  \infer[\rulename{subst-zero}] % SubstZero
+  {\isterm{\G}{\uu}{\A}}
+  {\issubst{\sbzero{\G}{\A}{\uu}}{\G}{\ctxextend{\G}{\A}}}
+}
 
 \newcommand{\rlSubstWeak}{\referTo{subst-weak}{rul:subst-weak}}
 \newcommand{\showSubstWeak}{%
@@ -72,12 +78,12 @@
 
 \newcommand{\rlSubstShift}{\referTo{subst-shift}{rul:subst-shift}}
 \newcommand{\showSubstShift}{%
-  \infer
+  \infer[\rulename{subst-shift}] % SubstShift
   {\issubst{\sbs}{\G}{\D} \\
    \istype{\D}{\A}
   }
   {\issubst
-      {(\sbshift{\sbs}{\G}{\A})}
+      {(\sbshift{\G}{\A}{\sbs})}
       {\ctxextend{\G}{\subst{\A}{\sbs}}}
       {\ctxextend{\D}{\A}}
   }
@@ -220,7 +226,7 @@
   {\isterm
     {\G}
     {\app{\uu}{\A}{\B}{\vv}}
-    {\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}}}
+    {\subst{\B}{\sbzero{\G}{\A}{\vv}}}
   }
 }
 
@@ -301,7 +307,7 @@
 %   }
 % }
 
-
+% GO AWAY
 \newcommand{\rlEqTySubstCompose}{\referTo{eq-ty-subst-compose}{rul:eq-ty-subst-compose}}
 \newcommand{\showEqTySubstCompose}{%
   \infer[\rulename{eq-ty-subst-compose}] % EqTySubstCompose
@@ -312,6 +318,21 @@
   {\eqtype{\G}
     {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
     {\subst{(\subst{\A}{\sbs})}{\sbt}}
+  }
+}
+
+
+\newcommand{\rlEqTyWeakNat}{\referTo{eq-ty-weak-nat}{rul:eq-ty-weak-nat}}
+\newcommand{\showEqTyWeakNat}{%
+  \infer[\rulename{eq-ty-weak-nat}] % EqTyWeakNat
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A} \\
+   \istype{\D}{\B}
+  }
+  {\eqtype
+   {\ctxextend{\G}{\subst{\A}{\sbs}}}
+   {\subst{(\subst{\B}{\sbweak{\D}{\A}})}{\sbshift{\G}{\A}{\sbs}}}
+   {\subst{(\subst{\B}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
   }
 }
 
@@ -327,7 +348,7 @@
     {\subst{(\Prod{\A}{\B})}{\sbs}}
     {\Prod
       {\subst{\A}{\sbs}}
-      {\subst{\B}{\sbshift{\sbs}{\G}{\A}}}
+      {\subst{\B}{\sbshift{\G}{\A}{\sbs}}}
     }
   }
 }
@@ -466,6 +487,67 @@
 }
 
 
+\newcommand{\rlEqSubstZeroZero}{\referTo{eq-subst-zero-zero}{rul:eq-subst-zero-zero}}
+\newcommand{\showEqSubstZeroZero}{%
+  \infer[\rulename{eq-subst-zero-zero}] % EqSubstZeroZero
+  {
+    \isterm{\G}{\uu}{\A}
+  }
+  {\eqterm{\G}
+    {\subst{\var{0}}{\sbzero{\G}{\A}{\uu}}}
+    {\uu}
+    {\A}
+  }
+}
+
+\newcommand{\rlEqSubstZeroSucc}{\referTo{eq-subst-zero-succ}{rul:eq-subst-zero-succ}}
+\newcommand{\showEqSubstZeroSucc}{%
+  \infer[\rulename{eq-subst-zero-succ}] % EqSubstZeroSucc
+  {
+    \isterm{\G}{\var{k}}{\A} \\
+    \isterm{\G}{\uu}{\B}
+  }
+  {\eqterm{\G}
+    {\subst
+      {\var{k+1}}
+      {\sbzero{\G}{\B}{\uu}}
+    }
+    {\var{k}}
+    {\A}
+  }
+}
+
+\newcommand{\rlEqSubstShiftZero}{\referTo{eq-subst-shift-zero}{rul:eq-subst-shift-zero}}
+\newcommand{\showEqSubstShiftZero}{%
+  \infer[\rulename{eq-subst-shift-zero}] % EqSubstShiftZero
+  {\issubst{\sbs}{\G}{\D}\\
+   \istype{\D}{\A}
+  }
+  {\eqterm
+   {\ctxextend{\G}{\subst{\A}{\sbs}}}
+   {\subst{\var{0}}{\sbshift{\G}{\A}{\sbs}}}
+   {\var{0}}
+   {\subst{(\subst{\A}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
+  }
+}
+
+\newcommand{\rlEqSubstShiftSucc}{\referTo{eq-subst-shift-succ}{rul:eq-subst-shift-succ}}
+\newcommand{\showEqSubstShiftSucc}{%
+  \infer[\rulename{eq-subst-shift-succ}] % EqSubstShiftSucc
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\D}{\var{k}}{\B} \\
+   \istype{\D}{\A}
+  }
+  {\eqterm
+   {\ctxextend{\G}{\subst{\A}{\sbs}}}
+   {\subst{\var{k+1}}{\sbshift{\G}{\A}{\sbs}}}
+   {\subst{(\subst{\var{k}}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
+   {\subst{\subst{\B}{\sbs}}{\sbweak{\G}{\subst{\A}{\sbs}}}}
+  }
+}
+
+
+
 \newcommand{\rlEqSubstExtendZero}{\referTo{eq-subst-extend-zero}{rul:eq-subst-extend-zero}}
 \newcommand{\showEqSubstExtendZero}{%
   \infer[\rulename{eq-subst-extend-zero}] % EqSubstExtendZero
@@ -512,15 +594,15 @@
       {\subst{\A}{\sbs}}
       {\subst
         {\B}
-        {\sbshift{\sbs}{\G}{\A}}
+        {\sbshift{\G}{\A}{\sbs}}
       }
-      \subst{\uu}{\sbshift{\sbs}{\G}{\A}})
+      \subst{\uu}{\sbshift{\G}{\A}{\sbs}})
     }
     {\Prod
       {\subst{\A}{\sbs}}
       {\subst
         {\B}
-        {\sbshift{\sbs}{\G}{\A}}
+        {\sbshift{\G}{\A}{\sbs}}
       }
     }
   }
@@ -542,11 +624,11 @@
       {\subst{\A}{\sbs}}
       {\subst
         {\B}
-        {\sbshift{\sbs}{\G}{\A}}
+        {\sbshift{\G}{\A}{\sbs}}
       }
       {\subst{\vv}{\sbs}}}
     {\subst
-      {(\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}})}
+      {(\subst{\B}{\sbzero{\G}{\A}{\vv}})}
       {\sbs}
     }
   }
@@ -586,8 +668,8 @@
   {\isterm{\ctxextend{\G}{\A}}{\uu}{\B}\\
     \isterm{\G}{\vv}{\A}}
   {\eqterm{\G}{\bigl(\app{(\lam{\A}{\B}{\uu})}{\A}{\B}{\vv}\bigr)}
-    {\subst{\uu}{\sbextend{\sbid{\G}}{\A}{\vv}}}
-    {\subst{\B}{\sbextend{\sbid{\G}}{\A}{\vv}}}}
+    {\subst{\uu}{\sbzero{\G}{\A}{\vv}}}
+    {\subst{\B}{\sbzero{\G}{\A}{\vv}}}}
 }
 
 
@@ -653,7 +735,7 @@
     {\G}
     {(\app{\uu_1}{\A_1}{\A_2}{\uu_2})}
     {(\app{\vv_1}{\B_1}{\B_2}{\vv_2})}
-    {\subst{\A_2}{\sbextend{\sbid{\G}}{\A_1}{\uu_2}}}
+    {\subst{\A_2}{\sbzero{\G}{\A_1}{\uu_2}}}
   }
 }
 

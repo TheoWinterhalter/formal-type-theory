@@ -34,8 +34,11 @@
 \newcommand{\sbid}[1]{\mathsf{1}_{#1}}         % identity substitution
 \newcommand{\sbcomp}[2]{#1 \circ #2}           % composition of substitutions
 \newcommand{\sbextend}[3]{#1,(#2,#3)}          % extended substitution
+
+\newcommand{\sbzero}[3]{\{#3\}_{#1,#2}}        % substitition of the zeroth index
 \newcommand{\sbweak}[2]{\mathsf{w}_{(#1, #2)}} % weakening substitution
-\newcommand{\sbshift}[3]{#1 {\mid}_{#2} #3}    % shifted substitution
+\newcommand{\sbshift}[3]{#3 {\mid}_{#1} #2}    % shifted substitution
+
 \newcommand{\subst}[2]{#1[#2]}                 % substitution operation
 
 
