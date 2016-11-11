@@ -70,15 +70,7 @@ $\sbextend{\sbcomp{\sbs}{\sbweak{\G}{\subst{\A}{\sbs}}}}{\A}{\var{0}}$.
 Then we have the derivable rule
 %
 \begin{equation*}
-  \infer
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\D}{\A}
-  }
-  {\issubst
-      {(\sbshift{\sbs}{\G}{\A})}
-      {\ctxextend{\G}{\subst{\A}{\sbs}}}
-      {\ctxextend{\D}{\A}}
-  }
+ {\label{rul:subst-shift} \showSubstShift}
 \end{equation*}
 
 \subsection{Types \fbox{$\istype{\G}{\A}$}}

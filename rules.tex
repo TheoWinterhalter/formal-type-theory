@@ -70,6 +70,18 @@
   }
 }
 
+\newcommand{\rlSubstShift}{\referTo{subst-shift}{rul:subst-shift}}
+\newcommand{\showSubstShift}{%
+  \infer
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A}
+  }
+  {\issubst
+      {(\sbshift{\sbs}{\G}{\A})}
+      {\ctxextend{\G}{\subst{\A}{\sbs}}}
+      {\ctxextend{\D}{\A}}
+  }
+}
 
 %%%% Types
 
@@ -93,6 +105,9 @@
   {\istype{\G}{\subst{\A}{\sbs}}}
 }
 
+% We want \istype{\G}{\A} because in the sanity theorem we
+% need to prove that \G is a context (without inversion on the
+% extended context).
 
 \newcommand{\rlTyProd}{\referTo{ty-prod}{rul:ty-prod}}
 \newcommand{\showTyProd}{%
@@ -488,6 +503,7 @@
 \newcommand{\showEqSubstAbs}{%
   \infer[\rulename{eq-subst-abs}] % EqSubstAbs
   {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A} \\
     \isterm{\ctxextend{\D}{\A}}{\uu}{\B}
   }
   {\eqterm{\G}
@@ -496,15 +512,15 @@
       {\subst{\A}{\sbs}}
       {\subst
         {\B}
-        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
+        {\sbshift{\sbs}{\G}{\A}}
       }
-      \subst{\uu}{\sbextend{\sbs}{\A}{\var{0}}})
+      \subst{\uu}{\sbshift{\sbs}{\G}{\A}})
     }
     {\Prod
       {\subst{\A}{\sbs}}
       {\subst
         {\B}
-        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
+        {\sbshift{\sbs}{\G}{\A}}
       }
     }
   }
@@ -526,7 +542,7 @@
       {\subst{\A}{\sbs}}
       {\subst
         {\B}
-        {\sbshift{\sbs}{\G}{\subst{\A}{\sbs}}}
+        {\sbshift{\sbs}{\G}{\A}}
       }
       {\subst{\vv}{\sbs}}}
     {\subst

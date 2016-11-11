@@ -69,6 +69,16 @@ Consider a derivation ending with
 First, $\isctx{\G}$ follows by induction hypothesis on the premise, and then
 $\isctx{\ctxextend{\G}{\A}}$ by an application of {\rlCtxExtend}.
 
+\subsubsection*{Rule {\rlSubstShift}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showSubstShift
+\end{equation*}
+%
+\meta{TO DO}
+
 \subsection{Types \fbox{$\istype{\G}{\A}$}}
 
 In this section we prove clause \eqref{sane-istype}.
@@ -538,6 +548,23 @@ Consider a derivation ending with
 \begin{equation*}
   \showEqSubstAbs
 \end{equation*}
+%
+We use {\rlTermAbs} and {\rlTermSubst} to establish
+%
+$\isterm{\G} {\subst{(\lam{\A}{\B} \uu)}{\sbs}} {\subst{(\Prod{\A} \B)}{\sbs}} $. We
+continue with {\rlTermTyConv}, using the equation given by {\rlEqTySubstProd} to conclude
+$\isterm{\G} {\subst{(\lam{\A}{\B} \uu)}{\sbs}} {\Prod {\subst{\A}{\sbs}} {\subst {\B}
+    {\sbshift{\sbs}{\G}{\A}} } } $. Observe that by {\rlTySubst} we have
+$\istype{\G}{\subst{\A}{\sbs}}$. By {\rlSubstShift} we get
+$\issubst{\sbshift{\sbs}{\G}{\A}}{\ctxextend{\G}{\subst{\A}{\sbs}}}{\ctxextend{\D}{\A}}$,
+  which allows us to form
+$\isterm
+ {\ctxextend{\G}{\subst{\A}{\sbs}}}
+ {\subst{\uu}{\sbshift{\sbs}{\G}{\A}}}
+ {\subst{\B}{\sbshift{\sbs}{\G}{\A}}}
+$
+by {\rlTermSubst}. We conclude by an application of {\rlTermAbs}.
+
 
 \subsubsection*{Rule {\rlEqSubstApp}}
 
