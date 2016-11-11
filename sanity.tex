@@ -332,17 +332,15 @@ Consider a derivation ending with
 %
 \begin{equation*}
   \infer[\rl{eq-ctx-extend}]
-  {\eqctx{\G}{\D} \\
+  {
    \eqtype{\G}{\A}{\B}
   }
-  {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\D}{\B})}}
+  {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\G}{\B})}}
 \end{equation*}
 %
-By induction hypothesis on the right premise we obtain $\istype{\G}{\A}$ and
-$\istype{\G}{\B}$. Now, using $\rl{ty-ctx-conv}$ with the left premise and the
-$\istype{\G}{\B}$, we get $\istype{\D}{\B}$. From this, we conclude
-$\isctx{\ctxextend{\G}{\A}}$ and $\isctx{\ctxextend{\D}{\B}}$ by applying
-$\rl{ctx-extend}$.
+We apply $\rl{ctx-extend}$ twice to the induction hypotheses to conclude
+$\isctx{\ctxextend{\G}{\A}}$ and $\isctx{\ctxextend{\D}{\B}}$.
+
 
 \subsubsection*{Rule $\rl{eq-ctx-refl}$}
 
@@ -541,9 +539,14 @@ Consider a derivation ending with
    \eqtype{\ctxextend{\G}{\A_1}}{\A_2}{\B_2}}
   {\eqtype{\G}{\Prod{\A_1}{\A_2}}{\Prod{\B_1}{\B_2}}}
 \end{equation*}
-Note: To type $\istype{\ctxextend{\G}{\B_1}}{\B_2}$, we need
-$\eqctx{\G}{\G}$ which is derivable from $\isctx{\G}$.
-This in turn we don't have (same kind of trouble as $\rl{term-app}$).
+%
+The induction hypotheses yield $\istype{\G}{\A_1}$ and
+$\istype{\ctxextend{\G}{\A_1}}{\A_2}$, as well as $\istype{\G}{\B_1}$ and
+$\istype{\ctxextend{\G}{\A_1}}{\B_2}$. We may conclude $\istype{\G}{\Prod{A_1} A_2}$ and
+$\istype{\G}{\Prod{B_1} B_2}$ by $\rl{ty-prod}$, provided we derive
+$\istype{\ctxextend{\G}{\B_1}}{\B_2}$. To do so, we first derive
+$\eqctx{\ctxextend{\G}{\A_1}}{\ctxextend{\G}{\B_1}}$ by $\rl{eq-ctx-extend}$ and then
+apply $\rl{ty-ctx-conv}$ to $\istype{\ctxextend{\G}{\A_1}}{\B_2}$.
 
 \subsubsection*{Rule $\rl{cong-id}$}
 

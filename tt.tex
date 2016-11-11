@@ -234,10 +234,10 @@ Then we have the derivable rule
   {\eqctx{\ctxempty}{\ctxempty}}
 
   \infer[\rl{eq-ctx-extend}]
-  {\eqctx{\G}{\D} \\
+  {
    \eqtype{\G}{\A}{\B}
   }
-  {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\D}{\B})}}
+  {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\G}{\B})}}
 
   \infer[\rl{eq-ctx-refl}]
   {\isctx{\G}}
