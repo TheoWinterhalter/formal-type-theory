@@ -470,9 +470,11 @@ Consider a derivation ending with
   \showEqTyConv
 \end{equation*}
 %
-By induction hypothesis on the left premise we obtain $\isterm{\G}{\uu}{\A}$
-and $\isterm{\G}{\vv}{\A}$. Then using {\rlTermTyConv} on both and on the
+By induction hypothesis on the left premise we obtain $\isctx{\G}$,
+$\isterm{\G}{\uu}{\A}$, and $\isterm{\G}{\vv}{\A}$.
+Then using {\rlTermTyConv} on both and on the
 right premise, we conclude $\isterm{\G}{\uu}{\B}$ and $\isterm{\G}{\vv}{\B}$.
+We get $\istype{\G}{\B}$ by induction hypothesis on the right premise.
 
 \subsubsection*{Rule {\rlEqCtxConv}}
 
@@ -482,9 +484,12 @@ Consider a derivation ending with
   \showEqCtxConv
 \end{equation*}
 %
-By induction hypothesis on the left premise we obtain $\isterm{\G}{\uu}{\A}$
-and $\isterm{\G}{\vv}{\A}$. Then using {\rlTermCtxConv} on both and on the
-right premise, we conclude $\isterm{\D}{\uu}{\A}$ and $\isterm{\D}{\vv}{\A}$.
+We first get $\isctx{\D}$ from the induction hypothesis on the right premise.
+Then, by induction hypothesis on the left premise we obtain $\istype{\G}{\A}$,
+$\isterm{\G}{\uu}{\A}$ and $\isterm{\G}{\vv}{\A}$.
+Then using {\rlTyCtxConv} and {\rlTermCtxConv} on all of them and on the right
+premise, we conclude $\istype{\D}{\A}$, $\isterm{\D}{\uu}{\A}$ and
+$\isterm{\D}{\vv}{\A}$.
 
 \subsubsection*{Rule {\rlEqRefl}}
 
@@ -494,7 +499,8 @@ Consider a derivation ending with
   \showEqRefl
 \end{equation*}
 %
-We have $\isterm{\G}{\uu}{\A}$ as a premise.
+We have $\isterm{\G}{\uu}{\A}$ as a premise and $\isctx{\G}$ and
+$\istype{\G}{\A}$ by induction hypothesis.
 
 \subsubsection*{Rule {\rlEqSym}}
 
@@ -527,7 +533,18 @@ Consider a derivation ending with
   \showEqSubstWeak
 \end{equation*}
 %
-\meta{TO DO}
+From the right premise we derive $\isctx{\ctxextend{\G}{\B}}$.
+By induction hypothesis on the left premise we get $\istype{\G}{\A}$
+and then using {\rlTySubst} we obtain
+$\istype{\ctxextend{\G}{\B}}{\subst{\A}{\sbweak{\G}{\B}}}$.
+Using {\rlTermSubst} on the left premise we deduce
+$\isterm
+  {\ctxextend{\G}{\B}}
+  {\subst{\var{k}}{\sbweak{\G}{\B}}}
+  {\subst{\A}{\sbweak{\G}{\B}}}
+$.
+An application of {\rlTermVarSkip} on the premises let us conclude
+$\isterm{\ctxextend{\G}{\B}}{\var{k+1}}{\subst{\A}{\sbweak{\G}{\B}}}$.
 
 
 \subsubsection*{Rule {\rlEqSubstZeroZero}}
@@ -538,7 +555,19 @@ Consider a derivation ending with
   \showEqSubstZeroZero
 \end{equation*}
 %
-\meta{TO DO}
+By induction hypothesis we can directly conclude $\isctx{\G}$ and
+$\istype{\G}{\A}$. We have $\isterm{\G}{\uu}{\A}$ as a premise.
+With {\rlTermVar} we derive
+$\isterm{\ctxextend{\G}{\A}}{\var{0}}{\subst{\A}{\sbweak{\G}{\A}}}$.
+With {\rlSubstZero} we get
+$\issubst{\sbzero{\G}{\A}{\uu}}{\G}{\ctxextend{\G}{\A}}$,
+and with {\rlTermSubst} we get
+$\isterm{\G}
+  {\subst{\var{0}}{\sbzero{\G}{\A}{\uu}}}
+  {\subst{(\subst{\A}{\sbweak{\G}{\A}})}{\sbzero{\G}{\A}{\uu}}}
+$.
+\meta{Now, we need to be able to get $\A$ as a type, so we need another
+rule for the action of substitutions on types.}
 
 
 \subsubsection*{Rule {\rlEqSubstZeroSucc}}
@@ -549,7 +578,18 @@ Consider a derivation ending with
   \showEqSubstZeroSucc
 \end{equation*}
 %
-\meta{TO DO}
+By induction hypothesis on the left premise we conclude $\isctx{\G}$ and
+$\istype{\G}{\A}$ and $\isterm{\G}{\var{k}}{\A}$ is the premise itself.
+From {\rlTermVarSkip} we derive
+$\isterm{\ctxextend{\G}{\B}}{\var{k+1}}{\subst{\A}{\sbweak{\G}{\B}}}$.
+With {\rlSubstZero} we get
+$\issubst{\sbzero{\G}{\B}{\uu}}{\G}{\ctxextend{\G}{\B}}$,
+and with {\rlTermSubst} we get
+$\isterm{\G}
+  {\subst{\var{k+1}}{\sbzero{\G}{\B}{\uu}}}
+  {\subst{(\subst{\A}{\sbweak{\G}{\B}})}{\sbzero{\G}{\B}{\uu}}}
+$.
+\meta{We need the same rule here.}
 
 
 
@@ -561,7 +601,34 @@ Consider a derivation ending with
   \showEqSubstShiftZero
 \end{equation*}
 %
-\meta{TO DO}
+From {\rlTySubst} and {\rlCtxExtend} we get $\istype{\G}{\subst{\A}{\sbs}}$ and
+then $\isctx{(\ctxextend{\G}{\subst{\A}{\sbs}})}$.
+Then with {\rlSubstWeak} and {\rlTySubst} we get
+$\istype
+  {\ctxextend{\G}{\subst{\A}{\sbs}}}
+  {\subst{(\subst{\A}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
+$.
+From $\istype{\G}{\subst{\A}{\sbs}}$ and {\rlTermVar} we conclude
+$\isterm
+  {\ctxextend{\G}{\subst{\A}{\sbs}}}
+  {\var{0}}
+  {\subst{(\subst{\A}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
+$.
+In the same fashion, we get
+$\isterm{\ctxextend{\D}{\A}}{\var{0}}{\subst{\A}{\sbweak{\D}{\A}}}$
+and with {\rlTermSubst} and {\rlSubstShift} we obtain
+$\isterm
+  {\ctxextend{\G}{\subst{\A}{\sbs}}}
+  {\subst{\var{0}}{\sbshift{\G}{\A}{\sbs}}}
+  {\subst{(\subst{\A}{\sbweak{\D}{\A}})}{\sbshift{\G}{\A}{\sbs}}}
+$.
+Finally by applying {\rlTermTyConv} to the equality obtained by
+{\rlEqTyWeakNat}, we can conclude
+$\isterm
+  {\ctxextend{\G}{\subst{\A}{\sbs}}}
+  {\subst{\var{0}}{\sbshift{\G}{\A}{\sbs}}}
+  {\subst{(\subst{\A}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
+$.
 
 
 \subsubsection*{Rule {\rlEqSubstShiftSucc}}
@@ -572,7 +639,39 @@ Consider a derivation ending with
   \showEqSubstShiftSucc
 \end{equation*}
 %
-\meta{TO DO}
+From {\rlTySubst} and {\rlCtxExtend} we get $\istype{\G}{\subst{\A}{\sbs}}$ and
+then $\isctx{(\ctxextend{\G}{\subst{\A}{\sbs}})}$.
+%
+By induction hypothesis on the middle premise, $\istype{\D}{\B}$,
+then using {\rlTySubst} twice with subsitutions given in the left premise and
+by {\rlSubstWeak} we derive
+$\istype
+  {\ctxextend{\G}{\subst{\A}{\sbs}}}
+  {\subst{(\subst{\B}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
+$.
+%
+By successive applications of {\rlTermSubst} on the same substitutions we
+conclude
+$\isterm
+  {\ctxextend{\G}{\subst{\A}{\sbs}}}
+  {\subst{(\subst{\var{k}}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
+  {\subst{(\subst{\B}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
+$.
+%
+For the last one, we use {\rlTermVarSkip} to get
+$\isterm{\ctxextend{\D}{\A}}{\var{k+1}}{\subst{\B}{\sbweak{\D}{\A}}}$
+and then with {\rlSubstShift} and {\rlTermSubst} we obtain
+$\isterm
+  {\ctxextend{\G}{\subst{\A}{\sbs}}}
+  {\subst{\var{k+1}}{\sbshift{\G}{\A}{\sbs}}}
+  {\subst{(\subst{\B}{\sbweak{\D}{\A}})}{\sbshift{\G}{\A}{\sbs}}}
+$.
+Finally, by an application of {\rlTermTyConv} and {\rlEqTyWeakNat}, we conclude
+$\isterm
+  {\ctxextend{\G}{\subst{\A}{\sbs}}}
+  {\subst{\var{k+1}}{\sbshift{\G}{\A}{\sbs}}}
+  {\subst{(\subst{\B}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
+$.
 
 
 \subsubsection*{Rule {\rlEqSubstAbs}}
@@ -583,15 +682,31 @@ Consider a derivation ending with
   \showEqSubstAbs
 \end{equation*}
 %
+We first get $\isctx{\G}$ by induction hypothesis on the left premise.
+%
+We then conclude
+$\istype{\G}{\Prod{\subst{\A}{\sbs}} \subst{\B}{\sbshift{\G}{\A}{\sbs}}}$
+using {\rlTermSubst} twice (once with {\rlSubstShift}) and then applying
+{\rlTyProd}.
+%
 We use {\rlTermAbs} and {\rlTermSubst} to establish
 %
-$\isterm{\G} {\subst{(\lam{\A}{\B} \uu)}{\sbs}} {\subst{(\Prod{\A} \B)}{\sbs}} $. We
-continue with {\rlTermTyConv}, using the equation given by {\rlEqTySubstProd} to conclude
-$\isterm{\G} {\subst{(\lam{\A}{\B} \uu)}{\sbs}} {\Prod {\subst{\A}{\sbs}} {\subst {\B}
-    {\sbshift{\sbs}{\G}{\A}} } } $. Observe that by {\rlTySubst} we have
-$\istype{\G}{\subst{\A}{\sbs}}$. By {\rlSubstShift} we get
-$\issubst{\sbshift{\sbs}{\G}{\A}}{\ctxextend{\G}{\subst{\A}{\sbs}}}{\ctxextend{\D}{\A}}$,
-  which allows us to form
+$\isterm{\G} {\subst{(\lam{\A}{\B} \uu)}{\sbs}} {\subst{(\Prod{\A} \B)}{\sbs}}$.
+We continue by applying {\rlTermTyConv}, with the equation that is yielded by
+{\rlEqTySubstProd} to conclude
+$\isterm{\G}
+  {\subst{(\lam{\A}{\B} \uu)}{\sbs}}
+  {\Prod
+    {\subst{\A}{\sbs}}
+    {\subst{\B}{\sbshift{\G}{\A}{\sbs}}}
+  }
+$.
+By {\rlSubstShift} we get
+$\issubst
+  {(\sbshift{\G}{\A}{\sbs})}
+  {\ctxextend{\G}{\subst{\A}{\sbs}}}
+  {\ctxextend{\D}{\A}}
+$, which allows us to form
 $\isterm
  {\ctxextend{\G}{\subst{\A}{\sbs}}}
  {\subst{\uu}{\sbshift{\sbs}{\G}{\A}}}
@@ -607,6 +722,10 @@ Consider a derivation ending with
 \begin{equation*}
   \showEqSubstApp
 \end{equation*}
+%
+We first get $\isctx{\G}$ by induction hypothesis on the left premise.
+%
+\meta{Rules need minor fixing (wrong context on sbzero).}
 
 \subsubsection*{Rule {\rlEqSubstRefl}}
 
@@ -615,6 +734,26 @@ Consider a derivation ending with
 \begin{equation*}
   \showEqSubstRefl
 \end{equation*}
+%
+We first get $\isctx{\G}$ by induction hypothesis on the left premise.
+%
+Then by induction hypothesis on the right premise we get $\istype{\D}{\A}$
+and then an application of {\rlTySubst} and two applications of
+{\rlTermSubst} followed by {\rlTyId} yield
+$\istype{\G}{\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\uu}{\sbs}}}$.
+%
+In the same fashion, but using {\rlTermRefl} instead we get
+$\isterm{\G}
+  {\refl{\subst{\A}{\sbs}} \subst{\uu}{\sbs}}
+  {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\uu}{\sbs}}}
+$.
+%
+If we begin with {\rlTermRefl} and then apply {\rlTermSubst}, we obtain
+the last judgment up to {\rlEqTySubstId} (which we apply with {\rlTermTyConv})
+$\isterm{\G}
+  {\subst{\refl{\A} \uu}{\sbs}}
+  {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\uu}{\sbs}}}
+$.
 
 \subsubsection*{Rule {\rlEqReflection}}
 
@@ -623,6 +762,8 @@ Consider a derivation ending with
 \begin{equation*}
   \showEqReflection
 \end{equation*}
+%
+\meta{TODO}
 
 
 \subsubsection*{Rule {\rlProdBeta}}
@@ -632,6 +773,8 @@ Consider a derivation ending with
 \begin{equation*}
   \showProdBeta
 \end{equation*}
+%
+\meta{TODO}
 
 \subsubsection*{Rule {\rlProdEta}}
 
@@ -640,6 +783,8 @@ Consider a derivation ending with
 \begin{equation*}
   \showProdEta
 \end{equation*}
+%
+\meta{TODO}
 
 \subsubsection*{Rule {\rlCongAbs}}
 
@@ -648,6 +793,8 @@ Consider a derivation ending with
 \begin{equation*}
   \showCongAbs
 \end{equation*}
+%
+\meta{TODO}
 
 \subsubsection*{Rule {\rlCongApp}}
 
@@ -656,6 +803,8 @@ Consider a derivation ending with
 \begin{equation*}
   \showCongApp
 \end{equation*}
+%
+\meta{TODO}
 
 \subsubsection*{Rule {\rlCongRefl}}
 
@@ -664,6 +813,8 @@ Consider a derivation ending with
 \begin{equation*}
   \showCongRefl
 \end{equation*}
+%
+\meta{TODO}
 
 \subsubsection*{Rule {\rlCongTermSubst}}
 
@@ -672,6 +823,8 @@ Consider a derivation ending with
 \begin{equation*}
   \showCongTermSubst
 \end{equation*}
+%
+\meta{TODO}
 
 %%% Local Variables:
 %%% mode: latex
