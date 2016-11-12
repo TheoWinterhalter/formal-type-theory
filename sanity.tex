@@ -725,7 +725,37 @@ Consider a derivation ending with
 %
 We first get $\isctx{\G}$ by induction hypothesis on the left premise.
 %
-\meta{Rules need minor fixing (wrong context on sbzero).}
+From an application of {\rlSubstZero} to the last premise we get
+$\issubst{\sbzero{\D}{\A}{\vv}}{\D}{\ctxextend{\D}{\A}}$
+and then using {\rlTySubst} twice on the second premise yields
+$\istype{\D}{\subst{\B}{\sbzero{\D}{\A}{\vv}}}$ and
+$\istype{\G}{\subst{(\subst{\B}{\sbzero{\D}{\A}{\vv}})}{\sbs}}$.
+%
+An application of {\rlTermApp} on the last three premises followed by
+{\rlTermSubst} gives us
+$\isterm{\G}
+  {\subst{(\app{\uu}{\A}{\B}{\vv})}{\sbs}}
+  {\subst{(\subst{\B}{\sbzero{\D}{\A}{\vv}})}{\sbs}}
+$.
+%
+If we use {\rlTermSubst} and {\rlTySubst} as well as {\rlSubstShift}
+and {\rlEqTySubstProd} before applying {\rlTermApp} we get
+$\isterm{\G}
+  {\app
+    {\subst{\uu}{\sbs}}
+    {\subst{\A}{\sbs}}
+    {\subst
+      {\B}
+      {\sbshift{\G}{\A}{\sbs}}
+    }
+    {\subst{\vv}{\sbs}}}
+  {\subst
+    {\subst
+      {\B}
+      {\sbshift{\G}{\A}{\sbs}}}
+    {\sbzero{\D}{\A}{\vv}}}
+$.
+\meta{We need yet another rule to conclude.}
 
 \subsubsection*{Rule {\rlEqSubstRefl}}
 
