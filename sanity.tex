@@ -793,7 +793,10 @@ Consider a derivation ending with
   \showEqReflection
 \end{equation*}
 %
-\meta{TODO}
+We get $\isctx{\G}$ by induction hypothesis on the left premise.
+%
+\meta{How we get the rest is unclear if we don't want to invert on
+$\istype{\G}{\Id{\A}{\uu}{\vv}}$}.
 
 
 \subsubsection*{Rule {\rlProdBeta}}
@@ -804,7 +807,27 @@ Consider a derivation ending with
   \showProdBeta
 \end{equation*}
 %
-\meta{TODO}
+We get $\isctx{\G}$ and $\istype{\ctxextend{\G}{\A}}{\B}$ by induction
+hypothesis on the left premise, and $\istype{\G}{\A}$ by induction hypothesis
+on the right premise.
+%
+From {\rlSubstZero} and {\rlTySubst} we get
+$\istype{\G}{\subst{\B}{\sbzero{\G}{\A}{\vv}}}$.
+%
+In a similar fashion we get
+$\istype{\G}
+  {\subst{\uu}{\sbzero{\G}{\A}{\vv}}}
+  {\subst{\B}{\sbzero{\G}{\A}{\vv}}}
+$.
+%
+By an application of {\rlTermAbs}, we get
+$\isterm{\G}{\lam{\A}{\B}{\uu}}{\Prod{\A} \B}$,
+then, by an application of {\rlTermApp} we conclude
+$\isterm{\G}
+  {\app{(\lam{\A}{\B}{\uu})}{\A}{\B}{\vv}}
+  {\subst{\B}{\sbzero{\G}{\A}{\vv}}}
+$.
+
 
 \subsubsection*{Rule {\rlProdEta}}
 
