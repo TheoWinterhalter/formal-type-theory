@@ -293,6 +293,7 @@ Consider a derivation ending with
   \showEqTyCtxConv
 \end{equation*}
 %
+By induction hypothesis on the right premise we obtain $\isctx{\D}$.
 By induction hypothesis on the left premise we obtain $\istype{\G}{\A}$
 and $\istype{\G}{\B}$.
 Using {\rlTyCtxConv} on both combined with the right premise we obtain
@@ -306,7 +307,8 @@ Consider a derivation ending with
   \showEqTyRefl
 \end{equation*}
 %
-We have $\istype{\G}{\A}$ as premise.
+$\isctx{\G}$ follows by induction hypothesis and
+we have $\istype{\G}{\A}$ as premise.
 
 \subsubsection*{Rule {\rlEqTySym}}
 
@@ -337,7 +339,38 @@ Consider a derivation ending with
   \showEqTyWeakNat
 \end{equation*}
 %
-\meta{TO DO}
+By induction hypothesis on the left premise we obtain $\isctx{\G}$ and then
+using {\rlTySubst} on the two first premises we get
+$\istype{\G}{\subst{\A}{\sbs}}$, hence
+$\isctx{(\ctxextend{\G}{\subst{\A}{\sbs}})}$ by {\rlCtxExtend}.
+%
+Now, to prove
+$\istype
+  {\ctxextend{\G}{\subst{\A}{\sbs}}}
+  {\subst{(\subst{\B}{\sbweak{\D}{\A}})}{\sbshift{\G}{\A}{\sbs}}}
+$,
+we apply {\rlTySubst} to
+$\issubst
+  {(\sbshift{\G}{\A}{\sbs})}
+  {\ctxextend{\G}{\subst{\A}{\sbs}}}
+  {\ctxextend{\D}{\A}}
+$, which we get by applying {\rlSubstShift} to the first two premises,
+and to
+$\istype{\ctxextend{\D}{\A}}{\subst{\B}{\sbweak{\D}{\A}}}$.
+The last judgment is obtained by {\rlTySubst} applied to
+$\issubst{\sbweak{\D}{\A}}{\ctxextend{\D}{\A}}{\D}$ and to the middle premise
+(which is also the needed premise to type the substitution with
+{\rlSubstWeak}).
+%
+Finally, to prove
+$\istype
+  {\ctxextend{\G}{\subst{\A}{\sbs}}}
+  {\subst{(\subst{\B}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
+$, we also resort to the use of {\rlTySubst} twice starting with the right
+premise, and applying consecutively $\issubst{\sbs}{\G}{\D}$ and
+$\issubst{\sbweak{\G}{\subst{\A}{\sbs}}}{\ctxextend{\G}{\subst{\A}{\sbs}}}{\G}$.
+The latter is well-typed thanks to {\rlSubstWeak} applied to
+$\istype{\G}{\subst{\A}{\sbs}}$ which we got earlier.
 
 
 \subsubsection*{Rule {\rlEqTySubstProd}}
@@ -347,6 +380,8 @@ Consider a derivation ending with
 \begin{equation*}
   \showEqTySubstProd
 \end{equation*}
+%
+Using the induction hypothesis on the left premise we get $\isctx{\G}$.
 %
 Using {\rlTyProd} and {\rlTySubst} we get
 $\istype{\G}{\subst{(\Prod{\A}{\B})}{\sbs}}$.
@@ -368,6 +403,8 @@ Consider a derivation ending with
   \showEqTySubstId
 \end{equation*}
 %
+Using the induction hypothesis on the left premise we get $\isctx{\G}$.
+%
 We apply {\rlTyId} and {\rlTySubst} to the premises to get
 $\istype{\G}{\subst{(\Id{\A}{\uu}{\vv})}{\sbs}}$. Then we apply {\rlTySubst} and
 {\rlTermSubst} on the last three premises and put the results together using
@@ -382,13 +419,14 @@ Consider a derivation ending with
   \showCongProd
 \end{equation*}
 %
-The induction hypotheses yield $\istype{\G}{\A_1}$ and
+The induction hypotheses yield $\isctx{\G}$, $\istype{\G}{\A_1}$ and
 $\istype{\ctxextend{\G}{\A_1}}{\A_2}$, as well as $\istype{\G}{\B_1}$ and
-$\istype{\ctxextend{\G}{\A_1}}{\B_2}$. We may conclude $\istype{\G}{\Prod{A_1} A_2}$ and
+$\istype{\ctxextend{\G}{\A_1}}{\B_2}$.
+We may conclude $\istype{\G}{\Prod{A_1} A_2}$ and
 $\istype{\G}{\Prod{B_1} B_2}$ by {\rlTyProd}, provided we derive
 $\istype{\ctxextend{\G}{\B_1}}{\B_2}$. To do so, we first derive
-$\eqctx{\ctxextend{\G}{\A_1}}{\ctxextend{\G}{\B_1}}$ by {\rlEqCtxExtend} and then
-apply {\rlTyCtxConv} to $\istype{\ctxextend{\G}{\A_1}}{\B_2}$.
+$\eqctx{(\ctxextend{\G}{\A_1})}{(\ctxextend{\G}{\B_1})}$ by {\rlEqCtxExtend} and
+then apply {\rlTyCtxConv} to $\istype{\ctxextend{\G}{\A_1}}{\B_2}$.
 
 \subsubsection*{Rule {\rlCongId}}
 
@@ -397,6 +435,8 @@ Consider a derivation ending with
 \begin{equation*}
   \showCongId
 \end{equation*}
+%
+Using the induction hypothesis on the left premise we get $\isctx{\G}$.
 %
 We apply {\rlTyId} to the induction hypotheses to get
 $\istype{\G}{\Id{\A}{\uu_1}{\uu_2}}$. We obtain $\istype{\G}{\Id{\B}{\vv_1}{\vv_2}}$ in
@@ -410,6 +450,7 @@ Consider a derivation ending with
   \showCongTySubst
 \end{equation*}
 %
+Using the induction hypothesis on the left premise we get $\isctx{\G}$.
 We apply {\rlTySubst} on the left premise and the induction hypothesis
 applied to the right premise to conclude.
 
