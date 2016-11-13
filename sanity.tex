@@ -837,7 +837,11 @@ Consider a derivation ending with
   \showProdEta
 \end{equation*}
 %
-\meta{TODO}
+By induction hypothesis on the left premise we immediately conclude
+$\isctx{\G}$ and $\istype{\G}{\Prod{\A} \B}$ and
+$\isterm{\G}{\uu}{\Prod{\A} \B}$.
+By induction hypothesis on the right premise we get the last conclusion:
+$\isterm{\G}{\vv}{\Prod{\A} \B}$.
 
 \subsubsection*{Rule {\rlCongAbs}}
 
@@ -847,7 +851,20 @@ Consider a derivation ending with
   \showCongAbs
 \end{equation*}
 %
-\meta{TODO}
+By the different induction hypotheses we get $\isctx{\G}$,
+$\istype{\G}{\A_1}$, $\istype{\ctxextend{\G}{\A_1}}{\A_2}$,
+$\isterm{\ctxextend{\G}{\A_1}}{\uu_1}{\A_2}$,
+$\istype{\G}{\B_1}$ and, up to {\rlTyCtxConv}, {\rlTermCtxConv} and
+{\rlEqCtxExtend},
+$\istype{\ctxextend{\G}{\B_1}}{\B_2}$ and
+$\isterm{\ctxextend{\G}{\B_1}}{\uu_2}{\B_2}$.
+%
+By an application of {\rlTyProd} we obtain $\istype{\G}{\Prod{\A_1} \A_2}$.
+By applications of {\rlTermApp} we obtain
+$\isterm{\G}{\lam{\A_1}{\A_2}{\uu_1}}{\Prod{\A_1} \A_2}$ and
+$\isterm{\G}{\lam{\B_1}{\B_2}{\uu_2}}{\Prod{\B_1} \B_2}$.
+Finally, with {\rlCongProd} and {\rlTermTyConv} we conclude
+$\isterm{\G}{\lam{\B_1}{\B_2}{\uu_2}}{\Prod{\A_1} \A_2}$.
 
 \subsubsection*{Rule {\rlCongApp}}
 
@@ -857,7 +874,12 @@ Consider a derivation ending with
   \showCongApp
 \end{equation*}
 %
-\meta{TODO}
+\meta{We need yet another rule to conclude
+$\eqtype{\G}
+  {\subst{\A_2}{\sbzero{\G}{\A_1}{\uu_2}}}
+  {\subst{\B_2}{\sbzero{\G}{\B_1}{\vv_2}}}
+$.
+}
 
 \subsubsection*{Rule {\rlCongRefl}}
 
@@ -867,7 +889,16 @@ Consider a derivation ending with
   \showCongRefl
 \end{equation*}
 %
-\meta{TODO}
+By induction hypotheses, we get $\isctx{\G}$, $\istype{\G}{\A_1}$,
+$\istype{\G}{\A_2}$, $\isterm{\G}{\uu_1}{\A_1}$ and
+$\isterm{\G}{\uu_2}{\A_1}$. Using {\rlTermTyConv} we obtain
+$\isterm{\G}{\uu_2}{\A_2}$.
+By an application of {\rlTyId} we derive $\istype{\G}{\Id{\A_1}{\uu_1}{\uu_1}}$.
+By applications of {\rlTermRefl} we derive
+$\isterm{\G}{\refl{\A_1} \uu_1}{\Id{\A_1}{\uu_1}{\uu_1}}$ and
+$\isterm{\G}{\refl{\A_2} \uu_2}{\Id{\A_2}{\uu_2}{\uu_2}}$.
+Finally, using {\rlCongId} and {\rlTermTyConv} we conclude
+$\isterm{\G}{\refl{\A_2} \uu_2}{\Id{\A_1}{\uu_1}{\uu_1}}$.
 
 \subsubsection*{Rule {\rlCongTermSubst}}
 
@@ -877,7 +908,14 @@ Consider a derivation ending with
   \showCongTermSubst
 \end{equation*}
 %
-\meta{TODO}
+By induction hypothesis on the left premise we conclude $\isctx{\G}$.
+%
+By induction hypothesis on the right premise we get $\istype{\D}{\A}$,
+$\isterm{\D}{\uu_1}{\A}$ and $\isterm{\D}{\uu_2}{\A}$.
+By an application of {\rlTySubst} we conclude $\istype{\G}{\subst{\A}{\sbs}}$.
+By applications of {\rlTermSubst} we finally conclude
+$\isterm{\G}{\subst{\uu_1}{\sbs}}{\subst{\A}{\sbs}}$ and
+$\isterm{\G}{\subst{\uu_2}{\sbs}}{\subst{\A}{\sbs}}$.
 
 %%% Local Variables:
 %%% mode: latex
