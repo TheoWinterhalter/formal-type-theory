@@ -7,13 +7,11 @@ with open("sanity.tex", "r") as f:
     trg = None
     for line in f:
         m = re.search(r'\\show(\w+)', line)
-        if m: 
-            if src is None:
-                src = m.group(1)
-                trg = set([])
-            else:
+        if m:
+            if src is not None:
                 print ('{0} -> {{ {1} }}; \n'.format(src, " ".join(trg)))
-                trg = set([])
+            src = m.group(1)
+            trg = set([])
         else:
             m = re.search(r'\\rl(\w+)', line);
             if m:
