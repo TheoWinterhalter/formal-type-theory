@@ -381,7 +381,13 @@ Consider a derivation ending with
   \showEqTyWeakZero
 \end{equation*}
 %
-\meta{TODO}
+By induction hypothesis on the left premise we obtain $\isctx{\G}$
+and we have $\istype{\G}{\A}$ as a premise.
+By induction hypothesis on the right premise we have $\istype{\G}{\B}$
+and thus, by {\rlSubstWeak} and {\rlTySubst} we get
+$\istype{\ctxextend{\G}{\B}}{\subst{\A}{\sbweak{\G}{\B}}}$.
+Using {\rlSubstZero} on the right premise and {\rlTySubst} we conclude
+$\istype{\G}{\subst{(\subst{\A}{\sbweak{\G}{\B}})}{\sbzero{\G}{\B}{\uu}}}$.
 
 
 \subsubsection*{Rule {\rlEqTyShiftZero}}
@@ -392,7 +398,22 @@ Consider a derivation ending with
   \showEqTyShiftZero
 \end{equation*}
 %
-\meta{TODO}
+By induction hypothesis on the left premise we get $\isctx{\G}$.
+Using {\rlSubstZero} on the right hypothesis and then {\rlTySubst}
+we obtain $\istype{\D}{\subst{\B}{\sbzero{\D}{\A}{\vv}}}$;
+with {\rlTySubst} again we get
+$\istype{\G}{\subst{(\subst{\B}{\sbzero{\D}{\A}{\vv}})}{\sbs}}$.
+By induction hypothesis on the right premise we get $\istype{\D}{\A}$,
+and then with {\rlSubstShift} and {\rlTySubst} we get
+$\istype{\ctxextend{\G}{\subst{\A}{\sbs}}}{\subst{\B}{\sbshift{\G}{\A}{\sbs}}}$;
+finally, by {\rlTermSubst} we have
+$\isterm{\G}{\subst{\vv}{\sbs}}{\subst{\A}{\sbs}}$, and by {\rlSubstZero}
+and {\rlTySubst} we conclude
+$\istype{\G}
+  {\subst
+    {(\subst{\B}{\sbshift{\G}{\A}{\sbs}})}
+    {\sbzero{\G}{\subst{\A}{\sbs}}{\subst{\vv}{\sbs}}}}
+$.
 
 
 \subsubsection*{Rule {\rlEqTyCongZero}}
@@ -403,7 +424,15 @@ Consider a derivation ending with
   \showEqTyCongZero
 \end{equation*}
 %
-\meta{TODO}
+We have $\isctx{\G}$ by induction hypothesis.
+Using {\rlEqCtxExtend} on the left premise, we get
+$\eqctx
+  {(\ctxextend{\G}{\A_1})}
+  {(\ctxextend{\G}{\A_2})}
+$ and thus by {\rlTyCtxConv}, we obtain $\istype{\ctxextend{\G}{\A_2}}{\B}$.
+Then using {\rlSubstZero} and {\rlTySubst} we construct
+$\istype{\G}{\subst{\B}{\sbzero{\G}{\A_1}{\uu_1}}}$ and
+$\istype{\G}{\subst{\B}{\sbzero{\G}{\A_2}{\uu_2}}}$.
 
 
 \subsubsection*{Rule {\rlEqTySubstProd}}
@@ -599,8 +628,11 @@ $\isterm{\G}
   {\subst{\var{0}}{\sbzero{\G}{\A}{\uu}}}
   {\subst{(\subst{\A}{\sbweak{\G}{\A}})}{\sbzero{\G}{\A}{\uu}}}
 $.
-\meta{Now, we need to be able to get $\A$ as a type, so we need another
-rule for the action of substitutions on types.}
+Now, with {\rlEqTyWeakZero} and {\rlTermTyConv} we conclude
+$\isterm{\G}
+  {\subst{\var{0}}{\sbzero{\G}{\A}{\uu}}}
+  {\A}
+$.
 
 
 \subsubsection*{Rule {\rlEqSubstZeroSucc}}
@@ -622,7 +654,11 @@ $\isterm{\G}
   {\subst{\var{k+1}}{\sbzero{\G}{\B}{\uu}}}
   {\subst{(\subst{\A}{\sbweak{\G}{\B}})}{\sbzero{\G}{\B}{\uu}}}
 $.
-\meta{We need the same rule here.}
+Now, with {\rlEqTyWeakZero} and {\rlTermTyConv} we conclude
+$\isterm{\G}
+  {\subst{\var{k+1}}{\sbzero{\G}{\B}{\uu}}}
+  {\A}
+$.
 
 
 
@@ -788,7 +824,18 @@ $\isterm{\G}
       {\sbshift{\G}{\A}{\sbs}}}
     {\sbzero{\G}{\subst{\A}{\sbs}}{\subst{\vv}{\sbs}}}}
 $.
-\meta{We need yet another rule to conclude.}
+Now using {\rlEqTyShiftZero} and {\rlTermTyConv} we conclude
+$\isterm{\G}
+  {\app
+    {\subst{\uu}{\sbs}}
+    {\subst{\A}{\sbs}}
+    {\subst
+      {\B}
+      {\sbshift{\G}{\A}{\sbs}}
+    }
+    {\subst{\vv}{\sbs}}}
+  {\subst{(\subst{\B}{\sbzero{\D}{\A}{\vv}})}{\sbs}}
+$.
 
 \subsubsection*{Rule {\rlEqSubstRefl}}
 
@@ -907,12 +954,29 @@ Consider a derivation ending with
   \showCongApp
 \end{equation*}
 %
-\meta{We need yet another rule to conclude
-$\eqtype{\G}
-  {\subst{\A_2}{\sbzero{\G}{\A_1}{\uu_2}}}
-  {\subst{\B_2}{\sbzero{\G}{\B_1}{\vv_2}}}
+By induction hypothesis, we get $\isctx{\G}$,
+$\istype{\G}{\A_1}$, $\istype{\ctxextend{\G}{\A_1}}{\A_2}$,
+$\isterm{\G}{\uu_1}{\Prod{\A_1} \A_2}$,
+$\isterm{\ctxextend{\G}{\A_1}}{\uu_2}{\A_2}$ and, with a touch of
+{\rlEqCtxExtend}, {\rlTyCtxConv}, {\rlCongProd} and {\rlTermTyConv},
+$\istype{\G}{\B_1}$, $\istype{\ctxextend{\G}{\B_1}}{\B_2}$,
+$\isterm{\G}{\vv_1}{\Prod{\B_1} \B_2}$,
+$\isterm{\ctxextend{\G}{\B_1}}{\vv_2}{\B_2}$.
+From all this we derive, using {\rlTermApp},
+$\isterm{\G}
+  {\app{\uu_1}{\A_1}{\A_2}{\uu_2}}
+  {\subst{\A_2}{\sbzero{\G}{\A_1}{\uu_1}}}
+$ and
+$\isterm{\G}
+  {\app{\vv_1}{\B_1}{\B_2}{\vv_2}}
+  {\subst{\B_2}{\sbzero{\G}{\B_1}{\vv_1}}}
 $.
-}
+Now using {\rlEqTyCongZero}, {\rlEqTySym} and {\rlTermTyConv} we conclude
+$\isterm{\G}
+  {\app{\vv_1}{\B_1}{\B_2}{\vv_2}}
+  {\subst{\A_2}{\sbzero{\G}{\A_1}{\uu_1}}}
+$
+
 
 \subsubsection*{Rule {\rlCongRefl}}
 
