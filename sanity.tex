@@ -373,6 +373,39 @@ The latter is well-typed thanks to {\rlSubstWeak} applied to
 $\istype{\G}{\subst{\A}{\sbs}}$ which we got earlier.
 
 
+\subsubsection*{Rule {\rlEqTyWeakZero}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqTyWeakZero
+\end{equation*}
+%
+\meta{TODO}
+
+
+\subsubsection*{Rule {\rlEqTyShiftZero}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqTyShiftZero
+\end{equation*}
+%
+\meta{TODO}
+
+
+\subsubsection*{Rule {\rlEqTyCongZero}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqTyCongZero
+\end{equation*}
+%
+\meta{TODO}
+
+
 \subsubsection*{Rule {\rlEqTySubstProd}}
 
 Consider a derivation ending with
@@ -753,7 +786,7 @@ $\isterm{\G}
     {\subst
       {\B}
       {\sbshift{\G}{\A}{\sbs}}}
-    {\sbzero{\D}{\A}{\vv}}}
+    {\sbzero{\G}{\subst{\A}{\sbs}}{\subst{\vv}{\sbs}}}}
 $.
 \meta{We need yet another rule to conclude.}
 

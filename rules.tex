@@ -279,6 +279,51 @@
 }
 
 
+\newcommand{\rlEqTyWeakZero}{\referTo{eq-ty-weak-zero}{rul:eq-ty-weak-zero}}
+\newcommand{\showEqTyWeakZero}{%
+  \infer[\rulename{eq-ty-weak-zero}]
+  {\istype{\G}{\A} \\
+   \isterm{\G}{\uu}{\B}
+  }
+  {\eqtype{\G}
+    {\subst{(\subst{\A}{\sbweak{\G}{\B}})}{\sbzero{\G}{\B}{\uu}}}
+    {\A}
+  }
+}
+
+
+\newcommand{\rlEqTyShiftZero}{\referTo{eq-ty-shift-zero}{rul:eq-ty-shift-zero}}
+\newcommand{\showEqTyShiftZero}{%
+  \infer[\rulename{eq-ty-shift-zero}]
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\ctxextend{\D}{\A}}{\B} \\
+   \isterm{\D}{\vv}{\A}
+  }
+  {\eqtype{\G}
+    {\subst
+      {(\subst{\B}{\sbshift{\G}{\A}{\sbs}})}
+      {\sbzero{\G}{\subst{\A}{\sbs}}{\subst{\vv}{\sbs}}}
+    }
+    {\subst{(\subst{\B}{\sbzero{\D}{\A}{\vv}})}{\sbs}}
+  }
+}
+
+
+\newcommand{\rlEqTyCongZero}{\referTo{eq-ty-cong-zero}{rul:eq-ty-cong-zero}}
+\newcommand{\showEqTyCongZero}{%
+  \infer[\rulename{eq-ty-cong-zero}]
+  {\eqtype{\G}{\A_1}{\A_2} \\
+   \isterm{\G}{\uu_1}{\A_1} \\
+   \isterm{\G}{\uu_2}{\A_2} \\
+   \istype{\ctxextend{\G}{\A_1}}{\B}
+  }
+  {\eqtype{\G}
+    {\subst{\B}{\sbzero{\G}{\A_1}{\uu_1}}}
+    {\subst{\B}{\sbzero{\G}{\A_2}{\uu_2}}}
+  }
+}
+
+
 \newcommand{\rlEqTySubstProd}{\referTo{eq-ty-subst-prod}{rul:eq-ty-subst-prod}}
 \newcommand{\showEqTySubstProd}{%
   \infer[\rulename{eq-ty-subst-prod}] % EqTySubstProd
