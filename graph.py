@@ -13,10 +13,12 @@ with open("sanity.tex", "r") as f:
             src = m.group(1)
             trg = set([])
         else:
-            m = re.search(r'\\rl(\w+)', line);
-            if m:
-                if src:
-                    trg.add(m.group(1))
+            m = re.search(r'\\subsubsection*', line);
+            if not m:
+                m = re.search(r'\\rl(\w+)', line);
+                if m:
+                    if src:
+                        trg.add(m.group(1))
     print("}")
 
 # Then you do:
