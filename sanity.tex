@@ -209,12 +209,12 @@ apply {\rlTySubst} using the left premise.
 % ENDS WITH TySubst
 
 
-\subsubsection*{Rule {\rlTermVar}}
+\subsubsection*{Rule {\rlTermVarZero}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \showTermVar
+  \showTermVarZero
 \end{equation*}
 %
 By induction hypothesis we get $\isctx{\G}$, which we may extend to
@@ -226,12 +226,12 @@ and to the premise.
 
 % ENDS WITH TySubst
 
-\subsubsection*{Rule {\rlTermVarSkip}}
+\subsubsection*{Rule {\rlTermVarSucc}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \showTermVarSkip
+  \showTermVarSucc
 \end{equation*}
 %
 By induction hypothesis on the right premise we get $\isctx{\G}$, which we may extend to
@@ -674,11 +674,11 @@ $\isterm
   {\subst{\var{k}}{\sbweak{\G}{\B}}}
   {\subst{\A}{\sbweak{\G}{\B}}}
 $.
-An application of {\rlTermVarSkip} on the premises let us conclude
+An application of {\rlTermVarSucc} on the premises let us conclude
 $\isterm{\ctxextend{\G}{\B}}{\var{k+1}}{\subst{\A}{\sbweak{\G}{\B}}}$.
 
 % ENDS WITH TermSubst
-% ENDS WITH TermVarSkip
+% ENDS WITH TermVarSucc
 
 
 
@@ -692,7 +692,7 @@ Consider a derivation ending with
 %
 By induction hypothesis we can directly conclude $\isctx{\G}$ and
 $\istype{\G}{\A}$. We have $\isterm{\G}{\uu}{\A}$ as a premise.
-With {\rlTermVar} we derive
+With {\rlTermVarZero} we derive
 $\isterm{\ctxextend{\G}{\A}}{\var{0}}{\subst{\A}{\sbweak{\G}{\A}}}$.
 With {\rlSubstZero} we get
 $\issubst{\sbzero{\G}{\A}{\uu}}{\G}{\ctxextend{\G}{\A}}$,
@@ -721,7 +721,7 @@ Consider a derivation ending with
 %
 By induction hypothesis on the left premise we conclude $\isctx{\G}$ and
 $\istype{\G}{\A}$ and $\isterm{\G}{\var{k}}{\A}$ is the premise itself.
-From {\rlTermVarSkip} we derive
+From {\rlTermVarSucc} we derive
 $\isterm{\ctxextend{\G}{\B}}{\var{k+1}}{\subst{\A}{\sbweak{\G}{\B}}}$.
 With {\rlSubstZero} we get
 $\issubst{\sbzero{\G}{\B}{\uu}}{\G}{\ctxextend{\G}{\B}}$,
@@ -756,7 +756,7 @@ $\istype
   {\ctxextend{\G}{\subst{\A}{\sbs}}}
   {\subst{(\subst{\A}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
 $.
-From $\istype{\G}{\subst{\A}{\sbs}}$ and {\rlTermVar} we conclude
+From $\istype{\G}{\subst{\A}{\sbs}}$ and {\rlTermVarZero} we conclude
 $\isterm
   {\ctxextend{\G}{\subst{\A}{\sbs}}}
   {\var{0}}
@@ -778,7 +778,7 @@ $\isterm
   {\subst{(\subst{\A}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
 $.
 
-% ENDS WITH TermVar
+% ENDS WITH TermVarZero
 % ENDS WITH TermTyConv
 
 
@@ -809,7 +809,7 @@ $\isterm
   {\subst{(\subst{\B}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
 $.
 %
-For the last one, we use {\rlTermVarSkip} to get
+For the last one, we use {\rlTermVarSucc} to get
 $\isterm{\ctxextend{\D}{\A}}{\var{k+1}}{\subst{\B}{\sbweak{\D}{\A}}}$
 and then with {\rlSubstShift} and {\rlTermSubst} we obtain
 $\isterm

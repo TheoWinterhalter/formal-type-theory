@@ -136,9 +136,9 @@
 }
 
 
-\newcommand{\rlTermVar}{\referTo{term-var}{rul:term-var}}
-\newcommand{\showTermVar}{%
-  \infer[\rulename{term-var}] % TermVar
+\newcommand{\rlTermVarZero}{\referTo{term-var-zero}{rul:term-var-zero}}
+\newcommand{\showTermVarZero}{%
+  \infer[\rulename{term-var-zero}] % TermVarZero
   {
     \istype{\G}{\A}
   }
@@ -150,9 +150,9 @@
 }
 
 
-\newcommand{\rlTermVarSkip}{\referTo{term-var-skip}{rul:term-var-skip}}
-\newcommand{\showTermVarSkip}{%
-  \infer[\rulename{term-var-skip}] % TermVarSkip
+\newcommand{\rlTermVarSucc}{\referTo{term-var-succ}{rul:term-var-succ}}
+\newcommand{\showTermVarSucc}{%
+  \infer[\rulename{term-var-succ}] % TermVarSucc
   {\isterm{\G}{\var{k}}{\A} \\
     \istype{\G}{\B}
   }

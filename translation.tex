@@ -331,7 +331,7 @@ $\G' \vdash \uu'' \simeq \subst{\uu'}{\f} : \A'$.
 
 \meta{TODO}
 
-\Case{term-var}
+\Case{term-var-zero}
 
 %
 \begin{equation*}
@@ -356,7 +356,7 @@ Since, for $\A'$ is also a translation of $\A$, we have $\istype{\G'}{\A'}$
 \meta{(we need some strengthening by saying that $\x$ should not appear in
 $\A'$)}, we can apply~\eqref{lbl:ty-path} twice to get an equivalence
 $\G' \vdash \A' \simeq \A''$.
-Thanks to the rule \rl{term-var}, we have
+Thanks to the rule \rl{term-var-zero}, we have
 $\isterm{\ctxextend{\G'}{\A'}}{\x}{\A'}$
 and then
 $\isterm{\ctxextend{\G'}{\A'}}{\app{\f}{\A'}{\A''}{\x}}{\A''}$
@@ -374,7 +374,7 @@ This is probably one of the times where we require the produced equivalences
 to be equal.}
 
 
-\Case{term-var-skip}
+\Case{term-var-zero-skip}
 
 \begin{equation*}
   \infer{
