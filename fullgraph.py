@@ -53,7 +53,7 @@ with open("sanity.tex", "r") as f:
                         if rul not in ruledic.keys():
                             print ('!!! UNKNOWN IH CATEGORY {0} !!!'.format(rul))
                         else:
-                            trg |= ruledic[mIH.group(1)]
+                            trg |= ruledic[rul]
                     else:
                         mPr = re.search(r'Premise (.+)', t)
                         if mPr:
@@ -61,11 +61,19 @@ with open("sanity.tex", "r") as f:
                             if rul not in ruledic.keys():
                                 print ('!!! UNKNOWN Premise CATEGORY {0} !!!'.format(rul))
                             else:
-                                trg |= ruledic[mPr.group(1)]
+                                trg |= ruledic[rul]
                         else:
-                            trg.add(t)
-                            if t not in rules and t not in ['IH', 'Premise', 'Inversion']:
-                                print ('!!! UNKNOWN TARGET RULE {0} !!!'.format(t))
+                            mInv = re.search(r'Inversion (.+)', t)
+                            if mInv:
+                                rul = mInv.group(1)
+                                if rul not in ruledic.keys():
+                                    print ('!!! UNKNOWN Premise CATEGORY {0} !!!'.format(rul))
+                                else:
+                                    trg |= ruledic[rul]
+                            else:
+                                trg.add(t)
+                                if t not in rules and t not in ['IH', 'Premise', 'Inversion']:
+                                    print ('!!! UNKNOWN TARGET RULE {0} !!!'.format(t))
 
         g.write("}")
 
