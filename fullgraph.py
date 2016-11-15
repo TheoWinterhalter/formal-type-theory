@@ -48,9 +48,13 @@ with open("sanity.tex", "r") as f:
                     if mIH and mIH.group(1) in ruledic.keys():
                         trg |= ruledic[mIH.group(1)]
                     else:
-                        trg.add(t)
-                        if t not in rules and t not in ['IH', 'Premise', 'Inversion']:
-                            print ('!!! UNKNOWN TARGET RULE {0} !!!'.format(t))
+                        mPr = re.search(r'Premise (.+)', t)
+                        if mPr and mPr.group(1) in ruledic.keys():
+                            trg |= ruledic[mPr.group(1)]
+                        else:
+                            trg.add(t)
+                            if t not in rules and t not in ['IH', 'Premise', 'Inversion']:
+                                print ('!!! UNKNOWN TARGET RULE {0} !!!'.format(t))
 
         g.write("}")
 

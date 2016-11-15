@@ -366,7 +366,8 @@ Consider a derivation ending with
 $\isctx{\G}$ follows by induction hypothesis and
 we have $\istype{\G}{\A}$ as premise.
 
-% ENDS WITH Premise
+% ENDS WITH IH Contexts
+% ENDS WITH Premise Types
 
 \subsubsection*{Rule {\rlEqTySym}}
 
@@ -454,8 +455,10 @@ $\istype{\ctxextend{\G}{\B}}{\subst{\A}{\sbweak{\G}{\B}}}$.
 Using {\rlSubstZero} on the right premise and {\rlTySubst} we conclude
 $\istype{\G}{\subst{(\subst{\A}{\sbweak{\G}{\B}})}{\sbzero{\G}{\B}{\uu}}}$.
 
+% ENDS WITH IH Contexts
+% ENDS WITH IH Types
 % ENDS WITH TySubst
-% ENDS WITH Premise
+% ENDS WITH Premise Types
 
 \subsubsection*{Rule {\rlEqTyShiftZero}}
 
@@ -649,7 +652,9 @@ Consider a derivation ending with
 We have $\isterm{\G}{\uu}{\A}$ as a premise and $\isctx{\G}$ and
 $\istype{\G}{\A}$ by induction hypothesis.
 
-% ENDS WITH Premise
+% ENDS WITH Premise Terms
+% ENDS WITH IH Contexts
+% ENDS WITH IH Types
 
 \subsubsection*{Rule {\rlEqSym}}
 
@@ -731,7 +736,9 @@ $\isterm{\G}
   {\A}
 $.
 
-% ENDS WITH Premise
+% ENDS WITH IH Contexts
+% ENDS WITH IH Types
+% ENDS WITH Premise Terms
 % ENDS WITH TermTyConv
 
 
@@ -761,7 +768,9 @@ $\isterm{\G}
 $.
 
 
-% ENDS WITH Premise
+% ENDS WITH IH Contexts
+% ENDS WITH IH Types
+% ENDS WITH Premise Terms
 % ENDS WITH TermTyConv
 
 
@@ -1043,7 +1052,9 @@ Then
 $\isterm{\G}{\uu}{\Prod{\A} \B}$ and
 $\isterm{\G}{\vv}{\Prod{\A} \B}$ are just the premises.
 
-% ENDS WITH Premise
+% ENDS WITH IH Contexts
+% ENDS WITH IH Types
+% ENDS WITH Premise Terms
 
 \subsubsection*{Rule {\rlCongAbs}}
 
