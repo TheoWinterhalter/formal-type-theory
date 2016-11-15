@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/python
 import re
 import subprocess
 
@@ -17,7 +17,7 @@ print ("{0} rules loaded.".format(len(rules)))
                 
 with open("sanity.tex", "r") as f:
     with open("sanity.dot", "w") as g:
-        g.write("digraph SanityGraph {")
+        g.write("digraph SanityGraph {\nrankdir=LR\n")
         src = None
         trg = None
         for line in f:
