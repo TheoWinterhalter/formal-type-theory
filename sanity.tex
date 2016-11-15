@@ -76,6 +76,9 @@ Consider a derivation ending with
 By induction hypothesis $\isctx{\G}$ and $\istype{\G}{\A}$. We get
 $\isctx{(\ctxextend{\G}{\A})}$ by {\rlCtxExtend}.
 
+% ENDS WITH IH
+% ENDS WITH CtxExtend
+
 
 \subsubsection*{Rule {\rlSubstWeak}}
 
@@ -88,6 +91,8 @@ Consider a derivation ending with
 First, $\isctx{\G}$ follows by induction hypothesis on the premise, and then
 $\isctx{\ctxextend{\G}{\A}}$ by an application of {\rlCtxExtend}.
 
+% ENDS WITH IH
+% ENDS WITH CtxExtend
 
 \subsubsection*{Rule {\rlSubstShift}}
 
@@ -100,6 +105,8 @@ Consider a derivation ending with
 By induction hypothesis $\isctx{\G}$ and $\isctx{\D}$. Then $\isctx{(\ctxextend{\D}{\A})}$
 by {\rlCtxExtend}, while $\isctx{(\ctxextend{\G}{\subst{\A}{\sbs}})}$ by {\rlTySubst} and
 {\rlCtxExtend}.
+
+% ENDS WITH CtxExtend
 
 \subsection{Types \fbox{$\istype{\G}{\A}$}}
 
@@ -115,6 +122,8 @@ Consider a derivation ending with
 %
 By induction hypothesis on the right premise we obtain $\isctx{\D}$.
 
+% ENDS WITH IH
+
 \subsubsection*{Rule {\rlTySubst}}
 
 Consider a derivation ending with
@@ -124,6 +133,9 @@ Consider a derivation ending with
 \end{equation*}
 %
 By induction hypothesis on the left premise we obtain $\isctx{\G}$.
+
+% ENDS WITH IH
+
 
 \subsubsection*{Rule {\rlTyProd}}
 
@@ -135,6 +147,9 @@ Consider a derivation ending with
 %
 By induction hypothesis on the left premise we obtain $\isctx{\G}$.
 
+% ENDS WITH IH
+
+
 \subsubsection*{Rule {\rlTyId}}
 
 Consider a derivation ending with
@@ -144,6 +159,9 @@ Consider a derivation ending with
 \end{equation*}
 %
 By induction hypothesis on the left premise we obtain $\isctx{\G}$.
+
+% ENDS WITH IH
+
 
 \subsection{Terms \fbox{$\isterm{\G}{\uu}{\A}$}}
 
@@ -159,6 +177,8 @@ Consider a derivation ending with
 %
 By induction hypothesis on the right premise we obtain $\isctx{\G}$ and $\istype{\G}{\B}$.
 
+% ENDS WITH IH
+
 
 \subsubsection*{Rule {\rlTermCtxConv}}
 
@@ -172,6 +192,7 @@ By induction hypothesis on the right premise we obtain $\isctx{\D}$.
 By induction hypothesis on the left premise we obtain $\istype{\G}{\A}$, and then we apply
 {\rlTyCtxConv} using the right premise.
 
+% ENDS WITH TyCtxConv
 
 \subsubsection*{Rule {\rlTermSubst}}
 
@@ -184,6 +205,9 @@ Consider a derivation ending with
 By induction hypothesis on the left premise we obtain $\isctx{\G}$.
 By induction hypothesis on the right premise we obtain $\istype{\D}{\A}$, and then we
 apply {\rlTySubst} using the left premise.
+
+% ENDS WITH TySubst
+
 
 \subsubsection*{Rule {\rlTermVar}}
 
@@ -200,6 +224,8 @@ We apply {\rlSubstWeak} to the premise to obtain
 $\issubst{\sbweak{\G}{\A}}{\ctxextend{\G}{\A}}{\G}$. Then we apply {\rlTySubst} to it
 and to the premise.
 
+% ENDS WITH TySubst
+
 \subsubsection*{Rule {\rlTermVarSkip}}
 
 Consider a derivation ending with
@@ -215,6 +241,8 @@ By induction hypothesis on the left premise we obtain $\istype{\G}{\A}$. We
 apply {\rlTySubst} to it and to {\rlSubstWeak} applied to the
 right premise.
 
+% ENDS WITH TySubst
+
 
 \subsubsection*{Rule {\rlTermAbs}}
 
@@ -229,6 +257,7 @@ By induction hypothesis on the left premise we obtain $\isctx{\G}$.
 By induction hypothesis on the right premise we obtain $\istype{\ctxextend{\G}{\A}}{\B}$,
 after which we apply {\rlTyProd} to it and to the left premise.
 
+% ENDS WITH TyProd
 
 \subsubsection*{Rule {\rlTermApp}}
 
@@ -243,6 +272,8 @@ By induction hypothesis on the right premise we obtain $\isctx{\G}$.
 By {\rlSubstZero} we have $\issubst{\sbzero{\G}{\A}{\vv}}{\G}{\ctxextend{\G}{\A}}$, which
 allows us to concluding by an application of {\rlTySubst} to the left premise.
 
+% ENDS WITH TySubst
+
 \subsubsection*{Rule {\rlTermRefl}}
 
 Consider a derivation ending with
@@ -254,6 +285,8 @@ Consider a derivation ending with
 By induction hypothesis on the premise we obtain $\isctx{\G}$ and $\istype{\G}{\A}$ and
 then by using {\rlTyId} on it and on the premise itself twice, we conclude
 $\istype{\G}{\Id{\A}{\uu}{\uu}}$.
+
+% ENDS WITH TyId
 
 \subsection{Context equality \fbox{$\eqctx{\G}{\D}$}}
 
@@ -269,6 +302,8 @@ Consider a derivation ending with
 %
 By {\rlCtxEmpty}, $\isctx{\ctxempty}$ holds.
 
+% ENDS WITH CtxEmpty
+
 \subsubsection*{Rule {\rlEqCtxExtend}}
 
 Consider a derivation ending with
@@ -280,6 +315,7 @@ Consider a derivation ending with
 We apply {\rlCtxExtend} twice to the induction hypotheses to conclude
 $\isctx{\ctxextend{\G}{\A}}$ and $\isctx{\ctxextend{\D}{\B}}$.
 
+% ENDS WITH CtxExtend
 
 \subsection{Type equality \fbox{$\eqtype{\G}{\A}{\B}$}}
 
@@ -299,6 +335,8 @@ and $\istype{\G}{\B}$.
 Using {\rlTyCtxConv} on both combined with the right premise we obtain
 $\istype{\D}{\A}$ and $\istype{\D}{\B}$.
 
+% ENDS WITH TyCtxConv
+
 \subsubsection*{Rule {\rlEqTyRefl}}
 
 Consider a derivation ending with
@@ -310,6 +348,8 @@ Consider a derivation ending with
 $\isctx{\G}$ follows by induction hypothesis and
 we have $\istype{\G}{\A}$ as premise.
 
+% ENDS WITH Premise
+
 \subsubsection*{Rule {\rlEqTySym}}
 
 Consider a derivation ending with
@@ -319,6 +359,8 @@ Consider a derivation ending with
 \end{equation*}
 %
 By induction hypothesis on the premise, we conclude.
+
+% ENDS WITH IH
 
 \subsubsection*{Rule {\rlEqTyTrans}}
 
@@ -330,6 +372,7 @@ Consider a derivation ending with
 %
 By induction hypothesis on the premises, we conclude.
 
+% ENDS WITH IH
 
 \subsubsection*{Rule {\rlEqTyWeakNat}}
 
@@ -372,6 +415,8 @@ $\issubst{\sbweak{\G}{\subst{\A}{\sbs}}}{\ctxextend{\G}{\subst{\A}{\sbs}}}{\G}$.
 The latter is well-typed thanks to {\rlSubstWeak} applied to
 $\istype{\G}{\subst{\A}{\sbs}}$ which we got earlier.
 
+% ENDS WITH TySubst
+% ENDS WITH TySubst
 
 \subsubsection*{Rule {\rlEqTyWeakZero}}
 
@@ -389,6 +434,8 @@ $\istype{\ctxextend{\G}{\B}}{\subst{\A}{\sbweak{\G}{\B}}}$.
 Using {\rlSubstZero} on the right premise and {\rlTySubst} we conclude
 $\istype{\G}{\subst{(\subst{\A}{\sbweak{\G}{\B}})}{\sbzero{\G}{\B}{\uu}}}$.
 
+% ENDS WITH TySubst
+% ENDS WITH Premise
 
 \subsubsection*{Rule {\rlEqTyShiftZero}}
 
@@ -415,6 +462,7 @@ $\istype{\G}
     {\sbzero{\G}{\subst{\A}{\sbs}}{\subst{\vv}{\sbs}}}}
 $.
 
+% ENDS WITH TySubst
 
 \subsubsection*{Rule {\rlEqTyCongZero}}
 
@@ -433,6 +481,8 @@ $ and thus by {\rlTyCtxConv}, we obtain $\istype{\ctxextend{\G}{\A_2}}{\B}$.
 Then using {\rlSubstZero} and {\rlTySubst} we construct
 $\istype{\G}{\subst{\B}{\sbzero{\G}{\A_1}{\uu_1}}}$ and
 $\istype{\G}{\subst{\B}{\sbzero{\G}{\A_2}{\uu_2}}}$.
+
+% ENDS WITH TySubst
 
 
 \subsubsection*{Rule {\rlEqTySubstProd}}
@@ -457,6 +507,9 @@ $\istype
     {\subst{\A}{\sbs}}
     {\subst{\B}{\sbshift{\sbs}{\G}{\A}}}}$.
 
+% ENDS WITH TySubst
+% ENDS WITH TyProd
+
 \subsubsection*{Rule {\rlEqTySubstId}}
 
 Consider a derivation ending with
@@ -472,6 +525,9 @@ $\istype{\G}{\subst{(\Id{\A}{\uu}{\vv})}{\sbs}}$. Then we apply {\rlTySubst} and
 {\rlTermSubst} on the last three premises and put the results together using
 {\rlTyId} to get
 $\istype{\G}{\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\vv}{\sbs}}}$.
+
+% ENDS WITH TySubst
+% ENDS WITH TyId
 
 \subsubsection*{Rule {\rlCongProd}}
 
@@ -490,6 +546,8 @@ $\istype{\ctxextend{\G}{\B_1}}{\B_2}$. To do so, we first derive
 $\eqctx{(\ctxextend{\G}{\A_1})}{(\ctxextend{\G}{\B_1})}$ by {\rlEqCtxExtend} and
 then apply {\rlTyCtxConv} to $\istype{\ctxextend{\G}{\A_1}}{\B_2}$.
 
+% ENDS WITH TyProd
+
 \subsubsection*{Rule {\rlCongId}}
 
 Consider a derivation ending with
@@ -504,6 +562,8 @@ We apply {\rlTyId} to the induction hypotheses to get
 $\istype{\G}{\Id{\A}{\uu_1}{\uu_2}}$. We obtain $\istype{\G}{\Id{\B}{\vv_1}{\vv_2}}$ in
 the same way, but use {\rlTermTyConv} on the last two induction hypotheses beforehand.
 
+% ENDS WITH TyId
+
 \subsubsection*{Rule {\rlCongTySubst}}
 
 Consider a derivation ending with
@@ -516,7 +576,8 @@ Using the induction hypothesis on the left premise we get $\isctx{\G}$.
 We apply {\rlTySubst} on the left premise and the induction hypothesis
 applied to the right premise to conclude.
 
-\goodbreak
+% ENDS WITH TySubst
+
 
 \subsection{Term equality \fbox{$\eqterm{\G}{\uu_1}{\uu_2}{\A}$}}
 
@@ -538,6 +599,8 @@ Then using {\rlTermTyConv} on both and on the
 right premise, we conclude $\isterm{\G}{\uu}{\B}$ and $\isterm{\G}{\vv}{\B}$.
 We get $\istype{\G}{\B}$ by induction hypothesis on the right premise.
 
+% ENDS WITH TermTyConv
+
 \subsubsection*{Rule {\rlEqCtxConv}}
 
 Consider a derivation ending with
@@ -553,6 +616,8 @@ Then using {\rlTyCtxConv} and {\rlTermCtxConv} on all of them and on the right
 premise, we conclude $\istype{\D}{\A}$, $\isterm{\D}{\uu}{\A}$ and
 $\isterm{\D}{\vv}{\A}$.
 
+% ENDS WITH TermCtxConv
+
 \subsubsection*{Rule {\rlEqRefl}}
 
 Consider a derivation ending with
@@ -564,6 +629,8 @@ Consider a derivation ending with
 We have $\isterm{\G}{\uu}{\A}$ as a premise and $\isctx{\G}$ and
 $\istype{\G}{\A}$ by induction hypothesis.
 
+% ENDS WITH Premise
+
 \subsubsection*{Rule {\rlEqSym}}
 
 Consider a derivation ending with
@@ -573,6 +640,8 @@ Consider a derivation ending with
 \end{equation*}
 %
 We conclude immediately using the induction hypothesis.
+
+% ENDS WITH IH
 
 \subsubsection*{Rule {\rlEqTrans}}
 
@@ -584,7 +653,7 @@ Consider a derivation ending with
 %
 We conclude immediately using the induction hypotheses.
 
-
+% ENDS WITH IH
 
 
 \subsubsection*{Rule {\rlEqSubstWeak}}
@@ -607,6 +676,10 @@ $\isterm
 $.
 An application of {\rlTermVarSkip} on the premises let us conclude
 $\isterm{\ctxextend{\G}{\B}}{\var{k+1}}{\subst{\A}{\sbweak{\G}{\B}}}$.
+
+% ENDS WITH TermSubst
+% ENDS WITH TermVarSkip
+
 
 
 \subsubsection*{Rule {\rlEqSubstZeroZero}}
@@ -634,6 +707,9 @@ $\isterm{\G}
   {\A}
 $.
 
+% ENDS WITH Premise
+% ENDS WITH TermTyConv
+
 
 \subsubsection*{Rule {\rlEqSubstZeroSucc}}
 
@@ -660,6 +736,9 @@ $\isterm{\G}
   {\A}
 $.
 
+
+% ENDS WITH Premise
+% ENDS WITH TermTyConv
 
 
 \subsubsection*{Rule {\rlEqSubstShiftZero}}
@@ -698,6 +777,9 @@ $\isterm
   {\subst{\var{0}}{\sbshift{\G}{\A}{\sbs}}}
   {\subst{(\subst{\A}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
 $.
+
+% ENDS WITH TermVar
+% ENDS WITH TermTyConv
 
 
 \subsubsection*{Rule {\rlEqSubstShiftSucc}}
@@ -742,6 +824,9 @@ $\isterm
   {\subst{(\subst{\B}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
 $.
 
+% ENDS WITH TermSubst
+% ENDS WITH TermTyConv
+
 
 \subsubsection*{Rule {\rlEqSubstAbs}}
 
@@ -783,6 +868,8 @@ $\isterm
 $
 by {\rlTermSubst}. We conclude by an application of {\rlTermAbs}.
 
+% ENDS WITH TermSubst
+% ENDS WITH TermAbs
 
 \subsubsection*{Rule {\rlEqSubstApp}}
 
@@ -837,6 +924,9 @@ $\isterm{\G}
   {\subst{(\subst{\B}{\sbzero{\D}{\A}{\vv}})}{\sbs}}
 $.
 
+% ENDS WITH TermSubst
+% ENDS WITH TermTyConv
+
 \subsubsection*{Rule {\rlEqSubstRefl}}
 
 Consider a derivation ending with
@@ -865,6 +955,9 @@ $\isterm{\G}
   {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\uu}{\sbs}}}
 $.
 
+% ENDS WITH TermRefl
+% ENDS WITH TermTyConv
+
 \subsubsection*{Rule {\rlEqReflection}}
 
 Consider a derivation ending with
@@ -878,6 +971,7 @@ We get $\isctx{\G}$ by induction hypothesis on the left premise.
 \meta{How we get the rest is unclear if we don't want to invert on
 $\istype{\G}{\Id{\A}{\uu}{\vv}}$}.
 
+% ENDS WITH Inversion
 
 \subsubsection*{Rule {\rlProdBeta}}
 
@@ -894,8 +988,8 @@ on the right premise.
 From {\rlSubstZero} and {\rlTySubst} we get
 $\istype{\G}{\subst{\B}{\sbzero{\G}{\A}{\vv}}}$.
 %
-In a similar fashion we get
-$\istype{\G}
+In a similar fashion using {\rlTermSubst} we get
+$\isterm{\G}
   {\subst{\uu}{\sbzero{\G}{\A}{\vv}}}
   {\subst{\B}{\sbzero{\G}{\A}{\vv}}}
 $.
@@ -908,6 +1002,8 @@ $\isterm{\G}
   {\subst{\B}{\sbzero{\G}{\A}{\vv}}}
 $.
 
+% ENDS WITH TermApp
+% ENDS WITH TermSubst
 
 \subsubsection*{Rule {\rlProdEta}}
 
@@ -918,10 +1014,12 @@ Consider a derivation ending with
 \end{equation*}
 %
 By induction hypothesis on the left premise we immediately conclude
-$\isctx{\G}$ and $\istype{\G}{\Prod{\A} \B}$ and
-$\isterm{\G}{\uu}{\Prod{\A} \B}$.
-By induction hypothesis on the right premise we get the last conclusion:
-$\isterm{\G}{\vv}{\Prod{\A} \B}$.
+$\isctx{\G}$ and $\istype{\G}{\Prod{\A} \B}$.
+Then 
+$\isterm{\G}{\uu}{\Prod{\A} \B}$ and 
+$\isterm{\G}{\vv}{\Prod{\A} \B}$ are just the premises.
+
+% ENDS WITH Premise
 
 \subsubsection*{Rule {\rlCongAbs}}
 
@@ -945,6 +1043,9 @@ $\isterm{\G}{\lam{\A_1}{\A_2}{\uu_1}}{\Prod{\A_1} \A_2}$ and
 $\isterm{\G}{\lam{\B_1}{\B_2}{\uu_2}}{\Prod{\B_1} \B_2}$.
 Finally, with {\rlCongProd} and {\rlTermTyConv} we conclude
 $\isterm{\G}{\lam{\B_1}{\B_2}{\uu_2}}{\Prod{\A_1} \A_2}$.
+
+% ENDS WITH TermApp
+% ENDS WITH TermTyConv
 
 \subsubsection*{Rule {\rlCongApp}}
 
@@ -977,6 +1078,8 @@ $\isterm{\G}
   {\subst{\A_2}{\sbzero{\G}{\A_1}{\uu_1}}}
 $
 
+% ENDS WITH TermApp
+% ENDS WITH TermTyConv
 
 \subsubsection*{Rule {\rlCongRefl}}
 
@@ -997,6 +1100,9 @@ $\isterm{\G}{\refl{\A_2} \uu_2}{\Id{\A_2}{\uu_2}{\uu_2}}$.
 Finally, using {\rlCongId} and {\rlTermTyConv} we conclude
 $\isterm{\G}{\refl{\A_2} \uu_2}{\Id{\A_1}{\uu_1}{\uu_1}}$.
 
+% ENDS WITH TermRefl
+% ENDS WITH TermTyConv
+
 \subsubsection*{Rule {\rlCongTermSubst}}
 
 Consider a derivation ending with
@@ -1013,6 +1119,8 @@ By an application of {\rlTySubst} we conclude $\istype{\G}{\subst{\A}{\sbs}}$.
 By applications of {\rlTermSubst} we finally conclude
 $\isterm{\G}{\subst{\uu_1}{\sbs}}{\subst{\A}{\sbs}}$ and
 $\isterm{\G}{\subst{\uu_2}{\sbs}}{\subst{\A}{\sbs}}$.
+
+% ENDS WITH TermSubst
 
 %%% Local Variables:
 %%% mode: latex
