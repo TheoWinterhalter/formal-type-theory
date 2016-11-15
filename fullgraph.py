@@ -24,6 +24,9 @@ with open("rules.tex", "r") as r:
 rules = reduce(union, ruledic.values())
 print ("{0} rules loaded.".format(len(rules)))
 
+for key in ruledic.keys():
+    print ("{0} rules in {1}.".format(len(ruledic[key]),key))
+
 
 with open("sanity.tex", "r") as f:
     with open("sanity.dot", "w") as g:
