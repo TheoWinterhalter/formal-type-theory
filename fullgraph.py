@@ -45,12 +45,20 @@ with open("sanity.tex", "r") as f:
                     t = m.group(1)
 
                     mIH = re.search(r'IH (.+)', t)
-                    if mIH and mIH.group(1) in ruledic.keys():
-                        trg |= ruledic[mIH.group(1)]
+                    if mIH:
+                        rul = mIH.group(1)
+                        if rul not in ruledic.keys():
+                            print ('!!! UNKNOWN IH CATEGORY {0} !!!'.format(rul))
+                        else:
+                            trg |= ruledic[mIH.group(1)]
                     else:
                         mPr = re.search(r'Premise (.+)', t)
-                        if mPr and mPr.group(1) in ruledic.keys():
-                            trg |= ruledic[mPr.group(1)]
+                        if mPr:
+                            rul = mPr.group(1)
+                            if rul not in ruledic.keys():
+                                print ('!!! UNKNOWN Premise CATEGORY {0} !!!'.format(rul))
+                            else:
+                                trg |= ruledic[mPr.group(1)]
                         else:
                             trg.add(t)
                             if t not in rules and t not in ['IH', 'Premise', 'Inversion']:
