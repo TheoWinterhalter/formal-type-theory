@@ -6,6 +6,7 @@ extracts the well-typedness of a derivation of
 $\istype{\G}{\Id{\A}{\uu}{\vv}}$.
 
 \begin{problem}
+  \label{pbm:id-inversion}
   Given $\istype{\G}{\Id{\A}{\uu}{\vv}}$, construct
   $\istype{\G}{\A}$, $\isterm{\G}{\uu}{\A}$ and $\isterm{\G}{\vv}{\A}$.
 \end{problem}
@@ -123,6 +124,7 @@ By induction hypothesis $\isctx{\G}$ and $\isctx{\D}$. Then $\isctx{(\ctxextend{
 by {\rlCtxExtend}, while $\isctx{(\ctxextend{\G}{\subst{\A}{\sbs}})}$ by {\rlTySubst} and
 {\rlCtxExtend}.
 
+% ENDS WITH IH Contexts
 % ENDS WITH CtxExtend
 
 \subsection{Types \fbox{$\istype{\G}{\A}$}}
@@ -210,6 +212,7 @@ By induction hypothesis on the right premise we obtain $\isctx{\D}$.
 By induction hypothesis on the left premise we obtain $\istype{\G}{\A}$, and then we apply
 {\rlTyCtxConv} using the right premise.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TyCtxConv
 
 \subsubsection*{Rule {\rlTermSubst}}
@@ -224,6 +227,7 @@ By induction hypothesis on the left premise we obtain $\isctx{\G}$.
 By induction hypothesis on the right premise we obtain $\istype{\D}{\A}$, and then we
 apply {\rlTySubst} using the left premise.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TySubst
 
 
@@ -275,6 +279,7 @@ By induction hypothesis on the left premise we obtain $\isctx{\G}$.
 By induction hypothesis on the right premise we obtain $\istype{\ctxextend{\G}{\A}}{\B}$,
 after which we apply {\rlTyProd} to it and to the left premise.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TyProd
 
 \subsubsection*{Rule {\rlTermApp}}
@@ -290,6 +295,7 @@ By induction hypothesis on the right premise we obtain $\isctx{\G}$.
 By {\rlSubstZero} we have $\issubst{\sbzero{\G}{\A}{\vv}}{\G}{\ctxextend{\G}{\A}}$, which
 allows us to concluding by an application of {\rlTySubst} to the left premise.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TySubst
 
 \subsubsection*{Rule {\rlTermRefl}}
@@ -304,6 +310,7 @@ By induction hypothesis on the premise we obtain $\isctx{\G}$ and $\istype{\G}{\
 then by using {\rlTyId} on it and on the premise itself twice, we conclude
 $\istype{\G}{\Id{\A}{\uu}{\uu}}$.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TyId
 
 \subsection{Context equality \fbox{$\eqctx{\G}{\D}$}}
@@ -353,6 +360,7 @@ and $\istype{\G}{\B}$.
 Using {\rlTyCtxConv} on both combined with the right premise we obtain
 $\istype{\D}{\A}$ and $\istype{\D}{\B}$.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TyCtxConv
 
 \subsubsection*{Rule {\rlEqTyRefl}}
@@ -485,6 +493,7 @@ $\istype{\G}
     {\sbzero{\G}{\subst{\A}{\sbs}}{\subst{\vv}{\sbs}}}}
 $.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TySubst
 
 \subsubsection*{Rule {\rlEqTyCongZero}}
@@ -505,6 +514,7 @@ Then using {\rlSubstZero} and {\rlTySubst} we construct
 $\istype{\G}{\subst{\B}{\sbzero{\G}{\A_1}{\uu_1}}}$ and
 $\istype{\G}{\subst{\B}{\sbzero{\G}{\A_2}{\uu_2}}}$.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TySubst
 
 
@@ -530,6 +540,7 @@ $\istype
     {\subst{\A}{\sbs}}
     {\subst{\B}{\sbshift{\sbs}{\G}{\A}}}}$.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TySubst
 % ENDS WITH TyProd
 
@@ -549,6 +560,7 @@ $\istype{\G}{\subst{(\Id{\A}{\uu}{\vv})}{\sbs}}$. Then we apply {\rlTySubst} and
 {\rlTyId} to get
 $\istype{\G}{\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\vv}{\sbs}}}$.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TySubst
 % ENDS WITH TyId
 
@@ -569,6 +581,7 @@ $\istype{\ctxextend{\G}{\B_1}}{\B_2}$. To do so, we first derive
 $\eqctx{(\ctxextend{\G}{\A_1})}{(\ctxextend{\G}{\B_1})}$ by {\rlEqCtxExtend} and
 then apply {\rlTyCtxConv} to $\istype{\ctxextend{\G}{\A_1}}{\B_2}$.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TyProd
 
 \subsubsection*{Rule {\rlCongId}}
@@ -585,6 +598,7 @@ We apply {\rlTyId} to the induction hypotheses to get
 $\istype{\G}{\Id{\A}{\uu_1}{\uu_2}}$. We obtain $\istype{\G}{\Id{\B}{\vv_1}{\vv_2}}$ in
 the same way, but use {\rlTermTyConv} on the last two induction hypotheses beforehand.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TyId
 
 \subsubsection*{Rule {\rlCongTySubst}}
@@ -599,6 +613,7 @@ Using the induction hypothesis on the left premise we get $\isctx{\G}$.
 We apply {\rlTySubst} on the left premise and the induction hypothesis
 applied to the right premise to conclude.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TySubst
 
 
@@ -622,6 +637,9 @@ Then using {\rlTermTyConv} on both and on the
 right premise, we conclude $\isterm{\G}{\uu}{\B}$ and $\isterm{\G}{\vv}{\B}$.
 We get $\istype{\G}{\B}$ by induction hypothesis on the right premise.
 
+% ENDS WITH IH Contexts
+% ENDS WITH IH Types
+% ENDS WITH IH Terms
 % ENDS WITH TermTyConv
 
 \subsubsection*{Rule {\rlEqCtxConv}}
@@ -639,6 +657,7 @@ Then using {\rlTyCtxConv} and {\rlTermCtxConv} on all of them and on the right
 premise, we conclude $\istype{\D}{\A}$, $\isterm{\D}{\uu}{\A}$ and
 $\isterm{\D}{\vv}{\A}$.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TermCtxConv
 
 \subsubsection*{Rule {\rlEqRefl}}
@@ -693,7 +712,8 @@ Consider a derivation ending with
   \showEqSubstWeak
 \end{equation*}
 %
-From the right premise we derive $\isctx{\ctxextend{\G}{\B}}$.
+From the right premise we derive $\isctx{\ctxextend{\G}{\B}}$
+by {\rlCtxExtend}.
 By induction hypothesis on the left premise we get $\istype{\G}{\A}$
 and then using {\rlTySubst} we obtain
 $\istype{\ctxextend{\G}{\B}}{\subst{\A}{\sbweak{\G}{\B}}}$.
@@ -901,6 +921,7 @@ $\isterm
 $
 by {\rlTermSubst}. We conclude by an application of {\rlTermAbs}.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TermSubst
 % ENDS WITH TermAbs
 
@@ -957,6 +978,7 @@ $\isterm{\G}
   {\subst{(\subst{\B}{\sbzero{\D}{\A}{\vv}})}{\sbs}}
 $.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TermSubst
 % ENDS WITH TermTyConv
 
@@ -988,6 +1010,7 @@ $\isterm{\G}
   {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\uu}{\sbs}}}
 $.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TermRefl
 % ENDS WITH TermTyConv
 
@@ -1001,9 +1024,9 @@ Consider a derivation ending with
 %
 We get $\isctx{\G}$ by induction hypothesis on the left premise.
 %
-\meta{How we get the rest is unclear if we don't want to invert on
-$\istype{\G}{\Id{\A}{\uu}{\vv}}$}.
+The rest we obtain by inversion~\ref{pbm:id-inversion}.
 
+% ENDS WITH IH Contexts
 % ENDS WITH Inversion
 
 \subsubsection*{Rule {\rlProdBeta}}
@@ -1035,6 +1058,7 @@ $\isterm{\G}
   {\subst{\B}{\sbzero{\G}{\A}{\vv}}}
 $.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TermApp
 % ENDS WITH TermSubst
 
@@ -1079,6 +1103,7 @@ $\isterm{\G}{\lam{\B_1}{\B_2}{\uu_2}}{\Prod{\B_1} \B_2}$.
 Finally, with {\rlCongProd} and {\rlTermTyConv} we conclude
 $\isterm{\G}{\lam{\B_1}{\B_2}{\uu_2}}{\Prod{\A_1} \A_2}$.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TermApp
 % ENDS WITH TermTyConv
 
@@ -1113,6 +1138,7 @@ $\isterm{\G}
   {\subst{\A_2}{\sbzero{\G}{\A_1}{\uu_1}}}
 $
 
+% ENDS WITH IH Contexts
 % ENDS WITH TermApp
 % ENDS WITH TermTyConv
 
@@ -1135,6 +1161,7 @@ $\isterm{\G}{\refl{\A_2} \uu_2}{\Id{\A_2}{\uu_2}{\uu_2}}$.
 Finally, using {\rlCongId} and {\rlTermTyConv} we conclude
 $\isterm{\G}{\refl{\A_2} \uu_2}{\Id{\A_1}{\uu_1}{\uu_1}}$.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TermRefl
 % ENDS WITH TermTyConv
 
@@ -1155,7 +1182,9 @@ By applications of {\rlTermSubst} we finally conclude
 $\isterm{\G}{\subst{\uu_1}{\sbs}}{\subst{\A}{\sbs}}$ and
 $\isterm{\G}{\subst{\uu_2}{\sbs}}{\subst{\A}{\sbs}}$.
 
+% ENDS WITH IH Contexts
 % ENDS WITH TermSubst
+% ENDS WITH TySubst
 
 %%% Local Variables:
 %%% mode: latex
