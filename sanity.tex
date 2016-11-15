@@ -93,7 +93,7 @@ Consider a derivation ending with
 By induction hypothesis $\isctx{\G}$ and $\istype{\G}{\A}$. We get
 $\isctx{(\ctxextend{\G}{\A})}$ by {\rlCtxExtend}.
 
-% ENDS WITH IH
+% ENDS WITH IH Contexts
 % ENDS WITH CtxExtend
 
 
@@ -108,7 +108,7 @@ Consider a derivation ending with
 First, $\isctx{\G}$ follows by induction hypothesis on the premise, and then
 $\isctx{\ctxextend{\G}{\A}}$ by an application of {\rlCtxExtend}.
 
-% ENDS WITH IH
+% ENDS WITH IH Contexts
 % ENDS WITH CtxExtend
 
 \subsubsection*{Rule {\rlSubstShift}}
@@ -139,7 +139,7 @@ Consider a derivation ending with
 %
 By induction hypothesis on the right premise we obtain $\isctx{\D}$.
 
-% ENDS WITH IH
+% ENDS WITH IH Contexts
 
 \subsubsection*{Rule {\rlTySubst}}
 
@@ -151,7 +151,7 @@ Consider a derivation ending with
 %
 By induction hypothesis on the left premise we obtain $\isctx{\G}$.
 
-% ENDS WITH IH
+% ENDS WITH IH Contexts
 
 
 \subsubsection*{Rule {\rlTyProd}}
@@ -164,7 +164,7 @@ Consider a derivation ending with
 %
 By induction hypothesis on the left premise we obtain $\isctx{\G}$.
 
-% ENDS WITH IH
+% ENDS WITH IH Contexts
 
 
 \subsubsection*{Rule {\rlTyId}}
@@ -177,7 +177,7 @@ Consider a derivation ending with
 %
 By induction hypothesis on the left premise we obtain $\isctx{\G}$.
 
-% ENDS WITH IH
+% ENDS WITH IH Contexts
 
 
 \subsection{Terms \fbox{$\isterm{\G}{\uu}{\A}$}}
@@ -194,7 +194,8 @@ Consider a derivation ending with
 %
 By induction hypothesis on the right premise we obtain $\isctx{\G}$ and $\istype{\G}{\B}$.
 
-% ENDS WITH IH
+% ENDS WITH IH Contexts
+% ENDS WITH IH Types
 
 
 \subsubsection*{Rule {\rlTermCtxConv}}
@@ -377,7 +378,8 @@ Consider a derivation ending with
 %
 By induction hypothesis on the premise, we conclude.
 
-% ENDS WITH IH
+% ENDS WITH IH Contexts
+% ENDS WITH IH Types
 
 \subsubsection*{Rule {\rlEqTyTrans}}
 
@@ -389,7 +391,8 @@ Consider a derivation ending with
 %
 By induction hypothesis on the premises, we conclude.
 
-% ENDS WITH IH
+% ENDS WITH IH Contexts
+% ENDS WITH IH Types
 
 \subsubsection*{Rule {\rlEqTyWeakNat}}
 
@@ -658,7 +661,9 @@ Consider a derivation ending with
 %
 We conclude immediately using the induction hypothesis.
 
-% ENDS WITH IH
+% ENDS WITH IH Contexts
+% ENDS WITH IH Types
+% ENDS WITH IH Terms
 
 \subsubsection*{Rule {\rlEqTrans}}
 
@@ -670,7 +675,9 @@ Consider a derivation ending with
 %
 We conclude immediately using the induction hypotheses.
 
-% ENDS WITH IH
+% ENDS WITH IH Contexts
+% ENDS WITH IH Types
+% ENDS WITH IH Terms
 
 
 \subsubsection*{Rule {\rlEqSubstWeak}}
