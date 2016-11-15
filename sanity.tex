@@ -1,6 +1,23 @@
 \section{Type theory is well formed}
 \label{sec:type-theory-well}
 
+Because of the reflection rule, we want to have a simple construction that
+extracts the well-typedness of a derivation of
+$\istype{\G}{\Id{\A}{\uu}{\vv}}$.
+
+\begin{problem}
+  Given $\istype{\G}{\Id{\A}{\uu}{\vv}}$, construct
+  $\istype{\G}{\A}$, $\isterm{\G}{\uu}{\A}$ and $\isterm{\G}{\vv}{\A}$.
+\end{problem}
+%
+\begin{proof}[Construction]
+  This inversion construction is obtained by simply looking at the rules
+  that can be used to conclude $\istype{\G}{\Id{\A}{\uu}{\vv}}$.
+  Only two apply: {\rlTyId} which allows to conclude immediately, and
+  {\rlTyCtxConv}.
+  \meta{We need to do it inductively if we ever want to conclude.}
+\end{proof}
+
 % We want the following construction to be just a simple structural recursion on the derivation.
 % It should not use any admissibility results, or nested forms of induction.
 % The reasons for this are:
@@ -1015,8 +1032,8 @@ Consider a derivation ending with
 %
 By induction hypothesis on the left premise we immediately conclude
 $\isctx{\G}$ and $\istype{\G}{\Prod{\A} \B}$.
-Then 
-$\isterm{\G}{\uu}{\Prod{\A} \B}$ and 
+Then
+$\isterm{\G}{\uu}{\Prod{\A} \B}$ and
 $\isterm{\G}{\vv}{\Prod{\A} \B}$ are just the premises.
 
 % ENDS WITH Premise
