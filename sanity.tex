@@ -12,11 +12,31 @@ $\istype{\G}{\Id{\A}{\uu}{\vv}}$.
 \end{problem}
 %
 \begin{proof}[Construction]
-  This inversion construction is obtained by simply looking at the rules
-  that can be used to conclude $\istype{\G}{\Id{\A}{\uu}{\vv}}$.
-  Only two apply: {\rlTyId} which allows to conclude immediately, and
-  {\rlTyCtxConv}.
-  \meta{We need to do it inductively if we ever want to conclude.}
+  We proceed by induction on the derivation of $\istype{\G}{\Id{\A}{\uu}{\vv}}$.
+  There are two possible cases:
+
+  \begin{enumerate}
+    \item The last rule is
+      \begin{equation*}
+        \showTyId
+      \end{equation*}
+      %
+      We conclude immediately using its premises.
+    \item The last rule is
+      \begin{equation*}
+        % \showTyCtxConv
+        \infer[\rulename{ty-ctx-conv}]
+        {\istype{\G}{\Id{\A}{\uu}{\vv}} \\
+          \eqctx{\G}{\D}
+        }
+        {\istype{\D}{\Id{\A}{\uu}{\vv}}}
+      \end{equation*}
+      %
+      By induction hypothesis, we have $\istype{\G}{\A}$,
+      $\isterm{\G}{\uu}{\A}$ and $\isterm{\G}{\vv}{\A}$.
+      Then, using {\rlTyCtxConv} and {\rlTermCtxConv} we conclude
+      $\istype{\D}{\A}$, $\isterm{\D}{\uu}{\A}$ and $\isterm{\D}{\vv}{\A}$.
+  \end{enumerate}
 \end{proof}
 
 % We want the following construction to be just a simple structural recursion on the derivation.
