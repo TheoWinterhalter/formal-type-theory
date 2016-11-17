@@ -40,13 +40,15 @@
 
 % Type formers
 \newcommand{\Prod}[1]{\mathop{\textstyle\prod_{#1}}} % dependent product
-\newcommand{\Id}[3]{\mathsf{Id}_{#1}(#2,#3)} % Identity type
+\newcommand{\Id}[3]{\mathsf{Id}_{#1}(#2,#3)}         % identity type
+\newcommand{\Empty}{\mathsf{Empty}}                  % empty type
 
 % Terms
 \newcommand{\var}[1]{\mathsf{x}_{#1}} % the first de Bruijn index
 \newcommand{\lam}[2]{\lambda #1 . #2 .} % $\lambda$-abstraction
 \newcommand{\app}[4]{#1\mathbin{@^{#2.#3}} #4} % application
 \newcommand{\refl}[1]{{\mathsf{refl}_{#1}}\ }    % reflexivity
+\newcommand{\exfalso}[1]{\mathsf{exfalso}_{#1}\ } % ex falso quodlibet
 
 % Judgments
 \newcommand{\isctx}[1]{#1\ \mathsf{ctx}} % well formed context
