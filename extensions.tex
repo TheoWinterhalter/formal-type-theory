@@ -283,7 +283,7 @@ Consider a derivation ending with
   \showTyUnit
 \end{equation*}
 %
-\meta{TODO}
+We have $\isctx{\G}$ as a premise.
 
 \subsubsection*{Rule {\rlTermUnit}}
 
@@ -293,7 +293,8 @@ Consider a derivation ending with
   \showTermUnit
 \end{equation*}
 %
-\meta{TODO}
+We have $\isctx{\G}$ as a premise and from it and {\rlTyUnit} we conclude
+$\istype{\G}{\Unit}$.
 
 \subsubsection*{Rule {\rlTermLet}}
 
@@ -303,7 +304,11 @@ Consider a derivation ending with
   \showTermLet
 \end{equation*}
 %
-\meta{TODO}
+We have $\isctx{\G}$ by induction hypothesis on the middle premise.
+With an application of {\rlSubstZero} to the middle premise we get
+$\issubst{\sbzero{\G}{\Unit}{\uu}}{\G}{\ctxextend{\G}{\Unit}}$.
+With {\rlTySubst} we conclude
+$\istype{\G}{\subst{\A}{\sbzero{\G}{\Unit}{\uu}}}$.
 
 \subsubsection*{Rule {\rlEqTySubstUnit}}
 
@@ -313,7 +318,9 @@ Consider a derivation ending with
   \showEqTySubstUnit
 \end{equation*}
 %
-\meta{TODO}
+By induction hypothesis we have $\isctx{\G}$ and $\isctx{\D}$.
+Then with {\rlTyUnit} we get $\istype{\G}{\Unit}$ and $\istype{\D}{\Unit}$.
+With {\rlTySubst} we finally conclude $\istype{\G}{\subst{\Unit}{\sbs}}$.
 
 \subsubsection*{Rule {\rlEqSubstUnit}}
 
@@ -323,7 +330,14 @@ Consider a derivation ending with
   \showEqSubstUnit
 \end{equation*}
 %
-\meta{TODO}
+By induction hypothesis $\isctx{\G}$ and $\isctx{\D}$.
+Then using {\rlTyUnit} we conclude $\istype{\G}{\Unit}$.
+Applications of {\rlTermUnit} yield $\isterm{\G}{\unit}{\Unit}$
+and $\isterm{\D}{\unit}{\Unit}$.
+With {\rlTermSubst} we get
+$\isterm{\G}{\subst{\unit}{\sbs}}{\subst{\Unit}{\sbs}}$.
+Finally using {\rlEqTySubstUnit} and {\rlTermTyConv} we conclude
+$\isterm{\G}{\subst{\unit}{\sbs}}{\Unit}$.
 
 \subsubsection*{Rule {\rlEqSubstLet}}
 
@@ -333,7 +347,62 @@ Consider a derivation ending with
   \showEqSubstLet
 \end{equation*}
 %
-\meta{TODO}
+By induction hypothesis on the left premise we have $\isctx{\G}$.
+From {\rlSubstZero} we deduce
+$\issubst{\sbzero{\D}{\Unit}{\uu}}{\D}{\ctxextend{\D}{\Unit}}$ and thus,
+with two applications of {\rlTySubst} we derive
+$\istype{\G}{\subst{\subst{\A}{\sbzero{\D}{\Unit}{\uu}}}{\sbs}}$.
+An application of {\rlTermLet} followed by {\rlTermSubst} gives us
+$\isterm{\G}
+  {\subst{(\ulet{\A}{\uu} \vv)}{\sbs}}
+  {\subst{\subst{\A}{\sbzero{\D}{\Unit}{\uu}}}{\sbs}}
+$.
+% Similarly, several applications of {\rlTermSubst} and an application of
+% {\rlTySubst} (up to {\rlSubstShift}) followed by {\rlTermLet} yield
+% $\isterm{\G}
+%   {\subst{(\ulet{\A}{\uu} \vv)}{\sbs}}
+%   {\subst{\subst{\A}{\sbzero{\D}{\Unit}{\uu}}}{\sbs}}
+% $.
+Applications of {\rlTermSubst} yield
+$\isterm{\G}{\subst{\uu}{\sbs}}{\subst{\Unit}{\sbs}}$ and
+$\isterm{\G}
+  {\subst{\vv}{\sbs}}
+  {\subst{\subst{\A}{\sbzero{\D}{\Unit}{\unit}}}{\sbs}}
+$.
+With {\rlEqSubstUnit} and {\rlTermTyConv} we get
+$\isterm{\G}{\subst{\uu}{\sbs}}{\Unit}$.
+Now, using {\rlEqTyShiftZero}, {\rlEqTySym}
+we get to the type
+$\subst
+  {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
+  {\sbzero{\G}{\subst{\Unit}{\sbs}}{\subst{\unit}{\sbs}}}
+$.
+Then, if we use {\rlEqTyTrans} with a right hand side obtained through
+{\rlEqTyCongZero}, {\rlEqSubstUnit}, {\rlEqTySubstUnit}, and finally
+{\rlTermTyConv} we get
+$\isterm{\G}
+  {\subst{\vv}{\sbs}}
+  {\subst
+    {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
+    {\sbzero{\G}{\Unit}{\unit}}
+  }
+$.
+Then, by applying {\rlSubstShift} and {\rlTySubst} and then {\rlEqTySubstUnit}
+followed by {\rlEqCtxExtend} we get
+$\istype{\ctxextend{\G}{\Unit}}{\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}$.
+Now, using {\rlTermLet} we get
+$\isterm{\G}
+  {\ulet
+    {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
+    {\subst{\uu}{\sbs}}
+    \subst{\vv}{\sbs}}
+  {\subst
+    {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
+    {\sbzero{\G}{\Unit}{\subst{\uu}{\sbs}}}
+  }
+$.
+\meta{I see how to conclude but I give up...}
+
 
 \subsubsection*{Rule {\rlLetBeta}}
 
@@ -343,7 +412,12 @@ Consider a derivation ending with
   \showLetBeta
 \end{equation*}
 %
-\meta{TODO}
+By indcution hypothesis on the right premise we conclude $\isctx{\G}$
+and $\istype{\G}{\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}$.
+We have $\isterm{\G}{\vv}{\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}$ as a
+premise.
+Now, knowing $\isterm{\G}{\unit}{\Unit}$ we have, by {\rlTermLet},
+$\isterm{\G}{\ulet{\A}{\unit} \vv}{\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}$.
 
 \subsubsection*{Rule {\rlCongLet}}
 
