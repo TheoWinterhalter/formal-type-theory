@@ -313,8 +313,7 @@
 \newcommand{\showEqTyCongZero}{%
   \infer[\rulename{eq-ty-cong-zero}]
   {\eqtype{\G}{\A_1}{\A_2} \\
-   \isterm{\G}{\uu_1}{\A_1} \\
-   \isterm{\G}{\uu_2}{\A_2} \\
+   \eqterm{\G}{\uu_1}{\uu_2}{\A_1} \\
    \istype{\ctxextend{\G}{\A_1}}{\B}
   }
   {\eqtype{\G}

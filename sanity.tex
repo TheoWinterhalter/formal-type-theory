@@ -529,6 +529,10 @@ $\eqctx
   {(\ctxextend{\G}{\A_1})}
   {(\ctxextend{\G}{\A_2})}
 $ and thus by {\rlTyCtxConv}, we obtain $\istype{\ctxextend{\G}{\A_2}}{\B}$.
+%
+The induction hypothesis on the middle premise gives $\isterm{\G}{\uu_1}{\A_1}$ and
+(after {\rlTermTyConv}) also $\isterm{\G}{\uu_2}{\A_2}$.
+%
 Then using {\rlSubstZero} and {\rlTySubst} we construct
 $\istype{\G}{\subst{\B}{\sbzero{\G}{\A_1}{\uu_1}}}$ and
 $\istype{\G}{\subst{\B}{\sbzero{\G}{\A_2}{\uu_2}}}$.
