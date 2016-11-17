@@ -449,10 +449,9 @@ $\issubst
 $, which we get by applying {\rlSubstShift} to the first two premises,
 and to
 $\istype{\ctxextend{\D}{\A}}{\subst{\B}{\sbweak{\D}{\A}}}$.
-The last judgment is obtained by {\rlTySubst} applied to
-$\issubst{\sbweak{\D}{\A}}{\ctxextend{\D}{\A}}{\D}$ and to the middle premise
-(which is also the needed premise to type the substitution with
-{\rlSubstWeak}).
+The last judgment is obtained by {\rlTySubst} applied to the right premise and
+$\issubst{\sbweak{\D}{\A}}{\ctxextend{\D}{\A}}{\D}$,
+obtained by {\rlSubstWeak} from the middle premise.
 %
 Finally, to prove
 $\istype
