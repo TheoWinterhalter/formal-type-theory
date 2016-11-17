@@ -167,6 +167,192 @@ We conclude $\isterm{\G}{\exfalso{\B} \vv}{\A}$ with {\rlEqTySym} and
 
 
 \subsection{Unit Type}
+\label{sec:unit-type}
+
+\begin{align*}
+  \text{Type $\A$, $\B$, $\C$}
+    \bnf   {}& \ldots                   && \text{previous types}\\
+    \bnfor {}& \Unit                    && \text{unit type} \\
+  \\
+  \text{Term $\uu$, $\vv$, $\ww$}
+    \bnf   {}& \ldots                   && \text{previous terms} \\
+    \bnfor {}& \unit                    && \text{the unit inhabitant} \\
+    \bnfor {}& \ulet{\A}{\uu} \vv       && \text{the unit eliminator}
+\end{align*}
+
+\newcommand{\rlTyUnit}{\referTo{ty-unit}{rul:ty-unit}}
+\newcommand{\showTyUnit}{%
+  \infer[\rulename{ty-unit}] % TyUnit
+  {\isctx{\G}}
+  {\istype{\G}{\Unit}}
+}
+
+\newcommand{\rlTermUnit}{\referTo{term-unit}{rul:term-unit}}
+\newcommand{\showTermUnit}{%
+  \infer[\rulename{term-unit}] % TermUnit
+  {\isctx{\G}}
+  {\isterm{\G}{\unit}{\Unit}}
+}
+
+\newcommand{\rlTermLet}{\referTo{term-let}{rul:term-let}}
+\newcommand{\showTermLet}{%
+  \infer[\rulename{term-let}] % TermLet
+  {\istype{\ctxextend{\G}{\Unit}}{\A} \\
+   \isterm{\G}{\uu}{\Unit} \\
+   \isterm{\G}{\vv}{\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}}
+  {\isterm{\G}{\ulet{\A}{\uu} \vv}{\subst{\A}{\sbzero{\G}{\Unit}{\uu}}}}
+}
+
+\newcommand{\rlEqTySubstUnit}{\referTo{eq-ty-subst-unit}{rul:eq-ty-subst-unit}}
+\newcommand{\showEqTySubstUnit}{%
+  \infer[\rulename{eq-ty-subst-unit}] % EqTySubstUnit
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqtype{\G}{\subst{\Unit}{\sbs}}{\Unit}}
+}
+
+\newcommand{\rlEqSubstUnit}{\referTo{eq-subst-unit}{rul:eq-subst-unit}}
+\newcommand{\showEqSubstUnit}{%
+  \infer[\rulename{eq-subst-unit}] % EqSubstUnit
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqterm{\G}{\subst{\unit}{\sbs}}{\unit}{\Unit}}
+}
+
+\newcommand{\rlEqSubstLet}{\referTo{eq-subst-let}{rul:eq-subst-let}}
+\newcommand{\showEqSubstLet}{%
+  \infer[\rulename{eq-subst-let}] % EqSubstLet
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\ctxextend{\D}{\Unit}}{\A} \\
+   \isterm{\D}{\uu}{\Unit} \\
+   \isterm{\D}{\vv}{\subst{\A}{\sbzero{\D}{\Unit}{\unit}}}}
+  {\eqterm{\G}
+    {\subst{(\ulet{\A}{\uu} \vv)}{\sbs}}
+    {\ulet
+      {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
+      {\subst{\uu}{\sbs}}
+      \subst{\vv}{\sbs}
+    }
+    {\subst{\subst{\A}{\sbzero{\D}{\Unit}{\uu}}}}{\sbs}}
+}
+
+\newcommand{\rlLetBeta}{\referTo{let-beta}{rul:let-beta}}
+\newcommand{\showLetBeta}{%
+  \infer[\rulename{let-beta}] % LetBeta
+  {\istype{\ctxextend{\G}{\Unit}}{\A} \\
+   \isterm{\G}{\vv}{\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}}
+  {\eqterm{\G}
+    {\ulet{\A}{\unit} \vv}
+    {\vv}
+    {\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}}
+}
+
+\newcommand{\rlCongLet}{\referTo{cong-let}{rul:cong-let}}
+\newcommand{\showCongLet}{%
+  \infer[\rulename{cong-let}] % CongLet
+  {\eqtype{\ctxextend{\G}{\Unit}}{\A}{\B} \\
+   \eqterm{\G}{\uu_1}{\uu_2}{\Unit} \\
+   \eqterm{\G}{\vv_1}{\vv_2}{\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}}
+  {\eqterm{\G}
+    {\ulet{\A}{\uu_1} \vv_1}
+    {\ulet{\B}{\uu_2} \vv_2}
+    {\subst{\A}{\sbzero{\G}{\Unit}{\uu_1}}}}
+}
+
+\begin{mathpar}
+  {\label{rul:ty-unit} \showTyUnit}
+
+  {\label{rul:term-unit} \showTermUnit}
+
+  {\label{rul:term-let} \showTermLet}
+
+  {\label{rul:eq-ty-subst-unit} \showEqTySubstUnit}
+
+  {\label{rul:eq-subst-unit} \showEqSubstUnit}
+
+  {\label{rul:eq-subst-let} \showEqSubstLet}
+
+  {\label{rul:let-beta} \showLetBeta}
+
+  {\label{rul:cong-let} \showCongLet}
+\end{mathpar}
+
+\subsubsection*{Rule {\rlTyUnit}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showTyUnit
+\end{equation*}
+%
+\meta{TODO}
+
+\subsubsection*{Rule {\rlTermUnit}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showTermUnit
+\end{equation*}
+%
+\meta{TODO}
+
+\subsubsection*{Rule {\rlTermLet}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showTermLet
+\end{equation*}
+%
+\meta{TODO}
+
+\subsubsection*{Rule {\rlEqTySubstUnit}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqTySubstUnit
+\end{equation*}
+%
+\meta{TODO}
+
+\subsubsection*{Rule {\rlEqSubstUnit}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqSubstUnit
+\end{equation*}
+%
+\meta{TODO}
+
+\subsubsection*{Rule {\rlEqSubstLet}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqSubstLet
+\end{equation*}
+%
+\meta{TODO}
+
+\subsubsection*{Rule {\rlLetBeta}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showLetBeta
+\end{equation*}
+%
+\meta{TODO}
+
+\subsubsection*{Rule {\rlCongLet}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showCongLet
+\end{equation*}
+%
 \meta{TODO}
 
 \subsection{Boolean Type}
