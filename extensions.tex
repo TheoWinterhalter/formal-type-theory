@@ -767,11 +767,94 @@ Once again, lemma~\ref{pbm:id-inversion} is safe.
   }
 }
 
+\newcommand{\rlEqSubstJ}{\referTo{eq-subst-j}{rul:eq-subst-j}}
+\newcommand{\showEqSubstJ}{%
+  \infer[\rulename{eq-subst-j}] % EqSubstJ
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A} \\
+   \isterm{\D}{\uu}{\A} \\
+   \istype
+    {\ctxextend
+      {\ctxextend{\D}{\A}}
+      {\Id
+        {\subst{\A}{\sbweak{\D}{\A}}}
+        {\subst{\uu}{\sbweak{\D}{\A}}}
+        {\var{0}}}
+    }
+    {\C} \\
+   \isterm
+    {\D}
+    {\ww}
+    {\subst
+      {\subst
+        {\C}
+        {\sbshift
+          {\D}
+          {\Id
+            {\subst{\A}{\sbweak{\D}{\A}}}
+            {\subst{\uu}{\sbweak{\D}{\A}}}
+            {\var{0}}
+          }
+          {\sbzero{\D}{\A}{\uu}}
+        }
+      }
+      {\sbzero{\D}{\Id{\A}{\uu}{\uu}}{\refl{\A} \uu}}
+    } \\
+   \isterm{\D}{\vv}{\A} \\
+   \isterm{\D}{\p}{\Id{\A}{\uu}{\vv}}
+  }
+  {\eqterm{\G}
+    {\subst
+      {\J{\A}{\uu}{\C}{\ww}{\vv}{\p}}
+      {\sbs}
+    }
+    {\J
+      {\subst{\A}{\sbs}}
+      {\subst{\uu}{\sbs}}
+      {\subst
+        {\C}
+        {\sbshift
+          {\ctxextend{\G}{\subst{\A}{\sbs}}}
+          {\Id
+            {\subst{\A}{\sbweak{\D}{\A}}}
+            {\subst{\uu}{\sbweak{\D}{\A}}}
+            {\var{0}}
+          }
+          {(\sbshift{\G}{\A}{\sbs})}
+        }
+      }
+      {\subst{\ww}{\sbs}}
+      {\subst{\vv}{\sbs}}
+      {\subst{\p}{\sbs}}
+    }
+    {\subst
+      {\subst
+        {\subst
+          {\C}
+          {\sbshift
+            {\G}
+            {\Id
+              {\subst{\A}{\sbweak{\G}{\A}}}
+              {\subst{\uu}{\sbweak{\G}{\A}}}
+              {\var{0}}
+            }
+            {\sbzero{\G}{\A}{\vv}}
+          }
+        }
+        {\sbzero{\G}{\Id{\A}{\uu}{\vv}}{\p}}
+      }
+      {\sbs}
+    }
+  }
+}
+
 \begin{mathpar}
   {\label{rul:term-j} \showTermJ}
+
+  {\label{rul:eq-subst-j} \showEqSubstJ}
 \end{mathpar}
 
-\meta{Substitution, congruence and computation rules missing.}
+\meta{Congruence and computation rules missing.}
 
 Remark: Lemma~\ref{pbm:id-inversion} still holds with this extension.
 
