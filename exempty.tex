@@ -1,0 +1,152 @@
+\subsection{Empty Type}
+\label{sec:empty-type}
+
+We extend the syntax with the following:
+%
+\begin{align*}
+  \text{Type $\A$, $\B$, $\C$}
+    \bnf   {}& \ldots                   && \text{previous types}\\
+    \bnfor {}& \Empty                   && \text{empty type} \\
+  \\
+  \text{Term $\uu$, $\vv$, $\ww$}
+    \bnf   {}& \ldots                   && \text{previous terms} \\
+    \bnfor {}& \exfalso{\A} \uu         && \text{ex falso quod libet}
+\end{align*}
+
+We now lay the new rules.
+
+\newcommand{\rlTyEmpty}{\referTo{ty-empty}{rul:ty-empty}}
+\newcommand{\showTyEmpty}{%
+  \infer[\rulename{ty-empty}] % TyEmpty
+  {\isctx{\G}}
+  {\istype{\G}{\Empty}}
+}
+
+\newcommand{\rlTermExfalso}{\referTo{term-exfalso}{rul:term-exfalso}}
+\newcommand{\showTermExfalso}{%
+  \infer[\rulename{term-exfalso}] % TermExfalso
+  {\istype{\G}{\A} \\
+   \isterm{\G}{\uu}{\Empty}
+  }
+  {\isterm{\G}{\exfalso{\A} \uu}{\A}}
+}
+
+\newcommand{\rlEqTySubstEmpty}{\referTo{eq-ty-subst-empty}{rul:eq-ty-subst-empty}}
+\newcommand{\showEqTySubstEmpty}{%
+  \infer[\rulename{eq-ty-subst-empty}] % EqTySubstEmpty
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqtype{\G}{\subst{\Empty}{\sbs}}{\Empty}}
+}
+
+\newcommand{\rlEqSubstExfalso}{\referTo{eq-subst-exfalso}{rul:eq-subst-exfalso}}
+\newcommand{\showEqSubstExfalso}{%
+  \infer[\rulename{eq-subst-exfalso}] % EqSubstExfalso
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A} \\
+   \isterm{\D}{\uu}{\Empty}
+  }
+  {\eqterm{\G}
+    {\subst{(\exfalso{\A} \uu)}{\sbs}}
+    {\exfalso{\subst{\A}{\sbs}} \subst{\uu}{\sbs}}
+    {\subst{\A}{\sbs}}
+  }
+}
+
+\newcommand{\rlConfExfalso}{\referTo{cong-exfalso}{rul:cong-exfalso}}
+\newcommand{\showConfExfalso}{%
+  \infer[\rulename{cong-exfalso}] % ConfExfalso
+  {\eqtype{\G}{\A}{\B} \\
+   \eqterm{\G}{\uu}{\vv}{\Empty}
+  }
+  {\eqterm{\G}
+    {\exfalso{\A} \uu}
+    {\exfalso{\B} \vv}
+    {\A}
+  }
+}
+
+\begin{mathpar}
+  {\label{rul:ty-empty} \showTyEmpty}
+
+  {\label{rul:term-exfalso} \showTermExfalso}
+
+  {\label{rul:eq-ty-subst-empty} \showEqTySubstEmpty}
+
+  {\label{rul:eq-subst-exfalso} \showEqSubstExfalso}
+
+  {\label{rul:cong-exfalso} \showConfExfalso}
+\end{mathpar}
+
+First notice that the inversion lemma~\ref{pbm:id-inversion} still holds with
+the same proof as none of the rules we introduce can yield
+$\istype{\G}{\Id{\A}{\uu}{\vv}}$.
+Now let's extend the proof of sanity~\ref{pbm:sanity}.
+
+\subsubsection*{Rule {\rlTyEmpty}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showTyEmpty
+\end{equation*}
+%
+We have $\isctx{\G}$ as a premise.
+
+
+\subsubsection*{Rule {\rlTermExfalso}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showTermExfalso
+\end{equation*}
+%
+We have $\isctx{\G}$ by induction hypothesis and $\istype{\G}{\A}$ as a premise.
+
+
+\subsubsection*{Rule {\rlEqTySubstEmpty}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqTySubstEmpty
+\end{equation*}
+%
+We have $\isctx{\G}$ and $\isctx{\D}$ by induction hypothesis.
+Using {\rlTyEmpty} we derive $\istype{\G}{\Empty}$ and $\istype{\D}{\Empty}$,
+then using {\rlTySubst} we conclude $\istype{\G}{\subst{\Empty}{\sbs}}$.
+
+
+\subsubsection*{Rule {\rlEqSubstExfalso}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqSubstExfalso
+\end{equation*}
+%
+By induction hypothesis on the left premise we get $\isctx{\G}$.
+Using {\rlTySubst} we get $\istype{\G}{\subst{\A}{\sbs}}$.
+Using {\rlTermExfalso} we derive $\isterm{\D}{\exfalso{\A} \uu}{\A}$
+and then with {\rlTermSubst} we conclude
+$\isterm{\G}{\subst{(\exfalso{\A} \uu)}{\sbs}}{\subst{\A}{\sbs}}$.
+Using {\rlTermSubst} and then {\rlTermExfalso} yields
+$\isterm{\G}{\exfalso{\subst{\A}{\sbs}} \subst{\uu}{\sbs}}{\subst{\A}{\sbs}}$.
+
+
+\subsubsection*{Rule {\rlConfExfalso}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showConfExfalso
+\end{equation*}
+%
+By induction hypothesis on the left premise $\isctx{\G}$ and $\istype{\G}{\A}$
+and $\istype{\G}{\B}$.
+Induction hypothesis on the right premise yields $\isterm{\G}{\uu}{\Empty}$
+and $\isterm{\G}{\vv}{\Empty}$.
+Applications of {\rlTermExfalso} give $\isterm{\G}{\exfalso{\A} \uu}{\A}$
+and $\isterm{\G}{\exfalso{\B} \vv}{\B}$.
+We conclude $\isterm{\G}{\exfalso{\B} \vv}{\A}$ with {\rlEqTySym} and
+{\rlTermTyConv}.
