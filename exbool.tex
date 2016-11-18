@@ -415,7 +415,10 @@ Consider a derivation ending with
   \showLargeCondTrue
 \end{equation*}
 %
-\meta{TODO}
+By induction hypothesis we have $\isctx{\G}$.
+We have $\istype{\G}{\A}$ as a premise.
+By {\rlTermTrue} and {\rlTyCond} we conclude
+$\istype{\G}{\Cond{\true}{\A}{\B}}$.
 
 
 \subsubsection*{Rule {\rlLargeCondFalse}}
@@ -426,7 +429,10 @@ Consider a derivation ending with
   \showLargeCondFalse
 \end{equation*}
 %
-\meta{TODO}
+By induction hypothesis we have $\isctx{\G}$.
+We have $\istype{\G}{\A}$ as a premise.
+By applying {\rlTermFalse} and {\rlTyCond} we conclude
+$\istype{\G}{\Cond{\true}{\A}{\B}}$.
 
 
 \subsubsection*{Rule {\rlCondTrue}}
@@ -437,7 +443,14 @@ Consider a derivation ending with
   \showCondTrue
 \end{equation*}
 %
-\meta{TODO}
+By induction hypothesis we have $\isctx{\G}$
+and $\istype{\G}{\subst{\C}{\sbzero{\G}{\Bool}{\true}}}$.
+We have $\isterm{\G}{\vv}{\subst{\C}{\sbzero{\G}{\Bool}{\true}}}$ as a premise.
+Using {\rlTermTrue} and {\rlTermCond} we conclude
+$\isterm{\G}
+  {\cond{\C}{\true}{\vv}{\ww}}
+  {\subst{\C}{\sbzero{\G}{\Bool}{\true}}}
+$.
 
 
 \subsubsection*{Rule {\rlCondFalse}}
@@ -448,7 +461,7 @@ Consider a derivation ending with
   \showCondFalse
 \end{equation*}
 %
-\meta{TODO}
+Likewise.
 
 
 \subsubsection*{Rule {\rlCongLargeCond}}
@@ -459,7 +472,13 @@ Consider a derivation ending with
   \showCongLargeCond
 \end{equation*}
 %
-\meta{TODO}
+By induction hypotheses we have $\isterm{\G}{\uu_1}{\Bool}$,
+$\istype{\G}{\A_1}$ and $\istype{\G}{\B_1}$ on one hand and
+$\isterm{\G}{\uu_2}{\Bool}$, $\istype{\G}{\A_2}$ and $\istype{\G}{\B_2}$
+on the other, as well as $\isctx{\G}$.
+Then using {\rlTyCond} on each set we conclude
+$\istype{\G}{\Cond{\uu_1}{\A_1}{\B_1}}$ and
+$\istype{\G}{\Cond{\uu_2}{\A_2}{\B_2}}$.
 
 
 \subsubsection*{Rule {\rlCongCond}}
@@ -470,4 +489,12 @@ Consider a derivation ending with
   \showCongCond
 \end{equation*}
 %
-\meta{TODO}
+We conclude $\isctx{\G}$ directly by induction hypothesis.
+%
+We get $\istype{\G}{\subst{\C_1}{\sbzero{\G}{\Bool}{\uu_1}}}$ using the
+induction hypotheses, {\rlSubstZero} and {\rlTySubst}.
+%
+Then we use the induction hypotheses followed by {\rlTermCond} to conclude
+(as in the previous case);
+we only need to care about the type conversion which is handled through
+{\rlCongTySubst} and {\rlEqTyCongZero} and of course {\rlTermTyConv}.
