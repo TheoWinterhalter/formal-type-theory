@@ -849,13 +849,123 @@ Once again, lemma~\ref{pbm:id-inversion} is safe.
       {\sbzero{\G}{\A}{\vv}}
 }
 
+\newcommand{\rlCongJ}{\referTo{cong-j}{rul:cong-j}}
+\newcommand{\showCongJ}{%
+  \infer[\rulename{cong-j}] % CongJ
+  {\eqtype{\G}{\A_1}{\A_2} \\
+   \eqterm{\G}{\uu_1}{\uu_2}{\A_1} \\
+   \eqtype
+    {\ctxextend
+      {\ctxextend{\G}{\A}}
+      {\Id
+        {\subst{\A}{\sbweak{\G}{\A}}}
+        {\subst{\uu}{\sbweak{\G}{\A}}}
+        {\var{0}}}
+    }
+    {\C_1}
+    {\C_2} \\
+   \eqterm
+    {\G}
+    {\ww_1}
+    {\ww_2}
+    {\subst
+      {\subst
+        {\C_1}
+        {\sbshift
+          {\G}
+          {\Id
+            {\subst{\A_1}{\sbweak{\G}{\A_1}}}
+            {\subst{\uu_1}{\sbweak{\G}{\A_1}}}
+            {\var{0}}
+          }
+          {\sbzero{\G}{\A_1}{\uu_1}}
+        }
+      }
+      {\sbzero{\G}{\Id{\A_1}{\uu_1}{\uu_1}}{\refl{\A_1} \uu_1}}
+    } \\
+   \eqterm{\G}{\vv_1}{\vv_2}{\A_1} \\
+   \eqterm{\G}{\p_1}{\p_2}{\Id{\A_1}{\uu_1}{\vv_1}}
+  }
+  {\eqterm{\G}
+    {\J{\A_1}{\uu_1}{\C_1}{\ww_1}{\vv_1}{\p_1}}
+    {\J{\A_2}{\uu_2}{\C_2}{\ww_2}{\vv_2}{\p_2}}
+    {\subst
+      {\subst
+        {\C_1}
+        {\sbr}
+      }
+      {\sbzero{\G}{\Id{\A_1}{\uu_1}{\vv_1}}{\p_1}}
+    }
+  }
+
+  \text{Where } \sbr =
+    \sbshift
+      {\G}
+      {\Id
+        {\subst{\A_1}{\sbweak{\G}{\A_1}}}
+        {\subst{\uu_1}{\sbweak{\G}{\A_1}}}
+        {\var{0}}
+      }
+      {\sbzero{\G}{\A_1}{\vv_1}}
+}
+
+\newcommand{\rlJRefl}{\referTo{j-refl}{rul:j-refl}}
+\newcommand{\showJRefl}{%
+  \infer[\rulename{j-refl}] % JRefl
+  {\istype{\G}{\A} \\
+   \isterm{\G}{\uu}{\A} \\
+   \istype
+    {\ctxextend
+      {\ctxextend{\G}{\A}}
+      {\Id
+        {\subst{\A}{\sbweak{\G}{\A}}}
+        {\subst{\uu}{\sbweak{\G}{\A}}}
+        {\var{0}}}
+    }
+    {\C} \\
+   \isterm
+    {\G}
+    {\ww}
+    {\subst
+      {\subst
+        {\C}
+        {\sbt}
+      }
+      {\sbzero{\G}{\Id{\A}{\uu}{\uu}}{\refl{\A} \uu}}
+    }
+  }
+  {\eqterm{\G}
+    {\J{\A}{\uu}{\C}{\ww}{\uu}{\refl{\A} \uu}}
+    {\ww}
+    {\subst
+      {\subst
+        {\C}
+        {\sbt}
+      }
+      {\sbzero{\G}{\Id{\A}{\uu}{\uu}}{\refl{\A} \uu}}
+    }
+  }
+
+  \text{Where } \sbt =
+    \sbshift
+      {\G}
+      {\Id
+        {\subst{\A}{\sbweak{\G}{\A}}}
+        {\subst{\uu}{\sbweak{\G}{\A}}}
+        {\var{0}}
+      }
+      {\sbzero{\G}{\A}{\uu}}
+}
+
 \begin{mathpar}
   {\label{rul:term-j} \showTermJ}
 
   \label{rul:eq-subst-j} \showEqSubstJ
-\end{mathpar}
 
-\meta{Congruence and computation rules missing.}
+  \label{rul:cong-j} \showCongJ
+
+  \label{rul:j-refl} \showJRefl
+\end{mathpar}
 
 Remark: Lemma~\ref{pbm:id-inversion} still holds with this extension.
 
