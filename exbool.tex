@@ -107,7 +107,7 @@
       {\subst{\vv}{\sbs}}
       {\subst{\ww}{\sbs}}
     }
-    {\subst{\C}{\sbzero{\G}{\Bool}{\uu}}}
+    {\subst{\subst{\C}{\sbzero{\D}{\Bool}{\uu}}}{\sbs}}
   }
 }
 
@@ -217,4 +217,257 @@
 
 Once again, lemma~\ref{pbm:id-inversion} is safe.
 
-\meta{TODO: Prove sanity.}
+\subsubsection*{Rule {\rlTyBool}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showTyBool
+\end{equation*}
+%
+By induction hypothesis we have $\isctx{\G}$.
+
+
+\subsubsection*{Rule {\rlTyCond}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showTyCond
+\end{equation*}
+%
+By induction hypothesis we have $\isctx{\G}$.
+
+
+\subsubsection*{Rule {\rlTermTrue}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showTermTrue
+\end{equation*}
+%
+We have $\isctx{\G}$ as a premise and then with {\rlTyBool} we conclude
+$\istype{\G}{\Bool}$.
+
+
+\subsubsection*{Rule {\rlTermFalse}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showTermFalse
+\end{equation*}
+%
+We have $\isctx{\G}$ as a premise and then with {\rlTyBool} we conclude
+$\istype{\G}{\Bool}$.
+
+
+\subsubsection*{Rule {\rlTermCond}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showTermCond
+\end{equation*}
+%
+By induction hypothesis we have $\isctx{\G}$.
+Then, from {\rlSubstZero} we derive
+$\issubst{\sbzero{\G}{\Bool}{\uu}}{\G}{\ctxextend{\G}{\Bool}}$.
+Finally, from {\rlTySubst} we conclude
+$\istype{\G}{\subst{\C}{\sbzero{\G}{\Bool}{\uu}}}$.
+
+
+\subsubsection*{Rule {\rlEqTySubstBool}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqTySubstBool
+\end{equation*}
+%
+By induction hypothesis we have $\isctx{\G}$ and $\isctx{\D}$.
+We then deduce $\istype{\G}{\Bool}$ and $\istype{\D}{\Bool}$.
+From {\rlTySubst} we conclude $\istype{\G}{\subst{\Bool}{\sbs}}$.
+
+
+\subsubsection*{Rule {\rlEqTySubstCond}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqTySubstCond
+\end{equation*}
+%
+By induction hypothesis we have $\isctx{\G}$.
+%
+By an application of {\rlTyCond} we obtain
+$\istype{\D}{\Cond{\uu}{\A}{\B}}$.
+With {\rlTySubst} we get
+$\istype{\G}{\subst{(\Cond{\uu}{\A}{\B})}{\sbs}}$.
+%
+By several applications of {\rlTySubst} and an application of
+{\rlTermSubst} (that must be followed by {\rlTermTyConv} and {\rlEqTySubstBool})
+followed by {\rlTyCond} we can conclude
+$\istype{\G}{\Cond{\subst{\uu}{\sbs}}{\subst{\A}{\sbs}}{\subst{\B}{\sbs}}}$.
+
+
+\subsubsection*{Rule {\rlEqSubstTrue}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqSubstTrue
+\end{equation*}
+%
+By induction hypothesis we have $\isctx{\G}$ and $\isctx{\D}$.
+%
+From that and {\rlTyBool} we derive $\istype{\G}{\Bool}$.
+%
+Using {\rlTermTrue} twice yields $\isterm{\G}{\true}{\Bool}$
+and $\isterm{\D}{\true}{\Bool}$.
+Now, using {\rlTermSubst} we derive
+$\isterm{\G}{\subst{\true}{\sbs}}{\subst{\Bool}{\sbs}}$.
+Using {\rlEqTySubstBool} and {\rlTermTyConv} we conclude
+$\isterm{\G}{\subst{\true}{\sbs}}{\Bool}$.
+
+
+\subsubsection*{Rule {\rlEqSubstFalse}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqSubstFalse
+\end{equation*}
+%
+By induction hypothesis we have $\isctx{\G}$ and $\isctx{\D}$.
+%
+From that and {\rlTyBool} we derive $\istype{\G}{\Bool}$.
+%
+Using {\rlTermFalse} twice yields $\isterm{\G}{\false}{\Bool}$
+and $\isterm{\D}{\false}{\Bool}$.
+Now, using {\rlTermSubst} we derive
+$\isterm{\G}{\subst{\false}{\sbs}}{\subst{\Bool}{\sbs}}$.
+Using {\rlEqTySubstBool} and {\rlTermTyConv} we conclude
+$\isterm{\G}{\subst{\false}{\sbs}}{\Bool}$.
+
+
+\subsubsection*{Rule {\rlEqSubstCond}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqSubstCond
+\end{equation*}
+%
+By induction hypothesis we have $\isctx{\G}$.
+%
+From {\rlSubstZero} we derive
+$\issubst{\sbzero{\D}{\Bool}{\uu}}{\D}{\ctxextend{\D}{\Bool}}$,
+then with {\rlTySubst} twice we get
+$\istype{\D}{\subst{\C}{\sbzero{\D}{\Bool}{\uu}}}$ and finally
+$\istype{\G}{\subst{\subst{\C}{\sbzero{\D}{\Bool}{\uu}}}{\sbs}}$.
+%
+An application of {\rlTermCond} gives us
+$\isterm{\D}{\cond{\C}{\uu}{\vv}{\ww}}{\subst{\C}{\sbzero{\D}{\Bool}{\uu}}}$.
+Then, with {\rlTermSubst} we are able to conclude
+$\isterm{\G}
+  {\subst{\cond{\C}{\uu}{\vv}{\ww}}{\sbs}}
+  {\subst{\subst{\C}{\sbzero{\D}{\Bool}{\uu}}}{\sbs}}
+$.
+%
+Thanks to the rules {\rlSubstShift}, {\rlTySubst}, {\rlEqTySubstBool} and
+{\rlEqCtxExtend} and {\rlTyCtxConv} we derive
+$\istype{\ctxextend{\G}{\Bool}}{\subst{\C}{\sbshift{\G}{\Bool}{\sbs}}}$.
+By applications of {\rlTermSubst} we get
+$\isterm{\G}
+  {\subst{\vv}{\sbs}}
+  {\subst{\subst{\C}{\sbzero{\D}{\Bool}{\true}}}{\sbs}}
+$ as well as
+$\isterm{\G}
+  {\subst{\ww}{\sbs}}
+  {\subst{\subst{\C}{\sbzero{\D}{\Bool}{\false}}}{\sbs}}
+$.
+With {\rlEqTySym} and {\rlEqTyShiftZero} (with some application of
+{\rlEqTySubstBool}, {\rlEqSubstTrue}, {\rlEqSubstFalse} and {\rlEqTyCongZero})
+and {\rlTermTyConv} on each we get
+$\isterm{\G}
+  {\subst{\vv}{\sbs}}
+  {\subst{\subst{\C}{\sbshift{\G}{\Bool}{\sbs}}}{\sbzero{\G}{\Bool}{\true}}}
+$ as well as
+$\isterm{\G}
+  {\subst{\ww}{\sbs}}
+  {\subst{\subst{\C}{\sbshift{\G}{\Bool}{\sbs}}}{\sbzero{\G}{\Bool}{\false}}}
+$.
+Without less trouble we get $\isterm{\G}{\subst{\uu}{\sbs}}{\Bool}$.
+Then with {\rlTermCond} we conclude up to coherence stating
+$\eqtype{\G}
+  {\subst{\subst{\C}{\sbshift{\G}{\Bool}{\sbs}}}{\sbzero{\G}{\Bool}{\uu}}}
+  {\subst{\subst{\C}{\sbzero{\D}{\Bool}{\uu}}}{\sbs}}
+$. This equality obtained as we did above.
+
+
+\subsubsection*{Rule {\rlLargeCondTrue}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showLargeCondTrue
+\end{equation*}
+%
+\meta{TODO}
+
+
+\subsubsection*{Rule {\rlLargeCondFalse}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showLargeCondFalse
+\end{equation*}
+%
+\meta{TODO}
+
+
+\subsubsection*{Rule {\rlCondTrue}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showCondTrue
+\end{equation*}
+%
+\meta{TODO}
+
+
+\subsubsection*{Rule {\rlCondFalse}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showCondFalse
+\end{equation*}
+%
+\meta{TODO}
+
+
+\subsubsection*{Rule {\rlCongLargeCond}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showCongLargeCond
+\end{equation*}
+%
+\meta{TODO}
+
+
+\subsubsection*{Rule {\rlCongCond}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showCongCond
+\end{equation*}
+%
+\meta{TODO}
