@@ -610,32 +610,24 @@
     {(\app
       {\subst{\uu}{\sbweak{\G}{\A}}}
       {\subst{\A}{\sbweak{\G}{\A}}}
-      {\subst
-        {\B}
-        {\sbshift
-          {\ctxextend{\G}{\A}}
-          {\A}
-          {\sbweak{\G}{\A}}
-        }
-      }
+      {\subst{\B}{\sbt}}
       {\var{0}})
     }
     {(\app
       {\subst{\vv}{\sbweak{\G}{\A}}}
       {\subst{\A}{\sbweak{\G}{\A}}}
-      {\subst
-        {\B}
-        {\sbshift
-          {\ctxextend{\G}{\A}}
-          {\A}
-          {\sbweak{\G}{\A}}
-        }
-      }
+      {\subst{\B}{\sbt}}
       {\var{0}})
     }
     {\B}
   }
   {\eqterm{\G}{\uu}{\vv}{\Prod{\A}{\B}}}
+
+  \text{Where } \sbt =
+    \sbshift
+      {\ctxextend{\G}{\A}}
+      {\A}
+      {\sbweak{\G}{\A}}
 }
 
 
