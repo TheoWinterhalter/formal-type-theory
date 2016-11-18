@@ -701,8 +701,81 @@ This is achived by {\rlEqTyTrans} using {\rlCongTySubst} on one side and
 
 Once again, lemma~\ref{pbm:id-inversion} is safe.
 
+\meta{TODO: Prove sanity.}
+
 \subsection{J eliminator}
-\meta{TODO}
+\label{sec:j-elim}
+
+\begin{align*}
+  \text{Term $\uu$, $\vv$, $\ww$}
+    \bnf   {}& \ldots                        && \text{previous terms} \\
+    \bnfor {}& \J{\A}{\uu}{\C}{\ww}{\vv}{\p} && \text{the J eliminator}
+\end{align*}
+
+\newcommand{\rlTermJ}{\referTo{term-j}{rul:term-j}}
+\newcommand{\showTermJ}{%
+  \infer[\rulename{term-j}] % TermJ
+  {\istype{\G}{\A} \\
+   \isterm{\G}{\uu}{\A} \\
+   \istype
+    {\ctxextend
+      {\ctxextend{\G}{\A}}
+      {\Id
+        {\subst{\A}{\sbweak{\G}{\A}}}
+        {\subst{\uu}{\sbweak{\G}{\A}}}
+        {\var{0}}}
+    }
+    {\C} \\
+   \isterm
+    {\G}
+    {\ww}
+    {\subst
+      {\subst
+        {\C}
+        {\sbshift
+          {\G}
+          {\Id
+            {\subst{\A}{\sbweak{\G}{\A}}}
+            {\subst{\uu}{\sbweak{\G}{\A}}}
+            {\var{0}}
+          }
+          {\sbzero{\G}{\A}{\uu}}
+        }
+      }
+      {\sbzero{\G}{\Id{\A}{\uu}{\uu}}{\refl{\A} \uu}}
+    } \\
+   \isterm{\G}{\vv}{\A} \\
+   \isterm{\G}{\p}{\Id{\A}{\uu}{\vv}}
+  }
+  {\isterm{\G}
+    {\J{\A}{\uu}{\C}{\ww}{\vv}{\p}}
+    {\subst
+      {\subst
+        {\C}
+        {\sbshift
+          {\G}
+          {\Id
+            {\subst{\A}{\sbweak{\G}{\A}}}
+            {\subst{\uu}{\sbweak{\G}{\A}}}
+            {\var{0}}
+          }
+          {\sbzero{\G}{\A}{\vv}}
+        }
+      }
+      {\sbzero{\G}{\Id{\A}{\uu}{\vv}}{\p}}
+    }
+  }
+}
+
+\begin{mathpar}
+  {\label{rul:term-j} \showTermJ}
+\end{mathpar}
+
+\meta{Substitution, congruence and computation rules missing.}
+
+Remark: Lemma~\ref{pbm:id-inversion} still holds with this extension.
+
+\meta{TODO: Sanity.}
 
 \subsection{W Types}
 \meta{TODO?}
