@@ -38,7 +38,7 @@ We now lay the new rules.
 
 \newcommand{\rlTermExfalso}{\referTo{term-exfalso}{rul:term-exfalso}}
 \newcommand{\showTermExfalso}{%
-\infer[\rulename{term-exfalso}] % TermExfalso
+  \infer[\rulename{term-exfalso}] % TermExfalso
   {\istype{\G}{\A} \\
    \isterm{\G}{\uu}{\Empty}
   }
@@ -47,14 +47,14 @@ We now lay the new rules.
 
 \newcommand{\rlEqTySubstEmpty}{\referTo{eq-ty-subst-empty}{rul:eq-ty-subst-empty}}
 \newcommand{\showEqTySubstEmpty}{%
-\infer[\rulename{eq-ty-subst-empty}] % EqTySubstEmpty
+  \infer[\rulename{eq-ty-subst-empty}] % EqTySubstEmpty
   {\issubst{\sbs}{\G}{\D}}
   {\eqtype{\G}{\subst{\Empty}{\sbs}}{\Empty}}
 }
 
 \newcommand{\rlEqSubstExfalso}{\referTo{eq-subst-exfalso}{rul:eq-subst-exfalso}}
 \newcommand{\showEqSubstExfalso}{%
-\infer[\rulename{eq-subst-exfalso}] % EqSubstExfalso
+  \infer[\rulename{eq-subst-exfalso}] % EqSubstExfalso
   {\issubst{\sbs}{\G}{\D} \\
    \istype{\D}{\A} \\
    \isterm{\D}{\uu}{\Empty}
@@ -68,7 +68,7 @@ We now lay the new rules.
 
 \newcommand{\rlConfExfalso}{\referTo{cong-exfalso}{rul:cong-exfalso}}
 \newcommand{\showConfExfalso}{%
-\infer[\rulename{cong-exfalso}] % ConfExfalso
+  \infer[\rulename{cong-exfalso}] % ConfExfalso
   {\eqtype{\G}{\A}{\B} \\
    \eqterm{\G}{\uu}{\vv}{\Empty}
   }
@@ -483,7 +483,223 @@ This is achived by {\rlEqTyTrans} using {\rlCongTySubst} on one side and
 {\rlEqTyCongZero} on the other.
 
 \subsection{Boolean Type}
-\meta{TODO}
+\label{sec:bool-type}
+
+\begin{align*}
+  \text{Type $\A$, $\B$, $\C$}
+    \bnf   {}& \ldots                   && \text{previous types}\\
+    \bnfor {}& \Bool                    && \text{bool type} \\
+    \bnfor {}& \Cond{\uu}{\A}{\B}       && \text{conditional type} \\
+  \\
+  \text{Term $\uu$, $\vv$, $\ww$}
+    \bnf   {}& \ldots                   && \text{previous terms} \\
+    \bnfor {}& \true                    && \text{true} \\
+    \bnfor {}& \false                   && \text{false} \\
+    \bnfor {}& \cond{\A}{\uu}{\vv}{\ww} && \text{conditional term}
+\end{align*}
+
+\newcommand{\rlTyBool}{\referTo{ty-bool}{rul:ty-bool}}
+\newcommand{\showTyBool}{%
+  \infer[\rulename{ty-bool}] % TyBool
+  {\isctx{\G}}
+  {\istype{\G}{\Bool}}
+}
+
+\newcommand{\rlTyCond}{\referTo{ty-cond}{rul:ty-cond}}
+\newcommand{\showTyCond}{%
+  \infer[\rulename{ty-cond}] % TyCond
+  {\isterm{\G}{\uu}{\Bool} \\
+   \istype{\G}{\A} \\
+   \istype{\G}{\B}
+  }
+  {\istype{\G}{\Cond{\uu}{\A}{\B}}}
+}
+
+\newcommand{\rlTermTrue}{\referTo{term-true}{rul:term-true}}
+\newcommand{\showTermTrue}{%
+  \infer[\rulename{term-true}] % TermTrue
+  {\isctx{\G}}
+  {\isterm{\G}{\true}{\Bool}}
+}
+
+\newcommand{\rlTermFalse}{\referTo{term-false}{rul:term-false}}
+\newcommand{\showTermFalse}{%
+  \infer[\rulename{term-false}] % TermFalse
+  {\isctx{\G}}
+  {\isterm{\G}{\false}{\Bool}}
+}
+
+\newcommand{\rlTermCond}{\referTo{term-cond}{rul:term-cond}}
+\newcommand{\showTermCond}{%
+  \infer[\rulename{term-cond}] % TermCond
+  {\isterm{\G}{\uu}{\Bool} \\
+   \istype{\ctxextend{\G}{\Bool}}{\C} \\
+   \isterm{\G}{\vv}{\subst{\C}{\sbzero{\G}{\Bool}{\true}}} \\
+   \isterm{\G}{\ww}{\subst{\C}{\sbzero{\G}{\Bool}{\false}}}
+  }
+  {\isterm{\G}{\cond{\C}{\uu}{\vv}{\ww}}{\subst{\C}{\sbzero{\G}{\Bool}{\uu}}}}
+}
+
+\newcommand{\rlEqTySubstBool}{\referTo{eq-ty-subst-bool}{rul:eq-ty-subst-bool}}
+\newcommand{\showEqTySubstBool}{%
+  \infer[\rulename{eq-ty-subst-bool}] % EqTySubstBool
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqtype{\G}{\subst{\Bool}{\sbs}}{\Bool}}
+}
+
+\newcommand{\rlEqTySubstCond}{\referTo{eq-ty-subst-cond}{rul:eq-ty-subst-cond}}
+\newcommand{\showEqTySubstCond}{%
+  \infer[\rulename{eq-ty-subst-cond}] % EqTySubstCond
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\D}{\uu}{\Bool} \\
+   \istype{\D}{\A} \\
+   \istype{\D}{\B}
+  }
+  {\eqtype{\G}
+    {\subst{\Cond{\uu}{\A}{\B}}{\sbs}}
+    {\Cond{\subst{\uu}{\sbs}}{\subst{\A}{\sbs}}{\subst{\B}{\sbs}}}}
+}
+
+\newcommand{\rlEqSubstTrue}{\referTo{eq-subst-true}{rul:eq-subst-true}}
+\newcommand{\showEqSubstTrue}{%
+  \infer[\rulename{eq-subst-true}] % EqSubstTrue
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqterm{\G}{\subst{\true}{\sbs}}{\true}{\Bool}}
+}
+
+\newcommand{\rlEqSubstFalse}{\referTo{eq-subst-false}{rul:eq-subst-false}}
+\newcommand{\showEqSubstFalse}{%
+  \infer[\rulename{eq-subst-false}] % EqSubstFalse
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqterm{\G}{\subst{\false}{\sbs}}{\false}{\Bool}}
+}
+
+\newcommand{\rlEqSubstCond}{\referTo{eq-subst-cond}{rul:eq-subst-cond}}
+\newcommand{\showEqSubstCond}{%
+  \infer[\rulename{eq-subst-cond}] % EqSubstCond
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\D}{\uu}{\Bool} \\
+   \istype{\ctxextend{\D}{\Bool}}{\C} \\
+   \isterm{\D}{\vv}{\subst{\C}{\sbzero{\D}{\Bool}{\true}}} \\
+   \isterm{\D}{\ww}{\subst{\C}{\sbzero{\D}{\Bool}{\false}}}
+  }
+  {\eqterm{\G}
+    {\subst{\cond{\C}{\uu}{\vv}{\ww}}{\sbs}}
+    {\cond
+      {\subst{\C}{\sbshift{\G}{\Bool}{\sbs}}}
+      {\subst{\uu}{\sbs}}
+      {\subst{\vv}{\sbs}}
+      {\subst{\ww}{\sbs}}
+    }
+    {\subst{\C}{\sbzero{\G}{\Bool}{\uu}}}
+  }
+}
+
+\newcommand{\rlLargeCondTrue}{\referTo{large-cond-true}{rul:large-cond-true}}
+\newcommand{\showLargeCondTrue}{%
+  \infer[\rulename{large-cond-true}] % LargeCondTrue
+  {\istype{\G}{\A} \\
+   \istype{\G}{\B}
+  }
+  {\eqtype{\G}{\Cond{\true}{\A}{\B}}{\A}}
+}
+
+\newcommand{\rlLargeCondFalse}{\referTo{large-cond-false}{rul:large-cond-false}}
+\newcommand{\showLargeCondFalse}{%
+  \infer[\rulename{large-cond-false}] % LargeCondFalse
+  {\istype{\G}{\A} \\
+   \istype{\G}{\B}
+  }
+  {\eqtype{\G}{\Cond{\false}{\A}{\B}}{\B}}
+}
+
+\newcommand{\rlCondTrue}{\referTo{cond-true}{rul:cond-true}}
+\newcommand{\showCondTrue}{%
+  \infer[\rulename{cond-true}] % CondTrue
+  {\istype{\ctxextend{\G}{\Bool}}{\C} \\
+   \isterm{\G}{\vv}{\subst{\C}{\sbzero{\G}{\Bool}{\true}}} \\
+   \isterm{\G}{\ww}{\subst{\C}{\sbzero{\G}{\Bool}{\false}}}
+  }
+  {\eqterm{\G}
+    {\cond{\C}{\true}{\vv}{\ww}}
+    {\vv}
+    {\subst{\C}{\sbzero{\G}{\Bool}{\true}}}
+  }
+}
+
+\newcommand{\rlCondFalse}{\referTo{cond-false}{rul:cond-false}}
+\newcommand{\showCondFalse}{%
+  \infer[\rulename{cond-false}] % CondFalse
+  {\istype{\ctxextend{\G}{\Bool}}{\C} \\
+   \isterm{\G}{\vv}{\subst{\C}{\sbzero{\G}{\Bool}{\true}}} \\
+   \isterm{\G}{\ww}{\subst{\C}{\sbzero{\G}{\Bool}{\false}}}
+  }
+  {\eqterm{\G}
+    {\cond{\C}{\false}{\vv}{\ww}}
+    {\ww}
+    {\subst{\C}{\sbzero{\G}{\Bool}{\false}}}
+  }
+}
+
+\newcommand{\rlCongLargeCond}{\referTo{cong-large-cond}{rul:cong-large-cond}}
+\newcommand{\showCongLargeCond}{%
+  \infer[\rulename{cong-large-cond}] % CongLargeCond
+  {\eqterm{\G}{\uu_1}{\uu_2}{\Bool} \\
+   \eqtype{\G}{\A_1}{\A_2} \\
+   \eqtype{\G}{\B_1}{\B_2}
+  }
+  {\eqtype{\G}{\Cond{\uu_1}{\A_1}{\B_1}}{\Cond{\uu_2}{\A_2}{\B_2}}}
+}
+
+\newcommand{\rlCongCond}{\referTo{cong-cond}{rul:cong-cond}}
+\newcommand{\showCongCond}{%
+  \infer[\rulename{cong-cond}] % CongCond
+  {\eqterm{\G}{\uu_1}{\uu_2}{\Bool} \\
+   \eqtype{\ctxextend{\G}{\Bool}}{\C_1}{\C_2} \\
+   \eqterm{\G}{\vv_1}{\vv_2}{\subst{\C_1}{\sbzero{\G}{\Bool}{\true}}} \\
+   \eqterm{\G}{\ww_1}{\ww_2}{\subst{\C_1}{\sbzero{\G}{\Bool}{\false}}}
+  }
+  {\eqterm{\G}
+    {\cond{\C_1}{\uu_1}{\vv_1}{\ww_1}}
+    {\cond{\C_2}{\uu_2}{\vv_2}{\ww_2}}
+    {\subst{\C_1}{\sbzero{\G}{\Bool}{\uu_1}}}}
+}
+
+\begin{mathpar}
+  {\label{rul:ty-bool} \showTyBool}
+
+  {\label{rul:ty-cond} \showTyCond}
+
+  {\label{rul:term-true} \showTermTrue}
+
+  {\label{rul:term-false} \showTermFalse}
+
+  {\label{rul:term-cond} \showTermCond}
+
+  {\label{rul:eq-ty-subst-bool} \showEqTySubstBool}
+
+  {\label{rul:eq-ty-subst-cond} \showEqTySubstCond}
+
+  {\label{rul:eq-subst-true} \showEqSubstTrue}
+
+  {\label{rul:eq-subst-false} \showEqSubstFalse}
+
+  {\label{rul:eq-subst-cond} \showEqSubstCond}
+
+  {\label{rul:large-cond-true} \showLargeCondTrue}
+
+  {\label{rul:large-cond-false} \showLargeCondFalse}
+
+  {\label{rul:cond-true} \showCondTrue}
+
+  {\label{rul:cond-false} \showCondFalse}
+
+  {\label{rul:cong-large-cond} \showCongLargeCond}
+
+  {\label{rul:cong-cond} \showCongCond}
+\end{mathpar}
+
+Once again, lemma~\ref{pbm:id-inversion} is safe.
 
 \subsection{J eliminator}
 \meta{TODO}
