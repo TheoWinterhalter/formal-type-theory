@@ -275,6 +275,10 @@ We conclude $\isterm{\G}{\exfalso{\B} \vv}{\A}$ with {\rlEqTySym} and
   {\label{rul:cong-let} \showCongLet}
 \end{mathpar}
 
+Remark: None of the rules can be used to conclude
+$\istype{\G}{\Id{\A}{\uu}{\vv}}$ and so lemma~\ref{pbm:id-inversion} still
+holds with this extension.
+
 \subsubsection*{Rule {\rlTyUnit}}
 
 Consider a derivation ending with
@@ -357,12 +361,7 @@ $\isterm{\G}
   {\subst{(\ulet{\A}{\uu} \vv)}{\sbs}}
   {\subst{\subst{\A}{\sbzero{\D}{\Unit}{\uu}}}{\sbs}}
 $.
-% Similarly, several applications of {\rlTermSubst} and an application of
-% {\rlTySubst} (up to {\rlSubstShift}) followed by {\rlTermLet} yield
-% $\isterm{\G}
-%   {\subst{(\ulet{\A}{\uu} \vv)}{\sbs}}
-%   {\subst{\subst{\A}{\sbzero{\D}{\Unit}{\uu}}}{\sbs}}
-% $.
+%
 Applications of {\rlTermSubst} yield
 $\isterm{\G}{\subst{\uu}{\sbs}}{\subst{\Unit}{\sbs}}$ and
 $\isterm{\G}
@@ -401,7 +400,32 @@ $\isterm{\G}
     {\sbzero{\G}{\Unit}{\subst{\uu}{\sbs}}}
   }
 $.
-\meta{I see how to conclude but I give up...}
+By an application of {\rlEqTyCongZero} and {\rlEqTySubstUnit} we equate
+$\subst
+  {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
+  {\sbzero{\G}{\Unit}{\subst{\uu}{\sbs}}}
+$ and
+$\subst
+  {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
+  {\sbzero{\G}{\subst{\Unit}{\sbs}}{\subst{\uu}{\sbs}}}
+$.
+From this, we apply {\rlEqTyTrans} and {\rlEqTyShiftZero} to equate this with
+the type
+$\subst
+  {\subst{\A}{\sbzero{\D}{\Unit}{\uu}}}
+  {\sbs}
+$.
+Now, by applying {\rlTermTyConv} we can finally conclude that
+$\isterm{\G}
+  {\ulet
+    {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
+    {\subst{\uu}{\sbs}}
+    \subst{\vv}{\sbs}}
+  {\subst
+    {\subst{\A}{\sbzero{\D}{\Unit}{\uu}}}
+    {\sbs}
+  }
+$.
 
 
 \subsubsection*{Rule {\rlLetBeta}}
@@ -427,7 +451,36 @@ Consider a derivation ending with
   \showCongLet
 \end{equation*}
 %
-\meta{TODO}
+By induction hypothesis on the middle premise we have $\isctx{\G}$
+and $\isterm{\G}{\uu_1}{\Unit}$.
+%
+By {\rlSubstZero} we deduce
+$\issubst{\sbzero{\G}{\Unit}{\uu_1}}{\G}{\ctxextend{\G}{\Unit}}$.
+Since by induction hypothesis on the left premise we have
+$\istype{\ctxextend{\G}{\Unit}}{\A}$ we conclude
+$\istype{\G}{\subst{\A}{\sbzero{\G}{\Unit}{\uu_1}}}$.
+%
+By induction hypothesis on the different premises we have
+$\istype{\ctxextend{\G}{\Unit}}{\A}$,
+$\isterm{\G}{\uu_1}{\Unit}$ and
+$\isterm{\G}{\vv_1}{\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}$,
+and so by {\rlTermLet} we conclude
+$\isterm{\G}{\ulet{\A}{\uu_1} \vv_1}{\subst{\A}{\sbzero{\G}{\Unit}{\uu_1}}}$.
+%
+On the other hand, induction hypothesis, followed by {\rlCongTySubst} and
+{\rlTermTyConv} we have
+$\istype{\ctxextend{\G}{\Unit}}{\B}$,
+$\isterm{\G}{\uu_2}{\Unit}$ and
+$\isterm{\G}{\vv_2}{\subst{\B}{\sbzero{\G}{\Unit}{\unit}}}$,
+and with an application of {\rlTermLet} so we can derive
+$\isterm{\G}{\ulet{\B}{\uu_2} \vv_2}{\subst{\B}{\sbzero{\G}{\Unit}{\uu_2}}}$.
+Now thanks to {\rlTermTyConv} and {\rlEqTySym} it suffices to prove
+$\eqtype{\G}
+  {\subst{\A}{\sbzero{\G}{\Unit}{\uu_1}}}
+  {\subst{\B}{\sbzero{\G}{\Unit}{\uu_2}}}
+$.
+This is achived by {\rlEqTyTrans} using {\rlCongTySubst} on one side and
+{\rlEqTyCongZero} on the other.
 
 \subsection{Boolean Type}
 \meta{TODO}
