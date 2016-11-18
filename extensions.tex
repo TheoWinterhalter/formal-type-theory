@@ -811,18 +811,7 @@ Once again, lemma~\ref{pbm:id-inversion} is safe.
     {\J
       {\subst{\A}{\sbs}}
       {\subst{\uu}{\sbs}}
-      {\subst
-        {\C}
-        {\sbshift
-          {\ctxextend{\G}{\subst{\A}{\sbs}}}
-          {\Id
-            {\subst{\A}{\sbweak{\D}{\A}}}
-            {\subst{\uu}{\sbweak{\D}{\A}}}
-            {\var{0}}
-          }
-          {(\sbshift{\G}{\A}{\sbs})}
-        }
-      }
+      {\subst{\C}{\sbt}}
       {\subst{\ww}{\sbs}}
       {\subst{\vv}{\sbs}}
       {\subst{\p}{\sbs}}
@@ -831,27 +820,39 @@ Once again, lemma~\ref{pbm:id-inversion} is safe.
       {\subst
         {\subst
           {\C}
-          {\sbshift
-            {\G}
-            {\Id
-              {\subst{\A}{\sbweak{\G}{\A}}}
-              {\subst{\uu}{\sbweak{\G}{\A}}}
-              {\var{0}}
-            }
-            {\sbzero{\G}{\A}{\vv}}
-          }
+          {\sbr}
         }
         {\sbzero{\G}{\Id{\A}{\uu}{\vv}}{\p}}
       }
       {\sbs}
     }
   }
+
+  \text{Where } \sbt =
+    \sbshift
+      {\ctxextend{\G}{\subst{\A}{\sbs}}}
+      {\Id
+        {\subst{\A}{\sbweak{\D}{\A}}}
+        {\subst{\uu}{\sbweak{\D}{\A}}}
+        {\var{0}}
+      }
+      {(\sbshift{\G}{\A}{\sbs})}
+
+  \text{and } \sbr =
+    \sbshift
+      {\G}
+      {\Id
+        {\subst{\A}{\sbweak{\G}{\A}}}
+        {\subst{\uu}{\sbweak{\G}{\A}}}
+        {\var{0}}
+      }
+      {\sbzero{\G}{\A}{\vv}}
 }
 
 \begin{mathpar}
   {\label{rul:term-j} \showTermJ}
 
-  {\label{rul:eq-subst-j} \showEqSubstJ}
+  \label{rul:eq-subst-j} \showEqSubstJ
 \end{mathpar}
 
 \meta{Congruence and computation rules missing.}
