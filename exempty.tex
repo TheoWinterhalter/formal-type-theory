@@ -1,7 +1,7 @@
 \subsection{Empty Type}
 \label{sec:empty-type}
 
-We extend the syntax with the following:
+We extend the syntax as follows:
 %
 \begin{align*}
   \text{Type $\A$, $\B$, $\C$}
@@ -52,9 +52,9 @@ We now lay the new rules.
   }
 }
 
-\newcommand{\rlConfExfalso}{\referTo{cong-exfalso}{rul:cong-exfalso}}
-\newcommand{\showConfExfalso}{%
-  \infer[\rulename{cong-exfalso}] % ConfExfalso
+\newcommand{\rlCongExfalso}{\referTo{cong-exfalso}{rul:cong-exfalso}}
+\newcommand{\showCongExfalso}{%
+  \infer[\rulename{cong-exfalso}] % CongExfalso
   {\eqtype{\G}{\A}{\B} \\
    \eqterm{\G}{\uu}{\vv}{\Empty}
   }
@@ -74,7 +74,7 @@ We now lay the new rules.
 
   {\label{rul:eq-subst-exfalso} \showEqSubstExfalso}
 
-  {\label{rul:cong-exfalso} \showConfExfalso}
+  {\label{rul:cong-exfalso} \showCongExfalso}
 \end{mathpar}
 
 First notice that the inversion lemma~\ref{pbm:id-inversion} still holds with
@@ -134,12 +134,12 @@ Using {\rlTermSubst} and then {\rlTermExfalso} yields
 $\isterm{\G}{\exfalso{\subst{\A}{\sbs}} \subst{\uu}{\sbs}}{\subst{\A}{\sbs}}$.
 
 
-\subsubsection*{Rule {\rlConfExfalso}}
+\subsubsection*{Rule {\rlCongExfalso}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \showConfExfalso
+  \showCongExfalso
 \end{equation*}
 %
 By induction hypothesis on the left premise $\isctx{\G}$ and $\istype{\G}{\A}$
