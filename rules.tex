@@ -314,11 +314,11 @@
   \infer[\rulename{eq-ty-cong-zero}]
   {\eqtype{\G}{\A_1}{\A_2} \\
    \eqterm{\G}{\uu_1}{\uu_2}{\A_1} \\
-   \istype{\ctxextend{\G}{\A_1}}{\B}
+   \eqtype{\ctxextend{\G}{\A_1}}{\B_1}{\B_2}
   }
   {\eqtype{\G}
-    {\subst{\B}{\sbzero{\G}{\A_1}{\uu_1}}}
-    {\subst{\B}{\sbzero{\G}{\A_2}{\uu_2}}}
+    {\subst{\B_1}{\sbzero{\G}{\A_1}{\uu_1}}}
+    {\subst{\B_2}{\sbzero{\G}{\A_2}{\uu_2}}}
   }
 }
 

@@ -525,18 +525,20 @@ Consider a derivation ending with
 \end{equation*}
 %
 We have $\isctx{\G}$ by induction hypothesis.
+The induction hypothesis on the right premise gives
+$\istype{\ctxextend{\G}{\A_1}}{\B_2}$.
 Using {\rlEqCtxExtend} on the left premise, we get
 $\eqctx
   {(\ctxextend{\G}{\A_1})}
   {(\ctxextend{\G}{\A_2})}
-$ and thus by {\rlTyCtxConv}, we obtain $\istype{\ctxextend{\G}{\A_2}}{\B}$.
+$ and thus by {\rlTyCtxConv}, we obtain $\istype{\ctxextend{\G}{\A_2}}{\B_2}$.
 %
 The induction hypothesis on the middle premise gives $\isterm{\G}{\uu_1}{\A_1}$ and
 (after {\rlTermTyConv}) also $\isterm{\G}{\uu_2}{\A_2}$.
 %
 Then using {\rlSubstZero} and {\rlTySubst} we construct
-$\istype{\G}{\subst{\B}{\sbzero{\G}{\A_1}{\uu_1}}}$ and
-$\istype{\G}{\subst{\B}{\sbzero{\G}{\A_2}{\uu_2}}}$.
+$\istype{\G}{\subst{\B_1}{\sbzero{\G}{\A_1}{\uu_1}}}$ and
+$\istype{\G}{\subst{\B_2}{\sbzero{\G}{\A_2}{\uu_2}}}$.
 
 % ENDS WITH IH Contexts
 % ENDS WITH TySubst
