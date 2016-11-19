@@ -65,6 +65,29 @@ We now lay the new rules.
   }
 }
 
+\newcommand{\rlEqTyExfalso}{\referTo{eq-ty-exfalso}{rul:eq-ty-exfalso}}
+\newcommand{\showEqTyExfalso}{%
+  \infer[\rulename{eq-ty-exfalso}] % EqTyExfalso
+  {\istype{\G}{\A} \\
+    \istype{\G}{\B} \\
+    \isterm{\G}{\uu}{\Empty}
+  }
+  {\eqtype{\G}{\A}{\B}
+  }
+}
+
+\newcommand{\rlEqTermExfalso}{\referTo{eq-term-exfalso}{rul:eq-term-exfalso}}
+\newcommand{\showEqTermExfalso}{%
+  \infer[\rulename{eq-term-exfalso}] % EqTermExfalso
+  {\istype{\G}{\A} \\
+    \isterm{\G}{\uu}{\A} \\
+    \isterm{\G}{\vv}{\A} \\
+    \isterm{\G}{\ww}{\Empty}
+  }
+  {\eqterm{\G}{\uu}{\vv}{\A}
+  }
+}
+
 \begin{mathpar}
   {\label{rul:ty-empty} \showTyEmpty}
 
@@ -75,6 +98,10 @@ We now lay the new rules.
   {\label{rul:eq-subst-exfalso} \showEqSubstExfalso}
 
   {\label{rul:cong-exfalso} \showCongExfalso}
+
+  {\label{rul:eq-ty-exfalso} \showEqTyExfalso}
+
+  {\label{rul:eq-term-exfalso} \showEqTermExfalso}
 \end{mathpar}
 
 First notice that the inversion lemma~\ref{pbm:id-inversion} still holds with
@@ -150,3 +177,30 @@ Applications of {\rlTermExfalso} give $\isterm{\G}{\exfalso{\A} \uu}{\A}$
 and $\isterm{\G}{\exfalso{\B} \vv}{\B}$.
 We conclude $\isterm{\G}{\exfalso{\B} \vv}{\A}$ with {\rlEqTySym} and
 {\rlTermTyConv}.
+
+\subsubsection*{Rule {\rlEqTyExfalso}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqTyExfalso
+\end{equation*}
+%
+By induction hypothesis on the left premise we have $\isctx{\G}$ and $\istype{\G}{\A}$,
+while induction on the right premise yields $\istype{\G}{\B}$.
+
+\subsubsection*{Rule {\rlEqTermExfalso}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showEqTermExfalso
+\end{equation*}
+%
+By induction hypothesis on the left premise we have $\isctx{\G}$, and the rest is obtained
+directly from the premises.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
