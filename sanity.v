@@ -1,7 +1,28 @@
 Require Import reflections.
 
-Parameter TyIdInversion : forall {G A u v}, istype G (Id A u v) ->
-                                            istype G A * isterm G u A * isterm G v A.
+Fixpoint TyIdInversion {G A u v} (H : istype G (Id A u v)) {struct H} :
+  istype G A * isterm G u A * isterm G v A.
+Proof.
+  inversion H.
+
+  - { split ; [split | idtac].
+      - apply (@TyCtxConv G0 G).
+        + now apply TyIdInversion with (u := u) (v := v).
+        + assumption.
+      - apply (@TermCtxConv G0 G).
+        + now apply TyIdInversion with (u := u) (v:= v).
+        + assumption.
+      - apply (@TermCtxConv G0 G).
+        + now apply TyIdInversion with (u := u) (v:= v).
+        + assumption. }
+
+  - { split ; [split | idtac].
+      - assumption.
+      - assumption.
+      - assumption. }
+
+Defined.
+
 
 Fixpoint sane_issubst {G D sbs} (H : issubst sbs G D) {struct H} :
        isctx G * isctx D
