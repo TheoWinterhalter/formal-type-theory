@@ -1,29 +1,32 @@
 Require Import reflections.
 
-Fixpoint sane_issubst {G D sbs} :
-       issubst sbs G D -> isctx G * isctx D
+Parameter TyIdInversion : forall {G A u v}, istype G (Id A u v) ->
+                                            istype G A * isterm G u A * isterm G v A.
 
-with sane_istype {G A} :
-       istype G A -> isctx G
+Fixpoint sane_issubst {G D sbs} (H : issubst sbs G D) {struct H} :
+       isctx G * isctx D
 
-with sane_isterm {G A u} :
-       isterm G u A -> isctx G * istype G A
+with sane_istype {G A} (H : istype G A) {struct H} :
+       isctx G
 
-with sane_eqctx {G D} :
-       eqctx G D -> isctx G * isctx D
+with sane_isterm {G A u} (H : isterm G u A) {struct H} :
+       isctx G * istype G A
 
-with sane_eqtype {G A B} :
-       eqtype G A B -> isctx G * istype G A * istype G B
+with sane_eqctx {G D} (H : eqctx G D) {struct H} :
+       isctx G * isctx D
 
-with sane_eqterm {G u v A} :
-       eqterm G u v A -> isctx G * istype G A * isterm G u A * isterm G v A.
+with sane_eqtype {G A B} (H : eqtype G A B) {struct H} :
+       isctx G * istype G A * istype G B
+
+with sane_eqterm {G u v A} (H : eqterm G u v A) {struct H} :
+       isctx G * istype G A * isterm G u A * isterm G v A.
 
 Proof.
   (****** sane_issubst ******)
-  - intro H; destruct H ; split.
+  - destruct H ; split.
 
     (* SubstZero *)
-    + now eapply (fst (sane_isterm _ _ _ _)).
+    + now apply (sane_isterm G A u).
     + apply CtxExtend.
       now apply (sane_isterm G A u).
     
@@ -37,10 +40,10 @@ Proof.
     + now apply CtxExtend.
 
   (****** sane_istype ******)
-  - intro H; destruct H.
+  - destruct H.
 
     (* TyCtxConv *)
-    + eapply (snd (sane_eqctx G D _)).
+    + now apply (sane_eqctx G D).
 
     (* TySubst *)
     + now apply (sane_issubst G D sbs).
@@ -53,7 +56,7 @@ Proof.
 
 
   (****** sane_isterm ******)
-  - intro H; destruct H; split.
+  - destruct H; split.
 
     (* TermTyConv *)
     + now apply (sane_eqtype G A B).
@@ -103,7 +106,7 @@ Proof.
       * assumption.
 
   (****** sane_eqctx ******)
-  - intro H; destruct H; split.
+  - destruct H; split.
 
     (* EqCtxEmpty *)
     + exact CtxEmpty.
@@ -117,7 +120,7 @@ Proof.
 
 
   (****** sane_eqtype ******)
-  - intro H; destruct H; (split ; [split | idtac]).
+  - destruct H; (split ; [split | idtac]).
 
     (* EqTyCtxConv *)
     + now apply (sane_eqctx G D).
@@ -183,18 +186,18 @@ Proof.
         { assumption. }
 
     (* EqTyCongZero *)
-    + now apply (sane_eqtype G A1 A2).
+    + now apply (sane_eqtype G A1 B1).
     + eapply TySubst.
       * apply SubstZero.
         now apply (sane_eqterm G u1 u2 A1).
-      * assumption.
+      * now apply (sane_eqtype _ A2 B2).
     + eapply TySubst.
       * apply SubstZero.
         apply @TermTyConv with (A := A1).
         { now apply (sane_eqterm G u1 u2 A1). }
         { assumption. }
       * eapply @TyCtxConv.
-        { eassumption. }
+        { now apply (sane_eqtype (ctxextend G A1) A2 B2). }
         { now apply EqCtxExtend. }
 
     (* EqTySubstProd *)
@@ -258,131 +261,306 @@ Proof.
 
     
   (****** sane_eqterm ******)
-  - intro H; destruct H ;
+  - destruct H ;
     (split ; [(split ; [split | idtac]) | idtac]).
 
 
     (* EqTyConv *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + now apply (sane_eqtype G A B).
+    + now apply (sane_eqtype G A B).
+    + eapply TermTyConv.
+      * now apply (sane_eqterm G u v A).
+      * assumption.
+    + eapply TermTyConv.
+      * now apply (sane_eqterm G u v A).
+      * assumption.
 
     (* EqCtxConv *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + now apply (sane_eqctx G D).
+    + eapply TyCtxConv.
+      * now apply (sane_eqterm G u v A).
+      * assumption.
+    + eapply TermCtxConv.
+      * now apply (sane_eqterm G u v A).
+      * assumption.
+    + eapply TermCtxConv.
+      * now apply (sane_eqterm G u v A).
+      * assumption.
 
     (* EqRefl *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + now apply (sane_isterm G A u).
+    + now apply (sane_isterm G A u).
+    + assumption.
+    + assumption.
 
     (* EqSym *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + now apply (sane_eqterm G v u A).
+    + now apply (sane_eqterm G v u A).
+    + now apply (sane_eqterm G v u A).
+    + now apply (sane_eqterm G v u A).
 
     (* EqTrans *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
-
+    + now apply (sane_eqterm G u v A).
+    + now apply (sane_eqterm G u v A).
+    + now apply (sane_eqterm G u v A).
+    + now apply (sane_eqterm G v w A).
 
     (* EqSubstWeak *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
-
+    + now apply CtxExtend.
+    + apply @TySubst with (D := G).
+      * now apply SubstWeak.
+      * now apply (sane_isterm G A (var k)).
+    + apply @TermSubst with (D := G).
+      * now apply SubstWeak.
+      * assumption.
+    + now apply @TermVarSucc.
 
     (* EqSubstZeroZero *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + now apply (sane_isterm G A u).
+    + now apply (sane_isterm G A u).
+    + eapply TermTyConv.
+      * { eapply TermSubst.
+          - now apply SubstZero.
+          - apply TermVarZero.
+            now apply (sane_isterm G A u). }
+      * { apply EqTyWeakZero.
+          - now apply (sane_isterm G A u).
+          - assumption. }
+    + assumption.
 
     (* EqSubstZeroSucc *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + now apply (sane_isterm G A (var k)).
+    + now apply (sane_isterm G A (var k)).
+    + eapply TermTyConv.
+      * { eapply TermSubst.
+          - now apply SubstZero.
+          - apply @TermVarSucc with (A := A).
+            + assumption.
+            + now apply (sane_isterm G B u). }
+      * { apply EqTyWeakZero.
+          - now apply (sane_isterm G A (var k)).
+          - assumption. }
+    + assumption.
 
     (* EqSubstShiftZero *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + apply CtxExtend.
+      * { eapply TySubst.
+          - eassumption.
+          - assumption. }
+    + { eapply TySubst.
+        - apply SubstWeak.
+          now apply @TySubst with (D := D).
+        - now apply @TySubst with (D := D). }
+    + { eapply TermTyConv.
+        - eapply TermSubst.
+          + eapply SubstShift.
+            * eassumption.
+            * assumption.
+          + now apply TermVarZero.
+        - now apply EqTyWeakNat. }
+    + apply TermVarZero.
+      now apply @TySubst with (D := D).
 
     (* EqSubstShiftSucc *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + apply CtxExtend.
+      now apply @TySubst with (D := D).
+    + { eapply TySubst.
+        - apply SubstWeak.
+          now apply @TySubst with (D := D).
+        - apply @TySubst with (D := D).
+          + assumption.
+          + now apply (sane_isterm D B (var k)). }
+    + { eapply TermTyConv.
+        - eapply TermSubst.
+          + eapply SubstShift.
+            * eassumption.
+            * assumption.
+          + eapply TermVarSucc.
+            * eassumption.
+            * assumption.
+        - apply EqTyWeakNat.
+          + assumption.
+          + assumption.
+          + now apply (sane_isterm D B (var k)). } 
+    + { eapply TermSubst.
+        - apply SubstWeak.
+          now apply @TySubst with (D := D).
+        - now apply @TermSubst with (D := D). }
 
     (* EqSubstAbs *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + now apply (sane_issubst G D sbs).
+    + { apply TyProd.
+        - now apply @TySubst with (D := D).
+        - eapply TySubst.
+          + now apply @SubstShift with (D := D).
+          + now apply (sane_isterm _ B u). }
+    + { eapply TermTyConv.
+        - apply @TermSubst with (D := D).
+          + assumption.
+          + now apply TermAbs.
+        - apply @EqTySubstProd with (D := D).
+          + assumption.
+          + assumption.
+          + now apply (sane_isterm _ B u). }
+    + { apply TermAbs.
+        - now apply @TySubst with (D := D).
+        - eapply TermSubst.
+          + eapply SubstShift.
+            * eassumption.
+            * assumption.
+          + assumption. }
 
     (* EqSubstApp *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + now apply (sane_issubst G D sbs).
+    + { eapply TySubst.
+        - eassumption.
+        - eapply TySubst.
+          + now apply SubstZero.
+          + assumption. }
+    + { apply @TermSubst with (D := D).
+        - assumption.
+        - now apply TermApp. }
+    + { eapply TermTyConv.
+        - apply TermApp.
+          + { eapply TySubst.
+              - eapply SubstShift.
+                + eassumption.
+                + now apply (sane_isterm D A v). 
+              - assumption. }
+          + { eapply TermTyConv.
+              - apply @TermSubst with (D := D).
+                + assumption.
+                + eassumption.
+              - eapply EqTySubstProd.
+                + eassumption.
+                + now apply (sane_isterm D A v).
+                + assumption. }
+          + now apply @TermSubst with (D := D).
+        - now apply EqTyShiftZero. }
 
     (* EqSubstRefl *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + now apply (sane_issubst G D sbs). 
+    + { apply TyId.
+        - apply @TySubst with (D := D).
+          + assumption.
+          + now apply (sane_isterm D A u).
+        - now apply @TermSubst with (D := D).
+        - now apply @TermSubst with (D := D). }
+    + { eapply TermTyConv.
+        - apply @TermSubst with (D := D).
+          + assumption.
+          + now apply TermRefl.
+        - apply @EqTySubstId with (D := D).
+          + assumption.
+          + now apply (sane_isterm D A u).
+          + assumption.
+          + assumption. }
+    + apply TermRefl.
+      now apply @TermSubst with (D := D).
+
 
     (* EqReflection *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + now apply (sane_isterm G (Id A u v) w1).
+    + eapply TyIdInversion.
+      now apply (sane_isterm G (Id A u v) w1).
+    + apply @TyIdInversion with (u := u) (v := v).
+      now apply (sane_isterm G (Id A u v) w1).
+    + apply @TyIdInversion with (u := u) (v := v).
+      now apply (sane_isterm G (Id A u v) w1).
 
     (* ProdBeta *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + now apply (sane_isterm G A v).
+    + { eapply TySubst.
+        - now apply SubstZero.
+        - now apply (sane_isterm _ B u). }
+    + apply TermApp.
+      * now apply (sane_isterm _ B u).
+      * { apply TermAbs.
+          - now apply (sane_isterm G A v).
+          - assumption. }
+      * assumption.
+    + { eapply TermSubst.
+        - now apply SubstZero.
+        - assumption. }
 
     (* ProdEta *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + now apply (sane_isterm G (Prod A B) u).
+    + now apply (sane_isterm G (Prod A B) u).
+    + assumption.
+    + assumption.
 
     (* CongAbs *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + now apply (sane_eqtype G A1 B1).
+    + apply TyProd.
+      * now apply (sane_eqtype G A1 B1).
+      * now apply (sane_eqtype _ A2 B2).
+    + apply TermAbs.
+      * now apply (sane_eqtype G A1 B1).
+      * now apply (sane_eqterm _ u1 u2 A2).
+    + { eapply TermTyConv.
+        - apply TermAbs.
+          + now apply (sane_eqtype G A1 B1).
+          + { eapply TermCtxConv.
+              - eapply TermTyConv.
+                + now apply (sane_eqterm (ctxextend G A1) u1 u2 A2).
+                + assumption.
+              - now apply EqCtxExtend. }
+        - apply CongProd.
+          + now apply EqTySym.
+          + { eapply EqTyCtxConv.
+              - now apply @EqTySym with (G := ctxextend G A1).
+              - now apply EqCtxExtend. } }
 
     (* CongApp *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + now apply (sane_eqtype G A1 B1).
+    + { eapply TySubst.
+        - apply SubstZero.
+          now apply (sane_eqterm G u2 v2 A1).
+        - now apply (sane_eqtype _ A2 B2). } 
+    + apply TermApp.
+      * now apply (sane_eqtype _ A2 B2).
+      * now apply (sane_eqterm G u1 v1 _).
+      * now apply (sane_eqterm G u2 v2 A1).
+    + { eapply TermTyConv.
+        - apply TermApp.
+          + { eapply TyCtxConv.
+              - now apply (sane_eqtype (ctxextend G A1) A2 B2).
+              - now apply EqCtxExtend. }
+          + { eapply TermTyConv.
+              - now apply (sane_eqterm G u1 v1 (Prod A1 A2)).
+              - now apply CongProd. }
+          + { eapply TermTyConv.
+              - now apply (sane_eqterm G u2 v2 A1).
+              - assumption. }
+        - apply EqTySym.
+          now apply EqTyCongZero. }
 
     (* ConfRefl *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
-
+    + now apply (sane_eqtype G A1 A2).
+    + apply TyId.
+      * now apply (sane_eqtype G A1 A2).
+      * now apply (sane_eqterm G u1 u2 A1).
+      * now apply (sane_eqterm G u1 u2 A1).
+    + apply TermRefl.
+      now apply (sane_eqterm G u1 u2 A1).
+    + { eapply TermTyConv.
+        - apply TermRefl.
+          { eapply TermTyConv.
+            - now apply (sane_eqterm G u1 u2 A1).
+            - assumption. }
+        - apply EqTySym.
+          now apply CongId. }
+          
     (* CongTermSubst *)
-    + admit.
-    + admit.
-    + admit.
-    + admit.
+    + now apply (sane_issubst G D sbs).
+    + apply @TySubst with (D := D).
+      * assumption.
+      * now apply (sane_eqterm D u1 u2 A).
+    + apply @TermSubst with (D := D).
+      * assumption.
+      * now apply (sane_eqterm D u1 u2 A).
+    + apply @TermSubst with (D := D).
+      * assumption.
+      * now apply (sane_eqterm D u1 u2 A).
 
-Admitted.
-
+Defined.

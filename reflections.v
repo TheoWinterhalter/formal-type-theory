@@ -191,13 +191,13 @@ with eqtype : context -> type -> type -> Type :=
                   (Subst (Subst B (sbzero D A v)) sbs)
 
      | EqTyCongZero :
-         forall {G A1 A2 B u1 u2},
-           eqtype G A1 A2 ->
+         forall {G A1 A2 B1 B2 u1 u2},
+           eqtype G A1 B1 ->
            eqterm G u1 u2 A1 ->
-           istype (ctxextend G A1) B ->
+           eqtype (ctxextend G A1) A2 B2 ->
            eqtype G
-                  (Subst B (sbzero G A1 u1))
-                  (Subst B (sbzero G A2 u2))
+                  (Subst A2 (sbzero G A1 u1))
+                  (Subst B2 (sbzero G B1 u2))
 
      | EqTySubstProd :
          forall {G D A B sbs},
