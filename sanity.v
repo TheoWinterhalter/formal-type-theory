@@ -20,11 +20,12 @@ with sane_eqterm {G u v A} :
 
 Proof.
   (****** sane_issubst ******)
-  - induction 1; split.
+  - intro H; destruct H ; split.
 
     (* SubstZero *)
-    + eapply (fst (sane_isterm _ _ _ _)).
-    + eapply CtxExtend, (snd (sane_isterm _ _ _ _)).
+    + now eapply (fst (sane_isterm _ _ _ _)).
+    + apply CtxExtend.
+      now apply (sane_isterm G A u).
     
     (* SubstWeak *)
     + now apply CtxExtend.
@@ -36,7 +37,7 @@ Proof.
     + now apply CtxExtend.
 
   (****** sane_istype ******)
-  - induction 1.
+  - intro H; destruct H.
 
     (* TyCtxConv *)
     + eapply (snd (sane_eqctx G D _)).
@@ -45,14 +46,14 @@ Proof.
     + now apply (sane_issubst G D sbs).
 
     (* TyProd *)
-    + assumption.
+    + now apply (sane_istype G A).
 
     (* TyId *)
     + now apply (sane_istype G A).
 
 
   (****** sane_isterm ******)
-  - induction 1 ; split.
+  - intro H; destruct H; split.
 
     (* TermTyConv *)
     + now apply (sane_eqtype G A B).
@@ -80,16 +81,16 @@ Proof.
     + now apply CtxExtend.
     + apply (@TySubst _ G).
       * now apply SubstWeak.
-      * apply IHisterm.
+      * now apply (sane_isterm G A (var k)).
 
     (* TermAbs *)
     + now apply (sane_istype G A).
     + apply TyProd.
       * assumption.
-      * apply IHisterm.
+      * now apply (sane_isterm _ B u).
 
     (* TermApp *)
-    + apply IHisterm1.
+    + now apply (sane_isterm G (Prod A B) u).
     + apply @TySubst with (D := ctxextend G A).
       * now apply SubstZero.
       * assumption.
@@ -102,7 +103,7 @@ Proof.
       * assumption.
 
   (****** sane_eqctx ******)
-  - induction 1 ; split.
+  - intro H; destruct H; split.
 
     (* EqCtxEmpty *)
     + exact CtxEmpty.
@@ -116,7 +117,7 @@ Proof.
 
 
   (****** sane_eqtype ******)
-  - induction 1; (split ; [split | idtac]).
+  - intro H; destruct H; (split ; [split | idtac]).
 
     (* EqTyCtxConv *)
     + now apply (sane_eqctx G D).
@@ -257,7 +258,8 @@ Proof.
 
     
   (****** sane_eqterm ******)
-  - induction 1 ; (split ; [(split ; [split | idtac]) | idtac]).
+  - intro H; destruct H ;
+    (split ; [(split ; [split | idtac]) | idtac]).
 
 
     (* EqTyConv *)
