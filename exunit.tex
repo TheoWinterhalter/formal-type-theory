@@ -8,8 +8,7 @@
   \\
   \text{Term $\uu$, $\vv$, $\ww$}
     \bnf   {}& \ldots                   && \text{previous terms} \\
-    \bnfor {}& \unit                    && \text{the unit inhabitant} \\
-    \bnfor {}& \ulet{\A}{\uu} \vv       && \text{the unit eliminator}
+    \bnfor {}& \unit                    && \text{the unit inhabitant}
 \end{align*}
 
 \newcommand{\rlTyUnit}{\referTo{ty-unit}{rul:ty-unit}}
@@ -26,15 +25,6 @@
   {\isterm{\G}{\unit}{\Unit}}
 }
 
-\newcommand{\rlTermLet}{\referTo{term-let}{rul:term-let}}
-\newcommand{\showTermLet}{%
-  \infer[\rulename{term-let}] % TermLet
-  {\istype{\ctxextend{\G}{\Unit}}{\A} \\
-   \isterm{\G}{\uu}{\Unit} \\
-   \isterm{\G}{\vv}{\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}}
-  {\isterm{\G}{\ulet{\A}{\uu} \vv}{\subst{\A}{\sbzero{\G}{\Unit}{\uu}}}}
-}
-
 \newcommand{\rlEqTySubstUnit}{\referTo{eq-ty-subst-unit}{rul:eq-ty-subst-unit}}
 \newcommand{\showEqTySubstUnit}{%
   \infer[\rulename{eq-ty-subst-unit}] % EqTySubstUnit
@@ -49,62 +39,26 @@
   {\eqterm{\G}{\subst{\unit}{\sbs}}{\unit}{\Unit}}
 }
 
-\newcommand{\rlEqSubstLet}{\referTo{eq-subst-let}{rul:eq-subst-let}}
-\newcommand{\showEqSubstLet}{%
-  \infer[\rulename{eq-subst-let}] % EqSubstLet
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\ctxextend{\D}{\Unit}}{\A} \\
-   \isterm{\D}{\uu}{\Unit} \\
-   \isterm{\D}{\vv}{\subst{\A}{\sbzero{\D}{\Unit}{\unit}}}}
-  {\eqterm{\G}
-    {\subst{(\ulet{\A}{\uu} \vv)}{\sbs}}
-    {\ulet
-      {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
-      {\subst{\uu}{\sbs}}
-      \subst{\vv}{\sbs}
-    }
-    {\subst{\subst{\A}{\sbzero{\D}{\Unit}{\uu}}}}{\sbs}}
+\newcommand{\rlUnitEta}{\referTo{unit-eta}{rul:unit-eta}}
+\newcommand{\showUnitEta}{%
+  \infer[\rulename{unit-eta}] % UnitEta
+  {\isterm{\G}{\uu}{\Unit} \\
+   \isterm{\G}{\vv}{\Unit}
+ }
+ {\eqterm{\G}{\uu}{\vv}{\Unit}}
 }
 
-\newcommand{\rlLetBeta}{\referTo{let-beta}{rul:let-beta}}
-\newcommand{\showLetBeta}{%
-  \infer[\rulename{let-beta}] % LetBeta
-  {\istype{\ctxextend{\G}{\Unit}}{\A} \\
-   \isterm{\G}{\vv}{\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}}
-  {\eqterm{\G}
-    {\ulet{\A}{\unit} \vv}
-    {\vv}
-    {\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}}
-}
-
-\newcommand{\rlCongLet}{\referTo{cong-let}{rul:cong-let}}
-\newcommand{\showCongLet}{%
-  \infer[\rulename{cong-let}] % CongLet
-  {\eqtype{\ctxextend{\G}{\Unit}}{\A}{\B} \\
-   \eqterm{\G}{\uu_1}{\uu_2}{\Unit} \\
-   \eqterm{\G}{\vv_1}{\vv_2}{\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}}
-  {\eqterm{\G}
-    {\ulet{\A}{\uu_1} \vv_1}
-    {\ulet{\B}{\uu_2} \vv_2}
-    {\subst{\A}{\sbzero{\G}{\Unit}{\uu_1}}}}
-}
 
 \begin{mathpar}
   {\label{rul:ty-unit} \showTyUnit}
 
   {\label{rul:term-unit} \showTermUnit}
 
-  {\label{rul:term-let} \showTermLet}
-
   {\label{rul:eq-ty-subst-unit} \showEqTySubstUnit}
 
   {\label{rul:eq-subst-unit} \showEqSubstUnit}
 
-  {\label{rul:eq-subst-let} \showEqSubstLet}
-
-  {\label{rul:let-beta} \showLetBeta}
-
-  {\label{rul:cong-let} \showCongLet}
+  {\label{rul:unit-eta} \showUnitEta}
 \end{mathpar}
 
 Remark: None of the rules can be used to conclude
@@ -131,20 +85,6 @@ Consider a derivation ending with
 %
 We have $\isctx{\G}$ as a premise and from it and {\rlTyUnit} we conclude
 $\istype{\G}{\Unit}$.
-
-\subsubsection*{Rule {\rlTermLet}}
-
-Consider a derivation ending with
-%
-\begin{equation*}
-  \showTermLet
-\end{equation*}
-%
-We have $\isctx{\G}$ by induction hypothesis on the middle premise.
-With an application of {\rlSubstZero} to the middle premise we get
-$\issubst{\sbzero{\G}{\Unit}{\uu}}{\G}{\ctxextend{\G}{\Unit}}$.
-With {\rlTySubst} we conclude
-$\istype{\G}{\subst{\A}{\sbzero{\G}{\Unit}{\uu}}}$.
 
 \subsubsection*{Rule {\rlEqTySubstUnit}}
 
@@ -175,141 +115,18 @@ $\isterm{\G}{\subst{\unit}{\sbs}}{\subst{\Unit}{\sbs}}$.
 Finally using {\rlEqTySubstUnit} and {\rlTermTyConv} we conclude
 $\isterm{\G}{\subst{\unit}{\sbs}}{\Unit}$.
 
-\subsubsection*{Rule {\rlEqSubstLet}}
+\subsubsection*{Rule {\rlUnitEta}}
 
 Consider a derivation ending with
 %
 \begin{equation*}
-  \showEqSubstLet
+  \showUnitEta
 \end{equation*}
 %
-By induction hypothesis on the left premise we have $\isctx{\G}$.
-From {\rlSubstZero} we deduce
-$\issubst{\sbzero{\D}{\Unit}{\uu}}{\D}{\ctxextend{\D}{\Unit}}$ and thus,
-with two applications of {\rlTySubst} we derive
-$\istype{\G}{\subst{\subst{\A}{\sbzero{\D}{\Unit}{\uu}}}{\sbs}}$.
-An application of {\rlTermLet} followed by {\rlTermSubst} gives us
-$\isterm{\G}
-  {\subst{(\ulet{\A}{\uu} \vv)}{\sbs}}
-  {\subst{\subst{\A}{\sbzero{\D}{\Unit}{\uu}}}{\sbs}}
-$.
-%
-Applications of {\rlTermSubst} yield
-$\isterm{\G}{\subst{\uu}{\sbs}}{\subst{\Unit}{\sbs}}$ and
-$\isterm{\G}
-  {\subst{\vv}{\sbs}}
-  {\subst{\subst{\A}{\sbzero{\D}{\Unit}{\unit}}}{\sbs}}
-$.
-With {\rlEqSubstUnit} and {\rlTermTyConv} we get
-$\isterm{\G}{\subst{\uu}{\sbs}}{\Unit}$.
-Now, using {\rlEqTyShiftZero}, {\rlEqTySym}
-we get to the type
-$\subst
-  {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
-  {\sbzero{\G}{\subst{\Unit}{\sbs}}{\subst{\unit}{\sbs}}}
-$.
-Then, if we use {\rlEqTyTrans} with a right hand side obtained through
-{\rlEqTyCongZero}, {\rlEqSubstUnit}, {\rlEqTySubstUnit}, and finally
-{\rlTermTyConv} we get
-$\isterm{\G}
-  {\subst{\vv}{\sbs}}
-  {\subst
-    {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
-    {\sbzero{\G}{\Unit}{\unit}}
-  }
-$.
-Then, by applying {\rlSubstShift} and {\rlTySubst} and then {\rlEqTySubstUnit}
-followed by {\rlEqCtxExtend} we get
-$\istype{\ctxextend{\G}{\Unit}}{\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}$.
-Now, using {\rlTermLet} we get
-$\isterm{\G}
-  {\ulet
-    {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
-    {\subst{\uu}{\sbs}}
-    \subst{\vv}{\sbs}}
-  {\subst
-    {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
-    {\sbzero{\G}{\Unit}{\subst{\uu}{\sbs}}}
-  }
-$.
-By an application of {\rlEqTyCongZero} and {\rlEqTySubstUnit} we equate
-$\subst
-  {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
-  {\sbzero{\G}{\Unit}{\subst{\uu}{\sbs}}}
-$ and
-$\subst
-  {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
-  {\sbzero{\G}{\subst{\Unit}{\sbs}}{\subst{\uu}{\sbs}}}
-$.
-From this, we apply {\rlEqTyTrans} and {\rlEqTyShiftZero} to equate this with
-the type
-$\subst
-  {\subst{\A}{\sbzero{\D}{\Unit}{\uu}}}
-  {\sbs}
-$.
-Now, by applying {\rlTermTyConv} we can finally conclude that
-$\isterm{\G}
-  {\ulet
-    {\subst{\A}{\sbshift{\G}{\Unit}{\sbs}}}
-    {\subst{\uu}{\sbs}}
-    \subst{\vv}{\sbs}}
-  {\subst
-    {\subst{\A}{\sbzero{\D}{\Unit}{\uu}}}
-    {\sbs}
-  }
-$.
+The induction hypothesis on the left premise gives $\isctx{\G}$. By {\rlTyUnit} we then
+get $\istype{\G}{\Unit}$, and the rest from the premises.
 
-
-\subsubsection*{Rule {\rlLetBeta}}
-
-Consider a derivation ending with
-%
-\begin{equation*}
-  \showLetBeta
-\end{equation*}
-%
-By indcution hypothesis on the right premise we obtain $\isctx{\G}$
-and $\istype{\G}{\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}$.
-We have $\isterm{\G}{\vv}{\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}$ as a
-premise.
-Now, knowing $\isterm{\G}{\unit}{\Unit}$ we have, by {\rlTermLet},
-$\isterm{\G}{\ulet{\A}{\unit} \vv}{\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}$.
-
-\subsubsection*{Rule {\rlCongLet}}
-
-Consider a derivation ending with
-%
-\begin{equation*}
-  \showCongLet
-\end{equation*}
-%
-By induction hypothesis on the middle premise we have $\isctx{\G}$
-and $\isterm{\G}{\uu_1}{\Unit}$.
-%
-By {\rlSubstZero} we deduce
-$\issubst{\sbzero{\G}{\Unit}{\uu_1}}{\G}{\ctxextend{\G}{\Unit}}$.
-Since by induction hypothesis on the left premise we have
-$\istype{\ctxextend{\G}{\Unit}}{\A}$ we conclude
-$\istype{\G}{\subst{\A}{\sbzero{\G}{\Unit}{\uu_1}}}$.
-%
-By induction hypothesis on the different premises we have
-$\istype{\ctxextend{\G}{\Unit}}{\A}$,
-$\isterm{\G}{\uu_1}{\Unit}$ and
-$\isterm{\G}{\vv_1}{\subst{\A}{\sbzero{\G}{\Unit}{\unit}}}$,
-and so by {\rlTermLet} we conclude
-$\isterm{\G}{\ulet{\A}{\uu_1} \vv_1}{\subst{\A}{\sbzero{\G}{\Unit}{\uu_1}}}$.
-%
-On the other hand, induction hypothesis, followed by {\rlCongTySubst} and
-{\rlTermTyConv} we have
-$\istype{\ctxextend{\G}{\Unit}}{\B}$,
-$\isterm{\G}{\uu_2}{\Unit}$ and
-$\isterm{\G}{\vv_2}{\subst{\B}{\sbzero{\G}{\Unit}{\unit}}}$,
-and with an application of {\rlTermLet} so we can derive
-$\isterm{\G}{\ulet{\B}{\uu_2} \vv_2}{\subst{\B}{\sbzero{\G}{\Unit}{\uu_2}}}$.
-Now thanks to {\rlTermTyConv} and {\rlEqTySym} it suffices to prove
-$\eqtype{\G}
-  {\subst{\A}{\sbzero{\G}{\Unit}{\uu_1}}}
-  {\subst{\B}{\sbzero{\G}{\Unit}{\uu_2}}}
-$.
-This is achived by {\rlEqTyTrans} using {\rlCongTySubst} on one side and
-{\rlEqTyCongZero} on the other.
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
