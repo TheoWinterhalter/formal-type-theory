@@ -264,4 +264,139 @@
 
 Remark: Lemma~\ref{pbm:id-inversion} still holds with this extension.
 
-\meta{TODO: Sanity.}
+
+\subsubsection*{Rule {\rlTermJ}}
+
+Consider a derivation ending with
+%
+\begin{equation*}
+  \showTermJ
+\end{equation*}
+%
+By induction hypothesis we have $\isctx{\G}$.
+%
+By {\rlSubstZero} and one the assumptions we have
+$\issubst{\sbzero{\G}{\A}{\vv}}{\G}{\ctxextend{\G}{\A}}$,
+then, by {\rlSubstShift}, remarking that we can derive
+$\istype
+  {\ctxextend{\G}{\A}}
+  {\Id{\subst{\A}{\sbweak{\G}{\A}}}{\subst{\uu}{\sbweak{\G}{\A}}}{\var{0}}}
+$ \meta{(why?)},
+we have
+$\issubst
+  {\sbshift
+    {\G}
+    {\Id{\subst{\A}{\sbweak{\G}{\A}}}{\subst{\uu}{\sbweak{\G}{\A}}}{\var{0}}}
+    {\sbzero{\G}{\A}{\vv}}
+  }
+  {\D_1}
+  {\D_2}
+$
+where the contexts are defined as
+$\D_1 =
+\ctxextend
+  {\G}
+  {\subst
+    {(\Id
+      {\subst{\A}{\sbweak{\G}{\A}}}
+      {\subst{\uu}{\sbweak{\G}{\A}}}
+      {\var{0}}
+    )}
+    {\sbzero{\G}{\A}{\vv}}
+  }
+$ as well as
+$\D_2 =
+\ctxextend
+  {\ctxextend{\G}{\A}}
+  {\Id
+    {\subst{\A}{\sbweak{\G}{\A}}}
+    {\subst{\uu}{\sbweak{\G}{\A}}}
+    {\var{0}}
+  }
+$.
+From this and {\rlTySubst} we derive
+$\istype
+  {\D_1}
+  {\subst
+    {\C}
+    {\sbshift
+      {\G}
+      {\Id{\subst{\A}{\sbweak{\G}{\A}}}{\subst{\uu}{\sbweak{\G}{\A}}}{\var{0}}}
+      {\sbzero{\G}{\A}{\vv}}
+    }
+  }
+$.
+Now using {\rlEqTySubstId}, {\rlCongId} as well as {\rlEqTyWeakZero},
+{\rlEqSubstZeroZero}
+and \meta{a rule that is missing on weakening and subst zero on terms} prior
+to {\rlEqCtxExtend} and then {\rlTyCtxConv} we get
+$\istype
+  {\ctxextend
+    {\G}
+    {\Id{\A}{\uu}{\vv}}
+  }
+  {\subst
+    {\C}
+    {\sbshift
+      {\G}
+      {\Id{\subst{\A}{\sbweak{\G}{\A}}}{\subst{\uu}{\sbweak{\G}{\A}}}{\var{0}}}
+      {\sbzero{\G}{\A}{\vv}}
+    }
+  }
+$.
+Then, from {\rlSubstZero} again we get
+$\issubst
+  {\sbzero{\G}{\Id{\A}{\uu}{\vv}}{\p}}
+  {\G}
+  {\ctxextend{\G}{\Id{\A}{\uu}{\vv}}}
+$, allowing to conclude by {\rlTySubst}:
+$\istype
+  {\G}
+  {\subst
+    {\subst
+      {\C}
+      {\sbshift
+        {\G}
+        {\Id{\subst{\A}{\sbweak{\G}{\A}}}{\subst{\uu}{\sbweak{\G}{\A}}}{\var{0}}}
+        {\sbzero{\G}{\A}{\vv}}
+      }
+    }
+    {\sbzero{\G}{\Id{\A}{\uu}{\vv}}{\p}}
+  }
+$.
+
+
+\subsubsection*{Rule {\rlEqSubstJ}}
+
+Consider a derivation ending with
+%
+\begin{mathpar}
+  \showEqSubstJ
+\end{mathpar}
+%
+By induction hypothesis we have $\isctx{\G}$.
+\meta{TODO}
+
+
+\subsubsection*{Rule {\rlCongJ}}
+
+Consider a derivation ending with
+%
+\begin{mathpar}
+  \showCongJ
+\end{mathpar}
+%
+By induction hypothesis we have $\isctx{\G}$.
+\meta{TODO}
+
+
+\subsubsection*{Rule {\rlJRefl}}
+
+Consider a derivation ending with
+%
+\begin{mathpar}
+  \showJRefl
+\end{mathpar}
+%
+By induction hypothesis we have $\isctx{\G}$.
+\meta{TODO}
