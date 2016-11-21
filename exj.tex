@@ -135,13 +135,13 @@
 
   \text{and } \sbr =
     \sbshift
-      {\G}
+      {\D}
       {\Id
-        {\subst{\A}{\sbweak{\G}{\A}}}
-        {\subst{\uu}{\sbweak{\G}{\A}}}
+        {\subst{\A}{\sbweak{\D}{\A}}}
+        {\subst{\uu}{\sbweak{\D}{\A}}}
         {\var{0}}
       }
-      {\sbzero{\G}{\A}{\vv}}
+      {\sbzero{\D}{\A}{\vv}}
 }
 
 \newcommand{\rlCongJ}{\referTo{cong-j}{rul:cong-j}}
@@ -151,10 +151,10 @@
    \eqterm{\G}{\uu_1}{\uu_2}{\A_1} \\
    \eqtype
     {\ctxextend
-      {\ctxextend{\G}{\A}}
+      {\ctxextend{\G}{\A_1}}
       {\Id
-        {\subst{\A}{\sbweak{\G}{\A}}}
-        {\subst{\uu}{\sbweak{\G}{\A}}}
+        {\subst{\A_1}{\sbweak{\G}{\A_1}}}
+        {\subst{\uu}{\sbweak{\G}{\A_1}}}
         {\var{0}}}
     }
     {\C_1}
@@ -376,6 +376,15 @@ Consider a derivation ending with
 \end{mathpar}
 %
 By induction hypothesis we have $\isctx{\G}$.
+%
+The type is the same as in the previous rule and its sanity can be derived
+the same way using the induction hypotheses and then using {\rlTySubst}.
+%
+The left-hand side term is typed using the induction hypotheses and
+{\rlTermJ} followed by {\rlTermSubst}.
+%
+\meta{Problem with how $\sbs$ should go through the terms inside Id-types here
+as well.}
 \meta{TODO}
 
 
@@ -388,6 +397,13 @@ Consider a derivation ending with
 \end{mathpar}
 %
 By induction hypothesis we have $\isctx{\G}$.
+%
+The type well-formedness is again obtained the same way.
+%
+The left-hand side we type using {\rlTermJ} on the induction hypotheses.
+%
+\meta{For the right-hand side we need to be able to type  $\C_2$ in the context
+with only $2$s as subscript.}
 \meta{TODO}
 
 
@@ -400,4 +416,11 @@ Consider a derivation ending with
 \end{mathpar}
 %
 By induction hypothesis we have $\isctx{\G}$.
-\meta{TODO}
+%
+The type well-formedness is again obtained the same way by remarking that
+$\isterm{\G}{\refl{\A} \uu}{\Id{\A}{\uu}{\uu}}$ (obtained from
+{\rlTermRefl}).
+%
+Keeping that remark in mind, we type the left-hand side using {\rlTermJ}.
+%
+The right-hand side we have as an assumption.
