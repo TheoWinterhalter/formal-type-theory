@@ -281,7 +281,8 @@ then, by {\rlSubstShift}, remarking that we can derive
 $\istype
   {\ctxextend{\G}{\A}}
   {\Id{\subst{\A}{\sbweak{\G}{\A}}}{\subst{\uu}{\sbweak{\G}{\A}}}{\var{0}}}
-$ \meta{(why?)},
+$ (from {\rlTyId} after {\rlSubstWeak}, {\rlTySubst}, {\rlTermSubst} and
+{\rlTermVarZero}),
 we have
 $\issubst
   {\sbshift
@@ -314,7 +315,7 @@ $\D_2 =
     {\var{0}}
   }
 $.
-From this and {\rlTySubst} we derive
+From this and {\rlTySubst} we are able to derive
 $\istype
   {\D_1}
   {\subst
