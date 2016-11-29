@@ -7,6 +7,7 @@ with type : Type :=
      | Id : type -> term -> term -> type
      | Subst : type -> substitution -> type
      | Empty : type
+     | Unit : type
 
 with term : Type :=
      | var : nat -> term
@@ -15,6 +16,7 @@ with term : Type :=
      | refl : type -> term -> term
      | subst : term -> substitution -> term
      | exfalso : type -> term -> term
+     | unit : term
 
 with substitution : Type :=
      | sbzero : context -> type -> term -> substitution
@@ -85,6 +87,11 @@ with istype : context -> type -> Type :=
            isctx G ->
            istype G Empty
 
+     | TyUnit :
+         forall {G},
+           isctx G ->
+           istype G Unit
+
 
 
 with isterm : context -> term -> type -> Type :=
@@ -141,6 +148,11 @@ with isterm : context -> term -> type -> Type :=
            istype G A ->
            isterm G u Empty ->
            isterm G (exfalso A u) A
+
+     | TermUnit :
+         forall {G},
+           isctx G ->
+           isterm G unit Unit
 
 
 
@@ -237,6 +249,13 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G
                   (Subst Empty sbs)
                   Empty
+
+     | EqTySubstUnit :
+         forall {G D sbs},
+           issubst sbs G D ->
+           eqtype G
+                  (Subst Unit sbs)
+                  Unit
 
      | EqTyExfalso :
          forall {G A B u},
@@ -392,6 +411,14 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (exfalso (Subst A sbs) (subst u sbs))
                   (Subst A sbs)
 
+     | EqSubstUnit :
+         forall {G D sbs},
+           issubst sbs G D ->
+           eqterm G
+                  (subst unit sbs)
+                  unit
+                  Unit
+
      | EqTermExfalso :
          forall {G A u v w},
            istype G A ->
@@ -399,6 +426,12 @@ with eqterm : context -> term -> term -> type -> Type :=
            isterm G v A ->
            isterm G w Empty ->
            eqterm G u v A
+
+     | UnitEta :
+         forall {G u v},
+           isterm G u Unit ->
+           isterm G v Unit ->
+           eqterm G u v Unit
 
      | EqReflection :
          forall {G A u v w1 w2},

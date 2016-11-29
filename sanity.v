@@ -78,6 +78,9 @@ Proof.
     (* TyEmpty *)
     + assumption.
 
+    (* TyUnit *)
+    + assumption.
+
   (****** sane_isterm ******)
   - destruct H; split.
 
@@ -131,6 +134,10 @@ Proof.
     (* TermExfalso *)
     + now apply (sane_istype G A).
     + assumption.
+
+    (* TermUnit *)
+    + assumption.
+    + now apply TyUnit.
 
   (****** sane_eqctx ******)
   - destruct H; split.
@@ -256,6 +263,13 @@ Proof.
       * eassumption.
       * apply TyEmpty. now apply (sane_issubst G D sbs).
     + apply TyEmpty. now apply (sane_issubst G D sbs).
+
+    (* EqTySubstEmpty *)
+    + now apply (sane_issubst G D sbs).
+    + eapply TySubst.
+      * eassumption.
+      * apply TyUnit. now apply (sane_issubst G D sbs).
+    + apply TyUnit. now apply (sane_issubst G D sbs).
 
     (* EqTyExfalso *)
     + now apply (sane_istype G A).
@@ -514,9 +528,26 @@ Proof.
           - now apply @EqTySubstEmpty with (D := D).
         }
 
+    (* EqSubstUnit *)
+    + now apply (sane_issubst G D sbs).
+    + apply TyUnit. now apply (sane_issubst G D sbs).
+    + eapply TermTyConv.
+      * { apply @TermSubst with (D := D).
+          - assumption.
+          - apply TermUnit. now apply (sane_issubst G D sbs).
+        }
+      * now apply @EqTySubstUnit with (D := D).
+    + apply TermUnit. now apply (sane_issubst G D sbs).
+
     (* EqTermExfalso *)
-    + now apply (sane_istype G A).
+     + now apply (sane_istype G A).
     + assumption.
+    + assumption.
+    + assumption.
+
+    (* UnitEta *)
+    + now apply (sane_isterm G Unit u).
+    + now apply (sane_isterm G Unit u).
     + assumption.
     + assumption.
 
