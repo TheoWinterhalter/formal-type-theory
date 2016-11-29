@@ -1,6 +1,7 @@
 ## Coq files
 *.glob
 *.vo
+*.v.d
 
 ## Core latex/pdflatex auxiliary files:
 *.aux

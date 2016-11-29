@@ -6,6 +6,7 @@ with type : Type :=
      | Prod : type -> type -> type
      | Id : type -> term -> term -> type
      | Subst : type -> substitution -> type
+     | Empty : type
 
 with term : Type :=
      | var : nat -> term
@@ -13,6 +14,7 @@ with term : Type :=
      | app : term -> type -> type -> term -> term
      | refl : type -> term -> term
      | subst : term -> substitution -> term
+     | exfalso : type -> term -> term
 
 with substitution : Type :=
      | sbzero : context -> type -> term -> substitution
@@ -24,7 +26,7 @@ Parameter UIP : type -> type.
 Inductive isctx : context -> Type :=
      | CtxEmpty :
          isctx ctxempty
-          
+
      | CtxExtend :
          forall {G A},
            istype G A -> isctx (ctxextend G A)
@@ -32,7 +34,7 @@ Inductive isctx : context -> Type :=
 
 
 with issubst : substitution -> context -> context -> Type :=
-       
+
      | SubstZero :
          forall {G u A},
            isterm G u A ->
@@ -77,6 +79,11 @@ with istype : context -> type -> Type :=
            isterm G u A ->
            isterm G v A ->
            istype G (Id A u v)
+
+     | TyEmpty :
+         forall {G},
+           isctx G ->
+           istype G Empty
 
 
 
@@ -128,6 +135,12 @@ with isterm : context -> term -> type -> Type :=
          forall {G A u},
            isterm G u A ->
            isterm G (refl A u) (Id A u u)
+
+     | TermExfalso :
+         forall {G A u},
+           istype G A ->
+           isterm G u Empty ->
+           isterm G (exfalso A u) A
 
 
 
@@ -207,7 +220,7 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G
                   (Subst (Prod A B) sbs)
                   (Prod (Subst A sbs) (Subst B (sbshift G A sbs)))
-                  
+
      | EqTySubstId :
          forall {G D A u v sbs},
            issubst sbs G D ->
@@ -217,6 +230,20 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G
                   (Subst (Id A u v) sbs)
                   (Id (Subst A sbs) (subst u sbs) (subst v sbs))
+
+     | EqTySubstEmpty :
+         forall {G D sbs},
+           issubst sbs G D ->
+           eqtype G
+                  (Subst Empty sbs)
+                  Empty
+
+     | EqTyExfalso :
+         forall {G A B u},
+           istype G A ->
+           istype G B ->
+           isterm G u Empty ->
+           eqtype G A B
 
      | CongProd :
          forall {G A1 A2 B1 B2},
@@ -355,6 +382,24 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (refl (Subst A sbs) (subst u sbs))
                   (Id (Subst A sbs) (subst u sbs) (subst u sbs))
 
+     | EqSubstExfalso :
+         forall {G D A u sbs},
+           issubst sbs G D ->
+           istype D A ->
+           isterm D u Empty ->
+           eqterm G
+                  (subst (exfalso A u) sbs)
+                  (exfalso (Subst A sbs) (subst u sbs))
+                  (Subst A sbs)
+
+     | EqTermExfalso :
+         forall {G A u v w},
+           istype G A ->
+           isterm G u A ->
+           isterm G v A ->
+           isterm G w Empty ->
+           eqterm G u v A
+
      | EqReflection :
          forall {G A u v w1 w2},
            isterm G w1 (Id A u v) ->
@@ -416,6 +461,16 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (refl A2 u2)
                   (Id A1 u1 u1)
 
+     (* This rule doesn't seem necessary as subsumed by EqTermexfalso! *)
+     (* | CongExfalso : *)
+     (*     forall {G A B u v}, *)
+     (*       eqtype G A B -> *)
+     (*       eqterm G u v Empty -> *)
+     (*       eqterm G *)
+     (*              (exfalso A u) *)
+     (*              (exfalso B v) *)
+     (*              A *)
+
      | CongTermSubst :
          forall {G D A u1 u2 sbs},
            issubst sbs G D ->
@@ -424,4 +479,3 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (subst u1 sbs)
                   (subst u2 sbs)
                   (Subst A sbs).
-           
