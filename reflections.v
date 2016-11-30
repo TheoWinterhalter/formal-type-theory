@@ -1,4 +1,9 @@
 Module Type Param.
+
+  Parameter hasCoercions : Type.
+  Parameter typeCoercion : Type.
+  Parameter ctxCoercion : Type.
+
 End Param.
 
 Module Theory (P : Param).
@@ -11,6 +16,7 @@ with type : Type :=
      | Prod : type -> type -> type
      | Id : type -> term -> term -> type
      | Subst : type -> substitution -> type
+     | Coerc : P.hasCoercions -> type -> P.ctxCoercion -> type
      | Empty : type
      | Unit : type
      | Bool : type
@@ -21,6 +27,7 @@ with term : Type :=
      | app : term -> type -> type -> term -> term
      | refl : type -> term -> term
      | subst : term -> substitution -> term
+     | coerc : P.hasCoercions -> term -> P.ctxCoercion -> P.typeCoercion -> term
      | exfalso : type -> term -> term
      | unit : term
      | true : term

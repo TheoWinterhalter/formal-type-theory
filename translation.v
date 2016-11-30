@@ -2,11 +2,24 @@ Require Import reflections.
 
 Open Scope type_scope.
 
-Module Dummy : Param.
-End Dummy.
+Module WoCoercions : Param.
 
-Module S := Theory (Dummy).
-Module T := Theory (Dummy).
+  Definition hasCoercions := False.
+  Definition typeCoercion := False.
+  Definition ctxCoercion := False.
+
+End WoCoercions.
+
+Module WithCoercions : Param.
+
+  Definition hasCoercions := True.
+  Definition typeCoercion := False.
+  Definition ctxCoercion := False.
+
+End WithCoercions.
+
+Module S := Theory (WoCoercions).
+Module T := Theory (WithCoercions).
 
 Inductive same_shape_ctx : S.context -> T.context -> Type :=
 | same_shape_ctx_empty : same_shape_ctx S.ctxempty T.ctxempty.
