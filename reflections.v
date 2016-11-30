@@ -1,3 +1,11 @@
+Module Type Param.
+End Param.
+
+Module Empty_Param : Param.
+End Empty_Param.
+
+Module Theory (P : Param).
+
 Inductive context : Type :=
 | ctxempty : context
 | ctxextend : context -> type -> context
@@ -610,3 +618,5 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (subst u1 sbs)
                   (subst u2 sbs)
                   (Subst A sbs).
+
+End Theory.
