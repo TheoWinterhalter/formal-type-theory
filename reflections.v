@@ -8,6 +8,7 @@ with type : Type :=
      | Subst : type -> substitution -> type
      | Empty : type
      | Unit : type
+     | Bool : type
 
 with term : Type :=
      | var : nat -> term
@@ -17,6 +18,9 @@ with term : Type :=
      | subst : term -> substitution -> term
      | exfalso : type -> term -> term
      | unit : term
+     | true : term
+     | false : term
+     | cond : type -> term -> term -> term -> term
 
 with substitution : Type :=
      | sbzero : context -> type -> term -> substitution
@@ -92,6 +96,11 @@ with istype : context -> type -> Type :=
            isctx G ->
            istype G Unit
 
+     | TyBool :
+         forall {G},
+           isctx G ->
+           istype G Bool
+
 
 
 with isterm : context -> term -> type -> Type :=
@@ -153,6 +162,26 @@ with isterm : context -> term -> type -> Type :=
          forall {G},
            isctx G ->
            isterm G unit Unit
+
+     | TermTrue :
+         forall {G},
+           isctx G ->
+           isterm G true Bool
+
+     | TermFalse :
+         forall {G},
+           isctx G ->
+           isterm G false Bool
+
+     | TermCond :
+         forall {G C u v w},
+           isterm G u Bool ->
+           istype (ctxextend G Bool) C ->
+           isterm G v (Subst C (sbzero G Bool true)) ->
+           isterm G w (Subst C (sbzero G Bool false)) ->
+           isterm G
+                  (cond C u v w)
+                  (Subst C (sbzero G Bool u))
 
 
 
@@ -256,6 +285,13 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G
                   (Subst Unit sbs)
                   Unit
+
+     | EqTySubstBool :
+         forall {G D sbs},
+           issubst sbs G D ->
+           eqtype G
+                  (Subst Bool sbs)
+                  Bool
 
      | EqTyExfalso :
          forall {G A B u},
@@ -419,6 +455,37 @@ with eqterm : context -> term -> term -> type -> Type :=
                   unit
                   Unit
 
+     | EqSubstTrue :
+         forall {G D sbs},
+           issubst sbs G D ->
+           eqterm G
+                  (subst true sbs)
+                  true
+                  Bool
+
+     | EqSubstFalse :
+         forall {G D sbs},
+           issubst sbs G D ->
+           eqterm G
+                  (subst false sbs)
+                  false
+                  Bool
+
+     | EqSubstCond :
+         forall {G D C u v w sbs},
+           issubst sbs G D ->
+           isterm D u Bool ->
+           istype (ctxextend D Bool) C ->
+           isterm D v (Subst C (sbzero D Bool true)) ->
+           isterm D w (Subst C (sbzero D Bool false)) ->
+           eqterm G
+                  (subst (cond C u v w) sbs)
+                  (cond (Subst C (sbshift G Bool sbs))
+                        (subst u sbs)
+                        (subst v sbs)
+                        (subst w sbs))
+                  (Subst (Subst C (sbzero D Bool u)) sbs)
+
      | EqTermExfalso :
          forall {G A u v w},
            istype G A ->
@@ -447,6 +514,26 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (app (lam A B u) A B v)
                   (subst u (sbzero G A v))
                   (Subst B (sbzero G A v))
+
+     | CondTrue :
+         forall {G C v w},
+           istype (ctxextend G Bool) C ->
+           isterm G v (Subst C (sbzero G Bool true)) ->
+           isterm G w (Subst C (sbzero G Bool false)) ->
+           eqterm G
+                  (cond C true v w)
+                  v
+                  (Subst C (sbzero G Bool true))
+
+     | CondFalse :
+         forall {G C v w},
+           istype (ctxextend G Bool) C ->
+           isterm G v (Subst C (sbzero G Bool true)) ->
+           isterm G w (Subst C (sbzero G Bool false)) ->
+           eqterm G
+                  (cond C false v w)
+                  w
+                  (Subst C (sbzero G Bool false))
 
      | ProdEta :
          forall {G A B u v},
@@ -503,6 +590,17 @@ with eqterm : context -> term -> term -> type -> Type :=
      (*              (exfalso A u) *)
      (*              (exfalso B v) *)
      (*              A *)
+
+     | CongCond :
+         forall {G C1 C2 u1 u2 v1 v2 w1 w2},
+           eqterm G u1 u2 Bool ->
+           eqtype (ctxextend G Bool) C1 C2 ->
+           eqterm G v1 v2 (Subst C1 (sbzero G Bool true)) ->
+           eqterm G w1 w2 (Subst C1 (sbzero G Bool false)) ->
+           eqterm G
+                  (cond C1 u1 v1 w1)
+                  (cond C2 u2 v2 w2)
+                  (Subst C1 (sbzero G Bool u1))
 
      | CongTermSubst :
          forall {G D A u1 u2 sbs},
