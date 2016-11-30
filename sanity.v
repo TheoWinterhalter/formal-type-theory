@@ -621,7 +621,17 @@ Proof.
                   * assumption.
                   * assumption.
                   * apply TermTrue. now apply (sane_issubst G D sbs).
-                + admit.
+                + { apply EqTyCongZero.
+                    - now apply @EqTySubstBool with (D := D).
+                    - eapply EqTyConv.
+                      + now apply @EqSubstTrue with (D := D).
+                      + apply EqTySym. now apply @EqTySubstBool with (D := D).
+                    - apply EqTyRefl. apply @TySubst with (D := ctxextend D Bool).
+                      + apply SubstShift.
+                        * assumption.
+                        * now apply (sane_isterm D Bool u).
+                      + assumption.
+                  }
             }
           + { eapply TermTyConv.
               - eapply TermSubst.
@@ -632,9 +642,29 @@ Proof.
                   * assumption.
                   * assumption.
                   * apply TermFalse. now apply (sane_issubst G D sbs).
-                + admit.
+                + { apply EqTyCongZero.
+                    - now apply @EqTySubstBool with (D := D).
+                    - eapply EqTyConv.
+                      + now apply @EqSubstFalse with (D := D).
+                      + apply EqTySym. now apply @EqTySubstBool with (D := D).
+                    - apply EqTyRefl. apply @TySubst with (D := ctxextend D Bool).
+                      + apply SubstShift.
+                        * assumption.
+                        * now apply (sane_isterm D Bool u).
+                      + assumption.
+                  }
             }
-        - admit.
+        - apply EqTySym. eapply EqTyTrans.
+          + eapply EqTySym. now apply EqTyShiftZero.
+          + { apply EqTyCongZero.
+              - now apply @EqTySubstBool with (D := D).
+              - apply EqRefl. now apply @TermSubst with (D := D).
+              - apply EqTyRefl. apply @TySubst with (D := ctxextend D Bool).
+                + apply SubstShift.
+                  * assumption.
+                  * now apply (sane_isterm D Bool u).
+                + assumption.
+            }
       }
 
     (* EqTermExfalso *)
