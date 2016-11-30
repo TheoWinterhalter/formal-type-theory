@@ -1,9 +1,6 @@
 Module Type Param.
 End Param.
 
-Module Empty_Param : Param.
-End Empty_Param.
-
 Module Theory (P : Param).
 
 Inductive context : Type :=
