@@ -1,4 +1,4 @@
-Require Import reflections.
+Require Import ett.
 
 Fixpoint TyIdInversion {G A u v} (H : istype G (Id A u v)) {struct H} :
   istype G A * isterm G u A * isterm G v A.
