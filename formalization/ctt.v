@@ -1,8 +1,8 @@
 (* The intermediate type theory with coercions (CTT for Coercive Type Theory). *)
 
 
-Parameter ctxCoerce : Type.
 Parameter typeCoerce : Type.
+Parameter termCoerce : Type.
 
 Inductive context : Type :=
 | ctxempty : context
@@ -17,7 +17,7 @@ with type' :=
      | Bool : type'
 
 with type : Type :=
-     | Coerce : ctxCoerce -> type' -> type
+     | Coerce : typeCoerce -> type' -> type
 
 with term' : Type :=
      | var : nat -> term'
@@ -32,7 +32,7 @@ with term' : Type :=
      | cond : type -> term -> term -> term -> term'
 
 with term : Type :=
-     | coerce : ctxCoerce -> typeCoerce -> term' -> term
+     | coerce : termCoerce -> term' -> term
 
 with substitution : Type :=
      | sbzero : context -> type -> term -> substitution

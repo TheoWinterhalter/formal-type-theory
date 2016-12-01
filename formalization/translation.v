@@ -4,87 +4,105 @@ Require ctt.
 Module E := ett.
 Module C := ctt.
 
-(* "hom" stands for "homologous" which is too long to type. *)
+(* "hml" stands for "homologous" which is too long to type. *)
 
-Inductive hom_context :
+Inductive hml_context :
   E.context -> C.context -> Type :=
 
-  | hom_ctxempty :
-      hom_context E.ctxempty C.ctxempty
+  | hml_ctxempty :
+      hml_context E.ctxempty C.ctxempty
 
-  | hom_ctxextend : 
+  | hml_ctxextend : 
       forall {G G' A A'}, 
-        hom_context G G' ->
-        hom_type A A' ->
-        hom_context (E.ctxextend G A) (C.ctxextend G' A')
+        hml_context G G' ->
+        hml_type A A' ->
+        hml_context (E.ctxextend G A) (C.ctxextend G' A')
 
-with hom_type :
+with hml_type :
  E.type -> C.type -> Type :=
        
- | hom_Id :
+ | hml_Id :
      forall {A A' u u' v v' c},
-       hom_type A A' ->
-       hom_term u u' ->
-       hom_term v v' ->
-       hom_type (E.Id A u v) (C.Coerce c (C.Id A' u' v'))
+       hml_type A A' ->
+       hml_term u u' ->
+       hml_term v v' ->
+       hml_type (E.Id A u v) (C.Coerce c (C.Id A' u' v'))
 
-with hom_term : 
+with hml_term : 
   E.term -> C.term -> Type :=
 
- | hom_var {k c1 c2} :
-     hom_term (E.var k) (C.coerce c1 c2 (C.var k))
+ | hml_var {k c} :
+     hml_term (E.var k) (C.coerce c (C.var k))
 .
 
 Structure istrans_ctx (G : E.context) (G' : C.context) :=
   { 
     isctx_derive : C.isctx G' ;
-    isctx_hom : hom_context G G'
+    isctx_hom : hml_context G G'
   }.
 
 Structure istrans_type (A : E.type) (G' : C.context) (A' : C.type) :=
   { 
     istype_derive : C.istype G' A' ;
-    istype_hom : hom_type A A'
+    istype_hom : hml_type A A'
   }.
 
-Structure istrans_term (u : E.term) (G' : C.context) (A' : C.type) (u' : C.term) :=
+Structure istrans_term (u : E.term) (G' : C.context) (u' : C.term) (A' : C.type) :=
   {
     isterm_derive : C.isterm G' u' A' ;
-    isterm_hom : hom_term u u'
+    isterm_hom : hml_term u u'
   }.
 
-Inductive equiv_type : C.type -> C.type -> Type :=.
+Parameter equiv_type : C.context -> C.type -> C.type -> Type.
+
+Parameter equiv_term : C.context -> C.term -> C.term -> C.type -> Type.
 
 Fixpoint trans_ctx {G} (H : E.isctx G) {struct H} :
   { G' : C.context & istrans_ctx G G' }
 
-with trans_substl {G G' D sbs} (H : E.issubst sbs G D)
+with trans_subst_left {G G' D sbs} (H : E.issubst sbs G D)
                   (Ht : istrans_ctx G G') {struct H} :
        { D' : C.context & { sbt : C.substitution & C.issubst sbt G' D' } }
 
-with trans_substr {G D D' sbs} (H : E.issubst sbs G D)
+(* this one might not be needed? *)
+with trans_subst_right {G D D' sbs} (H : E.issubst sbs G D)
                   (Ht : istrans_ctx D D') {struct H} :
        { G' : C.context & { sbt : C.substitution & C.issubst sbt G' D' } }
 
 with trans_type {G G' A} (H : E.istype G A) (Ht : istrans_ctx G G') {struct H} :
-       { A' : C.type & istrans_type A G' A' }
+       { A' : C.type &
+              istrans_type A G' A' * 
+              (* this component might not be needed? *)
+              forall A'' (Hty : istrans_type A G' A''), equiv_type G' A' A''
+       }%type
 
-with trans_type2 {G A G' A''} (H : E.istype G A) (Ht : istrans_ctx G G')
-                 (Hty : istrans_type A G' A'') {struct H} :
-       { A' : C.type & (istrans_type A G' A' * equiv_type A' A'')%type }.
+with trans_term
+       {G u A G' A'}
+       (H : E.isterm G u A)
+       (HG : istrans_ctx G G')
+       (HA : istrans_type A G' A') {struct H}
+     : { u' : C.term &
+              istrans_term u G' u' A' *
+              (* this component might not be needed? *)
+              forall u'' (Hu : istrans_term u G' u'' A'), equiv_term G' u' u'' A'
+       }%type.
+         
 Proof.
   (****** trans_ctx ******)
-  - induction H.
+  - { induction H.
 
     (* CtxEmpty *)
-    + admit.
+    - exists C.ctxempty.
+      split.
+      + admit.
+      + constructor.
 
     (* CtxExtend *)
-    + (* We cannot win without sanity... *)
+    - (* We cannot win without sanity... *)
       admit.
-
+  }
   (****** trans_substl ******)
-  - induction H.
+  - { induction H.
 
     (* SubstZero *)
     + admit.
@@ -94,9 +112,9 @@ Proof.
 
     (* SubstShift *)
     + admit.
-
+  }
   (****** trans_substr ******)
-  - induction H.
+  - {  induction H.
 
     (* SubstZero *)
     + admit.
@@ -106,5 +124,5 @@ Proof.
 
     (* SubstShift *)
     + admit.
-
+  }
 Abort.
