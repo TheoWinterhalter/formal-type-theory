@@ -6,7 +6,6 @@ with type : Type :=
      | Prod : type -> type -> type
      | Id : type -> term -> term -> type
      | Subst : type -> substitution -> type
-     | Coerc : P.hasCoercions -> type -> P.ctxCoercion -> type
      | Empty : type
      | Unit : type
      | Bool : type
@@ -17,7 +16,6 @@ with term : Type :=
      | app : term -> type -> type -> term -> term
      | refl : type -> term -> term
      | subst : term -> substitution -> term
-     | coerc : P.hasCoercions -> term -> P.ctxCoercion -> P.typeCoercion -> term
      | exfalso : type -> term -> term
      | unit : term
      | true : term
