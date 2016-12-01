@@ -1,13 +1,3 @@
-Module Type Param.
-
-  Parameter hasCoercions : Type.
-  Parameter typeCoercion : Type.
-  Parameter ctxCoercion : Type.
-
-End Param.
-
-Module Theory (P : Param).
-
 Inductive context : Type :=
 | ctxempty : context
 | ctxextend : context -> type -> context
@@ -622,5 +612,3 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (subst u1 sbs)
                   (subst u2 sbs)
                   (Subst A sbs).
-
-End Theory.

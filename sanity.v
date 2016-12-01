@@ -1,10 +1,5 @@
 Require Import reflections.
 
-Module Sanity (P : Param).
-
-Module T := Theory P.
-Import T.
-
 Fixpoint TyIdInversion {G A u v} (H : istype G (Id A u v)) {struct H} :
   istype G A * isterm G u A * isterm G v A.
 Proof.
@@ -847,6 +842,5 @@ Proof.
       * assumption.
       * now apply (sane_eqterm D u1 u2 A).
 
-Defined.
-
-End Sanity.
+Admitted.
+(* Defined. *)
