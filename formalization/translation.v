@@ -12,37 +12,38 @@ Inductive hml_context :
   | hml_ctxempty :
       hml_context E.ctxempty C.ctxempty
 
-  | hml_ctxextend : 
-      forall {G G' A A'}, 
+  | hml_ctxextend :
+      forall {G G' A A'},
         hml_context G G' ->
         hml_type A A' ->
         hml_context (E.ctxextend G A) (C.ctxextend G' A')
 
 with hml_type :
- E.type -> C.type -> Type :=
-       
- | hml_Id :
-     forall {A A' u u' v v' c},
-       hml_type A A' ->
-       hml_term u u' ->
-       hml_term v v' ->
-       hml_type (E.Id A u v) (C.Coerce c (C.Id A' u' v'))
+  E.type -> C.type -> Type :=
 
-with hml_term : 
+  | hml_Id :
+      forall {A A' u u' v v' c},
+        hml_type A A' ->
+        hml_term u u' ->
+        hml_term v v' ->
+        hml_type (E.Id A u v) (C.Coerce c (C.Id A' u' v'))
+
+with hml_term :
   E.term -> C.term -> Type :=
 
- | hml_var {k c} :
-     hml_term (E.var k) (C.coerce c (C.var k))
+  | hml_var {k c} :
+      hml_term (E.var k) (C.coerce c (C.var k))
+
 .
 
 Structure istrans_ctx (G : E.context) (G' : C.context) :=
-  { 
+  {
     isctx_derive : C.isctx G' ;
     isctx_hom : hml_context G G'
   }.
 
 Structure istrans_type (A : E.type) (G' : C.context) (A' : C.type) :=
-  { 
+  {
     istype_derive : C.istype G' A' ;
     istype_hom : hml_type A A'
   }.
@@ -71,7 +72,7 @@ with trans_subst_right {G D D' sbs} (H : E.issubst sbs G D)
 
 with trans_type {G G' A} (H : E.istype G A) (Ht : istrans_ctx G G') {struct H} :
        { A' : C.type &
-              istrans_type A G' A' * 
+              istrans_type A G' A' *
               (* this component might not be needed? *)
               forall A'' (Hty : istrans_type A G' A''), equiv_type G' A' A''
        }%type
@@ -86,7 +87,7 @@ with trans_term
               (* this component might not be needed? *)
               forall u'' (Hu : istrans_term u G' u'' A'), equiv_term G' u' u'' A'
        }%type.
-         
+
 Proof.
   (****** trans_ctx ******)
   - { induction H.
@@ -100,31 +101,36 @@ Proof.
     (* CtxExtend *)
     (* this is the reason we changed CtxExtend to include "isctx G". *)
     - destruct (trans_ctx _ H) as [G' HGisG'].
-      destruct (trans_type G G' A i HGisG') as [A' [pp qq]].
-      admit.
+      destruct (trans_type G G' A i HGisG') as (A' & HAisA' & _).
+      exists (C.ctxextend G' A').
+      split.
+      + admit.
+      + constructor.
+        * now destruct HGisG'.
+        * now destruct HAisA'.
   }
   (****** trans_substl ******)
   - { induction H.
 
     (* SubstZero *)
-    + admit.
+    - admit.
 
     (* SubstWeak *)
-    + admit.
+    - admit.
 
     (* SubstShift *)
-    + admit.
+    - admit.
   }
   (****** trans_substr ******)
   - {  induction H.
 
     (* SubstZero *)
-    + admit.
+    - admit.
 
     (* SubstWeak *)
-    + admit.
+    - admit.
 
     (* SubstShift *)
-    + admit.
+    - admit.
   }
 Abort.
