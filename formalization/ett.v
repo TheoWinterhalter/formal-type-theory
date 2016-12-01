@@ -17,6 +17,7 @@ with term : Type :=
      | lam : type -> type -> term -> term
      | app : term -> type -> type -> term -> term
      | refl : type -> term -> term
+     | j : type -> term -> type -> term -> term -> term -> term
      | subst : term -> substitution -> term
      | exfalso : type -> term -> term
      | unit : term
@@ -32,6 +33,7 @@ with substitution : Type :=
 Parameter UIP : type -> type.
 
 Inductive isctx : context -> Type :=
+
      | CtxEmpty :
          isctx ctxempty
 
@@ -155,6 +157,57 @@ with isterm : context -> term -> type -> Type :=
          forall {G A u},
            isterm G u A ->
            isterm G (refl A u) (Id A u u)
+
+     | TermJ :
+         forall {G A C u v w p},
+           istype G A ->
+           isterm G u A ->
+           istype
+             (ctxextend
+                (ctxextend G A)
+                (Id
+                   (Subst A (sbweak G A))
+                   (subst u (sbweak G A))
+                   (var 0)
+                )
+             )
+             C ->
+           isterm G
+                  w
+                  (Subst
+                     (Subst
+                        C
+                        (sbshift
+                           G
+                           (Id
+                              (Subst A (sbweak G A))
+                              (subst u (sbweak G A))
+                              (var 0)
+                           )
+                           (sbzero G A u)
+                        )
+                     )
+                     (sbzero G (Id A u u) (refl A u))
+                  ) ->
+           isterm G v A ->
+           isterm G p (Id A u v) ->
+           isterm G
+                  (j A u C w v p)
+                  (Subst
+                     (Subst
+                        C
+                        (sbshift
+                           G
+                           (Id
+                              (Subst A (sbweak G A))
+                              (subst u (sbweak G A))
+                              (var 0)
+                           )
+                           (sbzero G A v)
+                        )
+                     )
+                     (sbzero G (Id A u u) p)
+                  )
 
      | TermExfalso :
          forall {G A u},

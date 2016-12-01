@@ -54,7 +54,7 @@ Proof.
     (* SubstWeak *)
     + apply CtxExtend.
       * now apply (sane_istype G A).
-      * assumption. 
+      * assumption.
     + now apply (sane_istype G A).
 
     (* SubstShift *)
@@ -119,7 +119,7 @@ Proof.
     (* TermVarSucc *)
     + apply CtxExtend.
       * now apply (sane_istype G B).
-      * assumption.   
+      * assumption.
     + apply (@TySubst _ G).
       * now apply SubstWeak.
       * now apply (sane_isterm G A (var k)).
@@ -142,6 +142,10 @@ Proof.
       * now apply (sane_isterm G A u).
       * assumption.
       * assumption.
+
+    (* TermJ *)
+    + now apply (sane_istype G A).
+    + admit.
 
     (* TermExfalso *)
     + now apply (sane_istype G A).
@@ -855,4 +859,5 @@ Proof.
       * assumption.
       * now apply (sane_eqterm D u1 u2 A).
 
-Defined.
+(* Defined. *)
+Admitted.
