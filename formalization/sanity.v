@@ -48,17 +48,22 @@ Proof.
 
     (* SubstZero *)
     + now apply (sane_isterm G A u).
-    + apply CtxExtend.
-      now apply (sane_isterm G A u).
+    + apply CtxExtend
+      ; now apply (sane_isterm G A u).
 
     (* SubstWeak *)
-    + now apply CtxExtend.
+    + apply CtxExtend.
+      * now apply (sane_istype G A).
+      * assumption. 
     + now apply (sane_istype G A).
 
     (* SubstShift *)
     + apply CtxExtend.
-      now apply @TySubst with (D := D).
-    + now apply CtxExtend.
+      * now apply (sane_issubst G D sbs).
+      * now apply @TySubst with (D := D).
+    + apply CtxExtend.
+      * now apply (sane_istype D A).
+      * assumption.
 
   (****** sane_istype ******)
   - destruct H.
@@ -104,13 +109,17 @@ Proof.
       * now apply (sane_isterm D A u).
 
     (* TermVarZero *)
-    + now apply CtxExtend.
+    + apply CtxExtend.
+      * now apply (sane_istype G A).
+      * assumption.
     + apply (@TySubst _ G).
       * now apply SubstWeak.
       * assumption.
 
     (* TermVarSucc *)
-    + now apply CtxExtend.
+    + apply CtxExtend.
+      * now apply (sane_istype G B).
+      * assumption.   
     + apply (@TySubst _ G).
       * now apply SubstWeak.
       * now apply (sane_isterm G A (var k)).
@@ -164,11 +173,10 @@ Proof.
     + exact CtxEmpty.
 
     (* EqCtxExtend *)
-    + apply CtxExtend.
-      now apply (sane_eqtype G A B).
-    + apply CtxExtend.
-      now apply (sane_eqtype G A B).
-
+    + apply CtxExtend
+      ; now apply (sane_eqtype G A B).
+    + apply CtxExtend
+      ; now apply (sane_eqtype G A B).
 
   (****** sane_eqtype ******)
   - destruct H; (split ; [split | idtac]).
@@ -199,7 +207,8 @@ Proof.
 
     (* EqTyWeakNat *)
     + apply CtxExtend.
-      now apply @TySubst with (D := D).
+      * now apply (sane_issubst G D sbs).
+      * now apply @TySubst with (D := D).
     + eapply TySubst.
       * eapply SubstShift; eassumption.
       * eapply TySubst.
@@ -383,7 +392,9 @@ Proof.
     + now apply (sane_eqterm G v w A).
 
     (* EqSubstWeak *)
-    + now apply CtxExtend.
+    + apply CtxExtend.
+      * now apply (sane_istype G B).
+      * assumption.
     + apply @TySubst with (D := G).
       * now apply SubstWeak.
       * now apply (sane_isterm G A (var k)).
@@ -421,6 +432,7 @@ Proof.
 
     (* EqSubstShiftZero *)
     + apply CtxExtend.
+      * now apply (sane_issubst G D sbs).
       * { eapply TySubst.
           - eassumption.
           - assumption. }
@@ -440,7 +452,8 @@ Proof.
 
     (* EqSubstShiftSucc *)
     + apply CtxExtend.
-      now apply @TySubst with (D := D).
+      * now apply (sane_issubst G D sbs).
+      * now apply @TySubst with (D := D).
     + { eapply TySubst.
         - apply SubstWeak.
           now apply @TySubst with (D := D).
@@ -842,5 +855,4 @@ Proof.
       * assumption.
       * now apply (sane_eqterm D u1 u2 A).
 
-Admitted.
-(* Defined. *)
+Defined.

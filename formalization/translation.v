@@ -98,7 +98,9 @@ Proof.
       + constructor.
 
     (* CtxExtend *)
-    - (* We cannot win without sanity... *)
+    (* this is the reason we changed CtxExtend to include "isctx G". *)
+    - destruct (trans_ctx _ H) as [G' HGisG'].
+      destruct (trans_type G G' A i HGisG') as [A' [pp qq]].
       admit.
   }
   (****** trans_substl ******)
