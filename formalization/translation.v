@@ -1,51 +1,83 @@
-Require Import ett.
+Require ett.
+Require ctt.
 
-Open Scope type_scope.
+Module E := ett.
+Module C := ctt.
 
-Module Dummy : Param.
-End Dummy.
+(* "hom" stands for "homologous" which is too long to type. *)
 
-Module S := Theory (Dummy).
-Module T := Theory (Dummy).
+Inductive hom_context :
+  E.context -> C.context -> Type :=
 
-Inductive same_shape_ctx : S.context -> T.context -> Type :=
-| same_shape_ctx_empty : same_shape_ctx S.ctxempty T.ctxempty.
+  | hom_ctxempty :
+      hom_context E.ctxempty C.ctxempty
 
-Inductive same_shape_type : S.type -> T.type -> Type :=.
+  | hom_ctxextend : 
+      forall {G G' A A'}, 
+        hom_context G G' ->
+        hom_type A A' ->
+        hom_context (E.ctxextend G A) (C.ctxextend G' A')
 
-Definition istrans_ctx D G :=
-  T.isctx D * same_shape_ctx G D.
+with hom_type :
+ E.type -> C.type -> Type :=
+       
+ | hom_Id :
+     forall {A A' u u' v v' c},
+       hom_type A A' ->
+       hom_term u u' ->
+       hom_term v v' ->
+       hom_type (E.Id A u v) (C.Coerce c (C.Id A' u' v'))
 
-Definition istrans_type G' A' A :=
-  T.istype G' A' * same_shape_type A A'.
+with hom_term : 
+  E.term -> C.term -> Type :=
 
-Inductive equiv_type : T.type -> T.type -> Type :=.
+ | hom_var {k c1 c2} :
+     hom_term (E.var k) (C.coerce c1 c2 (C.var k))
+.
 
-Fixpoint trans_ctx {G} (H : S.isctx G) {struct H} :
-  { D : T.context & istrans_ctx D G }
+Structure istrans_ctx (G : E.context) (G' : C.context) :=
+  { 
+    isctx_derive : C.isctx G' ;
+    isctx_hom : hom_context G G'
+  }.
 
-with trans_substl {G G' D sbs} (H : S.issubst sbs G D)
-                  (Ht : istrans_ctx G' G) {struct H} :
-       { D' : T.context & { sbt : T.substitution & T.issubst sbt G' D' } }
+Structure istrans_type (A : E.type) (G' : C.context) (A' : C.type) :=
+  { 
+    istype_derive : C.istype G' A' ;
+    istype_hom : hom_type A A'
+  }.
 
-with trans_substr {G D D' sbs} (H : S.issubst sbs G D)
-                  (Ht : istrans_ctx D' D) {struct H} :
-       { G' : T.context & { sbt : T.substitution & T.issubst sbt G' D' } }
+Structure istrans_term (u : E.term) (G' : C.context) (A' : C.type) (u' : C.term) :=
+  {
+    isterm_derive : C.isterm G' u' A' ;
+    isterm_hom : hom_term u u'
+  }.
 
-with trans_type {G G' A} (H : S.istype G A) (Ht : istrans_ctx G' G) {struct H} :
-       { A' : T.type & istrans_type G' A' A }
+Inductive equiv_type : C.type -> C.type -> Type :=.
 
-with trans_type2 {G G' A A''} (H : S.istype G A) (Ht : istrans_ctx G' G)
-                 (Hty : istrans_type G' A'' A) {struct H} :
-       { A' : T.type & istrans_type G' A' A * equiv_type A' A'' }.
+Fixpoint trans_ctx {G} (H : E.isctx G) {struct H} :
+  { G' : C.context & istrans_ctx G G' }
+
+with trans_substl {G G' D sbs} (H : E.issubst sbs G D)
+                  (Ht : istrans_ctx G G') {struct H} :
+       { D' : C.context & { sbt : C.substitution & C.issubst sbt G' D' } }
+
+with trans_substr {G D D' sbs} (H : E.issubst sbs G D)
+                  (Ht : istrans_ctx D D') {struct H} :
+       { G' : C.context & { sbt : C.substitution & C.issubst sbt G' D' } }
+
+with trans_type {G G' A} (H : E.istype G A) (Ht : istrans_ctx G G') {struct H} :
+       { A' : C.type & istrans_type A G' A' }
+
+with trans_type2 {G A G' A''} (H : E.istype G A) (Ht : istrans_ctx G G')
+                 (Hty : istrans_type A G' A'') {struct H} :
+       { A' : C.type & (istrans_type A G' A' * equiv_type A' A'')%type }.
 Proof.
   (****** trans_ctx ******)
   - induction H.
 
     (* CtxEmpty *)
-    + exists T.ctxempty. split.
-      * constructor.
-      * constructor.
+    + admit.
 
     (* CtxExtend *)
     + (* We cannot win without sanity... *)

@@ -1,3 +1,5 @@
+(* The source type theory. *)
+
 Inductive context : Type :=
 | ctxempty : context
 | ctxextend : context -> type -> context
