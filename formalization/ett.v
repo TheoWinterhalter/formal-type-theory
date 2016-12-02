@@ -575,7 +575,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                               (sbzero D A v)
                            )
                         )
-                        (sbzero G (Id A u v) p)
+                        (sbzero D (Id A u v) p)
                      )
                      sbs
                   )

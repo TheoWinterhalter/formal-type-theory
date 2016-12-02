@@ -451,7 +451,52 @@ Proof.
     + now apply @TermSubst with (D := D).
 
     (* EqSubstJ *)
-    + destruct todo.
+    + { eapply TySubst.
+        - eassumption.
+        - eapply TySubst.
+          + eapply SubstZero. assumption.
+          + { eapply TyCtxConv.
+              - eapply TySubst.
+                + eapply SubstShift.
+                  * eapply SubstZero. assumption.
+                  * { apply TyId.
+                      - eapply TySubst.
+                        + eapply SubstWeak. magic.
+                        + magic.
+                      - eapply TermSubst.
+                        + eapply SubstWeak. magic.
+                        + assumption.
+                      - magic.
+                    }
+                + assumption.
+              - constructor. eapply EqTyTrans.
+                + { eapply EqTySubstId.
+                    - eapply SubstZero. assumption.
+                    - eapply TySubst.
+                      + eapply SubstWeak. magic.
+                      + magic.
+                    - eapply TermSubst.
+                      + eapply SubstWeak. magic.
+                      + assumption.
+                    - constructor. magic.
+                  }
+                + { apply CongId.
+                    - apply EqTyWeakZero.
+                      + magic.
+                      + assumption.
+                    - eapply EqTyConv.
+                      + eapply EqSubstWeakZero.
+                        * eassumption.
+                        * assumption.
+                      + apply EqTySym. apply EqTyWeakZero.
+                        * magic.
+                        * assumption.
+                    - eapply EqTyConv.
+                      + apply EqSubstZeroZero. magic.
+                      + apply EqTySym. apply EqTyWeakZero ; magic.
+                  }
+            }
+      }
     + destruct todo.
     + destruct todo.
 
