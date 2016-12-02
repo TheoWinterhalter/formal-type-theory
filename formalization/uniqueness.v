@@ -26,24 +26,82 @@ Hypothesis eqctx_ctx :
 Hypothesis temporary :
   forall {G A B}, eqtype G A B.
   
-Fixpoint unique_term {G u A B}
-  (H1 : isterm G u A)
-  (H2 : isterm G u B)
-  {struct H2} :
-  eqtype G A B
+Hypothesis temporary2 :
+  forall {G D}, eqctx G D.
 
-with unique_subst {G D1 D2 sbs}
-  (H1 : issubst sbs G D1)
-  (H2 : issubst sbs G D2)
-  {struct H2} :
-  eqctx D1 D2
+Fixpoint unique_term G u A (H1 : isterm G u A) {struct H1}:
+  forall B (H2 : isterm G u B),
+    eqtype G A B
 
-with unique_TermTyConv C u {G A B}
-  (H1 : isterm G u A)
-  (H2 : isterm G u C)
-  (H3 : eqtype G C B) 
-  {struct H2} :
-  eqtype G A B.
+with unique_subst G D1 sbs (H1 : issubst sbs G D1) {struct H1}:
+  forall D2 (H2 : issubst sbs G D2),
+    eqctx D1 D2.
+
+Proof.
+  (* unique_term *)
+  { destruct H1.
+
+    (* H1: TermTyConv *)    
+    - { intros B' H2'.
+        pose (K := unique_term G u A H1 _ H2').
+        apply (@EqTyTrans G _ A B').
+        + now apply EqTySym.
+        + exact K.
+      }
+
+    (* H1: TermCtxConv *)
+    - intros; now apply temporary.
+
+    - intros; now apply temporary.
+
+    (* H1: TermVarZero *)
+    - { simple refine 
+          (fix unique_term' B H2' {struct H2'}:= _).
+        inversion H2'.
+
+        (* H2: TermTyConv *)
+        - { apply (@EqTyTrans _ _ A0).
+            - apply unique_term'.
+              exact H.
+            - exact H0.
+          }
+
+        - intros; now apply temporary.
+        - intros; now apply temporary.
+      }
+
+    - intros; now apply temporary.
+    - intros; now apply temporary.
+    - intros; now apply temporary.
+    - intros; now apply temporary.
+    - intros; now apply temporary.
+    - intros; now apply temporary.
+    - intros; now apply temporary.
+    - intros; now apply temporary.
+    - intros; now apply temporary.
+    - intros; now apply temporary.
+  }
+
+ (* unique_subst *)
+ { intros;
+   apply temporary2.
+ }
+
+Defined.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Proof.
   (* unique_term *)
@@ -392,13 +450,6 @@ Proof.
       apply eqctx_ctx.
       now apply (unique_subst G _ _ sbs). 
     }    
-  }
-
-  (* unique_TermTyConv *)
-  {
-    apply (@EqTyTrans G A C).
-    - now apply (unique_term G u).
-    - assumption.
   }
 
 Defined.
