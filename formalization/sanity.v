@@ -552,6 +552,12 @@ Proof.
     + apply TermRefl.
       now apply @TermSubst with (D := D).
 
+    (* EqSubstJ *)
+    + admit.
+    + admit.
+    + admit.
+    + admit.
+
     (* EqSubstExfalso *)
     + now apply (sane_issubst G D sbs).
     + eapply TySubst.
@@ -748,6 +754,12 @@ Proof.
     + assumption.
     + assumption.
 
+    (* JRefl*)
+    + admit.
+    + admit.
+    + admit.
+    + admit.
+
     (* CongAbs *)
     + now apply (sane_eqtype G A1 B1).
     + apply TyProd.
@@ -809,6 +821,12 @@ Proof.
             - assumption. }
         - apply EqTySym.
           now apply CongId. }
+
+    (* CongJ *)
+    + admit.
+    + admit.
+    + admit.
+    + admit.
 
     (* CongCond *)
     + now apply (sane_eqterm G u1 u2 Bool).
