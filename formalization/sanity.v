@@ -369,6 +369,18 @@ Proof.
           now apply @TySubst with (D := D).
         - now apply @TermSubst with (D := D). }
 
+    (* EqSubstWeakZero *)
+    + { eapply TermTyConv.
+        - eapply TermSubst.
+          + magic.
+          + eapply TermSubst.
+            * magic.
+            * eassumption.
+        - apply EqTyWeakZero.
+          + magic.
+          + magic.
+      }
+
     (* EqSubstAbs *)
     + now apply @TySubst with (D := D).
     + eapply TySubst.

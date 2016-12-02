@@ -446,7 +446,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
 
      | EqSubstShiftSucc :
-         forall { G D A B sbs k },
+         forall {G D A B sbs k},
            issubst sbs G D ->
            isterm D (var k) B ->
            istype D A ->
@@ -454,6 +454,16 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (subst (var (S k)) (sbshift G A sbs))
                   (subst (subst (var k) sbs) (sbweak G (Subst A sbs)))
                   (Subst (Subst B sbs) (sbweak G (Subst A sbs)))
+
+     (* This one should be added to the PDF! *)
+     | EqSubstWeakZero :
+         forall {G A B u v},
+           isterm G u A ->
+           isterm G v B ->
+           eqterm G
+                  (subst (subst u (sbweak G B)) (sbzero G B v))
+                  u
+                  A
 
      | EqSubstAbs :
          forall {G D A B u sbs},
