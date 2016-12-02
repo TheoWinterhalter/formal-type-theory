@@ -497,8 +497,63 @@ Proof.
                   }
             }
       }
-    + destruct todo.
-    + destruct todo.
+    + { eapply TermSubst.
+        - eassumption.
+        - constructor.
+          + magic.
+          + assumption.
+          + assumption.
+          + assumption.
+          + assumption.
+          + assumption.
+      }
+    + { eapply TermTyConv.
+        - constructor.
+          + apply @TySubst with (D := D) ; assumption.
+          + apply @TermSubst with (D := D) ; assumption.
+          + { eapply TyCtxConv.
+              - eapply TySubst.
+                + { eapply SubstShift.
+                    - eapply SubstShift.
+                      + eassumption.
+                      + magic.
+                    - constructor.
+                      + eapply TySubst.
+                        * eapply SubstWeak. magic.
+                        * magic.
+                      + eapply TermSubst.
+                        * eapply SubstWeak. magic.
+                        * assumption.
+                      + constructor. magic.
+                  }
+                + assumption.
+              - constructor.
+                { eapply EqTyTrans.
+                  - eapply EqTySubstId.
+                    + eapply SubstShift.
+                      * eassumption.
+                      * magic.
+                    + eapply TySubst.
+                      * eapply SubstWeak. magic.
+                      * magic.
+                    + eapply TermSubst.
+                      * eapply SubstWeak. magic.
+                      * assumption.
+                    + constructor. magic.
+                  - apply CongId.
+                    + apply EqTyWeakNat ; assumption.
+                    + destruct todo. (* We need EqTyWeakNat for terms *)
+                    + destruct todo.
+                      (* This could be done, but let's do it the same way *)
+                }
+            }
+          + destruct todo. (* I don't have such stength today *)
+          + apply @TermSubst with (D := D) ; assumption.
+          + eapply TermTyConv.
+            * eapply @TermSubst with (D := D) ; eassumption.
+            * apply @EqTySubstId with (D := D) ; assumption.
+        - destruct todo. (* Still no stength *)
+      }
 
     (* EqSubstExfalso *)
     + eapply TySubst.
