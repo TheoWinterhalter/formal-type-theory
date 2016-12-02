@@ -17,6 +17,19 @@ Proof.
   - now apply EqCtxExtend, EqTyRefl.
 Defined.
 
+Lemma eqctx_trans G D E :
+  eqctx G D -> eqctx D E -> eqctx G E.
+Proof.
+  intros [|? ? ? ?].
+  - intro H ; exact H.
+  - intro H.
+    inversion H.
+    apply EqCtxExtend.
+    eapply EqTyTrans.
+    + eassumption.
+    + assumption.
+Defined.
+
 (* We will have to add this as an inference rule. *)
 Hypothesis eqctx_ctx :
   forall { G D A },
@@ -30,7 +43,9 @@ Hypothesis temporary2 :
   forall {G D}, eqctx G D.
 
 Fixpoint unique_term G u A (H1 : isterm G u A) {struct H1}:
-  forall B (H2 : isterm G u B),
+  forall B D,
+    isterm D u B ->
+    eqctx D G ->
     eqtype G A B
 
 with unique_subst G D1 sbs (H1 : issubst sbs G D1) {struct H1}:
@@ -39,14 +54,17 @@ with unique_subst G D1 sbs (H1 : issubst sbs G D1) {struct H1}:
 
 Proof.
   (* unique_term *)
-  { destruct H1.
+  { destruct H1 ;
+    simple refine (fix unique_term' B' D' H2' H3' {struct H2'}:= _).
 
     (* H1: TermTyConv *)    
-    - { intros B' H2'.
-        pose (K := unique_term G u A H1 _ H2').
+    - { 
         apply (@EqTyTrans G _ A B').
         + now apply EqTySym.
-        + exact K.
+        + eapply (unique_term G u A).
+          * assumption.
+          * eassumption.
+          * assumption.
       }
 
     (* H1: TermCtxConv *)
@@ -55,18 +73,27 @@ Proof.
     - intros; now apply temporary.
 
     (* H1: TermVarZero *)
-    - { simple refine 
-          (fix unique_term' B H2' {struct H2'}:= _).
-        inversion H2'.
+    - { inversion_clear H2'.
 
         (* H2: TermTyConv *)
-        - { apply (@EqTyTrans _ _ A0).
-            - apply unique_term'.
-              exact H.
-            - exact H0.
+        - { 
+            apply (@EqTyTrans _ _ A0).
+            - eapply unique_term'.
+              * eassumption.
+              * assumption.
+            - eapply EqTyCtxConv.
+              * eassumption.
+              * assumption.
           }
 
-        - intros; now apply temporary.
+        (* H2: TermCtxConv *)
+        - {
+            eapply unique_term'.
+            - eassumption.
+            - now apply (eqctx_trans _ D').
+          }
+
+        (* H2: TermVarZero *)
         - intros; now apply temporary.
       }
 
