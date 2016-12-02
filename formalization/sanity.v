@@ -63,6 +63,10 @@ Ltac magic :=
   try easy ;
   try (constructor ; try (ih || easy)).
 
+(* For admitting purposes *)
+Lemma todo : False.
+Admitted.
+
 
 Fixpoint sane_issubst {G D sbs} (H : issubst sbs G D) {struct H} :
        isctx G * isctx D
@@ -110,7 +114,53 @@ Proof.
     + apply @TySubst with (D := ctxextend G A) ; magic.
 
     (* TermJ *)
-    + admit.
+    + { apply @TySubst with (D := ctxextend G (Id A u v)).
+        - now apply SubstZero.
+        - { apply @TyCtxConv
+            with (G :=
+                    ctxextend G
+                              (Subst
+                                 (Id
+                                    (Subst A (sbweak G A))
+                                    (subst u (sbweak G A))
+                                    (var 0))
+                                 (sbzero G A v))).
+            - { eapply TySubst.
+                - eapply SubstShift.
+                  + now eapply SubstZero.
+                  + magic ; magic.
+                    * { eapply TySubst.
+                        - apply SubstWeak. magic.
+                        - magic.
+                      }
+                    * { eapply @TermSubst.
+                        - magic.
+                        - magic.
+                      }
+                - magic.
+              }
+            - magic. eapply EqTyTrans.
+              + { eapply EqTySubstId.
+                  - magic.
+                  - eapply TySubst.
+                    + magic.
+                    + magic.
+                  - eapply TermSubst.
+                    + magic.
+                    + magic.
+                  - magic.
+                }
+              + { apply CongId.
+                  - apply EqTyWeakZero.
+                    + magic.
+                    + magic.
+                  - destruct todo. (* This is the missing rule. *)
+                  - eapply EqTyConv.
+                    + apply EqSubstZeroZero. magic.
+                    + apply EqTySym. apply EqTyWeakZero ; magic.
+                }
+          }
+      }
 
     (* TermCond *)
     + apply @TySubst with (D := ctxextend G Bool) ; magic.
@@ -383,9 +433,9 @@ Proof.
     + now apply @TermSubst with (D := D).
 
     (* EqSubstJ *)
-    + admit.
-    + admit.
-    + admit.
+    + destruct todo.
+    + destruct todo.
+    + destruct todo.
 
     (* EqSubstExfalso *)
     + eapply TySubst.
@@ -531,7 +581,7 @@ Proof.
     + constructor. ih.
 
     (* JRefl*)
-    + admit.
+    + destruct todo.
 
     (* CongAbs *)
     + { eapply TermTyConv.
@@ -577,9 +627,9 @@ Proof.
           now apply CongId. }
 
     (* CongJ *)
-    + admit.
-    + admit.
-    + admit.
+    + destruct todo.
+    + destruct todo.
+    + destruct todo.
 
     (* CongCond *)
     + eapply TySubst.
@@ -623,5 +673,4 @@ Proof.
       * assumption.
       * ih.
 
-(* Defined. *)
-Admitted.
+Defined.
