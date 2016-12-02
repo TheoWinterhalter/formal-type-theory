@@ -154,7 +154,13 @@ Proof.
                   - apply EqTyWeakZero.
                     + magic.
                     + magic.
-                  - destruct todo. (* This is the missing rule. *)
+                  - eapply EqTyConv.
+                    + eapply EqSubstWeakZero.
+                      * eassumption.
+                      * assumption.
+                    + apply EqTySym. apply EqTyWeakZero.
+                      * magic.
+                      * assumption.
                   - eapply EqTyConv.
                     + apply EqSubstZeroZero. magic.
                     + apply EqTySym. apply EqTyWeakZero ; magic.
