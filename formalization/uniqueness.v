@@ -76,6 +76,16 @@ Hypothesis eqTyCongZero' :
            (Subst A2 (sbzero G1 A1 u1))
            (Subst B2 (sbzero G2 B1 u2)).
 
+Hypothesis eqTyCongShift' :
+  forall {G1 G2 D A1 A2 B1 B2 sbs},
+    eqctx G1 G2 ->
+    issubst sbs G1 D ->
+    eqtype D A1 A2 ->
+    eqtype (ctxextend D A1) B1 B2 ->
+    eqtype (ctxextend G1 (Subst A1 sbs))
+           (Subst B1 (sbshift G1 A1 sbs))
+           (Subst B2 (sbshift G2 A2 sbs)).
+
 (* A hack to be able to admit cases and still have Coq verify
    that the fixpoints are well-defined. *)
 Hypothesis temporary :
@@ -227,8 +237,13 @@ Proof.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.
 
-          - now apply temporary.
-
+          - { apply eqTyCongZero'.
+              + now apply eqctx_sym.
+              + now apply EqTyRefl, TyId.
+              + apply EqRefl.
+                eapply TermCtxConv; eassumption.
+              + { apply temporary. }
+            }
         }
 
       (* TermExfalso *)
