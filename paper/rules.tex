@@ -17,7 +17,8 @@
 \newcommand{\rlCtxExtend}{\referTo{ctx-extend}{rul:ctx-extend}}
 \newcommand{\showCtxExtend}{%
   \infer[\rulename{ctx-extend}] % CtxExtend
-  {\istype{\G}{\A}
+  {\isctx{\G} \\
+   \istype{\G}{\A}
   }
   {\isctx{(\ctxextend{\G}{\A})}}
 }
