@@ -562,9 +562,14 @@ Proof.
                     + constructor. magic.
                   - apply CongId.
                     + apply EqTyWeakNat ; assumption.
-                    + destruct todo. (* We need EqTyWeakNat for terms *)
-                    + destruct todo.
-                      (* This could be done, but let's do it the same way *)
+                    + { eapply EqTyConv.
+                        - eapply EqSubstWeakNat ; eassumption.
+                        - apply EqTySym. apply EqTyWeakNat ; assumption.
+                      }
+                    + { eapply EqTyConv.
+                        - eapply EqSubstShiftZero ; eassumption.
+                        - apply EqTySym. apply EqTyWeakNat ; assumption.
+                      }
                 }
             }
           + destruct todo. (* I don't have such stength today *)
