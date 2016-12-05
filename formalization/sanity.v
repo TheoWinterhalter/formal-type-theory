@@ -775,9 +775,48 @@ Proof.
                                 }
                             + magic.
                           - constructor.
-                            destruct todo.
+                            { eapply EqTyTrans.
+                              - eapply EqTySubstId.
+                                + eapply SubstShift ; eassumption.
+                                + eapply TySubst.
+                                  * eapply SubstWeak. ih.
+                                  * ih.
+                                + eapply TermSubst.
+                                  * eapply SubstWeak. ih.
+                                  * assumption.
+                                + apply TermVarZero. ih.
+                              - { apply CongId.
+                                  - apply EqTyWeakNat ; magic.
+                                  - eapply EqTyConv.
+                                    + eapply EqSubstWeakNat.
+                                      * assumption.
+                                      * ih.
+                                      * eassumption.
+                                    + apply EqTySym. apply EqTyWeakNat ; magic.
+                                  - eapply EqTyConv.
+                                    + eapply EqSubstShiftZero ; eassumption.
+                                    + apply EqTySym. apply EqTyWeakNat ; magic.
+                                }
+                            }
                         }
-                      + destruct todo.
+                      + { eapply TermTyConv.
+                          - eapply TermRefl.
+                            eapply TermSubst.
+                            + eapply SubstWeak.
+                              eapply TySubst ; eassumption.
+                            + eapply TermSubst ; eassumption.
+                          - { apply CongId.
+                              - apply EqTyRefl.
+                                eapply TySubst.
+                                + eapply SubstWeak.
+                                  eapply TySubst ; eassumption.
+                                + eapply TySubst ; eassumption.
+                              - apply EqRefl.
+                                eapply TermSubst.
+                                + eapply SubstWeak.
+                                  eapply TySubst ; eassumption.
+                                + eapply TermSubst ; eassumption.
+                              - destruct todo. (* This is false... *)
                     - destruct todo.
                   }
             }
