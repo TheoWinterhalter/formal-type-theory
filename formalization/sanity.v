@@ -756,7 +756,8 @@ Proof.
                               }
                         }
                     }
-                + { eapply EqTyTrans.
+                + (* Is this where everything goes wrong? *)
+                  { eapply EqTyTrans.
                     - eapply EqTyShiftZero.
                       + eapply SubstZero.
                         eapply TermSubst ; eassumption.
