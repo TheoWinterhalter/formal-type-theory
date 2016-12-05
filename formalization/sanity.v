@@ -387,6 +387,26 @@ Proof.
           + magic.
       }
 
+    (* EqSubstWeakNat *)
+    + now apply @TySubst with (D := D).
+    + eapply TySubst.
+      * eapply SubstWeak. now apply @TySubst with (D := D).
+      * apply @TySubst with (D := D) ; magic.
+    + { eapply TermTyConv.
+        - eapply TermSubst.
+          + eapply SubstShift ; eassumption.
+          + eapply TermSubst.
+            * eapply SubstWeak. assumption.
+            * eassumption.
+        - apply EqTyWeakNat ; magic.
+      }
+    + { eapply TermSubst.
+        - eapply SubstWeak. eapply TySubst.
+          + eassumption.
+          + assumption.
+        - eapply TermSubst ; eassumption.
+      }
+
     (* EqSubstAbs *)
     + now apply @TySubst with (D := D).
     + eapply TySubst.

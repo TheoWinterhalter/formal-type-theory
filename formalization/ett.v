@@ -465,6 +465,17 @@ with eqterm : context -> term -> term -> type -> Type :=
                   u
                   A
 
+     (* This one as well! *)
+     | EqSubstWeakNat :
+         forall {G D A B u sbs},
+           issubst sbs G D ->
+           istype D A ->
+           isterm D u B ->
+           eqterm (ctxextend G (Subst A sbs))
+                  (subst (subst u (sbweak D A)) (sbshift G A sbs))
+                  (subst (subst u sbs) (sbweak G (Subst A sbs)))
+                  (Subst (Subst B sbs) (sbweak G (Subst A sbs)))
+
      | EqSubstAbs :
          forall {G D A B u sbs},
            issubst sbs G D ->
