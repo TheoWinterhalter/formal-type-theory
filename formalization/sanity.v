@@ -757,6 +757,10 @@ Proof.
                         }
                     }
                 + (* Is this where everything goes wrong? *)
+                  (* This actually comes from before! The sbzero that we
+                     introduced is ill-typed. It was not before EqyCongZero,
+                     but somehow, one the exchanges that we did broke typing
+                     by removing one layer of substitution... *)
                   { eapply EqTyTrans.
                     - eapply EqTyShiftZero.
                       + eapply SubstZero.
@@ -800,7 +804,8 @@ Proof.
                                 }
                             }
                         }
-                      + { eapply TermTyConv.
+                      + (* This is false... *)
+                        { eapply TermTyConv.
                           - eapply TermRefl.
                             eapply TermSubst.
                             + eapply SubstWeak.
