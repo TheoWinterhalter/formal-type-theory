@@ -526,13 +526,7 @@ Proof.
       }
     + { eapply TermSubst.
         - eassumption.
-        - constructor.
-          + magic.
-          + assumption.
-          + assumption.
-          + assumption.
-          + assumption.
-          + assumption.
+        - magic.
       }
     + { eapply TermTyConv.
         - constructor.
@@ -579,6 +573,7 @@ Proof.
                       }
                 }
             }
+          (* Typing w is hard. *)
           + { eapply TermTyConv.
               - eapply TermSubst ; eassumption.
               - apply EqTySym. eapply EqTyTrans.
@@ -841,7 +836,9 @@ Proof.
           + eapply TermTyConv.
             * eapply @TermSubst with (D := D) ; eassumption.
             * apply @EqTySubstId with (D := D) ; assumption.
-        - destruct todo. (* Still no stength *)
+        - (* This is more or less the same thing as needed for w.
+             We need to figure out how to deal with these substitutions. *)
+          destruct todo. (* Still no stength *)
       }
 
     (* EqSubstExfalso *)
@@ -1022,14 +1019,86 @@ Proof.
           now apply CongId. }
 
     (* CongJ *)
-    + destruct todo.
-    + destruct todo.
-    + destruct todo.
+    + { eapply TySubst.
+        - eapply SubstZero. magic.
+        - { eapply TyCtxConv.
+            - eapply TySubst.
+              + eapply SubstShift.
+                * eapply SubstZero. magic.
+                * { apply TyId.
+                    - eapply TySubst.
+                      + eapply SubstWeak. magic.
+                      + magic.
+                    - eapply TermSubst.
+                      + eapply SubstWeak. magic.
+                      + magic.
+                    - apply TermVarZero. magic.
+                  }
+              + magic.
+            - { constructor. eapply EqTyTrans.
+                - eapply EqTySubstId.
+                  + eapply SubstZero. magic.
+                  + eapply TySubst.
+                    * eapply SubstWeak. magic.
+                    * magic.
+                  + eapply TermSubst.
+                    * eapply SubstWeak. magic.
+                    * magic.
+                  + apply TermVarZero. magic.
+                - apply CongId.
+                  + apply EqTyWeakZero ; magic.
+                  + apply EqSubstWeakZero.
+                    * { eapply TermTyConv.
+                        - magic.
+                        - apply EqTySym.
+                          apply EqTyWeakZero ; magic.
+                      }
+                    * magic.
+                  + { eapply EqTyConv.
+                      - apply EqSubstZeroZero. magic.
+                      - apply EqTySym.
+                        apply EqTyWeakZero ; magic.
+                    }
+              }
+          }
+      }
+    + { eapply TermTyConv.
+        - eapply TermJ.
+          + magic.
+          + eapply TermTyConv.
+            * magic.
+            * magic.
+          + (* We might need more equalities on contexts to deal with that
+               one... *)
+            eapply TyCtxConv.
+            * magic.
+            * destruct todo.
+          + eapply TermTyConv.
+            * magic.
+            * { apply EqTyCongZero.
+                - magic.
+                - magic.
+                - (* We might also need congruence for shift... *)
+                  destruct todo.
+              }
+          + eapply TermTyConv.
+            * magic.
+            * magic.
+          + eapply TermTyConv.
+            * magic.
+            * magic.
+        - { apply EqTySym. apply EqTyCongZero.
+            - magic.
+            - magic.
+            - (* We might also need congruence for shift... *)
+              destruct todo.
+          }
+      }
+    + eapply TySubst.
+      * eapply SubstZero. magic.
+      * magic.
 
     (* CongCond *)
-    + eapply TySubst.
-      * apply SubstZero. ih.
-      * ih.
     + { eapply TermTyConv.
         - { apply TermCond.
             - ih.

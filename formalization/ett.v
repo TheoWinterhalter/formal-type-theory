@@ -836,7 +836,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                            (sbzero G A1 v1)
                         )
                      )
-                     (sbzero G (Id A1 u1 u1) p1)
+                     (sbzero G (Id A1 u1 v1) p1)
                   )
 
      (* This rule doesn't seem necessary as subsumed by EqTermexfalso! *)
