@@ -24,19 +24,6 @@ Proof.
 Defined.
 
 (* Tactic to apply one the induction hypotheses. *)
-(* Unfortunately the straightforward definition below insn't accepted. *)
-(* Ltac ih := *)
-(*   match goal with *)
-(*   | _ : issubst ?sbs ?G ?D |- _ => now apply (sane_issubst G D sbs) *)
-(*   | _ : istype ?G ?A |- _ => now apply (sane_istype G A) *)
-(*   | _ : isterm ?G ?u ?A |- _ => now apply (sane_isterm G A u) *)
-(*   | _ : eqctx ?G ?D |- _ => now apply (sane_eqctx G D) *)
-(*   | _ : eqtype ?G ?A ?B |- _ => now apply (sane_eqtype G A B) *)
-(*   | _ : eqterm ?G ?u ?v ?A |- _ => now apply (sane_eqterm G u v A) *)
-(*   | _ => fail *)
-(*   end. *)
-
-(* More tedious version. *)
 Ltac ih :=
   match goal with
   | f : forall G D sbs, issubst sbs G D -> isctx G * isctx D ,
@@ -58,10 +45,13 @@ Ltac ih :=
   end.
 
 (* Magic tactic. *)
-Ltac magic :=
-  try ih ;
-  try easy ;
-  try (constructor ; try (ih || easy)).
+Ltac magicn n :=
+  match eval compute in n with
+  | 0 => ih || easy
+  | S ?n => magicn n || (constructor ; magicn n)
+  end.
+
+Ltac magic := magicn (S (S (S 0))).
 
 (* For admitting purposes *)
 Lemma todo : False.
@@ -88,15 +78,17 @@ with sane_eqterm {G u v A} (H : eqterm G u v A) {struct H} :
 
 Proof.
   (****** sane_issubst ******)
-  - destruct H ; split ; magic.
+  - destruct H ; split ; try magic.
+
     (* SubstShift *)
+    constructor ; try magic.
     now apply @TySubst with (D := D).
 
   (****** sane_istype ******)
   - destruct H ; magic.
 
   (****** sane_isterm ******)
-  - destruct H; split ; magic.
+  - destruct H; split ; try magic.
 
     (* TermCtxConv *)
     + apply (@TyCtxConv G D A) ; magic.
@@ -128,7 +120,7 @@ Proof.
             - { eapply TySubst.
                 - eapply SubstShift.
                   + now eapply SubstZero.
-                  + magic ; magic.
+                  + constructor ; try magic.
                     * { eapply TySubst.
                         - apply SubstWeak. magic.
                         - magic.
@@ -139,7 +131,7 @@ Proof.
                       }
                 - magic.
               }
-            - magic. eapply EqTyTrans.
+            - constructor. eapply EqTyTrans.
               + { eapply EqTySubstId.
                   - magic.
                   - eapply TySubst.
@@ -175,14 +167,16 @@ Proof.
   - destruct H; split ; magic.
 
   (****** sane_eqtype ******)
-  - destruct H; (split ; [split | idtac]) ; magic.
+  - destruct H; (split ; [split | idtac]) ; try magic.
 
     (* EqTyCtxConv *)
     + apply @TyCtxConv with (G := G) ; magic.
     + apply @TyCtxConv with (G := G) ; magic.
 
     (* EqTyWeakNat *)
-    + now apply @TySubst with (D := D).
+    + constructor.
+      * magic.
+      * now apply @TySubst with (D := D).
     + eapply TySubst.
       * eapply SubstShift; eassumption.
       * eapply TySubst.
@@ -231,20 +225,22 @@ Proof.
     + eapply TySubst.
       * eassumption.
       * now apply TyProd.
-    + eapply TySubst.
-      { eassumption. }
-      { assumption. }
-    + eapply TySubst.
-      { eapply SubstShift. eassumption. assumption. }
-      { assumption. }
+    + constructor.
+      * eapply TySubst.
+        { eassumption. }
+        { assumption. }
+      * eapply TySubst.
+        { eapply SubstShift. eassumption. assumption. }
+        { assumption. }
 
     (* EqTySubstId *)
     + eapply TySubst.
       * eassumption.
       * now apply TyId.
-    + now apply @TySubst with (D := D).
-    + now apply @TermSubst with (D := D).
-    + now apply @TermSubst with (D := D).
+    + constructor.
+      * now apply @TySubst with (D := D).
+      * now apply @TermSubst with (D := D).
+      * now apply @TermSubst with (D := D).
 
     (* EqTySubstEmpty *)
     + eapply TySubst.
@@ -262,17 +258,20 @@ Proof.
       * apply TyBool. ih.
 
     (* CongProd *)
-    + apply @TyCtxConv with (G := ctxextend G A1).
-      { ih. }
-      { now apply EqCtxExtend. }
+    + constructor.
+      * ih.
+      * apply @TyCtxConv with (G := ctxextend G A1).
+        { ih. }
+        { now apply EqCtxExtend. }
 
     (* CongId *)
-    + apply @TermTyConv with (A := A).
-      { ih. }
-      { assumption. }
-    + apply @TermTyConv with (A := A).
-      { ih. }
-      { assumption. }
+    + constructor ; try magic.
+      * apply @TermTyConv with (A := A).
+        { ih. }
+        { assumption. }
+      * apply @TermTyConv with (A := A).
+        { ih. }
+        { assumption. }
 
     (* CongTySubst *)
     + apply @TySubst with (D := D).
@@ -285,7 +284,7 @@ Proof.
 
   (****** sane_eqterm ******)
   - destruct H ;
-    (split ; [(split ; [split | idtac]) | idtac]) ; magic.
+    (split ; [(split ; [split | idtac]) | idtac]) ; try magic.
 
     (* EqTyConv *)
     + eapply TermTyConv.
@@ -336,7 +335,8 @@ Proof.
           - assumption. }
 
     (* EqSubstShiftZero *)
-    + now apply @TySubst with (D := D).
+    + constructor ; try magic.
+      now apply @TySubst with (D := D).
     + { eapply TySubst.
         - apply SubstWeak.
           now apply @TySubst with (D := D).
@@ -348,10 +348,12 @@ Proof.
             * assumption.
           + now apply TermVarZero.
         - now apply EqTyWeakNat. }
-    + now apply @TySubst with (D := D).
+    + constructor ; try magic.
+      now apply @TySubst with (D := D).
 
     (* EqSubstShiftSucc *)
-    + now apply @TySubst with (D := D).
+    + constructor ; try magic.
+      now apply @TySubst with (D := D).
     + { eapply TySubst.
         - apply SubstWeak.
           now apply @TySubst with (D := D).
@@ -388,7 +390,8 @@ Proof.
       }
 
     (* EqSubstWeakNat *)
-    + now apply @TySubst with (D := D).
+    + constructor ; try magic.
+      now apply @TySubst with (D := D).
     + eapply TySubst.
       * eapply SubstWeak. now apply @TySubst with (D := D).
       * apply @TySubst with (D := D) ; magic.
@@ -408,10 +411,11 @@ Proof.
       }
 
     (* EqSubstAbs *)
-    + now apply @TySubst with (D := D).
-    + eapply TySubst.
-      * now apply @SubstShift with (D := D).
-      * ih.
+    + constructor ; try magic.
+      * now apply @TySubst with (D := D).
+      * eapply TySubst.
+        { now apply @SubstShift with (D := D). }
+        { ih. }
     + { eapply TermTyConv.
         - apply @TermSubst with (D := D).
           + assumption.
@@ -420,13 +424,14 @@ Proof.
           + assumption.
           + assumption.
           + ih. }
-    + now apply @TySubst with (D := D).
-    + { eapply TermSubst.
-        - eapply SubstShift.
-          + eassumption.
-          + assumption.
-        - assumption.
-      }
+    + constructor ; try magic.
+      * now apply @TySubst with (D := D).
+      * { eapply TermSubst.
+          - eapply SubstShift.
+            + eassumption.
+            + assumption.
+          - assumption.
+        }
 
     (* EqSubstApp *)
     + { eapply TySubst.
@@ -456,9 +461,10 @@ Proof.
         - now apply EqTyShiftZero. }
 
     (* EqSubstRefl *)
-    + apply @TySubst with (D := D) ; magic.
-    + now apply @TermSubst with (D := D).
-    + now apply @TermSubst with (D := D).
+    + constructor ; try magic.
+      * apply @TySubst with (D := D) ; magic.
+      * now apply @TermSubst with (D := D).
+      * now apply @TermSubst with (D := D).
     + { eapply TermTyConv.
         - apply @TermSubst with (D := D).
           + assumption.
@@ -468,7 +474,8 @@ Proof.
           + ih.
           + assumption.
           + assumption. }
-    + now apply @TermSubst with (D := D).
+    + constructor ; try magic.
+      now apply @TermSubst with (D := D).
 
     (* EqSubstJ *)
     + { eapply TySubst.
@@ -825,6 +832,8 @@ Proof.
                                   eapply TySubst ; eassumption.
                                 + eapply TermSubst ; eassumption.
                               - destruct todo. (* This is false... *)
+                            }
+                        }
                     - destruct todo.
                   }
             }
@@ -842,13 +851,14 @@ Proof.
     + eapply TermSubst.
       * eassumption.
       * apply TermExfalso ; assumption.
-    + now apply @TySubst with (D := D).
-    + { eapply TermTyConv.
-        - apply @TermSubst with (D := D).
-          + assumption.
-          + eassumption.
-        - now apply @EqTySubstEmpty with (D := D).
-      }
+    + constructor ; try magic.
+      * now apply @TySubst with (D := D).
+      * { eapply TermTyConv.
+          - apply @TermSubst with (D := D).
+            + assumption.
+            + eassumption.
+          - now apply @EqTySubstEmpty with (D := D).
+        }
 
     (* EqSubstUnit *)
     + eapply TermTyConv.
@@ -960,26 +970,13 @@ Proof.
     + apply @TyIdInversion with (u := u) (v := v). magic.
     + apply @TyIdInversion with (u := u) (v := v). magic.
 
-
     (* ProdBeta *)
     + { eapply TySubst.
         - now apply SubstZero.
-        - ih. }
-    + { apply TermAbs.
-        - ih.
-        - assumption. }
+        - now apply (sane_isterm _ B u). }
     + { eapply TermSubst.
         - now apply SubstZero.
         - assumption. }
-
-    (* CongTrue *)
-    + constructor. ih.
-
-    (* CongFalse *)
-    + constructor. ih.
-
-    (* JRefl*)
-    + destruct todo.
 
     (* CongAbs *)
     + { eapply TermTyConv.
