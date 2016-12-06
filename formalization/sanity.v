@@ -246,6 +246,25 @@ Proof.
     + apply @TyCtxConv with (G := G) ; magic.
     + apply @TyCtxConv with (G := G) ; magic.
 
+    (* EqTyIdSubst *)
+    + eapply TySubst.
+      * constructor. ih.
+      * assumption.
+
+    (* EqTySubstComp *)
+    + { eapply TySubst.
+        - eassumption.
+        - eapply TySubst.
+          + eassumption.
+          + assumption.
+      }
+    + { eapply TySubst.
+        - eapply SubstComp.
+          + eassumption.
+          + eassumption.
+        - assumption.
+      }
+
     (* EqTyWeakNat *)
     + constructor.
       * magic.
@@ -381,7 +400,40 @@ Proof.
       * ih.
       * assumption.
 
-    (* Eqsubstweak *)
+    (* EqIdSubst *)
+    + { eapply TermTyConv.
+        - eapply TermSubst.
+          + constructor. ih.
+          + eassumption.
+        - apply EqTyIdSubst. ih.
+      }
+    + { eapply TySubst.
+        - eapply SubstComp.
+          + eassumption.
+          + eassumption.
+        - ih.
+      }
+
+    (* EqSubstComp *)
+    + { eapply TermTyConv.
+        - eapply TermSubst.
+          + eassumption.
+          + eapply TermSubst.
+            * eassumption.
+            * eassumption.
+        - eapply EqTySubstComp.
+          + ih.
+          + eassumption.
+          + assumption.
+      }
+    + { eapply TermSubst.
+        - eapply SubstComp.
+          + eassumption.
+          + eassumption.
+        - assumption.
+      }
+
+    (* EqSubstWeak *)
     + apply @TySubst with (D := G).
       * now apply SubstWeak.
       * ih.

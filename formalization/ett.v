@@ -365,9 +365,10 @@ with eqtype : context -> type -> type -> Type :=
            eqctx G D ->
            eqtype D A B
 
-     | EqTyRefl: forall {G A},
-                   istype G A ->
-                   eqtype G A A
+     | EqTyRefl:
+         forall {G A},
+           istype G A ->
+           eqtype G A A
 
      | EqTySym :
          forall {G A B},
@@ -379,6 +380,22 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G A B ->
            eqtype G B C ->
            eqtype G A C
+
+     | EqTyIdSubst :
+         forall {G A},
+           istype G A ->
+           eqtype G
+                  (Subst A (sbid G))
+                  A
+
+     | EqTySubstComp :
+         forall {G D E A sbs sbt},
+           istype E A ->
+           issubst sbs G D ->
+           issubst sbt D E ->
+           eqtype G
+                  (Subst (Subst A sbt) sbs)
+                  (Subst A (sbcomp sbs sbt))
 
      | EqTyWeakNat :
          forall {G D A B sbs},
@@ -511,6 +528,23 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G v w A ->
            eqterm G u w A
 
+     | EqIdSubst :
+         forall {G A u},
+           isterm G u A ->
+           eqterm G
+                  (subst u (sbid G))
+                  u
+                  A
+
+     | EqSubstComp :
+         forall {G D E A u sbs sbt},
+           isterm E u A ->
+           issubst sbs G D ->
+           issubst sbt D E ->
+           eqterm G
+                  (subst (subst u sbt) sbs)
+                  (subst u (sbcomp sbs sbt))
+                  (Subst A (sbcomp sbs sbt))
 
      | EqSubstWeak :
          forall {G A B k},
