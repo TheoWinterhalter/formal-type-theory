@@ -58,10 +58,23 @@ Defined.
 Lemma EqTyWeakZero :
   forall {G A B u},
     istype G A ->
+    istype G B ->
     isterm G u B ->
     eqtype G (Subst (Subst A (sbweak G B)) (sbzero G B u)) A.
 Proof.
-Admitted.
+  intros G A B u H H0 H1.
+  eapply EqTyTrans.
+  - eapply EqTySubstComp.
+    + eassumption.
+    + eapply SubstZero. assumption.
+    + eapply SubstWeak. assumption.
+  - { eapply EqTyTrans.
+      - eapply CongTySubst.
+        + eapply WeakZero. assumption.
+        + now eapply EqTyRefl.
+      - now apply EqTyIdSubst.
+    }
+Defined.
 
 Lemma EqTyShiftZero :
   forall {G D A B v sbs},
@@ -82,16 +95,6 @@ Lemma EqTyCongZero :
     eqtype G
            (Subst A2 (sbzero G A1 u1))
            (Subst B2 (sbzero G B1 u2)).
-Admitted.
-
-Lemma EqSubstWeakZero :
-  forall {G A B u v},
-    isterm G u A ->
-    isterm G v B ->
-    eqterm G
-           (subst (subst u (sbweak G B)) (sbzero G B v))
-           u
-           A.
 Admitted.
 
 Lemma EqSubstWeakNat :
@@ -147,6 +150,46 @@ Proof.
         + assumption.
         + assumption.
         + assumption.
+    }
+Defined.
+
+Lemma EqSubstWeakZero :
+  forall {G A B u v},
+    istype G A ->
+    istype G B ->
+    isterm G u A ->
+    isterm G v B ->
+    eqterm G
+           (subst (subst u (sbweak G B)) (sbzero G B v))
+           u
+           A.
+Proof.
+  intros G A B u v H H0 H1 H2.
+  eapply EqTrans.
+  - { eapply EqTyConv.
+      - eapply EqSubstComp.
+        + eassumption.
+        + eapply SubstZero. assumption.
+        + eapply SubstWeak. assumption.
+      - { eapply EqTyTrans.
+          - eapply CongTySubst.
+            + eapply WeakZero. assumption.
+            + now eapply EqTyRefl.
+          - now apply EqTyIdSubst.
+        }
+    }
+  - { eapply EqTrans.
+      - eapply EqTyConv.
+        + eapply CongTermSubst.
+          * now eapply WeakZero.
+          * eapply EqRefl. eassumption.
+        + { eapply EqTyTrans.
+            - eapply CongTySubst.
+              + eapply WeakZero. assumption.
+              + now eapply EqTyRefl.
+            - now apply EqTyIdSubst.
+          }
+      - now apply EqIdSubst.
     }
 Defined.
 
@@ -282,12 +325,16 @@ Proof.
                     - apply EqTyWeakZero.
                       + magic.
                       + magic.
+                      + magic.
                     - eapply EqTyConv.
                       + eapply EqSubstWeakZero.
                         * eassumption.
                         * assumption.
+                        * assumption.
+                        * assumption.
                       + apply EqTySym. apply EqTyWeakZero.
                         * magic.
+                        * assumption.
                         * assumption.
                     - eapply EqTyConv.
                       + apply EqSubstZeroZero. magic.
@@ -384,6 +431,12 @@ Proof.
           + eassumption.
           + assumption.
         - assumption.
+      }
+
+    (* WeakZero *)
+    + { eapply SubstComp.
+        - now eapply SubstZero.
+        - eapply SubstWeak. ih.
       }
 
 
@@ -549,6 +602,7 @@ Proof.
             ih. }
       * { apply EqTyWeakZero.
           - ih.
+          - ih.
           - assumption. }
 
     (* EqSubstZeroSucc *)
@@ -559,6 +613,7 @@ Proof.
             + assumption.
             + ih. }
       * { apply EqTyWeakZero.
+          - ih.
           - ih.
           - assumption. }
 
@@ -707,12 +762,16 @@ Proof.
                     - apply EqTyWeakZero.
                       + magic.
                       + assumption.
+                      + assumption.
                     - eapply EqTyConv.
                       + eapply EqSubstWeakZero.
                         * eassumption.
                         * assumption.
+                        * assumption.
+                        * assumption.
                       + apply EqTySym. apply EqTyWeakZero.
                         * magic.
+                        * assumption.
                         * assumption.
                     - eapply EqTyConv.
                       + apply EqSubstZeroZero. magic.
@@ -806,11 +865,31 @@ Proof.
                       - apply CongId.
                         + apply EqTyWeakZero.
                           * eapply TySubst ; eassumption.
+                          * eapply TySubst ; eassumption.
                           * eapply TermSubst ; eassumption.
                         + apply EqSubstWeakZero.
+                          * { eapply TySubst.
+                              - eapply SubstZero.
+                                eapply TermSubst.
+                                + eassumption.
+                                + assumption.
+                              - eapply TySubst.
+                                + eapply SubstWeak.
+                                  eapply TySubst.
+                                  * eassumption.
+                                  * ih.
+                                + eapply TySubst.
+                                  * eassumption.
+                                  * ih.
+                            }
+                          * { eapply TySubst.
+                              - eassumption.
+                              - ih.
+                            }
                           * { eapply TermTyConv.
                               - eapply TermSubst ; eassumption.
                               - apply EqTySym. apply EqTyWeakZero.
+                                + eapply TySubst ; eassumption.
                                 + eapply TySubst ; eassumption.
                                 + eapply TermSubst ; eassumption.
                             }
@@ -819,6 +898,7 @@ Proof.
                             - eapply EqSubstZeroZero.
                               eapply TermSubst ; eassumption.
                             - apply EqTySym. apply EqTyWeakZero.
+                              + eapply TySubst ; eassumption.
                               + eapply TySubst ; eassumption.
                               + eapply TermSubst ; eassumption.
                           }
@@ -835,35 +915,67 @@ Proof.
                             }
                         + { apply CongRefl.
                             - apply EqSubstWeakZero.
+                              + { eapply TySubst.
+                                  - eapply SubstZero.
+                                    eapply TermSubst ; eassumption.
+                                  - eapply TySubst.
+                                    + eapply SubstWeak.
+                                      eapply TySubst ; eassumption.
+                                    + eapply TySubst ; eassumption.
+                                }
+                              + eapply TySubst ; eassumption.
                               + eapply TermTyConv.
                                 * eapply TermSubst ; eassumption.
                                 * apply EqTySym.
                                   { apply EqTyWeakZero.
+                                    - eapply TySubst ; eassumption.
                                     - eapply TySubst ; eassumption.
                                     - eapply TermSubst ; eassumption.
                                   }
                               + eapply TermSubst ; eassumption.
                             - apply EqTyWeakZero.
                               + eapply TySubst ; eassumption.
+                              + eapply TySubst ; eassumption.
                               + eapply TermSubst ; eassumption.
                           }
                       - { apply CongId.
                           - apply EqTyWeakZero.
                             + eapply TySubst ; eassumption.
+                            + eapply TySubst ; eassumption.
                             + eapply TermSubst ; eassumption.
                           - apply EqSubstWeakZero.
+                            + { eapply TySubst.
+                                - eapply SubstZero.
+                                  eapply TermSubst ; eassumption.
+                                - eapply TySubst.
+                                  + eapply SubstWeak.
+                                    eapply TySubst ; eassumption.
+                                  + eapply TySubst ; eassumption.
+                              }
+                            + eapply TySubst ; eassumption.
                             + eapply TermTyConv.
                               * eapply TermSubst ; eassumption.
                               * { apply EqTySym. apply EqTyWeakZero.
+                                  - eapply TySubst ; eassumption.
                                   - eapply TySubst ; eassumption.
                                   - eapply TermSubst ; eassumption.
                                 }
                             + eapply TermSubst ; eassumption.
                           - apply EqSubstWeakZero.
+                            + { eapply TySubst.
+                                - eapply SubstZero.
+                                  eapply TermSubst ; eassumption.
+                                - eapply TySubst.
+                                  + eapply SubstWeak.
+                                    eapply TySubst ; eassumption.
+                                  + eapply TySubst ; eassumption.
+                              }
+                            + eapply TySubst ; eassumption.
                             + eapply TermTyConv.
                               * eapply TermSubst ; eassumption.
                               * apply EqTySym.
                                 { apply EqTyWeakZero.
+                                  - eapply TySubst ; eassumption.
                                   - eapply TySubst ; eassumption.
                                   - eapply TermSubst ; eassumption.
                                 }
@@ -946,14 +1058,20 @@ Proof.
                           - apply CongId.
                             + apply EqTyWeakZero.
                               * eapply TySubst ; eassumption.
+                              * eapply TySubst ; eassumption.
                               * eapply TermSubst ; eassumption.
                             + eapply EqTyConv.
                               * { eapply EqSubstWeakZero.
-                                  - eapply TermSubst ; eassumption.
-                                  - eapply TermSubst ; eassumption.
+                                  Focus 3.
+                                  eapply TermSubst ; eassumption.
+                                  Focus 3.
+                                  eapply TermSubst ; eassumption.
+                                  - eapply TySubst ; eassumption.
+                                  - eapply TySubst ; eassumption.
                                 }
                               * apply EqTySym.
                                 { apply EqTyWeakZero.
+                                  - eapply TySubst ; eassumption.
                                   - eapply TySubst ; eassumption.
                                   - eapply TermSubst ; eassumption.
                                 }
@@ -962,6 +1080,7 @@ Proof.
                                   eapply TermSubst ; eassumption.
                                 - apply EqTySym.
                                   apply EqTyWeakZero.
+                                  + eapply TySubst ; eassumption.
                                   + eapply TySubst ; eassumption.
                                   + eapply TermSubst ; eassumption.
                               }
@@ -1270,6 +1389,15 @@ Proof.
                   - apply CongId.
                     + apply EqTyWeakZero ; magic.
                     + apply EqSubstWeakZero.
+                      * { eapply TySubst.
+                          - eapply SubstZero.
+                            magic.
+                          - eapply TySubst.
+                            + eapply SubstWeak.
+                              ih.
+                            + ih.
+                        }
+                      * ih.
                       * { eapply TermTyConv.
                           - magic.
                           - apply EqTySym.
@@ -1358,11 +1486,22 @@ Proof.
                               + apply EqTyWeakZero.
                                 * magic.
                                 * magic.
+                                * magic.
                               + apply EqSubstWeakZero.
+                                * { eapply TySubst.
+                                    - eapply SubstZero.
+                                      magic.
+                                    - eapply TySubst.
+                                      + eapply SubstWeak.
+                                        magic.
+                                      + magic.
+                                  }
+                                * magic.
                                 * { eapply TermTyConv.
                                     - magic.
                                     - apply EqTySym.
                                       apply EqTyWeakZero.
+                                      + magic.
                                       + magic.
                                       + magic.
                                   }

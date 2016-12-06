@@ -365,6 +365,15 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
                        (ctxextend G (Subst A sbs))
                        D
 
+     | WeakZero :
+         forall {G A u},
+           isterm G u A ->
+           eqsubst (sbcomp (sbzero G A u)
+                           (sbweak G A))
+                   (sbid G)
+                   G
+                   G
+
 
 
 

@@ -120,6 +120,11 @@ Proof.
 
     (* SubstShift *)
     - admit.
+
+    - admit.
+
+    - admit.
+    - admit.
   }
   (****** trans_substr ******)
   - {  induction H.
@@ -131,6 +136,10 @@ Proof.
     - admit.
 
     (* SubstShift *)
+    - admit.
+
+    - admit.
+    - admit.
     - admit.
   }
 Abort.
