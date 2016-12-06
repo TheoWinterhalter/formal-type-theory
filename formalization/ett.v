@@ -28,7 +28,9 @@ with term : Type :=
 with substitution : Type :=
      | sbzero : context -> type -> term -> substitution
      | sbweak : context -> type -> substitution
-     | sbshift : context -> type -> substitution -> substitution.
+     | sbshift : context -> type -> substitution -> substitution
+     | sbid : context -> substitution
+     | sbcomp : substitution -> substitution -> substitution.
 
 Parameter UIP : type -> type.
 
@@ -62,6 +64,17 @@ with issubst : substitution -> context -> context -> Type :=
            issubst sbs G D ->
            istype D A ->
            issubst (sbshift G A sbs) (ctxextend G (Subst A sbs)) (ctxextend D A)
+
+     | SubstId :
+         forall {G},
+           isctx G ->
+           issubst (sbid G) G G
+
+     | SubstComp :
+         forall {G D E sbs sbt},
+           issubst sbs G D ->
+           issubst sbt D E ->
+           issubst (sbcomp sbs sbt) G E
 
 
 
@@ -251,6 +264,65 @@ with eqctx : context -> context -> Type :=
          forall {G A B},
            eqtype G A B ->
            eqctx (ctxextend G A) (ctxextend G B)
+
+
+
+with eqsubst : substitution -> substitution -> context -> context -> Type :=
+
+     | SubstRefl :
+         forall {G D sbs},
+           issubst sbs G D ->
+           eqsubst sbs sbs G D
+
+     | SubstSym :
+         forall {G D sbs sbt},
+           eqsubst sbs sbt G D ->
+           eqsubst sbt sbs G D
+
+     | SubstTrans :
+         forall {G D sb1 sb2 sb3},
+           eqsubst sb1 sb2 G D ->
+           eqsubst sb2 sb3 G D ->
+           eqsubst sb1 sb3 G D
+
+     | CongSubstZero :
+         forall {G1 G2 A1 A2 u1 u2},
+           eqctx G1 G2 ->
+           eqtype G1 A1 A2 ->
+           eqterm G1 u1 u2 A1 ->
+           eqsubst (sbzero G1 A1 u1)
+                   (sbzero G1 A2 u2)
+                   G1
+                   (ctxextend G1 A1)
+
+     | CongSubstWeak :
+         forall {G1 G2 A1 A2},
+           eqctx G1 G2 ->
+           eqtype G1 A1 A2 ->
+           eqsubst (sbweak G1 A1)
+                   (sbweak G2 A2)
+                   (ctxextend G1 A1)
+                   G1
+
+     | CongSubstShift :
+         forall {G1 G2 D A1 A2 sbs1 sbs2},
+           eqctx G1 G2 ->
+           eqsubst sbs1 sbs2 G1 D ->
+           eqtype D A1 A2 ->
+           eqsubst (sbshift G1 A1 sbs1)
+                   (sbshift G2 A2 sbs2)
+                   (ctxextend G1 (Subst A1 sbs1))
+                   (ctxextend D A1)
+
+     | CongSubstComp :
+         forall {G D E sbs1 sbs2 sbt1 sbt2},
+           eqsubst sbs1 sbs2 G D ->
+           eqsubst sbt1 sbt2 D E ->
+           eqsubst (sbcomp sbs1 sbt1)
+                   (sbcomp sbs2 sbt2)
+                   G
+                   E
+
 
 
 
