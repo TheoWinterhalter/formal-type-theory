@@ -23,6 +23,133 @@ Proof.
 
 Defined.
 
+(* Some admissibility lemmata. *)
+Lemma EqTyWeakNat :
+  forall {G D A B sbs},
+    issubst sbs G D ->
+    istype D A ->
+    istype D B ->
+    eqtype (ctxextend G (Subst A sbs))
+           (Subst (Subst B (sbweak D A)) (sbshift G A sbs))
+           (Subst (Subst B sbs) (sbweak G (Subst A sbs))).
+Proof.
+  intros G D A B sbs H H0 H1.
+  eapply EqTyTrans.
+  - eapply EqTySubstComp.
+    + eassumption.
+    + eapply SubstShift.
+      * eassumption.
+      * assumption.
+    + eapply SubstWeak. assumption.
+  - { eapply EqTyTrans.
+      - eapply CongTySubst.
+        + eapply WeakNat ; assumption.
+        + now apply EqTyRefl.
+      - apply EqTySym.
+        eapply EqTySubstComp.
+        + eassumption.
+        + eapply SubstWeak. eapply TySubst.
+          * eassumption.
+          * assumption.
+        + assumption.
+    }
+Defined.
+
+Lemma EqTyWeakZero :
+  forall {G A B u},
+    istype G A ->
+    isterm G u B ->
+    eqtype G (Subst (Subst A (sbweak G B)) (sbzero G B u)) A.
+Proof.
+Admitted.
+
+Lemma EqTyShiftZero :
+  forall {G D A B v sbs},
+    issubst sbs G D ->
+    istype (ctxextend D A) B ->
+    isterm D v A ->
+    eqtype
+      G
+      (Subst (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs)))
+      (Subst (Subst B (sbzero D A v)) sbs).
+Admitted.
+
+Lemma EqTyCongZero :
+  forall {G A1 A2 B1 B2 u1 u2},
+    eqtype G A1 B1 ->
+    eqterm G u1 u2 A1 ->
+    eqtype (ctxextend G A1) A2 B2 ->
+    eqtype G
+           (Subst A2 (sbzero G A1 u1))
+           (Subst B2 (sbzero G B1 u2)).
+Admitted.
+
+Lemma EqSubstWeakZero :
+  forall {G A B u v},
+    isterm G u A ->
+    isterm G v B ->
+    eqterm G
+           (subst (subst u (sbweak G B)) (sbzero G B v))
+           u
+           A.
+Admitted.
+
+Lemma EqSubstWeakNat :
+  forall {G D A B u sbs},
+    issubst sbs G D ->
+    istype D A ->
+    istype D B -> (* It seems like we need to put it in. *)
+    isterm D u B ->
+    eqterm (ctxextend G (Subst A sbs))
+           (subst (subst u (sbweak D A)) (sbshift G A sbs))
+           (subst (subst u sbs) (sbweak G (Subst A sbs)))
+           (Subst (Subst B sbs) (sbweak G (Subst A sbs))).
+Proof.
+  intros G D A B u sbs H H0 H1 H2.
+  eapply EqTyConv.
+  - { eapply EqTrans.
+      - eapply EqSubstComp.
+        + eassumption.
+        + eapply SubstShift.
+          * eassumption.
+          * assumption.
+        + eapply SubstWeak. assumption.
+      - { eapply EqTrans.
+          - eapply CongTermSubst.
+            + eapply WeakNat ; assumption.
+            + now apply EqRefl.
+          - apply EqSym.
+            { eapply EqTyConv.
+              - eapply EqSubstComp.
+                + eassumption.
+                + eapply SubstWeak. eapply TySubst.
+                  * eassumption.
+                  * assumption.
+                + assumption.
+              - eapply CongTySubst.
+                + eapply SubstSym. eapply WeakNat.
+                  * assumption.
+                  * assumption.
+                + now apply EqTyRefl.
+            }
+        }
+    }
+  - { eapply EqTyTrans.
+      - eapply EqTySym.
+        eapply EqTySubstComp.
+        + eassumption.
+        + eapply SubstShift.
+          * eassumption.
+          * eassumption.
+        + eapply SubstWeak.
+          eassumption.
+      - apply EqTyWeakNat.
+        + assumption.
+        + assumption.
+        + assumption.
+    }
+Defined.
+
 (* Tactic to apply one the induction hypotheses. *)
 Ltac ih :=
   match goal with
@@ -237,6 +364,28 @@ Proof.
     + eapply SubstCtxConv ; magic.
     + eapply SubstCtxConv ; magic.
 
+    (* WeakNat *)
+    + { apply CtxExtend.
+        - ih.
+        - eapply TySubst.
+          + eassumption.
+          + assumption.
+      }
+    + { eapply SubstComp.
+        - eapply SubstShift.
+          + eassumption.
+          + assumption.
+        - eapply SubstWeak.
+          assumption.
+      }
+    + { eapply SubstComp.
+        - eapply SubstWeak.
+          eapply TySubst.
+          + eassumption.
+          + assumption.
+        - assumption.
+      }
+
 
   (****** sane_eqtype ******)
   - destruct H; (split ; [split | idtac]) ; try magic.
@@ -263,54 +412,6 @@ Proof.
           + eassumption.
         - assumption.
       }
-
-    (* EqTyWeakNat *)
-    + constructor.
-      * magic.
-      * now apply @TySubst with (D := D).
-    + eapply TySubst.
-      * eapply SubstShift; eassumption.
-      * eapply TySubst.
-        { eapply SubstWeak; eassumption. }
-        { assumption. }
-    + eapply TySubst.
-      * eapply SubstWeak.
-        now apply @TySubst with (D := D).
-      * now apply @TySubst with (D := D).
-
-    (* EqTyWeakZero *)
-    + eapply TySubst.
-      * now eapply SubstZero.
-      * eapply TySubst.
-        { apply SubstWeak. ih. }
-        { assumption. }
-
-    (* EqTyShiftZero *)
-    + eapply TySubst.
-      * apply SubstZero.
-        now apply @TermSubst with (D := D).
-      * eapply TySubst.
-        { eapply SubstShift.
-          - eassumption.
-          - ih.
-        }
-        { assumption. }
-    + eapply TySubst.
-      * eassumption.
-      * eapply TySubst.
-        { now apply SubstZero. }
-        { assumption. }
-
-    (* EqTyCongZero *)
-    + eapply TySubst ; magic.
-    + eapply TySubst.
-      * apply SubstZero.
-        apply @TermTyConv with (A := A1).
-        { ih. }
-        { assumption. }
-      * eapply @TyCtxConv.
-        { ih. }
-        { apply EqCtxExtend ; magic. }
 
     (* EqTySubstProd *)
     + eapply TySubst.
@@ -503,39 +604,6 @@ Proof.
         - apply SubstWeak.
           now apply @TySubst with (D := D).
         - now apply @TermSubst with (D := D). }
-
-    (* EqSubstWeakZero *)
-    + { eapply TermTyConv.
-        - eapply TermSubst.
-          + magic.
-          + eapply TermSubst.
-            * magic.
-            * eassumption.
-        - apply EqTyWeakZero.
-          + magic.
-          + magic.
-      }
-
-    (* EqSubstWeakNat *)
-    + constructor ; try magic.
-      now apply @TySubst with (D := D).
-    + eapply TySubst.
-      * eapply SubstWeak. now apply @TySubst with (D := D).
-      * apply @TySubst with (D := D) ; magic.
-    + { eapply TermTyConv.
-        - eapply TermSubst.
-          + eapply SubstShift ; eassumption.
-          + eapply TermSubst.
-            * eapply SubstWeak. assumption.
-            * eassumption.
-        - apply EqTyWeakNat ; magic.
-      }
-    + { eapply TermSubst.
-        - eapply SubstWeak. eapply TySubst.
-          + eassumption.
-          + assumption.
-        - eapply TermSubst ; eassumption.
-      }
 
     (* EqSubstAbs *)
     + constructor ; try magic.
@@ -947,6 +1015,7 @@ Proof.
                                       * assumption.
                                       * ih.
                                       * eassumption.
+                                      * assumption.
                                     + apply EqTySym. apply EqTyWeakNat ; magic.
                                   - eapply EqTyConv.
                                     + eapply EqSubstShiftZero ; eassumption.

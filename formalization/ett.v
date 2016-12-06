@@ -354,6 +354,18 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
            eqctx D1 D2 ->
            eqsubst sbs sbt G2 D2
 
+     | WeakNat :
+         forall {G D A sbs},
+               issubst sbs G D ->
+               istype D A ->
+               eqsubst (sbcomp (sbshift G A sbs)
+                               (sbweak D A))
+                       (sbcomp (sbweak G (Subst A sbs))
+                               sbs)
+                       (ctxextend G (Subst A sbs))
+                       D
+
+
 
 
 
@@ -396,39 +408,6 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G
                   (Subst (Subst A sbt) sbs)
                   (Subst A (sbcomp sbs sbt))
-
-     | EqTyWeakNat :
-         forall {G D A B sbs},
-           issubst sbs G D ->
-           istype D A ->
-           istype D B ->
-           eqtype (ctxextend G (Subst A sbs))
-                  (Subst (Subst B (sbweak D A)) (sbshift G A sbs))
-                  (Subst (Subst B sbs) (sbweak G (Subst A sbs)))
-
-     | EqTyWeakZero :
-         forall {G A B u},
-           istype G A ->
-           isterm G u B ->
-           eqtype G (Subst (Subst A (sbweak G B)) (sbzero G B u)) A
-
-     | EqTyShiftZero :
-         forall {G D A B v sbs},
-           issubst sbs G D ->
-           istype (ctxextend D A) B ->
-           isterm D v A ->
-           eqtype G
-                  (Subst (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs)))
-                  (Subst (Subst B (sbzero D A v)) sbs)
-
-     | EqTyCongZero :
-         forall {G A1 A2 B1 B2 u1 u2},
-           eqtype G A1 B1 ->
-           eqterm G u1 u2 A1 ->
-           eqtype (ctxextend G A1) A2 B2 ->
-           eqtype G
-                  (Subst A2 (sbzero G A1 u1))
-                  (Subst B2 (sbzero G B1 u2))
 
      | EqTySubstProd :
          forall {G D A B sbs},
@@ -590,27 +569,6 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm (ctxextend G (Subst A sbs))
                   (subst (var (S k)) (sbshift G A sbs))
                   (subst (subst (var k) sbs) (sbweak G (Subst A sbs)))
-                  (Subst (Subst B sbs) (sbweak G (Subst A sbs)))
-
-     (* This one should be added to the PDF! *)
-     | EqSubstWeakZero :
-         forall {G A B u v},
-           isterm G u A ->
-           isterm G v B ->
-           eqterm G
-                  (subst (subst u (sbweak G B)) (sbzero G B v))
-                  u
-                  A
-
-     (* This one as well! *)
-     | EqSubstWeakNat :
-         forall {G D A B u sbs},
-           issubst sbs G D ->
-           istype D A ->
-           isterm D u B ->
-           eqterm (ctxextend G (Subst A sbs))
-                  (subst (subst u (sbweak D A)) (sbshift G A sbs))
-                  (subst (subst u sbs) (sbweak G (Subst A sbs)))
                   (Subst (Subst B sbs) (sbweak G (Subst A sbs)))
 
      | EqSubstAbs :
