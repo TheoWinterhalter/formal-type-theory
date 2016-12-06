@@ -264,13 +264,30 @@ with isterm : context -> term -> type -> Type :=
 
 with eqctx : context -> context -> Type :=
 
+     | CtxRefl :
+         forall {G},
+           isctx G ->
+           eqctx G G
+
+     | CtxSym :
+         forall {G D},
+           eqctx G D ->
+           eqctx D G
+
+     | CtxTrans :
+         forall {G D E},
+           eqctx G D ->
+           eqctx D E ->
+           eqctx G E
+
      | EqCtxEmpty :
          eqctx ctxempty ctxempty
 
      | EqCtxExtend :
-         forall {G A B},
+         forall {G D A B},
+           eqctx G D ->
            eqtype G A B ->
-           eqctx (ctxextend G A) (ctxextend G B)
+           eqctx (ctxextend G A) (ctxextend D B)
 
 
 

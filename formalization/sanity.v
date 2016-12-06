@@ -138,32 +138,34 @@ Proof.
                       }
                 - magic.
               }
-            - constructor. eapply EqTyTrans.
-              + { eapply EqTySubstId.
-                  - magic.
-                  - eapply TySubst.
-                    + magic.
-                    + magic.
-                  - eapply TermSubst.
-                    + magic.
-                    + magic.
-                  - magic.
-                }
-              + { apply CongId.
-                  - apply EqTyWeakZero.
-                    + magic.
-                    + magic.
-                  - eapply EqTyConv.
-                    + eapply EqSubstWeakZero.
-                      * eassumption.
-                      * assumption.
-                    + apply EqTySym. apply EqTyWeakZero.
-                      * magic.
-                      * assumption.
-                  - eapply EqTyConv.
-                    + apply EqSubstZeroZero. magic.
-                    + apply EqTySym. apply EqTyWeakZero ; magic.
-                }
+            - apply EqCtxExtend.
+              + apply CtxRefl. magic.
+              + eapply EqTyTrans.
+                * { eapply EqTySubstId.
+                    - magic.
+                    - eapply TySubst.
+                      + magic.
+                      + magic.
+                    - eapply TermSubst.
+                      + magic.
+                      + magic.
+                    - magic.
+                  }
+                * { apply CongId.
+                    - apply EqTyWeakZero.
+                      + magic.
+                      + magic.
+                    - eapply EqTyConv.
+                      + eapply EqSubstWeakZero.
+                        * eassumption.
+                        * assumption.
+                      + apply EqTySym. apply EqTyWeakZero.
+                        * magic.
+                        * assumption.
+                    - eapply EqTyConv.
+                      + apply EqSubstZeroZero. magic.
+                      + apply EqTySym. apply EqTyWeakZero ; magic.
+                  }
           }
       }
 
@@ -171,7 +173,14 @@ Proof.
     + apply @TySubst with (D := ctxextend G Bool) ; magic.
 
   (****** sane_eqctx ******)
-  - destruct H; split ; magic.
+  - destruct H; split ; try magic.
+
+    (* EqCtxExtend *)
+    apply CtxExtend.
+    + magic.
+    + eapply TyCtxConv.
+      * magic.
+      * magic.
 
   (****** sane_eqsubst ******)
   - destruct H; (split ; [split ; [split | idtac] | idtac]) ; try magic.
@@ -183,9 +192,8 @@ Proof.
           - magic.
           - magic.
         }
-      * (* We need reflexivity for context equality. *)
-        destruct todo.
-      * constructor. magic.
+      * magic.
+      * apply EqCtxExtend ; magic.
 
     (* CongSubstWeak *)
     + { eapply SubstCtxConv.
@@ -193,10 +201,11 @@ Proof.
           eapply TyCtxConv.
           + magic.
           + assumption.
-        - (* We need stronger context equality. *)
-          destruct todo.
-        - (* We need symmetry for context equality. *)
-          destruct todo.
+        - apply CtxSym.
+          apply EqCtxExtend.
+          + assumption.
+          + assumption.
+        - now apply CtxSym.
       }
 
     (* CongSubstShift *)
@@ -211,11 +220,15 @@ Proof.
           + eapply SubstCtxConv.
             * magic.
             * assumption.
-            * (* Again reflexivity for contexts. *)
-              assert (f : eqctx D D) by (destruct todo). exact f.
+            * apply CtxRefl.
+              magic.
           + magic.
-        - (* Extended context equality. *)
-          destruct todo.
+        - apply CtxSym. apply EqCtxExtend.
+          + magic.
+          + (* We need to be able to deal with equal substitutions.
+               This doesn't come as a surprise though. *)
+            (* eapply CongTySubst. *)
+            destruct todo.
         - constructor. magic.
       }
 
@@ -279,7 +292,7 @@ Proof.
         { assumption. }
       * eapply @TyCtxConv.
         { ih. }
-        { now apply EqCtxExtend. }
+        { apply EqCtxExtend ; magic. }
 
     (* EqTySubstProd *)
     + eapply TySubst.
@@ -322,7 +335,10 @@ Proof.
       * ih.
       * apply @TyCtxConv with (G := ctxextend G A1).
         { ih. }
-        { now apply EqCtxExtend. }
+        { apply EqCtxExtend.
+          - magic.
+          - magic.
+        }
 
     (* CongId *)
     + constructor ; try magic.
@@ -556,7 +572,8 @@ Proof.
                       - magic.
                     }
                 + assumption.
-              - constructor. eapply EqTyTrans.
+              - apply EqCtxExtend ; try magic.
+                eapply EqTyTrans.
                 + { eapply EqTySubstId.
                     - eapply SubstZero. assumption.
                     - eapply TySubst.
@@ -608,7 +625,13 @@ Proof.
                       + constructor. magic.
                   }
                 + assumption.
-              - constructor.
+              - apply EqCtxExtend.
+                { apply CtxRefl. apply CtxExtend.
+                  - magic.
+                  - eapply TySubst.
+                    + eassumption.
+                    + magic.
+                }
                 { eapply EqTyTrans.
                   - eapply EqTySubstId.
                     + eapply SubstShift.
@@ -758,29 +781,36 @@ Proof.
                                     - eapply TermVarZero. ih.
                                   }
                               + magic.
-                            - constructor.
-                              eapply EqTyTrans.
-                              + { eapply EqTySubstId.
-                                  - eapply SubstShift ; eassumption.
-                                  - eapply TySubst.
-                                    + eapply SubstWeak. ih.
-                                    + ih.
-                                  - eapply TermSubst.
-                                    + eapply SubstWeak. ih.
-                                    + assumption.
-                                  - apply TermVarZero. ih.
-                                }
-                              + { apply CongId.
-                                  - apply EqTyWeakNat ; magic.
-                                  - eapply EqTyConv.
-                                    + eapply EqSubstWeakNat ; eassumption.
-                                    + apply EqTySym. apply EqTyWeakNat ; magic.
-                                  - eapply EqTyConv.
-                                    + eapply EqSubstShiftZero ; eassumption.
-                                    + apply EqTySym. apply EqTyWeakNat ; magic.
-                                }
+                            - apply EqCtxExtend.
+                              + apply CtxRefl.
+                                apply CtxExtend.
+                                * magic.
+                                * eapply TySubst ; eassumption.
+                              + eapply EqTyTrans.
+                                * { eapply EqTySubstId.
+                                    - eapply SubstShift ; eassumption.
+                                    - eapply TySubst.
+                                      + eapply SubstWeak. ih.
+                                      + ih.
+                                    - eapply TermSubst.
+                                      + eapply SubstWeak. ih.
+                                      + assumption.
+                                    - apply TermVarZero. ih.
+                                  }
+                                * { apply CongId.
+                                    - apply EqTyWeakNat ; magic.
+                                    - eapply EqTyConv.
+                                      + eapply EqSubstWeakNat ; eassumption.
+                                      + apply EqTySym.
+                                        apply EqTyWeakNat ; magic.
+                                    - eapply EqTyConv.
+                                      + eapply EqSubstShiftZero ; eassumption.
+                                      + apply EqTySym.
+                                        apply EqTyWeakNat ; magic.
+                                  }
                           }
-                      - { constructor. eapply EqTyTrans.
+                      - { apply EqCtxExtend ; try magic.
+                          eapply EqTyTrans.
                           - eapply EqTySubstId.
                             + eapply SubstZero.
                               eapply TermSubst ; eassumption.
@@ -843,7 +873,12 @@ Proof.
                                   - apply TermVarZero. ih.
                                 }
                             + magic.
-                          - constructor.
+                          - apply EqCtxExtend.
+                            { apply CtxRefl.
+                              apply CtxExtend.
+                              - magic.
+                              - eapply TySubst ; eassumption.
+                            }
                             { eapply EqTyTrans.
                               - eapply EqTySubstId.
                                 + eapply SubstShift ; eassumption.
@@ -965,7 +1000,9 @@ Proof.
                   * eassumption.
                   * ih.
                 + assumption.
-              - apply EqCtxExtend. now apply @EqTySubstBool with (D := D).
+              - apply EqCtxExtend.
+                + magic.
+                + now apply @EqTySubstBool with (D := D).
             }
           + { eapply TermTyConv.
               - eapply TermSubst.
@@ -1043,12 +1080,15 @@ Proof.
               - eapply TermTyConv.
                 + ih.
                 + assumption.
-              - now apply EqCtxExtend. }
+              - apply EqCtxExtend.
+                + magic.
+                + assumption.
+            }
         - apply CongProd.
           + now apply EqTySym.
           + { eapply EqTyCtxConv.
               - now apply @EqTySym with (G := ctxextend G A1).
-              - now apply EqCtxExtend. } }
+              - apply EqCtxExtend ; magic. } }
 
     (* CongApp *)
     + { eapply TySubst.
@@ -1059,7 +1099,7 @@ Proof.
         - apply TermApp.
           + { eapply TyCtxConv.
               - ih.
-              - now apply EqCtxExtend. }
+              - apply EqCtxExtend ; magic. }
           + { eapply TermTyConv.
               - ih.
               - now apply CongProd. }
@@ -1095,30 +1135,33 @@ Proof.
                     - apply TermVarZero. magic.
                   }
               + magic.
-            - { constructor. eapply EqTyTrans.
-                - eapply EqTySubstId.
-                  + eapply SubstZero. magic.
-                  + eapply TySubst.
-                    * eapply SubstWeak. magic.
-                    * magic.
-                  + eapply TermSubst.
-                    * eapply SubstWeak. magic.
-                    * magic.
-                  + apply TermVarZero. magic.
-                - apply CongId.
-                  + apply EqTyWeakZero ; magic.
-                  + apply EqSubstWeakZero.
-                    * { eapply TermTyConv.
-                        - magic.
+            - { apply EqCtxExtend.
+                { magic. }
+                { eapply EqTyTrans.
+                  - eapply EqTySubstId.
+                    + eapply SubstZero. magic.
+                    + eapply TySubst.
+                      * eapply SubstWeak. magic.
+                      * magic.
+                    + eapply TermSubst.
+                      * eapply SubstWeak. magic.
+                      * magic.
+                    + apply TermVarZero. magic.
+                  - apply CongId.
+                    + apply EqTyWeakZero ; magic.
+                    + apply EqSubstWeakZero.
+                      * { eapply TermTyConv.
+                          - magic.
+                          - apply EqTySym.
+                            apply EqTyWeakZero ; magic.
+                        }
+                      * magic.
+                    + { eapply EqTyConv.
+                        - apply EqSubstZeroZero. magic.
                         - apply EqTySym.
                           apply EqTyWeakZero ; magic.
                       }
-                    * magic.
-                  + { eapply EqTyConv.
-                      - apply EqSubstZeroZero. magic.
-                      - apply EqTySym.
-                        apply EqTyWeakZero ; magic.
-                    }
+                }
               }
           }
       }
@@ -1128,11 +1171,21 @@ Proof.
           + eapply TermTyConv.
             * magic.
             * magic.
-          + (* We might need more equalities on contexts to deal with that
-               one... *)
-            eapply TyCtxConv.
+          + eapply TyCtxConv.
             * magic.
-            * destruct todo.
+            * { apply EqCtxExtend.
+                - apply EqCtxExtend.
+                  + magic.
+                  + magic.
+                - apply CongId.
+                  + (* Need congruence for sbweak. *)
+                    destruct todo.
+                  + (* Need congruence for sbweak but also for terms. *)
+                    destruct todo.
+                  + apply EqRefl.
+                    apply TermVarZero.
+                    magic.
+              }
           + eapply TermTyConv.
             * magic.
             * { apply EqTyCongZero.
