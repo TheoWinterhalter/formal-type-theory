@@ -762,7 +762,9 @@ Proof.
                      but somehow, one the exchanges that we did broke typing
                      by removing one layer of substitution... *)
                   { eapply EqTyTrans.
-                    - eapply EqTyShiftZero.
+                    - (* This is the guilty party, the right-hand side we wish
+                         to produce is ill-typed. *)
+                      eapply EqTyShiftZero.
                       + eapply SubstZero.
                         eapply TermSubst ; eassumption.
                       + { eapply TyCtxConv.
