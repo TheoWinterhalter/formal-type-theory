@@ -474,10 +474,10 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G (Id A u1 u2) (Id B v1 v2)
 
      | CongTySubst :
-         forall {G D A B sbs},
-           issubst sbs G D ->
+         forall {G D A B sbs sbt},
+           eqsubst sbs sbt G D ->
            eqtype D A B ->
-           eqtype G (Subst A sbs) (Subst B sbs)
+           eqtype G (Subst A sbs) (Subst B sbt)
 
 
 
@@ -964,10 +964,10 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst C1 (sbzero G Bool u1))
 
      | CongTermSubst :
-         forall {G D A u1 u2 sbs},
-           issubst sbs G D ->
+         forall {G D A u1 u2 sbs sbt},
+           eqsubst sbs sbt G D ->
            eqterm D u1 u2 A ->
            eqterm G
                   (subst u1 sbs)
-                  (subst u2 sbs)
+                  (subst u2 sbt)
                   (Subst A sbs).

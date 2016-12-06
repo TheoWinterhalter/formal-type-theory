@@ -351,10 +351,10 @@ Proof.
 
     (* CongTySubst *)
     + apply @TySubst with (D := D).
-      * assumption.
+      * ih.
       * ih.
     + apply @TySubst with (D := D).
-      * assumption.
+      * ih.
       * ih.
 
 
@@ -1219,35 +1219,53 @@ Proof.
             - eapply TermTyConv.
               + ih.
               + apply @CongTySubst with (D := ctxextend G Bool).
-                * apply SubstZero. apply TermTrue.
-                  ih.
+                * { eapply CongSubstZero.
+                    - apply CtxRefl.
+                      magic.
+                    - apply EqTyRefl. apply TyBool. magic.
+                    - apply EqRefl. apply TermTrue. ih.
+                  }
                 * assumption.
             - eapply TermTyConv.
               + ih.
               + apply @CongTySubst with (D := ctxextend G Bool).
-                * apply SubstZero. apply TermFalse.
-                  ih.
+                * { eapply CongSubstZero.
+                    - apply CtxRefl.
+                      magic.
+                    - apply EqTyRefl. apply TyBool. magic.
+                    - apply EqRefl. apply TermFalse. ih.
+                  }
                 * assumption.
           }
         - apply EqTySym. eapply EqTyTrans.
           + eapply CongTySubst.
-            * apply SubstZero. ih.
+            * { eapply CongSubstZero.
+                - apply CtxRefl. magic.
+                - apply EqTyRefl. magic.
+                - eassumption.
+              }
             * eassumption.
-          + apply EqTyCongZero.
-            * apply EqTyRefl. ih.
-            * assumption.
-            * apply EqTyRefl. ih.
+          + apply EqTyRefl.
+            eapply TySubst.
+            * eapply SubstZero.
+              ih.
+            * ih.
       }
 
     (* CongTermSubst *)
     + apply @TySubst with (D := D).
-      * assumption.
+      * ih.
       * ih.
     + apply @TermSubst with (D := D).
-      * assumption.
       * ih.
-    + apply @TermSubst with (D := D).
-      * assumption.
       * ih.
+    + { eapply TermTyConv.
+        - eapply TermSubst.
+          + magic.
+          + magic.
+        - eapply CongTySubst.
+          + eapply SubstSym. eassumption.
+          + apply EqTyRefl. magic.
+      }
 
 Defined.
