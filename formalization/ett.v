@@ -76,6 +76,13 @@ with issubst : substitution -> context -> context -> Type :=
            issubst sbt D E ->
            issubst (sbcomp sbs sbt) G E
 
+     | SubstCtxConv :
+         forall {G1 G2 D1 D2 sbs},
+           issubst sbs G1 D1 ->
+           eqctx G1 G2 ->
+           eqctx D1 D2 ->
+           issubst sbs G2 D2
+
 
 
 with istype : context -> type -> Type :=
@@ -322,6 +329,13 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
                    (sbcomp sbs2 sbt2)
                    G
                    E
+
+     | EqSubstCtxConv :
+         forall {G1 G2 D1 D2 sbs sbt},
+           eqsubst sbs sbt G1 D1 ->
+           eqctx G1 G2 ->
+           eqctx D1 D2 ->
+           eqsubst sbs sbt G2 D2
 
 
 

@@ -36,6 +36,10 @@ Ltac ih :=
     _ : isterm ?G ?u ?A |- _ => now apply (f G A u)
   | f : forall G D, eqctx G D -> isctx G * isctx D ,
     _ : eqctx ?G ?D |- _ => now apply (f G D)
+  | f : forall G D sbs sbt,
+        eqsubst sbs sbt G D ->
+        isctx G * isctx D * issubst sbs G D * issubst sbt G D ,
+    _ : eqsubst ?sbs ?sbt ?G ?D |- _ => now apply (f G D sbs sbt)
   | f : forall G A B, eqtype G A B -> isctx G * istype G A * istype G B ,
     _ : eqtype ?G ?A ?B |- _ => now apply (f G A B)
   | f : forall G u v A,
@@ -69,6 +73,9 @@ with sane_isterm {G A u} (H : isterm G u A) {struct H} :
 
 with sane_eqctx {G D} (H : eqctx G D) {struct H} :
        isctx G * isctx D
+
+with sane_eqsubst {G D sbs sbt} (H : eqsubst sbs sbt G D) {struct H} :
+       isctx G * isctx D * issubst sbs G D * issubst sbt G D
 
 with sane_eqtype {G A B} (H : eqtype G A B) {struct H} :
        isctx G * istype G A * istype G B
@@ -165,6 +172,59 @@ Proof.
 
   (****** sane_eqctx ******)
   - destruct H; split ; magic.
+
+  (****** sane_eqsubst ******)
+  - destruct H; (split ; [split ; [split | idtac] | idtac]) ; try magic.
+
+    (* CongSubstZero *)
+    + eapply SubstCtxConv.
+      * eapply SubstZero.
+        { eapply TermTyConv.
+          - magic.
+          - magic.
+        }
+      * (* We need reflexivity for context equality. *)
+        destruct todo.
+      * constructor. magic.
+
+    (* CongSubstWeak *)
+    + { eapply SubstCtxConv.
+        - eapply SubstWeak.
+          eapply TyCtxConv.
+          + magic.
+          + assumption.
+        - (* We need stronger context equality. *)
+          destruct todo.
+        - (* We need symmetry for context equality. *)
+          destruct todo.
+      }
+
+    (* CongSubstShift *)
+    + { constructor.
+        - magic.
+        - eapply TySubst.
+          + magic.
+          + magic.
+      }
+    + { eapply SubstCtxConv.
+        - eapply SubstShift.
+          + eapply SubstCtxConv.
+            * magic.
+            * assumption.
+            * (* Again reflexivity for contexts. *)
+              assert (f : eqctx D D) by (destruct todo). exact f.
+          + magic.
+        - (* Extended context equality. *)
+          destruct todo.
+        - constructor. magic.
+      }
+
+    (* CongSubstComp *)
+    + eapply SubstComp ; magic.
+    + eapply SubstComp ; magic.
+    + eapply SubstCtxConv ; magic.
+    + eapply SubstCtxConv ; magic.
+
 
   (****** sane_eqtype ******)
   - destruct H; (split ; [split | idtac]) ; try magic.
