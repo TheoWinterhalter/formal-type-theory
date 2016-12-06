@@ -51,7 +51,7 @@ Ltac magicn n :=
   | S ?n => magicn n || (constructor ; magicn n)
   end.
 
-Ltac magic := magicn (S (S (S 0))).
+Ltac magic := magicn (S (S 0)).
 
 (* For admitting purposes *)
 Lemma todo : False.
