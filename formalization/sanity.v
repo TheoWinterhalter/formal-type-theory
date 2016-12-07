@@ -242,6 +242,16 @@ Proof.
     + eapply SubstCtxConv ; magic.
     + eapply SubstCtxConv ; magic.
 
+    (* CompAssoc *)
+    + { eapply SubstComp.
+        - eapply SubstComp ; eassumption.
+        - assumption.
+      }
+    + { eapply SubstComp.
+        - eassumption.
+        - eapply SubstComp ; eassumption.
+      }
+
     (* WeakNat *)
     + { apply CtxExtend.
         - ih.

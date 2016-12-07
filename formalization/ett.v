@@ -354,6 +354,16 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
            eqctx D1 D2 ->
            eqsubst sbs sbt G2 D2
 
+     | CompAssoc :
+         forall {G D E F sbs sbt sbr},
+           issubst sbs G D ->
+           issubst sbt D E ->
+           issubst sbr E F ->
+           eqsubst (sbcomp (sbcomp sbs sbt) sbr)
+                   (sbcomp sbs (sbcomp sbt sbr))
+                   G
+                   F
+
      | WeakNat :
          forall {G D A sbs},
                issubst sbs G D ->
