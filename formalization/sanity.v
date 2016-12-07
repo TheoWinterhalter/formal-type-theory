@@ -23,6 +23,74 @@ Proof.
 
 Defined.
 
+(* Some tactic to compose substitutions. *)
+Lemma eqtype_subst_left :
+  forall {G D E A B sbs sbt},
+    issubst sbs G D ->
+    issubst sbt D E ->
+    istype E A ->
+    eqtype G (Subst A (sbcomp sbs sbt)) B ->
+    eqtype G (Subst (Subst A sbt) sbs) B.
+Proof.
+  intros.
+  eapply EqTyTrans.
+  - eapply EqTySubstComp.
+    + eassumption.
+    + eassumption.
+    + assumption.
+  - assumption.
+Defined.
+
+Lemma eqterm_subst_left :
+  forall {G D E A u v sbs sbt},
+    issubst sbs G D ->
+    issubst sbt D E ->
+    istype E A ->
+    isterm E u A ->
+    eqterm G (subst u (sbcomp sbs sbt)) v (Subst A (sbcomp sbs sbt)) ->
+    eqterm G (subst (subst u sbt) sbs) v (Subst (Subst A sbt) sbs).
+Proof.
+  intros.
+  eapply EqTrans.
+  - eapply EqTyConv.
+    + eapply EqSubstComp.
+      * eassumption.
+      * eassumption.
+      * assumption.
+    + apply EqTySym.
+      eapply EqTySubstComp.
+      * eassumption.
+      * eassumption.
+      * assumption.
+  - eapply EqTyConv.
+    + eassumption.
+    + apply EqTySym.
+      eapply EqTySubstComp.
+      * eassumption.
+      * eassumption.
+      * assumption.
+Defined.
+
+Ltac compsubst1 :=
+  match goal with
+  | |- eqtype ?G (Subst (Subst ?A ?sbt) ?sbs) ?B =>
+    eapply eqtype_subst_left ; try eassumption
+  | |- eqtype ?G ?A (Subst (Subst ?B ?sbt) ?sbs) =>
+    eapply EqTySym ; eapply eqtype_subst_left ; try eassumption
+  | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v (Subst (Subst ?A ?sbt) ?sbs) =>
+    eapply eqterm_subst_left ; try eassumption
+  | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) (Subst (Subst ?A ?sbt) ?sbs) =>
+    eapply EqSym ; eapply eqterm_subst_left ; try eassumption
+  | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v ?A =>
+    eapply EqTyConv ;
+    [try eapply eqterm_subst_left ; try eassumption | try eassumption]
+  | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) ?A =>
+    eapply EqSym ; eapply EqTyConv ;
+    [try eapply eqterm_subst_left ; try eassumption | try eassumption]
+  | _ => fail
+  end.
+
+
 (* Some admissibility lemmata. *)
 Lemma EqTyWeakNat :
   forall {G D A B sbs},
@@ -79,13 +147,26 @@ Defined.
 Lemma EqTyShiftZero :
   forall {G D A B v sbs},
     issubst sbs G D ->
+    istype D A ->
     istype (ctxextend D A) B ->
     isterm D v A ->
     eqtype
       G
       (Subst (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs)))
       (Subst (Subst B (sbzero D A v)) sbs).
-Admitted.
+Proof.
+  intros.
+  compsubst1.
+  - eapply SubstZero.
+    eapply TermSubst ; eassumption.
+  - eapply SubstShift ; assumption.
+  - compsubst1.
+    + eapply SubstZero. assumption.
+    + eapply CongTySubst.
+      * eapply SubstSym.
+        eapply ShiftZero ; assumption.
+      * apply EqTyRefl ; assumption.
+Defined.
 
 Lemma EqTyCongZero :
   forall {G A1 A2 B1 B2 u1 u2},
@@ -191,6 +272,40 @@ Proof.
           }
       - now apply EqIdSubst.
     }
+Defined.
+
+Lemma EqSubstShiftZero :
+  forall {G D A B u v sbs},
+    issubst sbs G D ->
+    istype D A ->
+    istype (ctxextend D A) B ->
+    isterm (ctxextend D A) u B ->
+    isterm D v A ->
+    eqterm
+      G
+      (subst (subst u (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs)))
+      (subst (subst u (sbzero D A v)) sbs)
+      (Subst (Subst B (sbzero D A v)) sbs).
+Proof.
+  intros.
+  compsubst1.
+  - eapply SubstZero. assumption.
+  - compsubst1.
+    + eapply SubstZero.
+      eapply TermSubst ; eassumption.
+    + eapply SubstShift ; assumption.
+    + { eapply CongTermSubst.
+        - eapply ShiftZero ; assumption.
+        - apply EqRefl. assumption.
+      }
+    + compsubst1.
+      * eapply SubstZero.
+        eapply TermSubst ; eassumption.
+      * eapply SubstShift ; assumption.
+      * { eapply CongTySubst.
+          - eapply ShiftZero ; assumption.
+          - apply EqTyRefl. assumption.
+        }
 Defined.
 
 (* Tactic to apply one the induction hypotheses. *)

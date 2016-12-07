@@ -374,6 +374,16 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
                    G
                    G
 
+     | ShiftZero :
+         forall {G D A u sbs},
+           issubst sbs G D ->
+           isterm D u A ->
+           eqsubst (sbcomp (sbzero G (Subst A sbs) (subst u sbs))
+                           (sbshift G A sbs))
+                   (sbcomp sbs
+                           (sbzero D A u))
+                   G
+                   (ctxextend D A)
 
 
 
