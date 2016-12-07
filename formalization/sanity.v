@@ -170,13 +170,22 @@ Defined.
 
 Lemma EqTyCongZero :
   forall {G A1 A2 B1 B2 u1 u2},
+    isctx G ->
     eqtype G A1 B1 ->
     eqterm G u1 u2 A1 ->
     eqtype (ctxextend G A1) A2 B2 ->
     eqtype G
            (Subst A2 (sbzero G A1 u1))
            (Subst B2 (sbzero G B1 u2)).
-Admitted.
+Proof.
+  intros.
+  eapply CongTySubst.
+  - eapply CongSubstZero.
+    + apply CtxRefl. assumption.
+    + assumption.
+    + assumption.
+  - assumption.
+Defined.
 
 Lemma EqSubstWeakNat :
   forall {G D A B u sbs},
