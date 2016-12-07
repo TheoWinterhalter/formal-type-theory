@@ -1139,7 +1139,161 @@ Proof.
                               - { eapply CongTySubst.
                                   - (* Finally in the realm of substitutions!
                                        This is where the proof starts. *)
-                                    destruct todo.
+                                    (* We go from the rhs. *)
+                                    { eapply SubstSym. eapply SubstTrans.
+                                      - (* The we only look on the lhs of the
+                                           composition. *)
+                                        eapply CongSubstComp.
+                                        + (* We exchange the substs. *)
+                                          eapply SubstSym. eapply ShiftZero.
+                                          * assumption.
+                                          * apply TermRefl.
+                                            assumption.
+                                        + (* We don't touch the rhs. *)
+                                          eapply SubstRefl.
+                                          { eapply SubstCtxConv.
+                                            - eapply SubstShift.
+                                              + eapply SubstZero.
+                                                assumption.
+                                              + { apply TyId.
+                                                  - eapply TySubst.
+                                                    + eapply SubstWeak.
+                                                      assumption.
+                                                    + assumption.
+                                                  - eapply TermSubst.
+                                                    + eapply SubstWeak.
+                                                      assumption.
+                                                    + assumption.
+                                                  - apply TermVarZero.
+                                                    assumption.
+                                                }
+                                            - apply EqCtxExtend.
+                                              + apply CtxRefl. ih.
+                                              + { pushsubst1.
+                                                  - eapply SubstZero.
+                                                    assumption.
+                                                  - eapply TySubst.
+                                                    + eapply SubstWeak.
+                                                      assumption.
+                                                    + assumption.
+                                                  - eapply TermSubst.
+                                                    + now eapply SubstWeak.
+                                                    + assumption.
+                                                  - now apply TermVarZero.
+                                                  - apply CongId.
+                                                    + eapply EqTyWeakZero
+                                                      ; assumption.
+                                                    + { eapply EqSubstWeakZero.
+                                                        - eapply TySubst.
+                                                          + eapply SubstZero.
+                                                            assumption.
+                                                          + eapply TySubst.
+                                                            * eapply SubstWeak.
+                                                              assumption.
+                                                            * assumption.
+                                                        - assumption.
+                                                        - eapply TermTyConv.
+                                                          + eassumption.
+                                                          + apply EqTySym.
+                                                            apply EqTyWeakZero
+                                                            ; assumption.
+                                                        - assumption.
+                                                      }
+                                                    + { eapply EqTyConv.
+                                                        - eapply EqSubstZeroZero.
+                                                          assumption.
+                                                        - apply EqTySym.
+                                                          eapply EqTyWeakZero
+                                                          ; assumption.
+                                                      }
+                                                }
+                                            - apply CtxRefl.
+                                              ih.
+                                          }
+                                      - (* We're using associativity to look at
+                                           the rhs. *)
+                                        eapply SubstTrans.
+                                        + eapply CompAssoc.
+                                          * eapply SubstZero.
+                                            { eapply TermSubst.
+                                              - eassumption.
+                                              - apply TermRefl.
+                                                assumption.
+                                            }
+                                          * { eapply SubstShift.
+                                              - eassumption.
+                                              - apply TyId.
+                                                + assumption.
+                                                + assumption.
+                                                + assumption.
+                                            }
+                                          * { eapply SubstCtxConv.
+                                              - eapply SubstShift.
+                                                + eapply SubstZero.
+                                                  assumption.
+                                                + { apply TyId.
+                                                    - eapply TySubst.
+                                                      + eapply SubstWeak.
+                                                        assumption.
+                                                      + assumption.
+                                                    - eapply TermSubst.
+                                                      + eapply SubstWeak.
+                                                        assumption.
+                                                      + assumption.
+                                                    - apply TermVarZero.
+                                                      assumption.
+                                                  }
+                                              - apply EqCtxExtend.
+                                                + apply CtxRefl. ih.
+                                                + { pushsubst1.
+                                                    - eapply SubstZero.
+                                                      assumption.
+                                                    - eapply TySubst.
+                                                      + eapply SubstWeak.
+                                                        assumption.
+                                                      + assumption.
+                                                    - eapply TermSubst.
+                                                      + eapply SubstWeak.
+                                                        assumption.
+                                                      + assumption.
+                                                    - apply TermVarZero.
+                                                      assumption.
+                                                    - apply CongId.
+                                                      + apply EqTyWeakZero
+                                                        ; assumption.
+                                                      + { apply EqSubstWeakZero.
+                                                          - eapply TySubst.
+                                                            + eapply SubstZero.
+                                                              assumption.
+                                                            + eapply TySubst.
+                                                              * eapply SubstWeak.
+                                                                assumption.
+                                                              * assumption.
+                                                          - assumption.
+                                                          - eapply TermTyConv.
+                                                            + eassumption.
+                                                            + apply EqTySym.
+                                                              apply EqTyWeakZero
+                                                              ; assumption.
+                                                          - assumption.
+                                                        }
+                                                      + { eapply EqTyConv.
+                                                          - apply EqSubstZeroZero.
+                                                            assumption.
+                                                          - apply EqTySym.
+                                                            apply EqTyWeakZero
+                                                            ; assumption.
+                                                        }
+                                                  }
+                                              - apply CtxRefl. ih.
+                                            }
+                                        + (* TODO *)
+                                          (* We can now have a look at the rhs
+                                             of the composition.
+                                             This is marked by a star on my
+                                             notebook. *)
+                                          destruct todo.
+                                    }
                                   - eapply EqTyRefl.
                                     eassumption.
                                 }
