@@ -91,6 +91,17 @@ Ltac compsubst1 :=
   end.
 
 
+(* Some tactic to push substitutions inside one step. *)
+(* Partial for now. *)
+Ltac pushsubst1 :=
+  match goal with
+  | |- eqtype ?G (Subst (Id ?A ?u ?v) ?sbs) ?B =>
+    eapply EqTyTrans ; [
+      eapply EqTySubstId ; try eassumption
+    | try eassumption
+    ]
+  | _ => fail
+  end.
 (* Some admissibility lemmata. *)
 Lemma EqTyWeakNat :
   forall {G D A B sbs},
@@ -989,18 +1000,49 @@ Proof.
                 + apply CtxRefl. apply CtxExtend.
                   * ih.
                   * eapply TySubst ; eassumption.
-                + (* We'll make a tactic to push substitutions in! *)
-                  destruct todo.
+                + { pushsubst1.
+                    - eapply SubstShift ; eassumption.
+                    - eapply TySubst.
+                      + eapply SubstWeak. ih.
+                      + ih.
+                    - eapply TermSubst.
+                      + eapply SubstWeak. ih.
+                      + assumption.
+                    - apply TermVarZero. ih.
+                    - { apply CongId.
+                        - apply EqTyWeakNat ; magic.
+                        - eapply EqTyConv.
+                          + eapply EqSubstWeakNat.
+                            * assumption.
+                            * ih.
+                            * eassumption.
+                            * assumption.
+                          + apply EqTySym. apply EqTyWeakNat ; magic.
+                        - eapply EqTyConv.
+                          + eapply EqSubstShiftZero.
+                            * eassumption.
+                            * ih.
+                          + apply EqTySym. apply EqTyWeakNat ; magic.
+                      }
+                  }
             }
-          + destruct todo.
+          + (* Typing w is hard.
+               We might have more luck with the new tactics and lemmata. *)
+            destruct todo.
           + eapply TermSubst ; eassumption.
           + { eapply TermTyConv.
               - eapply TermSubst.
                 + eassumption.
                 + eassumption.
-              - destruct todo.
+              - pushsubst1.
+                apply EqTyRefl.
+                apply TyId.
+                + eapply TySubst ; eassumption.
+                + eapply TermSubst ; eassumption.
+                + eapply TermSubst ; eassumption.
             }
-        - destruct todo.
+        - (* Another hardship hopefully simplified now. *)
+          destruct todo.
       }
 
     (* EqSubstExfalso *)
