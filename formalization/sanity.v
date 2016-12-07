@@ -283,7 +283,7 @@ Proof.
     }
 Defined.
 
-Lemma EqSubstShiftZero :
+Lemma EqTermShiftZero :
   forall {G D A B u v sbs},
     issubst sbs G D ->
     istype D A ->
@@ -563,6 +563,17 @@ Proof.
         - eapply SubstWeak. ih.
       }
 
+    (* ShiftZero *)
+    + { eapply SubstComp.
+        - eapply SubstZero.
+          eapply TermSubst ; eassumption.
+        - eapply SubstShift ; magic.
+      }
+    + { eapply SubstComp.
+        - eassumption.
+        - eapply SubstZero. assumption.
+      }
+
 
   (****** sane_eqtype ******)
   - destruct H; (split ; [split | idtac]) ; try magic.
@@ -832,7 +843,7 @@ Proof.
                 + ih.
                 + assumption. }
           + now apply @TermSubst with (D := D).
-        - now apply EqTyShiftZero. }
+        - apply EqTyShiftZero ; magic. }
 
     (* EqSubstRefl *)
     + constructor ; try magic.
@@ -976,6 +987,7 @@ Proof.
                                   (subst (subst u sbs) (sbweak G (Subst A sbs)))
                             )
                             (sbzero G (Subst A sbs) (subst u sbs))).
+                  * magic.
                   * { apply EqTySym. eapply EqTyTrans.
                       - eapply EqTySubstId.
                         + eapply SubstZero. eapply TermSubst ; eassumption.
@@ -1221,6 +1233,18 @@ Proof.
                       eapply EqTyShiftZero.
                       + eapply SubstZero.
                         eapply TermSubst ; eassumption.
+                      + { apply TyId.
+                          - eapply TySubst.
+                            + eapply SubstWeak.
+                              eapply TySubst ; eassumption.
+                            + eapply TySubst ; eassumption.
+                          - eapply TermSubst.
+                            + eapply SubstWeak.
+                              eapply TySubst ; eassumption.
+                            + eapply TermSubst ; eassumption.
+                          - apply TermVarZero.
+                            eapply TySubst ; eassumption.
+                        }
                       + { eapply TyCtxConv.
                           - eapply TySubst.
                             + eapply SubstShift.
@@ -1374,9 +1398,11 @@ Proof.
               - eapply EqTyTrans.
                 + eapply EqTySym. apply EqTyShiftZero.
                   * assumption.
+                  * ih.
                   * assumption.
                   * apply TermTrue. ih.
                 + { apply EqTyCongZero.
+                    - ih.
                     - now apply @EqTySubstBool with (D := D).
                     - eapply EqTyConv.
                       + now apply @EqSubstTrue with (D := D).
@@ -1395,9 +1421,11 @@ Proof.
               - eapply EqTyTrans.
                 + eapply EqTySym. apply EqTyShiftZero.
                   * assumption.
+                  * ih.
                   * assumption.
                   * apply TermFalse. ih.
                 + { apply EqTyCongZero.
+                    - ih.
                     - now apply @EqTySubstBool with (D := D).
                     - eapply EqTyConv.
                       + now apply @EqSubstFalse with (D := D).
@@ -1410,8 +1438,9 @@ Proof.
                   }
             }
         - apply EqTySym. eapply EqTyTrans.
-          + eapply EqTySym. now apply EqTyShiftZero.
+          + eapply EqTySym. apply EqTyShiftZero ; magic.
           + { apply EqTyCongZero.
+              - ih.
               - now apply @EqTySubstBool with (D := D).
               - apply EqRefl. now apply @TermSubst with (D := D).
               - apply EqTyRefl. apply @TySubst with (D := ctxextend D Bool).
@@ -1470,7 +1499,7 @@ Proof.
               - ih.
               - assumption. }
         - apply EqTySym.
-          now apply EqTyCongZero. }
+          apply EqTyCongZero ; magic. }
 
     (* ConfRefl *)
     + { eapply TermTyConv.
@@ -1568,6 +1597,7 @@ Proof.
           + eapply TermTyConv.
             * magic.
             * { apply EqTyCongZero.
+                - ih.
                 - magic.
                 - magic.
                 - (* Congruence for shift, maybe as a lemma *)
@@ -1678,6 +1708,7 @@ Proof.
             * magic.
             * magic.
         - { apply EqTySym. apply EqTyCongZero.
+            - ih.
             - magic.
             - magic.
             - (* We might also need congruence for shift... *)
