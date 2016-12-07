@@ -385,6 +385,17 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
                    G
                    (ctxextend D A)
 
+     | CompShift :
+         forall {G D E A sbs sbt},
+           issubst sbs G D ->
+           issubst sbt D E ->
+           istype E A ->
+           eqsubst (sbcomp (sbshift G (Subst A sbt) sbs)
+                           (sbshift D A sbt))
+                   (sbshift G A (sbcomp sbs sbt))
+                   (ctxextend G (Subst A (sbcomp sbs sbt)))
+                   (ctxextend E A)
+
 
 
 

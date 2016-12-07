@@ -281,6 +281,40 @@ Proof.
         - eapply SubstZero. assumption.
       }
 
+    (* CompShift *)
+    + { apply CtxExtend.
+        - ih.
+        - eapply TySubst.
+          + eapply SubstComp.
+            * eassumption.
+            * eassumption.
+          + assumption.
+      }
+    + { eapply SubstComp.
+        - { eapply SubstCtxConv.
+            - eapply SubstShift.
+              + eassumption.
+              + eapply TySubst ; eassumption.
+            - apply EqCtxExtend.
+              + apply CtxRefl. ih.
+              + eapply EqTySubstComp.
+                * eassumption.
+                * eassumption.
+                * assumption.
+            - apply CtxRefl.
+              apply CtxExtend.
+              + ih.
+              + eapply TySubst ; eassumption.
+          }
+        - eapply SubstShift ; assumption.
+      }
+    + { eapply SubstShift.
+        - eapply SubstComp.
+          + eassumption.
+          + assumption.
+        - assumption.
+      }
+
 
   (****** sane_eqtype ******)
   - destruct H; (split ; [split | idtac]) ; try magic.
@@ -1096,12 +1130,12 @@ Proof.
                                   - (* Finally in the realm of substitutions!
                                        This is where the proof starts. *)
                                     destruct todo.
-                                  - destruct todo.
+                                  - eapply EqTyRefl.
+                                    eassumption.
                                 }
                             }
                         }
                     }
-                    + apply CtxRefl. ih.
                 }
             }
           + eapply TermSubst ; eassumption.
