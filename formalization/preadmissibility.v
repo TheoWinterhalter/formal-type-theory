@@ -761,7 +761,59 @@ Proof.
             + eassumption.
           - assumption.
         }
-    - destruct todo.
+    - gocompsubst. gocompsubst. gocompsubst.
+      eapply CongTySubst.
+      + eapply SubstTrans.
+        * eapply CompAssoc ; substproof.
+        * eapply SubstTrans.
+          { eapply CongSubstComp.
+            - eapply SubstRefl. substproof.
+            - eapply WeakZero. assumption.
+          }
+          eapply SubstTrans.
+          { eapply CompAssoc ; substproof. }
+          eapply SubstTrans.
+          { eapply CongSubstComp.
+            - eapply SubstRefl. substproof.
+            - eapply CompIdRight. substproof.
+          }
+          eapply SubstTrans.
+          { eapply CompAssoc ; substproof. }
+          eapply SubstTrans.
+          { eapply CongSubstComp.
+            - eapply SubstRefl. eassumption.
+            - eapply WeakZero. assumption.
+          }
+          eapply CompIdRight. assumption.
+      + assumption.
+  }
+  assert (
+    eqterm G
+           (subst u sbs)
+           (subst (var 0) (sbcomp sbs (sbzero D A u)))
+           (Subst A sbs)
+  ).
+  { apply EqSym. eapply EqTrans.
+    { eapply EqTyConv.
+      - eapply EqSym. eapply EqSubstComp.
+        + shelve.
+        + eassumption.
+        + substproof.
+        Unshelve. Focus 2. apply TermVarZero. assumption.
+      - gocompsubst. eapply CongTySubst.
+        + eapply SubstTrans.
+          { eapply CompAssoc ; substproof. }
+          eapply SubstTrans.
+          { eapply CongSubstComp.
+            - eapply SubstRefl. eassumption.
+            - eapply WeakZero. assumption.
+          }
+          eapply CompIdRight. assumption.
+        + assumption.
+    }
+    eapply CongTermSubst.
+    - eapply SubstRefl. eassumption.
+    - eapply EqSubstZeroZero. assumption.
   }
   assert (
     eqtype G
@@ -773,7 +825,7 @@ Proof.
       + eassumption.
       + assumption.
     - assumption.
-    - destruct todo.
+    - assumption.
   }
   assert (
     eqctx
@@ -842,7 +894,12 @@ Proof.
                       }
                   - (* Now that we have a composition inside the shift, we want
                        to proceed with an exchange by using ShiftZero. *)
-                    (* Note this is the part shifted to the right. *)
+                    (* NOTE this is the part shifted to the right!!! *)
+                    (* eapply SubstTrans. *)
+                    (* { eapply CongSubstComp. *)
+                    (*   - eapply SubstRefl. substproof. *)
+                    (*   - eapply EqSubstCtxConv. *)
+                    (*     +   *)
                     destruct todo.
                 }
         }
