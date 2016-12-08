@@ -359,28 +359,171 @@ Proof.
     - apply CtxRefl. assumption.
     - assumption.
   }
+  assert (
+    issubst
+      (sbshift D
+               (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+               (sbzero D A u))
+      (ctxextend D (Id A u u))
+      (ctxextend
+         (ctxextend D A)
+         (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))
+  ).
+  { eapply SubstCtxConv.
+    - substproof.
+    - assumption.
+    - apply CtxRefl. assumption.
+  }
+  assert (istype D (Id A u u)).
+  { apply TyId ; assumption. }
+  assert (isctx (ctxextend G (Subst (Id A u u) sbs))).
+  { apply CtxExtend ; substproof. }
+  assert (
+    issubst (sbshift G (Id A u u) sbs) (ctxextend G (Subst (Id A u u) sbs))
+    (ctxextend D
+       (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+          (sbzero D A u)))
+  ).
+  { eapply SubstCtxConv.
+    - substproof.
+    - apply CtxRefl ; assumption.
+    - apply CtxSym. assumption.
+  }
+  assert (
+    eqsubst (sbcomp (sbcomp sbs (sbzero D A u)) (sbweak D A)) sbs G D
+  ).
+  { eapply SubstTrans.
+    - eapply CompAssoc ; substproof.
+    - eapply SubstTrans.
+      + eapply CongSubstComp.
+        * eapply SubstRefl. eassumption.
+        * eapply WeakZero. assumption.
+      + apply CompIdRight. assumption.
+  }
+  assert (
+    eqtype G (Subst A (sbcomp (sbcomp sbs (sbzero D A u)) (sbweak D A)))
+    (Subst (Subst (Subst (Subst A (sbweak D A)) (sbzero D A u)) (sbweak D A))
+       (sbcomp sbs (sbzero D A u)))
+  ).
+  { gocompsubst. gocompsubst. gocompsubst.
+    eapply CongTySubst.
+    - eapply SubstTrans.
+      + eapply CompAssoc ; substproof.
+      + eapply SubstTrans.
+        * { eapply CongSubstComp.
+            - eapply SubstRefl. substproof.
+            - eapply WeakZero. assumption.
+          }
+        * eapply CompIdRight.
+          substproof.
+    - assumption.
+  }
+  assert (
+    eqterm G (subst u sbs)
+    (subst (subst u (sbweak D A)) (sbcomp sbs (sbzero D A u)))
+    (Subst A sbs)
+  ).
+  { eapply EqTyConv.
+    - eapply EqSym. eapply EqTrans.
+      + eapply eqterm_subst_left.
+        * substproof.
+        * substproof.
+        * shelve.
+        * eassumption.
+        * eapply EqRefl. substproof.
+          Unshelve. substproof.
+      + { eapply EqTyConv.
+          - eapply CongTermSubst.
+            + eassumption.
+            + eassumption.
+          - assumption.
+        }
+    - destruct todo.
+  }
+  assert (
+    eqtype G
+    (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+       (sbcomp sbs (sbzero D A u))) (Subst (Id A u u) sbs)
+  ).
+  { gopushsubst. gopushsubst. apply CongId.
+    - gocompsubst. eapply CongTySubst.
+      + eassumption.
+      + assumption.
+    - assumption.
+    - destruct todo.
+  }
+  assert (
+    eqctx
+    (ctxextend G
+       (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+          (sbcomp sbs (sbzero D A u)))) (ctxextend G (Subst (Id A u u) sbs))
+  ).
+  { apply EqCtxExtend.
+    - assumption.
+    - assumption.
+  }
   (* Now let's proceed with the proof. *)
-  gocompsubst.
-  - eapply TyCtxConv.
-    + substproof.
-    + assumption.
+  gocompsubst. gocompsubst. gocompsubst.
+  - eapply SubstCtxConv ; substproof.
   - gocompsubst.
-    + eapply SubstCtxConv.
+    + eapply SubstComp.
       * substproof.
-      * assumption.
-      * apply CtxRefl. assumption. (* Check if it shouldn't be asserted. *)
-    + { gocompsubst.
-        - eapply SubstCtxConv ; substproof.
-        - gocompsubst.
-          + eapply SubstComp.
-            * substproof.
-            * eapply SubstCtxConv ; substproof.
-          + eapply CongTySubst.
-            * (* Now we're back to where we're supposed to be,
-                 where the proof is in my notebook. *)
-              destruct todo.
-            * eapply EqTyRefl. eassumption.
-      }
+      * eapply SubstCtxConv ; substproof.
+    + eapply CongTySubst.
+      * (* Now we're back to where we're supposed to be,
+               where the proof is in my notebook. *)
+        (* We go from the rhs. *)
+        { eapply SubstSym. eapply SubstTrans.
+          - (* Then we only look on the lhs of the composition. *)
+            eapply CongSubstComp.
+            + (* We exchange the substs. *)
+              eapply SubstSym. eapply ShiftZero ; assumption.
+            + (* We don't touch the rhs. *)
+              eapply SubstRefl. eassumption.
+          - (* We're using associativity to look at the rhs. *)
+            eapply SubstTrans.
+            + eapply CompAssoc ; substproof.
+            + (* We can now have a look at the rhs of the composition. *)
+              eapply SubstTrans.
+              * { eapply CongSubstComp.
+                  - (* On the left we remain unchanged. *)
+                    eapply SubstRefl. substproof.
+                  - (* On the right we have a composition of shifts, thus we
+                       use fonctoriality to progress.
+                       However we need to apply congruence again to rewrite
+                       the type in the left shift.
+                     *)
+                    eapply CongSubstComp.
+                    + eapply @CongSubstShift
+                      with (A2 := Subst
+                                   (Id (Subst A (sbweak D A))
+                                       (subst u (sbweak D A))
+                                       (var 0))
+                                   (sbzero D A u)
+                      ).
+                      * eassumption.
+                      * eapply SubstRefl ; eassumption.
+                      * apply EqTySym. assumption.
+                    + (* We don't change the other substitution. *)
+                      eapply SubstRefl. substproof.
+                }
+              * (* Now that we rewrote the type, we can use fonctoriality. *)
+                { eapply SubstTrans.
+                  - eapply CongSubstComp.
+                    + (* On the left we remain unchanged. *)
+                      eapply SubstRefl. substproof.
+                    + { eapply EqSubstCtxConv.
+                        - eapply CompShift ; substproof.
+                        - assumption.
+                        - apply CtxRefl. assumption.
+                      }
+                  - (* Now that we have a composition inside the shift, we want
+                       to proceed with an exchange by using ShiftZero. *)
+                    (* Note this is the part shifted to the right. *)
+                    destruct todo.
+                }
+        }
+      * eapply EqTyRefl. eassumption.
 Defined.
 
 
