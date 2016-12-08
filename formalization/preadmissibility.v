@@ -79,6 +79,11 @@ Ltac pushsubst1 :=
       eapply EqTySubstId ; try eassumption
     | try eassumption
     ]
+  | |- eqtype ?G ?A (Subst (Id ?B ?u ?v) ?sbs) =>
+    eapply EqTySym ; eapply EqTyTrans ; [
+      eapply EqTySubstId ; try eassumption
+    | try eassumption
+    ]
   | _ => fail
   end.
 (* Some admissibility lemmata. *)
