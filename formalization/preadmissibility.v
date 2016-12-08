@@ -84,6 +84,19 @@ Ltac pushsubst1 :=
       eapply EqTySubstId ; try eassumption
     | try eassumption
     ]
+  | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
+    eapply EqTrans ; [
+      eapply EqSubstRefl ; try eassumption
+    | try eassumption
+    ]
+  | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
+    eapply EqTyConv ; [
+      eapply EqTrans ; [
+        eapply EqSubstRefl ; try eassumption
+      | try eassumption
+      ]
+    | try eassumption
+    ]
   | _ => fail
   end.
 (* Some admissibility lemmata. *)
