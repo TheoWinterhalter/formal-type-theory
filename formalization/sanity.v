@@ -1647,8 +1647,90 @@ eapply SubstTrans.
               - apply EqCtxExtend.
                 + apply CtxRefl. ih.
                 + (* Maybe with a strong pushsubst1 *)
-                  (* pushsubst1. *)
-                  destruct todo.
+                  { pushsubst1.
+                    - eapply SubstZero. eapply TermSubst ; eassumption.
+                    - eapply SubstShift ; eassumption.
+                    - eapply TySubst.
+                      + now eapply SubstWeak.
+                      + assumption.
+                    - eapply TermSubst.
+                      + now eapply SubstWeak.
+                      + assumption.
+                    - now apply TermVarZero.
+                    - eapply EqTyRefl. (* Unsure about that. *)
+                      { apply TyId.
+                        - eapply TySubst.
+                          + eapply SubstShift ; eassumption.
+                          + eapply TySubst.
+                            * now eapply SubstWeak.
+                            * assumption.
+                        - eapply TermSubst.
+                          + eapply SubstShift ; eassumption.
+                          + eapply TermSubst.
+                            * now eapply SubstWeak.
+                            * assumption.
+                        - eapply TermSubst.
+                          + eapply SubstShift ; eassumption.
+                          + now apply TermVarZero.
+                      }
+                    - { pushsubst1.
+                        - eapply SubstZero. eapply TermSubst ; eassumption.
+                        - eapply TySubst.
+                          + eapply SubstShift ; eassumption.
+                          + eapply TySubst.
+                            * now eapply SubstWeak.
+                            * assumption.
+                        - eapply TermSubst.
+                          + eapply SubstShift ; eassumption.
+                          + eapply TermSubst.
+                            * now eapply SubstWeak.
+                            * assumption.
+                        - eapply TermSubst.
+                          + eapply SubstShift ; eassumption.
+                          + now apply TermVarZero.
+                        - pushsubst1.
+                          { apply CongId.
+                            - compsubst1.
+                              + eapply SubstZero.
+                                eapply TermSubst ; eassumption.
+                              + eapply SubstShift ; eassumption.
+                              + eapply TySubst.
+                                * now eapply SubstWeak.
+                                * assumption.
+                              + { compsubst1.
+                                  - eapply SubstComp.
+                                    + eapply SubstZero.
+                                      eapply TermSubst ; eassumption.
+                                    + eapply SubstShift ; eassumption.
+                                  - now eapply SubstWeak.
+                                  - eapply CongTySubst.
+                                    + { eapply SubstTrans.
+                                        - eapply CongSubstComp.
+                                          + eapply ShiftZero ; eassumption.
+                                          + eapply SubstRefl.
+                                            now eapply SubstWeak.
+                                        - { eapply SubstTrans.
+                                            - eapply CompAssoc.
+                                              + eassumption.
+                                              + now eapply SubstZero.
+                                              + now eapply SubstWeak.
+                                            - eapply SubstTrans.
+                                              + eapply CongSubstComp.
+                                                * eapply SubstRefl.
+                                                  eassumption.
+                                                * now eapply WeakZero.
+                                              + (* Composition with id on the
+                                                   right. *)
+                                                destruct todo.
+                                          }
+                                      }
+                                    + now apply EqTyRefl.
+                                }
+                            - destruct todo.
+                            - destruct todo.
+                          }
+                      }
+                  }
               - apply CtxRefl. destruct todo.
             }
         + { apply SubstRefl. apply SubstShift.

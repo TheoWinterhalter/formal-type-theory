@@ -74,6 +74,14 @@ Ltac compsubst1 :=
 (* Partial for now. *)
 Ltac pushsubst1 :=
   match goal with
+  | |- eqtype ?G (Subst (Subst ?A ?sbs) ?sbt) ?B =>
+    eapply EqTyTrans ; [
+      eapply CongTySubst ; [
+        eapply SubstRefl ; try eassumption
+      | pushsubst1
+      ]
+    | try eassumption
+    ]
   | |- eqtype ?G (Subst (Id ?A ?u ?v) ?sbs) ?B =>
     eapply EqTyTrans ; [
       eapply EqTySubstId ; try eassumption
