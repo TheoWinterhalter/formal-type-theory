@@ -1560,10 +1560,30 @@ eapply CongSubstComp.
         + eapply TySubst ; eassumption.
         + eapply TermSubst ; eassumption.
         + eapply TermSubst ; eassumption.
-      - destruct todo. (* Maybe pushsubst1 for refl as well. *)
+      - pushsubst1.
+        + apply EqRefl. apply TermRefl.
+          eapply TermSubst ; eassumption.
+        + pushsubst1. apply EqTyRefl.
+          apply TyId.
+          * eapply TySubst ; eassumption.
+          * eapply TermSubst ; eassumption.
+          * eapply TermSubst ; eassumption.
     }
-  * destruct todo.
-+ destruct todo.
+  * { eapply EqSubstCtxConv.
+      - eapply CongSubstShift.
+        + apply CtxRefl. ih.
+        + destruct todo. (* Uh oh... Wrong again! *)
++ { pushsubst1.
+    - eapply SubstZero. assumption.
+    - eapply TySubst.
+      + eapply SubstWeak. assumption.
+      + assumption.
+    - eapply TermSubst.
+      + eapply SubstWeak. assumption.
+      + assumption.
+    - apply TermVarZero. assumption.
+    - destruct todo. (* Damn... Something wrong somewhere... *)
+  }
 (* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> *)
                                                     }
                                               }
