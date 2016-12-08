@@ -406,6 +406,16 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
                    (ctxextend G (Subst A (sbcomp sbs sbt)))
                    (ctxextend E A)
 
+     | CompIdRight :
+         forall {G D sbs},
+           issubst sbs G D ->
+           eqsubst (sbcomp sbs (sbid D)) sbs G D
+
+     | CompIdLeft :
+         forall {G D sbs},
+           issubst sbs G D ->
+           eqsubst (sbcomp (sbid G) sbs) sbs G D
+
 
 
 

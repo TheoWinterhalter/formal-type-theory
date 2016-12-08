@@ -325,6 +325,16 @@ Proof.
         - assumption.
       }
 
+    (* CompIdRight *)
+    + eapply SubstComp.
+      * eassumption.
+      * eapply SubstId. ih.
+
+    (* CompIdLeft *)
+    + eapply SubstComp.
+      * eapply SubstId. ih.
+      * assumption.
+
 
   (****** sane_eqtype ******)
   - destruct H; (split ; [split | idtac]) ; try magic.
