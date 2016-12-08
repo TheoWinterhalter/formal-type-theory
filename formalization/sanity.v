@@ -62,6 +62,327 @@ Ltac magic := magicn (S (S 0)).
 Lemma todo : False.
 Admitted.
 
+(* A tactic to type substitutions. *)
+Ltac substproof :=
+  match goal with
+  | |- issubst (sbzero ?G ?A ?u) ?G1 ?G2 =>
+    eapply SubstZero ; substproof
+  | |- issubst (sbweak ?G ?A) ?G1 ?G2 =>
+    eapply SubstWeak ; substproof
+  | |- issubst (sbshift ?G ?A ?sbs) ?G1 ?G2 =>
+    eapply SubstShift ; substproof
+  (* | |- issubst (sbshift ?G ?A ?sbs) ?G1 ?G2 => *)
+  (*   eapply SubstCtxConv ; [ *)
+  (*     substproof *)
+  (*   | try eassumption *)
+  (*   | try eassumption *)
+  (*   ] *)
+  | |- issubst (sbid ?G) ?G1 ?G2 =>
+    eapply SubstId ; eassumption
+  | |- issubst (sbcomp ?sbs ?sbt) ?G1 ?G2 =>
+    eapply SubstComp ; substproof
+  (* We also deal with cases where we have substitutions on types or terms *)
+  | |- istype ?G (Subst ?A ?sbs) =>
+    eapply TySubst ; substproof
+  | |- isterm ?G (subst ?u ?sbs) (Subst ?A ?sbs) =>
+    eapply TermSubst ; substproof
+  | |- isterm (ctxextend ?G ?A) (var 0) (Subst ?A (sbweak ?G ?A)) =>
+    apply TermVarZero ; eassumption
+  | _ => eassumption
+  end.
+
+(* With it we improve compsubst1 *)
+Ltac gocompsubst := compsubst1 ; try substproof.
+
+(* With it we improve pushsubst1 *)
+Ltac gopushsubst := pushsubst1 ; try substproof.
+
+
+(* The big lemma that we need for EqSusbtJ *)
+Lemma JTyConv :
+  forall {G D A C u v w p sbs},
+    isctx G ->
+    isctx D ->
+    issubst sbs G D ->
+    istype D A ->
+    isterm D u A ->
+    istype
+      (ctxextend
+         (ctxextend D A)
+         (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+      )
+      C ->
+    isterm
+      D
+      w
+      (Subst
+         (Subst
+            C
+            (sbshift
+               D
+               (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+               (sbzero D A u))) (sbzero D (Id A u u) (refl A u))) ->
+    isterm D v A ->
+    isterm D p (Id A u v) ->
+    eqtype
+      G
+      (Subst
+         (Subst
+            (Subst C
+                   (sbshift
+                      D
+                      (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+                      (sbzero D A u)
+                   )
+            )
+            (sbzero D (Id A u u) (refl A u))
+         )
+         sbs
+      )
+      (Subst
+         (Subst
+            (Subst C
+                   (sbshift
+                      (ctxextend G (Subst A sbs))
+                      (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+                      (sbshift G A sbs)
+                   )
+            )
+            (sbshift
+               G
+               (Id
+                  (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+                  (subst (subst u sbs) (sbweak G (Subst A sbs)))
+                  (var 0)
+               )
+               (sbzero G (Subst A sbs) (subst u sbs))
+            )
+         )
+         (sbzero
+            G
+            (Id (Subst A sbs) (subst u sbs) (subst u sbs))
+            (refl (Subst A sbs) (subst u sbs))
+         )
+      ).
+Proof.
+  intros.
+  (* First let's have some assertions that we won't keep proving. *)
+  assert (isterm D (refl A u) (Id A u u)).
+  { now apply TermRefl. }
+  assert (
+    istype (ctxextend D A)
+           (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+  ).
+  { apply TyId ; substproof. }
+  assert (eqctx D D).
+  { now apply CtxRefl. }
+  assert (eqtype D (Subst (Subst A (sbweak D A)) (sbzero D A u)) A).
+  { now apply EqTyWeakZero. }
+  assert (isterm D u (Subst (Subst A (sbweak D A)) (sbzero D A u))).
+  { eapply TermTyConv.
+    - eassumption.
+    - apply EqTySym. assumption.
+  }
+  assert (
+    eqterm D
+           (subst (subst u (sbweak D A)) (sbzero D A u)) u
+           (Subst (Subst A (sbweak D A)) (sbzero D A u))
+  ).
+  { apply EqSubstWeakZero ; try assumption. substproof. }
+  assert (eqterm D (subst (var 0) (sbzero D A u)) u
+    (Subst (Subst A (sbweak D A)) (sbzero D A u))).
+  { eapply EqTyConv.
+    - now eapply EqSubstZeroZero.
+    - apply EqTySym. assumption.
+  }
+  assert (
+    eqtype
+      D
+      (Id
+         (Subst (Subst A (sbweak D A)) (sbzero D A u))
+         (subst (subst u (sbweak D A)) (sbzero D A u))
+         (subst (var 0) (sbzero D A u)))
+      (Id A u u)
+  ).
+  { apply CongId ; assumption. }
+  assert (
+    eqtype D
+    (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+       (sbzero D A u)) (Id A u u)
+  ).
+  { gopushsubst. }
+  assert (
+    eqctx
+      (ctxextend
+         D
+         (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+                (sbzero D A u)))
+      (ctxextend D (Id A u u))
+  ).
+  { now apply EqCtxExtend. }
+  assert (isctx (ctxextend D A)).
+  { now apply CtxExtend. }
+  assert (isctx
+    (ctxextend (ctxextend D A)
+       (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))).
+  { now apply CtxExtend. }
+  assert (isterm G (refl (Subst A sbs) (subst u sbs))
+    (Id (Subst A sbs) (subst u sbs) (subst u sbs))).
+  { apply TermRefl. substproof. }
+  assert (
+    isterm (ctxextend G (Subst A sbs)) (var 0)
+    (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+  ).
+  { apply TermVarZero. substproof. }
+  assert (istype (ctxextend G (Subst A sbs))
+    (Id (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+       (subst (subst u sbs) (sbweak G (Subst A sbs))) (var 0))
+  ).
+  { apply TyId ; substproof. }
+  assert (eqctx G G).
+  { apply CtxRefl. assumption. }
+  assert (
+    eqsubst
+      (sbcomp
+         (sbcomp
+            (sbzero G (Subst A sbs) (subst u sbs))
+            (sbweak G (Subst A sbs))
+         )
+         sbs
+      )
+      sbs
+      G D
+  ).
+  { eapply SubstTrans.
+    - eapply CongSubstComp.
+      + eapply WeakZero. substproof.
+      + eapply SubstRefl. assumption.
+    - eapply SubstTrans.
+      + eapply CompIdLeft. assumption.
+      + eapply SubstRefl. assumption.
+  }
+  assert (eqtype D A A).
+  { apply EqTyRefl. assumption. }
+  assert (eqtype G
+    (Subst (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+       (sbzero G (Subst A sbs) (subst u sbs))) (Subst A sbs)).
+  { gocompsubst. gocompsubst. eapply CongTySubst ; eassumption. }
+  assert (eqterm D u u A).
+  { apply EqRefl. assumption. }
+  assert (
+    eqterm G
+    (subst (subst (subst u sbs) (sbweak G (Subst A sbs)))
+       (sbzero G (Subst A sbs) (subst u sbs))) (subst u sbs)
+    (Subst (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+       (sbzero G (Subst A sbs) (subst u sbs)))
+  ).
+  { gocompsubst. gocompsubst. eapply CongTermSubst ; eassumption. }
+  assert (
+    eqterm G (subst (var 0) (sbzero G (Subst A sbs) (subst u sbs)))
+    (subst u sbs)
+    (Subst (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+       (sbzero G (Subst A sbs) (subst u sbs)))
+  ).
+  { eapply EqTyConv.
+    - eapply EqSubstZeroZero. substproof.
+    - apply EqTySym. assumption.
+  }
+  assert (
+    eqtype G
+    (Subst
+       (Id (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+          (subst (subst u sbs) (sbweak G (Subst A sbs)))
+          (var 0)) (sbzero G (Subst A sbs) (subst u sbs)))
+    (Id (Subst A sbs) (subst u sbs) (subst u sbs))
+  ).
+  { gopushsubst. apply CongId ; assumption. }
+  assert (
+    eqctx
+    (ctxextend G
+       (Subst
+          (Id (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+             (subst (subst u sbs) (sbweak G (Subst A sbs)))
+             (var 0)) (sbzero G (Subst A sbs) (subst u sbs))))
+    (ctxextend G (Id (Subst A sbs) (subst u sbs) (subst u sbs)))
+  ).
+  { now apply EqCtxExtend. }
+  assert (isctx (ctxextend G (Subst A sbs))).
+  { apply CtxExtend.
+    - assumption.
+    - substproof.
+  }
+  assert (
+    eqtype (ctxextend G (Subst A sbs))
+    (Subst (Subst A (sbweak D A)) (sbshift G A sbs))
+    (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+  ).
+  { apply EqTyWeakNat ; assumption. }
+  assert (
+    eqterm (ctxextend G (Subst A sbs))
+    (subst (subst u (sbweak D A)) (sbshift G A sbs))
+    (subst (subst u sbs) (sbweak G (Subst A sbs)))
+    (Subst (Subst A (sbweak D A)) (sbshift G A sbs))
+  ).
+  { eapply EqTyConv.
+    - eapply EqSubstWeakNat ; eassumption.
+    - apply EqTySym. assumption.
+  }
+  assert (eqterm (ctxextend G (Subst A sbs)) (subst (var 0) (sbshift G A sbs))
+    (var 0) (Subst (Subst A (sbweak D A)) (sbshift G A sbs))).
+  { eapply EqTyConv.
+    - eapply EqSubstShiftZero ; eassumption.
+    - apply EqTySym. assumption.
+  }
+  assert (
+    eqtype (ctxextend G (Subst A sbs))
+    (Id (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+       (subst (subst u sbs) (sbweak G (Subst A sbs))) (var 0))
+    (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+       (sbshift G A sbs))
+  ).
+  { gopushsubst. apply CongId.
+    - assumption.
+    - assumption.
+    - assumption.
+  }
+  assert (
+    eqctx
+    (ctxextend (ctxextend G (Subst A sbs))
+       (Id (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+          (subst (subst u sbs) (sbweak G (Subst A sbs)))
+          (var 0)))
+    (ctxextend (ctxextend G (Subst A sbs))
+       (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+          (sbshift G A sbs)))
+  ).
+  { apply EqCtxExtend.
+    - apply CtxRefl. assumption.
+    - assumption.
+  }
+  (* Now let's proceed with the proof. *)
+  gocompsubst.
+  - eapply TyCtxConv.
+    + substproof.
+    + assumption.
+  - gocompsubst.
+    + eapply SubstCtxConv.
+      * substproof.
+      * assumption.
+      * apply CtxRefl. assumption. (* Check if it shouldn't be asserted. *)
+    + { gocompsubst.
+        - eapply SubstCtxConv ; substproof.
+        - gocompsubst.
+          + eapply SubstComp.
+            * substproof.
+            * eapply SubstCtxConv ; substproof.
+          + eapply CongTySubst.
+            * (* Now we're back to where we're supposed to be,
+                 where the proof is in my notebook. *)
+              destruct todo.
+            * eapply EqTyRefl. eassumption.
+      }
+Defined.
+
 
 Fixpoint sane_issubst {G D sbs} (H : issubst sbs G D) {struct H} :
        isctx G * isctx D
