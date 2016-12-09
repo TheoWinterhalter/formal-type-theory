@@ -381,10 +381,6 @@ Proof.
   - assumption.
 Defined.
 
-(* For admitting purposes *)
-Lemma todo : False.
-Admitted.
-
 (* A tactic to type substitutions. *)
 Ltac substproof :=
   match goal with
@@ -934,6 +930,37 @@ Proof.
       * eassumption.
     - assumption.
   }
+  assert (
+    eqtype G
+    (Subst
+       (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+          (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs)))
+    (Subst (Id A u v) sbs)
+  ).
+  { gopushsubst.
+    - eapply CongId ; eassumption.
+    - gopushsubst. gopushsubst.
+      apply EqTySym. apply CongId ; assumption.
+  }
+  assert (
+    eqctx
+    (ctxextend G
+       (Subst
+          (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+             (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs))))
+    (ctxextend G (Subst (Id A u v) sbs))
+  ).
+  { now apply EqCtxExtend. }
+  assert (
+    isctx
+    (ctxextend (ctxextend G (Subst A sbs))
+       (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+          (sbshift G A sbs)))
+  ).
+  { apply CtxExtend.
+    - assumption.
+    - substproof.
+  }
   (* Now let's proceed with the proof. *)
   gocompsubst. gocompsubst. gocompsubst.
   - eapply SubstCtxConv ; substproof.
@@ -1022,8 +1049,8 @@ Proof.
             - substproof.
             - eapply SubstCtxConv.
               + substproof.
-              + destruct todo.
-              + eapply CtxRefl. destruct todo.
+              + assumption.
+              + eapply CtxRefl. assumption.
             - substproof.
           }
           (* Now we should finally have the same structure for the substitutions
@@ -1032,17 +1059,17 @@ Proof.
           - eapply CongSubstComp.
             + eapply CongSubstZero.
               * eassumption.
-              * destruct todo.
-              * destruct todo.
+              * assumption.
+              * apply EqRefl. substproof.
             + { eapply EqSubstCtxConv.
                 - eapply CongSubstShift.
                   + assumption.
-                  + destruct todo.
-                  + destruct todo.
+                  + eapply SubstRefl. substproof.
+                  + apply EqTySym. assumption.
                 - apply EqCtxExtend.
                   + assumption.
-                  + destruct todo.
-                - apply CtxRefl. destruct todo.
+                  + assumption.
+                - apply CtxRefl. assumption.
               }
           - apply SubstRefl. apply SubstShift.
             + substproof.
