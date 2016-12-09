@@ -35,6 +35,8 @@
 \newcommand{\sbzero}[3]{\{#3\}_{#1,#2}}        % substitition of the zeroth index
 \newcommand{\sbweak}[2]{\mathsf{w}_{(#1, #2)}} % weakening substitution
 \newcommand{\sbshift}[3]{#3 {\mid}_{#1} #2}    % shifted substitution
+\newcommand{\sbid}[1]{\mathsf{id}_{#1}}        % identity substitution
+\newcommand{\sbcomp}[2]{#1 \circ #2}           % composition of substitutions
 
 \newcommand{\subst}[2]{#1[#2]}                 % substitution operation
 
@@ -65,7 +67,8 @@
 \newcommand{\isterm}[3]{#1 \vdash #2 : #3} % well formed term
 \newcommand{\issubst}[3]{#1 : #2 \to #3} % well formed substitution
 
-\newcommand{\eqctx}[2]{#1 \equiv #2}
+\newcommand{\eqctx}[2]{#1 \equiv #2} % equal contexts
+\newcommand{\eqsubst}[4]{#1 \equiv #2 : #3 \to #4} % equal substitutions
 \newcommand{\eqtype}[3]{#1 \vdash #2 \equiv #3} % equal types
 \newcommand{\eqterm}[4]{#1 \vdash #2 \equiv #3 : #4} % equal terms
 

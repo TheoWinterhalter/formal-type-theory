@@ -57,6 +57,44 @@
   }
 }
 
+\newcommand{\rlSubstId}{\referTo{subst-id}{rul:subst-id}}
+\newcommand{\showSubstId}{%
+  \infer[\rulename{subst-id}] % SubstId
+  {\isctx{\G}}
+  {\issubst
+    {\sbid{\G}}
+    {\G}
+    {\G}
+  }
+}
+
+\newcommand{\rlSubstComp}{\referTo{subst-comp}{rul:subst-comp}}
+\newcommand{\showSubstComp}{%
+  \infer[\rulename{subst-comp}] % SubstComp
+  {\issubst{\sbs}{\G}{\D} \\
+   \issubst{\sbt}{\D}{\E}
+  }
+  {\issubst
+    {\sbcomp{\sbs}{\sbt}}
+    {\G}
+    {\E}
+  }
+}
+
+\newcommand{\rlSubstCtxConv}{\referTo{subst-ctx-conv}{rul:subst-ctx-conv}}
+\newcommand{\showSubstCtxConv}{%
+  \infer[\rulename{subst-ctx-conv}] % SubstCtxConv
+  {\issubst{\sbs}{\G_1}{\D_1} \\
+   \eqctx{\G_1}{\G_2} \\
+   \eqctx{\D_1}{\D_2}
+  }
+  {\issubst
+    {\sbs}
+    {\G_2}
+    {\D_2}
+  }
+}
+
 %%%% Types
 
 
@@ -101,6 +139,30 @@
     \isterm{\G}{\vv}{\A}
   }
   {\istype{\G}{\Id{\A}{\uu}{\vv}}}
+}
+
+
+\newcommand{\rlTyEmpty}{\referTo{ty-empty}{rul:ty-empty}}
+\newcommand{\showTyEmpty}{%
+  \infer[\rulename{ty-empty}] % TyEmpty
+  {\isctx{\G}}
+  {\istype{\G}{\Empty}}
+}
+
+
+\newcommand{\rlTyUnit}{\referTo{ty-unit}{rul:ty-unit}}
+\newcommand{\showTyUnit}{%
+  \infer[\rulename{ty-unit}] % TyUnit
+  {\isctx{\G}}
+  {\istype{\G}{\Unit}}
+}
+
+
+\newcommand{\rlTyBool}{\referTo{ty-bool}{rul:ty-bool}}
+\newcommand{\showTyBool}{%
+  \infer[\rulename{ty-bool}] % TyBool
+  {\isctx{\G}}
+  {\istype{\G}{\Bool}}
 }
 
 
@@ -207,7 +269,135 @@
 }
 
 
+\newcommand{\rlTermJ}{\referTo{term-j}{rul:term-j}}
+\newcommand{\showTermJ}{%
+  \infer[\rulename{term-j}] % TermJ
+  {\istype{\G}{\A} \\
+   \isterm{\G}{\uu}{\A} \\
+   \istype
+    {\ctxextend
+      {\ctxextend{\G}{\A}}
+      {\Id
+        {\subst{\A}{\sbweak{\G}{\A}}}
+        {\subst{\uu}{\sbweak{\G}{\A}}}
+        {\var{0}}}
+    }
+    {\C} \\
+   \isterm
+    {\G}
+    {\ww}
+    {\subst
+      {\subst
+        {\C}
+        {\sbshift
+          {\G}
+          {\Id
+            {\subst{\A}{\sbweak{\G}{\A}}}
+            {\subst{\uu}{\sbweak{\G}{\A}}}
+            {\var{0}}
+          }
+          {\sbzero{\G}{\A}{\uu}}
+        }
+      }
+      {\sbzero{\G}{\Id{\A}{\uu}{\uu}}{\refl{\A} \uu}}
+    } \\
+   \isterm{\G}{\vv}{\A} \\
+   \isterm{\G}{\p}{\Id{\A}{\uu}{\vv}}
+  }
+  {\isterm{\G}
+    {\J{\A}{\uu}{\C}{\ww}{\vv}{\p}}
+    {\subst
+      {\subst
+        {\C}
+        {\sbshift
+          {\G}
+          {\Id
+            {\subst{\A}{\sbweak{\G}{\A}}}
+            {\subst{\uu}{\sbweak{\G}{\A}}}
+            {\var{0}}
+          }
+          {\sbzero{\G}{\A}{\vv}}
+        }
+      }
+      {\sbzero{\G}{\Id{\A}{\uu}{\vv}}{\p}}
+    }
+  }
+}
+
+
+\newcommand{\rlTermExfalso}{\referTo{term-exfalso}{rul:term-exfalso}}
+\newcommand{\showTermExfalso}{%
+  \infer[\rulename{term-exfalso}] % TermExfalso
+  {\istype{\G}{\A} \\
+   \isterm{\G}{\uu}{\Empty}
+  }
+  {\isterm{\G}{\exfalso{\A} \uu}{\A}}
+}
+
+
+\newcommand{\rlTermUnit}{\referTo{term-unit}{rul:term-unit}}
+\newcommand{\showTermUnit}{%
+  \infer[\rulename{term-unit}] % TermUnit
+  {\isctx{\G}}
+  {\isterm{\G}{\unit}{\Unit}}
+}
+
+
+\newcommand{\rlTermTrue}{\referTo{term-true}{rul:term-true}}
+\newcommand{\showTermTrue}{%
+  \infer[\rulename{term-true}] % TermTrue
+  {\isctx{\G}}
+  {\isterm{\G}{\true}{\Bool}}
+}
+
+
+\newcommand{\rlTermFalse}{\referTo{term-false}{rul:term-false}}
+\newcommand{\showTermFalse}{%
+  \infer[\rulename{term-false}] % TermFalse
+  {\isctx{\G}}
+  {\isterm{\G}{\false}{\Bool}}
+}
+
+
+\newcommand{\rlTermCond}{\referTo{term-cond}{rul:term-cond}}
+\newcommand{\showTermCond}{%
+  \infer[\rulename{term-cond}] % TermCond
+  {\isterm{\G}{\uu}{\Bool} \\
+   \istype{\ctxextend{\G}{\Bool}}{\C} \\
+   \isterm{\G}{\vv}{\subst{\C}{\sbzero{\G}{\Bool}{\true}}} \\
+   \isterm{\G}{\ww}{\subst{\C}{\sbzero{\G}{\Bool}{\false}}}
+  }
+  {\isterm{\G}{\cond{\C}{\uu}{\vv}{\ww}}{\subst{\C}{\sbzero{\G}{\Bool}{\uu}}}}
+}
+
+
 %%%% Context equality
+
+
+\newcommand{\rlCtxRefl}{\referTo{ctx-refl}{rul:ctx-refl}}
+\newcommand{\showCtxRefl}{%
+  \infer[\rulename{ctx-refl}] % CtxRefl
+  {\isctx{\G}}
+  {\eqctx{\G}{\G}}
+}
+
+
+\newcommand{\rlCtxSym}{\referTo{ctx-sym}{rul:ctx-sym}}
+\newcommand{\showCtxSym}{%
+  \infer[\rulename{ctx-sym}] % CtxSym
+  {\eqctx{\G}{\D}}
+  {\eqctx{\D}{\G}}
+}
+
+
+\newcommand{\rlCtxTrans}{\referTo{ctx-trans}{rul:ctx-trans}}
+\newcommand{\showCtxTrans}{%
+  \infer[\rulename{ctx-trans}] % CtxTrans
+  {\eqctx{\G}{\D} \\
+   \eqctx{\D}{\E}
+  }
+  {\eqctx{\G}{\E}}
+}
 
 
 \newcommand{\rlEqCtxEmpty}{\referTo{eq-ctx-empty}{rul:eq-ctx-empty}}
@@ -222,9 +412,10 @@
 \newcommand{\showEqCtxExtend}{%
   \infer[\rulename{eq-ctx-extend}] % EqCtxExtend
   {
+    \eqctx{\G}{\D} \\
     \eqtype{\G}{\A}{\B}
   }
-  {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\G}{\B})}}
+  {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\D}{\B})}}
 }
 
 
