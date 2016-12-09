@@ -58,10 +58,6 @@ Ltac magicn n :=
 
 Ltac magic := magicn (S (S 0)).
 
-(* For admitting purposes *)
-Lemma todo : False.
-Admitted.
-
 Fixpoint sane_issubst {G D sbs} (H : issubst sbs G D) {struct H} :
        isctx G * isctx D
 
@@ -729,7 +725,86 @@ Proof.
             }
           + { eapply TermTyConv.
               - eapply TermSubst ; eassumption.
-              - eapply JTyConv ; (ih || eassumption).
+              - eapply EqTyTrans.
+                + eapply JTyConv.
+                  * ih.
+                  * ih.
+                  * assumption.
+                  * assumption.
+                  * assumption.
+                  * assumption.
+                  * apply TermRefl. assumption.
+                  * assumption.
+                  * eassumption.
+                  * assumption.
+                  * apply TermRefl. assumption.
+                + { eapply CongTySubst.
+                    - eapply CongSubstZero.
+                      + apply CtxRefl. ih.
+                      + apply EqTyRefl. apply TyId ; substproof.
+                      + gopushsubst. apply EqRefl. apply TermRefl ; substproof.
+                    - apply EqTyRefl. eapply TySubst.
+                      + eapply SubstCtxConv.
+                        * { eapply SubstShift.
+                            - substproof.
+                            - apply TyId.
+                              + substproof.
+                              + substproof.
+                              + apply TermVarZero. substproof.
+                          }
+                        * { eapply EqCtxExtend.
+                            - apply CtxRefl. ih.
+                            - gopushsubst.
+                              + apply TermVarZero. substproof.
+                              + apply CongId.
+                                * apply EqTyWeakZero ; substproof.
+                                * apply EqSubstWeakZero ; try substproof.
+                                  { eapply TermTyConv.
+                                    - eapply TermSubst ; substproof.
+                                    - apply EqTySym.
+                                      apply EqTyWeakZero ; substproof.
+                                  }
+                                * { eapply EqTyConv.
+                                    - eapply EqSubstZeroZero.
+                                      substproof.
+                                    - apply EqTySym.
+                                      apply EqTyWeakZero ; substproof.
+                                  }
+                          }
+                        * apply CtxRefl.
+                          { apply CtxExtend.
+                            - apply CtxExtend.
+                              + ih.
+                              + substproof.
+                            - apply TyId.
+                              + substproof.
+                              + substproof.
+                              + apply TermVarZero. substproof.
+                          }
+                      + { eapply TySubst.
+                          - eapply SubstCtxConv.
+                            + eapply SubstShift.
+                              * substproof.
+                              * eapply TyId ; substproof.
+                            + eapply EqCtxExtend.
+                              * apply CtxRefl.
+                                apply CtxExtend ; [ih | substproof].
+                              * gopushsubst.
+                                { apply CongId.
+                                  - apply EqTyWeakNat ; substproof.
+                                  - eapply EqTyConv.
+                                    + eapply EqSubstWeakNat ; substproof.
+                                    + apply EqTySym.
+                                      apply EqTyWeakNat ; substproof.
+                                  - eapply EqTyConv.
+                                    + eapply EqSubstShiftZero ; substproof.
+                                    + apply EqTySym.
+                                      apply EqTyWeakNat ; substproof.
+                                }
+                            + apply CtxRefl. ih.
+                          - assumption.
+                        }
+                  }
             }
           + eapply TermSubst ; eassumption.
           + { eapply TermTyConv.
@@ -743,11 +818,7 @@ Proof.
                 + eapply TermSubst ; eassumption.
                 + eapply TermSubst ; eassumption.
             }
-        - eapply EqTyTrans.
-          + (* We need to generalize JTyConv to p and v *)
-            eapply EqTySym. (* eapply JTyConv ; (ih || eassumption). *)
-            destruct todo.
-          + destruct todo.
+        - apply EqTySym. eapply JTyConv ; (ih || eassumption).
       }
 
     (* EqSubstExfalso *)
