@@ -419,6 +419,215 @@
 }
 
 
+%%% Substitution equality
+
+
+\newcommand{\rlSubstRefl}{\referTo{subst-refl}{rul:subst-refl}}
+\newcommand{\showSubstRefl}{%
+  \infer[\rulename{subst-refl}] % SubstRefl
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqsubst{\sbs}{\sbs}{\G}{\D}}
+}
+
+
+\newcommand{\rlSubstSym}{\referTo{subst-sym}{rul:subst-sym}}
+\newcommand{\showSubstSym}{%
+  \infer[\rulename{subst-sym}] % SubstSym
+  {\eqsubst{\sbs}{\sbt}{\G}{\D}}
+  {\eqsubst{\sbt}{\sbs}{\G}{\D}}
+}
+
+
+\newcommand{\rlSubstTrans}{\referTo{subst-trans}{rul:subst-trans}}
+\newcommand{\showSubstTrans}{%
+  \infer[\rulename{subst-trans}] % SubstTrans
+  {\eqsubst{\sbs}{\sbt}{\G}{\D} \\
+   \eqsubst{\sbt}{\sbr}{\G}{\D}
+  }
+  {\eqsubst{\sbs}{\sbr}{\G}{\D}}
+}
+
+
+\newcommand{\rlCongSubstZero}{\referTo{cong-subst-zero}{rul:cong-subst-zero}}
+\newcommand{\showCongSubstZero}{%
+  \infer[\rulename{cong-subst-zero}] % CongSubstZero
+  {\eqctx{\G_1}{\G_2} \\
+   \eqtype{\G_1}{\A_1}{\A_2} \\
+   \eqterm{\G_1}{\uu_1}{\uu_2}{\A_1}
+  }
+  {\eqsubst
+    {\sbzero{\G_1}{\A_1}{\uu_1}}
+    {\sbzero{\G_2}{\A_2}{\uu_2}}
+    {\G_1}
+    {\ctxextend{\G_1}{\A_1}}
+  }
+}
+
+
+\newcommand{\rlCongSubstWeak}{\referTo{cong-subst-weak}{rul:cong-subst-weak}}
+\newcommand{\showCongSubstWeak}{%
+  \infer[\rulename{cong-subst-weak}] % CongSubstWeak
+  {\eqctx{\G_1}{\G_2} \\
+   \eqtype{\G_1}{\A_1}{\A_2}
+  }
+  {\eqsubst
+    {\sbweak{\G_1}{\A_1}}
+    {\sbweak{\G_2}{\A_2}}
+    {\ctxextend{\G_1}{\A_1}}
+    {\G_1}
+  }
+}
+
+
+\newcommand{\rlCongSubstShift}{\referTo{cong-subst-shift}{rul:cong-subst-shift}}
+\newcommand{\showCongSubstShift}{%
+  \infer[\rulename{cong-subst-shift}] % CongSubstShift
+  {\eqctx{\G_1}{\G_2} \\
+   \eqsubst{\sbs}{\sbt}{\G_1}{\D} \\
+   \eqtype{\D}{\A_1}{\A_2}
+  }
+  {\eqsubst
+    {\sbshift{\G_1}{\A_1}{\sbs}}
+    {\sbshift{\G_2}{\A_2}{\sbt}}
+    {\ctxextend{\G_1}{\subst{\A_1}{\sbs}}}
+    {\ctxextend{\D}{\A_1}}
+  }
+}
+
+
+\newcommand{\rlCongSubstComp}{\referTo{cong-subst-comp}{rul:cong-subst-comp}}
+\newcommand{\showCongSubstComp}{%
+  \infer[\rulename{cong-subst-comp}] % CongSubstComp
+  {\eqsubst{\sbs_1}{\sbs_2}{\G}{\D} \\
+   \eqsubst{\sbt_1}{\sbt_2}{\D}{\E}
+  }
+  {\eqsubst
+    {\sbcomp{\sbs_1}{\sbt_1}}
+    {\sbcomp{\sbs_2}{\sbt_2}}
+    {\G}
+    {\E}
+  }
+}
+
+
+\newcommand{\rlEqSubstCtxConv}{\referTo{eq-subst-ctx-conv}{rul:eq-subst-ctx-conv}}
+\newcommand{\showEqSubstCtxConv}{%
+  \infer[\rulename{eq-subst-ctx-conv}] % EqSubstCtxConv
+  {\eqsubst{\sbs}{\sbt}{\G_1}{\D_1} \\
+   \eqctx{\G_1}{\G_2} \\
+   \eqctx{\D_1}{\D_2}
+  }
+  {\eqsubst{\sbs}{\sbt}{\G_2}{\D_2}}
+}
+
+
+\newcommand{\rlCompAssoc}{\referTo{comp-assoc}{rul:comp-assoc}}
+\newcommand{\showCompAssoc}{%
+  \infer[\rulename{comp-assoc}] % CompAssoc
+  {\issubst{\sbs}{\G}{\D} \\
+   \issubst{\sbt}{\D}{\E} \\
+   \issubst{\sbr}{\E}{\F}
+  }
+  {\eqsubst
+    {\sbcomp{\sbcomp{\sbs}{\sbt}}{\sbr}}
+    {\sbcomp{\sbs}{\sbcomp{\sbt}{\sbr}}}
+    {\G}
+    {\F}
+  }
+}
+
+
+\newcommand{\rlWeakNat}{\referTo{weak-nat}{rul:weak-nat}}
+\newcommand{\showWeakNat}{%
+  \infer[\rulename{weak-nat}] % WeakNat
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A}
+  }
+  {\eqsubst
+    {\sbcomp{\sbshift{\G}{\A}{\sbs}}
+            {\sbweak{\D}{\A}}}
+    {\sbcomp{\sbweak{\G}{\subst{\A}{\sbs}}}
+            {\sbs}}
+    {\ctxextend{\G}{\subst{\A}{\sbs}}}
+    {\D}
+  }
+}
+
+
+\newcommand{\rlWeakZero}{\referTo{weak-zero}{rul:weak-zero}}
+\newcommand{\showWeakZero}{%
+  \infer[\rulename{weak-zero}] % WeakZero
+  {\isterm{\G}{\uu}{\A}}
+  {\eqsubst
+    {\sbcomp{\sbzero{\G}{\A}{\uu}}
+            {\sbweak{\G}{\A}}}
+    {\sbid{\G}}
+    {\G}
+    {\G}
+  }
+}
+
+
+\newcommand{\rlShiftZero}{\referTo{shift-zero}{rul:shift-zero}}
+\newcommand{\showShiftZero}{%
+  \infer[\rulename{shift-zero}] % ShiftZero
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\D}{\uu}{\A}
+  }
+  {\eqsubst
+    {\sbcomp{\sbzero{\G}{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}}
+            {\sbshift{\G}{\A}{\sbs}}}
+    {\sbcomp{\sbs}
+            {\sbzero{\D}{\A}{\uu}}}
+    {\G}
+    {\ctxextend{\D}{\A}}
+  }
+}
+
+
+\newcommand{\rlCompShift}{\referTo{comp-shift}{rul:comp-shift}}
+\newcommand{\showCompShift}{%
+  \infer[\rulename{comp-shift}] % CompShift
+  {\issubst{\sbs}{\G}{\D} \\
+   \issubst{\sbt}{\D}{\E} \\
+   \istype{\E}{\A}
+  }
+  {\eqsubst
+    {\sbcomp{\sbshift{\G}{\subst{\A}{\sbt}}{\sbs}}
+            {\sbshift{\D}{\A}{\sbt}}}
+    {\sbshift{\G}{\A}{\sbcomp{\sbs}{\sbt}}}
+    {\ctxextend{\G}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}}
+    {\ctxextend{\E}{\A}}
+  }
+}
+
+
+\newcommand{\rlCompIdRight}{\referTo{comp-id-right}{rul:comp-id-right}}
+\newcommand{\showCompIdRight}{%
+  \infer[\rulename{comp-id-right}] % CompIdRight
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqsubst
+    {\sbcomp{\sbid{\D}}{\sbs}}
+    {\sbs}
+    {\G}
+    {\D}
+  }
+}
+
+
+\newcommand{\rlCompIdLeft}{\referTo{comp-id-left}{rul:comp-id-left}}
+\newcommand{\showCompIdLeft}{%
+  \infer[\rulename{comp-id-left}] % CompIdLeft
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqsubst
+    {\sbcomp{\sbs}{\sbid{\G}}}
+    {\sbs}
+    {\G}
+    {\D}
+  }
+}
+
+
 %%%% Type equality
 
 
