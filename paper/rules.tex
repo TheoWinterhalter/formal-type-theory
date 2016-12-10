@@ -651,8 +651,8 @@
 \newcommand{\rlEqTySym}{\referTo{eq-ty-sym}{rul:eq-ty-sym}}
 \newcommand{\showEqTySym}{%
   \infer[\rulename{eq-ty-sym}] % EqTySym
-  {\eqtype{\G}{\B}{\A}}
   {\eqtype{\G}{\A}{\B}}
+  {\eqtype{\G}{\B}{\A}}
 }
 
 
@@ -665,61 +665,14 @@
 }
 
 
-\newcommand{\rlEqTyWeakNat}{\referTo{eq-ty-weak-nat}{rul:eq-ty-weak-nat}}
-\newcommand{\showEqTyWeakNat}{%
-  \infer[\rulename{eq-ty-weak-nat}] % EqTyWeakNat
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\D}{\A} \\
-   \istype{\D}{\B}
-  }
+\newcommand{\rlEqTyIdSubst}{\referTo{eq-ty-id-subst}{rul:eq-ty-id-subst}}
+\newcommand{\showEqTyIdSubst}{%
+  \infer[\rulename{eq-ty-id-subst}] % EqTyIdSubst
+  {\istype{\G}{\A}}
   {\eqtype
-   {\ctxextend{\G}{\subst{\A}{\sbs}}}
-   {\subst{(\subst{\B}{\sbweak{\D}{\A}})}{\sbshift{\G}{\A}{\sbs}}}
-   {\subst{(\subst{\B}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
-  }
-}
-
-
-\newcommand{\rlEqTyWeakZero}{\referTo{eq-ty-weak-zero}{rul:eq-ty-weak-zero}}
-\newcommand{\showEqTyWeakZero}{%
-  \infer[\rulename{eq-ty-weak-zero}]
-  {\istype{\G}{\A} \\
-   \isterm{\G}{\uu}{\B}
-  }
-  {\eqtype{\G}
-    {\subst{(\subst{\A}{\sbweak{\G}{\B}})}{\sbzero{\G}{\B}{\uu}}}
-    {\A}
-  }
-}
-
-
-\newcommand{\rlEqTyShiftZero}{\referTo{eq-ty-shift-zero}{rul:eq-ty-shift-zero}}
-\newcommand{\showEqTyShiftZero}{%
-  \infer[\rulename{eq-ty-shift-zero}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\ctxextend{\D}{\A}}{\B} \\
-   \isterm{\D}{\vv}{\A}
-  }
-  {\eqtype{\G}
-    {\subst
-      {(\subst{\B}{\sbshift{\G}{\A}{\sbs}})}
-      {\sbzero{\G}{\subst{\A}{\sbs}}{\subst{\vv}{\sbs}}}
-    }
-    {\subst{(\subst{\B}{\sbzero{\D}{\A}{\vv}})}{\sbs}}
-  }
-}
-
-
-\newcommand{\rlEqTyCongZero}{\referTo{eq-ty-cong-zero}{rul:eq-ty-cong-zero}}
-\newcommand{\showEqTyCongZero}{%
-  \infer[\rulename{eq-ty-cong-zero}]
-  {\eqtype{\G}{\A_1}{\A_2} \\
-   \eqterm{\G}{\uu_1}{\uu_2}{\A_1} \\
-   \eqtype{\ctxextend{\G}{\A_1}}{\B_1}{\B_2}
-  }
-  {\eqtype{\G}
-    {\subst{\B_1}{\sbzero{\G}{\A_1}{\uu_1}}}
-    {\subst{\B_2}{\sbzero{\G}{\A_2}{\uu_2}}}
+   {\G}
+   {\subst{\A}{\sbid{\G}}}
+   {\A}
   }
 }
 
@@ -752,6 +705,42 @@
   {\eqtype{\G}
     {\subst{(\Id{\A}{\uu}{\vv})}{\sbs}}
     {\Id{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}{\subst{\vv}{\sbs}}}
+  }
+}
+
+
+\newcommand{\rlEqTySubstEmpty}{\referTo{eq-ty-subst-empty}{rul:eq-ty-subst-empty}}
+\newcommand{\showEqTySubstEmpty}{%
+  \infer[\rulename{eq-ty-subst-empty}] % EqTySubstEmpty
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqtype{\G}{\subst{\Empty}{\sbs}}{\Empty}}
+}
+
+
+\newcommand{\rlEqTySubstUnit}{\referTo{eq-ty-subst-unit}{rul:eq-ty-subst-unit}}
+\newcommand{\showEqTySubstUnit}{%
+  \infer[\rulename{eq-ty-subst-unit}] % EqTySubstUnit
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqtype{\G}{\subst{\Unit}{\sbs}}{\Unit}}
+}
+
+
+\newcommand{\rlEqTySubstBool}{\referTo{eq-ty-subst-bool}{rul:eq-ty-subst-bool}}
+\newcommand{\showEqTySubstBool}{%
+  \infer[\rulename{eq-ty-subst-bool}] % EqTySubstBool
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqtype{\G}{\subst{\Bool}{\sbs}}{\Bool}}
+}
+
+
+\newcommand{\rlEqTyExfalso}{\referTo{eq-ty-exfalso}{rul:eq-ty-exfalso}}
+\newcommand{\showEqTyExfalso}{%
+  \infer[\rulename{eq-ty-exfalso}] % EqTyExfalso
+  {\istype{\G}{\A} \\
+    \istype{\G}{\B} \\
+    \isterm{\G}{\uu}{\Empty}
+  }
+  {\eqtype{\G}{\A}{\B}
   }
 }
 
