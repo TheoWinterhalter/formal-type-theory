@@ -736,6 +736,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                      sbs
                   )
 
+     (* This rule is subsumed by EqTermExfalso *)
      | EqSubstExfalso :
          forall {G D A u sbs},
            issubst sbs G D ->

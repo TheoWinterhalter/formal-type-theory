@@ -257,6 +257,8 @@ In this section we give the formulation of type theory that we shall work with.
 \begin{mathpar}
   {\label{rul:eq-ty-id-subst} \showEqTyIdSubst}
 
+  {\label{rul:eq-ty-subst-comp} \showEqTySubstComp}
+
   {\label{rul:eq-ty-subst-prod} \showEqTySubstProd}
 
   {\label{rul:eq-ty-subst-id} \showEqTySubstId}
@@ -301,6 +303,10 @@ In this section we give the formulation of type theory that we shall work with.
 \subsubsection*{Substitutions}
 
 \begin{mathpar}
+  {\label{rul:eq-id-subst} \showEqIdSubst}
+
+  {\label{rul:eq-subst-comp} \showEqSubstComp}
+
   {\label{rul:eq-subst-weak} \showEqSubstWeak}
 
   {\label{rul:eq-subst-zero-zero} \showEqSubstZeroZero}
@@ -316,6 +322,22 @@ In this section we give the formulation of type theory that we shall work with.
   {\label{rul:eq-subst-app} \showEqSubstApp}
 
   {\label{rul:eq-subst-refl} \showEqSubstRefl}
+
+  \label{rul:eq-subst-j} \showEqSubstJ
+\end{mathpar}
+
+\begin{mathpar}
+  {\label{rul:eq-subst-exfalso} \showEqSubstExfalso}
+
+  {\label{rul:eq-subst-unit} \showEqSubstUnit}
+
+  {\label{rul:eq-subst-true} \showEqSubstTrue}
+
+  {\label{rul:eq-subst-false} \showEqSubstFalse}
+
+  {\label{rul:eq-subst-cond} \showEqSubstCond}
+
+  {\label{rul:eq-term-exfalso} \showEqTermExfalso}
 \end{mathpar}
 
 \subsubsection*{Equality reflection}
@@ -330,13 +352,21 @@ Here $\mathsf{UIP}(\A)$ is an abbreviation for what is written traditionally as
 \subsubsection*{Computation and Extensionality}
 
 \begin{mathpar}
+  {\label{rul:unit-eta} \showUnitEta}
+
   {\label{rul:prod-beta} \showProdBeta}
 
+  {\label{rul:cond-true} \showCondTrue}
+
+  {\label{rul:cond-false} \showCondFalse}
+
   \label{rul:prod-eta} \showProdEta
+
+  \label{rul:j-refl} \showJRefl
 \end{mathpar}
 
-The rule {\rlProdEta} is optional. We may prefer not to keep it around, as it amounts
-to function extensionality.
+The rule {\rlProdEta} is optional. We may prefer not to keep it around, as it
+amounts to function extensionality.
 
 \subsubsection*{Congruence rules}
 
@@ -346,6 +376,10 @@ to function extensionality.
   {\label{rul:cong-app} \showCongApp}
 
   {\label{rul:cong-refl} \showCongRefl}
+
+  \label{rul:cong-j} \showCongJ
+
+  {\label{rul:cong-cond} \showCongCond}
 
   {\label{rul:cong-term-subst} \showCongTermSubst}
 \end{mathpar}
