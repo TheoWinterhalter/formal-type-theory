@@ -32,7 +32,7 @@ with substitution : Type :=
      | sbid : context -> substitution
      | sbcomp : substitution -> substitution -> substitution.
 
-Parameter UIP : type -> type.
+Parameter reflective : type -> type.
 
 Inductive isctx : context -> Type :=
 
@@ -803,7 +803,7 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqReflection :
          forall {G A u v w1 w2},
            isterm G w1 (Id A u v) ->
-           isterm G w2 (UIP A) ->
+           isterm G w2 (reflective A) ->
            eqterm G u v A
 
      | ProdBeta :
