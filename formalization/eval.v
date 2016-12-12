@@ -5,69 +5,68 @@ Require itt.
 Module C := ctt.
 Module I := itt.
 
-Definition todo : False.
+Definition todolater : False.
 Admitted.
 
-Fixpoint eval_ctx (G : C.context) : I.context
+Definition todo {A} : A :=
+  match todolater return A with end.
 
-with eval_substitution' (sbs : C.substitution') : I.substitution
+Fixpoint eval_ctx (G : C.context) : I.context :=
+  match G with
+  | C.ctxempty => I.ctxempty
+  | C.ctxextend G A => I.ctxextend (eval_ctx G) (eval_type A)
+  end
 
-with eval_substitution (sbs : C.substitution) : I.substitution
+with eval_substitution' (sbs : C.substitution') : I.substitution :=
+  match sbs with
+  | C.sbzero G A u => I.sbzero (eval_ctx G) (eval_type A) (eval_term u)
+  | C.sbweak G A => I.sbweak (eval_ctx G) (eval_type A)
+  | C.sbshift G A sbs =>
+    I.sbshift (eval_ctx G) (eval_type A) (eval_substitution sbs)
+  | C.sbid G => I.sbid (eval_ctx G)
+  | C.sbcomp sbs sbt =>
+    I.sbcomp (eval_substitution sbs) (eval_substitution sbt)
+  end
 
-with eval_type' (A : C.type') : I.type
+with eval_substitution (sbs : C.substitution) : I.substitution :=
+  todo
 
-with eval_type (A : C.type) : I.type
+with eval_type' (A : C.type') : I.type :=
+  match A with
+  | C.Prod A B => I.Prod (eval_type A) (eval_type B)
+  | C.Id A u v => I.Id (eval_type A) (eval_term u) (eval_term v)
+  | C.Subst A sbs => I.Subst (eval_type A) (eval_substitution sbs)
+  | C.Empty => I.Empty
+  | C.Unit => I.Unit
+  | C.Bool => I.Bool
+  end
 
-with eval_term' (t : C.term') : I.term
+with eval_type (A : C.type) : I.type :=
+  todo
 
-with eval_term (t : C.term) : I.term.
+with eval_term' (t : C.term') : I.term :=
+  match t with
+  | C.var k => I.var k
+  | C.lam A B u => I.lam (eval_type A) (eval_type B) (eval_term u)
+  | C.app u A B v =>
+    I.app (eval_term u) (eval_type A) (eval_type B) (eval_term v)
+  | C.refl A u => I.refl (eval_type A) (eval_term u)
+  | C.j A u C w v p => I.j (eval_type A)
+                          (eval_term u)
+                          (eval_type C)
+                          (eval_term w)
+                          (eval_term v)
+                          (eval_term p)
+  | C.subst u sbs => I.subst (eval_term u) (eval_substitution sbs)
+  | C.exfalso A u => I.exfalso (eval_type A) (eval_term u)
+  | C.unit => I.unit
+  | C.true => I.true
+  | C.false => I.false
+  | C.cond A u v w => I.cond (eval_type A)
+                            (eval_term u)
+                            (eval_term v)
+                            (eval_term w)
+  end
 
-Proof.
-
-  (****** eval_ctx ******)
-  - destruct G.
-
-    (* ctxempty *)
-    + exact I.ctxempty.
-
-    (* ctxextend *)
-    + simple refine (I.ctxextend _ _).
-      * now apply eval_ctx.
-      * now apply eval_type.
-
-  (****** Eval_substitution' ******)
-  - destruct sbs.
-
-    (* sbzero *)
-    + simple refine (I.sbzero _ _ _).
-      * now apply eval_ctx.
-      * now apply eval_type.
-      * now apply eval_term.
-
-    (* sbweak *)
-    + simple refine (I.sbweak _ _).
-      * now apply eval_ctx.
-      * now apply eval_type.
-
-    + destruct todo.
-
-    + destruct todo.
-
-    + destruct todo.
-
-  (****** eval_substitution ******)
-  - destruct todo.
-
-  (****** eval_type' ******)
-  - destruct todo.
-
-  (****** eval_type ******)
-  - destruct todo.
-
-  (****** eval_term' ******)
-  - destruct todo.
-
-  (****** eval_term ******)
-  - destruct todo.
-
-Defined.
+with eval_term (t : C.term) : I.term :=
+  todo.
