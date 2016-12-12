@@ -58,6 +58,11 @@ Parameter equiv_type : C.context -> C.type -> C.type -> Type.
 
 Parameter equiv_term : C.context -> C.term -> C.term -> C.type -> Type.
 
+(* Seems like this notation screws up the other one. *)
+(* Notation "{ x : A & y : B & P }" := *)
+(*   (sigT (A:=A) (fun x => sigT (A:=B) (fun y => P))) *)
+(*   : type_scope. *)
+
 Fixpoint trans_ctx {G} (H : E.isctx G) {struct H} :
   { G' : C.context & istrans_ctx G G' }
 
@@ -92,54 +97,74 @@ Proof.
   (****** trans_ctx ******)
   - { induction H.
 
-    (* CtxEmpty *)
-    - exists C.ctxempty.
-      split.
-      + admit.
-      + constructor.
+      (* CtxEmpty *)
+      - exists C.ctxempty.
+        split.
+        + constructor.
+        + constructor.
 
-    (* CtxExtend *)
-    (* this is the reason we changed CtxExtend to include "isctx G". *)
-    - destruct (trans_ctx _ H) as [G' HGisG'].
-      destruct (trans_type G G' A i HGisG') as (A' & HAisA' & _).
-      exists (C.ctxextend G' A').
-      split.
-      + admit.
-      + constructor.
-        * now destruct HGisG'.
-        * now destruct HAisA'.
-  }
-  (****** trans_substl ******)
+      (* CtxExtend *)
+      (* this is the reason we changed CtxExtend to include "isctx G". *)
+      - destruct (trans_ctx _ H) as [G' HGisG'].
+        destruct (trans_type G G' A i HGisG') as (A' & HAisA' & _).
+        exists (C.ctxextend G' A').
+        split.
+        + constructor.
+          * now destruct HGisG'.
+          * now destruct HAisA'.
+        + constructor.
+          * now destruct HGisG'.
+          * now destruct HAisA'.
+    }
+  (****** trans_subst_left ******)
   - { induction H.
 
-    (* SubstZero *)
-    - admit.
+      (* SubstZero *)
+      - (* We have a problem again, how do we translate A? *)
+        (* It would be nice if we didn't need trans_subst_left...
+           But it is needed by TySubst for instance. *)
+        admit.
 
-    (* SubstWeak *)
-    - admit.
+      (* SubstWeak *)
+      - destruct Ht as [HG' hom].
+        inversion hom. subst.
+        exists G'0. exists (C.sbcoerce C.idSb (C.sbweak G'0 A')).
+        (* We need to know istype G'0 A', however, it is unclear how to get it
+           unless by using inversion, but I assume we would like to avoid that.
+         *)
+        admit.
 
-    (* SubstShift *)
-    - admit.
+      (* SubstShift *)
+      - admit.
 
-    - admit.
+      (* SubstId *)
+      - admit.
 
-    - admit.
-    - admit.
-  }
+      (* SubstComp *)
+      - admit.
+
+      (* SubstCtxConv *)
+      - admit.
+    }
   (****** trans_substr ******)
-  - {  induction H.
+  - { induction H.
 
-    (* SubstZero *)
-    - admit.
+      (* SubstZero *)
+      - admit.
 
-    (* SubstWeak *)
-    - admit.
+      (* SubstWeak *)
+      - admit.
 
-    (* SubstShift *)
-    - admit.
+      (* SubstShift *)
+      - admit.
 
-    - admit.
-    - admit.
-    - admit.
-  }
+      (* SubstId *)
+      - admit.
+
+      (* SubstComp *)
+      - admit.
+
+      (* SubstCtxConv *)
+      - admit.
+    }
 Abort.
