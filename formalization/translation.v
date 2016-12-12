@@ -28,8 +28,40 @@ with hml_substitution :
         hml_term u u' ->
         hml_substitution (E.sbzero G A u) (C.sbcoerce c (C.sbzero G' A' u'))
 
+  | hml_sbweak :
+      forall {G G' A A' c},
+        hml_context G G' ->
+        hml_type A A' ->
+        hml_substitution (E.sbweak G A) (C.sbcoerce c (C.sbweak G' A'))
+
+  | hml_sbshift :
+      forall {G G' A A' sbs sbs' c},
+        hml_context G G' ->
+        hml_type A A' ->
+        hml_substitution sbs sbs' ->
+        hml_substitution (E.sbshift G A sbs)
+                         (C.sbcoerce c (C.sbshift G' A' sbs'))
+
+  | hml_sbid :
+      forall {G G' c},
+        hml_context G G' ->
+        hml_substitution (E.sbid G) (C.sbcoerce c (C.sbid G'))
+
+  | hml_sbcomp :
+      forall {sbs sbs' sbt sbt' c},
+        hml_substitution sbs sbs' ->
+        hml_substitution sbt sbt' ->
+        hml_substitution (E.sbcomp sbs sbt)
+                         (C.sbcoerce c (C.sbcomp sbs' sbt'))
+
 with hml_type :
   E.type -> C.type -> Type :=
+
+  | hml_Prod :
+      forall {A A' B B' c},
+        hml_type A A' ->
+        hml_type B B' ->
+        hml_type (E.Prod A B) (C.Coerce c (C.Prod A' B'))
 
   | hml_Id :
       forall {A A' u u' v v' c},
@@ -38,11 +70,96 @@ with hml_type :
         hml_term v v' ->
         hml_type (E.Id A u v) (C.Coerce c (C.Id A' u' v'))
 
+  | hml_Subst :
+      forall {A A' sbs sbs' c},
+        hml_type A A' ->
+        hml_substitution sbs sbs' ->
+        hml_type (E.Subst A sbs) (C.Coerce c (C.Subst A' sbs'))
+
+  | hml_Empty :
+      forall {c},
+        hml_type E.Empty (C.Coerce c C.Empty)
+
+  | hml_Unit :
+      forall {c},
+        hml_type E.Unit (C.Coerce c C.Unit)
+
+  | hml_Bool :
+      forall {c},
+        hml_type E.Bool (C.Coerce c C.Bool)
+
 with hml_term :
   E.term -> C.term -> Type :=
 
   | hml_var {k c} :
       hml_term (E.var k) (C.coerce c (C.var k))
+
+  | hml_lam :
+      forall {A A' B B' u u' c},
+        hml_type A A' ->
+        hml_type B B' ->
+        hml_term u u' ->
+        hml_term (E.lam A B u) (C.coerce c (C.lam A' B' u'))
+
+  | hml_app :
+      forall {A A' B B' u u' v v' c},
+        hml_type A A' ->
+        hml_type B B' ->
+        hml_term u u' ->
+        hml_term v v' ->
+        hml_term (E.app u A B v)
+                 (C.coerce c (C.app u' A' B' v'))
+
+  | hml_refl :
+      forall {A A' u u' c},
+        hml_type A A' ->
+        hml_term u u' ->
+        hml_term (E.refl A u) (C.coerce c (C.refl A' u'))
+
+  | hml_j :
+      forall {A A' C C' u u' v v' w w' p p' c},
+        hml_type A A' ->
+        hml_type C C' ->
+        hml_term u u' ->
+        hml_term v v' ->
+        hml_term w w' ->
+        hml_term p p' ->
+        hml_term (E.j A u C w v p)
+                 (C.coerce c (C.j A' u' C' w' v' p'))
+
+  | hml_subst :
+      forall {u u' sbs sbs' c},
+        hml_term u u' ->
+        hml_substitution sbs sbs' ->
+        hml_term (E.subst u sbs)
+                 (C.coerce c (C.subst u' sbs'))
+
+  | hml_exfalso :
+      forall {A A' u u' c},
+        hml_type A A' ->
+        hml_term u u' ->
+        hml_term (E.exfalso A u) (C.coerce c (C.exfalso A' u'))
+
+  | hml_unit :
+      forall {c},
+        hml_term E.unit (C.coerce c C.unit)
+
+  | hml_true :
+      forall {c},
+        hml_term E.true (C.coerce c C.true)
+
+  | hml_false :
+      forall {c},
+        hml_term E.false (C.coerce c C.false)
+
+  | hml_cond :
+      forall {C C' u u' v v' w w' c},
+        hml_type C C' ->
+        hml_term u u' ->
+        hml_term v v' ->
+        hml_term w w' ->
+        hml_term (E.cond C u v w)
+                 (C.coerce c (C.cond C' u' v' w'))
 
 .
 
