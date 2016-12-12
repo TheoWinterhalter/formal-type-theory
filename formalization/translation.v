@@ -18,6 +18,16 @@ Inductive hml_context :
         hml_type A A' ->
         hml_context (E.ctxextend G A) (C.ctxextend G' A')
 
+with hml_substitution :
+  E.substitution -> C.substitution -> Type :=
+
+  | hml_sbzero :
+      forall {G G' A A' u u' c},
+        hml_context G G' ->
+        hml_type A A' ->
+        hml_term u u' ->
+        hml_substitution (E.sbzero G A u) (C.sbcoerce c (C.sbzero G' A' u'))
+
 with hml_type :
   E.type -> C.type -> Type :=
 
@@ -40,6 +50,15 @@ Structure istrans_ctx (G : E.context) (G' : C.context) :=
   {
     isctx_derive : C.isctx G' ;
     isctx_hom : hml_context G G'
+  }.
+
+Structure istrans_subst
+          (sbs : E.substitution)
+          (G' D' : C.context) (sbs' : C.substitution)
+  :=
+  {
+    issubst_derive : C.issubst sbs' G' D' ;
+    issubst_hom : hml_substitution sbs sbs'
   }.
 
 Structure istrans_type (A : E.type) (G' : C.context) (A' : C.type) :=
@@ -68,12 +87,13 @@ Fixpoint trans_ctx {G} (H : E.isctx G) {struct H} :
 
 with trans_subst_left {G G' D sbs} (H : E.issubst sbs G D)
                   (Ht : istrans_ctx G G') {struct H} :
-       { D' : C.context & { sbt : C.substitution & C.issubst sbt G' D' } }
+       { D' : C.context &
+              { sbt : C.substitution & istrans_subst sbs G' D' sbt } }
 
 (* this one might not be needed? *)
-with trans_subst_right {G D D' sbs} (H : E.issubst sbs G D)
-                  (Ht : istrans_ctx D D') {struct H} :
-       { G' : C.context & { sbt : C.substitution & C.issubst sbt G' D' } }
+(* with trans_subst_right {G D D' sbs} (H : E.issubst sbs G D) *)
+(*                   (Ht : istrans_ctx D D') {struct H} : *)
+(*        { G' : C.context & { sbt : C.substitution & C.issubst sbt G' D' } } *)
 
 with trans_type {G G' A} (H : E.istype G A) (Ht : istrans_ctx G G') {struct H} :
        { A' : C.type &
@@ -116,6 +136,7 @@ Proof.
           * now destruct HGisG'.
           * now destruct HAisA'.
     }
+
   (****** trans_subst_left ******)
   - { induction H.
 
@@ -146,25 +167,26 @@ Proof.
       (* SubstCtxConv *)
       - admit.
     }
-  (****** trans_substr ******)
-  - { induction H.
 
-      (* SubstZero *)
-      - admit.
+  (****** trans_subst_right ******)
+  (* - { induction H. *)
 
-      (* SubstWeak *)
-      - admit.
+  (*     (* SubstZero *) *)
+  (*     - admit. *)
 
-      (* SubstShift *)
-      - admit.
+  (*     (* SubstWeak *) *)
+  (*     - admit. *)
 
-      (* SubstId *)
-      - admit.
+  (*     (* SubstShift *) *)
+  (*     - admit. *)
 
-      (* SubstComp *)
-      - admit.
+  (*     (* SubstId *) *)
+  (*     - admit. *)
 
-      (* SubstCtxConv *)
-      - admit.
-    }
+  (*     (* SubstComp *) *)
+  (*     - admit. *)
+
+  (*     (* SubstCtxConv *) *)
+  (*     - admit. *)
+  (*   } *)
 Abort.
