@@ -15,18 +15,29 @@ In this section we give the formulation of type theory that we shall work with.
     \bnf   {}& \Prod{\A} \B             && \text{product}\\
     \bnfor {}& \Id{\A}{\uu}{\vv}        && \text{identity type} \\
     \bnfor {}& \subst{\A}{\sbs}         && \text{substitution $\sbs$ applied to $\A$} \\
+    \bnfor {}& \Empty                   && \text{empty type} \\
+    \bnfor {}& \Unit                    && \text{unit type} \\
+    \bnfor {}& \Bool                    && \text{bool type} \\
   \\
   \text{Term $\uu$, $\vv$, $\ww$}
     \bnf   {}& \var{k}                  && \text{the $k$-th variable index (a la de Bruijn)} \\
     \bnfor {}& \lam{\A}{\B} \uu         && \text{$\lambda$-abstraction} \\
     \bnfor {}& \app{\uu}{\A}{\B}{\vv}   && \text{application} \\
     \bnfor {}& \refl{\A} \uu            && \text{reflexivity} \\
+    \bnfor {}& \J{\A}{\uu}{\C}{\ww}{\vv}{\p} && \text{the J eliminator} \\
     \bnfor {}& \subst{\uu}{\sbs}        && \text{substitution $\sbs$ applied to $\uu$} \\
+    \bnfor {}& \exfalso{\A} \uu         && \text{ex falso quod libet} \\
+    \bnfor {}& \unit                    && \text{the unit inhabitant} \\
+    \bnfor {}& \true                    && \text{true} \\
+    \bnfor {}& \false                   && \text{false} \\
+    \bnfor {}& \cond{\A}{\uu}{\vv}{\ww} && \text{conditional term} \\
   \\
   \text{Substitution $\sbs$, $\sbt$}
     \bnf   {}& \sbzero{\G}{\A}{\uu}     && \text{substitute $u$ for the $0$-th index} \\
     \bnfor {}& \sbweak{\G}{\A}          && \text{weakening substitution $\ctxextend{\G}{\A} \to \G$} \\
-    \bnfor {}& \sbshift{\G}{\A}{\sbs}   && \text{shift substitution}
+    \bnfor {}& \sbshift{\G}{\A}{\sbs}   && \text{shift substitution} \\
+    \bnfor {}& \sbid{\G}                && \text{identity substitution} \\
+    \bnfor {}& \sbcomp{\sbs}{\sbt}      && \text{composition of substitutions}
 \end{align*}
 
 \subsection{Judgments}
@@ -38,6 +49,7 @@ In this section we give the formulation of type theory that we shall work with.
 & \istype{\G}{\A}               && \text{$\A$ is a type in context $\G$} \\
 & \isterm{\G}{\uu}{\A}          && \text{$\uu$ is a term of type $\A$ in context $\G$} \\
 & \eqctx{\G}{\D}                && \text{$\G$ and $\D$ are equal contexts} \\
+& \eqsubst{\sbs}{\sbt}{\G}{\D}  && \text{$\sbs$ and $\sbt$ are equal substitutions from context $\G$ to context $\D$} \\
 & \eqtype{\G}{\A}{\B}           && \text{$\A$ and $\B$ are equal types in context $\G$} \\
 & \eqterm{\G}{\uu}{\vv}{\A}     && \text{$\uu$ and $\vv$ are equal terms of type $\A$ in context $\G$}
 \end{align*}
@@ -59,7 +71,13 @@ In this section we give the formulation of type theory that we shall work with.
 
   {\label{rul:subst-weak} \showSubstWeak}
 
- {\label{rul:subst-shift} \showSubstShift}
+  {\label{rul:subst-shift} \showSubstShift}
+
+  {\label{rul:subst-id} \showSubstId}
+
+  {\label{rul:subst-comp} \showSubstComp}
+
+  {\label{rul:subst-ctx-conv} \showSubstCtxConv}
 \end{mathpar}
 
 \subsection{Types \fbox{$\istype{\G}{\A}$}}
@@ -78,6 +96,12 @@ In this section we give the formulation of type theory that we shall work with.
   {\label{rul:ty-prod} \showTyProd}
 
   {\label{rul:ty-id} \showTyId}
+
+  {\label{rul:ty-empty} \showTyEmpty}
+
+  {\label{rul:ty-unit} \showTyUnit}
+
+  {\label{rul:ty-bool} \showTyBool}
 \end{mathpar}
 
 \subsection{Terms \fbox{$\isterm{\G}{\uu}{\A}$}}
@@ -114,20 +138,102 @@ In this section we give the formulation of type theory that we shall work with.
 \end{mathpar}
 
 
-\subsubsection*{Reflexivity}
+\subsubsection*{Indentity type}
 
 \begin{mathpar}
   {\label{rul:term-refl} \showTermRefl}
+
+  {\label{rul:term-j} \showTermJ}
 \end{mathpar}
+
+\subsubsection{Empty type}
+
+\begin{mathpar}
+  {\label{rul:term-exfalso} \showTermExfalso}
+\end{mathpar}
+
+\subsubsection{Unit type}
+
+\begin{mathpar}
+  {\label{rul:term-unit} \showTermUnit}
+\end{mathpar}
+
+\subsubsection{Booleans}
+
+\begin{mathpar}
+  {\label{rul:term-true} \showTermTrue}
+
+  {\label{rul:term-false} \showTermFalse}
+
+  {\label{rul:term-cond} \showTermCond}
+\end{mathpar}
+
 
 \subsection{Context equality \fbox{$\eqctx{\G}{\D}$}}
 \label{sec:cont-equal}
+
+\subsubsection{General rules}
+
+\begin{mathpar}
+  {\label{rul:ctx-refl} \showCtxRefl}
+
+  {\label{rul:ctx-sym} \showCtxSym}
+
+  {\label{rul:ctx-trans} \showCtxTrans}
+\end{mathpar}
+
+\subsubsection{Congruence rules}
 
 \begin{mathpar}
   {\label{rul:eq-ctx-empty} \showEqCtxEmpty}
 
   {\label{rul:eq-ctx-extend} \showEqCtxExtend}
 \end{mathpar}
+
+\goodbreak
+
+\subsection{Substitution equality \fbox{$\eqsubst{\sbs}{\sbt}{\G}{\D}$}}
+
+\subsubsection{General rules}
+
+\begin{mathpar}
+  {\label{rul:subst-refl} \showSubstRefl}
+
+  {\label{rul:subst-sym} \showSubstSym}
+
+  {\label{rul:subst-trans} \showSubstTrans}
+
+  {\label{rul:eq-subst-ctx-conv} \showEqSubstCtxConv}
+\end{mathpar}
+
+\subsubsection{Congruence rules}
+
+\begin{mathpar}
+  {\label{rul:cong-subst-zero} \showCongSubstZero}
+
+  {\label{rul:cong-subst-waek} \showCongSubstWeak}
+
+  {\label{rul:cong-subst-shift} \showCongSubstShift}
+
+  {\label{rul:cong-subst-comp} \showCongSubstComp}
+\end{mathpar}
+
+\subsubsection{Interaction rules}
+
+\begin{mathpar}
+  {\label{rul:weak-nat} \showWeakNat}
+
+  {\label{rul:weak-zero} \showWeakZero}
+
+  {\label{rul:shift-zero} \showShiftZero}
+
+  {\label{rul:comp-shift} \showCompShift}
+
+  {\label{rul:comp-id-right} \showCompIdRight}
+
+  {\label{rul:comp-id-left} \showCompIdLeft}
+\end{mathpar}
+
 
 \goodbreak
 
@@ -149,17 +255,21 @@ In this section we give the formulation of type theory that we shall work with.
 \subsubsection*{Substitution}
 
 \begin{mathpar}
-  {\label{rul:eq-ty-weak-nat} \showEqTyWeakNat}
+  {\label{rul:eq-ty-id-subst} \showEqTyIdSubst}
 
-  {\label{rul:eq-ty-weak-zero} \showEqTyWeakZero}
-
-  {\label{rul:eq-ty-shift-zero} \showEqTyShiftZero}
-
-  {\label{rul:eq-ty-cong-zero} \showEqTyCongZero}
+  {\label{rul:eq-ty-subst-comp} \showEqTySubstComp}
 
   {\label{rul:eq-ty-subst-prod} \showEqTySubstProd}
 
   {\label{rul:eq-ty-subst-id} \showEqTySubstId}
+
+  {\label{rul:eq-ty-subst-empty} \showEqTySubstEmpty}
+
+  {\label{rul:eq-ty-subst-unit} \showEqTySubstUnit}
+
+  {\label{rul:eq-ty-subst-bool} \showEqTySubstBool}
+
+  {\label{rul:eq-ty-exfalso} \showEqTyExfalso}
 \end{mathpar}
 
 \subsubsection*{Congruence rules}
@@ -193,6 +303,10 @@ In this section we give the formulation of type theory that we shall work with.
 \subsubsection*{Substitutions}
 
 \begin{mathpar}
+  {\label{rul:eq-id-subst} \showEqIdSubst}
+
+  {\label{rul:eq-subst-comp} \showEqSubstComp}
+
   {\label{rul:eq-subst-weak} \showEqSubstWeak}
 
   {\label{rul:eq-subst-zero-zero} \showEqSubstZeroZero}
@@ -208,6 +322,22 @@ In this section we give the formulation of type theory that we shall work with.
   {\label{rul:eq-subst-app} \showEqSubstApp}
 
   {\label{rul:eq-subst-refl} \showEqSubstRefl}
+
+  \label{rul:eq-subst-j} \showEqSubstJ
+\end{mathpar}
+
+\begin{mathpar}
+  {\label{rul:eq-subst-exfalso} \showEqSubstExfalso}
+
+  {\label{rul:eq-subst-unit} \showEqSubstUnit}
+
+  {\label{rul:eq-subst-true} \showEqSubstTrue}
+
+  {\label{rul:eq-subst-false} \showEqSubstFalse}
+
+  {\label{rul:eq-subst-cond} \showEqSubstCond}
+
+  {\label{rul:eq-term-exfalso} \showEqTermExfalso}
 \end{mathpar}
 
 \subsubsection*{Equality reflection}
@@ -216,19 +346,28 @@ In this section we give the formulation of type theory that we shall work with.
   {\label{rul:eq-reflection} \showEqReflection}
 \end{mathpar}
 %
-Here $\mathsf{UIP}(\A)$ is an abbreviation for what is written traditionally as
-``all parallel paths in $\A$ are (propositionally) equal''.
+Here $\mathsf{reflective}(\A)$ is an arbitrary guarding condition that states
+that a given type satisfies equality reflection. It implies in particular UIP
+for it but needs most likely to be more restrictive.
 
 \subsubsection*{Computation and Extensionality}
 
 \begin{mathpar}
+  {\label{rul:unit-eta} \showUnitEta}
+
   {\label{rul:prod-beta} \showProdBeta}
 
+  {\label{rul:cond-true} \showCondTrue}
+
+  {\label{rul:cond-false} \showCondFalse}
+
   \label{rul:prod-eta} \showProdEta
+
+  \label{rul:j-refl} \showJRefl
 \end{mathpar}
 
-The rule {\rlProdEta} is optional. We may prefer not to keep it around, as it amounts
-to function extensionality.
+The rule {\rlProdEta} is optional. We may prefer not to keep it around, as it
+amounts to function extensionality.
 
 \subsubsection*{Congruence rules}
 
@@ -238,6 +377,10 @@ to function extensionality.
   {\label{rul:cong-app} \showCongApp}
 
   {\label{rul:cong-refl} \showCongRefl}
+
+  \label{rul:cong-j} \showCongJ
+
+  {\label{rul:cong-cond} \showCongCond}
 
   {\label{rul:cong-term-subst} \showCongTermSubst}
 \end{mathpar}
