@@ -1,8 +1,19 @@
 Require ett.
 Require ctt.
+Require Import eval.
 
 Module E := ett.
 Module C := ctt.
+
+(* For a term in CTT to be well-typed we need to evaluate it to ITT and
+   check there. *)
+Definition Cisctx G := I.isctx (eval_ctx G).
+Definition Cissubst sbs G D :=
+  I.issubst (eval_substitution sbs) (eval_ctx G) (eval_ctx D).
+Definition Cistype G A :=
+  I.istype (eval_ctx G) (eval_type A).
+Definition Cisterm G u A :=
+  I.isterm (eval_ctx G) (eval_term u) (eval_type A).
 
 (* "hml" stands for "homologous" which is too long to type. *)
 
@@ -165,7 +176,7 @@ with hml_term :
 
 Structure istrans_ctx (G : E.context) (G' : C.context) :=
   {
-    isctx_derive : C.isctx G' ;
+    isctx_derive : Cisctx G' ;
     isctx_hom : hml_context G G'
   }.
 
@@ -174,19 +185,19 @@ Structure istrans_subst
           (G' D' : C.context) (sbs' : C.substitution)
   :=
   {
-    issubst_derive : C.issubst sbs' G' D' ;
+    issubst_derive : Cissubst sbs' G' D' ;
     issubst_hom : hml_substitution sbs sbs'
   }.
 
 Structure istrans_type (A : E.type) (G' : C.context) (A' : C.type) :=
   {
-    istype_derive : C.istype G' A' ;
+    istype_derive : Cistype G' A' ;
     istype_hom : hml_type A A'
   }.
 
 Structure istrans_term (u : E.term) (G' : C.context) (u' : C.term) (A' : C.type) :=
   {
-    isterm_derive : C.isterm G' u' A' ;
+    isterm_derive : Cisterm G' u' A' ;
     isterm_hom : hml_term u u'
   }.
 
