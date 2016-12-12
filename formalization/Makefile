@@ -98,8 +98,10 @@ endif
 
 VFILES:=ett.v\
   ctt.v\
+  itt.v\
   preadmissibility.v\
   sanity.v\
+  eval.v\
   translation.v
 
 ifneq ($(filter-out archclean clean cleanall printenv,$(MAKECMDGOALS)),)
