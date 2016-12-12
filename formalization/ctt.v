@@ -347,7 +347,161 @@ with isterm : context -> term -> type -> Type :=
 
 with eqctx : context -> context -> Type :=
 
+     | CtxRefl :
+         forall {G},
+           isctx G ->
+           eqctx G G
+
+     | CtxSym :
+         forall {G D},
+           eqctx G D ->
+           eqctx D G
+
+     | CtxTrans :
+         forall {G D E},
+           eqctx G D ->
+           eqctx D E ->
+           eqctx G E
+
+     | EqCtxEmpty :
+         eqctx ctxempty ctxempty
+
+     | EqCtxExtend :
+         forall {G D A B},
+           eqctx G D ->
+           eqtype G A B ->
+           eqctx (ctxextend G A) (ctxextend D B)
+
+with eqsubst' : substitution' -> substitution' -> context -> context -> Type :=
+
+     | CongSubstZero :
+         forall {G1 G2 A1 A2 u1 u2},
+           eqctx G1 G2 ->
+           eqtype G1 A1 A2 ->
+           eqterm G1 u1 u2 A1 ->
+           eqsubst' (sbzero G1 A1 u1)
+                   (sbzero G1 A2 u2)
+                   G1
+                   (ctxextend G1 A1)
+
+     | CongSubstWeak :
+         forall {G1 G2 A1 A2},
+           eqctx G1 G2 ->
+           eqtype G1 A1 A2 ->
+           eqsubst' (sbweak G1 A1)
+                   (sbweak G2 A2)
+                   (ctxextend G1 A1)
+                   G1
+
+     | CongSubstShift :
+         forall {G1 G2 D A1 A2 sbs1 sbs2},
+           eqctx G1 G2 ->
+           eqsubst sbs1 sbs2 G1 D ->
+           eqtype D A1 A2 ->
+           eqsubst' (sbshift G1 A1 sbs1)
+                   (sbshift G2 A2 sbs2)
+                   (ctxextend G1 (Coerce idTy (Subst A1 sbs1)))
+                   (ctxextend D A1)
+
+     | CongSubstComp :
+         forall {G D E sbs1 sbs2 sbt1 sbt2},
+           eqsubst sbs1 sbs2 G D ->
+           eqsubst sbt1 sbt2 D E ->
+           eqsubst' (sbcomp sbs1 sbt1)
+                   (sbcomp sbs2 sbt2)
+                   G
+                   E
+
+     | CompAssoc :
+         forall {G D E F sbs sbt sbr},
+           issubst sbs G D ->
+           issubst sbt D E ->
+           issubst sbr E F ->
+           eqsubst' (sbcomp (sbcoerce idSb (sbcomp sbs sbt)) sbr)
+                   (sbcomp sbs (sbcoerce idSb (sbcomp sbt sbr)))
+                   G
+                   F
+
+     | WeakNat :
+         forall {G D A sbs},
+           issubst sbs G D ->
+           istype D A ->
+           eqsubst' (sbcomp (sbcoerce idSb (sbshift G A sbs))
+                            (sbcoerce idSb (sbweak D A)))
+                    (sbcomp (sbcoerce idSb (sbweak G (Coerce idTy (Subst A sbs))))
+                            sbs)
+                    (ctxextend G (Coerce idTy (Subst A sbs)))
+                    D
+
+     | WeakZero :
+         forall {G A u},
+           isterm G u A ->
+           eqsubst' (sbcomp (sbcoerce idSb (sbzero G A u))
+                            (sbcoerce idSb (sbweak G A)))
+                    (sbid G)
+                    G
+                    G
+
+     | ShiftZero :
+         forall {G D A u sbs},
+           issubst sbs G D ->
+           isterm D u A ->
+           eqsubst' (sbcomp (sbcoerce idSb (sbzero G (Coerce idTy (Subst A sbs)) (coerce idTm (subst u sbs))))
+                            (sbcoerce idSb (sbshift G A sbs)))
+                    (sbcomp sbs
+                            (sbcoerce idSb (sbzero D A u)))
+                    G
+                    (ctxextend D A)
+
+     | CompShift :
+         forall {G D E A sbs sbt},
+           issubst sbs G D ->
+           issubst sbt D E ->
+           istype E A ->
+           eqsubst' (sbcomp (sbcoerce idSb (sbshift G (Coerce idTy (Subst A sbt)) sbs))
+                            (sbcoerce idSb (sbshift D A sbt)))
+                    (sbshift G A (sbcoerce idSb (sbcomp sbs sbt)))
+                    (ctxextend G (Coerce idTy (Subst A (sbcoerce idSb (sbcomp sbs sbt)))))
+                    (ctxextend E A)
+
+     (* Problem here! What should really eqsubst' and eqsubst be about? *)
+     (* | CompIdRight : *)
+     (*     forall {G D sbs}, *)
+     (*       issubst sbs G D -> *)
+     (*       eqsubst' (sbcomp sbs (sbcoerce idSb (sbid D))) sbs G D *)
+
+     (* | CompIdLeft : *)
+     (*     forall {G D sbs}, *)
+     (*       issubst sbs G D -> *)
+     (*       eqsubst' (sbcomp (sbid G) sbs) sbs G D *)
+
 with eqsubst : substitution -> substitution -> context -> context -> Type :=
+
+     | SubstRefl :
+         forall {G D sbs},
+           issubst sbs G D ->
+           eqsubst sbs sbs G D
+
+     | SubstSym :
+         forall {G D sbs sbt},
+           eqsubst sbs sbt G D ->
+           eqsubst sbt sbs G D
+
+     | SubstTrans :
+         forall {G D sb1 sb2 sb3},
+           eqsubst sb1 sb2 G D ->
+           eqsubst sb2 sb3 G D ->
+           eqsubst sb1 sb3 G D
+
+     | EqSubstCtxConv :
+         forall {G1 G2 D1 D2 sbs sbt},
+           eqsubst' sbs sbt G1 D1 ->
+           eqctx G1 G2 ->
+           eqctx D1 D2 ->
+           eqsubst
+             (sbcoerce idSb sbs)
+             (sbcoerce idSb sbt)
+             G2 D2
 
 with eqtype : context -> type -> type -> Type :=
 
