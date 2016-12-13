@@ -278,10 +278,12 @@ Proof.
       - destruct Ht as [HG' hom].
         inversion hom. subst.
         exists G'0. exists (C.sbcoerce C.idSb (C.sbweak G'0 A')).
-        (* We need to know istype G'0 A', however, it is unclear how to get it
-           unless by using inversion, but I assume we would like to avoid that.
-         *)
-        admit.
+        split.
+        + (* To type it we need to recover that A' is a type. *)
+          inversion HG'. subst.
+          (* We need to now how to evaluate coercions. *)
+          admit.
+        + constructor ; assumption.
 
       (* SubstShift *)
       - admit.
