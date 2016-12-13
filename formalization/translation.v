@@ -319,7 +319,7 @@ Proof.
     }
 
   (****** trans_subst_right ******)
-  (* - { induction H. *)
+  (* - { destruct H. *)
 
   (*     (* SubstZero *) *)
   (*     - admit. *)
@@ -341,7 +341,40 @@ Proof.
   (*   } *)
 
   (****** trans_type ******)
-  - todo.
+  - { destruct H.
+
+      (* TyCtxConv *)
+      - todo.
+
+      (* TySubst *)
+      - todo.
+
+      (* TyProd *)
+      - todo.
+
+      (* TyId *)
+      - destruct (trans_type G G' A H Ht) as [A' [HA fA]].
+        destruct (trans_term G u A G' A' i Ht HA) as [u' [Hu fu]].
+        destruct (trans_term G v A G' A' i0 Ht HA) as [v' [Hv fv]].
+        exists (C.Coerce C.idTy (C.Id A' u' v')).
+        split.
+        + split.
+          * todo.
+          * destruct HA ; destruct Hu ; destruct Hv ; now constructor.
+        + intros A'' HA''.
+          (* Without a notion of equivalence, no hope to complete this goal. *)
+          todo.
+
+      (* TyEmpty *)
+      - todo.
+
+      (* TyUnit *)
+      - todo.
+
+      (* TyBool *)
+      - todo.
+
+    }
 
   (****** trans_term ******)
   - todo.
