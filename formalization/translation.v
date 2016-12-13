@@ -366,10 +366,20 @@ Proof.
           todo.
 
       (* TyEmpty *)
-      - todo.
+      - exists (C.Coerce C.idTy C.Empty). split.
+        + split.
+          * todo.
+          * constructor.
+        + intros A'' HA''. destruct HA'' as [H hom].
+          inversion hom. subst.
+          todo.
 
       (* TyUnit *)
-      - todo.
+      - exists (C.Coerce C.idTy C.Unit). split.
+        + split.
+          * todo.
+          * constructor.
+        + todo.
 
       (* TyBool *)
       - todo.
