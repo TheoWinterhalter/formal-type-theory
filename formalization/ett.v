@@ -1,12 +1,4 @@
-Module Type Param.
-
-  Parameter hasCoercions : Type.
-  Parameter typeCoercion : Type.
-  Parameter ctxCoercion : Type.
-
-End Param.
-
-Module Theory (P : Param).
+(* The source type theory. *)
 
 Inductive context : Type :=
 | ctxempty : context
@@ -16,7 +8,6 @@ with type : Type :=
      | Prod : type -> type -> type
      | Id : type -> term -> term -> type
      | Subst : type -> substitution -> type
-     | Coerc : P.hasCoercions -> type -> P.ctxCoercion -> type
      | Empty : type
      | Unit : type
      | Bool : type
@@ -26,8 +17,8 @@ with term : Type :=
      | lam : type -> type -> term -> term
      | app : term -> type -> type -> term -> term
      | refl : type -> term -> term
+     | j : type -> term -> type -> term -> term -> term -> term
      | subst : term -> substitution -> term
-     | coerc : P.hasCoercions -> term -> P.ctxCoercion -> P.typeCoercion -> term
      | exfalso : type -> term -> term
      | unit : term
      | true : term
@@ -42,12 +33,15 @@ with substitution : Type :=
 Parameter UIP : type -> type.
 
 Inductive isctx : context -> Type :=
+
      | CtxEmpty :
          isctx ctxempty
 
      | CtxExtend :
          forall {G A},
-           istype G A -> isctx (ctxextend G A)
+           isctx G ->
+           istype G A ->
+           isctx (ctxextend G A)
 
 
 
@@ -163,6 +157,57 @@ with isterm : context -> term -> type -> Type :=
          forall {G A u},
            isterm G u A ->
            isterm G (refl A u) (Id A u u)
+
+     | TermJ :
+         forall {G A C u v w p},
+           istype G A ->
+           isterm G u A ->
+           istype
+             (ctxextend
+                (ctxextend G A)
+                (Id
+                   (Subst A (sbweak G A))
+                   (subst u (sbweak G A))
+                   (var 0)
+                )
+             )
+             C ->
+           isterm G
+                  w
+                  (Subst
+                     (Subst
+                        C
+                        (sbshift
+                           G
+                           (Id
+                              (Subst A (sbweak G A))
+                              (subst u (sbweak G A))
+                              (var 0)
+                           )
+                           (sbzero G A u)
+                        )
+                     )
+                     (sbzero G (Id A u u) (refl A u))
+                  ) ->
+           isterm G v A ->
+           isterm G p (Id A u v) ->
+           isterm G
+                  (j A u C w v p)
+                  (Subst
+                     (Subst
+                        C
+                        (sbshift
+                           G
+                           (Id
+                              (Subst A (sbweak G A))
+                              (subst u (sbweak G A))
+                              (var 0)
+                           )
+                           (sbzero G A v)
+                        )
+                     )
+                     (sbzero G (Id A u v) p)
+                  )
 
      | TermExfalso :
          forall {G A u},
@@ -401,13 +446,34 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
 
      | EqSubstShiftSucc :
-         forall { G D A B sbs k },
+         forall {G D A B sbs k},
            issubst sbs G D ->
            isterm D (var k) B ->
            istype D A ->
            eqterm (ctxextend G (Subst A sbs))
                   (subst (var (S k)) (sbshift G A sbs))
                   (subst (subst (var k) sbs) (sbweak G (Subst A sbs)))
+                  (Subst (Subst B sbs) (sbweak G (Subst A sbs)))
+
+     (* This one should be added to the PDF! *)
+     | EqSubstWeakZero :
+         forall {G A B u v},
+           isterm G u A ->
+           isterm G v B ->
+           eqterm G
+                  (subst (subst u (sbweak G B)) (sbzero G B v))
+                  u
+                  A
+
+     (* This one as well! *)
+     | EqSubstWeakNat :
+         forall {G D A B u sbs},
+           issubst sbs G D ->
+           istype D A ->
+           isterm D u B ->
+           eqterm (ctxextend G (Subst A sbs))
+                  (subst (subst u (sbweak D A)) (sbshift G A sbs))
+                  (subst (subst u sbs) (sbweak G (Subst A sbs)))
                   (Subst (Subst B sbs) (sbweak G (Subst A sbs)))
 
      | EqSubstAbs :
@@ -448,6 +514,82 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (subst (refl A u) sbs)
                   (refl (Subst A sbs) (subst u sbs))
                   (Id (Subst A sbs) (subst u sbs) (subst u sbs))
+
+     | EqSubstJ :
+         forall {G D A C u v w p sbs},
+           issubst sbs G D ->
+           istype D A ->
+           isterm D u A ->
+           istype
+             (ctxextend
+                (ctxextend D A)
+                (Id
+                   (Subst A (sbweak D A))
+                   (subst u (sbweak D A))
+                   (var 0)
+                )
+             )
+             C ->
+           isterm D
+                  w
+                  (Subst
+                     (Subst
+                        C
+                        (sbshift
+                           D
+                           (Id
+                              (Subst A (sbweak D A))
+                              (subst u (sbweak D A))
+                              (var 0)
+                           )
+                           (sbzero D A u)
+                        )
+                     )
+                     (sbzero D (Id A u u) (refl A u))
+                  ) ->
+           isterm D v A ->
+           isterm D p (Id A u v) ->
+           eqterm G
+                  (subst
+                     (j A u C w v p)
+                     sbs
+                  )
+                  (j (Subst A sbs)
+                     (subst u sbs)
+                     (Subst C
+                            (sbshift
+                               (ctxextend G
+                                          (Subst A sbs))
+                               (Id
+                                  (Subst A (sbweak D A))
+                                  (subst u (sbweak D A))
+                                  (var 0)
+                               )
+                               (sbshift G A sbs)
+                            )
+                     )
+                     (subst w sbs)
+                     (subst v sbs)
+                     (subst p sbs)
+                  )
+                  (Subst
+                     (Subst
+                        (Subst
+                           C
+                           (sbshift
+                              D
+                              (Id
+                                 (Subst A (sbweak D A))
+                                 (subst u (sbweak D A))
+                                 (var 0)
+                              )
+                              (sbzero D A v)
+                           )
+                        )
+                        (sbzero D (Id A u v) p)
+                     )
+                     sbs
+                  )
 
      | EqSubstExfalso :
          forall {G D A u sbs},
@@ -563,6 +705,56 @@ with eqterm : context -> term -> term -> type -> Type :=
                   B ->
            eqterm G u v (Prod A B)
 
+     | JRefl :
+         forall {G A C u w},
+           istype G A ->
+           isterm G u A ->
+           istype
+             (ctxextend
+                (ctxextend G A)
+                (Id
+                   (Subst A (sbweak G A))
+                   (subst u (sbweak G A))
+                   (var 0)
+                )
+             )
+             C ->
+           isterm G
+                  w
+                  (Subst
+                     (Subst
+                        C
+                        (sbshift
+                           G
+                           (Id
+                              (Subst A (sbweak G A))
+                              (subst u (sbweak G A))
+                              (var 0)
+                           )
+                           (sbzero G A u)
+                        )
+                     )
+                     (sbzero G (Id A u u) (refl A u))
+                  ) ->
+           eqterm G
+                  (j A u C w u (refl A u))
+                  w
+                  (Subst
+                     (Subst
+                        C
+                        (sbshift
+                           G
+                           (Id
+                              (Subst A (sbweak G A))
+                              (subst u (sbweak G A))
+                              (var 0)
+                           )
+                           (sbzero G A u)
+                        )
+                     )
+                     (sbzero G (Id A u u) (refl A u))
+                  )
+
      | CongAbs :
          forall {G A1 A2 B1 B2 u1 u2},
            eqtype G A1 B1 ->
@@ -584,7 +776,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (app v1 B1 B2 v2)
                   (Subst A2 (sbzero G A1 u2))
 
-     | ConfRefl :
+     | CongRefl :
          forall {G u1 u2 A1 A2},
            eqterm G u1 u2 A1 ->
            eqtype G A1 A2 ->
@@ -592,6 +784,60 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (refl A1 u1)
                   (refl A2 u2)
                   (Id A1 u1 u1)
+
+     | CongJ :
+         forall {G A1 A2 C1 C2 u1 u2 v1 v2 w1 w2 p1 p2},
+           eqtype G A1 A2 ->
+           eqterm G u1 u2 A1 ->
+           eqtype
+             (ctxextend
+                (ctxextend G A1)
+                (Id
+                   (Subst A1 (sbweak G A1))
+                   (subst u1 (sbweak G A1))
+                   (var 0)
+                )
+             )
+             C1
+             C2 ->
+           eqterm G
+                  w1
+                  w2
+                  (Subst
+                     (Subst
+                        C1
+                        (sbshift
+                           G
+                           (Id
+                              (Subst A1 (sbweak G A1))
+                              (subst u1 (sbweak G A1))
+                              (var 0)
+                           )
+                           (sbzero G A1 u1)
+                        )
+                     )
+                     (sbzero G (Id A1 u1 u1) (refl A1 u1))
+                  ) ->
+           eqterm G v1 v2 A1 ->
+           eqterm G p1 p2 (Id A1 u1 v1) ->
+           eqterm G
+                  (j A1 u1 C1 w1 v1 p1)
+                  (j A2 u2 C2 w2 v2 p2)
+                  (Subst
+                     (Subst
+                        C1
+                        (sbshift
+                           G
+                           (Id
+                              (Subst A1 (sbweak G A1))
+                              (subst u1 (sbweak G A1))
+                              (var 0)
+                           )
+                           (sbzero G A1 v1)
+                        )
+                     )
+                     (sbzero G (Id A1 u1 v1) p1)
+                  )
 
      (* This rule doesn't seem necessary as subsumed by EqTermexfalso! *)
      (* | CongExfalso : *)
@@ -622,5 +868,3 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (subst u1 sbs)
                   (subst u2 sbs)
                   (Subst A sbs).
-
-End Theory.
