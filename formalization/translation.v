@@ -243,7 +243,7 @@ with trans_term
 
 Proof.
   (****** trans_ctx ******)
-  - { induction H.
+  - { destruct H.
 
       (* CtxEmpty *)
       - exists C.ctxempty.
@@ -266,7 +266,7 @@ Proof.
     }
 
   (****** trans_subst_left ******)
-  - { induction H.
+  - { destruct H.
 
       (* SubstZero *)
       - (* We have a problem again, how do we translate A? *)
@@ -286,7 +286,22 @@ Proof.
         + constructor ; assumption.
 
       (* SubstShift *)
-      - admit.
+      - destruct Ht as [HG' hom].
+        inversion hom. subst.
+        inversion X0. subst.
+        (* We probably want to use sbs' that we already have. *)
+        (* assert (HtG : istrans_ctx G G'0). *)
+        (* { split. *)
+        (*   - now inversion HG'. *)
+        (*   - assumption. *)
+        (* } *)
+        (* destruct (trans_subst_left G G'0 D sbs H HtG) as [D' [sbt h]]. *)
+        (* exists (C.ctxextend D' A'0). exists () *)
+        inversion HG'. subst.
+        (* Now that's great, but the inversion doesn't give us that A'σ' is well
+           typed and thus that σ' is as well, yielding a Δ' for us to play with.
+         *)
+        admit.
 
       (* SubstId *)
       - admit.
