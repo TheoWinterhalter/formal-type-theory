@@ -210,6 +210,8 @@ Parameter equiv_term : C.context -> C.term -> C.term -> C.type -> Type.
 (*   (sigT (A:=A) (fun x => sigT (A:=B) (fun y => P))) *)
 (*   : type_scope. *)
 
+Ltac todo := exact todo.
+
 Fixpoint trans_ctx {G} (H : E.isctx G) {struct H} :
   { G' : C.context & istrans_ctx G G' }
 
@@ -272,7 +274,7 @@ Proof.
       - (* We have a problem again, how do we translate A? *)
         (* It would be nice if we didn't need trans_subst_left...
            But it is needed by TySubst for instance. *)
-        admit.
+        todo.
 
       (* SubstWeak *)
       - destruct Ht as [HG' hom].
@@ -282,7 +284,7 @@ Proof.
         + (* To type it we need to recover that A' is a type. *)
           inversion HG'. subst.
           (* We need to now how to evaluate coercions. *)
-          admit.
+          todo.
         + constructor ; assumption.
 
       (* SubstShift *)
@@ -301,16 +303,19 @@ Proof.
         (* Now that's great, but the inversion doesn't give us that A'σ' is well
            typed and thus that σ' is as well, yielding a Δ' for us to play with.
          *)
-        admit.
+        todo.
 
       (* SubstId *)
-      - admit.
+      - exists G'. exists (C.sbcoerce C.idSb (C.sbid G')).
+        split.
+        + todo.
+        + constructor. now destruct Ht.
 
       (* SubstComp *)
-      - admit.
+      - todo.
 
       (* SubstCtxConv *)
-      - admit.
+      - todo.
     }
 
   (****** trans_subst_right ******)
@@ -334,4 +339,11 @@ Proof.
   (*     (* SubstCtxConv *) *)
   (*     - admit. *)
   (*   } *)
-Abort.
+
+  (****** trans_type ******)
+  - todo.
+
+  (****** trans_term ******)
+  - todo.
+
+Defined.
