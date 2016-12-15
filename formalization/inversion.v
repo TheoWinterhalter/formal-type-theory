@@ -8,21 +8,23 @@ Notation " Γ ⊢ A 'ty' " := (istype Γ A) (at level 40).
 
 
 Lemma invert_refl : ∀ {Γ : context} {u : term} {E : type} (J : Γ ⊢ u ∷ E),
-    ∀ e A (u_refl : u = refl A e), Γ ⊢ e ∷ A.
+    ∀ e (u_refl : u = refl e), {A : type & Γ ⊢ e ∷ A}.
 
 Proof.
   induction 1
-  ; intros t a ?
-  ; try solve [discriminate u_refl].
+  ; intros t u_refl
+  ; try solve [discriminate u_refl]
+  ; rename A into T.
 
-  - exact (IHJ t a u_refl).                      (* TermTyConv *)
-  - pose (IHJ t a u_refl) as J_t.                (* TermCtxConv *)
-    exact (TermCtxConv J_t e).
-  - now inversion u_refl; subst.                 (* TermRefl *)
+  - exact (IHJ _ u_refl).                      (* TermTyConv *)
+  - pose (IHJ t u_refl) as J_t.                (* TermCtxConv *)
+    destruct J_t as [A J_t].
+    exists A. exact (TermCtxConv J_t e).
+  - inversion u_refl. exists T. now subst.     (* TermRefl *)
 Defined.
 
-Fact inversion_refl {Γ A e E} (J : Γ ⊢ refl A e ∷ E) : Γ ⊢ e ∷ A.
-  exact (invert_refl J e A eq_refl).
+Fact inversion_refl {Γ e E} (J : Γ ⊢ refl e ∷ E) : {A : type & Γ ⊢ e ∷ A}.
+  exact (invert_refl J e eq_refl).
 Defined.
 
 Lemma invert_prod : ∀ {Γ : context} {T : type} (J : Γ ⊢ T ty),
