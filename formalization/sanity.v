@@ -609,7 +609,7 @@ Proof.
     + { eapply TermTyConv.
         - apply @TermSubst with (D := D).
           + assumption.
-          + now apply TermRefl.
+          + now apply (TermRefl i0).
         - apply @EqTySubstId with (D := D).
           + assumption.
           + ih.
@@ -742,7 +742,7 @@ Proof.
                     - eapply CongSubstZero.
                       + apply CtxRefl. ih.
                       + apply EqTyRefl. apply TyId ; substproof.
-                      + gopushsubst. apply EqRefl. apply TermRefl ; substproof.
+                      + admit. (* gopushsubst. apply EqRefl. apply TermRefl ; substproof. *)
                     - apply EqTyRefl. eapply TySubst.
                       + eapply SubstCtxConv.
                         * { eapply SubstShift.
@@ -999,14 +999,15 @@ Proof.
         - apply EqTySym.
           apply EqTyCongZero ; magic. }
 
-    (* ConfRefl *)
+    (* CongRefl *)
     + { eapply TermTyConv.
-        - apply TermRefl.
+        - apply (TermRefl (A := A2)).
           { eapply TermTyConv.
             - ih.
             - assumption. }
         - apply EqTySym.
-          now apply CongId. }
+          now apply CongId.
+      }
 
     (* CongJ *)
     + { eapply TySubst.
@@ -1097,7 +1098,8 @@ Proof.
             * { apply EqTyCongZero.
                 - ih.
                 - magic.
-                - magic.
+                - admit.
+                  (* magic. *)
                 - { eapply EqTyCtxConv.
                     - eapply EqTyCongShift.
                       + apply CtxRefl. ih.
@@ -1287,4 +1289,4 @@ Proof.
           + apply EqTyRefl. magic.
       }
 
-Defined.
+Admitted.
