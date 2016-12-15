@@ -442,7 +442,7 @@ Lemma JTyConv :
             (sbshift
                D
                (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
-               (sbzero D A u))) (sbzero D (Id A u u) (refl A u))) ->
+               (sbzero D A u))) (sbzero D (Id A u u) (refl u))) ->
     isterm D v A ->
     isterm D p (Id A u v) ->
     eqtype
@@ -488,7 +488,7 @@ Lemma JTyConv :
 Proof.
   intros.
   (* First let's have some assertions that we won't keep proving. *)
-  assert (isterm D (refl A u) (Id A u u)).
+  assert (isterm D (refl u) (Id A u u)).
   { now apply TermRefl. }
   assert (
     istype (ctxextend D A)
@@ -547,7 +547,7 @@ Proof.
     (ctxextend (ctxextend D A)
        (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))).
   { now apply CtxExtend. }
-  assert (isterm G (refl (Subst A sbs) (subst u sbs))
+  assert (isterm G (refl (subst u sbs))
     (Id (Subst A sbs) (subst u sbs) (subst u sbs))).
   { apply TermRefl. substproof. }
   assert (

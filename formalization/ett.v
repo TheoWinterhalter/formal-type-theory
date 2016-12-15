@@ -16,7 +16,7 @@ with term : Type :=
      | var : nat -> term
      | lam : type -> type -> term -> term
      | app : term -> type -> type -> term -> term
-     | refl : type -> term -> term
+     | refl : term -> term
      | j : type -> term -> type -> term -> term -> term -> term
      | subst : term -> substitution -> term
      | exfalso : type -> term -> term
@@ -176,7 +176,7 @@ with isterm : context -> term -> type -> Type :=
      | TermRefl :
          forall {G A u},
            isterm G u A ->
-           isterm G (refl A u) (Id A u u)
+           isterm G (refl u) (Id A u u)
 
      | TermJ :
          forall {G A C u v w p},
@@ -207,7 +207,7 @@ with isterm : context -> term -> type -> Type :=
                            (sbzero G A u)
                         )
                      )
-                     (sbzero G (Id A u u) (refl A u))
+                     (sbzero G (Id A u u) (refl u))
                   ) ->
            isterm G v A ->
            isterm G p (Id A u v) ->
@@ -656,8 +656,8 @@ with eqterm : context -> term -> term -> type -> Type :=
            issubst sbs G D ->
            isterm D u A ->
            eqterm G
-                  (subst (refl A u) sbs)
-                  (refl (Subst A sbs) (subst u sbs))
+                  (subst (refl u) sbs)
+                  (refl (subst u sbs))
                   (Id (Subst A sbs) (subst u sbs) (subst u sbs))
 
      | EqSubstJ :
@@ -690,7 +690,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                            (sbzero D A u)
                         )
                      )
-                     (sbzero D (Id A u u) (refl A u))
+                     (sbzero D (Id A u u) (refl u))
                   ) ->
            isterm D v A ->
            isterm D p (Id A u v) ->
@@ -880,10 +880,10 @@ with eqterm : context -> term -> term -> type -> Type :=
                            (sbzero G A u)
                         )
                      )
-                     (sbzero G (Id A u u) (refl A u))
+                     (sbzero G (Id A u u) (refl u))
                   ) ->
            eqterm G
-                  (j A u C w u (refl A u))
+                  (j A u C w u (refl u))
                   w
                   (Subst
                      (Subst
@@ -898,7 +898,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                            (sbzero G A u)
                         )
                      )
-                     (sbzero G (Id A u u) (refl A u))
+                     (sbzero G (Id A u u) (refl u))
                   )
 
      | CongAbs :
@@ -927,8 +927,8 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G u1 u2 A1 ->
            eqtype G A1 A2 ->
            eqterm G
-                  (refl A1 u1)
-                  (refl A2 u2)
+                  (refl u1)
+                  (refl u2)
                   (Id A1 u1 u1)
 
      | CongJ :
@@ -962,7 +962,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                            (sbzero G A1 u1)
                         )
                      )
-                     (sbzero G (Id A1 u1 u1) (refl A1 u1))
+                     (sbzero G (Id A1 u1 u1) (refl u1))
                   ) ->
            eqterm G v1 v2 A1 ->
            eqterm G p1 p2 (Id A1 u1 v1) ->
