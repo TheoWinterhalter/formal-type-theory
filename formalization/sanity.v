@@ -742,7 +742,7 @@ Proof.
                     - eapply CongSubstZero.
                       + apply CtxRefl. ih.
                       + apply EqTyRefl. apply TyId ; substproof.
-                      + admit. (* gopushsubst. apply EqRefl. apply TermRefl ; substproof. *)
+                      + gopushsubst. apply EqRefl. apply TermRefl ; substproof.
                     - apply EqTyRefl. eapply TySubst.
                       + eapply SubstCtxConv.
                         * { eapply SubstShift.

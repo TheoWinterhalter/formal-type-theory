@@ -92,12 +92,12 @@ Ltac pushsubst1 :=
       eapply EqTySubstId ; try eassumption
     | try eassumption
     ]
-  | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
+  | |- eqterm ?G (subst (refl ?u) ?sbs) ?v ?B =>
     eapply EqTrans ; [
       eapply EqSubstRefl ; try eassumption
     | try eassumption
     ]
-  | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
+  | |- eqterm ?G (subst (refl ?u) ?sbs) ?v ?B =>
     eapply EqTyConv ; [
       eapply EqTrans ; [
         eapply EqSubstRefl ; try eassumption
