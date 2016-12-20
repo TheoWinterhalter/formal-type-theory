@@ -1098,8 +1098,7 @@ Proof.
             * { apply EqTyCongZero.
                 - ih.
                 - magic.
-                - admit.
-                  (* magic. *)
+                - exact (CongRefl H e).
                 - { eapply EqTyCtxConv.
                     - eapply EqTyCongShift.
                       + apply CtxRefl. ih.
@@ -1289,4 +1288,4 @@ Proof.
           + apply EqTyRefl. magic.
       }
 
-Admitted.
+Defined.
