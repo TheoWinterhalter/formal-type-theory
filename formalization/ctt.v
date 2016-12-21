@@ -54,11 +54,30 @@ Structure typeCoercion {G D : itt.context} (c : @contextCoercion G D)
         }
   }.
 
+(* Coercion for a type *)
+Structure typeCoerce : Type :=
+  { ctx_fro : itt.context ;
+    ctx_to  : itt.context ;
+    ctx_co  : @contextCoercion ctx_fro ctx_to
+  }.
 
-Parameter typeCoerce : Type.
-Parameter termCoerce : Type.
+(* Coercion for a term *)
+Structure termCoerce : Type :=
+  { (* ctx_fro : itt.context ; *)
+    (* ctx_to  : itt.context ; *)
+    (* ctx_co  : @contextCoercion ctx_fro ctx_to ; *)
+    full_ctx_co : typeCoerce ; (* Maybe abstract it away? *)
+    ty_fro      : itt.type ;
+    ty_to       : itt.type ;
+    ty_co       : @typeCoercion (ctx_fro full_ctx_co)
+                                (ctx_to  full_ctx_co)
+                                (ctx_co  full_ctx_co)
+                                ty_fro ty_to
+  }.
+
 Parameter substCoerce : Type.
 
+(* These will require parameters. *)
 Parameter idTy : typeCoerce.
 Parameter idTm : termCoerce.
 Parameter idSb : substCoerce.
