@@ -96,9 +96,11 @@ endif
 #                    #
 ######################
 
-VFILES:=ett.v\
+VFILES:=syntax.v\
+  ett.v\
+  ptt.v\
   ctt.v\
-  sanity.v\
+  paranoidSanity.v\
   translation.v
 
 ifneq ($(filter-out archclean clean cleanall printenv,$(MAKECMDGOALS)),)

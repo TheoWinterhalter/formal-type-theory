@@ -1,4 +1,4 @@
-(* The source type theory. *)
+(* Paranoid type theory. *)
 
 Require Import syntax.
 
@@ -19,16 +19,21 @@ with issubst : substitution -> context -> context -> Type :=
 
      | SubstZero :
          forall {G u A},
+           isctx G ->
+           istype G A ->
            isterm G u A ->
            issubst (sbzero G A u) G (ctxextend G A)
 
      | SubstWeak :
          forall {G A},
+           isctx G ->
            istype G A ->
            issubst (sbweak G A) (ctxextend G A) G
 
      | SubstShift :
          forall {G D A sbs},
+           isctx G ->
+           isctx D ->
            issubst sbs G D ->
            istype D A ->
            issubst (sbshift G A sbs) (ctxextend G (Subst A sbs)) (ctxextend D A)
@@ -39,24 +44,30 @@ with istype : context -> type -> Type :=
 
      | TyCtxConv :
          forall {G D A},
+           isctx G ->
+           isctx D ->
            istype G A ->
            eqctx G D ->
            istype D A
 
      | TySubst :
          forall {G D A sbs},
+           isctx G ->
+           isctx D ->
            issubst sbs G D ->
            istype D A ->
            istype G (Subst A sbs)
 
      | TyProd :
          forall {G A B},
+           isctx G ->
            istype G A ->
            istype (ctxextend G A) B ->
            istype G (Prod A B)
 
      | TyId :
          forall {G A u v},
+           isctx G ->
            istype G A ->
            isterm G u A ->
            isterm G v A ->
@@ -83,41 +94,57 @@ with isterm : context -> term -> type -> Type :=
 
      | TermTyConv :
          forall {G A B u},
+           isctx G ->
+           istype A ->
+           istype B ->
            isterm G u A ->
            eqtype G A B ->
            isterm G u B
 
      | TermCtxConv :
          forall {G D A u},
+           isctx G ->
+           isctx D ->
+           istype G A ->
            isterm G u A ->
            eqctx G D ->
            isterm D u A
 
      | TermSubst :
          forall {G D A u sbs},
+           isctx G ->
+           isctx D ->
+           istype D A ->
            issubst sbs G D ->
            isterm D u A ->
            isterm G (subst u sbs) (Subst A sbs)
 
      | TermVarZero :
          forall {G A},
+           isctx G ->
            istype G A ->
            isterm (ctxextend G A) (var 0) (Subst A (sbweak G A))
 
      | TermVarSucc :
          forall {G A B k},
+           isctx G ->
+           istype G A ->
            isterm G (var k) A ->
            istype G B ->
            isterm (ctxextend G B) (var (S k)) (Subst A (sbweak G B))
 
      | TermAbs :
          forall {G A u B},
+           isctx G ->
            istype G A ->
+           istype (ctxextend G A) B ->
            isterm (ctxextend G A) u B ->
            isterm G (lam A B u) (Prod A B)
 
      | TermApp :
          forall {G A B u v},
+           isctx G ->
+           istype G A ->
            istype (ctxextend G A) B ->
            isterm G u (Prod A B) ->
            isterm G v A ->
@@ -125,11 +152,14 @@ with isterm : context -> term -> type -> Type :=
 
      | TermRefl :
          forall {G A u},
+           isctx G ->
+           istype G A ->
            isterm G u A ->
            isterm G (refl A u) (Id A u u)
 
      | TermJ :
          forall {G A C u v w p},
+           isctx G ->
            istype G A ->
            isterm G u A ->
            istype
@@ -181,6 +211,7 @@ with isterm : context -> term -> type -> Type :=
 
      | TermExfalso :
          forall {G A u},
+           isctx G ->
            istype G A ->
            isterm G u Empty ->
            isterm G (exfalso A u) A
@@ -202,6 +233,7 @@ with isterm : context -> term -> type -> Type :=
 
      | TermCond :
          forall {G C u v w},
+           isctx G ->
            isterm G u Bool ->
            istype (ctxextend G Bool) C ->
            isterm G v (Subst C (sbzero G Bool true)) ->
@@ -219,6 +251,9 @@ with eqctx : context -> context -> Type :=
 
      | EqCtxExtend :
          forall {G A B},
+           isctx G ->
+           istype G A ->
+           istype G B ->
            eqtype G A B ->
            eqctx (ctxextend G A) (ctxextend G B)
 
@@ -228,27 +263,42 @@ with eqtype : context -> type -> type -> Type :=
 
      | EqTyCtxConv :
          forall {G D A B},
+           isctx G ->
+           isctx D ->
+           istype G A ->
+           istype G B ->
            eqtype G A B ->
            eqctx G D ->
            eqtype D A B
 
-     | EqTyRefl: forall {G A},
-                   istype G A ->
-                   eqtype G A A
+     | EqTyRefl:
+         forall {G A},
+           isctx G ->
+           istype G A ->
+           eqtype G A A
 
      | EqTySym :
          forall {G A B},
+           isctx G ->
+           istype G A ->
+           istype G B ->
            eqtype G A B ->
            eqtype G B A
 
      | EqTyTrans :
          forall {G A B C},
+           isctx G ->
+           istype G A ->
+           istype G B ->
+           istype G C ->
            eqtype G A B ->
            eqtype G B C ->
            eqtype G A C
 
      | EqTyWeakNat :
          forall {G D A B sbs},
+           isctx G ->
+           isctx D ->
            issubst sbs G D ->
            istype D A ->
            istype D B ->
@@ -258,12 +308,17 @@ with eqtype : context -> type -> type -> Type :=
 
      | EqTyWeakZero :
          forall {G A B u},
+           isctx G ->
            istype G A ->
+           istype G B ->
            isterm G u B ->
            eqtype G (Subst (Subst A (sbweak G B)) (sbzero G B u)) A
 
      | EqTyShiftZero :
          forall {G D A B v sbs},
+           isctx G ->
+           isctx D ->
+           istype G A ->
            issubst sbs G D ->
            istype (ctxextend D A) B ->
            isterm D v A ->
@@ -273,6 +328,11 @@ with eqtype : context -> type -> type -> Type :=
 
      | EqTyCongZero :
          forall {G A1 A2 B1 B2 u1 u2},
+           isctx G ->
+           istype G A1 ->
+           istype G B1 ->
+           istype (ctxextend G A1) A2 ->
+           istype (ctxextend G A1) B2 ->
            eqtype G A1 B1 ->
            eqterm G u1 u2 A1 ->
            eqtype (ctxextend G A1) A2 B2 ->
@@ -817,3 +877,53 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (subst u1 sbs)
                   (subst u2 sbs)
                   (Subst A sbs).
+
+
+Definition sane_isctx sbs G D :
+  issubst sbs G D -> isctx G * isctx D.
+Proof.
+  intro H ; destruct H.
+
+  (* SubstZero *)
+  { split.
+    
+    - assumption.
+    - now apply CtxExtend.
+  }
+
+  (* SubstWeak *)
+  { split.
+    
+    - now apply CtxExtend.
+    - assumption.
+  }
+
+  (* SubstShift *)
+  { split.
+    
+    - apply CtxExtend.
+      + assumption.
+      + eapply TySubst.
+        * eassumption.
+        * assumption.
+    - now apply CtxExtend.
+  }
+
+Defined.
+
+Definition sane_istype G A :
+  istype G A -> isctx G.
+Proof.
+Admitted.
+
+Definition sane_isterm G u A :
+  isterm G u A -> isctx G * istype G A.
+Admitted.
+
+Definition sane_eqtype G A B :
+  eqtype G A B -> isctx G * istype G A * istype G B.
+Admitted.
+
+Definition isctx_from_eqterm G u v A :
+  eqterm G u v A -> isctx G * istype G A * isterm G u A * isterm G v A.
+Admitted.
