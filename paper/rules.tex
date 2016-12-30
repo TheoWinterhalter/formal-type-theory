@@ -57,6 +57,44 @@
   }
 }
 
+\newcommand{\rlSubstId}{\referTo{subst-id}{rul:subst-id}}
+\newcommand{\showSubstId}{%
+  \infer[\rulename{subst-id}] % SubstId
+  {\isctx{\G}}
+  {\issubst
+    {\sbid{\G}}
+    {\G}
+    {\G}
+  }
+}
+
+\newcommand{\rlSubstComp}{\referTo{subst-comp}{rul:subst-comp}}
+\newcommand{\showSubstComp}{%
+  \infer[\rulename{subst-comp}] % SubstComp
+  {\issubst{\sbs}{\G}{\D} \\
+   \issubst{\sbt}{\D}{\E}
+  }
+  {\issubst
+    {\sbcomp{\sbs}{\sbt}}
+    {\G}
+    {\E}
+  }
+}
+
+\newcommand{\rlSubstCtxConv}{\referTo{subst-ctx-conv}{rul:subst-ctx-conv}}
+\newcommand{\showSubstCtxConv}{%
+  \infer[\rulename{subst-ctx-conv}] % SubstCtxConv
+  {\issubst{\sbs}{\G_1}{\D_1} \\
+   \eqctx{\G_1}{\G_2} \\
+   \eqctx{\D_1}{\D_2}
+  }
+  {\issubst
+    {\sbs}
+    {\G_2}
+    {\D_2}
+  }
+}
+
 %%%% Types
 
 
@@ -101,6 +139,30 @@
     \isterm{\G}{\vv}{\A}
   }
   {\istype{\G}{\Id{\A}{\uu}{\vv}}}
+}
+
+
+\newcommand{\rlTyEmpty}{\referTo{ty-empty}{rul:ty-empty}}
+\newcommand{\showTyEmpty}{%
+  \infer[\rulename{ty-empty}] % TyEmpty
+  {\isctx{\G}}
+  {\istype{\G}{\Empty}}
+}
+
+
+\newcommand{\rlTyUnit}{\referTo{ty-unit}{rul:ty-unit}}
+\newcommand{\showTyUnit}{%
+  \infer[\rulename{ty-unit}] % TyUnit
+  {\isctx{\G}}
+  {\istype{\G}{\Unit}}
+}
+
+
+\newcommand{\rlTyBool}{\referTo{ty-bool}{rul:ty-bool}}
+\newcommand{\showTyBool}{%
+  \infer[\rulename{ty-bool}] % TyBool
+  {\isctx{\G}}
+  {\istype{\G}{\Bool}}
 }
 
 
@@ -207,7 +269,135 @@
 }
 
 
+\newcommand{\rlTermJ}{\referTo{term-j}{rul:term-j}}
+\newcommand{\showTermJ}{%
+  \infer[\rulename{term-j}] % TermJ
+  {\istype{\G}{\A} \\
+   \isterm{\G}{\uu}{\A} \\
+   \istype
+    {\ctxextend
+      {\ctxextend{\G}{\A}}
+      {\Id
+        {\subst{\A}{\sbweak{\G}{\A}}}
+        {\subst{\uu}{\sbweak{\G}{\A}}}
+        {\var{0}}}
+    }
+    {\C} \\
+   \isterm
+    {\G}
+    {\ww}
+    {\subst
+      {\subst
+        {\C}
+        {\sbshift
+          {\G}
+          {\Id
+            {\subst{\A}{\sbweak{\G}{\A}}}
+            {\subst{\uu}{\sbweak{\G}{\A}}}
+            {\var{0}}
+          }
+          {\sbzero{\G}{\A}{\uu}}
+        }
+      }
+      {\sbzero{\G}{\Id{\A}{\uu}{\uu}}{\refl{\A} \uu}}
+    } \\
+   \isterm{\G}{\vv}{\A} \\
+   \isterm{\G}{\p}{\Id{\A}{\uu}{\vv}}
+  }
+  {\isterm{\G}
+    {\J{\A}{\uu}{\C}{\ww}{\vv}{\p}}
+    {\subst
+      {\subst
+        {\C}
+        {\sbshift
+          {\G}
+          {\Id
+            {\subst{\A}{\sbweak{\G}{\A}}}
+            {\subst{\uu}{\sbweak{\G}{\A}}}
+            {\var{0}}
+          }
+          {\sbzero{\G}{\A}{\vv}}
+        }
+      }
+      {\sbzero{\G}{\Id{\A}{\uu}{\vv}}{\p}}
+    }
+  }
+}
+
+
+\newcommand{\rlTermExfalso}{\referTo{term-exfalso}{rul:term-exfalso}}
+\newcommand{\showTermExfalso}{%
+  \infer[\rulename{term-exfalso}] % TermExfalso
+  {\istype{\G}{\A} \\
+   \isterm{\G}{\uu}{\Empty}
+  }
+  {\isterm{\G}{\exfalso{\A} \uu}{\A}}
+}
+
+
+\newcommand{\rlTermUnit}{\referTo{term-unit}{rul:term-unit}}
+\newcommand{\showTermUnit}{%
+  \infer[\rulename{term-unit}] % TermUnit
+  {\isctx{\G}}
+  {\isterm{\G}{\unit}{\Unit}}
+}
+
+
+\newcommand{\rlTermTrue}{\referTo{term-true}{rul:term-true}}
+\newcommand{\showTermTrue}{%
+  \infer[\rulename{term-true}] % TermTrue
+  {\isctx{\G}}
+  {\isterm{\G}{\true}{\Bool}}
+}
+
+
+\newcommand{\rlTermFalse}{\referTo{term-false}{rul:term-false}}
+\newcommand{\showTermFalse}{%
+  \infer[\rulename{term-false}] % TermFalse
+  {\isctx{\G}}
+  {\isterm{\G}{\false}{\Bool}}
+}
+
+
+\newcommand{\rlTermCond}{\referTo{term-cond}{rul:term-cond}}
+\newcommand{\showTermCond}{%
+  \infer[\rulename{term-cond}] % TermCond
+  {\isterm{\G}{\uu}{\Bool} \\
+   \istype{\ctxextend{\G}{\Bool}}{\C} \\
+   \isterm{\G}{\vv}{\subst{\C}{\sbzero{\G}{\Bool}{\true}}} \\
+   \isterm{\G}{\ww}{\subst{\C}{\sbzero{\G}{\Bool}{\false}}}
+  }
+  {\isterm{\G}{\cond{\C}{\uu}{\vv}{\ww}}{\subst{\C}{\sbzero{\G}{\Bool}{\uu}}}}
+}
+
+
 %%%% Context equality
+
+
+\newcommand{\rlCtxRefl}{\referTo{ctx-refl}{rul:ctx-refl}}
+\newcommand{\showCtxRefl}{%
+  \infer[\rulename{ctx-refl}] % CtxRefl
+  {\isctx{\G}}
+  {\eqctx{\G}{\G}}
+}
+
+
+\newcommand{\rlCtxSym}{\referTo{ctx-sym}{rul:ctx-sym}}
+\newcommand{\showCtxSym}{%
+  \infer[\rulename{ctx-sym}] % CtxSym
+  {\eqctx{\G}{\D}}
+  {\eqctx{\D}{\G}}
+}
+
+
+\newcommand{\rlCtxTrans}{\referTo{ctx-trans}{rul:ctx-trans}}
+\newcommand{\showCtxTrans}{%
+  \infer[\rulename{ctx-trans}] % CtxTrans
+  {\eqctx{\G}{\D} \\
+   \eqctx{\D}{\E}
+  }
+  {\eqctx{\G}{\E}}
+}
 
 
 \newcommand{\rlEqCtxEmpty}{\referTo{eq-ctx-empty}{rul:eq-ctx-empty}}
@@ -222,9 +412,219 @@
 \newcommand{\showEqCtxExtend}{%
   \infer[\rulename{eq-ctx-extend}] % EqCtxExtend
   {
+    \eqctx{\G}{\D} \\
     \eqtype{\G}{\A}{\B}
   }
-  {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\G}{\B})}}
+  {\eqctx{(\ctxextend{\G}{\A})}{(\ctxextend{\D}{\B})}}
+}
+
+
+%%% Substitution equality
+
+
+\newcommand{\rlSubstRefl}{\referTo{subst-refl}{rul:subst-refl}}
+\newcommand{\showSubstRefl}{%
+  \infer[\rulename{subst-refl}] % SubstRefl
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqsubst{\sbs}{\sbs}{\G}{\D}}
+}
+
+
+\newcommand{\rlSubstSym}{\referTo{subst-sym}{rul:subst-sym}}
+\newcommand{\showSubstSym}{%
+  \infer[\rulename{subst-sym}] % SubstSym
+  {\eqsubst{\sbs}{\sbt}{\G}{\D}}
+  {\eqsubst{\sbt}{\sbs}{\G}{\D}}
+}
+
+
+\newcommand{\rlSubstTrans}{\referTo{subst-trans}{rul:subst-trans}}
+\newcommand{\showSubstTrans}{%
+  \infer[\rulename{subst-trans}] % SubstTrans
+  {\eqsubst{\sbs}{\sbt}{\G}{\D} \\
+   \eqsubst{\sbt}{\sbr}{\G}{\D}
+  }
+  {\eqsubst{\sbs}{\sbr}{\G}{\D}}
+}
+
+
+\newcommand{\rlCongSubstZero}{\referTo{cong-subst-zero}{rul:cong-subst-zero}}
+\newcommand{\showCongSubstZero}{%
+  \infer[\rulename{cong-subst-zero}] % CongSubstZero
+  {\eqctx{\G_1}{\G_2} \\
+   \eqtype{\G_1}{\A_1}{\A_2} \\
+   \eqterm{\G_1}{\uu_1}{\uu_2}{\A_1}
+  }
+  {\eqsubst
+    {\sbzero{\G_1}{\A_1}{\uu_1}}
+    {\sbzero{\G_2}{\A_2}{\uu_2}}
+    {\G_1}
+    {\ctxextend{\G_1}{\A_1}}
+  }
+}
+
+
+\newcommand{\rlCongSubstWeak}{\referTo{cong-subst-weak}{rul:cong-subst-weak}}
+\newcommand{\showCongSubstWeak}{%
+  \infer[\rulename{cong-subst-weak}] % CongSubstWeak
+  {\eqctx{\G_1}{\G_2} \\
+   \eqtype{\G_1}{\A_1}{\A_2}
+  }
+  {\eqsubst
+    {\sbweak{\G_1}{\A_1}}
+    {\sbweak{\G_2}{\A_2}}
+    {\ctxextend{\G_1}{\A_1}}
+    {\G_1}
+  }
+}
+
+
+\newcommand{\rlCongSubstShift}{\referTo{cong-subst-shift}{rul:cong-subst-shift}}
+\newcommand{\showCongSubstShift}{%
+  \infer[\rulename{cong-subst-shift}] % CongSubstShift
+  {\eqctx{\G_1}{\G_2} \\
+   \eqsubst{\sbs}{\sbt}{\G_1}{\D} \\
+   \eqtype{\D}{\A_1}{\A_2}
+  }
+  {\eqsubst
+    {\sbshift{\G_1}{\A_1}{\sbs}}
+    {\sbshift{\G_2}{\A_2}{\sbt}}
+    {\ctxextend{\G_1}{\subst{\A_1}{\sbs}}}
+    {\ctxextend{\D}{\A_1}}
+  }
+}
+
+
+\newcommand{\rlCongSubstComp}{\referTo{cong-subst-comp}{rul:cong-subst-comp}}
+\newcommand{\showCongSubstComp}{%
+  \infer[\rulename{cong-subst-comp}] % CongSubstComp
+  {\eqsubst{\sbs_1}{\sbs_2}{\G}{\D} \\
+   \eqsubst{\sbt_1}{\sbt_2}{\D}{\E}
+  }
+  {\eqsubst
+    {\sbcomp{\sbs_1}{\sbt_1}}
+    {\sbcomp{\sbs_2}{\sbt_2}}
+    {\G}
+    {\E}
+  }
+}
+
+
+\newcommand{\rlEqSubstCtxConv}{\referTo{eq-subst-ctx-conv}{rul:eq-subst-ctx-conv}}
+\newcommand{\showEqSubstCtxConv}{%
+  \infer[\rulename{eq-subst-ctx-conv}] % EqSubstCtxConv
+  {\eqsubst{\sbs}{\sbt}{\G_1}{\D_1} \\
+   \eqctx{\G_1}{\G_2} \\
+   \eqctx{\D_1}{\D_2}
+  }
+  {\eqsubst{\sbs}{\sbt}{\G_2}{\D_2}}
+}
+
+
+\newcommand{\rlCompAssoc}{\referTo{comp-assoc}{rul:comp-assoc}}
+\newcommand{\showCompAssoc}{%
+  \infer[\rulename{comp-assoc}] % CompAssoc
+  {\issubst{\sbs}{\G}{\D} \\
+   \issubst{\sbt}{\D}{\E} \\
+   \issubst{\sbr}{\E}{\F}
+  }
+  {\eqsubst
+    {\sbcomp{\sbcomp{\sbs}{\sbt}}{\sbr}}
+    {\sbcomp{\sbs}{\sbcomp{\sbt}{\sbr}}}
+    {\G}
+    {\F}
+  }
+}
+
+
+\newcommand{\rlWeakNat}{\referTo{weak-nat}{rul:weak-nat}}
+\newcommand{\showWeakNat}{%
+  \infer[\rulename{weak-nat}] % WeakNat
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A}
+  }
+  {\eqsubst
+    {\sbcomp{\sbshift{\G}{\A}{\sbs}}
+            {\sbweak{\D}{\A}}}
+    {\sbcomp{\sbweak{\G}{\subst{\A}{\sbs}}}
+            {\sbs}}
+    {\ctxextend{\G}{\subst{\A}{\sbs}}}
+    {\D}
+  }
+}
+
+
+\newcommand{\rlWeakZero}{\referTo{weak-zero}{rul:weak-zero}}
+\newcommand{\showWeakZero}{%
+  \infer[\rulename{weak-zero}] % WeakZero
+  {\isterm{\G}{\uu}{\A}}
+  {\eqsubst
+    {\sbcomp{\sbzero{\G}{\A}{\uu}}
+            {\sbweak{\G}{\A}}}
+    {\sbid{\G}}
+    {\G}
+    {\G}
+  }
+}
+
+
+\newcommand{\rlShiftZero}{\referTo{shift-zero}{rul:shift-zero}}
+\newcommand{\showShiftZero}{%
+  \infer[\rulename{shift-zero}] % ShiftZero
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\D}{\uu}{\A}
+  }
+  {\eqsubst
+    {\sbcomp{\sbzero{\G}{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}}
+            {\sbshift{\G}{\A}{\sbs}}}
+    {\sbcomp{\sbs}
+            {\sbzero{\D}{\A}{\uu}}}
+    {\G}
+    {\ctxextend{\D}{\A}}
+  }
+}
+
+
+\newcommand{\rlCompShift}{\referTo{comp-shift}{rul:comp-shift}}
+\newcommand{\showCompShift}{%
+  \infer[\rulename{comp-shift}] % CompShift
+  {\issubst{\sbs}{\G}{\D} \\
+   \issubst{\sbt}{\D}{\E} \\
+   \istype{\E}{\A}
+  }
+  {\eqsubst
+    {\sbcomp{\sbshift{\G}{\subst{\A}{\sbt}}{\sbs}}
+            {\sbshift{\D}{\A}{\sbt}}}
+    {\sbshift{\G}{\A}{\sbcomp{\sbs}{\sbt}}}
+    {\ctxextend{\G}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}}
+    {\ctxextend{\E}{\A}}
+  }
+}
+
+
+\newcommand{\rlCompIdRight}{\referTo{comp-id-right}{rul:comp-id-right}}
+\newcommand{\showCompIdRight}{%
+  \infer[\rulename{comp-id-right}] % CompIdRight
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqsubst
+    {\sbcomp{\sbid{\D}}{\sbs}}
+    {\sbs}
+    {\G}
+    {\D}
+  }
+}
+
+
+\newcommand{\rlCompIdLeft}{\referTo{comp-id-left}{rul:comp-id-left}}
+\newcommand{\showCompIdLeft}{%
+  \infer[\rulename{comp-id-left}] % CompIdLeft
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqsubst
+    {\sbcomp{\sbs}{\sbid{\G}}}
+    {\sbs}
+    {\G}
+    {\D}
+  }
 }
 
 
@@ -251,8 +651,8 @@
 \newcommand{\rlEqTySym}{\referTo{eq-ty-sym}{rul:eq-ty-sym}}
 \newcommand{\showEqTySym}{%
   \infer[\rulename{eq-ty-sym}] % EqTySym
-  {\eqtype{\G}{\B}{\A}}
   {\eqtype{\G}{\A}{\B}}
+  {\eqtype{\G}{\B}{\A}}
 }
 
 
@@ -265,61 +665,28 @@
 }
 
 
-\newcommand{\rlEqTyWeakNat}{\referTo{eq-ty-weak-nat}{rul:eq-ty-weak-nat}}
-\newcommand{\showEqTyWeakNat}{%
-  \infer[\rulename{eq-ty-weak-nat}] % EqTyWeakNat
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\D}{\A} \\
-   \istype{\D}{\B}
-  }
+\newcommand{\rlEqTyIdSubst}{\referTo{eq-ty-id-subst}{rul:eq-ty-id-subst}}
+\newcommand{\showEqTyIdSubst}{%
+  \infer[\rulename{eq-ty-id-subst}] % EqTyIdSubst
+  {\istype{\G}{\A}}
   {\eqtype
-   {\ctxextend{\G}{\subst{\A}{\sbs}}}
-   {\subst{(\subst{\B}{\sbweak{\D}{\A}})}{\sbshift{\G}{\A}{\sbs}}}
-   {\subst{(\subst{\B}{\sbs})}{\sbweak{\G}{\subst{\A}{\sbs}}}}
+   {\G}
+   {\subst{\A}{\sbid{\G}}}
+   {\A}
   }
 }
 
 
-\newcommand{\rlEqTyWeakZero}{\referTo{eq-ty-weak-zero}{rul:eq-ty-weak-zero}}
-\newcommand{\showEqTyWeakZero}{%
-  \infer[\rulename{eq-ty-weak-zero}]
-  {\istype{\G}{\A} \\
-   \isterm{\G}{\uu}{\B}
+\newcommand{\rlEqTySubstComp}{\referTo{eq-ty-subst-comp}{rul:eq-ty-subst-comp}}
+\newcommand{\showEqTySubstComp}{%
+  \infer[\rulename{eq-ty-subst-comp}] % EqTySubstComp
+  {\istype{\E}{\A} \\
+   \issubst{\sbs}{\G}{\D} \\
+   \issubst{\sbt}{\D}{\E}
   }
   {\eqtype{\G}
-    {\subst{(\subst{\A}{\sbweak{\G}{\B}})}{\sbzero{\G}{\B}{\uu}}}
-    {\A}
-  }
-}
-
-
-\newcommand{\rlEqTyShiftZero}{\referTo{eq-ty-shift-zero}{rul:eq-ty-shift-zero}}
-\newcommand{\showEqTyShiftZero}{%
-  \infer[\rulename{eq-ty-shift-zero}]
-  {\issubst{\sbs}{\G}{\D} \\
-   \istype{\ctxextend{\D}{\A}}{\B} \\
-   \isterm{\D}{\vv}{\A}
-  }
-  {\eqtype{\G}
-    {\subst
-      {(\subst{\B}{\sbshift{\G}{\A}{\sbs}})}
-      {\sbzero{\G}{\subst{\A}{\sbs}}{\subst{\vv}{\sbs}}}
-    }
-    {\subst{(\subst{\B}{\sbzero{\D}{\A}{\vv}})}{\sbs}}
-  }
-}
-
-
-\newcommand{\rlEqTyCongZero}{\referTo{eq-ty-cong-zero}{rul:eq-ty-cong-zero}}
-\newcommand{\showEqTyCongZero}{%
-  \infer[\rulename{eq-ty-cong-zero}]
-  {\eqtype{\G}{\A_1}{\A_2} \\
-   \eqterm{\G}{\uu_1}{\uu_2}{\A_1} \\
-   \eqtype{\ctxextend{\G}{\A_1}}{\B_1}{\B_2}
-  }
-  {\eqtype{\G}
-    {\subst{\B_1}{\sbzero{\G}{\A_1}{\uu_1}}}
-    {\subst{\B_2}{\sbzero{\G}{\A_2}{\uu_2}}}
+    {\subst{\subst{\A}{\sbt}}{\sbs}}
+    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
   }
 }
 
@@ -356,6 +723,42 @@
 }
 
 
+\newcommand{\rlEqTySubstEmpty}{\referTo{eq-ty-subst-empty}{rul:eq-ty-subst-empty}}
+\newcommand{\showEqTySubstEmpty}{%
+  \infer[\rulename{eq-ty-subst-empty}] % EqTySubstEmpty
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqtype{\G}{\subst{\Empty}{\sbs}}{\Empty}}
+}
+
+
+\newcommand{\rlEqTySubstUnit}{\referTo{eq-ty-subst-unit}{rul:eq-ty-subst-unit}}
+\newcommand{\showEqTySubstUnit}{%
+  \infer[\rulename{eq-ty-subst-unit}] % EqTySubstUnit
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqtype{\G}{\subst{\Unit}{\sbs}}{\Unit}}
+}
+
+
+\newcommand{\rlEqTySubstBool}{\referTo{eq-ty-subst-bool}{rul:eq-ty-subst-bool}}
+\newcommand{\showEqTySubstBool}{%
+  \infer[\rulename{eq-ty-subst-bool}] % EqTySubstBool
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqtype{\G}{\subst{\Bool}{\sbs}}{\Bool}}
+}
+
+
+\newcommand{\rlEqTyExfalso}{\referTo{eq-ty-exfalso}{rul:eq-ty-exfalso}}
+\newcommand{\showEqTyExfalso}{%
+  \infer[\rulename{eq-ty-exfalso}] % EqTyExfalso
+  {\istype{\G}{\A} \\
+    \istype{\G}{\B} \\
+    \isterm{\G}{\uu}{\Empty}
+  }
+  {\eqtype{\G}{\A}{\B}
+  }
+}
+
+
 \newcommand{\rlCongProd}{\referTo{cong-prod}{rul:cong-prod}}
 \newcommand{\showCongProd}{%
   \infer[\rulename{cong-prod}] % CongProd
@@ -380,10 +783,10 @@
 \newcommand{\rlCongTySubst}{\referTo{cong-ty-subst}{rul:cong-ty-subst}}
 \newcommand{\showCongTySubst}{%
   \infer[\rulename{cong-ty-subst}] % CongTySubst
-  {\issubst{\sbs}{\G}{\D} \\
+  {\eqsubst{\sbs}{\sbt}{\G}{\D} \\
     \eqtype{\D}{\A}{\B}
   }
-  {\eqtype{\G}{\subst{\A}{\sbs}}{\subst{\B}{\sbs}}}
+  {\eqtype{\G}{\subst{\A}{\sbs}}{\subst{\B}{\sbt}}}
 }
 
 
@@ -432,6 +835,33 @@
   {\eqterm{\G}{\uu}{\ww}{\A}}
 }
 
+
+
+\newcommand{\rlEqIdSubst}{\referTo{eq-id-subst}{rul:eq-id-subst}}
+\newcommand{\showEqIdSubst}{%
+  \infer[\rulename{eq-id-subst}] % EqIdSubst
+  {\isterm{\G}{\uu}{\A}}
+  {\eqterm{\G}
+    {\subst{\uu}{\sbid{\G}}}
+    {\uu}
+    {\A}
+  }
+}
+
+
+\newcommand{\rlEqSubstComp}{\referTo{eq-subst-comp}{rul:eq-subst-comp}}
+\newcommand{\showEqSubstComp}{%
+  \infer[\rulename{eq-subst-comp}] % EqSubstComp
+  {\isterm{\E}{\uu}{\A} \\
+   \issubst{\sbs}{\G}{\D} \\
+   \issubst{\sbt}{\D}{\E}
+  }
+  {\eqterm{\G}
+    {\subst{\subst{\uu}{\sbt}}{\sbs}}
+    {\subst{\uu}{\sbcomp{\sbs}{\sbt}}}
+    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
+  }
+}
 
 
 \newcommand{\rlEqSubstWeak}{\referTo{eq-subst-weak}{rul:eq-subst-weak}}
@@ -577,6 +1007,173 @@
 }
 
 
+\newcommand{\rlEqSubstJ}{\referTo{eq-subst-j}{rul:eq-subst-j}}
+\newcommand{\showEqSubstJ}{%
+  \infer[\rulename{eq-subst-j}] % EqSubstJ
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A} \\
+   \isterm{\D}{\uu}{\A} \\
+   \istype
+    {\ctxextend
+      {\ctxextend{\D}{\A}}
+      {\Id
+        {\subst{\A}{\sbweak{\D}{\A}}}
+        {\subst{\uu}{\sbweak{\D}{\A}}}
+        {\var{0}}}
+    }
+    {\C} \\
+   \isterm
+    {\D}
+    {\ww}
+    {\subst
+      {\subst
+        {\C}
+        {\sbshift
+          {\D}
+          {\Id
+            {\subst{\A}{\sbweak{\D}{\A}}}
+            {\subst{\uu}{\sbweak{\D}{\A}}}
+            {\var{0}}
+          }
+          {\sbzero{\D}{\A}{\uu}}
+        }
+      }
+      {\sbzero{\D}{\Id{\A}{\uu}{\uu}}{\refl{\A} \uu}}
+    } \\
+   \isterm{\D}{\vv}{\A} \\
+   \isterm{\D}{\p}{\Id{\A}{\uu}{\vv}}
+  }
+  {\eqterm{\G}
+    {\subst
+      {\J{\A}{\uu}{\C}{\ww}{\vv}{\p}}
+      {\sbs}
+    }
+    {\J
+      {\subst{\A}{\sbs}}
+      {\subst{\uu}{\sbs}}
+      {\subst{\C}{\sbt}}
+      {\subst{\ww}{\sbs}}
+      {\subst{\vv}{\sbs}}
+      {\subst{\p}{\sbs}}
+    }
+    {\subst
+      {\subst
+        {\subst
+          {\C}
+          {\sbr}
+        }
+        {\sbzero{\G}{\Id{\A}{\uu}{\vv}}{\p}}
+      }
+      {\sbs}
+    }
+  }
+
+  \text{Where } \sbt =
+    \sbshift
+      {\ctxextend{\G}{\subst{\A}{\sbs}}}
+      {\Id
+        {\subst{\A}{\sbweak{\D}{\A}}}
+        {\subst{\uu}{\sbweak{\D}{\A}}}
+        {\var{0}}
+      }
+      {(\sbshift{\G}{\A}{\sbs})}
+
+  \text{and } \sbr =
+    \sbshift
+      {\D}
+      {\Id
+        {\subst{\A}{\sbweak{\D}{\A}}}
+        {\subst{\uu}{\sbweak{\D}{\A}}}
+        {\var{0}}
+      }
+      {\sbzero{\D}{\A}{\vv}}
+}
+
+
+\newcommand{\rlEqSubstExfalso}{\referTo{eq-subst-exfalso}{rul:eq-subst-exfalso}}
+\newcommand{\showEqSubstExfalso}{%
+  \infer[\rulename{eq-subst-exfalso}] % EqSubstExfalso
+  {\issubst{\sbs}{\G}{\D} \\
+   \istype{\D}{\A} \\
+   \isterm{\D}{\uu}{\Empty}
+  }
+  {\eqterm{\G}
+    {\subst{(\exfalso{\A} \uu)}{\sbs}}
+    {\exfalso{\subst{\A}{\sbs}} \subst{\uu}{\sbs}}
+    {\subst{\A}{\sbs}}
+  }
+}
+
+
+\newcommand{\rlEqSubstUnit}{\referTo{eq-subst-unit}{rul:eq-subst-unit}}
+\newcommand{\showEqSubstUnit}{%
+  \infer[\rulename{eq-subst-unit}] % EqSubstUnit
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqterm{\G}{\subst{\unit}{\sbs}}{\unit}{\Unit}}
+}
+
+
+\newcommand{\rlEqSubstTrue}{\referTo{eq-subst-true}{rul:eq-subst-true}}
+\newcommand{\showEqSubstTrue}{%
+  \infer[\rulename{eq-subst-true}] % EqSubstTrue
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqterm{\G}{\subst{\true}{\sbs}}{\true}{\Bool}}
+}
+
+
+\newcommand{\rlEqSubstFalse}{\referTo{eq-subst-false}{rul:eq-subst-false}}
+\newcommand{\showEqSubstFalse}{%
+  \infer[\rulename{eq-subst-false}] % EqSubstFalse
+  {\issubst{\sbs}{\G}{\D}}
+  {\eqterm{\G}{\subst{\false}{\sbs}}{\false}{\Bool}}
+}
+
+
+\newcommand{\rlEqSubstCond}{\referTo{eq-subst-cond}{rul:eq-subst-cond}}
+\newcommand{\showEqSubstCond}{%
+  \infer[\rulename{eq-subst-cond}] % EqSubstCond
+  {\issubst{\sbs}{\G}{\D} \\
+   \isterm{\D}{\uu}{\Bool} \\
+   \istype{\ctxextend{\D}{\Bool}}{\C} \\
+   \isterm{\D}{\vv}{\subst{\C}{\sbzero{\D}{\Bool}{\true}}} \\
+   \isterm{\D}{\ww}{\subst{\C}{\sbzero{\D}{\Bool}{\false}}}
+  }
+  {\eqterm{\G}
+    {\subst{\cond{\C}{\uu}{\vv}{\ww}}{\sbs}}
+    {\cond
+      {\subst{\C}{\sbshift{\G}{\Bool}{\sbs}}}
+      {\subst{\uu}{\sbs}}
+      {\subst{\vv}{\sbs}}
+      {\subst{\ww}{\sbs}}
+    }
+    {\subst{\subst{\C}{\sbzero{\D}{\Bool}{\uu}}}{\sbs}}
+  }
+}
+
+
+\newcommand{\rlEqTermExfalso}{\referTo{eq-term-exfalso}{rul:eq-term-exfalso}}
+\newcommand{\showEqTermExfalso}{%
+  \infer[\rulename{eq-term-exfalso}] % EqTermExfalso
+  {\istype{\G}{\A} \\
+    \isterm{\G}{\uu}{\A} \\
+    \isterm{\G}{\vv}{\A} \\
+    \isterm{\G}{\ww}{\Empty}
+  }
+  {\eqterm{\G}{\uu}{\vv}{\A}
+  }
+}
+
+
+\newcommand{\rlUnitEta}{\referTo{unit-eta}{rul:unit-eta}}
+\newcommand{\showUnitEta}{%
+  \infer[\rulename{unit-eta}] % UnitEta
+  {\isterm{\G}{\uu}{\Unit} \\
+   \isterm{\G}{\vv}{\Unit}
+ }
+ {\eqterm{\G}{\uu}{\vv}{\Unit}}
+}
+
+
 %
 
 
@@ -584,7 +1181,7 @@
 \newcommand{\showEqReflection}{%
   \infer[\rulename{eq-reflection}] % EqReflection
   {\isterm{\G}{\ww_1}{\Id{\A}{\uu}{\vv}} \\
-    \isterm{\G}{\ww_2}{\textsf{UIP}(\A)}
+    \isterm{\G}{\ww_2}{\textsf{reflective}(\A)}
   }
   {\eqterm{\G}{\uu}{\vv}{\A}}
 }
@@ -598,6 +1195,35 @@
   {\eqterm{\G}{\bigl(\app{(\lam{\A}{\B}{\uu})}{\A}{\B}{\vv}\bigr)}
     {\subst{\uu}{\sbzero{\G}{\A}{\vv}}}
     {\subst{\B}{\sbzero{\G}{\A}{\vv}}}}
+}
+
+
+\newcommand{\rlCondTrue}{\referTo{cond-true}{rul:cond-true}}
+\newcommand{\showCondTrue}{%
+  \infer[\rulename{cond-true}] % CondTrue
+  {\istype{\ctxextend{\G}{\Bool}}{\C} \\
+   \isterm{\G}{\vv}{\subst{\C}{\sbzero{\G}{\Bool}{\true}}} \\
+   \isterm{\G}{\ww}{\subst{\C}{\sbzero{\G}{\Bool}{\false}}}
+  }
+  {\eqterm{\G}
+    {\cond{\C}{\true}{\vv}{\ww}}
+    {\vv}
+    {\subst{\C}{\sbzero{\G}{\Bool}{\true}}}
+  }
+}
+
+\newcommand{\rlCondFalse}{\referTo{cond-false}{rul:cond-false}}
+\newcommand{\showCondFalse}{%
+  \infer[\rulename{cond-false}] % CondFalse
+  {\istype{\ctxextend{\G}{\Bool}}{\C} \\
+   \isterm{\G}{\vv}{\subst{\C}{\sbzero{\G}{\Bool}{\true}}} \\
+   \isterm{\G}{\ww}{\subst{\C}{\sbzero{\G}{\Bool}{\false}}}
+  }
+  {\eqterm{\G}
+    {\cond{\C}{\false}{\vv}{\ww}}
+    {\ww}
+    {\subst{\C}{\sbzero{\G}{\Bool}{\false}}}
+  }
 }
 
 
@@ -629,6 +1255,55 @@
       {\ctxextend{\G}{\A}}
       {\A}
       {\sbweak{\G}{\A}}
+}
+
+
+\newcommand{\rlJRefl}{\referTo{j-refl}{rul:j-refl}}
+\newcommand{\showJRefl}{%
+  \infer[\rulename{j-refl}] % JRefl
+  {\istype{\G}{\A} \\
+   \isterm{\G}{\uu}{\A} \\
+   \istype
+    {\ctxextend
+      {\ctxextend{\G}{\A}}
+      {\Id
+        {\subst{\A}{\sbweak{\G}{\A}}}
+        {\subst{\uu}{\sbweak{\G}{\A}}}
+        {\var{0}}}
+    }
+    {\C} \\
+   \isterm
+    {\G}
+    {\ww}
+    {\subst
+      {\subst
+        {\C}
+        {\sbt}
+      }
+      {\sbzero{\G}{\Id{\A}{\uu}{\uu}}{\refl{\A} \uu}}
+    }
+  }
+  {\eqterm{\G}
+    {\J{\A}{\uu}{\C}{\ww}{\uu}{\refl{\A} \uu}}
+    {\ww}
+    {\subst
+      {\subst
+        {\C}
+        {\sbt}
+      }
+      {\sbzero{\G}{\Id{\A}{\uu}{\uu}}{\refl{\A} \uu}}
+    }
+  }
+
+  \text{Where } \sbt =
+    \sbshift
+      {\G}
+      {\Id
+        {\subst{\A}{\sbweak{\G}{\A}}}
+        {\subst{\uu}{\sbweak{\G}{\A}}}
+        {\var{0}}
+      }
+      {\sbzero{\G}{\A}{\uu}}
 }
 
 
@@ -669,13 +1344,89 @@
 }
 
 
+\newcommand{\rlCongJ}{\referTo{cong-j}{rul:cong-j}}
+\newcommand{\showCongJ}{%
+  \infer[\rulename{cong-j}] % CongJ
+  {\eqtype{\G}{\A_1}{\A_2} \\
+   \eqterm{\G}{\uu_1}{\uu_2}{\A_1} \\
+   \eqtype
+    {\ctxextend
+      {\ctxextend{\G}{\A_1}}
+      {\Id
+        {\subst{\A_1}{\sbweak{\G}{\A_1}}}
+        {\subst{\uu}{\sbweak{\G}{\A_1}}}
+        {\var{0}}}
+    }
+    {\C_1}
+    {\C_2} \\
+   \eqterm
+    {\G}
+    {\ww_1}
+    {\ww_2}
+    {\subst
+      {\subst
+        {\C_1}
+        {\sbshift
+          {\G}
+          {\Id
+            {\subst{\A_1}{\sbweak{\G}{\A_1}}}
+            {\subst{\uu_1}{\sbweak{\G}{\A_1}}}
+            {\var{0}}
+          }
+          {\sbzero{\G}{\A_1}{\uu_1}}
+        }
+      }
+      {\sbzero{\G}{\Id{\A_1}{\uu_1}{\uu_1}}{\refl{\A_1} \uu_1}}
+    } \\
+   \eqterm{\G}{\vv_1}{\vv_2}{\A_1} \\
+   \eqterm{\G}{\p_1}{\p_2}{\Id{\A_1}{\uu_1}{\vv_1}}
+  }
+  {\eqterm{\G}
+    {\J{\A_1}{\uu_1}{\C_1}{\ww_1}{\vv_1}{\p_1}}
+    {\J{\A_2}{\uu_2}{\C_2}{\ww_2}{\vv_2}{\p_2}}
+    {\subst
+      {\subst
+        {\C_1}
+        {\sbr}
+      }
+      {\sbzero{\G}{\Id{\A_1}{\uu_1}{\vv_1}}{\p_1}}
+    }
+  }
+
+  \text{Where } \sbr =
+    \sbshift
+      {\G}
+      {\Id
+        {\subst{\A_1}{\sbweak{\G}{\A_1}}}
+        {\subst{\uu_1}{\sbweak{\G}{\A_1}}}
+        {\var{0}}
+      }
+      {\sbzero{\G}{\A_1}{\vv_1}}
+}
+
+
+\newcommand{\rlCongCond}{\referTo{cong-cond}{rul:cong-cond}}
+\newcommand{\showCongCond}{%
+  \infer[\rulename{cong-cond}] % CongCond
+  {\eqterm{\G}{\uu_1}{\uu_2}{\Bool} \\
+   \eqtype{\ctxextend{\G}{\Bool}}{\C_1}{\C_2} \\
+   \eqterm{\G}{\vv_1}{\vv_2}{\subst{\C_1}{\sbzero{\G}{\Bool}{\true}}} \\
+   \eqterm{\G}{\ww_1}{\ww_2}{\subst{\C_1}{\sbzero{\G}{\Bool}{\false}}}
+  }
+  {\eqterm{\G}
+    {\cond{\C_1}{\uu_1}{\vv_1}{\ww_1}}
+    {\cond{\C_2}{\uu_2}{\vv_2}{\ww_2}}
+    {\subst{\C_1}{\sbzero{\G}{\Bool}{\uu_1}}}}
+}
+
+
 \newcommand{\rlCongTermSubst}{\referTo{cong-term-subst}{rul:cong-term-subst}}
 \newcommand{\showCongTermSubst}{%
   \infer[\rulename{cong-term-subst}] % CongTermSubst
-  {\issubst{\sbs}{\G}{\D} \\
+  {\eqsubst{\sbs}{\sbt}{\G}{\D} \\
     \eqterm{\D}{\uu_1}{\uu_2}{\A}
   }
-  {\eqterm{\G}{\subst{\uu_1}{\sbs}}{\subst{\uu_2}{\sbs}}{\subst{\A}{\sbs}}}
+  {\eqterm{\G}{\subst{\uu_1}{\sbs}}{\subst{\uu_2}{\sbt}}{\subst{\A}{\sbs}}}
 }
 
 %%% Local Variables:

@@ -1,6 +1,38 @@
 (* The source type theory. *)
 
-Require Import syntax.
+Inductive context : Type :=
+| ctxempty : context
+| ctxextend : context -> type -> context
+
+with type : Type :=
+     | Prod : type -> type -> type
+     | Id : type -> term -> term -> type
+     | Subst : type -> substitution -> type
+     | Empty : type
+     | Unit : type
+     | Bool : type
+
+with term : Type :=
+     | var : nat -> term
+     | lam : type -> type -> term -> term
+     | app : term -> type -> type -> term -> term
+     | refl : type -> term -> term
+     | j : type -> term -> type -> term -> term -> term -> term
+     | subst : term -> substitution -> term
+     | exfalso : type -> term -> term
+     | unit : term
+     | true : term
+     | false : term
+     | cond : type -> term -> term -> term -> term
+
+with substitution : Type :=
+     | sbzero : context -> type -> term -> substitution
+     | sbweak : context -> type -> substitution
+     | sbshift : context -> type -> substitution -> substitution
+     | sbid : context -> substitution
+     | sbcomp : substitution -> substitution -> substitution.
+
+Parameter reflective : type -> type.
 
 Inductive isctx : context -> Type :=
 
@@ -32,6 +64,24 @@ with issubst : substitution -> context -> context -> Type :=
            issubst sbs G D ->
            istype D A ->
            issubst (sbshift G A sbs) (ctxextend G (Subst A sbs)) (ctxextend D A)
+
+     | SubstId :
+         forall {G},
+           isctx G ->
+           issubst (sbid G) G G
+
+     | SubstComp :
+         forall {G D E sbs sbt},
+           issubst sbs G D ->
+           issubst sbt D E ->
+           issubst (sbcomp sbs sbt) G E
+
+     | SubstCtxConv :
+         forall {G1 G2 D1 D2 sbs},
+           issubst sbs G1 D1 ->
+           eqctx G1 G2 ->
+           eqctx D1 D2 ->
+           issubst sbs G2 D2
 
 
 
@@ -214,13 +264,158 @@ with isterm : context -> term -> type -> Type :=
 
 with eqctx : context -> context -> Type :=
 
+     | CtxRefl :
+         forall {G},
+           isctx G ->
+           eqctx G G
+
+     | CtxSym :
+         forall {G D},
+           eqctx G D ->
+           eqctx D G
+
+     | CtxTrans :
+         forall {G D E},
+           eqctx G D ->
+           eqctx D E ->
+           eqctx G E
+
      | EqCtxEmpty :
          eqctx ctxempty ctxempty
 
      | EqCtxExtend :
-         forall {G A B},
+         forall {G D A B},
+           eqctx G D ->
            eqtype G A B ->
-           eqctx (ctxextend G A) (ctxextend G B)
+           eqctx (ctxextend G A) (ctxextend D B)
+
+
+
+with eqsubst : substitution -> substitution -> context -> context -> Type :=
+
+     | SubstRefl :
+         forall {G D sbs},
+           issubst sbs G D ->
+           eqsubst sbs sbs G D
+
+     | SubstSym :
+         forall {G D sbs sbt},
+           eqsubst sbs sbt G D ->
+           eqsubst sbt sbs G D
+
+     | SubstTrans :
+         forall {G D sb1 sb2 sb3},
+           eqsubst sb1 sb2 G D ->
+           eqsubst sb2 sb3 G D ->
+           eqsubst sb1 sb3 G D
+
+     | CongSubstZero :
+         forall {G1 G2 A1 A2 u1 u2},
+           eqctx G1 G2 ->
+           eqtype G1 A1 A2 ->
+           eqterm G1 u1 u2 A1 ->
+           eqsubst (sbzero G1 A1 u1)
+                   (sbzero G1 A2 u2)
+                   G1
+                   (ctxextend G1 A1)
+
+     | CongSubstWeak :
+         forall {G1 G2 A1 A2},
+           eqctx G1 G2 ->
+           eqtype G1 A1 A2 ->
+           eqsubst (sbweak G1 A1)
+                   (sbweak G2 A2)
+                   (ctxextend G1 A1)
+                   G1
+
+     | CongSubstShift :
+         forall {G1 G2 D A1 A2 sbs1 sbs2},
+           eqctx G1 G2 ->
+           eqsubst sbs1 sbs2 G1 D ->
+           eqtype D A1 A2 ->
+           eqsubst (sbshift G1 A1 sbs1)
+                   (sbshift G2 A2 sbs2)
+                   (ctxextend G1 (Subst A1 sbs1))
+                   (ctxextend D A1)
+
+     | CongSubstComp :
+         forall {G D E sbs1 sbs2 sbt1 sbt2},
+           eqsubst sbs1 sbs2 G D ->
+           eqsubst sbt1 sbt2 D E ->
+           eqsubst (sbcomp sbs1 sbt1)
+                   (sbcomp sbs2 sbt2)
+                   G
+                   E
+
+     | EqSubstCtxConv :
+         forall {G1 G2 D1 D2 sbs sbt},
+           eqsubst sbs sbt G1 D1 ->
+           eqctx G1 G2 ->
+           eqctx D1 D2 ->
+           eqsubst sbs sbt G2 D2
+
+     | CompAssoc :
+         forall {G D E F sbs sbt sbr},
+           issubst sbs G D ->
+           issubst sbt D E ->
+           issubst sbr E F ->
+           eqsubst (sbcomp (sbcomp sbs sbt) sbr)
+                   (sbcomp sbs (sbcomp sbt sbr))
+                   G
+                   F
+
+     | WeakNat :
+         forall {G D A sbs},
+               issubst sbs G D ->
+               istype D A ->
+               eqsubst (sbcomp (sbshift G A sbs)
+                               (sbweak D A))
+                       (sbcomp (sbweak G (Subst A sbs))
+                               sbs)
+                       (ctxextend G (Subst A sbs))
+                       D
+
+     | WeakZero :
+         forall {G A u},
+           isterm G u A ->
+           eqsubst (sbcomp (sbzero G A u)
+                           (sbweak G A))
+                   (sbid G)
+                   G
+                   G
+
+     | ShiftZero :
+         forall {G D A u sbs},
+           issubst sbs G D ->
+           isterm D u A ->
+           eqsubst (sbcomp (sbzero G (Subst A sbs) (subst u sbs))
+                           (sbshift G A sbs))
+                   (sbcomp sbs
+                           (sbzero D A u))
+                   G
+                   (ctxextend D A)
+
+     | CompShift :
+         forall {G D E A sbs sbt},
+           issubst sbs G D ->
+           issubst sbt D E ->
+           istype E A ->
+           eqsubst (sbcomp (sbshift G (Subst A sbt) sbs)
+                           (sbshift D A sbt))
+                   (sbshift G A (sbcomp sbs sbt))
+                   (ctxextend G (Subst A (sbcomp sbs sbt)))
+                   (ctxextend E A)
+
+     | CompIdRight :
+         forall {G D sbs},
+           issubst sbs G D ->
+           eqsubst (sbcomp sbs (sbid D)) sbs G D
+
+     | CompIdLeft :
+         forall {G D sbs},
+           issubst sbs G D ->
+           eqsubst (sbcomp (sbid G) sbs) sbs G D
+
 
 
 
@@ -232,9 +427,10 @@ with eqtype : context -> type -> type -> Type :=
            eqctx G D ->
            eqtype D A B
 
-     | EqTyRefl: forall {G A},
-                   istype G A ->
-                   eqtype G A A
+     | EqTyRefl:
+         forall {G A},
+           istype G A ->
+           eqtype G A A
 
      | EqTySym :
          forall {G A B},
@@ -247,38 +443,21 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G B C ->
            eqtype G A C
 
-     | EqTyWeakNat :
-         forall {G D A B sbs},
-           issubst sbs G D ->
-           istype D A ->
-           istype D B ->
-           eqtype (ctxextend G (Subst A sbs))
-                  (Subst (Subst B (sbweak D A)) (sbshift G A sbs))
-                  (Subst (Subst B sbs) (sbweak G (Subst A sbs)))
-
-     | EqTyWeakZero :
-         forall {G A B u},
+     | EqTyIdSubst :
+         forall {G A},
            istype G A ->
-           isterm G u B ->
-           eqtype G (Subst (Subst A (sbweak G B)) (sbzero G B u)) A
+           eqtype G
+                  (Subst A (sbid G))
+                  A
 
-     | EqTyShiftZero :
-         forall {G D A B v sbs},
+     | EqTySubstComp :
+         forall {G D E A sbs sbt},
+           istype E A ->
            issubst sbs G D ->
-           istype (ctxextend D A) B ->
-           isterm D v A ->
+           issubst sbt D E ->
            eqtype G
-                  (Subst (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs)))
-                  (Subst (Subst B (sbzero D A v)) sbs)
-
-     | EqTyCongZero :
-         forall {G A1 A2 B1 B2 u1 u2},
-           eqtype G A1 B1 ->
-           eqterm G u1 u2 A1 ->
-           eqtype (ctxextend G A1) A2 B2 ->
-           eqtype G
-                  (Subst A2 (sbzero G A1 u1))
-                  (Subst B2 (sbzero G B1 u2))
+                  (Subst (Subst A sbt) sbs)
+                  (Subst A (sbcomp sbs sbt))
 
      | EqTySubstProd :
          forall {G D A B sbs},
@@ -341,10 +520,10 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G (Id A u1 u2) (Id B v1 v2)
 
      | CongTySubst :
-         forall {G D A B sbs},
-           issubst sbs G D ->
+         forall {G D A B sbs sbt},
+           eqsubst sbs sbt G D ->
            eqtype D A B ->
-           eqtype G (Subst A sbs) (Subst B sbs)
+           eqtype G (Subst A sbs) (Subst B sbt)
 
 
 
@@ -378,6 +557,23 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G v w A ->
            eqterm G u w A
 
+     | EqIdSubst :
+         forall {G A u},
+           isterm G u A ->
+           eqterm G
+                  (subst u (sbid G))
+                  u
+                  A
+
+     | EqSubstComp :
+         forall {G D E A u sbs sbt},
+           isterm E u A ->
+           issubst sbs G D ->
+           issubst sbt D E ->
+           eqterm G
+                  (subst (subst u sbt) sbs)
+                  (subst u (sbcomp sbs sbt))
+                  (Subst A (sbcomp sbs sbt))
 
      | EqSubstWeak :
          forall {G A B k},
@@ -416,7 +612,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
 
      | EqSubstShiftSucc :
-         forall { G D A B sbs k },
+         forall {G D A B sbs k},
            issubst sbs G D ->
            isterm D (var k) B ->
            istype D A ->
@@ -535,11 +731,12 @@ with eqterm : context -> term -> term -> type -> Type :=
                               (sbzero D A v)
                            )
                         )
-                        (sbzero G (Id A u v) p)
+                        (sbzero D (Id A u v) p)
                      )
                      sbs
                   )
 
+     (* This rule is subsumed by EqTermExfalso *)
      | EqSubstExfalso :
          forall {G D A u sbs},
            issubst sbs G D ->
@@ -606,7 +803,7 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqReflection :
          forall {G A u v w1 w2},
            isterm G w1 (Id A u v) ->
-           isterm G w2 (UIP A) ->
+           isterm G w2 (reflective A) ->
            eqterm G u v A
 
      | ProdBeta :
@@ -785,7 +982,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                            (sbzero G A1 v1)
                         )
                      )
-                     (sbzero G (Id A1 u1 u1) p1)
+                     (sbzero G (Id A1 u1 v1) p1)
                   )
 
      (* This rule doesn't seem necessary as subsumed by EqTermexfalso! *)
@@ -810,10 +1007,10 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst C1 (sbzero G Bool u1))
 
      | CongTermSubst :
-         forall {G D A u1 u2 sbs},
-           issubst sbs G D ->
+         forall {G D A u1 u2 sbs sbt},
+           eqsubst sbs sbt G D ->
            eqterm D u1 u2 A ->
            eqterm G
                   (subst u1 sbs)
-                  (subst u2 sbs)
+                  (subst u2 sbt)
                   (Subst A sbs).

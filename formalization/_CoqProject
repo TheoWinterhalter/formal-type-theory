@@ -4,5 +4,6 @@ syntax.v
 ett.v
 ptt.v
 ctt.v
-paranoidSanity.v
+preadmissibility.v
+sanity.v
 translation.v
