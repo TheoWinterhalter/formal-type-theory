@@ -1,3 +1,4 @@
+Require Import syntax.
 Require Import ett.
 Require Import preadmissibility.
 
@@ -322,13 +323,13 @@ Proof.
 
     (* CompIdRight *)
     + eapply SubstComp.
-      * eassumption.
       * eapply SubstId. ih.
+      * assumption.
 
     (* CompIdLeft *)
     + eapply SubstComp.
+      * eassumption.
       * eapply SubstId. ih.
-      * assumption.
 
 
   (****** sane_eqtype ******)

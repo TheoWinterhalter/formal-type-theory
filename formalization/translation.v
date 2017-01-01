@@ -1,54 +1,56 @@
+Require syntax. (* The syntax of ett. *)
 Require ett.
 Require ctt.
 
+Module S := syntax.
 Module E := ett.
 Module C := ctt.
 
 (* "hml" stands for "homologous" which is too long to type. *)
 
 Inductive hml_context :
-  E.context -> C.context -> Type :=
+  S.context -> C.context -> Type :=
 
   | hml_ctxempty :
-      hml_context E.ctxempty C.ctxempty
+      hml_context S.ctxempty C.ctxempty
 
   | hml_ctxextend :
       forall {G G' A A'},
         hml_context G G' ->
         hml_type A A' ->
-        hml_context (E.ctxextend G A) (C.ctxextend G' A')
+        hml_context (S.ctxextend G A) (C.ctxextend G' A')
 
 with hml_type :
-  E.type -> C.type -> Type :=
+  S.type -> C.type -> Type :=
 
   | hml_Id :
       forall {A A' u u' v v' c},
         hml_type A A' ->
         hml_term u u' ->
         hml_term v v' ->
-        hml_type (E.Id A u v) (C.Coerce c (C.Id A' u' v'))
+        hml_type (S.Id A u v) (C.Coerce c (C.Id A' u' v'))
 
 with hml_term :
-  E.term -> C.term -> Type :=
+  S.term -> C.term -> Type :=
 
   | hml_var {k c} :
-      hml_term (E.var k) (C.coerce c (C.var k))
+      hml_term (S.var k) (C.coerce c (C.var k))
 
 .
 
-Structure istrans_ctx (G : E.context) (G' : C.context) :=
+Structure istrans_ctx (G : S.context) (G' : C.context) :=
   {
     isctx_derive : C.isctx G' ;
     isctx_hom : hml_context G G'
   }.
 
-Structure istrans_type (A : E.type) (G' : C.context) (A' : C.type) :=
+Structure istrans_type (A : S.type) (G' : C.context) (A' : C.type) :=
   {
     istype_derive : C.istype G' A' ;
     istype_hom : hml_type A A'
   }.
 
-Structure istrans_term (u : E.term) (G' : C.context) (u' : C.term) (A' : C.type) :=
+Structure istrans_term (u : S.term) (G' : C.context) (u' : C.term) (A' : C.type) :=
   {
     isterm_derive : C.isterm G' u' A' ;
     isterm_hom : hml_term u u'

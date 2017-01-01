@@ -1,5 +1,6 @@
 (* Admissibility rules and tactics (before sanity). *)
 
+Require Import syntax.
 Require Import ett.
 
 (* Some tactic to compose substitutions. *)
@@ -8,7 +9,7 @@ Lemma eqtype_subst_left :
     issubst sbs G D ->
     issubst sbt D E ->
     istype E A ->
-    eqtype G (Subst A (sbcomp sbs sbt)) B ->
+    eqtype G (Subst A (sbcomp sbt sbs)) B ->
     eqtype G (Subst (Subst A sbt) sbs) B.
 Proof.
   intros.
@@ -26,7 +27,7 @@ Lemma eqterm_subst_left :
     issubst sbt D E ->
     istype E A ->
     isterm E u A ->
-    eqterm G (subst u (sbcomp sbs sbt)) v (Subst A (sbcomp sbs sbt)) ->
+    eqterm G (subst u (sbcomp sbt sbs)) v (Subst A (sbcomp sbt sbs)) ->
     eqterm G (subst (subst u sbt) sbs) v (Subst (Subst A sbt) sbs).
 Proof.
   intros.
@@ -398,7 +399,7 @@ Ltac substproof :=
   (*   ] *)
   | |- issubst (sbid ?G) ?G1 ?G2 =>
     eapply SubstId ; eassumption
-  | |- issubst (sbcomp ?sbs ?sbt) ?G1 ?G2 =>
+  | |- issubst (sbcomp ?sbt ?sbs) ?G1 ?G2 =>
     eapply SubstComp ; substproof
   (* We also deal with cases where we have substitutions on types or terms *)
   | |- istype ?G (Subst ?A ?sbs) =>
@@ -565,11 +566,10 @@ Proof.
   assert (
     eqsubst
       (sbcomp
-         (sbcomp
-            (sbzero G (Subst A sbs) (subst v sbs))
-            (sbweak G (Subst A sbs))
-         )
          sbs
+         (sbcomp
+            (sbweak G (Subst A sbs))
+            (sbzero G (Subst A sbs) (subst v sbs)))
       )
       sbs
       G D
@@ -579,7 +579,7 @@ Proof.
       + eapply WeakZero. substproof.
       + eapply SubstRefl. assumption.
     - eapply SubstTrans.
-      + eapply CompIdLeft. assumption.
+      + eapply CompIdRight. assumption.
       + eapply SubstRefl. assumption.
   }
   assert (eqtype D A A).
@@ -707,7 +707,7 @@ Proof.
     - apply CtxSym. assumption.
   }
   assert (
-    eqsubst (sbcomp (sbcomp sbs (sbzero D A v)) (sbweak D A)) sbs G D
+    eqsubst (sbcomp (sbweak D A) (sbcomp (sbzero D A v) sbs)) sbs G D
   ).
   { eapply SubstTrans.
     - eapply CompAssoc ; substproof.
@@ -715,12 +715,12 @@ Proof.
       + eapply CongSubstComp.
         * eapply SubstRefl. eassumption.
         * eapply WeakZero. assumption.
-      + apply CompIdRight. assumption.
+      + apply CompIdLeft. assumption.
   }
   assert (
-    eqtype G (Subst A (sbcomp (sbcomp sbs (sbzero D A v)) (sbweak D A)))
+    eqtype G (Subst A (sbcomp (sbweak D A) (sbcomp (sbzero D A v) sbs)))
     (Subst (Subst (Subst (Subst A (sbweak D A)) (sbzero D A v)) (sbweak D A))
-       (sbcomp sbs (sbzero D A v)))
+       (sbcomp (sbzero D A v) sbs))
   ).
   { gocompsubst. gocompsubst. gocompsubst.
     eapply CongTySubst.
@@ -731,13 +731,13 @@ Proof.
             - eapply SubstRefl. substproof.
             - eapply WeakZero. assumption.
           }
-        * eapply CompIdRight.
+        * eapply CompIdLeft.
           substproof.
     - assumption.
   }
   assert (
     eqterm G (subst u sbs)
-    (subst (subst u (sbweak D A)) (sbcomp sbs (sbzero D A v)))
+    (subst (subst u (sbweak D A)) (sbcomp (sbzero D A v) sbs))
     (Subst A sbs)
   ).
   { eapply EqTyConv.
@@ -769,7 +769,7 @@ Proof.
           eapply SubstTrans.
           { eapply CongSubstComp.
             - eapply SubstRefl. substproof.
-            - eapply CompIdRight. substproof.
+            - eapply CompIdLeft. substproof.
           }
           eapply SubstTrans.
           { eapply CompAssoc ; substproof. }
@@ -778,13 +778,13 @@ Proof.
             - eapply SubstRefl. eassumption.
             - eapply WeakZero. assumption.
           }
-          eapply CompIdRight. assumption.
+          eapply CompIdLeft. assumption.
       + assumption.
   }
   assert (
     eqterm G
            (subst v sbs)
-           (subst (var 0) (sbcomp sbs (sbzero D A v)))
+           (subst (var 0) (sbcomp (sbzero D A v) sbs))
            (Subst A sbs)
   ).
   { apply EqSym. eapply EqTrans.
@@ -802,7 +802,7 @@ Proof.
             - eapply SubstRefl. eassumption.
             - eapply WeakZero. assumption.
           }
-          eapply CompIdRight. assumption.
+          eapply CompIdLeft. assumption.
         + assumption.
     }
     eapply CongTermSubst.
@@ -812,7 +812,7 @@ Proof.
   assert (
     eqtype G
     (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
-       (sbcomp sbs (sbzero D A v))) (Subst (Id A u v) sbs)
+       (sbcomp (sbzero D A v) sbs)) (Subst (Id A u v) sbs)
   ).
   { gopushsubst. gopushsubst. apply CongId.
     - gocompsubst. eapply CongTySubst ; eassumption.
@@ -823,7 +823,7 @@ Proof.
     eqctx
     (ctxextend G
        (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
-          (sbcomp sbs (sbzero D A v)))) (ctxextend G (Subst (Id A u v) sbs))
+          (sbcomp (sbzero D A v) sbs))) (ctxextend G (Subst (Id A u v) sbs))
   ).
   { apply EqCtxExtend.
     - assumption.
@@ -831,12 +831,15 @@ Proof.
   }
   assert (
     eqsubst
-    (sbcomp (sbcomp (sbzero G (Subst A sbs) (subst v sbs)) (sbshift G A sbs))
-       (sbweak D A)) sbs G D
+    (sbcomp
+       (sbweak D A)
+       (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
+    sbs
+    G D
   ).
   { eapply SubstTrans.
     { eapply CongSubstComp.
-      - eapply ShiftZero ; eassumption.
+      eapply ShiftZero ; eassumption.
       - eapply SubstRefl. substproof.
     }
     eapply SubstTrans.
@@ -846,22 +849,22 @@ Proof.
       - eapply SubstRefl. substproof.
       - eapply WeakZero. assumption.
     }
-    eapply CompIdRight. assumption.
+    eapply CompIdLeft. assumption.
   }
   assert (
     eqtype G
     (Subst (Subst A (sbweak D A))
-       (sbcomp (sbzero G (Subst A sbs) (subst v sbs)) (sbshift G A sbs)))
+       (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
     (Subst A sbs)
   ).
   { gocompsubst. eapply CongTySubst ; eassumption. }
   assert (
     eqterm G
     (subst (subst u (sbweak D A))
-       (sbcomp (sbzero G (Subst A sbs) (subst v sbs)) (sbshift G A sbs)))
+       (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
     (subst u sbs)
     (Subst (Subst A (sbweak D A))
-       (sbcomp (sbzero G (Subst A sbs) (subst v sbs)) (sbshift G A sbs)))
+       (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
   ).
   { gocompsubst. eapply CongTermSubst ; eassumption. }
   assert (
@@ -871,10 +874,10 @@ Proof.
   assert (
     eqterm G
     (subst (var 0)
-       (sbcomp (sbzero G (Subst A sbs) (subst v sbs)) (sbshift G A sbs)))
+       (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
     (subst v sbs)
     (Subst (Subst A (sbweak D A))
-       (sbcomp (sbzero G (Subst A sbs) (subst v sbs)) (sbshift G A sbs)))
+       (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
   ).
   { eapply EqTrans.
     { eapply EqSym. eapply EqSubstComp ; substproof. }
@@ -896,7 +899,7 @@ Proof.
   assert (
     eqtype G
     (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
-       (sbcomp (sbzero G (Subst A sbs) (subst v sbs)) (sbshift G A sbs)))
+       (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
     (Subst (Id A u v) sbs)
   ).
   { gopushsubst. gopushsubst. apply EqTySym. apply CongId ; assumption. }
@@ -904,7 +907,7 @@ Proof.
     eqctx
     (ctxextend G
        (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
-          (sbcomp (sbzero G (Subst A sbs) (subst v sbs)) (sbshift G A sbs))))
+          (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs)))))
     (ctxextend G (Subst (Id A u v) sbs))
   ).
   { now apply EqCtxExtend. }
