@@ -1114,8 +1114,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          forall {G A1 A2 B1 B2 u1 u2 v1 v2},
            isctx G ->
            istype G A1 ->
-           istype G A2 ->
            istype (ctxextend G A1) A2 ->
+           istype G B1 ->
            istype (ctxextend G A1) B2 ->
            isterm G u1 (Prod A1 A2) ->
            isterm G v1 (Prod A1 A2) ->

@@ -845,26 +845,63 @@ Proof.
         - now apply (ptt.ProdTyInversion G A B),
                     (ptt.sane_isterm G u (Prod A B)),
                     sane_isterm.
-        - later.
-        - later.
-        - later.
-        - later.
+        - now apply (ptt.ProdTyInversion G A B),
+                    (ptt.sane_isterm G u (Prod A B)),
+                    sane_isterm.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply sane_eqterm.
       }
 
     (* JRefl *)
-    - { apply ptt.JRefl ; later.
+    - { apply ptt.JRefl.
+        - now apply (ptt.sane_istype G A), sane_istype.
+        - now apply sane_istype.
+        - now apply sane_isterm.
+        - now apply sane_istype.
+        - now apply sane_isterm.
       }
 
     (* CongAbs *)
-    - { apply ptt.CongAbs ; later.
+    - { apply ptt.CongAbs.
+        - now apply (ptt.sane_eqtype G A1 B1), sane_eqtype.
+        - now apply (ptt.sane_eqtype G A1 B1), sane_eqtype.
+        - now apply (ptt.sane_eqtype G A1 B1), sane_eqtype.
+        - now apply (ptt.sane_eqtype (ctxextend G A1) A2 B2), sane_eqtype.
+        - now apply (ptt.sane_eqtype (ctxextend G A1) A2 B2), sane_eqtype.
+        - now apply (ptt.sane_eqterm (ctxextend G A1) u1 u2 A2), sane_eqterm.
+        - now apply (ptt.sane_eqterm (ctxextend G A1) u1 u2 A2), sane_eqterm.
+        - now apply sane_eqtype.
+        - now apply sane_eqtype.
+        - now apply sane_eqterm.
       }
 
     (* CongApp *)
-    - { apply ptt.CongApp ; later.
+    - { apply ptt.CongApp.
+        - now apply (ptt.sane_eqtype G A1 B1), sane_eqtype.
+        - now apply (ptt.sane_eqtype G A1 B1), sane_eqtype.
+        - now apply (ptt.sane_eqtype (ctxextend G A1) A2 B2), sane_eqtype.
+        - now apply (ptt.sane_eqtype G A1 B1), sane_eqtype.
+        - now apply (ptt.sane_eqtype (ctxextend G A1) A2 B2), sane_eqtype.
+        - now apply (ptt.sane_eqterm G u1 v1 (Prod A1 A2)), sane_eqterm.
+        - now apply (ptt.sane_eqterm G u1 v1 (Prod A1 A2)), sane_eqterm.
+        - now apply (ptt.sane_eqterm G u2 v2 A1), sane_eqterm.
+        - now apply (ptt.sane_eqterm G u2 v2 A1), sane_eqterm.
+        - now apply sane_eqtype.
+        - now apply sane_eqtype.
+        - now apply sane_eqterm.
+        - now apply sane_eqterm.
       }
 
     (* CongRefl *)
-    - { apply ptt.CongRefl ; later.
+    - { apply ptt.CongRefl.
+        - now apply (ptt.sane_eqtype G A1 A2), sane_eqtype.
+        - now apply (ptt.sane_eqtype G A1 A2), sane_eqtype.
+        - now apply (ptt.sane_eqtype G A1 A2), sane_eqtype.
+        - now apply (ptt.sane_eqterm G u1 u2 A1), sane_eqterm.
+        - now apply (ptt.sane_eqterm G u1 u2 A1), sane_eqterm.
+        - now apply sane_eqterm.
+        - now apply sane_eqtype.
       }
 
     (* CongJ *)
@@ -872,7 +909,7 @@ Proof.
       }
 
     (* CongCond *)
-    - { apply ptt.CongCond ; later.
+    - { later.
       }
 
     (* CongTermSubst *)
