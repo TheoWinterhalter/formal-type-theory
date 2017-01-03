@@ -1,4 +1,4 @@
-(* The source type theory. *)
+(* Paranoid type theory. *)
 
 Require Import syntax.
 
@@ -19,37 +19,24 @@ with issubst : substitution -> context -> context -> Type :=
 
      | SubstZero :
          forall {G u A},
+           isctx G ->
+           istype G A ->
            isterm G u A ->
            issubst (sbzero G A u) G (ctxextend G A)
 
      | SubstWeak :
          forall {G A},
+           isctx G ->
            istype G A ->
            issubst (sbweak G A) (ctxextend G A) G
 
      | SubstShift :
          forall {G D A sbs},
+           isctx G ->
+           isctx D ->
            issubst sbs G D ->
            istype D A ->
            issubst (sbshift G A sbs) (ctxextend G (Subst A sbs)) (ctxextend D A)
-
-     | SubstId :
-         forall {G},
-           isctx G ->
-           issubst (sbid G) G G
-
-     | SubstComp :
-         forall {G D E sbs sbt},
-           issubst sbs G D ->
-           issubst sbt D E ->
-           issubst (sbcomp sbt sbs) G E
-
-     | SubstCtxConv :
-         forall {G1 G2 D1 D2 sbs},
-           issubst sbs G1 D1 ->
-           eqctx G1 G2 ->
-           eqctx D1 D2 ->
-           issubst sbs G2 D2
 
 
 
@@ -57,24 +44,30 @@ with istype : context -> type -> Type :=
 
      | TyCtxConv :
          forall {G D A},
+           isctx G ->
+           isctx D ->
            istype G A ->
            eqctx G D ->
            istype D A
 
      | TySubst :
          forall {G D A sbs},
+           isctx G ->
+           isctx D ->
            issubst sbs G D ->
            istype D A ->
            istype G (Subst A sbs)
 
      | TyProd :
          forall {G A B},
+           isctx G ->
            istype G A ->
            istype (ctxextend G A) B ->
            istype G (Prod A B)
 
      | TyId :
          forall {G A u v},
+           isctx G ->
            istype G A ->
            isterm G u A ->
            isterm G v A ->
@@ -101,41 +94,57 @@ with isterm : context -> term -> type -> Type :=
 
      | TermTyConv :
          forall {G A B u},
+           isctx G ->
+           istype G A ->
+           istype G B ->
            isterm G u A ->
            eqtype G A B ->
            isterm G u B
 
      | TermCtxConv :
          forall {G D A u},
+           isctx G ->
+           isctx D ->
+           istype G A ->
            isterm G u A ->
            eqctx G D ->
            isterm D u A
 
      | TermSubst :
          forall {G D A u sbs},
+           isctx G ->
+           isctx D ->
+           istype D A ->
            issubst sbs G D ->
            isterm D u A ->
            isterm G (subst u sbs) (Subst A sbs)
 
      | TermVarZero :
          forall {G A},
+           isctx G ->
            istype G A ->
            isterm (ctxextend G A) (var 0) (Subst A (sbweak G A))
 
      | TermVarSucc :
          forall {G A B k},
+           isctx G ->
+           istype G A ->
            isterm G (var k) A ->
            istype G B ->
            isterm (ctxextend G B) (var (S k)) (Subst A (sbweak G B))
 
      | TermAbs :
          forall {G A u B},
+           isctx G ->
            istype G A ->
+           istype (ctxextend G A) B ->
            isterm (ctxextend G A) u B ->
            isterm G (lam A B u) (Prod A B)
 
      | TermApp :
          forall {G A B u v},
+           isctx G ->
+           istype G A ->
            istype (ctxextend G A) B ->
            isterm G u (Prod A B) ->
            isterm G v A ->
@@ -143,11 +152,14 @@ with isterm : context -> term -> type -> Type :=
 
      | TermRefl :
          forall {G A u},
+           isctx G ->
+           istype G A ->
            isterm G u A ->
            isterm G (refl A u) (Id A u u)
 
      | TermJ :
          forall {G A C u v w p},
+           isctx G ->
            istype G A ->
            isterm G u A ->
            istype
@@ -199,6 +211,7 @@ with isterm : context -> term -> type -> Type :=
 
      | TermExfalso :
          forall {G A u},
+           isctx G ->
            istype G A ->
            isterm G u Empty ->
            isterm G (exfalso A u) A
@@ -220,6 +233,7 @@ with isterm : context -> term -> type -> Type :=
 
      | TermCond :
          forall {G C u v w},
+           isctx G ->
            isterm G u Bool ->
            istype (ctxextend G Bool) C ->
            isterm G v (Subst C (sbzero G Bool true)) ->
@@ -232,155 +246,16 @@ with isterm : context -> term -> type -> Type :=
 
 with eqctx : context -> context -> Type :=
 
-     | CtxRefl :
-         forall {G},
-           isctx G ->
-           eqctx G G
-
-     | CtxSym :
-         forall {G D},
-           eqctx G D ->
-           eqctx D G
-
-     | CtxTrans :
-         forall {G D E},
-           eqctx G D ->
-           eqctx D E ->
-           eqctx G E
-
      | EqCtxEmpty :
          eqctx ctxempty ctxempty
 
      | EqCtxExtend :
-         forall {G D A B},
-           eqctx G D ->
+         forall {G A B},
+           isctx G ->
+           istype G A ->
+           istype G B ->
            eqtype G A B ->
-           eqctx (ctxextend G A) (ctxextend D B)
-
-
-
-with eqsubst : substitution -> substitution -> context -> context -> Type :=
-
-     | SubstRefl :
-         forall {G D sbs},
-           issubst sbs G D ->
-           eqsubst sbs sbs G D
-
-     | SubstSym :
-         forall {G D sbs sbt},
-           eqsubst sbs sbt G D ->
-           eqsubst sbt sbs G D
-
-     | SubstTrans :
-         forall {G D sb1 sb2 sb3},
-           eqsubst sb1 sb2 G D ->
-           eqsubst sb2 sb3 G D ->
-           eqsubst sb1 sb3 G D
-
-     | CongSubstZero :
-         forall {G1 G2 A1 A2 u1 u2},
-           eqctx G1 G2 ->
-           eqtype G1 A1 A2 ->
-           eqterm G1 u1 u2 A1 ->
-           eqsubst (sbzero G1 A1 u1)
-                   (sbzero G1 A2 u2)
-                   G1
-                   (ctxextend G1 A1)
-
-     | CongSubstWeak :
-         forall {G1 G2 A1 A2},
-           eqctx G1 G2 ->
-           eqtype G1 A1 A2 ->
-           eqsubst (sbweak G1 A1)
-                   (sbweak G2 A2)
-                   (ctxextend G1 A1)
-                   G1
-
-     | CongSubstShift :
-         forall {G1 G2 D A1 A2 sbs1 sbs2},
-           eqctx G1 G2 ->
-           eqsubst sbs1 sbs2 G1 D ->
-           eqtype D A1 A2 ->
-           eqsubst (sbshift G1 A1 sbs1)
-                   (sbshift G2 A2 sbs2)
-                   (ctxextend G1 (Subst A1 sbs1))
-                   (ctxextend D A1)
-
-     | CongSubstComp :
-         forall {G D E sbs1 sbs2 sbt1 sbt2},
-           eqsubst sbs1 sbs2 G D ->
-           eqsubst sbt1 sbt2 D E ->
-           eqsubst (sbcomp sbt1 sbs1)
-                   (sbcomp sbt2 sbs2)
-                   G
-                   E
-
-     | EqSubstCtxConv :
-         forall {G1 G2 D1 D2 sbs sbt},
-           eqsubst sbs sbt G1 D1 ->
-           eqctx G1 G2 ->
-           eqctx D1 D2 ->
-           eqsubst sbs sbt G2 D2
-
-     | CompAssoc :
-         forall {G D E F sbs sbt sbr},
-           issubst sbs G D ->
-           issubst sbt D E ->
-           issubst sbr E F ->
-           eqsubst (sbcomp sbr (sbcomp sbt sbs))
-                   (sbcomp (sbcomp sbr sbt) sbs)
-                   G
-                   F
-
-     | WeakNat :
-         forall {G D A sbs},
-               issubst sbs G D ->
-               istype D A ->
-               eqsubst (sbcomp (sbweak D A) (sbshift G A sbs))
-                       (sbcomp sbs (sbweak G (Subst A sbs)))
-                       (ctxextend G (Subst A sbs))
-                       D
-
-     | WeakZero :
-         forall {G A u},
-           isterm G u A ->
-           eqsubst (sbcomp (sbweak G A) (sbzero G A u))
-                   (sbid G)
-                   G
-                   G
-
-     | ShiftZero :
-         forall {G D A u sbs},
-           issubst sbs G D ->
-           isterm D u A ->
-           eqsubst (sbcomp (sbshift G A sbs)
-                           (sbzero G (Subst A sbs) (subst u sbs)))
-                   (sbcomp (sbzero D A u)
-                           sbs)
-                   G
-                   (ctxextend D A)
-
-     | CompShift :
-         forall {G D E A sbs sbt},
-           issubst sbs G D ->
-           issubst sbt D E ->
-           istype E A ->
-           eqsubst (sbcomp (sbshift D A sbt)
-                           (sbshift G (Subst A sbt) sbs))
-                   (sbshift G A (sbcomp sbt sbs))
-                   (ctxextend G (Subst A (sbcomp sbt sbs)))
-                   (ctxextend E A)
-
-     | CompIdRight :
-         forall {G D sbs},
-           issubst sbs G D ->
-           eqsubst (sbcomp sbs (sbid G)) sbs G D
-
-     | CompIdLeft :
-         forall {G D sbs},
-           issubst sbs G D ->
-           eqsubst (sbcomp (sbid D) sbs) sbs G D
-
+           eqctx (ctxextend G A) (ctxextend G B)
 
 
 
@@ -388,41 +263,82 @@ with eqtype : context -> type -> type -> Type :=
 
      | EqTyCtxConv :
          forall {G D A B},
+           isctx G ->
+           isctx D ->
+           istype G A ->
+           istype G B ->
            eqtype G A B ->
            eqctx G D ->
            eqtype D A B
 
      | EqTyRefl:
          forall {G A},
+           isctx G ->
            istype G A ->
            eqtype G A A
 
      | EqTySym :
          forall {G A B},
+           isctx G ->
+           istype G A ->
+           istype G B ->
            eqtype G A B ->
            eqtype G B A
 
      | EqTyTrans :
          forall {G A B C},
+           isctx G ->
+           istype G A ->
+           istype G B ->
+           istype G C ->
            eqtype G A B ->
            eqtype G B C ->
            eqtype G A C
 
-     | EqTyIdSubst :
-         forall {G A},
-           istype G A ->
-           eqtype G
-                  (Subst A (sbid G))
-                  A
-
-     | EqTySubstComp :
-         forall {G D E A sbs sbt},
-           istype E A ->
+     | EqTyWeakNat :
+         forall {G D A B sbs},
+           isctx G ->
+           isctx D ->
            issubst sbs G D ->
-           issubst sbt D E ->
+           istype D A ->
+           istype D B ->
+           eqtype (ctxextend G (Subst A sbs))
+                  (Subst (Subst B (sbweak D A)) (sbshift G A sbs))
+                  (Subst (Subst B sbs) (sbweak G (Subst A sbs)))
+
+     | EqTyWeakZero :
+         forall {G A B u},
+           isctx G ->
+           istype G A ->
+           istype G B ->
+           isterm G u B ->
+           eqtype G (Subst (Subst A (sbweak G B)) (sbzero G B u)) A
+
+     | EqTyShiftZero :
+         forall {G D A B v sbs},
+           isctx G ->
+           isctx D ->
+           istype G A ->
+           issubst sbs G D ->
+           istype (ctxextend D A) B ->
+           isterm D v A ->
            eqtype G
-                  (Subst (Subst A sbt) sbs)
-                  (Subst A (sbcomp sbt sbs))
+                  (Subst (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs)))
+                  (Subst (Subst B (sbzero D A v)) sbs)
+
+     | EqTyCongZero :
+         forall {G A1 A2 B1 B2 u1 u2},
+           isctx G ->
+           istype G A1 ->
+           istype G B1 ->
+           istype (ctxextend G A1) A2 ->
+           istype (ctxextend G A1) B2 ->
+           eqtype G A1 B1 ->
+           eqterm G u1 u2 A1 ->
+           eqtype (ctxextend G A1) A2 B2 ->
+           eqtype G
+                  (Subst A2 (sbzero G A1 u1))
+                  (Subst B2 (sbzero G B1 u2))
 
      | EqTySubstProd :
          forall {G D A B sbs},
@@ -485,10 +401,10 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G (Id A u1 u2) (Id B v1 v2)
 
      | CongTySubst :
-         forall {G D A B sbs sbt},
-           eqsubst sbs sbt G D ->
+         forall {G D A B sbs},
+           issubst sbs G D ->
            eqtype D A B ->
-           eqtype G (Subst A sbs) (Subst B sbt)
+           eqtype G (Subst A sbs) (Subst B sbs)
 
 
 
@@ -522,23 +438,6 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G v w A ->
            eqterm G u w A
 
-     | EqIdSubst :
-         forall {G A u},
-           isterm G u A ->
-           eqterm G
-                  (subst u (sbid G))
-                  u
-                  A
-
-     | EqSubstComp :
-         forall {G D E A u sbs sbt},
-           isterm E u A ->
-           issubst sbs G D ->
-           issubst sbt D E ->
-           eqterm G
-                  (subst (subst u sbt) sbs)
-                  (subst u (sbcomp sbt sbs))
-                  (Subst A (sbcomp sbt sbs))
 
      | EqSubstWeak :
          forall {G A B k},
@@ -577,7 +476,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
 
      | EqSubstShiftSucc :
-         forall {G D A B sbs k},
+         forall { G D A B sbs k },
            issubst sbs G D ->
            isterm D (var k) B ->
            istype D A ->
@@ -696,12 +595,11 @@ with eqterm : context -> term -> term -> type -> Type :=
                               (sbzero D A v)
                            )
                         )
-                        (sbzero D (Id A u v) p)
+                        (sbzero G (Id A u v) p)
                      )
                      sbs
                   )
 
-     (* This rule is subsumed by EqTermExfalso *)
      | EqSubstExfalso :
          forall {G D A u sbs},
            issubst sbs G D ->
@@ -947,7 +845,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                            (sbzero G A1 v1)
                         )
                      )
-                     (sbzero G (Id A1 u1 v1) p1)
+                     (sbzero G (Id A1 u1 u1) p1)
                   )
 
      (* This rule doesn't seem necessary as subsumed by EqTermexfalso! *)
@@ -972,10 +870,62 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst C1 (sbzero G Bool u1))
 
      | CongTermSubst :
-         forall {G D A u1 u2 sbs sbt},
-           eqsubst sbs sbt G D ->
+         forall {G D A u1 u2 sbs},
+           issubst sbs G D ->
            eqterm D u1 u2 A ->
            eqterm G
                   (subst u1 sbs)
-                  (subst u2 sbt)
+                  (subst u2 sbs)
                   (Subst A sbs).
+
+
+Definition sane_isctx sbs G D :
+  issubst sbs G D -> isctx G * isctx D.
+Proof.
+  intro H ; destruct H.
+
+  (* SubstZero *)
+  { split.
+
+    - assumption.
+    - now apply CtxExtend.
+  }
+
+  (* SubstWeak *)
+  { split.
+
+    - now apply CtxExtend.
+    - assumption.
+  }
+
+  (* SubstShift *)
+  { split.
+
+    - apply CtxExtend.
+      + assumption.
+      + eapply TySubst.
+        * eassumption.
+        * eassumption.
+        * assumption.
+        * assumption.
+    - now apply CtxExtend.
+  }
+
+Defined.
+
+Definition sane_istype G A :
+  istype G A -> isctx G.
+Proof.
+Admitted.
+
+Definition sane_isterm G u A :
+  isterm G u A -> isctx G * istype G A.
+Admitted.
+
+Definition sane_eqtype G A B :
+  eqtype G A B -> isctx G * istype G A * istype G B.
+Admitted.
+
+Definition isctx_from_eqterm G u v A :
+  eqterm G u v A -> isctx G * istype G A * isterm G u A * isterm G v A.
+Admitted.

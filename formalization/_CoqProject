@@ -1,6 +1,8 @@
 -R . ""
 
+syntax.v
 ett.v
+ptt.v
 ctt.v
 itt.v
 preadmissibility.v
