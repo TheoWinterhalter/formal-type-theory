@@ -298,13 +298,14 @@ with eqctx : context -> context -> Type :=
          eqctx ctxempty ctxempty
 
      | EqCtxExtend :
-         forall {G A B},
+         forall {G D A B},
            isctx G ->
+           isctx D ->
            istype G A ->
            istype G B ->
+           eqctx G D ->
            eqtype G A B ->
-           eqctx (ctxextend G A) (ctxextend G B)
-
+           eqctx (ctxextend G A) (ctxextend D B)
 
 with eqsubst : substitution -> substitution -> context -> context -> Type :=
 
@@ -347,7 +348,7 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
            eqtype G1 A1 A2 ->
            eqterm G1 u1 u2 A1 ->
            eqsubst (sbzero G1 A1 u1)
-                   (sbzero G1 A2 u2)
+                   (sbzero G2 A2 u2)
                    G1
                    (ctxextend G1 A1)
 
@@ -369,8 +370,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
            isctx G1 ->
            isctx G2 ->
            isctx D ->
-           istype G1 A1 ->
-           istype G1 A2 ->
+           istype D A1 ->
+           istype D A2 ->
            issubst sbs1 G1 D ->
            issubst sbs2 G1 D ->
            eqctx G1 G2 ->
@@ -419,8 +420,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
            issubst sbs G D ->
            issubst sbt D E ->
            issubst sbr E F ->
-           eqsubst (sbcomp (sbcomp sbr sbt) sbs)
-                   (sbcomp sbr (sbcomp sbt sbs))
+           eqsubst (sbcomp sbr (sbcomp sbt sbs))
+                   (sbcomp (sbcomp sbr sbt) sbs)
                    G
                    F
 
@@ -480,14 +481,14 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
            isctx G ->
            isctx D ->
            issubst sbs G D ->
-           eqsubst (sbcomp (sbid D) sbs) sbs G D
+           eqsubst (sbcomp sbs (sbid G)) sbs G D
 
      | CompIdLeft :
          forall {G D sbs},
            isctx G ->
            isctx D ->
            issubst sbs G D ->
-           eqsubst (sbcomp sbs (sbid G)) sbs G D
+           eqsubst (sbcomp (sbid D) sbs) sbs G D
 
 
 with eqtype : context -> type -> type -> Type :=
@@ -1488,8 +1489,9 @@ Proof.
     - { now apply TyProd. }
     - { apply TyProd ; auto.
         apply (@TyCtxConv (ctxextend G A1)) ; auto using CtxExtend.
-        now apply EqCtxExtend. }
+        apply EqCtxExtend ; auto using CtxRefl.
       }
+  }
 
   (* CongId *)
   { split.
@@ -1542,10 +1544,13 @@ Proof.
   (* EqCtxExtend *)
   { split.
     - now apply CtxExtend.
-    - now apply CtxExtend.
+    - apply CtxExtend.
+      + assumption.
+      + apply (@TyCtxConv G D) ; auto.
   }
 
 Defined.
+
 
 Theorem sane_eqtype G A B :
   eqtype G A B -> isctx G * istype G A * istype G B.
@@ -1553,6 +1558,160 @@ Proof.
   intro H.
   destruct (sane_eqtype' G A B H).
   auto using (sane_istype G A).
+Defined.
+
+Theorem sane_eqsubst' sbs sbt G D :
+  eqsubst sbs sbt G D -> issubst sbs G D * issubst sbt G D.
+Proof.
+  intro H ; destruct H.
+
+  (* SubstRefl *)
+  - { split.
+      - assumption.
+      - assumption.
+    }
+
+  (* SubstSym *)
+  - { split.
+      - assumption.
+      - assumption.
+    }
+
+  (* SubstTrans *)
+  - { split.
+      - assumption.
+      - assumption.
+    }
+
+  (* CongSubstZero *)
+  - { split.
+      - now apply SubstZero.
+      - apply (@SubstCtxConv G2 G1 (ctxextend G2 A2) (ctxextend G1 A1)) ;
+          auto using CtxExtend, CtxRefl, CtxSym.
+        + apply CtxExtend ; auto using (@TyCtxConv G1 G2).
+        + apply SubstZero ;
+            auto using (@TyCtxConv G1 G2), (@TermCtxConv G1 G2), (@TermTyConv G1 A1 A2).
+        + apply EqCtxExtend ; 
+            auto using (@TyCtxConv G1 G2), CtxSym, (@EqTyCtxConv G1 G2), EqTySym.
+    }
+
+  (* CongSubstWeak *)
+  - { split.
+      - now apply SubstWeak.
+      - apply (@SubstCtxConv (ctxextend G2 A2) (ctxextend G1 A1) G2 G1) ;
+          auto using CtxExtend, CtxRefl.
+        + apply CtxExtend ; auto.
+          now apply (@TyCtxConv G1 G2).
+        + apply SubstWeak ; auto.
+          now apply (@TyCtxConv G1, G2).
+        + apply EqCtxExtend ; auto using (@TyCtxConv G1 G2), CtxSym.
+          apply (@EqTyCtxConv G1 G2) ; auto using EqTySym.
+        + now apply CtxSym. 
+    }
+
+  (* CongSubstShift *)
+  - { split.
+      - now apply SubstShift.
+      - apply (@SubstCtxConv (ctxextend G2 (Subst A2 sbs2)) _ (ctxextend D A2) _) ;
+          auto using CtxExtend.
+        + apply CtxExtend ; auto.
+          apply (@TyCtxConv G1 G2) ; auto.
+          now apply (@TySubst G1 D).
+        + apply CtxExtend ; auto.
+          now apply (@TySubst G1 D).
+        + apply SubstShift ; auto.
+          apply (@SubstCtxConv G1 _ D D) ; auto using CtxRefl.
+        + apply EqCtxExtend ; auto.
+          * apply (@TySubst G2 D) ; auto.
+            apply (@SubstCtxConv G1 _ D D); auto using CtxRefl.
+          * apply (@TyCtxConv G1 G2); auto.
+            now apply (@TySubst G1 D).
+          * now apply CtxSym.
+          * apply (@EqTyCtxConv G1 G2); auto using (@TySubst G1 D).
+            apply (@CongTySubst G1 D) ; auto using EqTySym.
+        + apply EqCtxExtend ; auto using EqTySym, CtxRefl.
+    }
+
+  (* CongSubstComp *)
+  - { split.
+      - now apply (@SubstComp G D E).
+      - now apply (@SubstComp G D E).
+    }
+
+  (* EqSubstCtxConv *)
+  - { split.
+      - now apply (@SubstCtxConv G1 G2 D1 D2).
+      - now apply (@SubstCtxConv G1 G2 D1 D2).
+    }
+
+  (* CompAssoc *)
+  - { split.
+      - apply (@SubstComp G E F) ; auto.
+        now apply (@SubstComp G D E).
+      - apply (@SubstComp G D F); auto.
+        now apply (@SubstComp D E F).
+    }
+
+  (* WeakNat *)
+  - { split.
+      - apply (@SubstComp _ (ctxextend D A)) ;
+          auto using CtxExtend, (@TySubst G D), SubstShift, SubstWeak.
+      - apply (@SubstComp _ G) ; 
+          auto using CtxExtend, (@TySubst G D), SubstWeak.
+    }
+
+  (* WeakZero *)
+  - { split.
+      - apply (@SubstComp _ (ctxextend G A)) ;
+          auto using CtxExtend, SubstZero, SubstWeak.
+      - now apply SubstId.
+    }
+
+  (* ShiftZero *)
+  - { split.
+      - apply (@SubstComp _ (ctxextend G (Subst A sbs))) ;
+          auto using CtxExtend, (@TySubst G D), SubstZero, (@TermSubst G D), SubstShift.
+      - apply (@SubstComp _ D) ;
+          auto using CtxExtend, SubstZero.
+    }
+
+  (* CompShift *)
+  - { split.
+      - apply (@SubstComp _ (ctxextend D (Subst A sbt))) ;
+          auto using CtxExtend, (@TySubst D E), SubstShift.
+        + apply CtxExtend ; auto.
+          apply (@TySubst G E) ; auto using (@SubstComp G D E).
+        + { apply (@SubstCtxConv (ctxextend G (Subst (Subst A sbt) sbs)) _ 
+                                 (ctxextend D (Subst A sbt))) ;
+            auto using CtxExtend, (@TySubst D E), (@TySubst G D), (@TySubst G E),
+                       (@SubstComp G D E), SubstShift, CtxRefl.
+            apply EqCtxExtend ;
+                auto using CtxRefl, (@TySubst G D), (@TySubst D E),
+                           (@TySubst G E), (@SubstComp G D E).
+              now apply (@EqTySubstComp G D E).
+          }
+      - apply SubstShift ; auto using (@SubstComp G D E).
+    }
+
+  (* CompIdRight *)
+  - { split.
+      - apply (@SubstComp G G D) ; auto using SubstId.
+      - assumption.
+    }
+
+  (* CompIdLeft *)
+  - { split.
+      - apply (@SubstComp G D D) ; auto using SubstId.
+      - assumption.
+    }
+Defined.
+
+Theorem sane_eqsubst sbs sbt G D :
+  eqsubst sbs sbt G D -> isctx G * isctx D * issubst sbs G D * issubst sbt G D.
+Proof.
+  intro H.
+  destruct (sane_eqsubst' sbs sbt G D H).
+  auto using (sane_issubst sbs G D).
 Defined.
 
 Theorem sane_eqterm' G u v A :
@@ -1830,3 +1989,11 @@ Proof.
     }
 
 Admitted.
+
+Theorem sane_eqterm G u v A :
+  eqterm G u v A -> isctx G * istype G A * isterm G u A * isterm G v A.
+Proof.
+  intro H.
+  destruct (sane_eqterm' G u v A H).
+  auto using (@sane_isterm G u A).
+Defined.

@@ -190,11 +190,14 @@ Proof.
     + eapply SubstCtxConv.
       * eapply SubstZero.
         { eapply TermTyConv.
-          - magic.
-          - magic.
+          - apply (@TermCtxConv G1 G2) ;  magic.
+          - apply (@EqTyCtxConv G1 G2) ; magic.
         }
       * magic.
-      * apply EqCtxExtend ; magic.
+      * { apply EqCtxExtend.
+          - now apply CtxSym.
+          - apply (@EqTyCtxConv G1 G2) ; auto using EqTySym.
+        }
 
     (* CongSubstWeak *)
     + { eapply SubstCtxConv.

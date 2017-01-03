@@ -283,7 +283,7 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
            eqtype G1 A1 A2 ->
            eqterm G1 u1 u2 A1 ->
            eqsubst (sbzero G1 A1 u1)
-                   (sbzero G1 A2 u2)
+                   (sbzero G2 A2 u2)
                    G1
                    (ctxextend G1 A1)
 
