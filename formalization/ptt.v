@@ -14,7 +14,6 @@ Inductive isctx : context -> Type :=
            isctx (ctxextend G A)
 
 
-
 with issubst : substitution -> context -> context -> Type :=
 
      | SubstZero :
@@ -640,6 +639,7 @@ with eqtype : context -> type -> type -> Type :=
            issubst sbs G D ->
            issubst sbt G D ->
            eqtype D A B ->
+           eqsubst sbs sbt G D ->
            eqtype G (Subst A sbs) (Subst B sbt)
 
 
@@ -898,7 +898,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                               (sbzero D A v)
                            )
                         )
-                        (sbzero G (Id A u v) p)
+                        (sbzero D (Id A u v) p)
                      )
                      sbs
                   )
@@ -1224,7 +1224,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                            (sbzero G A1 v1)
                         )
                      )
-                     (sbzero G (Id A1 u1 u1) p1)
+                     (sbzero G (Id A1 u1 v1) p1)
                   )
 
      (* This rule doesn't seem necessary as subsumed by EqTermexfalso! *)
@@ -1630,7 +1630,7 @@ Proof.
             now apply (@TySubst G1 D).
           * now apply CtxSym.
           * apply (@EqTyCtxConv G1 G2); auto using (@TySubst G1 D).
-            apply (@CongTySubst G1 D) ; auto using EqTySym.
+            apply (@CongTySubst G1 D) ; auto using EqTySym, SubstSym.
         + apply EqCtxExtend ; auto using EqTySym, CtxRefl.
     }
 
@@ -1817,7 +1817,7 @@ Proof.
                 - apply (@EqTySubstComp G (ctxextend G A) G) ;
                   auto using CtxExtend, (@SubstComp G (ctxextend G A)) , SubstWeak, SubstZero.
                 - apply (@CongTySubst G G) ;
-                  auto using CtxExtend, (@SubstComp G (ctxextend G A)) , SubstWeak, SubstZero, SubstId, EqTyRefl.
+                  auto using CtxExtend, (@SubstComp G (ctxextend G A)) , SubstWeak, SubstZero, SubstId, EqTyRefl, WeakZero.
               }
             + now apply EqTyIdSubst.
         }

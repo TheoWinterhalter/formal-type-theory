@@ -104,7 +104,8 @@ endif
 VFILES:=syntax.v\
   ett.v\
   ptt.v\
-  paranoidSanity.v\
+  ptt2ett.v\
+  ett2ptt.v\
   ctt.v\
   preadmissibility.v\
   sanity.v\

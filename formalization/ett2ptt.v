@@ -592,6 +592,7 @@ Proof.
       - now apply (@ptt.sane_eqsubst sbs sbt G D), sane_eqsubst.
       - now apply (@ptt.sane_eqsubst sbs sbt G D), sane_eqsubst.
       - now apply sane_eqtype.
+      - now apply sane_eqsubst.
     }
   }
 
