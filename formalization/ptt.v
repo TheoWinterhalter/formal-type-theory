@@ -1258,17 +1258,19 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst C1 (sbzero G Bool u1))
 
      | CongTermSubst :
-         forall {G D A u1 u2 sbs},
+         forall {G D A u1 u2 sbs sbt},
            isctx G ->
            isctx D ->
            istype D A ->
            isterm D u1 A ->
            isterm D u2 A ->
            issubst sbs G D ->
+           issubst sbt G D ->
+           eqsubst sbs sbt G D ->
            eqterm D u1 u2 A ->
            eqterm G
                   (subst u1 sbs)
-                  (subst u2 sbs)
+                  (subst u2 sbt)
                   (Subst A sbs).
 
 Definition sane_issubst sbs G D :
@@ -2048,7 +2050,7 @@ Proof.
           * apply EqTyRefl ; auto.
             now apply (ProdTyInversion G0 A B).
     }
-            
+
   - { split ; [ split | idtac ].
       - assumption.
       - assumption.

@@ -909,13 +909,34 @@ Proof.
       }
 
     (* CongCond *)
-    - { later.
+    - { apply ptt.CongCond.
+        - now apply (ptt.sane_eqterm G v1 v2 (Subst C1 (sbzero G Bool true))), sane_eqterm.
+        - now apply (ptt.sane_eqtype (ctxextend G Bool) C1 C2), sane_eqtype.
+        - now apply (ptt.sane_eqtype (ctxextend G Bool) C1 C2), sane_eqtype.
+        - now apply (ptt.sane_eqterm G u1 u2 Bool), sane_eqterm.
+        - now apply (ptt.sane_eqterm G u1 u2 Bool), sane_eqterm.
+        - now apply (ptt.sane_eqterm G v1 v2 (Subst C1 (sbzero G Bool true))), sane_eqterm.
+        - now apply (ptt.sane_eqterm G v1 v2 (Subst C1 (sbzero G Bool true))), sane_eqterm.
+        - now apply (ptt.sane_eqterm G w1 w2 (Subst C1 (sbzero G Bool false))), sane_eqterm.
+        - now apply (ptt.sane_eqterm G w1 w2 (Subst C1 (sbzero G Bool false))), sane_eqterm.
+        - now apply sane_eqterm.
+        - now apply sane_eqtype.
+        - now apply sane_eqterm.
+        - now apply sane_eqterm.
       }
 
     (* CongTermSubst *)
-    - { later.
+    - { apply (@ptt.CongTermSubst G D).
+        - now apply (@ptt.sane_eqsubst sbs sbt G D), sane_eqsubst.
+        - now apply (@ptt.sane_eqsubst sbs sbt G D), sane_eqsubst.
+        - now apply (@ptt.sane_eqterm D u1 u2 A), sane_eqterm.
+        - now apply (@ptt.sane_eqterm D u1 u2 A), sane_eqterm.
+        - now apply (@ptt.sane_eqterm D u1 u2 A), sane_eqterm.
+        - now apply (@ptt.sane_eqsubst sbs sbt G D), sane_eqsubst.
+        - now apply (@ptt.sane_eqsubst sbs sbt G D), sane_eqsubst.
+        - now apply sane_eqsubst.
+        - now apply sane_eqterm.
       }
-
   }
 
 Defined.
