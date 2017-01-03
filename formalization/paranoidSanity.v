@@ -379,8 +379,8 @@ Proof.
         - now apply (@ptt.sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
         - now apply (@ptt.sane_eqsubst sbt1 sbt2 D E), sane_eqsubst.
         - now apply (@ptt.sane_eqsubst sbt1 sbt2 D E), sane_eqsubst.
-        - now apply sane_eqsubst. 
-        - now apply sane_eqsubst. 
+        - now apply sane_eqsubst.
+        - now apply sane_eqsubst.
       }
 
     (* EqSubstCtxConv *)
@@ -580,7 +580,7 @@ Proof.
       - now apply (@ptt.sane_eqterm G u2 v2 A), sane_eqterm.
       - now apply sane_eqtype.
       - now apply sane_eqterm.
-      - now apply sane_eqterm.        
+      - now apply sane_eqterm.
     }
 
     (* CongTySubst *)
@@ -879,4 +879,6 @@ Proof.
     - { later.
       }
 
-Admitted.
+  }
+
+Defined.
