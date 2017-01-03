@@ -22,7 +22,7 @@ with sane_eqterm G u v A (P : ett.eqterm G u v A) {struct P} : ptt.eqterm G u v 
 
 Proof.
 
-  (* sane_isctx *)
+  (****** sane_isctx ******)
   { destruct P.
 
     (* CtxEmpty *)
@@ -36,7 +36,7 @@ Proof.
       }
   }
 
-  (* sane_issubst *)
+  (****** sane_issubst ******)
   { destruct P.
 
     (* SubstZero *)
@@ -103,7 +103,7 @@ Proof.
        }
   }
 
-  (* sane_istype *)
+  (****** sane_istype ******)
   { destruct P.
 
     (* TyCtxConv *)
@@ -153,7 +153,7 @@ Proof.
     }
   }
 
-  (* sane_isterm *)
+  (****** sane_isterm ******)
   { destruct P.
 
     (* TermTyConv *)
@@ -264,7 +264,7 @@ Proof.
       }
   }
 
-  (* sane_eqctx *)
+  (****** sane_eqctx ******)
   { destruct P.
 
     (* CtxRefl *)
@@ -303,7 +303,7 @@ Proof.
       }
   }
 
-  (* sane_eqsubst *)
+  (****** sane_eqsubst ******)
   { destruct P.
 
     (* SubstRefl *)
@@ -457,7 +457,7 @@ Proof.
   }
 
 
-  (* sane_eqtype *)
+  (****** sane_eqtype ******)
   { destruct P.
 
     (* EqTyCtxConv *)
@@ -595,9 +595,288 @@ Proof.
     }
   }
 
-  (* sane_eqterm *)
-  {
-    later.
-  }
+  (****** sane_eqterm ******)
+  { destruct P.
 
-Defined.
+    (* EqTyConv *)
+    - { apply (@ptt.EqTyConv G A B).
+        - now apply (@ptt.sane_eqtype G A B), sane_eqtype.
+        - now apply (@ptt.sane_eqtype G A B), sane_eqtype.
+        - now apply (@ptt.sane_eqtype G A B), sane_eqtype.
+        - now apply (@ptt.sane_eqterm G u v A), sane_eqterm.
+        - now apply (@ptt.sane_eqterm G u v A), sane_eqterm.
+        - now apply sane_eqterm.
+        - now apply sane_eqtype.
+    }
+
+    (* EqCtxConv *)
+    - { apply (@ptt.EqCtxConv G D).
+        - now apply (@ptt.sane_eqctx G D), sane_eqctx.
+        - now apply (@ptt.sane_eqctx G D), sane_eqctx.
+        - now apply (@ptt.sane_eqterm G u v A), sane_eqterm.
+        - now apply (@ptt.sane_eqterm G u v A), sane_eqterm.
+        - now apply (@ptt.sane_eqterm G u v A), sane_eqterm.
+        - now apply sane_eqterm.
+        - now apply sane_eqctx.
+      }
+
+    (* EqRefl *)
+    - { apply ptt.EqRefl.
+        - now apply (@ptt.sane_isterm G u A), sane_isterm.
+        - now apply (@ptt.sane_isterm G u A), sane_isterm.
+        - now apply sane_isterm.
+      }
+
+    (* EqSym *)
+    - { apply ptt.EqSym.
+        - now apply (@ptt.sane_eqterm G v u A), sane_eqterm.
+        - now apply (@ptt.sane_eqterm G v u A), sane_eqterm.
+        - now apply (@ptt.sane_eqterm G v u A), sane_eqterm.
+        - now apply (@ptt.sane_eqterm G v u A), sane_eqterm.
+        - now apply sane_eqterm.
+      }
+
+    (* EqTrans *)
+    - { apply (@ptt.EqTrans G A u v w).
+        - now apply (@ptt.sane_eqterm G u v A), sane_eqterm.
+        - now apply (@ptt.sane_eqterm G u v A), sane_eqterm.
+        - now apply (@ptt.sane_eqterm G u v A), sane_eqterm.
+        - now apply (@ptt.sane_eqterm G u v A), sane_eqterm.
+        - now apply (@ptt.sane_eqterm G v w A), sane_eqterm.
+        - now apply sane_eqterm.
+        - now apply sane_eqterm.
+      }
+
+    (* EqIdSubst *)
+    - { apply ptt.EqIdSubst.
+        - now apply (@ptt.sane_isterm G u A), sane_isterm.
+        - now apply (@ptt.sane_isterm G u A), sane_isterm.
+        - now apply sane_isterm.
+      }
+
+    (* EqSubstComp *)
+    - { apply (@ptt.EqSubstComp G D E A u sbs sbt).
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_issubst sbt D E), sane_issubst.
+        - now apply (@ptt.sane_isterm E u A), sane_isterm.
+        - now apply sane_isterm.
+        - now apply sane_issubst.
+        - now apply sane_issubst.
+      }
+
+    (* EqSubstWeak *)
+    - { apply ptt.EqSubstWeak.
+        - now apply (@ptt.sane_istype G B), sane_istype.
+        - now apply (@ptt.sane_isterm G (var k) A), sane_isterm.
+        - now apply sane_isterm.
+        - now apply sane_istype.
+      }
+
+    (* EqSubstZeroZero *)
+    - { apply ptt.EqSubstZeroZero.
+        - now apply (@ptt.sane_isterm G u A), sane_isterm.
+        - now apply (@ptt.sane_isterm G u A), sane_isterm.
+        - now apply sane_isterm.
+      }
+
+    (* EqSubstZeroSucc *)
+    - { apply ptt.EqSubstZeroSucc.
+        - now apply (@ptt.sane_isterm G u B), sane_isterm.
+        - now apply (@ptt.sane_isterm G (var k) A), sane_isterm.
+        - now apply (@ptt.sane_isterm G u B), sane_isterm.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+      }
+
+    (* EqSubstShiftZero *)
+    - { apply (@ptt.EqSubstShiftZero G D).
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply sane_issubst.
+        - now apply sane_istype.
+      }
+
+    (* EqSubstShiftSucc *)
+    - { apply (@ptt.EqSubstShiftSucc G D).
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_isterm D (var k) B), sane_isterm.
+        - now apply sane_issubst.
+        - now apply sane_isterm.
+        - now apply sane_istype.
+      }
+
+    (* EqSubstAbs *)
+    - { apply (@ptt.EqSubstAbs G D).
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply sane_istype.
+        - now apply (@ptt.sane_isterm (ctxextend D A) u B), sane_isterm.
+        - now apply sane_isterm.
+        - now apply sane_issubst.
+      }
+
+    (* EqSubstApp *)
+    - { apply ptt.EqSubstApp.
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_isterm D v A), sane_isterm.
+        - now apply sane_istype.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply sane_issubst.
+      }
+
+    (* EqSubstRefl *)
+    - { apply (@ptt.EqSubstRefl G D).
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_isterm D u A), sane_isterm.
+        - now apply sane_isterm.
+        - now apply sane_issubst.
+      }
+
+    (* EqSubstJ *)
+    - { later.
+      }
+
+    (* EqSubstExfalso *)
+    - { apply (@ptt.EqSubstExfalso G D).
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply sane_istype.
+        - now apply sane_isterm.
+        - now apply sane_issubst.
+      }
+
+    (* EqSubstUnit *)
+    - { apply (@ptt.EqSubstUnit G D).
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply sane_issubst.
+      }
+
+    (* EqSubstTrue *)
+    - { apply (@ptt.EqSubstTrue G D).
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply sane_issubst.
+      }
+
+    (* EqSubstFalse *)
+    - { apply (@ptt.EqSubstFalse G D).
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply sane_issubst.
+      }
+
+    (* EqSubstCond *)
+    - { apply (@ptt.EqSubstCond G D).
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply sane_issubst.
+        - now apply sane_isterm.
+        - now apply sane_istype.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+      }
+
+    (* EqTermExfalso *)
+    - { apply (@ptt.EqTermExfalso G A u v w).
+        - now apply (@ptt.sane_istype G A), sane_istype.
+        - now apply sane_istype.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+      }
+
+    (* UnitEta *)
+    - { apply ptt.UnitEta.
+        - now apply (@ptt.sane_isterm G u Unit), sane_isterm.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+      }
+
+    (* EqReflection *)
+    - { apply (@ptt.EqReflection G A u v w1 w2).
+        - now apply (@ptt.sane_isterm G w1 (Id A u v)), sane_isterm.
+        - now apply (ptt.TyIdInversion G A u v),
+                    (ptt.sane_isterm G w1 (Id A u v)),
+                    sane_isterm.
+        - now apply (ptt.TyIdInversion G A u v),
+                    (ptt.sane_isterm G w1 (Id A u v)),
+                    sane_isterm.
+        - now apply (ptt.TyIdInversion G A u v),
+                    (ptt.sane_isterm G w1 (Id A u v)),
+                    sane_isterm.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+      }
+
+    (* ProdBeta *)
+    - { apply ptt.ProdBeta.
+        - now apply (@ptt.sane_isterm G v A), sane_isterm.
+        - now apply (@ptt.sane_isterm G v A), sane_isterm.
+        - now apply (@ptt.sane_isterm (ctxextend G A) u B), sane_isterm.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+      }
+
+    (* CondTrue *)
+    - { apply ptt.CondTrue.
+        - now apply (@ptt.sane_isterm G v (Subst C (sbzero G Bool true))), sane_isterm.
+        - now apply sane_istype.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+      }
+
+    (* CondFalse *)
+    - { apply ptt.CondFalse.
+        - now apply (@ptt.sane_isterm G v (Subst C (sbzero G Bool true))), sane_isterm.
+        - now apply sane_istype.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+      }
+
+    (* ProdEta *)
+    - { apply ptt.ProdEta.
+        - now apply (@ptt.sane_isterm G u (Prod A B)), sane_isterm.
+        - now apply (ptt.ProdTyInversion G A B),
+                    (ptt.sane_isterm G u (Prod A B)),
+                    sane_isterm.
+        - later.
+        - later.
+        - later.
+        - later.
+      }
+
+    (* JRefl *)
+    - { apply ptt.JRefl ; later.
+      }
+
+    (* CongAbs *)
+    - { apply ptt.CongAbs ; later.
+      }
+
+    (* CongApp *)
+    - { apply ptt.CongApp ; later.
+      }
+
+    (* CongRefl *)
+    - { apply ptt.CongRefl ; later.
+      }
+
+    (* CongJ *)
+    - { later.
+      }
+
+    (* CongCond *)
+    - { apply ptt.CongCond ; later.
+      }
+
+    (* CongTermSubst *)
+    - { later.
+      }
+
+Admitted.
