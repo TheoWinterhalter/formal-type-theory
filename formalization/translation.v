@@ -358,7 +358,7 @@ Proof.
       - destruct (trans_type G G' A H Ht) as [A' [HA fA]].
         destruct (trans_term G u A G' A' i Ht HA) as [u' [Hu fu]].
         destruct (trans_term G v A G' A' i0 Ht HA) as [v' [Hv fv]].
-        exists (C.Coerce C.idTy (C.Id A' u' v')).
+        exists (C.Coerce (C.idTy (eval_ctx G')) (C.Id A' u' v')).
         split.
         + split.
           * todo.
@@ -368,7 +368,7 @@ Proof.
           todo.
 
       (* TyEmpty *)
-      - exists (C.Coerce C.idTy C.Empty). split.
+      - exists (C.Coerce (C.idTy (eval_ctx G')) C.Empty). split.
         + split.
           * todo.
           * constructor.
@@ -377,7 +377,7 @@ Proof.
           todo.
 
       (* TyUnit *)
-      - exists (C.Coerce C.idTy C.Unit). split.
+      - exists (C.Coerce (C.idTy (eval_ctx G')) C.Unit). split.
         + split.
           * todo.
           * constructor.
