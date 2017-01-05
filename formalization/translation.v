@@ -1,10 +1,10 @@
-Require syntax. (* The syntax of ett. *)
-Require ett.
+Require syntax. (* The syntax of ett/ptt. *)
+Require ptt.
 Require ctt.
 Require Import eval.
 
 Module S := syntax.
-Module E := ett.
+Module P := ptt.
 Module C := ctt.
 
 (* For a term in CTT to be well-typed we need to evaluate it to ITT and
@@ -214,10 +214,10 @@ Parameter equiv_term : C.context -> C.term -> C.term -> C.type -> Type.
 
 Ltac todo := exact todo.
 
-Fixpoint trans_ctx {G} (H : E.isctx G) {struct H} :
+Fixpoint trans_ctx {G} (H : P.isctx G) {struct H} :
   { G' : C.context & istrans_ctx G G' }
 
-with trans_subst_left {G G' D sbs} (H : E.issubst sbs G D)
+with trans_subst_left {G G' D sbs} (H : P.issubst sbs G D)
                   (Ht : istrans_ctx G G') {struct H} :
        { D' : C.context &
               { sbt : C.substitution & istrans_subst sbs G' D' sbt } }
@@ -227,7 +227,7 @@ with trans_subst_left {G G' D sbs} (H : E.issubst sbs G D)
 (*                   (Ht : istrans_ctx D D') {struct H} : *)
 (*        { G' : C.context & { sbt : C.substitution & C.issubst sbt G' D' } } *)
 
-with trans_type {G G' A} (H : E.istype G A) (Ht : istrans_ctx G G') {struct H} :
+with trans_type {G G' A} (H : P.istype G A) (Ht : istrans_ctx G G') {struct H} :
        { A' : C.type &
               istrans_type A G' A' *
               (* this component might not be needed? *)
@@ -236,7 +236,7 @@ with trans_type {G G' A} (H : E.istype G A) (Ht : istrans_ctx G G') {struct H} :
 
 with trans_term
        {G u A G' A'}
-       (H : E.isterm G u A)
+       (H : P.isterm G u A)
        (HG : istrans_ctx G G')
        (HA : istrans_type A G' A') {struct H}
      : { u' : C.term &
@@ -356,8 +356,8 @@ Proof.
 
       (* TyId *)
       - destruct (trans_type G G' A H Ht) as [A' [HA fA]].
-        destruct (trans_term G u A G' A' i Ht HA) as [u' [Hu fu]].
-        destruct (trans_term G v A G' A' i0 Ht HA) as [v' [Hv fv]].
+        destruct (trans_term G u A G' A' i0 Ht HA) as [u' [Hu fu]].
+        destruct (trans_term G v A G' A' i1 Ht HA) as [v' [Hv fv]].
         exists (C.Coerce (C.idTy (eval_ctx G')) (C.Id A' u' v')).
         split.
         + split.
