@@ -273,10 +273,17 @@ Proof.
   - { destruct H.
 
       (* SubstZero *)
-      - (* We have a problem again, how do we translate A? *)
-        (* It would be nice if we didn't need trans_subst_left...
-           But it is needed by TySubst for instance. *)
-        todo.
+      - destruct (trans_type G G' A i0 Ht) as (A' & HAisA' & _).
+        destruct (trans_term G u A G' A' i1 Ht HAisA') as (u' & Huisu' & _).
+        exists (C.ctxextend G' A').
+        exists (C.sbcoerce C.idSb (C.sbzero G' A' u')).
+        split.
+        + (* unfold Cissubst. simpl. *)
+          todo. (* We need to know who is idSb. *)
+        + constructor.
+          * now destruct Ht.
+          * now destruct HAisA'.
+          * now destruct Huisu'.
 
       (* SubstWeak *)
       - destruct Ht as [HG' hom].
