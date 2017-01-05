@@ -288,18 +288,18 @@ Proof.
               * now inversion HAisA'.
           - exists (C.sbcoerce
                  (C.idSb
-                    (itt.ctxextend (eval_ctx G') (eval_type A'))
-                    (eval_ctx G'))
+                    (eval_ctx G')
+                    (itt.ctxextend (eval_ctx G') (eval_type A')))
                  (C.sbzero G' A' u')).
             split.
             + unfold Cissubst. simpl.
               { eapply I.SubstComp.
-                - eapply I.SubstId. now inversion Ht.
                 - eapply I.SubstComp.
+                  + eapply I.SubstId. now inversion Ht.
                   + eapply I.SubstZero. now inversion Huisu'.
-                  + apply I.SubstId. eapply I.CtxExtend.
-                    * now inversion Ht.
-                    * now inversion HAisA'.
+                - apply I.SubstId. eapply I.CtxExtend.
+                  + now inversion Ht.
+                  + now inversion HAisA'.
               }
             + constructor.
               * now destruct Ht.
@@ -317,8 +317,8 @@ Proof.
             + assumption.
           - exists (C.sbcoerce
                  (C.idSb
-                    (eval_ctx G'0)
-                    (itt.ctxextend (eval_ctx G'0) (eval_type A')))
+                    (itt.ctxextend (eval_ctx G'0) (eval_type A'))
+                    (eval_ctx G'0))
                  (C.sbweak G'0 A')).
             split.
             + (* To type it we need to recover that A' is a type. *)
@@ -326,10 +326,10 @@ Proof.
               (* We need to now how to evaluate coercions. *)
               unfold Cissubst. simpl.
               { eapply I.SubstComp.
-                - eapply I.SubstId. assumption.
                 - eapply I.SubstComp.
-                  + eapply I.SubstWeak. assumption.
                   + eapply I.SubstId. assumption.
+                  + eapply I.SubstWeak. assumption.
+                - eapply I.SubstId. assumption.
               }
             + constructor ; assumption.
         }
@@ -359,19 +359,36 @@ Proof.
         split.
         + unfold Cissubst. simpl.
           { eapply I.SubstComp.
-            - eapply I.SubstId. now inversion Ht.
             - eapply I.SubstComp.
               + eapply I.SubstId. now inversion Ht.
               + eapply I.SubstId. now inversion Ht.
+            - eapply I.SubstId. now inversion Ht.
           }
         + constructor. now destruct Ht.
 
       (* SubstComp *)
-      - destruct (trans_subst_left G G' D sbs H Ht) as (D' & sbs' & ?).
-        (* Here we have the problem raised in #9: no way to know D' is
-           homologous to D... *)
-        (* destruct (trans_subst_left D D' E sbt H0 HD') as (E' & sbt' & HE'). *)
-        todo.
+      - destruct (trans_subst_left G G' D sbs H Ht) as (D' & HD' & sbs' & Hsbs).
+        destruct (trans_subst_left D D' E sbt H0 HD') as (E' & HE' & sbt' & ?).
+        exists E'.
+        split.
+        + assumption.
+        + exists (C.sbcoerce
+               (C.idSb (eval_ctx G') (eval_ctx E'))
+               (C.sbcomp sbt' sbs')).
+          { split.
+            - unfold Cissubst. simpl.
+              eapply I.SubstComp.
+              + { eapply I.SubstComp.
+                  - eapply I.SubstId. now inversion Ht.
+                  - eapply I.SubstComp.
+                    + inversion Hsbs. eassumption.
+                    + inversion i2. eassumption.
+                }
+              + eapply I.SubstId. now inversion HE'.
+            - constructor.
+              + now inversion i2.
+              + now inversion Hsbs.
+          }
 
       (* SubstCtxConv *)
       - (* We need to be able to translate equality first. *)
