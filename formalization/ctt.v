@@ -87,13 +87,15 @@ Definition termCoerce : Type :=
 (*                                 ty_fro ty_to *)
 (*   }. *)
 
-Parameter substCoerce : Type.
+(* Coercion for a substitution *)
+Definition substCoerce : Type :=
+  contextCoercion * contextCoercion.
 
+(* Some identities *)
 Definition idTy G : typeCoerce :=
   {| ctxco_map := itt.sbid G
    ; ctxco_inv := itt.sbid G |}.
 
-(* These will require parameters. *)
 Parameter idTm : termCoerce.
 Parameter idSb : substCoerce.
 

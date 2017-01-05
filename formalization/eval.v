@@ -29,7 +29,11 @@ with eval_substitution' (sbs : C.substitution') : I.substitution :=
   end
 
 with eval_substitution (sbs : C.substitution) : I.substitution :=
-  todo
+  match sbs with
+  | C.sbcoerce (c1, c2) sbs' => I.sbcomp (C.ctxco_map c2)
+                                        (I.sbcomp (eval_substitution' sbs')
+                                                  (C.ctxco_inv c1))
+  end
 
 with eval_type' (A : C.type') : I.type :=
   match A with
