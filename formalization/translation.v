@@ -276,7 +276,9 @@ Proof.
       - destruct (trans_type G G' A i0 Ht) as (A' & HAisA' & _).
         destruct (trans_term G u A G' A' i1 Ht HAisA') as (u' & Huisu' & _).
         exists (C.ctxextend G' A').
-        exists (C.sbcoerce C.idSb (C.sbzero G' A' u')).
+        exists (C.sbcoerce
+             (C.idSb (eval_ctx G') (itt.ctxextend (eval_ctx G') (eval_type A')))
+             (C.sbzero G' A' u')).
         split.
         + (* unfold Cissubst. simpl. *)
           todo. (* We need to know who is idSb. *)
@@ -288,7 +290,12 @@ Proof.
       (* SubstWeak *)
       - destruct Ht as [HG' hom].
         inversion hom. subst.
-        exists G'0. exists (C.sbcoerce C.idSb (C.sbweak G'0 A')).
+        exists G'0.
+        exists (C.sbcoerce
+             (C.idSb
+                (itt.ctxextend (eval_ctx G'0) (eval_type A'))
+                (eval_ctx G'0))
+             (C.sbweak G'0 A')).
         split.
         + (* To type it we need to recover that A' is a type. *)
           inversion HG'. subst.
@@ -315,7 +322,8 @@ Proof.
         todo.
 
       (* SubstId *)
-      - exists G'. exists (C.sbcoerce C.idSb (C.sbid G')).
+      - exists G'.
+        exists (C.sbcoerce (C.idSb (eval_ctx G') (eval_ctx G')) (C.sbid G')).
         split.
         + todo.
         + constructor. now destruct Ht.

@@ -92,12 +92,17 @@ Definition substCoerce : Type :=
   contextCoercion * contextCoercion.
 
 (* Some identities *)
-Definition idTy G : typeCoerce :=
+Definition contextId G : contextCoercion :=
   {| ctxco_map := itt.sbid G
    ; ctxco_inv := itt.sbid G |}.
 
-Parameter idTm : termCoerce.
-Parameter idSb : substCoerce.
+Definition typeId G A : typeCoercion :=
+  {| tyco_map := itt.lam A (itt.Subst A (itt.sbweak G A)) (itt.var 0)
+   ; tyco_inv := itt.lam A (itt.Subst A (itt.sbweak G A)) (itt.var 0) |}.
+
+Definition idTy G : typeCoerce := contextId G.
+Definition idTm G A : termCoerce := (contextId G , typeId G A).
+Definition idSb G D : substCoerce := (contextId G , contextId D).
 
 Inductive context : Type :=
 | ctxempty : context
