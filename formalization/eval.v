@@ -42,7 +42,9 @@ with eval_type' (A : C.type') : I.type :=
   end
 
 with eval_type (A : C.type) : I.type :=
-  todo
+  match A with
+  | C.Coerce c A' => I.Subst (eval_type' A') (C.ctxco_map c)
+  end
 
 with eval_term' (t : C.term') : I.term :=
   match t with
@@ -69,4 +71,11 @@ with eval_term' (t : C.term') : I.term :=
   end
 
 with eval_term (t : C.term) : I.term :=
-  todo.
+  match t with
+  | C.coerce (cc, tc) t' => I.app (C.tyco_map tc)
+                                 (* Where do we get the type information
+                                    from? *)
+                                 todo
+                                 todo
+                                 (I.subst (eval_term' t') (C.ctxco_map cc))
+  end.
