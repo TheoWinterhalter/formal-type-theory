@@ -75,7 +75,7 @@
    \issubst{\sbt}{\D}{\E}
   }
   {\issubst
-    {\sbcomp{\sbs}{\sbt}}
+    {\sbcomp{\sbt}{\sbs}}
     {\G}
     {\E}
   }
@@ -502,8 +502,8 @@
    \eqsubst{\sbt_1}{\sbt_2}{\D}{\E}
   }
   {\eqsubst
-    {\sbcomp{\sbs_1}{\sbt_1}}
-    {\sbcomp{\sbs_2}{\sbt_2}}
+    {\sbcomp{\sbt_1}{\sbs_1}}
+    {\sbcomp{\sbt_2}{\sbs_2}}
     {\G}
     {\E}
   }
@@ -529,8 +529,8 @@
    \issubst{\sbr}{\E}{\F}
   }
   {\eqsubst
-    {\sbcomp{\sbcomp{\sbs}{\sbt}}{\sbr}}
-    {\sbcomp{\sbs}{\sbcomp{\sbt}{\sbr}}}
+    {\sbcomp{\sbr}{\sbcomp{\sbt}{\sbs}}}
+    {\sbcomp{\sbcomp{\sbr}{\sbt}}{\sbs}}
     {\G}
     {\F}
   }
@@ -544,10 +544,10 @@
    \istype{\D}{\A}
   }
   {\eqsubst
-    {\sbcomp{\sbshift{\G}{\A}{\sbs}}
-            {\sbweak{\D}{\A}}}
-    {\sbcomp{\sbweak{\G}{\subst{\A}{\sbs}}}
-            {\sbs}}
+    {\sbcomp{\sbweak{\D}{\A}}
+            {\sbshift{\G}{\A}{\sbs}}}
+    {\sbcomp{\sbs}
+            {\sbweak{\G}{\subst{\A}{\sbs}}}}
     {\ctxextend{\G}{\subst{\A}{\sbs}}}
     {\D}
   }
@@ -559,8 +559,8 @@
   \infer[\rulename{weak-zero}] % WeakZero
   {\isterm{\G}{\uu}{\A}}
   {\eqsubst
-    {\sbcomp{\sbzero{\G}{\A}{\uu}}
-            {\sbweak{\G}{\A}}}
+    {\sbcomp{\sbweak{\G}{\A}}
+            {\sbzero{\G}{\A}{\uu}}}
     {\sbid{\G}}
     {\G}
     {\G}
@@ -575,10 +575,10 @@
    \isterm{\D}{\uu}{\A}
   }
   {\eqsubst
-    {\sbcomp{\sbzero{\G}{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}}
-            {\sbshift{\G}{\A}{\sbs}}}
-    {\sbcomp{\sbs}
-            {\sbzero{\D}{\A}{\uu}}}
+    {\sbcomp{\sbshift{\G}{\A}{\sbs}}
+            {\sbzero{\G}{\subst{\A}{\sbs}}{\subst{\uu}{\sbs}}}}
+    {\sbcomp{\sbzero{\D}{\A}{\uu}}
+            {\sbs}}
     {\G}
     {\ctxextend{\D}{\A}}
   }
@@ -593,10 +593,10 @@
    \istype{\E}{\A}
   }
   {\eqsubst
-    {\sbcomp{\sbshift{\G}{\subst{\A}{\sbt}}{\sbs}}
-            {\sbshift{\D}{\A}{\sbt}}}
-    {\sbshift{\G}{\A}{\sbcomp{\sbs}{\sbt}}}
-    {\ctxextend{\G}{\subst{\A}{\sbcomp{\sbs}{\sbt}}}}
+    {\sbcomp{\sbshift{\D}{\A}{\sbt}}
+            {\sbshift{\G}{\subst{\A}{\sbt}}{\sbs}}}
+    {\sbshift{\G}{\A}{\sbcomp{\sbt}{\sbs}}}
+    {\ctxextend{\G}{\subst{\A}{\sbcomp{\sbt}{\sbs}}}}
     {\ctxextend{\E}{\A}}
   }
 }
@@ -607,7 +607,7 @@
   \infer[\rulename{comp-id-right}] % CompIdRight
   {\issubst{\sbs}{\G}{\D}}
   {\eqsubst
-    {\sbcomp{\sbid{\D}}{\sbs}}
+    {\sbcomp{\sbid{\G}}{\sbs}}
     {\sbs}
     {\G}
     {\D}
@@ -620,7 +620,7 @@
   \infer[\rulename{comp-id-left}] % CompIdLeft
   {\issubst{\sbs}{\G}{\D}}
   {\eqsubst
-    {\sbcomp{\sbs}{\sbid{\G}}}
+    {\sbcomp{\sbs}{\sbid{\D}}}
     {\sbs}
     {\G}
     {\D}
@@ -686,7 +686,7 @@
   }
   {\eqtype{\G}
     {\subst{\subst{\A}{\sbt}}{\sbs}}
-    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
+    {\subst{\A}{\sbcomp{\sbt}{\sbs}}}
   }
 }
 
@@ -858,8 +858,8 @@
   }
   {\eqterm{\G}
     {\subst{\subst{\uu}{\sbt}}{\sbs}}
-    {\subst{\uu}{\sbcomp{\sbs}{\sbt}}}
-    {\subst{\A}{\sbcomp{\sbs}{\sbt}}}
+    {\subst{\uu}{\sbcomp{\sbt}{\sbs}}}
+    {\subst{\A}{\sbcomp{\sbt}{\sbs}}}
   }
 }
 
