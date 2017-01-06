@@ -21,6 +21,39 @@ Definition Cisterm G u A :=
 Definition CisContextCoercion c G D :=
   C.isContextCoercion c (eval_ctx G) (eval_ctx D).
 
+
+
+(* Inversion lemmata *)
+Lemma inversion_substitution :
+  forall sbs G D,
+    Cissubst sbs G D ->
+    { sbs' : C.substitution' &
+      { G' : C.context &
+        { D' : C.context &
+          I.issubst (eval_substitution' sbs') (eval_ctx G') (eval_ctx D') *
+          { c1 : C.contextCoercion &
+            CisContextCoercion c1 G' G *
+            { c2 : C.contextCoercion &
+              CisContextCoercion c2 D' D *
+              (sbs = C.sbcoerce (c1,c2) sbs')
+            }
+          }
+        }
+      }
+    }%type.
+Proof.
+  intros sbs G D h.
+  destruct sbs as [sc sbs'].
+  destruct sc as [c1 c2].
+  exists sbs'.
+  inversion h.
+  - subst. inversion H1.
+    + subst.
+      (* exists D1. *) (* D1 lives in ITT and not in CTT as we would like... *)
+Abort.
+
+
+
 (* "hml" stands for "homologous" which is too long to type. *)
 
 Inductive hml_context :
