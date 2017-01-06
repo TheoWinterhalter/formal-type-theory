@@ -61,7 +61,25 @@ Definition coerce_substitution (sbs : C.substitution) (sc : C.substCoerce)
     | C.sbcoerce (c1',c2') sbs', (c1,c2) =>
       C.sbcoerce (C.contextComp c1 c1', C.contextComp c2 c2') sbs'
     end.
-(* There will remain the question of why it conserves well-typing *)
+
+Lemma coerce_substitution_typing
+  { sbs c1 c2 G D G' D' }
+  (hsbs : Cissubst sbs G D)
+  (hc1 : CisContextCoercion c1 G G') (hc2 : CisContextCoercion c2 D D')
+  : Cissubst (coerce_substitution sbs (c1,c2)) G' D'.
+Proof.
+  unfold coerce_substitution. destruct sbs. destruct s.
+  unfold Cissubst. simpl.
+  eapply I.SubstComp.
+  - eapply I.SubstComp.
+    + eapply I.SubstComp.
+      * destruct hc1 as [[_ h] _]. exact h.
+      * admit.
+    + admit.
+  - eapply I.SubstComp.
+    + admit.
+    + destruct hc2 as [[h _] _]. exact h.
+Admitted.
 
 
 (* "hml" stands for "homologous" which is too long to type. *)
@@ -499,10 +517,13 @@ Proof.
         + assumption.
         + exists (coerce_substitution sbs' (c1,c2)).
           split.
-          * unfold Cissubst. simpl.
-            todo. (* Here we need something. *)
+          * { eapply coerce_substitution_typing.
+              - destruct Hsbs. eassumption.
+              - eassumption.
+              - eassumption.
+            }
           * destruct Hsbs as [_ hml].
-            unfold coerce_substitution. destruct s.
+            unfold coerce_substitution. destruct sbs'. destruct s.
             eapply hml_substitution_change. eassumption.
     }
 
