@@ -473,6 +473,7 @@ Proof.
             - destruct Hsbs as [_ hml].
               (* We probably need a lemma to conclude here. *)
               todo.
+          }
     }
 
   (****** trans_subst_right ******)
