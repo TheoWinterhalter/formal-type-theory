@@ -53,6 +53,16 @@ Proof.
 Abort.
 
 
+(* Some lemma to apply a coercion to a substitution rather than on a
+   substitution' *)
+Definition coerce_substitution (sbs : C.substitution) (sc : C.substCoerce)
+  : C.substitution
+  := match sbs,sc with
+    | C.sbcoerce (c1',c2') sbs', (c1,c2) =>
+      C.sbcoerce (C.contextComp c1 c1', C.contextComp c2 c2') sbs'
+    end.
+(* There will remain the question of why it conserves well-typing *)
+
 
 (* "hml" stands for "homologous" which is too long to type. *)
 
@@ -487,47 +497,13 @@ Proof.
         exists D2'.
         split.
         + assumption.
-        + (* All this stuff of composing coercions should probably be done
-             outside *)
-          destruct sbs'. rename s into sc. rename s0 into sbs'.
-          destruct sc as [sc1 sc2].
-          exists (C.sbcoerce (C.contextComp c1 sc1, C.contextComp c2 sc2) sbs').
-          { split.
-            - unfold Cissubst. simpl.
-              (* I was stuck in a loop I think... *)
-              (* inversion Hc1. destruct H0. *)
-              (* inversion Hsbs. inversion issubst_derive0. subst. *)
-              (* inversion H3. subst. *)
-              (* inversion Hc2. destruct H0. *)
-              (* eapply I.SubstComp. *)
-              (* + eapply I.SubstComp. *)
-              (*   * eapply I.SubstComp. *)
-              (*     { eassumption. } *)
-              (*     { eassumption. } *)
-              (*   * eassumption. *)
-              (* + eapply I.SubstComp ; eassumption. *)
-              (* + subst. *)
-              (*   inversion H3. subst. *)
-              (*   inversion Hc2. destruct H5. *)
-              (*   { eapply I.SubstComp. *)
-              (*     - eapply I.SubstComp. *)
-              (*       + eapply I.SubstComp. *)
-              (*         * eassumption. *)
-              (*         * eassumption. *)
-              (*       + eassumption. *)
-              (*     - eapply I.SubstComp. *)
-              (*       + eassumption. *)
-              (*       + eassumption. *)
-              (*   } *)
-              (*   { eapply I.SubstComp. *)
-              (*     - eapply I.SubstComp. *)
-              (*       + eapply I.SubstComp. *)
-              (*         * eassumption. *)
-              (*         *  *)
-              todo.
-            - destruct Hsbs as [_ hml].
-              eapply hml_substitution_change. eassumption.
-          }
+        + exists (coerce_substitution sbs' (c1,c2)).
+          split.
+          * unfold Cissubst. simpl.
+            todo. (* Here we need something. *)
+          * destruct Hsbs as [_ hml].
+            unfold coerce_substitution. destruct s.
+            eapply hml_substitution_change. eassumption.
     }
 
   (****** trans_subst_right ******)
