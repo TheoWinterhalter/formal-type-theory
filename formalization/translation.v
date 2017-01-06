@@ -436,10 +436,43 @@ Proof.
              outside *)
           destruct sbs'. rename s into sc. rename s0 into sbs'.
           destruct sc as [sc1 sc2].
-          (* exists (C.sbcoerce (C.contextInv c1 , c2) sbs'). *)
-          (* We might actually not need to invert since it is 'done' in eval
-             already. *)
-          todo.
+          exists (C.sbcoerce (C.contextComp c1 sc1, C.contextComp c2 sc2) sbs').
+          { split.
+            - unfold Cissubst. simpl.
+              (* I was stuck in a loop I think... *)
+              (* inversion Hc1. destruct H0. *)
+              (* inversion Hsbs. inversion issubst_derive0. subst. *)
+              (* inversion H3. subst. *)
+              (* inversion Hc2. destruct H0. *)
+              (* eapply I.SubstComp. *)
+              (* + eapply I.SubstComp. *)
+              (*   * eapply I.SubstComp. *)
+              (*     { eassumption. } *)
+              (*     { eassumption. } *)
+              (*   * eassumption. *)
+              (* + eapply I.SubstComp ; eassumption. *)
+              (* + subst. *)
+              (*   inversion H3. subst. *)
+              (*   inversion Hc2. destruct H5. *)
+              (*   { eapply I.SubstComp. *)
+              (*     - eapply I.SubstComp. *)
+              (*       + eapply I.SubstComp. *)
+              (*         * eassumption. *)
+              (*         * eassumption. *)
+              (*       + eassumption. *)
+              (*     - eapply I.SubstComp. *)
+              (*       + eassumption. *)
+              (*       + eassumption. *)
+              (*   } *)
+              (*   { eapply I.SubstComp. *)
+              (*     - eapply I.SubstComp. *)
+              (*       + eapply I.SubstComp. *)
+              (*         * eassumption. *)
+              (*         *  *)
+              todo.
+            - destruct Hsbs as [_ hml].
+              (* We probably need a lemma to conclude here. *)
+              todo.
     }
 
   (****** trans_subst_right ******)
