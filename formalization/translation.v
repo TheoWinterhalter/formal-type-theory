@@ -17,6 +17,10 @@ Definition Cistype G A :=
 Definition Cisterm G u A :=
   I.isterm (eval_ctx G) (eval_term u) (eval_type A).
 
+(* We do something similar for coercions. *)
+Definition CisContextCoercion c G D :=
+  C.isContextCoercion c (eval_ctx G) (eval_ctx D).
+
 (* "hml" stands for "homologous" which is too long to type. *)
 
 Inductive hml_context :
@@ -203,9 +207,10 @@ Structure istrans_term (u : S.term) (G' : C.context) (u' : C.term) (A' : C.type)
     isterm_hom : hml_term u u'
   }.
 
+(* Notion of equivalences. *)
 Parameter equiv_type : C.context -> C.type -> C.type -> Type.
-
 Parameter equiv_term : C.context -> C.term -> C.term -> C.type -> Type.
+(* Should we use coercions as the corresponding definition for equiv_type? *)
 
 (* Seems like this notation screws up the other one. *)
 (* Notation "{ x : A & y : B & P }" := *)
@@ -244,6 +249,28 @@ with trans_term
          istrans_term u G' u' A' *
          (* this component might not be needed? *)
          forall u'' (Hu : istrans_term u G' u'' A'), equiv_term G' u' u'' A'
+       }%type
+
+with trans_eqctx_left
+       {G G' D}
+       (H : P.eqctx G D)
+       (HG : istrans_ctx G G') {struct H}
+     : { D' : C.context &
+         istrans_ctx D D' *
+         { c : C.contextCoercion &
+           CisContextCoercion c G' D'
+         }
+       }%type
+
+with trans_eqctx_right
+       {G D D'}
+       (H : P.eqctx G D)
+       (HD : istrans_ctx D D') {struct H}
+     : { G' : C.context &
+         istrans_ctx G G' *
+         { c : C.contextCoercion &
+           CisContextCoercion c G' D'
+         }
        }%type.
 
 Proof.
@@ -470,6 +497,12 @@ Proof.
     }
 
   (****** trans_term ******)
+  - todo.
+
+  (****** trans_eqctx_left ******)
+  - todo.
+
+  (****** trans_eqctx_right ******)
   - todo.
 
 Defined.
