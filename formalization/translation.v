@@ -337,7 +337,13 @@ Proof.
       (* SubstShift *)
       - destruct Ht as [HG' hom].
         inversion hom. subst.
-        inversion X0. subst.
+        rename G'0 into G'. rename X into homG. rename X0 into homAs.
+        inversion homAs. subst.
+        rename A'0 into A'. rename X into homA. rename X0 into homs.
+        (* What we probably want is something similar to the other
+           translation functions where we can take in some homologous
+           object to build a path between them? *)
+
         (* We probably want to use sbs' that we already have. *)
         (* assert (HtG : istrans_ctx G G'0). *)
         (* { split. *)
