@@ -121,15 +121,14 @@ Definition substCoerce : Type :=
 (*     admit. *)
 (* Admitted. *)
 
+(* Definition typeInv c : typeCoercion := *)
+(*   {| tyco_map := tyco_inv c *)
+(*    ; tyco_inv := tyco_map c |}. *)
+
 (* Composition of coercions *)
 Definition contextComp c1 c2 : contextCoercion :=
   {| ctxco_map := itt.sbcomp (ctxco_map c1) (ctxco_map c2)
    ; ctxco_inv := itt.sbcomp (ctxco_inv c2) (ctxco_inv c1) |}.
-
-
-Definition typeInv c : typeCoercion :=
-  {| tyco_map := tyco_inv c
-   ; tyco_inv := tyco_map c |}.
 
 (* Some identities *)
 Definition contextId G : contextCoercion :=
