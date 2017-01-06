@@ -91,6 +91,40 @@ Definition termCoerce : Type :=
 Definition substCoerce : Type :=
   contextCoercion * contextCoercion.
 
+(* Inverses of coercions *)
+Definition contextInv c : contextCoercion :=
+  {| ctxco_map := ctxco_inv c
+   ; ctxco_inv := ctxco_map c |}.
+
+Lemma ctx_inverse :
+  forall {c G D}, isContextCoercion c G D ->
+             isContextCoercion (contextInv c) D G.
+Proof.
+  intros c G D H.
+  destruct H as [[h1 h2] h3].
+  repeat split.
+  - assumption.
+  - assumption.
+  - intros A u H.
+    pose (sbs := ctxco_inv c).
+    pose (As := itt.Subst A sbs).
+    pose (us := itt.subst u sbs).
+    assert (H' : itt.isterm D us As).
+    { eapply itt.TermSubst.
+      - exact h2.
+      - assumption.
+    }
+    destruct (h3 As us H') as (p & Hp).
+    (* Am I missing something? Or do we need to modify the definition? *)
+    admit.
+Admitted.
+
+
+
+Definition typeInv c : typeCoercion :=
+  {| tyco_map := tyco_inv c
+   ; tyco_inv := tyco_map c |}.
+
 (* Some identities *)
 Definition contextId G : contextCoercion :=
   {| ctxco_map := itt.sbid G

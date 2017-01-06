@@ -424,8 +424,22 @@ Proof.
           }
 
       (* SubstCtxConv *)
-      - (* We need to be able to translate equality first. *)
-        todo.
+      - rename G' into G2'.
+        destruct (trans_eqctx_right G1 G2 G2' e Ht) as (G1' & HG1 & c1 & Hc1).
+        destruct (trans_subst_left G1 G1' D1 sbs H HG1)
+          as (D1' & HD1 & sbs' & Hsbs).
+        destruct (trans_eqctx_left D1 D1' D2 e0 HD1) as (D2' & HD2 & c2 & Hc2).
+        exists D2'.
+        split.
+        + assumption.
+        + (* All this stuff of composing coercions should probably be done
+             outside *)
+          destruct sbs'. rename s into sc. rename s0 into sbs'.
+          destruct sc as [sc1 sc2].
+          (* exists (C.sbcoerce (C.contextInv c1 , c2) sbs'). *)
+          (* We might actually not need to invert since it is 'done' in eval
+             already. *)
+          todo.
     }
 
   (****** trans_subst_right ******)
