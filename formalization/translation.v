@@ -180,6 +180,28 @@ with hml_term :
 
 .
 
+(* Lemma hml_substitution_change : *)
+(*   forall sc1 sc2 sbs sbs', *)
+(*     hml_substitution sbs (C.sbcoerce sc1 sbs') -> *)
+(*     hml_substitution sbs (C.sbcoerce sc2 sbs'). *)
+(* Proof. *)
+(*   intros sc1 sc2 sbs. *)
+(*   induction 2. *)
+(*   case_eq h ; intros. *)
+(*   - apply hml_sbzero. *)
+Definition hml_substitution_change
+    sc1 sc2 sbs sbs'
+    (h : hml_substitution sbs (C.sbcoerce sc1 sbs'))
+  : hml_substitution sbs (C.sbcoerce sc2 sbs')
+  := match h with
+    | hml_sbzero h1 h2 h3  => hml_sbzero h1 h2 h3
+    | hml_sbweak h1 h2     => hml_sbweak h1 h2
+    | hml_sbshift h1 h2 h3 => hml_sbshift h1 h2 h3
+    | hml_sbid h1          => hml_sbid h1
+    | hml_sbcomp h1 h2     => hml_sbcomp h1 h2
+    end.
+
+
 Structure istrans_ctx (G : S.context) (G' : C.context) :=
   {
     isctx_derive : Cisctx G' ;
@@ -471,8 +493,7 @@ Proof.
               (*         *  *)
               todo.
             - destruct Hsbs as [_ hml].
-              (* We probably need a lemma to conclude here. *)
-              todo.
+              eapply hml_substitution_change. eassumption.
           }
     }
 
