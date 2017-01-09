@@ -733,7 +733,14 @@ Proof.
         exists (C.Coerce (C.idTy (eval_ctx G')) (C.Id A' u' v')).
         split.
         + split.
-          * todo.
+          * { unfold Cistype. simpl.
+              eapply I.TySubst.
+              - eapply I.SubstId. now destruct Ht.
+              - eapply I.TyId.
+                + now destruct HA.
+                + now destruct Hu.
+                + now destruct Hv.
+            }
           * destruct HA ; destruct Hu ; destruct Hv ; now constructor.
         + intros A'' HA''.
           (* Without a notion of equivalence, no hope to complete this goal. *)
