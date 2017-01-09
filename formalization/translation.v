@@ -678,7 +678,23 @@ Proof.
         + todo. (* Same as always, we need to be sure what an equivalence is. *)
 
       (* TySubst *)
-      - todo.
+      - destruct (trans_subst_left G G' D sbs i1 Ht) as [D' [HD [sbt Hsbt]]].
+        destruct (trans_type D D' A H HD) as [A' [HAisA' fA]].
+        exists (C.Coerce (C.idTy (eval_ctx G')) (C.Subst A' sbt)).
+        split.
+        + split.
+          * { unfold Cistype. simpl.
+              eapply I.TySubst.
+              - eapply I.SubstId. now destruct Ht.
+              - eapply I.TySubst.
+                + destruct Hsbt. eassumption.
+                + destruct HAisA'. assumption.
+            }
+          * { apply hml_Subst.
+              - now destruct HAisA'.
+              - now destruct Hsbt.
+            }
+        + todo. (* Same again. *)
 
       (* TyProd *)
       - todo.
