@@ -68,7 +68,7 @@ Lemma coerce_substitution_typing
   (hc1 : CisContextCoercion c1 G G') (hc2 : CisContextCoercion c2 D D')
   : Cissubst (coerce_substitution sbs (c1,c2)) G' D'.
 Proof.
-  unfold coerce_substitution. destruct sbs. destruct s.
+  unfold coerce_substitution. destruct sbs as [[c1' c2'] sbs'].
   unfold Cissubst. simpl.
   eapply I.SubstComp.
   - eapply I.SubstComp.
@@ -80,6 +80,12 @@ Proof.
     + admit.
     + destruct hc2 as [[h _] _]. exact h.
 Admitted.
+
+(* Subgoals :
+     I.issubst (C.ctxco_inv c1') (eval_ctx G) ?Goal1
+     I.issubst (eval_substitution' sbs') ?Goal1 ?Goal
+     I.issubst (C.ctxco_map c2') ?Goal (eval_ctx D)
+*)
 
 
 (* "hml" stands for "homologous" which is too long to type. *)
