@@ -579,7 +579,11 @@ Proof.
   - { destruct H.
 
       (* TyCtxConv *)
-      - todo.
+      - rename G' into D'.
+        destruct (trans_eqctx_right G D D' e Ht) as (G' & HGisG' & c & Hc).
+        destruct (trans_type G G' A H HGisG') as [A' [HA fA]].
+        (* Now we need to be able to coerce a coerced type. *)
+        todo.
 
       (* TySubst *)
       - todo.
