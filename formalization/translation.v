@@ -52,6 +52,28 @@ Proof.
       (* exists D1. *) (* D1 lives in ITT and not in CTT as we would like... *)
 Abort.
 
+Lemma inversion_substitution :
+  forall {c1' c2' sbs' G D},
+    Cissubst (C.sbcoerce (c1', c2') sbs') G D ->
+    { Gi : I.context &
+      { Di : I.context &
+        I.issubst (C.ctxco_inv c1') (eval_ctx G) Gi *
+        I.issubst (eval_substitution' sbs') Gi Di   *
+        I.issubst (C.ctxco_map c2') Di (eval_ctx D)
+      }
+    }%type.
+Proof.
+  intros c1' c2' sbs' G D h.
+  inversion h.
+  - subst. inversion H1.
+    + subst. exists D1, D0. repeat split.
+      * assumption.
+      * assumption.
+      * assumption.
+    + subst. exists G1, D1. repeat split.
+(* The problem is that we probably need a better inversion lemma that is
+   specific to composition of substitution. *)
+Admitted.
 
 (* Some lemma to apply a coercion to a substitution rather than on a
    substitution' *)
@@ -70,22 +92,17 @@ Lemma coerce_substitution_typing
 Proof.
   unfold coerce_substitution. destruct sbs as [[c1' c2'] sbs'].
   unfold Cissubst. simpl.
+  destruct (inversion_substitution hsbs) as (Gi & Di & [[h1 h2] h3]).
   eapply I.SubstComp.
   - eapply I.SubstComp.
     + eapply I.SubstComp.
       * destruct hc1 as [[_ h] _]. exact h.
-      * admit.
-    + admit.
+      * eassumption.
+    + eassumption.
   - eapply I.SubstComp.
-    + admit.
+    + eassumption.
     + destruct hc2 as [[h _] _]. exact h.
-Admitted.
-
-(* Subgoals :
-     I.issubst (C.ctxco_inv c1') (eval_ctx G) ?Goal1
-     I.issubst (eval_substitution' sbs') ?Goal1 ?Goal
-     I.issubst (C.ctxco_map c2') ?Goal (eval_ctx D)
-*)
+Defined.
 
 
 (* "hml" stands for "homologous" which is too long to type. *)
