@@ -47,7 +47,7 @@ with eval_type' (A : C.type') : I.type :=
 
 with eval_type (A : C.type) : I.type :=
   match A with
-  | C.Coerce c A' => I.Subst (eval_type' A') (C.ctxco_map c)
+  | C.Coerce c A' => I.Subst (eval_type' A') (C.ctxco_inv c)
   end
 
 with eval_term' (t : C.term') : I.term :=

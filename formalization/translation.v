@@ -107,6 +107,77 @@ Proof.
     + destruct hc2 as [[h _] _]. exact h.
 Defined.
 
+(* Same thing but on a type. *)
+Lemma inversion_Subst :
+  forall { G A sbs },
+    I.istype G (I.Subst A sbs) ->
+    { D : I.context &
+      I.issubst sbs G D *
+      I.istype D A
+    }%type.
+Proof.
+  intros G A sbs h.
+  assert (
+    forall B,
+      B = I.Subst A sbs ->
+      I.istype G B ->
+      { D : I.context &
+        I.issubst sbs G D *
+        I.istype D A
+      }%type
+  ).
+  { intros B eq. induction 1 ; try discriminate.
+    - subst. destruct (IHistype H eq_refl) as [E [h1 h2]].
+      exists E. split.
+      + eapply I.SubstCtxConv.
+        * eassumption.
+        * assumption.
+        * (* Once again we need sanity for ITT *)
+          apply I.CtxRefl.
+          admit.
+      + assumption.
+    - inversion eq. subst.
+      exists D. split ; assumption.
+  }
+  apply (H (I.Subst A sbs) eq_refl h).
+Admitted.
+
+Lemma inversion_type :
+  forall {G c' A'},
+    Cistype G (C.Coerce c' A') ->
+    { D : I.context &
+      I.issubst (C.ctxco_inv c') (eval_ctx G) D *
+      I.istype D (eval_type' A')
+    }%type.
+Proof.
+  intros G c' A' h.
+  unfold Cistype in h. simpl in h.
+  destruct (inversion_Subst h) as [E [h1 h2]].
+  exists E. split ; assumption.
+Defined.
+
+Definition coerce_type (A : C.type) (tc : C.typeCoerce) : C.type :=
+  match A with
+  | C.Coerce c A' =>
+    C.Coerce (C.contextComp tc c) A'
+  end.
+
+Lemma coerce_type_typing
+  { G D A c }
+  (hA : Cistype G A)
+  (hc : CisContextCoercion c G D)
+  : Cistype D (coerce_type A c).
+Proof.
+  unfold coerce_type. destruct A as [c' A'].
+  unfold Cistype. simpl.
+  destruct (inversion_type hA) as [E [h1 h2]].
+  eapply I.TySubst.
+  - eapply I.SubstComp.
+    + destruct hc as [[_ h] _]. exact h.
+    + eassumption.
+  - assumption.
+Defined.
+
 
 (* "hml" stands for "homologous" which is too long to type. *)
 
@@ -286,6 +357,19 @@ Definition hml_substitution_change
     | hml_sbshift h1 h2 h3 => hml_sbshift h1 h2 h3
     | hml_sbid h1          => hml_sbid h1
     | hml_sbcomp h1 h2     => hml_sbcomp h1 h2
+    end.
+
+Definition hml_type_change
+    c1 c2 A A'
+    (h : hml_type A (C.Coerce c1 A'))
+  : hml_type A (C.Coerce c2 A')
+  := match h with
+    | hml_Prod h1 h2  => hml_Prod h1 h2
+    | hml_Id h1 h2 h3 => hml_Id h1 h2 h3
+    | hml_Subst h1 h2 => hml_Subst h1 h2
+    | hml_Empty       => hml_Empty
+    | hml_Unit        => hml_Unit
+    | hml_Bool        => hml_Bool
     end.
 
 
@@ -582,8 +666,16 @@ Proof.
       - rename G' into D'.
         destruct (trans_eqctx_right G D D' e Ht) as (G' & HGisG' & c & Hc).
         destruct (trans_type G G' A H HGisG') as [A' [HA fA]].
-        (* Now we need to be able to coerce a coerced type. *)
-        todo.
+        exists (coerce_type A' c). split.
+        + { split.
+            - eapply coerce_type_typing.
+              + destruct HA. eassumption.
+              + assumption.
+            - destruct HA.
+              unfold coerce_type. destruct A'.
+              eapply hml_type_change. eassumption.
+          }
+        + todo. (* Same as always, we need to be sure what an equivalence is. *)
 
       (* TySubst *)
       - todo.
