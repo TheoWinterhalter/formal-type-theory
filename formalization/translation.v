@@ -21,36 +21,44 @@ Definition Cisterm G u A :=
 Definition CisContextCoercion c G D :=
   C.isContextCoercion c (eval_ctx G) (eval_ctx D).
 
-
-
-(* Inversion lemmata *)
-Lemma inversion_substitution :
-  forall sbs G D,
-    Cissubst sbs G D ->
-    { sbs' : C.substitution' &
-      { G' : C.context &
-        { D' : C.context &
-          I.issubst (eval_substitution' sbs') (eval_ctx G') (eval_ctx D') *
-          { c1 : C.contextCoercion &
-            CisContextCoercion c1 G' G *
-            { c2 : C.contextCoercion &
-              CisContextCoercion c2 D' D *
-              (sbs = C.sbcoerce (c1,c2) sbs')
-            }
-          }
-        }
-      }
+(* This lemma might need to be relocated in itt or so. *)
+Lemma inversion_sbcomp :
+  forall {sbs sbt G D},
+    I.issubst (I.sbcomp sbs sbt) G D ->
+    { E : I.context &
+      I.issubst sbs E D *
+      I.issubst sbt G E
     }%type.
 Proof.
-  intros sbs G D h.
-  destruct sbs as [sc sbs'].
-  destruct sc as [c1 c2].
-  exists sbs'.
-  inversion h.
-  - subst. inversion H1.
-    + subst.
-      (* exists D1. *) (* D1 lives in ITT and not in CTT as we would like... *)
-Abort.
+  intros sbs sbt G D h.
+  assert (
+      forall sbr,
+        sbr = I.sbcomp sbs sbt -> I.issubst sbr G D ->
+        { E : I.context &
+          I.issubst sbs E D *
+          I.issubst sbt G E
+        }%type
+  ).
+  { intros sbr eq. induction 1 ; try discriminate.
+    - inversion eq. subst.
+      exists D. split ; assumption.
+    - subst. destruct (IHissubst H eq_refl) as [E [h1 h2]].
+      exists E. split.
+      + eapply I.SubstCtxConv.
+        * exact h1.
+        * apply I.CtxRefl.
+          (* We need sanity to conclude. *)
+          admit.
+        * assumption.
+      + eapply I.SubstCtxConv.
+        * exact h2.
+        * assumption.
+        * apply I.CtxRefl.
+          (* We need sanity to conclude. *)
+          admit.
+  }
+  apply (H (I.sbcomp sbs sbt) eq_refl h).
+Admitted.
 
 Lemma inversion_substitution :
   forall {c1' c2' sbs' G D},
@@ -64,16 +72,11 @@ Lemma inversion_substitution :
     }%type.
 Proof.
   intros c1' c2' sbs' G D h.
-  inversion h.
-  - subst. inversion H1.
-    + subst. exists D1, D0. repeat split.
-      * assumption.
-      * assumption.
-      * assumption.
-    + subst. exists G1, D1. repeat split.
-(* The problem is that we probably need a better inversion lemma that is
-   specific to composition of substitution. *)
-Admitted.
+  unfold Cissubst in h. simpl in h.
+  destruct (inversion_sbcomp h) as [E1 [h1 h2]].
+  destruct (inversion_sbcomp h2) as [E2 [h3 h4]].
+  exists E2, E1. repeat split ; assumption.
+Defined.
 
 (* Some lemma to apply a coercion to a substitution rather than on a
    substitution' *)
