@@ -15,7 +15,7 @@ with type : Type :=
 with term : Type :=
      | var : nat -> term
      | lam : type -> type -> term -> term
-     | app : term -> type -> type -> term -> term
+     | app : term -> term -> term
      | refl : type -> term -> term
      | j : type -> term -> type -> term -> term -> term -> term
      | subst : term -> substitution -> term
@@ -169,7 +169,7 @@ with isterm : context -> term -> type -> Type :=
            istype (ctxextend G A) B ->
            isterm G u (Prod A B) ->
            isterm G v A ->
-           isterm G (app u A B v) (Subst B (sbzero G A v))
+           isterm G (app u v) (Subst B (sbzero G A v))
 
      | TermRefl :
          forall {G A u},
@@ -638,11 +638,9 @@ with eqterm : context -> term -> term -> type -> Type :=
            isterm D u (Prod A B) ->
            isterm D v A ->
            eqterm G
-                  (subst (app u A B v) sbs)
+                  (subst (app u v) sbs)
                   (app
                      (subst u sbs)
-                     (Subst A sbs)
-                     (Subst B (sbshift G A sbs))
                      (subst v sbs))
                   (Subst (Subst B (sbzero D A v)) sbs)
 
@@ -800,7 +798,7 @@ with eqterm : context -> term -> term -> type -> Type :=
            isterm (ctxextend G A) u B ->
            isterm G v A ->
            eqterm G
-                  (app (lam A B u) A B v)
+                  (app (lam A B u) v)
                   (subst u (sbzero G A v))
                   (Subst B (sbzero G A v))
 
@@ -830,12 +828,8 @@ with eqterm : context -> term -> term -> type -> Type :=
            isterm G v (Prod A B) ->
            eqterm (ctxextend G A)
                   (app (subst u (sbweak G A))
-                       (Subst A (sbweak G A))
-                       (Subst B (sbshift (ctxextend G A) A (sbweak G A)))
                        (var 0))
                   (app (subst v (sbweak G A))
-                       (Subst A (sbweak G A))
-                       (Subst B (sbshift (ctxextend G A) A (sbweak G A)))
                        (var 0))
                   B ->
            eqterm G u v (Prod A B)
@@ -907,8 +901,8 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G u1 v1 (Prod A1 A2) ->
            eqterm G u2 v2 A1 ->
            eqterm G
-                  (app u1 A1 A2 u2)
-                  (app v1 B1 B2 v2)
+                  (app u1 u2)
+                  (app v1 v2)
                   (Subst A2 (sbzero G A1 u2))
 
      | CongRefl :

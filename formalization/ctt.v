@@ -52,15 +52,8 @@ Definition istypeCoercion cc G D tc A B :=
                         A
                         (itt.app
                            (itt.subst (tyco_inv tc) (ctxco_map cc))
-                           (itt.Subst B (ctxco_map cc))
-                           (itt.Subst
-                              A
-                              (itt.sbweak G (itt.Subst B (ctxco_map cc))))
                            (itt.app
                               (tyco_map tc)
-                              A
-                              (itt.Subst (itt.Subst B (ctxco_map cc))
-                                         (itt.sbweak G A))
                               x))
                         x)
         }

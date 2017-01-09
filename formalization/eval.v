@@ -55,7 +55,7 @@ with eval_term' (t : C.term') : I.term :=
   | C.var k => I.var k
   | C.lam A B u => I.lam (eval_type A) (eval_type B) (eval_term u)
   | C.app u A B v =>
-    I.app (eval_term u) (eval_type A) (eval_type B) (eval_term v)
+    I.app (eval_term u) (eval_term v)
   | C.refl A u => I.refl (eval_type A) (eval_term u)
   | C.j A u C w v p => I.j (eval_type A)
                           (eval_term u)
@@ -77,9 +77,5 @@ with eval_term' (t : C.term') : I.term :=
 with eval_term (t : C.term) : I.term :=
   match t with
   | C.coerce (cc, tc) t' => I.app (C.tyco_map tc)
-                                 (* Where do we get the type information
-                                    from? *)
-                                 todo
-                                 todo
                                  (I.subst (eval_term' t') (C.ctxco_map cc))
   end.
