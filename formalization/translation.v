@@ -787,9 +787,47 @@ Proof.
   - todo.
 
   (****** trans_eqctx_left ******)
-  - todo.
+  - { destruct H.
+
+      (* CtxRefl *)
+      - exists G'. split.
+        + assumption.
+        + exists (C.contextId (eval_ctx G')).
+          unfold CisContextCoercion. apply C.isCoercionContextId.
+          now destruct HG.
+
+      (* CtxSym *)
+      - todo.
+
+      (* CtxTrans *)
+      - todo.
+
+      (* EqCtxEmpty *)
+      - todo.
+
+      (* EqCtxExtend *)
+      - todo.
+
+    }
 
   (****** trans_eqctx_right ******)
-  - todo.
+  - { destruct H.
+
+      (* CtxRefl *)
+      - todo.
+
+      (* CtxSym *)
+      - todo.
+
+      (* CtxTrans *)
+      - todo.
+
+      (* EqCtxEmpty *)
+      - todo.
+
+      (* EqCtxExtend *)
+      - todo.
+
+    }
 
 Defined.

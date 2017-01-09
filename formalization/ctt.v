@@ -136,6 +136,25 @@ Definition idTy G : typeCoerce := contextId G.
 Definition idTm G A : termCoerce := (contextId G , typeId G A).
 Definition idSb G D : substCoerce := (contextId G , contextId D).
 
+Lemma isCoercionContextId :
+  forall G,
+    itt.isctx G ->
+    isContextCoercion (contextId G) G G.
+Proof.
+  intros G h. repeat split.
+  - unfold contextId. simpl.
+    apply itt.SubstId. assumption.
+  - simpl.
+    apply itt.SubstId. assumption.
+  - intros A u H. simpl.
+    exists (itt.refl A u).
+    admit.
+Admitted.
+
+
+
+(* CTT *)
+
 Inductive context : Type :=
 | ctxempty : context
 | ctxextend : context -> type -> context
