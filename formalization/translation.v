@@ -749,21 +749,37 @@ Proof.
       (* TyEmpty *)
       - exists (C.Coerce (C.idTy (eval_ctx G')) C.Empty). split.
         + split.
-          * todo.
+          * { unfold Cistype. simpl.
+              eapply I.TySubst.
+              - eapply I.SubstId. now destruct Ht.
+              - eapply I.TyEmpty. now destruct Ht.
+            }
           * constructor.
-        + intros A'' HA''. destruct HA'' as [H hom].
-          inversion hom. subst.
+        + intros A'' HA''. (* destruct HA'' as [H hom]. *)
+          (* inversion hom. subst. *)
           todo.
 
       (* TyUnit *)
       - exists (C.Coerce (C.idTy (eval_ctx G')) C.Unit). split.
         + split.
-          * todo.
+          * { unfold Cistype. simpl.
+              eapply I.TySubst.
+              - eapply I.SubstId. now destruct Ht.
+              - eapply I.TyUnit. now destruct Ht.
+            }
           * constructor.
         + todo.
 
       (* TyBool *)
-      - todo.
+      - exists (C.Coerce (C.idTy (eval_ctx G')) C.Bool). split.
+        + split.
+          * { unfold Cistype. simpl.
+              eapply I.TySubst.
+              - eapply I.SubstId. now destruct Ht.
+              - eapply I.TyBool. now destruct Ht.
+            }
+          * constructor.
+        + todo.
 
     }
 
