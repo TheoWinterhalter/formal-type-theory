@@ -123,6 +123,28 @@ Definition contextComp c1 c2 : contextCoercion :=
   {| ctxco_map := itt.sbcomp (ctxco_map c1) (ctxco_map c2)
    ; ctxco_inv := itt.sbcomp (ctxco_inv c2) (ctxco_inv c1) |}.
 
+Lemma isCoercionContextComp :
+  forall {G D E c1 c2},
+    isContextCoercion c1 D E ->
+    isContextCoercion c2 G D ->
+    isContextCoercion (contextComp c1 c2) G E.
+Proof.
+  intros G D E c1 c2 h1 h2.
+  destruct h1 as [[map1 inv1] coh1].
+  destruct h2 as [[map2 inv2] coh2].
+  repeat split.
+  - unfold contextComp. simpl.
+    eapply itt.SubstComp.
+    + eassumption.
+    + assumption.
+  - unfold contextComp. simpl.
+    eapply itt.SubstComp.
+    + eassumption.
+    + assumption.
+  - admit.
+Admitted.
+
+
 (* Some identities *)
 Definition contextId G : contextCoercion :=
   {| ctxco_map := itt.sbid G
