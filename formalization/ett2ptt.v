@@ -1,9 +1,6 @@
 Require Import syntax.
 Require ett ptt.
 
-Axiom postpone_proof : forall A : Type, A.
-Ltac later := apply postpone_proof.
-
 Fixpoint sane_isctx G (P : ett.isctx G) {struct P} : ptt.isctx G
 
 with sane_issubst sbs G D (P : ett.issubst sbs G D) {struct P} : ptt.issubst sbs G D
@@ -915,7 +912,24 @@ Proof.
       }
 
     (* CongJ *)
-    - { later.
+    - { apply ptt.CongJ.
+        - now apply (ptt.sane_eqtype G A1 A2), sane_eqtype.
+        - now apply (ptt.sane_eqtype G A1 A2), sane_eqtype.
+        - now apply (ptt.sane_eqtype G A1 A2), sane_eqtype.
+        - now apply (ptt.sane_eqtype _ C1 C2), sane_eqtype.
+        - now apply (ptt.sane_eqtype _ C1 C2), sane_eqtype.
+        - now apply (ptt.sane_eqterm G u1 u2 A1), sane_eqterm.
+        - now apply (ptt.sane_eqterm G u1 u2 A1), sane_eqterm.
+        - now apply (ptt.sane_eqterm G v1 v2 A1), sane_eqterm.
+        - now apply (ptt.sane_eqterm G v1 v2 A1), sane_eqterm.
+        - now apply (ptt.sane_eqterm G p1 p2 _), sane_eqterm.
+        - now apply (ptt.sane_eqterm G p1 p2 _), sane_eqterm.
+        - now apply sane_eqtype.
+        - now apply sane_eqterm.
+        - now apply sane_eqtype.
+        - now apply sane_eqterm.
+        - now apply sane_eqterm.
+        - now apply sane_eqterm.
       }
 
     (* CongCond *)
