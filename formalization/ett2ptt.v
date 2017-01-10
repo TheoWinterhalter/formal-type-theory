@@ -739,7 +739,16 @@ Proof.
       }
 
     (* EqSubstJ *)
-    - { later.
+    - { apply ptt.EqSubstJ.
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt.sane_isterm D v A), sane_isterm.
+        - now apply sane_issubst.
+        - now apply sane_isterm.
+        - now apply sane_istype.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
       }
 
     (* EqSubstExfalso *)
