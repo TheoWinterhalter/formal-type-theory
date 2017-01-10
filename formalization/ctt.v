@@ -85,34 +85,32 @@ Definition substCoerce : Type :=
   contextCoercion * contextCoercion.
 
 (* Inverses of coercions *)
-(* We'll put them back if ever needed (most probable).
-   In this event, we will probably need to enrich the definition. *)
-(* Definition contextInv c : contextCoercion := *)
-(*   {| ctxco_map := ctxco_inv c *)
-(*    ; ctxco_inv := ctxco_map c |}. *)
+Definition contextInv c : contextCoercion :=
+  {| ctxco_map := ctxco_inv c
+   ; ctxco_inv := ctxco_map c |}.
 
-(* Lemma ctx_inverse : *)
-(*   forall {c G D}, isContextCoercion c G D -> *)
-(*              isContextCoercion (contextInv c) D G. *)
-(* Proof. *)
-(*   intros c G D H. *)
-(*   destruct H as [[h1 h2] h3]. *)
-(*   repeat split. *)
-(*   - assumption. *)
-(*   - assumption. *)
-(*   - intros A u H. *)
-(*     pose (sbs := ctxco_inv c). *)
-(*     pose (As := itt.Subst A sbs). *)
-(*     pose (us := itt.subst u sbs). *)
-(*     assert (H' : itt.isterm D us As). *)
-(*     { eapply itt.TermSubst. *)
-(*       - exact h2. *)
-(*       - assumption. *)
-(*     } *)
-(*     destruct (h3 As us H') as (p & Hp). *)
-(*     (* Am I missing something? Or do we need to modify the definition? *) *)
-(*     admit. *)
-(* Admitted. *)
+Lemma isCoercionContextInv :
+  forall {c G D}, isContextCoercion c G D ->
+             isContextCoercion (contextInv c) D G.
+Proof.
+  intros c G D H.
+  destruct H as [[h1 h2] h3].
+  repeat split.
+  - assumption.
+  - assumption.
+  - intros A u H.
+    pose (sbs := ctxco_inv c).
+    pose (As := itt.Subst A sbs).
+    pose (us := itt.subst u sbs).
+    assert (H' : itt.isterm D us As).
+    { eapply itt.TermSubst.
+      - exact h2.
+      - assumption.
+    }
+    destruct (h3 As us H') as (p & Hp).
+    (* Am I missing something? Or do we need to modify the definition? *)
+    admit.
+Admitted.
 
 (* Definition typeInv c : typeCoercion := *)
 (*   {| tyco_map := tyco_inv c *)
