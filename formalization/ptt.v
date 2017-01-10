@@ -2,6 +2,15 @@
 
 Require Import syntax.
 
+(* Magic tactic. *)
+Ltac magicn n :=
+  match eval compute in n with
+  | 0 => assumption
+  | S ?n => magicn n || (constructor ; magicn n)
+  end.
+
+Ltac magic := magicn (S (S 0)).
+
 Inductive isctx : context -> Type :=
 
      | CtxEmpty :
@@ -1371,7 +1380,68 @@ Proof.
   { now apply TyId. }
 
   (* TermJ *)
-  { admit. }
+  { apply @TySubst with (D := ctxextend G (Id A u v)).
+    - assumption.
+    - magic.
+    - magic.
+    - { apply @TyCtxConv
+            with (G :=
+                    ctxextend G
+                              (Subst
+                                 (Id
+                                    (Subst A (sbweak G A))
+                                    (subst u (sbweak G A))
+                                    (var 0))
+                                 (sbzero G A v))).
+        - constructor.
+          + assumption.
+          + eapply @TySubst with (D := ctxextend G A).
+            * assumption.
+            * magic.
+            * magic.
+            * { constructor.
+                - magic.
+                - eapply @TySubst with (D := G) ; magic.
+                - eapply @TermSubst with (D := G) ; magic.
+                - magic.
+              }
+        - magic.
+        - (* eapply @TySubst. *)
+          (* Focus 1. { *)
+          (*   constructor. *)
+          (*   + assumption. *)
+          (*   + eapply TySubst. *)
+          (*     Focus 1. assumption. *)
+          (*     Focus 2. econstructor ; magic. *)
+          (*     * magic. *)
+          (*     * { constructor. *)
+          (*         - magic. *)
+          (*         - eapply TySubst. *)
+          (*           Focus 1. magic. *)
+          (*           Focus 2. econstructor ; magic. *)
+          (*           + assumption. *)
+          (*           + assumption. *)
+          (*         - eapply TermSubst. *)
+          (*           Focus 1. magic. *)
+          (*           Focus 3. econstructor ; magic. *)
+          (*           + magic. *)
+          (*           + magic. *)
+          (*           + magic. *)
+          (*         - magic. *)
+          (*       } *)
+          (* } *)
+          (* For some reason it doesn't want me doing that...
+             I'll probably have to come up with something to do TySubst in
+             the order I want.
+             I should even have a smarter tactic than magic like the one in
+             preadmissibility.
+           *)
+          (* Focus 2. *)
+          admit.
+        - (* This is the part in sanity that starts with EqCtxExtend. *)
+          admit.
+      }
+  }
 
   (* TermExfalso *)
   { assumption. }
@@ -1593,7 +1663,7 @@ Proof.
         + apply CtxExtend ; auto using (@TyCtxConv G1 G2).
         + apply SubstZero ;
             auto using (@TyCtxConv G1 G2), (@TermCtxConv G1 G2), (@TermTyConv G1 A1 A2).
-        + apply EqCtxExtend ; 
+        + apply EqCtxExtend ;
             auto using (@TyCtxConv G1 G2), CtxSym, (@EqTyCtxConv G1 G2), EqTySym.
     }
 
@@ -1608,7 +1678,7 @@ Proof.
           now apply (@TyCtxConv G1, G2).
         + apply EqCtxExtend ; auto using (@TyCtxConv G1 G2), CtxSym.
           apply (@EqTyCtxConv G1 G2) ; auto using EqTySym.
-        + now apply CtxSym. 
+        + now apply CtxSym.
     }
 
   (* CongSubstShift *)
@@ -1658,7 +1728,7 @@ Proof.
   - { split.
       - apply (@SubstComp _ (ctxextend D A)) ;
           auto using CtxExtend, (@TySubst G D), SubstShift, SubstWeak.
-      - apply (@SubstComp _ G) ; 
+      - apply (@SubstComp _ G) ;
           auto using CtxExtend, (@TySubst G D), SubstWeak.
     }
 
@@ -1683,7 +1753,7 @@ Proof.
           auto using CtxExtend, (@TySubst D E), SubstShift.
         + apply CtxExtend ; auto.
           apply (@TySubst G E) ; auto using (@SubstComp G D E).
-        + { apply (@SubstCtxConv (ctxextend G (Subst (Subst A sbt) sbs)) _ 
+        + { apply (@SubstCtxConv (ctxextend G (Subst (Subst A sbt) sbs)) _
                                  (ctxextend D (Subst A sbt))) ;
             auto using CtxExtend, (@TySubst D E), (@TySubst G D), (@TySubst G E),
                        (@SubstComp G D E), SubstShift, CtxRefl.
@@ -2057,4 +2127,3 @@ Proof.
       - assumption.
     }
 Defined.
-
