@@ -797,16 +797,39 @@ Proof.
           now destruct HG.
 
       (* CtxSym *)
-      - todo.
+      - rename G' into D'. rename HG into HD.
+        destruct (trans_eqctx_right G D D' H HD) as [G' [HG [c Hc]]].
+        exists G'. split.
+        + assumption.
+        + (* We need the inversion of coercions. *)
+          todo.
 
       (* CtxTrans *)
-      - todo.
+      - destruct (trans_eqctx_left G G' D H HG) as [D' [HD [c1 Hc1]]].
+        destruct (trans_eqctx_left D D' E H0 HD) as [E' [HE [c2 Hc2]]].
+        exists E'. split.
+        + assumption.
+        + exists (C.contextComp c2 c1).
+          (* We need some lemma to know that the composition remains
+             well-typed. *)
+          todo.
 
       (* EqCtxEmpty *)
-      - todo.
+      - exists G'. split.
+        + assumption.
+        + exists (C.contextId (eval_ctx G')).
+          unfold CisContextCoercion. apply C.isCoercionContextId.
+          now destruct HG.
 
       (* EqCtxExtend *)
-      - todo.
+      - destruct HG as [HGA Hhom]. inversion Hhom. subst.
+        rename X into homG. rename X0 into homA. rename G'0 into G'.
+        inversion HGA. subst.
+        assert (HGisG' : istrans_ctx G G').
+        { split ; assumption. }
+        destruct (trans_eqctx_left G G' D H HGisG') as [D' [HD [cc Hcc]]].
+        (* We now need to be able to translate type equalities. *)
+        todo.
 
     }
 
@@ -814,19 +837,50 @@ Proof.
   - { destruct H.
 
       (* CtxRefl *)
-      - todo.
+      - rename D' into G'. rename HD into HG.
+        exists G'. split.
+        + assumption.
+        + exists (C.contextId (eval_ctx G')).
+          unfold CisContextCoercion. apply C.isCoercionContextId.
+          now destruct HG.
 
       (* CtxSym *)
-      - todo.
+      - rename D' into G'. rename HD into HG.
+        destruct (trans_eqctx_left G G' D H HG) as [D' [HD [c Hc]]].
+        exists D'. split.
+        + assumption.
+        + (* We need the inversion of coercions. *)
+          todo.
 
       (* CtxTrans *)
-      - todo.
+      - rename HD into HE. rename D' into E'.
+        destruct (trans_eqctx_right D E E' H0 HE) as [D' [HD [c2 Hc2]]].
+        destruct (trans_eqctx_right G D D' H HD) as [G' [HG [c1 Hc1]]].
+        exists G'. split.
+        + assumption.
+        + exists (C.contextComp c2 c1).
+          (* We need some lemma to know that the composition remains
+             well-typed. *)
+          todo.
 
       (* EqCtxEmpty *)
-      - todo.
+      - rename D' into G'. rename HD into HG.
+        exists G'. split.
+        + assumption.
+        + exists (C.contextId (eval_ctx G')).
+          unfold CisContextCoercion. apply C.isCoercionContextId.
+          now destruct HG.
 
       (* EqCtxExtend *)
-      - todo.
+      - destruct HD as [HDB Hhom]. inversion Hhom. subst.
+        rename X into homD. rename X0 into homB.
+        rename G' into D'. rename A' into B'.
+        inversion HDB. subst.
+        assert (HDisD' : istrans_ctx D D').
+        { split ; assumption. }
+        destruct (trans_eqctx_right G D D' H HDisD') as [G' [HG [cc Hcc]]].
+        (* We now need to be able to translate type equalities. *)
+        todo.
 
     }
 
