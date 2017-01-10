@@ -801,8 +801,8 @@ Proof.
         destruct (trans_eqctx_right G D D' H HD) as [G' [HG [c Hc]]].
         exists G'. split.
         + assumption.
-        + (* We need the inversion of coercions. *)
-          todo.
+        + exists (C.contextInv c).
+          eapply C.isCoercionContextInv. assumption.
 
       (* CtxTrans *)
       - destruct (trans_eqctx_left G G' D H HG) as [D' [HD [c1 Hc1]]].
@@ -810,9 +810,7 @@ Proof.
         exists E'. split.
         + assumption.
         + exists (C.contextComp c2 c1).
-          (* We need some lemma to know that the composition remains
-             well-typed. *)
-          todo.
+          eapply C.isCoercionContextComp ; eassumption.
 
       (* EqCtxEmpty *)
       - exists G'. split.
@@ -849,8 +847,8 @@ Proof.
         destruct (trans_eqctx_left G G' D H HG) as [D' [HD [c Hc]]].
         exists D'. split.
         + assumption.
-        + (* We need the inversion of coercions. *)
-          todo.
+        + exists (C.contextInv c).
+          eapply C.isCoercionContextInv. assumption.
 
       (* CtxTrans *)
       - rename HD into HE. rename D' into E'.
@@ -859,9 +857,7 @@ Proof.
         exists G'. split.
         + assumption.
         + exists (C.contextComp c2 c1).
-          (* We need some lemma to know that the composition remains
-             well-typed. *)
-          todo.
+          eapply C.isCoercionContextComp ; eassumption.
 
       (* EqCtxEmpty *)
       - rename D' into G'. rename HD into HG.
