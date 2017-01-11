@@ -1839,8 +1839,23 @@ Proof.
     - magic.
     - eapply myTySubst ; magic3.
     - apply EqCtxExtend ; try magic.
-      gopushsubst.
-      admit.
+      gopushsubst. apply CongId ; try magic.
+      + eapply myTermTyConv.
+        * eassumption.
+        * admit. (* gocompsubst needs to be back. *)
+        * assumption.
+        * assumption.
+        * magic.
+      + eapply myTermTyConv.
+        * eassumption.
+        * admit. (* gocompsubst needs to be back. *)
+        * assumption.
+        * assumption.
+        * magic.
+      + admit. (* We actually should assert it so that we don't keep proving
+                  it. *)
+      + admit. (* gocompsubst for terms. *)
+      + admit. (* gocompsubst for terms. *)
   }
 
   (* TermExfalso *)
