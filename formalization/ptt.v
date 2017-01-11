@@ -1383,6 +1383,11 @@ Ltac magicn n :=
     eapply myTermSubst ; magicn n
   | |- isterm (ctxextend ?G ?A) (var 0) (Subst ?A (sbweak ?G ?A)) =>
     apply TermVarZero ; magicn n
+  (* For equality of contexts we don't want to use symmetry. *)
+  | |- eqctx ctxempty ctxempty =>
+    now apply EqCtxEmpty
+  | |- eqctx (ctxextend ?G ?A) (ctxextend ?D ?B) =>
+    apply EqCtxExtend ; magicn n
   | _ =>
     match eval compute in n with
     | 0 => assumption
@@ -1504,46 +1509,12 @@ Proof.
                               (subst u (sbweak G A))
                               (var 0))
                            (sbzero G A v))).
-    - constructor ; magic.
+    - magic3.
     - magic.
-    - eapply myTySubst.
-      + magic3.
-      + magic.
-      + magic.
-      + magic3.
-    - constructor.
-      + magic.
-      + magic3.
-      + constructor.
-        * magic3.
-        * magic.
-        * { constructor.
-            - magic.
-            - magic3.
-            - constructor.
-              + magic3.
-              + magic.
-              + constructor.
-                * magic.
-                * magic3.
-                * { constructor.
-                    - magic3.
-                    - magic.
-                    - constructor.
-                      + magic.
-                      + magic3.
-                      + constructor.
-                        * magic3.
-                        * magic.
-                        * { constructor.
-                            - magic.
-                            - magic3.
-                            - admit.
-                              (* We are indeed in a loop, it keeps using
-                                 CtxSym... *)
-                          }
-                  }
-          }
+    - eapply myTySubst ; magic3.
+    - apply EqCtxExtend ; try magic.
+      (* We probably want to pushsubst. *)
+      admit.
   }
 
   (* TermExfalso *)
