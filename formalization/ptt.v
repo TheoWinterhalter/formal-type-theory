@@ -1276,9 +1276,9 @@ with eqterm : context -> term -> term -> type -> Type :=
 (* TySubst and TermSubst ask questions in the wrong order when eapplied. *)
 Lemma myTySubst :
   forall {G D A sbs},
-    isctx G ->
     issubst sbs G D ->
     istype D A ->
+    isctx G ->
     isctx D ->
     istype G (Subst A sbs).
 Proof.
@@ -1287,9 +1287,9 @@ Defined.
 
 Lemma myTermSubst :
   forall {G D A u sbs},
-    isctx G ->
     issubst sbs G D ->
     isterm D u A ->
+    isctx G ->
     istype D A ->
     isctx D ->
     isterm G (subst u sbs) (Subst A sbs).
@@ -1300,9 +1300,9 @@ Defined.
 (* Same for some other substitution tasks. *)
 Lemma mySubstShift :
   forall {G D A sbs},
-    isctx G ->
     issubst sbs G D ->
     istype D A ->
+    isctx G ->
     isctx D ->
     issubst (sbshift G A sbs)
             (ctxextend G (Subst A sbs))
@@ -1412,12 +1412,12 @@ Defined.
 
 Lemma myEqSubstComp :
   forall {G D E A u sbs sbt},
+    isterm E u A ->
     issubst sbs G D ->
     issubst sbt D E ->
     isctx G ->
     isctx D ->
     isctx E ->
-    isterm E u A ->
     istype E A ->
     eqterm G
            (subst (subst u sbt) sbs)
@@ -1426,8 +1426,8 @@ Lemma myEqSubstComp :
 Proof.
   intros. eapply EqSubstComp.
   - assumption.
-  - exact H2.
   - exact H3.
+  - exact H4.
   - assumption.
   - assumption.
   - assumption.
@@ -1453,8 +1453,8 @@ Defined.
 
 Lemma myCongTySubst :
   forall {G D A B sbs sbt},
-    eqtype D A B ->
     eqsubst sbs sbt G D ->
+    eqtype D A B ->
     isctx G ->
     isctx D ->
     istype D A ->
@@ -1489,6 +1489,27 @@ Proof.
   intros. eapply EqSubstRefl.
   - assumption.
   - exact H2.
+  - assumption.
+  - assumption.
+  - assumption.
+Defined.
+
+Lemma myEqTySubstId :
+  forall {G D A u v sbs},
+    issubst sbs G D ->
+    istype D A ->
+    isterm D u A ->
+    isterm D v A ->
+    isctx G ->
+    isctx D ->
+    eqtype G
+           (Subst (Id A u v) sbs)
+           (Id (Subst A sbs) (subst u sbs) (subst v sbs)).
+Proof.
+  intros. eapply EqTySubstId.
+  - assumption.
+  - exact H4.
+  - assumption.
   - assumption.
   - assumption.
   - assumption.
@@ -1612,7 +1633,7 @@ Ltac pushsubst1 :=
     ]
   | |- eqtype ?G (Subst (Id ?A ?u ?v) ?sbs) ?B =>
     eapply myEqTyTrans ; [
-      eapply EqTySubstId ; try eassumption
+      eapply myEqTySubstId ; try eassumption
     | try eassumption
     | try eassumption
     | try eassumption
@@ -1625,7 +1646,7 @@ Ltac pushsubst1 :=
     | try eassumption
     | try eassumption
     | eapply myEqTyTrans ; [
-        eapply EqTySubstId ; try eassumption
+        eapply myEqTySubstId ; try eassumption
       | try eassumption
       | try eassumption
       | try eassumption
@@ -1645,7 +1666,7 @@ Ltac pushsubst1 :=
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
     eapply myEqTyConv ; [
       eapply myEqTrans ; [
-        eapply EqSubstRefl ; try eassumption
+        eapply myEqSubstRefl ; try eassumption
       | try eassumption
       | try eassumption
       | try eassumption
