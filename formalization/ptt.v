@@ -1273,15 +1273,6 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (subst u2 sbt)
                   (Subst A sbs).
 
-(* Magic tactic. *)
-Ltac magicn n :=
-  match eval compute in n with
-  | 0 => assumption
-  | S ?n => magicn n || (constructor ; magicn n)
-  end.
-
-Ltac magic2 := magicn (S (S 0)).
-
 (* TySubst and TermSubst ask questions in the wrong order when eapplied. *)
 Lemma myTySubst :
   forall {G D A sbs},
@@ -1337,30 +1328,73 @@ Proof.
   - assumption.
 Defined.
 
+(* Magic tactic. *)
+(* Ltac magicn n := *)
+(*   match eval compute in n with *)
+(*   | 0 => assumption *)
+(*   | S ?n => magicn n || (constructor ; magicn n) *)
+(*   end. *)
+
+(* Ltac magic2 := magicn (S (S 0)). *)
+(* Ltac magic3 := magicn (S (S (S 0))). *)
+(* Ltac magic4 := magicn (S (S (S (S 0)))). *)
+
 (* A tactic to type substitutions. *)
-Ltac substproof :=
+(* Ltac substproof := *)
+(*   match goal with *)
+(*   | |- issubst (sbzero ?G ?A ?u) ?G1 ?G2 => *)
+(*     eapply SubstZero ; substproof *)
+(*   | |- issubst (sbweak ?G ?A) ?G1 ?G2 => *)
+(*     eapply SubstWeak ; substproof *)
+(*   | |- issubst (sbshift ?G ?A ?sbs) ?G1 ?G2 => *)
+(*     eapply mySubstShift ; substproof *)
+(*   | |- issubst (sbid ?G) ?G1 ?G2 => *)
+(*     eapply SubstId ; magic3 *)
+(*   | |- issubst (sbcomp ?sbt ?sbs) ?G1 ?G2 => *)
+(*     eapply mySubstComp ; substproof *)
+(*   (* We also deal with cases where we have substitutions on types or terms *) *)
+(*   | |- istype ?G (Subst ?A ?sbs) => *)
+(*     eapply myTySubst ; substproof *)
+(*   | |- isterm ?G (subst ?u ?sbs) (Subst ?A ?sbs) => *)
+(*     eapply myTermSubst ; substproof *)
+(*   | |- isterm (ctxextend ?G ?A) (var 0) (Subst ?A (sbweak ?G ?A)) => *)
+(*     apply TermVarZero ; magic3 *)
+(*   | _ => magic3 *)
+(*   end. *)
+
+(* Ltac magic := substproof. *)
+
+Ltac magicn n :=
   match goal with
   | |- issubst (sbzero ?G ?A ?u) ?G1 ?G2 =>
-    eapply SubstZero ; substproof
+    eapply SubstZero ; magicn n
   | |- issubst (sbweak ?G ?A) ?G1 ?G2 =>
-    eapply SubstWeak ; substproof
+    eapply SubstWeak ; magicn n
   | |- issubst (sbshift ?G ?A ?sbs) ?G1 ?G2 =>
-    eapply mySubstShift ; substproof
+    eapply mySubstShift ; magicn n
   | |- issubst (sbid ?G) ?G1 ?G2 =>
-    eapply SubstId ; magic2
+    eapply SubstId ; magicn n
   | |- issubst (sbcomp ?sbt ?sbs) ?G1 ?G2 =>
-    eapply mySubstComp ; substproof
+    eapply mySubstComp ; magicn n
   (* We also deal with cases where we have substitutions on types or terms *)
   | |- istype ?G (Subst ?A ?sbs) =>
-    eapply myTySubst ; substproof
+    eapply myTySubst ; magicn n
   | |- isterm ?G (subst ?u ?sbs) (Subst ?A ?sbs) =>
-    eapply myTermSubst ; substproof
+    eapply myTermSubst ; magicn n
   | |- isterm (ctxextend ?G ?A) (var 0) (Subst ?A (sbweak ?G ?A)) =>
-    apply TermVarZero ; magic2
-  | _ => magic2
+    apply TermVarZero ; magicn n
+  | _ =>
+    match eval compute in n with
+    | 0 => assumption
+    | S ?n => assumption || (constructor ; magicn n)
+    end
   end.
 
-Ltac magic := substproof.
+Ltac magic2 := magicn (S (S 0)).
+Ltac magic3 := magicn (S (S (S 0))).
+Ltac magic4 := magicn (S (S (S (S 0)))).
+Ltac magic5 := magicn (S (S (S (S (S 0))))).
+Ltac magic := magic2.
 
 Definition sane_issubst sbs G D :
   issubst sbs G D -> isctx G * isctx D.
@@ -1470,98 +1504,44 @@ Proof.
                               (subst u (sbweak G A))
                               (var 0))
                            (sbzero G A v))).
-    - constructor ; try magic.
-      eapply @TySubst with (D := ctxextend G A) ; try magic.
-      constructor ; try magic.
+    - constructor ; magic.
     - magic.
     - eapply myTySubst.
-      + constructor.
-        * magic.
-        * { eapply myTySubst.
-            - magic.
-            - magic.
-            - constructor ; magic.
-            - magic.
-          }
-      + eapply mySubstShift.
-        * magic.
-        * magic.
-        * constructor ; magic.
-        * magic.
+      + magic3.
       + magic.
-      + constructor.
-        * magic.
-        * constructor ; magic.
+      + magic.
+      + magic3.
     - constructor.
       + magic.
+      + magic3.
       + constructor.
-        * magic.
-        * { eapply myTySubst.
-            - magic.
-            - magic.
-            - constructor ; magic.
-            - magic.
-          }
-      + constructor.
-        * { constructor.
-            - magic.
-            - eapply myTySubst.
-              + magic.
-              + magic.
-              + constructor ; magic.
-              + magic.
-          }
+        * magic3.
         * magic.
         * { constructor.
             - magic.
+            - magic3.
             - constructor.
-              + magic.
-              + eapply myTySubst.
-                * magic.
-                * magic.
-                * constructor ; magic.
-                * magic.
-            - constructor.
-              + constructor.
-                * magic.
-                * { eapply myTySubst.
-                    - magic.
-                    - magic.
-                    - constructor ; magic.
-                    - magic.
-                  }
+              + magic3.
               + magic.
               + constructor.
                 * magic.
+                * magic3.
                 * { constructor.
-                    - magic.
-                    - eapply myTySubst.
-                      + magic.
-                      + magic.
-                      + constructor ; magic.
-                      + magic.
-                  }
-                * { constructor.
-                    - constructor.
-                      + magic.
-                      + eapply myTySubst.
-                        * magic.
-                        * magic.
-                        * constructor ; magic.
-                        * magic.
+                    - magic3.
                     - magic.
                     - constructor.
                       + magic.
+                      + magic3.
                       + constructor.
+                        * magic3.
                         * magic.
-                        * { eapply myTySubst.
+                        * { constructor.
                             - magic.
-                            - magic.
-                            - constructor ; magic.
-                            - magic.
+                            - magic3.
+                            - admit.
+                              (* We are indeed in a loop, it keeps using
+                                 CtxSym... *)
                           }
-                      + admit.
-                        (* Did we fall into a loop or something? *)
                   }
           }
   }
