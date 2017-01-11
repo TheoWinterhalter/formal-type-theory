@@ -1451,6 +1451,49 @@ Proof.
   - assumption.
 Defined.
 
+Lemma myCongTySubst :
+  forall {G D A B sbs sbt},
+    eqtype D A B ->
+    eqsubst sbs sbt G D ->
+    isctx G ->
+    isctx D ->
+    istype D A ->
+    istype D B ->
+    issubst sbs G D ->
+    issubst sbt G D ->
+    eqtype G (Subst A sbs) (Subst B sbt).
+Proof.
+  intros. eapply CongTySubst.
+  - assumption.
+  - exact H2.
+  - assumption.
+  - assumption.
+  - assumption.
+  - assumption.
+  - assumption.
+  - assumption.
+Defined.
+
+Lemma myEqSubstRefl :
+  forall {G D A u sbs},
+    issubst sbs G D ->
+    isterm D u A ->
+    isctx G ->
+    isctx D ->
+    istype D A ->
+    eqterm G
+           (subst (refl A u) sbs)
+           (refl (Subst A sbs) (subst u sbs))
+           (Id (Subst A sbs) (subst u sbs) (subst u sbs)).
+Proof.
+  intros. eapply EqSubstRefl.
+  - assumption.
+  - exact H2.
+  - assumption.
+  - assumption.
+  - assumption.
+Defined.
+
 
 (* Some tactic to compose substitutions. *)
 Lemma eqtype_subst_left :
@@ -1469,13 +1512,7 @@ Lemma eqtype_subst_left :
 Proof.
   intros.
   eapply myEqTyTrans.
-  - eapply myEqTySubstComp.
-    + eassumption.
-    + eassumption.
-    + assumption.
-    + assumption.
-    + assumption.
-    + assumption.
+  - eapply myEqTySubstComp ; eassumption.
   - assumption.
   - assumption.
   - assumption.
@@ -1512,26 +1549,12 @@ Proof.
   { eapply myEqTyConv ; eassumption. }
   eapply myEqTrans.
   - eapply myEqTyConv.
-    + eapply myEqSubstComp.
-      * eassumption.
-      * eassumption.
-      * assumption.
-      * assumption.
-      * assumption.
-      * eassumption.
-      * assumption.
+    + eapply myEqSubstComp ; eassumption.
     + apply EqTySym.
       * assumption.
       * assumption.
       * assumption.
-      * { eapply myEqTySubstComp.
-          - eassumption.
-          - eassumption.
-          - assumption.
-          - assumption.
-          - assumption.
-          - assumption.
-        }
+      * eapply myEqTySubstComp ; eassumption.
     + assumption.
     + assumption.
     + assumption.
@@ -1545,24 +1568,24 @@ Proof.
   - eapply myTermTyConv ; eassumption.
 Defined.
 
-Ltac compsubst1 :=
-  match goal with
-  | |- eqtype ?G (Subst (Subst ?A ?sbt) ?sbs) ?B =>
-    eapply eqtype_subst_left ; try eassumption
-  | |- eqtype ?G ?A (Subst (Subst ?B ?sbt) ?sbs) =>
-    eapply EqTySym ; eapply eqtype_subst_left ; try eassumption
-  | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v (Subst (Subst ?A ?sbt) ?sbs) =>
-    eapply eqterm_subst_left ; try eassumption
-  | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) (Subst (Subst ?A ?sbt) ?sbs) =>
-    eapply EqSym ; eapply eqterm_subst_left ; try eassumption
-  | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v ?A =>
-    eapply EqTyConv ;
-    [try eapply eqterm_subst_left ; try eassumption | try eassumption]
-  | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) ?A =>
-    eapply EqSym ; eapply EqTyConv ;
-    [try eapply eqterm_subst_left ; try eassumption | try eassumption]
-  | _ => fail
-  end.
+(* Ltac compsubst1 := *)
+(*   match goal with *)
+(*   | |- eqtype ?G (Subst (Subst ?A ?sbt) ?sbs) ?B => *)
+(*     eapply eqtype_subst_left ; try eassumption *)
+(*   | |- eqtype ?G ?A (Subst (Subst ?B ?sbt) ?sbs) => *)
+(*     eapply EqTySym ; eapply eqtype_subst_left ; try eassumption *)
+(*   | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v (Subst (Subst ?A ?sbt) ?sbs) => *)
+(*     eapply eqterm_subst_left ; try eassumption *)
+(*   | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) (Subst (Subst ?A ?sbt) ?sbs) => *)
+(*     eapply EqSym ; eapply eqterm_subst_left ; try eassumption *)
+(*   | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v ?A => *)
+(*     eapply EqTyConv ; *)
+(*     [try eapply eqterm_subst_left ; try eassumption | try eassumption] *)
+(*   | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) ?A => *)
+(*     eapply EqSym ; eapply EqTyConv ; *)
+(*     [try eapply eqterm_subst_left ; try eassumption | try eassumption] *)
+(*   | _ => fail *)
+(*   end. *)
 
 
 (* Some tactic to push substitutions inside one step. *)
@@ -1570,34 +1593,70 @@ Ltac compsubst1 :=
 Ltac pushsubst1 :=
   match goal with
   | |- eqtype ?G (Subst (Subst ?A ?sbs) ?sbt) ?B =>
-    eapply EqTyTrans ; [
-      eapply CongTySubst ; [
+    eapply myEqTyTrans ; [
+      eapply myCongTySubst ; [
         eapply SubstRefl ; try eassumption
       | pushsubst1
+      | try eassumption
+      | try eassumption
+      | try eassumption
+      | try eassumption
+      | try eassumption
+      | try eassumption
       ]
+    | try eassumption
+    | try eassumption
+    | try eassumption
+    | try eassumption
     | try eassumption
     ]
   | |- eqtype ?G (Subst (Id ?A ?u ?v) ?sbs) ?B =>
-    eapply EqTyTrans ; [
+    eapply myEqTyTrans ; [
       eapply EqTySubstId ; try eassumption
+    | try eassumption
+    | try eassumption
+    | try eassumption
+    | try eassumption
     | try eassumption
     ]
   | |- eqtype ?G ?A (Subst (Id ?B ?u ?v) ?sbs) =>
-    eapply EqTySym ; eapply EqTyTrans ; [
-      eapply EqTySubstId ; try eassumption
+    eapply EqTySym ; [
+      try eassumption
     | try eassumption
-    ]
-  | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
-    eapply EqTrans ; [
-      eapply EqSubstRefl ; try eassumption
     | try eassumption
-    ]
-  | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
-    eapply EqTyConv ; [
-      eapply EqTrans ; [
-        eapply EqSubstRefl ; try eassumption
+    | eapply myEqTyTrans ; [
+        eapply EqTySubstId ; try eassumption
+      | try eassumption
+      | try eassumption
+      | try eassumption
+      | try eassumption
       | try eassumption
       ]
+    ]
+  | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
+    eapply myEqTrans ; [
+      eapply myEqSubstRefl ; try eassumption
+    | try eassumption
+    | try eassumption
+    | try eassumption
+    | try eassumption
+    | try eassumption
+    ]
+  | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
+    eapply myEqTyConv ; [
+      eapply myEqTrans ; [
+        eapply EqSubstRefl ; try eassumption
+      | try eassumption
+      | try eassumption
+      | try eassumption
+      | try eassumption
+      | try eassumption
+      ]
+    | try eassumption
+    | try eassumption
+    | try eassumption
+    | try eassumption
+    | try eassumption
     | try eassumption
     ]
   | _ => fail
@@ -1642,7 +1701,7 @@ Ltac magic5 := magicn (S (S (S (S (S 0))))).
 Ltac magic := magic2.
 
 (* With it we improve compsubst1 *)
-Ltac gocompsubst := compsubst1 ; try magic.
+(* Ltac gocompsubst := compsubst1 ; try magic. *)
 
 (* With it we improve pushsubst1 *)
 Ltac gopushsubst := pushsubst1 ; try magic.
@@ -1759,7 +1818,7 @@ Proof.
     - magic.
     - eapply myTySubst ; magic3.
     - apply EqCtxExtend ; try magic.
-      (* We probably want to pushsubst. *)
+      (* gopushsubst. *)
       admit.
   }
 
