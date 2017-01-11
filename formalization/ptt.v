@@ -1616,69 +1616,69 @@ Ltac pushsubst1 :=
   | |- eqtype ?G (Subst (Subst ?A ?sbs) ?sbt) ?B =>
     eapply myEqTyTrans ; [
       eapply myCongTySubst ; [
-        eapply SubstRefl ; try eassumption
+        eapply SubstRefl
       | pushsubst1
-      | try eassumption
-      | try eassumption
-      | try eassumption
-      | try eassumption
-      | try eassumption
-      | try eassumption
+      | idtac
+      | idtac
+      | idtac
+      | idtac
+      | idtac
+      | idtac
       ]
-    | try eassumption
-    | try eassumption
-    | try eassumption
-    | try eassumption
-    | try eassumption
+    | idtac
+    | idtac
+    | idtac
+    | idtac
+    | idtac
     ]
   | |- eqtype ?G (Subst (Id ?A ?u ?v) ?sbs) ?B =>
     eapply myEqTyTrans ; [
-      eapply myEqTySubstId ; try eassumption
-    | try eassumption
-    | try eassumption
-    | try eassumption
-    | try eassumption
-    | try eassumption
+      eapply myEqTySubstId
+    | idtac
+    | idtac
+    | idtac
+    | idtac
+    | idtac
     ]
   | |- eqtype ?G ?A (Subst (Id ?B ?u ?v) ?sbs) =>
     eapply EqTySym ; [
-      try eassumption
-    | try eassumption
-    | try eassumption
+      idtac
+    | idtac
+    | idtac
     | eapply myEqTyTrans ; [
-        eapply myEqTySubstId ; try eassumption
-      | try eassumption
-      | try eassumption
-      | try eassumption
-      | try eassumption
-      | try eassumption
+        eapply myEqTySubstId
+      | idtac
+      | idtac
+      | idtac
+      | idtac
+      | idtac
       ]
     ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
     eapply myEqTrans ; [
-      eapply myEqSubstRefl ; try eassumption
-    | try eassumption
-    | try eassumption
-    | try eassumption
-    | try eassumption
-    | try eassumption
+      eapply myEqSubstRefl
+    | idtac
+    | idtac
+    | idtac
+    | idtac
+    | idtac
     ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
     eapply myEqTyConv ; [
       eapply myEqTrans ; [
-        eapply myEqSubstRefl ; try eassumption
-      | try eassumption
-      | try eassumption
-      | try eassumption
-      | try eassumption
-      | try eassumption
+        eapply myEqSubstRefl
+      | idtac
+      | idtac
+      | idtac
+      | idtac
+      | idtac
       ]
-    | try eassumption
-    | try eassumption
-    | try eassumption
-    | try eassumption
-    | try eassumption
-    | try eassumption
+    | idtac
+    | idtac
+    | idtac
+    | idtac
+    | idtac
+    | idtac
     ]
   | _ => fail
   end.
@@ -1839,7 +1839,7 @@ Proof.
     - magic.
     - eapply myTySubst ; magic3.
     - apply EqCtxExtend ; try magic.
-      (* gopushsubst. *)
+      gopushsubst.
       admit.
   }
 
