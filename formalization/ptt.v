@@ -2,15 +2,6 @@
 
 Require Import syntax.
 
-(* Magic tactic. *)
-Ltac magicn n :=
-  match eval compute in n with
-  | 0 => assumption
-  | S ?n => magicn n || (constructor ; magicn n)
-  end.
-
-Ltac magic := magicn (S (S 0)).
-
 Inductive isctx : context -> Type :=
 
      | CtxEmpty :
@@ -1282,6 +1273,95 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (subst u2 sbt)
                   (Subst A sbs).
 
+(* Magic tactic. *)
+Ltac magicn n :=
+  match eval compute in n with
+  | 0 => assumption
+  | S ?n => magicn n || (constructor ; magicn n)
+  end.
+
+Ltac magic2 := magicn (S (S 0)).
+
+(* TySubst and TermSubst ask questions in the wrong order when eapplied. *)
+Lemma myTySubst :
+  forall {G D A sbs},
+    isctx G ->
+    issubst sbs G D ->
+    istype D A ->
+    isctx D ->
+    istype G (Subst A sbs).
+Proof.
+  intros ; eapply TySubst ; eassumption.
+Defined.
+
+Lemma myTermSubst :
+  forall {G D A u sbs},
+    isctx G ->
+    issubst sbs G D ->
+    isterm D u A ->
+    istype D A ->
+    isctx D ->
+    isterm G (subst u sbs) (Subst A sbs).
+Proof.
+  intros ; eapply TermSubst ; eassumption.
+Defined.
+
+(* Same for some other substitution tasks. *)
+Lemma mySubstShift :
+  forall {G D A sbs},
+    isctx G ->
+    issubst sbs G D ->
+    istype D A ->
+    isctx D ->
+    issubst (sbshift G A sbs)
+            (ctxextend G (Subst A sbs))
+            (ctxextend D A).
+Proof.
+  intros ; eapply SubstShift ; eassumption.
+Defined.
+
+Lemma mySubstComp :
+  forall {G D E sbs sbt},
+    issubst sbs G D ->
+    issubst sbt D E ->
+    isctx G ->
+    isctx D ->
+    isctx E ->
+    issubst (sbcomp sbt sbs) G E.
+Proof.
+  intros ; eapply SubstComp.
+  - assumption.
+  - exact H2.
+  - assumption.
+  - assumption.
+  - assumption.
+Defined.
+
+(* A tactic to type substitutions. *)
+Ltac substproof :=
+  match goal with
+  | |- issubst (sbzero ?G ?A ?u) ?G1 ?G2 =>
+    eapply SubstZero ; substproof
+  | |- issubst (sbweak ?G ?A) ?G1 ?G2 =>
+    eapply SubstWeak ; substproof
+  | |- issubst (sbshift ?G ?A ?sbs) ?G1 ?G2 =>
+    eapply mySubstShift ; substproof
+  | |- issubst (sbid ?G) ?G1 ?G2 =>
+    eapply SubstId ; magic2
+  | |- issubst (sbcomp ?sbt ?sbs) ?G1 ?G2 =>
+    eapply mySubstComp ; substproof
+  (* We also deal with cases where we have substitutions on types or terms *)
+  | |- istype ?G (Subst ?A ?sbs) =>
+    eapply myTySubst ; substproof
+  | |- isterm ?G (subst ?u ?sbs) (Subst ?A ?sbs) =>
+    eapply myTermSubst ; substproof
+  | |- isterm (ctxextend ?G ?A) (var 0) (Subst ?A (sbweak ?G ?A)) =>
+    apply TermVarZero ; magic2
+  | _ => magic2
+  end.
+
+Ltac magic := substproof.
+
 Definition sane_issubst sbs G D :
   issubst sbs G D -> isctx G * isctx D.
 Proof.
@@ -1380,67 +1460,110 @@ Proof.
   { now apply TyId. }
 
   (* TermJ *)
-  { apply @TySubst with (D := ctxextend G (Id A u v)).
-    - assumption.
+  { apply @TySubst with (D := ctxextend G (Id A u v)) ; try magic.
+    apply @TyCtxConv
+      with (G :=
+              ctxextend G
+                        (Subst
+                           (Id
+                              (Subst A (sbweak G A))
+                              (subst u (sbweak G A))
+                              (var 0))
+                           (sbzero G A v))).
+    - constructor ; try magic.
+      eapply @TySubst with (D := ctxextend G A) ; try magic.
+      constructor ; try magic.
     - magic.
-    - magic.
-    - { apply @TyCtxConv
-            with (G :=
-                    ctxextend G
-                              (Subst
-                                 (Id
-                                    (Subst A (sbweak G A))
-                                    (subst u (sbweak G A))
-                                    (var 0))
-                                 (sbzero G A v))).
-        - constructor.
-          + assumption.
-          + eapply @TySubst with (D := ctxextend G A).
-            * assumption.
-            * magic.
-            * magic.
-            * { constructor.
-                - magic.
-                - eapply @TySubst with (D := G) ; magic.
-                - eapply @TermSubst with (D := G) ; magic.
-                - magic.
-              }
-        - magic.
-        - (* eapply @TySubst. *)
-          (* Focus 1. { *)
-          (*   constructor. *)
-          (*   + assumption. *)
-          (*   + eapply TySubst. *)
-          (*     Focus 1. assumption. *)
-          (*     Focus 2. econstructor ; magic. *)
-          (*     * magic. *)
-          (*     * { constructor. *)
-          (*         - magic. *)
-          (*         - eapply TySubst. *)
-          (*           Focus 1. magic. *)
-          (*           Focus 2. econstructor ; magic. *)
-          (*           + assumption. *)
-          (*           + assumption. *)
-          (*         - eapply TermSubst. *)
-          (*           Focus 1. magic. *)
-          (*           Focus 3. econstructor ; magic. *)
-          (*           + magic. *)
-          (*           + magic. *)
-          (*           + magic. *)
-          (*         - magic. *)
-          (*       } *)
-          (* } *)
-          (* For some reason it doesn't want me doing that...
-             I'll probably have to come up with something to do TySubst in
-             the order I want.
-             I should even have a smarter tactic than magic like the one in
-             preadmissibility.
-           *)
-          (* Focus 2. *)
-          admit.
-        - (* This is the part in sanity that starts with EqCtxExtend. *)
-          admit.
-      }
+    - eapply myTySubst.
+      + constructor.
+        * magic.
+        * { eapply myTySubst.
+            - magic.
+            - magic.
+            - constructor ; magic.
+            - magic.
+          }
+      + eapply mySubstShift.
+        * magic.
+        * magic.
+        * constructor ; magic.
+        * magic.
+      + magic.
+      + constructor.
+        * magic.
+        * constructor ; magic.
+    - constructor.
+      + magic.
+      + constructor.
+        * magic.
+        * { eapply myTySubst.
+            - magic.
+            - magic.
+            - constructor ; magic.
+            - magic.
+          }
+      + constructor.
+        * { constructor.
+            - magic.
+            - eapply myTySubst.
+              + magic.
+              + magic.
+              + constructor ; magic.
+              + magic.
+          }
+        * magic.
+        * { constructor.
+            - magic.
+            - constructor.
+              + magic.
+              + eapply myTySubst.
+                * magic.
+                * magic.
+                * constructor ; magic.
+                * magic.
+            - constructor.
+              + constructor.
+                * magic.
+                * { eapply myTySubst.
+                    - magic.
+                    - magic.
+                    - constructor ; magic.
+                    - magic.
+                  }
+              + magic.
+              + constructor.
+                * magic.
+                * { constructor.
+                    - magic.
+                    - eapply myTySubst.
+                      + magic.
+                      + magic.
+                      + constructor ; magic.
+                      + magic.
+                  }
+                * { constructor.
+                    - constructor.
+                      + magic.
+                      + eapply myTySubst.
+                        * magic.
+                        * magic.
+                        * constructor ; magic.
+                        * magic.
+                    - magic.
+                    - constructor.
+                      + magic.
+                      + constructor.
+                        * magic.
+                        * { eapply myTySubst.
+                            - magic.
+                            - magic.
+                            - constructor ; magic.
+                            - magic.
+                          }
+                      + admit.
+                        (* Did we fall into a loop or something? *)
+                  }
+          }
   }
 
   (* TermExfalso *)
