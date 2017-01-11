@@ -1328,42 +1328,282 @@ Proof.
   - assumption.
 Defined.
 
-(* Magic tactic. *)
-(* Ltac magicn n := *)
-(*   match eval compute in n with *)
-(*   | 0 => assumption *)
-(*   | S ?n => magicn n || (constructor ; magicn n) *)
-(*   end. *)
+Lemma myEqTyTrans :
+  forall {G A B C},
+    eqtype G A B ->
+    eqtype G B C ->
+    isctx G ->
+    istype G A ->
+    istype G B ->
+    istype G C ->
+    eqtype G A C.
+Proof.
+  intros ; eapply EqTyTrans.
+  - assumption.
+  - assumption.
+  - exact H3.
+  - assumption.
+  - assumption.
+  - assumption.
+Defined.
 
-(* Ltac magic2 := magicn (S (S 0)). *)
-(* Ltac magic3 := magicn (S (S (S 0))). *)
-(* Ltac magic4 := magicn (S (S (S (S 0)))). *)
+Lemma myEqTySubstComp :
+  forall {G D E A sbs sbt},
+    istype E A ->
+    issubst sbs G D ->
+    issubst sbt D E ->
+    isctx G ->
+    isctx D ->
+    isctx E ->
+    eqtype G
+           (Subst (Subst A sbt) sbs)
+           (Subst A (sbcomp sbt sbs)).
+Proof.
+  intros ; eapply EqTySubstComp.
+  - assumption.
+  - exact H3.
+  - exact H4.
+  - assumption.
+  - assumption.
+  - assumption.
+Defined.
 
-(* A tactic to type substitutions. *)
-(* Ltac substproof := *)
-(*   match goal with *)
-(*   | |- issubst (sbzero ?G ?A ?u) ?G1 ?G2 => *)
-(*     eapply SubstZero ; substproof *)
-(*   | |- issubst (sbweak ?G ?A) ?G1 ?G2 => *)
-(*     eapply SubstWeak ; substproof *)
-(*   | |- issubst (sbshift ?G ?A ?sbs) ?G1 ?G2 => *)
-(*     eapply mySubstShift ; substproof *)
-(*   | |- issubst (sbid ?G) ?G1 ?G2 => *)
-(*     eapply SubstId ; magic3 *)
-(*   | |- issubst (sbcomp ?sbt ?sbs) ?G1 ?G2 => *)
-(*     eapply mySubstComp ; substproof *)
-(*   (* We also deal with cases where we have substitutions on types or terms *) *)
-(*   | |- istype ?G (Subst ?A ?sbs) => *)
-(*     eapply myTySubst ; substproof *)
-(*   | |- isterm ?G (subst ?u ?sbs) (Subst ?A ?sbs) => *)
-(*     eapply myTermSubst ; substproof *)
-(*   | |- isterm (ctxextend ?G ?A) (var 0) (Subst ?A (sbweak ?G ?A)) => *)
-(*     apply TermVarZero ; magic3 *)
-(*   | _ => magic3 *)
-(*   end. *)
+Lemma myEqTrans :
+  forall {G A u v w},
+    eqterm G u v A ->
+    eqterm G v w A ->
+    isctx G ->
+    istype G A ->
+    isterm G u A ->
+    isterm G v A ->
+    isterm G w A ->
+    eqterm G u w A.
+Proof.
+  intros. eapply EqTrans.
+  - assumption.
+  - assumption.
+  - assumption.
+  - exact H4.
+  - assumption.
+  - assumption.
+  - assumption.
+Defined.
 
-(* Ltac magic := substproof. *)
+Lemma myEqTyConv :
+  forall {G A B u v},
+    eqterm G u v A ->
+    eqtype G A B ->
+    isctx G ->
+    istype G A ->
+    istype G B ->
+    isterm G u A ->
+    isterm G v A ->
+    eqterm G u v B.
+Proof.
+  intros. eapply EqTyConv.
+  - assumption.
+  - exact H2.
+  - assumption.
+  - assumption.
+  - assumption.
+  - assumption.
+  - assumption.
+Defined.
 
+Lemma myEqSubstComp :
+  forall {G D E A u sbs sbt},
+    issubst sbs G D ->
+    issubst sbt D E ->
+    isctx G ->
+    isctx D ->
+    isctx E ->
+    isterm E u A ->
+    istype E A ->
+    eqterm G
+           (subst (subst u sbt) sbs)
+           (subst u (sbcomp sbt sbs))
+           (Subst A (sbcomp sbt sbs)).
+Proof.
+  intros. eapply EqSubstComp.
+  - assumption.
+  - exact H2.
+  - exact H3.
+  - assumption.
+  - assumption.
+  - assumption.
+  - assumption.
+Defined.
+
+Lemma myTermTyConv :
+  forall {G A B u},
+    isterm G u A ->
+    eqtype G A B ->
+    isctx G ->
+    istype G A ->
+    istype G B ->
+    isterm G u B.
+Proof.
+  intros. eapply TermTyConv.
+  - assumption.
+  - exact H2.
+  - assumption.
+  - assumption.
+  - assumption.
+Defined.
+
+
+(* Some tactic to compose substitutions. *)
+Lemma eqtype_subst_left :
+  forall {G D E A B sbs sbt},
+    issubst sbs G D ->
+    issubst sbt D E ->
+    istype E A ->
+    istype G B ->
+    isctx G ->
+    isctx D ->
+    isctx E ->
+    istype G (Subst (Subst A sbt) sbs) ->
+    istype G (Subst A (sbcomp sbt sbs)) ->
+    eqtype G (Subst A (sbcomp sbt sbs)) B ->
+    eqtype G (Subst (Subst A sbt) sbs) B.
+Proof.
+  intros.
+  eapply myEqTyTrans.
+  - eapply myEqTySubstComp.
+    + eassumption.
+    + eassumption.
+    + assumption.
+    + assumption.
+    + assumption.
+    + assumption.
+  - assumption.
+  - assumption.
+  - assumption.
+  - assumption.
+  - assumption.
+Defined.
+
+Lemma eqterm_subst_left :
+  forall {G D E A u v sbs sbt},
+    issubst sbs G D ->
+    issubst sbt D E ->
+    istype E A ->
+    isterm E u A ->
+    isctx G ->
+    isctx D ->
+    isctx E ->
+    istype G (Subst (Subst A sbt) sbs) ->
+    istype G (Subst A (sbcomp sbt sbs)) ->
+    isterm G (subst (subst u sbt) sbs) (Subst A (sbcomp sbt sbs)) ->
+    isterm G (subst u (sbcomp sbt sbs)) (Subst A (sbcomp sbt sbs)) ->
+    isterm G v (Subst A (sbcomp sbt sbs)) ->
+    eqterm G (subst u (sbcomp sbt sbs)) v (Subst A (sbcomp sbt sbs)) ->
+    eqterm G (subst (subst u sbt) sbs) v (Subst (Subst A sbt) sbs).
+Proof.
+  intros.
+  assert (hh : eqtype G (Subst A (sbcomp sbt sbs)) (Subst (Subst A sbt) sbs)).
+  { apply EqTySym.
+    - assumption.
+    - assumption.
+    - assumption.
+    - eapply myEqTySubstComp ; eassumption.
+  }
+  assert (h : eqterm G (subst u (sbcomp sbt sbs)) v (Subst (Subst A sbt) sbs)).
+  { eapply myEqTyConv ; eassumption. }
+  eapply myEqTrans.
+  - eapply myEqTyConv.
+    + eapply myEqSubstComp.
+      * eassumption.
+      * eassumption.
+      * assumption.
+      * assumption.
+      * assumption.
+      * eassumption.
+      * assumption.
+    + apply EqTySym.
+      * assumption.
+      * assumption.
+      * assumption.
+      * { eapply myEqTySubstComp.
+          - eassumption.
+          - eassumption.
+          - assumption.
+          - assumption.
+          - assumption.
+          - assumption.
+        }
+    + assumption.
+    + assumption.
+    + assumption.
+    + assumption.
+    + assumption.
+  - assumption.
+  - assumption.
+  - assumption.
+  - eapply myTermTyConv ; eassumption.
+  - eapply myTermTyConv ; eassumption.
+  - eapply myTermTyConv ; eassumption.
+Defined.
+
+Ltac compsubst1 :=
+  match goal with
+  | |- eqtype ?G (Subst (Subst ?A ?sbt) ?sbs) ?B =>
+    eapply eqtype_subst_left ; try eassumption
+  | |- eqtype ?G ?A (Subst (Subst ?B ?sbt) ?sbs) =>
+    eapply EqTySym ; eapply eqtype_subst_left ; try eassumption
+  | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v (Subst (Subst ?A ?sbt) ?sbs) =>
+    eapply eqterm_subst_left ; try eassumption
+  | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) (Subst (Subst ?A ?sbt) ?sbs) =>
+    eapply EqSym ; eapply eqterm_subst_left ; try eassumption
+  | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v ?A =>
+    eapply EqTyConv ;
+    [try eapply eqterm_subst_left ; try eassumption | try eassumption]
+  | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) ?A =>
+    eapply EqSym ; eapply EqTyConv ;
+    [try eapply eqterm_subst_left ; try eassumption | try eassumption]
+  | _ => fail
+  end.
+
+
+(* Some tactic to push substitutions inside one step. *)
+(* Partial for now. *)
+Ltac pushsubst1 :=
+  match goal with
+  | |- eqtype ?G (Subst (Subst ?A ?sbs) ?sbt) ?B =>
+    eapply EqTyTrans ; [
+      eapply CongTySubst ; [
+        eapply SubstRefl ; try eassumption
+      | pushsubst1
+      ]
+    | try eassumption
+    ]
+  | |- eqtype ?G (Subst (Id ?A ?u ?v) ?sbs) ?B =>
+    eapply EqTyTrans ; [
+      eapply EqTySubstId ; try eassumption
+    | try eassumption
+    ]
+  | |- eqtype ?G ?A (Subst (Id ?B ?u ?v) ?sbs) =>
+    eapply EqTySym ; eapply EqTyTrans ; [
+      eapply EqTySubstId ; try eassumption
+    | try eassumption
+    ]
+  | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
+    eapply EqTrans ; [
+      eapply EqSubstRefl ; try eassumption
+    | try eassumption
+    ]
+  | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
+    eapply EqTyConv ; [
+      eapply EqTrans ; [
+        eapply EqSubstRefl ; try eassumption
+      | try eassumption
+      ]
+    | try eassumption
+    ]
+  | _ => fail
+  end.
+
+(* Magic Tactic *)
 Ltac magicn n :=
   match goal with
   | |- issubst (sbzero ?G ?A ?u) ?G1 ?G2 =>
@@ -1400,6 +1640,12 @@ Ltac magic3 := magicn (S (S (S 0))).
 Ltac magic4 := magicn (S (S (S (S 0)))).
 Ltac magic5 := magicn (S (S (S (S (S 0))))).
 Ltac magic := magic2.
+
+(* With it we improve compsubst1 *)
+Ltac gocompsubst := compsubst1 ; try magic.
+
+(* With it we improve pushsubst1 *)
+Ltac gopushsubst := pushsubst1 ; try magic.
 
 Definition sane_issubst sbs G D :
   issubst sbs G D -> isctx G * isctx D.
