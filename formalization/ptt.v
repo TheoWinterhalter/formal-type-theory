@@ -1959,7 +1959,17 @@ Proof.
               * magic.
               * magic.
             + eapply myTermTyConv ; try eassumption ; try magic.
-          - admit. (* This is really annoying. *)
+          - eapply myTermTyConv.
+            + eapply myTermSubst.
+              * magic.
+              * eapply myTermSubst ; try eassumption ; try magic.
+              * assumption.
+              * magic.
+              * magic.
+            + gocompsubst.
+            + assumption.
+            + magic.
+            + magic.
           - eapply myTermTyConv ; try eassumption ; try magic.
         }
       + eapply myEqTyConv ; try eassumption ; try magic.
@@ -2001,7 +2011,7 @@ Proof.
       * assumption.
     + assumption.
   }
-Admitted.
+Defined.
 
 
 Definition sane_isterm G u A :
