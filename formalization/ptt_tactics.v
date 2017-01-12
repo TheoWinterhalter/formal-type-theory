@@ -168,6 +168,13 @@ Ltac magicn n :=
   (* Equality of substitutions *)
   | |- eqsubst (sbzero ?G1 ?A1 ?u1) (sbzero ?G2 ?A2 ?u2) ?D ?E =>
     eapply myCongSubstZero ; magicn n
+  | |- eqsubst (sbshift ?G1 ?A1 ?sbs1) (sbshift ?G2 ?A2 ?sbs2) ?D ?E =>
+    eapply myCongSubstShift ; magicn n
+  | |- eqsubst (sbweak ?G1 ?A1) (sbweak ?G2 ?A2) ?D ?E =>
+    eapply myCongSubstWeak ; magicn n
+  (* Equality of types involving substitutions. *)
+  | |- eqtype ?G (Subst ?A ?sbs) (Subst ?B ?sbt) =>
+    eapply myCongTySubst ; magicn n
   (* When we want to type a context we don't want to use any of them. *)
   | |- isctx (ctxextend ?G ?A) =>
     apply CtxExtend ; magicn n

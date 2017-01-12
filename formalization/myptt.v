@@ -291,4 +291,101 @@ Lemma myCongSubstZero :
             G1
             (ctxextend G1 A1).
 Proof.
-Admitted.
+  intros.
+  apply CongSubstZero ; assumption.
+Defined.
+
+Lemma mySubstCtxConv :
+  forall {G1 G2 D1 D2 sbs},
+    issubst sbs G1 D1 ->
+    eqctx G1 G2 ->
+    eqctx D1 D2 ->
+    isctx G1 ->
+           isctx G2 ->
+           isctx D1 ->
+           isctx D2 ->
+    issubst sbs G2 D2.
+Proof.
+  intros.
+  eapply SubstCtxConv ; [
+    exact H2
+  | assumption
+  | exact H4
+  | assumption ..
+  ].
+Defined.
+
+Lemma myTyCtxConv :
+  forall {G D A},
+    istype G A ->
+    eqctx G D ->
+    isctx G ->
+    isctx D ->
+    istype D A.
+Proof.
+  intros.
+  eapply TyCtxConv ; [
+    exact H1
+  | assumption ..
+  ].
+Defined.
+
+Lemma myCongSubstShift :
+  forall {G1 G2 D A1 A2 sbs1 sbs2},
+    eqctx G1 G2 ->
+    eqsubst sbs1 sbs2 G1 D ->
+    eqtype D A1 A2 ->
+    isctx G1 ->
+    isctx G2 ->
+    isctx D ->
+    istype D A1 ->
+    istype D A2 ->
+    issubst sbs1 G1 D ->
+    issubst sbs2 G1 D ->
+    eqsubst (sbshift G1 A1 sbs1)
+            (sbshift G2 A2 sbs2)
+            (ctxextend G1 (Subst A1 sbs1))
+            (ctxextend D A1).
+Proof.
+  intros.
+  apply CongSubstShift ; assumption.
+Defined.
+
+Lemma myCongSubstWeak :
+  forall {G1 G2 A1 A2},
+    eqctx G1 G2 ->
+    eqtype G1 A1 A2 ->
+    isctx G1 ->
+    isctx G2 ->
+    istype G1 A1 ->
+    istype G1 A2 ->
+    eqsubst (sbweak G1 A1)
+            (sbweak G2 A2)
+            (ctxextend G1 A1)
+            G1.
+Proof.
+  intros.
+  apply CongSubstWeak ; assumption.
+Defined.
+
+Lemma myEqSubstCtxConv :
+  forall {G1 G2 D1 D2 sbs sbt},
+    eqsubst sbs sbt G1 D1 ->
+    eqctx G1 G2 ->
+    eqctx D1 D2 ->
+    isctx G1 ->
+    isctx G2 ->
+    isctx D1 ->
+    isctx D2 ->
+    issubst sbs G1 D1 ->
+    issubst sbt G1 D1 ->
+    eqsubst sbs sbt G2 D2.
+Proof.
+  intros.
+  eapply EqSubstCtxConv ; [
+    exact H2
+  | assumption
+  | exact H4
+  | assumption ..
+  ].
+Defined.

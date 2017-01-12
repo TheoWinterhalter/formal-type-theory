@@ -181,7 +181,7 @@ Proof.
               * assumption.
               * magic.
               * magic.
-            + gocompsubst.
+            + gocompsubst. Unshelve. assumption.
             + assumption.
             + magic.
             + magic.
