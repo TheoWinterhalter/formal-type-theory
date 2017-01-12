@@ -2481,7 +2481,37 @@ Proof.
 
   (* EqSubstShiftZero *)
   - { split.
-      - { admit. }
+      - { eapply myTermTyConv.
+          - eapply myTermSubst.
+            + eapply mySubstShift ; eassumption.
+            + magic.
+            + constructor.
+              * assumption.
+              * eapply myTySubst ; eassumption.
+            + eapply myTySubst ; try eassumption ; magic.
+            + magic.
+          - admit. (* We should import the admissibility lemmata of
+                      preadmissibility. *)
+          - constructor.
+            + assumption.
+            + eapply myTySubst ; eassumption.
+          - eapply myTySubst.
+            + eapply mySubstShift ; eassumption.
+            + eapply myTySubst ; magic.
+            + constructor.
+              * assumption.
+              * eapply myTySubst ; eassumption.
+            + magic.
+          - eapply myTySubst.
+            + eapply SubstWeak.
+              * assumption.
+              * eapply myTySubst ; eassumption.
+            + eapply myTySubst ; eassumption.
+            + constructor. (* There may be room for maigc improvement here *)
+              * assumption.
+              * eapply myTySubst ; eassumption.
+            + magic.
+        }
       - { admit. }
     }
 
