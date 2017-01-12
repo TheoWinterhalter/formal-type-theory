@@ -103,6 +103,7 @@ Proof.
 
   (* TermJ *)
   { apply @TySubst with (D := ctxextend G (Id A u v)) ; try magic.
+    Unshelve.
     apply @TyCtxConv
       with (G :=
               ctxextend G

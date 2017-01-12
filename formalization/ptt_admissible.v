@@ -175,7 +175,31 @@ Lemma EqSubstWeakNat :
            (subst (subst u (sbweak D A)) (sbshift G A sbs))
            (subst (subst u sbs) (sbweak G (Subst A sbs)))
            (Subst (Subst B sbs) (sbweak G (Subst A sbs))).
+Proof.
+  intros. eapply myEqTyConv.
+  - (* gocompsubst *)
+    compsubst1.
+    + magic.
+    + magic.
+    + eassumption.
+    + magic.
+    + admit.
+    + magic.
+    + magic.
+    + magic.
+    + magic.
+    + magic.
+    + admit.
+    + magic.
+    + admit.
+    + magic.
+    + magic.
+    + magic.
+    + magic.
+    + magic.
+    + admit.
 Admitted.
+
 
 Lemma EqSubstWeakZero :
   forall {G A B u v},

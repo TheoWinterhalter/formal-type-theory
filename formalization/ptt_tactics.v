@@ -27,8 +27,8 @@ Lemma eqterm_subst_left :
   forall {G D E A u v sbs sbt},
     issubst sbs G D ->
     issubst sbt D E ->
-    istype E A ->
     isterm E u A ->
+    istype E A ->
     eqterm G (subst u (sbcomp sbt sbs)) v (Subst A (sbcomp sbt sbs)) ->
     isctx G ->
     isctx D ->
@@ -180,6 +180,19 @@ Ltac magicn n :=
     apply CtxExtend ; magicn n
   | |- isctx ?G =>
     (* And not eassumption so we don't select some random context. *)
+    assumption || shelve
+  (* Dealing with types. *)
+  | |- istype ?G (Prod ?A ?B) =>
+    eapply TyProd ; magicn n
+  | |- istype ?G (Id ?A ?u ?v) =>
+    eapply TyId ; magicn n
+  | |- istype ?G Empty =>
+    eapply TyEmpty ; magicn n
+  | |- istype ?G Unit =>
+    eapply TyUnit ; magicn n
+  | |- istype ?G Bool =>
+    eapply TyBool ; magicn n
+  | |- istype ?G ?A =>
     assumption || shelve
   (* When all else fails. *)
   | _ =>
