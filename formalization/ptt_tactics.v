@@ -17,13 +17,10 @@ Lemma eqtype_subst_left :
     eqtype G (Subst (Subst A sbt) sbs) B.
 Proof.
   intros.
-  eapply myEqTyTrans.
-  - eapply myEqTySubstComp ; eassumption.
-  - assumption.
-  - assumption.
-  - assumption.
-  - assumption.
-  - assumption.
+  eapply myEqTyTrans ; [
+    eapply myEqTySubstComp ; eassumption
+  | assumption ..
+  ].
 Defined.
 
 Lemma eqterm_subst_left :
@@ -45,22 +42,20 @@ Lemma eqterm_subst_left :
 Proof.
   intros.
   assert (hh : eqtype G (Subst A (sbcomp sbt sbs)) (Subst (Subst A sbt) sbs)).
-  { apply EqTySym.
-    - assumption.
-    - assumption.
-    - assumption.
-    - eapply myEqTySubstComp ; eassumption.
+  { apply EqTySym ; [
+      assumption ..
+    | eapply myEqTySubstComp ; eassumption
+    ].
   }
   assert (h : eqterm G (subst u (sbcomp sbt sbs)) v (Subst (Subst A sbt) sbs)).
   { eapply myEqTyConv ; eassumption. }
   eapply myEqTrans.
   - eapply myEqTyConv.
     + eapply myEqSubstComp ; eassumption.
-    + apply EqTySym.
-      * assumption.
-      * assumption.
-      * assumption.
-      * eapply myEqTySubstComp ; eassumption.
+    + apply EqTySym ; [
+        assumption ..
+      | eapply myEqTySubstComp ; eassumption
+      ].
     + assumption.
     + assumption.
     + assumption.
@@ -87,25 +82,14 @@ Ltac compsubst1 :=
   | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v ?A =>
     eapply myEqTyConv ; [
       try eapply eqterm_subst_left
-    | idtac
-    | idtac
-    | idtac
-    | idtac
-    | idtac
-    | idtac
+    | idtac ..
     ]
   | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) ?A =>
     eapply EqSym ; [
-      idtac
-    | idtac
+      idtac ..
     | eapply myEqTyConv ; [
         try eapply eqterm_subst_left
-      | idtac
-      | idtac
-      | idtac
-      | idtac
-      | idtac
-      | idtac
+      | idtac ..
       ]
     ]
   | _ => fail
@@ -121,67 +105,35 @@ Ltac pushsubst1 :=
       eapply myCongTySubst ; [
         eapply SubstRefl
       | pushsubst1
-      | idtac
-      | idtac
-      | idtac
-      | idtac
-      | idtac
-      | idtac
+      | idtac ..
       ]
-    | idtac
-    | idtac
-    | idtac
-    | idtac
-    | idtac
+    | idtac ..
     ]
   | |- eqtype ?G (Subst (Id ?A ?u ?v) ?sbs) ?B =>
     eapply myEqTyTrans ; [
       eapply myEqTySubstId
-    | idtac
-    | idtac
-    | idtac
-    | idtac
-    | idtac
+    | idtac ..
     ]
   | |- eqtype ?G ?A (Subst (Id ?B ?u ?v) ?sbs) =>
     eapply EqTySym ; [
-      idtac
-    | idtac
-    | idtac
+      idtac ..
     | eapply myEqTyTrans ; [
         eapply myEqTySubstId
-      | idtac
-      | idtac
-      | idtac
-      | idtac
-      | idtac
+      | idtac ..
       ]
     ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
     eapply myEqTrans ; [
       eapply myEqSubstRefl
-    | idtac
-    | idtac
-    | idtac
-    | idtac
-    | idtac
+    | idtac ..
     ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
     eapply myEqTyConv ; [
       eapply myEqTrans ; [
         eapply myEqSubstRefl
-      | idtac
-      | idtac
-      | idtac
-      | idtac
-      | idtac
+      | idtac ..
       ]
-    | idtac
-    | idtac
-    | idtac
-    | idtac
-    | idtac
-    | idtac
+    | idtac ..
     ]
   | _ => fail
   end.
@@ -238,4 +190,3 @@ Ltac gocompsubst := compsubst1 ; try magic.
 
 (* With it we improve pushsubst1 *)
 Ltac gopushsubst := pushsubst1 ; try magic.
-
