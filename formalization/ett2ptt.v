@@ -1,5 +1,8 @@
 Require Import syntax.
+
 Require ett ptt.
+
+Require ptt_sanity 
 
 Fixpoint sane_isctx G (P : ett.isctx G) {struct P} : ptt.isctx G
 
