@@ -1810,21 +1810,13 @@ Lemma compWeakZero :
 Proof.
   intros.
   eapply EqTySym ; try magic.
-  eapply myEqTyTrans.
-  - eapply myCongTySubst.
-    + eapply WeakZero ; magic.
-    + eapply EqTyRefl ; magic.
-    + assumption.
-    + assumption.
-    + assumption.
-    + assumption.
-    + magic.
-    + magic.
-  - magic.
-  - assumption.
-  - magic.
-  - magic.
-  - magic.
+  eapply myEqTyTrans ; [
+    eapply myCongTySubst ; [
+      eapply WeakZero ; magic
+    | magic ..
+    ]
+  | magic ..
+  ].
 Defined.
 
 Lemma substWeakZero :
