@@ -165,6 +165,9 @@ Ltac magicn n :=
     now apply EqCtxEmpty
   | |- eqctx (ctxextend ?G ?A) (ctxextend ?D ?B) =>
     apply EqCtxExtend ; magicn n
+  (* Equality of substitutions *)
+  | |- eqsubst (sbzero ?G1 ?A1 ?u1) (sbzero ?G2 ?A2 ?u2) ?D ?E =>
+    eapply myCongSubstZero ; magicn n
   (* When we want to type a context we don't want to use any of them. *)
   | |- isctx (ctxextend ?G ?A) =>
     apply CtxExtend ; magicn n
