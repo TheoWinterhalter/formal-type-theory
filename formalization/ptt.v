@@ -1773,6 +1773,46 @@ Ltac gocompsubst := compsubst1 ; try magic.
 (* With it we improve pushsubst1 *)
 Ltac gopushsubst := pushsubst1 ; try magic.
 
+(* Some preliminary lemmata *)
+Lemma compWeakZero :
+  forall {G A B u},
+    isctx G ->
+    istype G A ->
+    istype G B ->
+    isterm G u B ->
+    eqtype G A (Subst A (sbcomp (sbweak G B) (sbzero G B u))).
+Proof.
+  intros.
+  eapply EqTySym ; try magic.
+  eapply myEqTyTrans.
+  - eapply myCongTySubst.
+    + eapply WeakZero ; magic.
+    + eapply EqTyRefl ; magic.
+    + assumption.
+    + assumption.
+    + assumption.
+    + assumption.
+    + magic.
+    + magic.
+  - magic.
+  - assumption.
+  - magic.
+  - magic.
+  - magic.
+Defined.
+
+Lemma substWeakZero :
+  forall {G A B u},
+    isctx G ->
+    istype G A ->
+    istype G B ->
+    isterm G u B ->
+    eqtype G A (Subst (Subst A (sbweak G B)) (sbzero G B u)).
+Proof.
+  intros.
+  gocompsubst. eapply EqTySym ; try magic. apply compWeakZero ; magic.
+Defined.
+
 Definition sane_issubst sbs G D :
   issubst sbs G D -> isctx G * isctx D.
 Proof.
@@ -1886,25 +1926,9 @@ Proof.
     - eapply myTySubst ; magic3.
     - apply EqCtxExtend ; try magic.
       assert (eqtype G A (Subst A (sbcomp (sbweak G A) (sbzero G A v)))).
-      { eapply EqTySym ; try magic.
-        eapply myEqTyTrans.
-        - eapply myCongTySubst.
-          + eapply WeakZero ; magic.
-          + eapply EqTyRefl ; magic.
-          + assumption.
-          + assumption.
-          + assumption.
-          + assumption.
-          + magic.
-          + magic.
-        - magic.
-        - assumption.
-        - magic.
-        - magic.
-        - magic.
-      }
+      { apply compWeakZero ; assumption. }
       assert (eqtype G A (Subst (Subst A (sbweak G A)) (sbzero G A v))).
-      { gocompsubst. }
+      { apply substWeakZero ; assumption. }
       gopushsubst. apply CongId ; try magic.
       + eapply myTermTyConv.
         * eassumption.
@@ -2449,7 +2473,8 @@ Proof.
             + apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
             + now apply SubstZero.
             + now apply TermVarSucc.
-          - admit.
+          - apply EqTySym ; try magic.
+            apply substWeakZero ; magic.
         }
       - { assumption. }
     }
