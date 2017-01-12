@@ -2756,7 +2756,7 @@ Proof.
 
 Defined.
 
-Fixpoint ProdTyInversion G A B (H : istype G (Prod A B)) {struct H} :
+Fixpoint TyProdInversion G A B (H : istype G (Prod A B)) {struct H} :
   isctx G * istype G A * istype (ctxextend G A) B.
 Proof.
   inversion H.
@@ -2764,20 +2764,20 @@ Proof.
   - { split ; [ split | idtac ].
       - assumption.
       - apply (@TyCtxConv G0 G) ; auto.
-        now apply (ProdTyInversion G0 A B).
+        now apply (TyProdInversion G0 A B).
       - apply (@TyCtxConv (ctxextend G0 A) (ctxextend G A)).
         + apply CtxExtend ; auto.
-          now apply (ProdTyInversion G0 A B).
+          now apply (TyProdInversion G0 A B).
         + apply CtxExtend.
           * assumption.
           * apply (@TyCtxConv G0 G) ; auto.
-            now apply (ProdTyInversion G0 A B).
-        + now apply (ProdTyInversion G0 A B).
+            now apply (TyProdInversion G0 A B).
+        + now apply (TyProdInversion G0 A B).
         + apply EqCtxExtend ; auto.
-          * now apply (ProdTyInversion G0 A B).
-          * now apply (ProdTyInversion G0 A B).
+          * now apply (TyProdInversion G0 A B).
+          * now apply (TyProdInversion G0 A B).
           * apply EqTyRefl ; auto.
-            now apply (ProdTyInversion G0 A B).
+            now apply (TyProdInversion G0 A B).
     }
 
   - { split ; [ split | idtac ].

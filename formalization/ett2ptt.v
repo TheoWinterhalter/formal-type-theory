@@ -206,7 +206,9 @@ Proof.
     - { apply ptt.TermApp.
         - now apply (@ptt.sane_isterm G v A), sane_isterm.
         - now apply (@ptt.sane_isterm G v A), sane_isterm.
-        - now apply sane_istype.
+        - now apply (ptt.TyProdInversion G A B),
+                    (ptt.sane_isterm G u (Prod A B)),
+                    sane_isterm.
         - now apply sane_isterm.
         - now apply sane_isterm.
       }
@@ -849,10 +851,10 @@ Proof.
     (* ProdEta *)
     - { apply ptt.ProdEta.
         - now apply (@ptt.sane_isterm G u (Prod A B)), sane_isterm.
-        - now apply (ptt.ProdTyInversion G A B),
+        - now apply (ptt.TyProdInversion G A B),
                     (ptt.sane_isterm G u (Prod A B)),
                     sane_isterm.
-        - now apply (ptt.ProdTyInversion G A B),
+        - now apply (ptt.TyProdInversion G A B),
                     (ptt.sane_isterm G u (Prod A B)),
                     sane_isterm.
         - now apply sane_isterm.
