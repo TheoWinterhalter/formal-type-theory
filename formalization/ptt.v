@@ -1742,6 +1742,8 @@ Ltac magicn n :=
     eapply SubstId ; magicn n
   | |- issubst (sbcomp ?sbt ?sbs) ?G1 ?G2 =>
     eapply mySubstComp ; magicn n
+  | |- issubst ?sbs ?G1 ?G2 =>
+    eassumption
   (* We also deal with cases where we have substitutions on types or terms *)
   | |- istype ?G (Subst ?A ?sbs) =>
     eapply myTySubst ; magicn n
@@ -1754,6 +1756,13 @@ Ltac magicn n :=
     now apply EqCtxEmpty
   | |- eqctx (ctxextend ?G ?A) (ctxextend ?D ?B) =>
     apply EqCtxExtend ; magicn n
+  (* When we want to type a context we don't want to use any of them. *)
+  | |- isctx (ctxextend ?G ?A) =>
+    apply CtxExtend ; magicn n
+  | |- isctx ?G =>
+    (* And not eassumption so we don't select some random context. *)
+    assumption || shelve
+  (* When all else fails. *)
   | _ =>
     match eval compute in n with
     | 0 => assumption
@@ -1765,7 +1774,7 @@ Ltac magic2 := magicn (S (S 0)).
 Ltac magic3 := magicn (S (S (S 0))).
 Ltac magic4 := magicn (S (S (S (S 0)))).
 Ltac magic5 := magicn (S (S (S (S (S 0))))).
-Ltac magic := magic2.
+Ltac magic := magic2. (* ; Unshelve ; magic2. *)
 
 (* With it we improve compsubst1 *)
 Ltac gocompsubst := compsubst1 ; try magic.
@@ -1774,6 +1783,23 @@ Ltac gocompsubst := compsubst1 ; try magic.
 Ltac gopushsubst := pushsubst1 ; try magic.
 
 (* Some preliminary lemmata *)
+Lemma EqTyWeakNat :
+  forall {G D A B sbs},
+    issubst sbs G D ->
+    istype D A ->
+    istype D B ->
+    isctx G ->
+    isctx D ->
+    eqtype (ctxextend G (Subst A sbs))
+           (Subst (Subst B (sbweak D A)) (sbshift G A sbs))
+           (Subst (Subst B sbs) (sbweak G (Subst A sbs))).
+Proof.
+  intros. gocompsubst. gocompsubst.
+  eapply myCongTySubst ; magic.
+  Unshelve. assumption.
+Defined.
+
+
 Lemma compWeakZero :
   forall {G A B u},
     isctx G ->
