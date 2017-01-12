@@ -140,7 +140,11 @@ Ltac pushsubst1 :=
 
 (* Magic Tactic *)
 Ltac magicn n :=
-  match goal with
+  (* If we use the lazy version, we need to account for symmetries.
+     We may be able to only deal with symmetries whenever we would like to
+     check the different assumptions. *)
+  (* It would also be very nice if we could avoid using shelve... *)
+  (* lazy *)match goal with
   | |- issubst (sbzero ?G ?A ?u) ?G1 ?G2 =>
     eapply SubstZero ; magicn n
   | |- issubst (sbweak ?G ?A) ?G1 ?G2 =>
