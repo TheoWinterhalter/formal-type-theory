@@ -1,6 +1,7 @@
 (* Sanity theorems for ptt. *)
 
 Require Import syntax.
+Require Import ptt.
 Require Import myptt ptt_tactics ptt_admissible.
 
 Definition sane_issubst sbs G D :
