@@ -399,3 +399,15 @@ Lemma myCtxSym :
 Proof.
   intros. apply CtxSym ; assumption.
 Defined.
+
+Lemma mySubstSym :
+  forall {G D sbs sbt},
+    eqsubst sbs sbt G D ->
+    issubst sbs G D ->
+    issubst sbt G D ->
+    isctx G ->
+    isctx D ->
+    eqsubst sbt sbs G D.
+Proof.
+  intros. apply SubstSym ; assumption.
+Defined.
