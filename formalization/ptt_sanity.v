@@ -707,20 +707,43 @@ Proof.
 
   (* EqSubstShiftSucc *)
   - { split.
-      - { admit. }
+      - { eapply myTermTyConv ; [
+            (eapply myTermSubst ; try magic) ;
+            (eapply TermVarSucc ; try magic) ;
+            eassumption
+          | try magic ..
+          ].
+          apply EqTyWeakNat ; magic.
+        }
       - { magic. }
     }
 
   (* EqSubstAbs *)
   - { split.
-      - { admit. }
+      - { eapply myTermTyConv ; [
+            eapply myTermSubst ; magic
+          | try magic ..
+          ].
+          gopushsubst.
+        }
       - { magic. }
     }
 
   (* EqSubstApp *)
   - { split.
-      - { admit. }
-      - { admit. }
+      - { magic. }
+      - { eapply myTermTyConv ; [
+            (eapply TermApp ; try magic) ;
+            (eapply myTermTyConv ; [
+              (eapply myTermSubst ; try eassumption) ; magic
+            | try magic ..
+            ]) ;
+            gopushsubst
+          | try magic ..
+          ].
+          apply EqTyShiftZero ; magic.
+          Unshelve. all:magic.
+        }
     }
 
   (* EqSubstRefl *)
@@ -750,13 +773,13 @@ Proof.
   (* EqSubstTrue *)
   - { split.
       - { admit. }
-      - { admit. }
+      - { magic. }
     }
 
   (* EqSubstFalse *)
   - { split.
       - { admit. }
-      - { admit. }
+      - { magic. }
     }
 
   (* EqSubstCond *)
@@ -768,49 +791,49 @@ Proof.
   (* EqTermExfalso *)
   - { split.
       - { admit. }
-      - { admit. }
+      - { magic. }
     }
 
   (* UnitEta *)
   - { split.
       - { admit. }
-      - { admit. }
+      - { magic. }
     }
 
   (* EqReflection *)
   - { split.
       - { admit. }
-      - { admit. }
+      - { magic. }
     }
 
   (* ProdBeta *)
   - { split.
       - { admit. }
-      - { admit. }
+      - { magic. }
     }
 
   (* CondTrue *)
   - { split.
       - { admit. }
-      - { admit. }
+      - { magic. }
     }
 
   (* CondFalse *)
   - { split.
       - { admit. }
-      - { admit. }
+      - { magic. }
     }
 
   (* ProdEta *)
   - { split.
       - { admit. }
-      - { admit. }
+      - { magic. }
     }
 
   (* JRefl *)
   - { split.
       - { admit. }
-      - { admit. }
+      - { magic. }
     }
 
   (* CongAbs *)
