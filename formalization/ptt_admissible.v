@@ -159,9 +159,8 @@ Proof.
   { eapply myTyCtxConv ; [ eassumption | magic .. ]. }
   eapply myCongTySubst ; [
     magic ..
-  | eapply mySubstCtxConv ; (* try *) magic
+  | eapply mySubstCtxConv ; magic
   ].
-  (* eapply CtxSym ; magic. *)
 Defined.
 
 Lemma EqSubstWeakNat :

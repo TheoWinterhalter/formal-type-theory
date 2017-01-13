@@ -139,12 +139,24 @@ Ltac pushsubst1 :=
   end.
 
 (* Magic Tactic *)
+(* It is basically a type checker that doesn't do the smart things,
+   namely type and context conversions (and it doesn't rely on reflection
+   obviously). *)
 Ltac magicn n :=
   (* If we use the lazy version, we need to account for symmetries.
      We may be able to only deal with symmetries whenever we would like to
      check the different assumptions. *)
   (* It would also be very nice if we could avoid using shelve... *)
-  (* lazy *)match goal with
+  lazymatch goal with
+  (* Contexts *)
+  | |- isctx ctxempty =>
+    apply CtxEmpty
+  | |- isctx (ctxextend ?G ?A) =>
+    apply CtxExtend ; magicn n
+  | |- isctx ?G =>
+    (* And not eassumption so we don't select some random context. *)
+    assumption || shelve
+  (* Substitutions *)
   | |- issubst (sbzero ?G ?A ?u) ?G1 ?G2 =>
     eapply SubstZero ; magicn n
   | |- issubst (sbweak ?G ?A) ?G1 ?G2 =>
@@ -156,36 +168,11 @@ Ltac magicn n :=
   | |- issubst (sbcomp ?sbt ?sbs) ?G1 ?G2 =>
     eapply mySubstComp ; magicn n
   | |- issubst ?sbs ?G1 ?G2 =>
+    (* Dangerous I would like to do it only when sbs is a variable. *)
     eassumption
-  (* We also deal with cases where we have substitutions on types or terms *)
+  (* Types *)
   | |- istype ?G (Subst ?A ?sbs) =>
     eapply myTySubst ; magicn n
-  | |- isterm ?G (subst ?u ?sbs) (Subst ?A ?sbs) =>
-    eapply myTermSubst ; magicn n
-  | |- isterm (ctxextend ?G ?A) (var 0) (Subst ?A (sbweak ?G ?A)) =>
-    apply TermVarZero ; magicn n
-  (* For equality of contexts we don't want to use symmetry. *)
-  | |- eqctx ctxempty ctxempty =>
-    now apply EqCtxEmpty
-  | |- eqctx (ctxextend ?G ?A) (ctxextend ?D ?B) =>
-    apply EqCtxExtend ; magicn n
-  (* Equality of substitutions *)
-  | |- eqsubst (sbzero ?G1 ?A1 ?u1) (sbzero ?G2 ?A2 ?u2) ?D ?E =>
-    eapply myCongSubstZero ; magicn n
-  | |- eqsubst (sbshift ?G1 ?A1 ?sbs1) (sbshift ?G2 ?A2 ?sbs2) ?D ?E =>
-    eapply myCongSubstShift ; magicn n
-  | |- eqsubst (sbweak ?G1 ?A1) (sbweak ?G2 ?A2) ?D ?E =>
-    eapply myCongSubstWeak ; magicn n
-  (* Equality of types involving substitutions. *)
-  | |- eqtype ?G (Subst ?A ?sbs) (Subst ?B ?sbt) =>
-    eapply myCongTySubst ; magicn n
-  (* When we want to type a context we don't want to use any of them. *)
-  | |- isctx (ctxextend ?G ?A) =>
-    apply CtxExtend ; magicn n
-  | |- isctx ?G =>
-    (* And not eassumption so we don't select some random context. *)
-    assumption || shelve
-  (* Dealing with types. *)
   | |- istype ?G (Prod ?A ?B) =>
     eapply TyProd ; magicn n
   | |- istype ?G (Id ?A ?u ?v) =>
@@ -198,7 +185,51 @@ Ltac magicn n :=
     eapply TyBool ; magicn n
   | |- istype ?G ?A =>
     assumption || shelve
+  (* Terms *)
+  | |- isterm ?G (subst ?u ?sbs) (Subst ?A ?sbs) =>
+    eapply myTermSubst ; magicn n
+  | |- isterm (ctxextend ?G ?A) (var 0) (Subst ?A (sbweak ?G ?A)) =>
+    apply TermVarZero ; magicn n
+  | |- isterm (ctxextend ?G ?B) (var (S ?k)) (Subst ?A (sbweak ?G ?B)) =>
+    apply TermVarSucc ; magicn n
+  (* To be continued... *)
+  (* Equality of contexts *)
+  | |- eqctx ctxempty ctxempty =>
+    apply EqCtxEmpty
+  | |- eqctx (ctxextend ?G ?A) (ctxextend ?D ?B) =>
+    first [
+      apply EqCtxExtend ; magicn n
+    | apply myCtxSym ; [ apply EqCtxExtend ; magicn n | magicn n .. ]
+    ]
+  | |- eqctx ?G ?G =>
+    apply CtxRefl ; magicn n
+  | |- eqctx ?G ?D =>
+    (* When comparing two contexts that are unknown, we either know
+       already, or we know the symmetry. *)
+    (* assumption *)
+    (* In the first case we don't want to use magic in order to avoid symmetry
+       again. *)
+    (* || apply myCtxSym ; [ assumption | magicn n .. ] *)
+    first [ assumption | apply myCtxSym ; [ assumption | magicn n .. ] ]
+  (* Equality of substitutions *)
+  | |- eqsubst (sbzero ?G1 ?A1 ?u1) (sbzero ?G2 ?A2 ?u2) ?D ?E =>
+    eapply myCongSubstZero ; magicn n
+  | |- eqsubst (sbweak ?G1 ?A1) (sbweak ?G2 ?A2) ?D ?E =>
+    eapply myCongSubstWeak ; magicn n
+  | |- eqsubst (sbshift ?G1 ?A1 ?sbs1) (sbshift ?G2 ?A2 ?sbs2) ?D ?E =>
+    eapply myCongSubstShift ; magicn n
+  (* We should probably avoid using congruence on composition. *)
+  (* To be continued... *)
+  (* Equality of types *)
+  | |- eqtype ?G (Subst ?A (sbid ?G)) ?B =>
+    apply EqTyIdSubst ; magicn n
+  (* EqTySubst* ? *)
+  | |- eqtype ?G (Subst ?A ?sbs) (Subst ?B ?sbt) =>
+    eapply myCongTySubst ; magicn n
+  (* To be continued... *)
+  (* Equality of terms to do *)
   (* When all else fails. *)
+  (* This part will hopefully be gone at some point. *)
   | _ =>
     match eval compute in n with
     | 0 => assumption
