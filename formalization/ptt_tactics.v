@@ -135,6 +135,45 @@ Ltac pushsubst1 :=
       | idtac ..
       ]
     ]
+  | |- eqtype ?G (Subst Empty ?sbs) ?A =>
+    eapply myEqTyTrans ; [
+      eapply myEqTySubstEmpty
+    | idtac ..
+    ]
+  | |- eqtype ?G ?A (Subst Empty ?sbs) =>
+    eapply EqTySym ; [
+      idtac ..
+    | eapply myEqTyTrans ; [
+        eapply myEqTySubstEmpty
+      | idtac ..
+      ]
+    ]
+  | |- eqtype ?G (Subst Unit ?sbs) ?A =>
+    eapply myEqTyTrans ; [
+      eapply myEqTySubstUnit
+    | idtac ..
+    ]
+  | |- eqtype ?G ?A (Subst Unit ?sbs) =>
+    eapply EqTySym ; [
+      idtac ..
+    | eapply myEqTyTrans ; [
+        eapply myEqTySubstUnit
+      | idtac ..
+      ]
+    ]
+  | |- eqtype ?G (Subst Bool ?sbs) ?A =>
+    eapply myEqTyTrans ; [
+      eapply myEqTySubstBool
+    | idtac ..
+    ]
+  | |- eqtype ?G ?A (Subst Bool ?sbs) =>
+    eapply EqTySym ; [
+      idtac ..
+    | eapply myEqTyTrans ; [
+        eapply myEqTySubstBool
+      | idtac ..
+      ]
+    ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
     eapply myEqTrans ; [
       eapply myEqSubstRefl
@@ -144,6 +183,32 @@ Ltac pushsubst1 :=
     eapply myEqTyConv ; [
       eapply myEqTrans ; [
         eapply myEqSubstRefl
+      | idtac ..
+      ]
+    | idtac ..
+    ]
+  | |- eqterm ?G (subst true ?sbs) ?u ?A =>
+    eapply myEqTrans ; [
+      eapply myEqSubstTrue
+    | idtac ..
+    ]
+  | |- eqterm ?G (subst true ?sbs) ?u ?A =>
+    eapply myEqTyConv ; [
+      eapply myEqTrans ; [
+        eapply myEqSubstTrue
+      | idtac ..
+      ]
+    | idtac ..
+    ]
+  | |- eqterm ?G (subst false ?sbs) ?u ?A =>
+    eapply myEqTrans ; [
+      eapply myEqSubstFalse
+    | idtac ..
+    ]
+  | |- eqterm ?G (subst false ?sbs) ?u ?A =>
+    eapply myEqTyConv ; [
+      eapply myEqTrans ; [
+        eapply myEqSubstFalse
       | idtac ..
       ]
     | idtac ..
