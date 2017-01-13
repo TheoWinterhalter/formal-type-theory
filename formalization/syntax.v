@@ -31,3 +31,11 @@ with substitution : Type :=
      | sbcomp : substitution -> substitution -> substitution.
 
 Parameter reflective : type -> type.
+
+(* Notations for writing down inference rules. *)
+
+Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
+Notation "'parameters:'  x .. y , p" := ((forall x , .. (forall y , p) ..)) (at level 200, x binder, y binder,
+                                                            right associativity, only parsing).
+Notation "'premise:' p q" := (p -> q) (only parsing, at level 95).
+Notation "'conclusion:' q" := q (no associativity, only parsing, at level 94).
