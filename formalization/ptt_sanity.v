@@ -987,62 +987,128 @@ Proof.
 
   (* EqTermExfalso *)
   - { split.
-      - { admit. }
-      - { magic. }
+      - { assumption. }
+      - { assumption. }
     }
 
   (* UnitEta *)
   - { split.
-      - { admit. }
+      - { assumption. }
       - { magic. }
     }
 
   (* EqReflection *)
   - { split.
-      - { admit. }
+      - { assumption. }
       - { magic. }
     }
 
   (* ProdBeta *)
   - { split.
-      - { admit. }
+      - { magic. }
       - { magic. }
     }
 
   (* CondTrue *)
   - { split.
-      - { admit. }
+      - { magic. }
       - { magic. }
     }
 
   (* CondFalse *)
   - { split.
-      - { admit. }
+      - { magic. }
       - { magic. }
     }
 
   (* ProdEta *)
   - { split.
-      - { admit. }
+      - { magic. }
       - { magic. }
     }
 
   (* JRefl *)
   - { split.
-      - { admit. }
+      - { magic. }
       - { magic. }
     }
 
   (* CongAbs *)
   - { split.
-      - { admit. }
-      - { admit. }
+      - { magic. }
+      - { eapply myTermTyConv ; [
+            eapply TermAbs ; try magic
+          | magic ..
+          ].
+          eapply myTermCtxConv ; [
+            eapply myTermTyConv ; [
+              eassumption
+            | magic ..
+            ]
+          | magic ..
+          ].
+        }
     }
 
   (* CongApp *)
   - { split.
-      - { admit. }
-      - { admit. }
+      - { magic. }
+      - { eapply myTermTyConv ; [
+            eapply TermApp ; try magic
+          | try magic ..
+          ].
+          - eapply myTermTyConv ; [
+              eassumption
+            | magic ..
+            ].
+          - eapply myTermTyConv ; [
+              eassumption
+            | magic ..
+            ].
+          - eapply myCongTySubst ; try magic.
+            + eapply myEqSubstCtxConv ; [
+               eapply myCongSubstZero ; try magic
+              | try magic ..
+              ].
+              * eapply myEqTyConv ; [
+                  eapply EqSym ; try magic ; try eassumption
+                | magic ..
+                ].
+              * eapply myTermTyConv ; [
+                  eassumption
+                | magic ..
+                ].
+              * eapply myTermTyConv ; [
+                  eassumption
+                | magic ..
+                ].
+              * eapply SubstZero ; try magic.
+                eapply myTermTyConv ; [
+                  eassumption
+                | magic ..
+                ].
+              * eapply SubstCtxConv ; magic.
+            + magic.
+            + eapply SubstCtxConv ; try magic.
+              * eapply SubstZero ; try magic.
+                eapply myTermTyConv ; [
+                  eassumption
+                | magic ..
+                ].
+              * magic.
+              * magic.
+          - eapply myTySubst.
+            + eapply SubstZero ; try magic.
+              eapply myTermTyConv ; [
+                eassumption
+              | magic ..
+              ].
+            + magic.
+            + magic.
+            + magic.
+        }
+        Unshelve. all:magic.
+        Unshelve. all:eapply myTyCtxConv ; [ eassumption | magic .. ].
     }
 
   (* CongRefl *)
