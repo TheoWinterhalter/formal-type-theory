@@ -159,9 +159,8 @@ Proof.
   { eapply myTyCtxConv ; [ eassumption | magic .. ]. }
   eapply myCongTySubst ; [
     magic ..
-  | eapply mySubstCtxConv ; (* try *) magic
+  | eapply mySubstCtxConv ; magic
   ].
-  (* eapply CtxSym ; magic. *)
 Defined.
 
 Lemma EqSubstWeakNat :
@@ -178,28 +177,93 @@ Lemma EqSubstWeakNat :
            (Subst (Subst B sbs) (sbweak G (Subst A sbs))).
 Proof.
   intros. eapply myEqTyConv.
-  - (* gocompsubst *)
-    compsubst1.
-    + magic.
-    + magic.
-    + eassumption.
-    + magic.
-    + admit.
-    + magic.
-    + magic.
-    + magic.
-    + magic.
-    + magic.
-    + admit.
-    + magic.
-    + admit.
-    + magic.
-    + magic.
-    + magic.
-    + magic.
-    + magic.
-    + admit.
-Admitted.
+  - gocompsubst ; try eassumption ; try magic.
+    + gocompsubst ; try eassumption ; try magic.
+      * { eapply myTermTyConv.
+          - eapply myTermSubst ; try magic.
+            eapply myTermSubst ; try magic.
+            eassumption.
+          - gocompsubst.
+          - magic.
+          - magic.
+          - magic.
+        }
+      * eapply myCongTermSubst ; [
+          eapply mySubstSym ; [
+            eapply WeakNat ; magic
+          | magic ..
+          ]
+        | magic ..
+        ].
+      * { eapply myTermTyConv.
+          - eapply myTermSubst ; try magic.
+            eapply myTermSubst ; try magic.
+            eassumption.
+          - gocompsubst.
+          - magic.
+          - magic.
+          - magic.
+        }
+      * { eapply myTermTyConv.
+          - eapply myTermSubst ; try magic.
+            eassumption.
+          - magic.
+          - magic.
+          - magic.
+          - magic.
+        }
+      * gocompsubst.
+      * { eapply myTermTyConv.
+          - eapply myTermSubst ; try magic.
+            eassumption.
+          - gocompsubst.
+          - magic.
+          - magic.
+          - magic.
+        }
+    + { eapply myTermTyConv.
+        - eapply myTermSubst ; try magic.
+          eapply myTermSubst ; try magic.
+          eassumption.
+        - gocompsubst.
+        - magic.
+        - magic.
+        - magic.
+      }
+    + { eapply myTermTyConv.
+        - eapply myTermSubst ; try magic.
+          eapply myTermSubst ; try magic.
+          eassumption.
+        - gocompsubst.
+        - magic.
+        - magic.
+        - magic.
+      }
+    + { eapply myTermTyConv.
+        - eapply myTermSubst ; try magic.
+          eapply myTermSubst ; try magic.
+          eassumption.
+        - apply EqTySym ; try magic. apply EqTyWeakNat ; magic.
+        - magic.
+        - magic.
+        - magic.
+      }
+  - apply EqTyWeakNat ; magic.
+  - magic.
+  - magic.
+  - magic.
+  - magic.
+  - { eapply myTermTyConv.
+      - eapply myTermSubst ; try magic.
+        eapply myTermSubst ; try magic.
+        eassumption.
+      - apply EqTySym ; try magic. apply EqTyWeakNat ; magic.
+      - magic.
+      - magic.
+      - magic.
+    }
+  Unshelve. all:magic.
+Defined.
 
 
 Lemma EqSubstWeakZero :
@@ -213,7 +277,54 @@ Lemma EqSubstWeakZero :
            (subst (subst u (sbweak G B)) (sbzero G B v))
            u
            A.
-Admitted.
+Proof.
+  intros.
+  gocompsubst ; try eassumption ; try magic.
+  - eapply myEqTrans.
+    + eapply myCongTermSubst ; [
+        eapply WeakZero ; magic
+      | magic ..
+      ].
+    + apply EqIdSubst ; try magic.
+      eapply myTermTyConv ; [
+        eassumption
+      | try magic ..
+      ].
+      apply compWeakZero ; magic.
+    + assumption.
+    + magic.
+    + magic.
+    + eapply myTermTyConv ; [
+        eapply myTermSubst ; try eassumption ; try magic
+      | try magic ..
+      ].
+      apply EqTySym ; magic.
+    + eapply myTermTyConv ; [
+        eassumption
+      | try magic ..
+      ].
+      apply compWeakZero ; magic.
+  - eapply myTermTyConv ; [
+      (eapply myTermSubst ; try magic) ;
+      (eapply myTermSubst ; try magic) ;
+      eassumption
+    | try magic ..
+    ].
+    gocompsubst.
+  - eapply myTermTyConv ; [
+      eassumption
+    | try magic ..
+    ].
+    apply compWeakZero ; magic.
+  - apply EqTySym ; try magic.
+    apply EqTyWeakZero ; magic.
+  - eapply myTermTyConv ; [
+      eassumption
+    | try magic ..
+    ].
+    apply EqTyWeakZero ; magic.
+  Unshelve. all:magic.
+Defined.
 
 Lemma EqTermShiftZero :
   forall {G D A B u v sbs},
@@ -229,7 +340,75 @@ Lemma EqTermShiftZero :
       (subst (subst u (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs)))
       (subst (subst u (sbzero D A v)) sbs)
       (Subst (Subst B (sbzero D A v)) sbs).
-Admitted.
+Proof.
+  intros.
+  gocompsubst.
+  - eapply myTermTyConv ; [
+      (eapply myTermSubst ; try magic) ;
+      (eapply myTermSubst ; try magic) ;
+      eassumption
+    | try magic ..
+    ].
+    apply EqTyShiftZero ; magic.
+  - gocompsubst.
+    + eapply myTermTyConv ; [
+        (eapply myTermSubst ; try magic) ;
+        (eapply myTermSubst ; try magic) ;
+        eassumption
+      | try magic ..
+      ].
+      gocompsubst.
+    + eassumption.
+    + eapply myCongTermSubst ; [
+        eapply ShiftZero ; magic
+      | magic ..
+      ].
+    + eapply myTermTyConv ; [
+        (eapply myTermSubst ; try magic) ;
+        (eapply myTermSubst ; try magic) ;
+        eassumption
+      | try magic ..
+      ].
+      gocompsubst.
+    + eapply myTermTyConv ; [
+        (eapply myTermSubst ; try magic) ;
+        eassumption
+      | try magic ..
+      ].
+    + eapply myTermTyConv ; [
+        (eapply myTermSubst ; try magic) ;
+        eassumption
+      | try magic ..
+      ].
+    + gocompsubst.
+    + eapply myTermTyConv ; [
+        (eapply myTermSubst ; try magic) ;
+        (eapply myTermSubst ; try magic) ;
+        eassumption
+      | try magic ..
+      ].
+    + eapply myTermTyConv ; [
+        (eapply myTermSubst ; try magic) ;
+        eassumption
+      | try magic ..
+      ].
+      gocompsubst.
+  - eapply myTermTyConv ; [
+      (eapply myTermSubst ; try magic) ;
+      (eapply myTermSubst ; try magic) ;
+      eassumption
+    | try magic ..
+    ].
+    gocompsubst.
+  - eapply myTermTyConv ; [
+      (eapply myTermSubst ; try magic) ;
+      (eapply myTermSubst ; try magic) ;
+      eassumption
+    | try magic ..
+    ].
+    gocompsubst.
+  Unshelve. all:magic.
+Defined.
 
 Lemma EqTermCongWeak :
   forall {G1 G2 A1 A2 B1 B2 u1 u2},
@@ -241,13 +420,43 @@ Lemma EqTermCongWeak :
     isctx G2 ->
     istype G1 A1 ->
     istype G1 B1 ->
-    istype G1 B2 ->
+    istype G2 B2 ->
     istype G2 A2 ->
+    isterm G1 u1 B1 ->
+    isterm G2 u2 B2 ->
     eqterm (ctxextend G1 A1)
            (subst u1 (sbweak G1 A1))
            (subst u2 (sbweak G2 A2))
            (Subst B1 (sbweak G1 A1)).
 Proof.
   intros.
-  assert (istype G1 A2) by admit.
-Admitted.
+  assert (istype G1 A2).
+  { eapply myTyCtxConv ; [
+      eassumption
+    | magic ..
+    ].
+  }
+  assert (istype G1 B2).
+  { eapply myTyCtxConv ; [
+      eassumption
+    | magic ..
+    ].
+  }
+  assert (isterm G1 u2 B1).
+  { eapply myTermTyConv ; [
+      eapply myTermCtxConv ; [
+        eassumption
+      | magic ..
+      ]
+    | magic ..
+    ].
+  }
+  eapply myCongTermSubst ; [
+    eapply CongSubstWeak ; magic
+  | try magic ..
+  ].
+  eapply mySubstCtxConv ; [
+    eapply SubstWeak ; magic
+  | magic ..
+  ].
+Defined.

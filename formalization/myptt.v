@@ -389,3 +389,41 @@ Proof.
   | assumption ..
   ].
 Defined.
+
+Lemma myCtxSym :
+  forall {G D},
+    eqctx G D ->
+    isctx G ->
+    isctx D ->
+    eqctx D G.
+Proof.
+  intros. apply CtxSym ; assumption.
+Defined.
+
+Lemma mySubstSym :
+  forall {G D sbs sbt},
+    eqsubst sbs sbt G D ->
+    issubst sbs G D ->
+    issubst sbt G D ->
+    isctx G ->
+    isctx D ->
+    eqsubst sbt sbs G D.
+Proof.
+  intros. apply SubstSym ; assumption.
+Defined.
+
+Lemma myTermCtxConv :
+  forall {G D A u},
+    isterm G u A ->
+    eqctx G D ->
+    isctx G ->
+    isctx D ->
+    istype G A ->
+    isterm D u A.
+Proof.
+  intros.
+  eapply TermCtxConv ; [
+    exact H1
+  | assumption ..
+  ].
+Defined.
