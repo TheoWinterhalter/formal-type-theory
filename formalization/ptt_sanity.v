@@ -681,8 +681,7 @@ Proof.
               * eapply myTySubst ; eassumption.
             + eapply myTySubst ; try eassumption ; magic.
             + magic.
-          - admit. (* We should import the admissibility lemmata of
-                      preadmissibility. *)
+          - apply EqTyWeakNat ; magic.
           - constructor.
             + assumption.
             + eapply myTySubst ; eassumption.
@@ -703,19 +702,19 @@ Proof.
               * eapply myTySubst ; eassumption.
             + magic.
         }
-      - { admit. }
+      - { magic. }
     }
 
   (* EqSubstShiftSucc *)
   - { split.
       - { admit. }
-      - { admit. }
+      - { magic. }
     }
 
   (* EqSubstAbs *)
   - { split.
       - { admit. }
-      - { admit. }
+      - { magic. }
     }
 
   (* EqSubstApp *)
@@ -727,7 +726,7 @@ Proof.
   (* EqSubstRefl *)
   - { split.
       - { admit. }
-      - { admit. }
+      - { magic. }
     }
 
   (* EqSubstJ *)
@@ -745,7 +744,7 @@ Proof.
   (* EqSubstUnit *)
   - { split.
       - { admit. }
-      - { admit. }
+      - { magic. }
     }
 
   (* EqSubstTrue *)
