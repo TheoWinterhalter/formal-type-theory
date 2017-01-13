@@ -427,3 +427,122 @@ Proof.
   | assumption ..
   ].
 Defined.
+
+Lemma myEqTySubstProd :
+  forall {G D A B sbs},
+    issubst sbs G D ->
+    istype D A ->
+    istype (ctxextend D A) B ->
+    isctx G ->
+    isctx D ->
+    eqtype G
+           (Subst (Prod A B) sbs)
+           (Prod (Subst A sbs) (Subst B (sbshift G A sbs))).
+Proof.
+  intros.
+  eapply EqTySubstProd ; [
+    assumption
+  | exact H3
+  | assumption ..
+  ].
+Defined.
+
+Lemma myEqTySubstEmpty :
+  forall {G D sbs},
+    issubst sbs G D ->
+    isctx G ->
+    isctx D ->
+    eqtype G
+           (Subst Empty sbs)
+           Empty.
+Proof.
+  intros. eapply EqTySubstEmpty.
+  - assumption.
+  - exact H1.
+  - assumption.
+Defined.
+
+Lemma myEqTySubstUnit :
+  forall {G D sbs},
+    issubst sbs G D ->
+    isctx G ->
+    isctx D ->
+    eqtype G
+           (Subst Unit sbs)
+           Unit.
+Proof.
+  intros. eapply EqTySubstUnit.
+  - assumption.
+  - exact H1.
+  - assumption.
+Defined.
+
+Lemma myEqTySubstBool :
+  forall {G D sbs},
+    issubst sbs G D ->
+    isctx G ->
+    isctx D ->
+    eqtype G
+           (Subst Bool sbs)
+           Bool.
+Proof.
+  intros. eapply EqTySubstBool.
+  - assumption.
+  - exact H1.
+  - assumption.
+Defined.
+
+Lemma myEqTySym :
+  forall {G A B},
+    eqtype G A B ->
+    istype G A ->
+    istype G B ->
+    isctx G ->
+    eqtype G B A.
+Proof.
+  intros. apply (EqTySym H2 H0 H1 H).
+Defined.
+
+Lemma myEqSubstTrue :
+  forall {G D sbs},
+    issubst sbs G D ->
+    isctx G ->
+    isctx D ->
+    eqterm G
+           (subst true sbs)
+           true
+           Bool.
+Proof.
+  intros. eapply EqSubstTrue.
+  - assumption.
+  - exact H1.
+  - assumption.
+Defined.
+
+Lemma myEqSubstFalse :
+  forall {G D sbs},
+    issubst sbs G D ->
+    isctx G ->
+    isctx D ->
+    eqterm G
+           (subst false sbs)
+           false
+           Bool.
+Proof.
+  intros. eapply EqSubstFalse.
+  - assumption.
+  - exact H1.
+  - assumption.
+Defined.
+
+Lemma myEqSym :
+  forall {G A u v},
+    eqterm G v u A ->
+    isterm G u A ->
+    isterm G v A ->
+    istype G A ->
+    isctx G ->
+    eqterm G u v A.
+Proof.
+  intros. apply EqSym ; assumption.
+Defined.

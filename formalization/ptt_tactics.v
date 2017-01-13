@@ -122,6 +122,58 @@ Ltac pushsubst1 :=
       | idtac ..
       ]
     ]
+  | |- eqtype ?G (Subst (Prod ?A ?B) ?sbs) ?C =>
+    eapply myEqTyTrans ; [
+      eapply myEqTySubstProd
+    | idtac ..
+    ]
+  | |- eqtype ?G ?A (Subst (Prod ?B ?C) ?sbs) =>
+    eapply EqTySym ; [
+      idtac ..
+    | eapply myEqTyTrans ; [
+        eapply myEqTySubstProd
+      | idtac ..
+      ]
+    ]
+  | |- eqtype ?G (Subst Empty ?sbs) ?A =>
+    eapply myEqTyTrans ; [
+      eapply myEqTySubstEmpty
+    | idtac ..
+    ]
+  | |- eqtype ?G ?A (Subst Empty ?sbs) =>
+    eapply EqTySym ; [
+      idtac ..
+    | eapply myEqTyTrans ; [
+        eapply myEqTySubstEmpty
+      | idtac ..
+      ]
+    ]
+  | |- eqtype ?G (Subst Unit ?sbs) ?A =>
+    eapply myEqTyTrans ; [
+      eapply myEqTySubstUnit
+    | idtac ..
+    ]
+  | |- eqtype ?G ?A (Subst Unit ?sbs) =>
+    eapply EqTySym ; [
+      idtac ..
+    | eapply myEqTyTrans ; [
+        eapply myEqTySubstUnit
+      | idtac ..
+      ]
+    ]
+  | |- eqtype ?G (Subst Bool ?sbs) ?A =>
+    eapply myEqTyTrans ; [
+      eapply myEqTySubstBool
+    | idtac ..
+    ]
+  | |- eqtype ?G ?A (Subst Bool ?sbs) =>
+    eapply EqTySym ; [
+      idtac ..
+    | eapply myEqTyTrans ; [
+        eapply myEqTySubstBool
+      | idtac ..
+      ]
+    ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
     eapply myEqTrans ; [
       eapply myEqSubstRefl
@@ -135,6 +187,32 @@ Ltac pushsubst1 :=
       ]
     | idtac ..
     ]
+  | |- eqterm ?G (subst true ?sbs) ?u ?A =>
+    eapply myEqTrans ; [
+      eapply myEqSubstTrue
+    | idtac ..
+    ]
+  | |- eqterm ?G (subst true ?sbs) ?u ?A =>
+    eapply myEqTyConv ; [
+      eapply myEqTrans ; [
+        eapply myEqSubstTrue
+      | idtac ..
+      ]
+    | idtac ..
+    ]
+  | |- eqterm ?G (subst false ?sbs) ?u ?A =>
+    eapply myEqTrans ; [
+      eapply myEqSubstFalse
+    | idtac ..
+    ]
+  | |- eqterm ?G (subst false ?sbs) ?u ?A =>
+    eapply myEqTyConv ; [
+      eapply myEqTrans ; [
+        eapply myEqSubstFalse
+      | idtac ..
+      ]
+    | idtac ..
+    ]
   | _ => fail
   end.
 
@@ -143,10 +221,9 @@ Ltac pushsubst1 :=
    namely type and context conversions (and it doesn't rely on reflection
    obviously). *)
 Ltac magicn n :=
-  (* If we use the lazy version, we need to account for symmetries.
-     We may be able to only deal with symmetries whenever we would like to
-     check the different assumptions. *)
-  (* It would also be very nice if we could avoid using shelve... *)
+  (* It would also be very nice if we could avoid using shelve...
+     In the meantime, we should provide a tactic that doesn't shelve
+     (in order to make sure we don't shelve stuff when solving the shelf). *)
   lazymatch goal with
   (* Contexts *)
   | |- isctx ctxempty =>
