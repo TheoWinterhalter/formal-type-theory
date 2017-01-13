@@ -534,3 +534,15 @@ Proof.
   - exact H1.
   - assumption.
 Defined.
+
+Lemma myEqSym :
+  forall {G A u v},
+    eqterm G v u A ->
+    isterm G u A ->
+    isterm G v A ->
+    istype G A ->
+    isctx G ->
+    eqterm G u v A.
+Proof.
+  intros. apply EqSym ; assumption.
+Defined.

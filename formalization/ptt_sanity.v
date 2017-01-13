@@ -1113,8 +1113,29 @@ Proof.
 
   (* CongRefl *)
   - { split.
-      - { admit. }
-      - { admit. }
+      - { magic. }
+      - { eapply myTermTyConv ; [
+            eapply TermRefl ; try magic
+          | try magic ..
+          ].
+          - eapply myTermTyConv ; [ eassumption | magic .. ].
+          - apply CongId ; try magic.
+            + eapply myTermTyConv ; [ eassumption | magic .. ].
+            + eapply myTermTyConv ; [ eassumption | magic .. ].
+            + eapply myTermTyConv ; [ eassumption | magic .. ].
+            + eapply myTermTyConv ; [ eassumption | magic .. ].
+            + eapply myEqTyConv ; [
+                eapply myEqSym ; [ eassumption | magic .. ]
+              | magic ..
+              ].
+            + eapply myEqTyConv ; [
+                eapply myEqSym ; [ eassumption | magic .. ]
+              | magic ..
+              ].
+          - apply TyId ; try magic.
+            + eapply myTermTyConv ; [ eassumption | magic .. ].
+            + eapply myTermTyConv ; [ eassumption | magic .. ].
+        }
     }
 
   (* CongJ *)
@@ -1125,14 +1146,25 @@ Proof.
 
   (* CongCond *)
   - { split.
-      - { admit. }
-      - { admit. }
+      - { magic. }
+      - { eapply myTermTyConv ; [
+            eapply TermCond ; try magic
+          | magic ..
+          ].
+          - eapply myTermTyConv ; [ eassumption | magic .. ].
+          - eapply myTermTyConv ; [ eassumption | magic .. ].
+        }
     }
 
   (* CongTermSubst *)
   - { split.
-      - { admit. }
-      - { admit. }
+      - { magic. }
+      - { eapply myTermTyConv ; [
+            eapply myTermSubst ; try magic
+          | magic ..
+          ].
+          eapply myTermTyConv ; [ eassumption | magic .. ].
+          Unshelve. all:assumption.
     }
 
 Admitted.
