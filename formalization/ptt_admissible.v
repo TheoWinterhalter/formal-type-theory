@@ -277,7 +277,54 @@ Lemma EqSubstWeakZero :
            (subst (subst u (sbweak G B)) (sbzero G B v))
            u
            A.
-Admitted.
+Proof.
+  intros.
+  gocompsubst ; try eassumption ; try magic.
+  - eapply myEqTrans.
+    + eapply myCongTermSubst ; [
+        eapply WeakZero ; magic
+      | magic ..
+      ].
+    + apply EqIdSubst ; try magic.
+      eapply myTermTyConv ; [
+        eassumption
+      | try magic ..
+      ].
+      apply compWeakZero ; magic.
+    + assumption.
+    + magic.
+    + magic.
+    + eapply myTermTyConv ; [
+        eapply myTermSubst ; try eassumption ; try magic
+      | try magic ..
+      ].
+      apply EqTySym ; magic.
+    + eapply myTermTyConv ; [
+        eassumption
+      | try magic ..
+      ].
+      apply compWeakZero ; magic.
+  - eapply myTermTyConv ; [
+      (eapply myTermSubst ; try magic) ;
+      (eapply myTermSubst ; try magic) ;
+      eassumption
+    | try magic ..
+    ].
+    gocompsubst.
+  - eapply myTermTyConv ; [
+      eassumption
+    | try magic ..
+    ].
+    apply compWeakZero ; magic.
+  - apply EqTySym ; try magic.
+    apply EqTyWeakZero ; magic.
+  - eapply myTermTyConv ; [
+      eassumption
+    | try magic ..
+    ].
+    apply EqTyWeakZero ; magic.
+  Unshelve. all:magic.
+Defined.
 
 Lemma EqTermShiftZero :
   forall {G D A B u v sbs},
