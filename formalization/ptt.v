@@ -1481,6 +1481,42 @@ with eqterm : context -> term -> term -> type -> Type :=
              C1
              C2
          premise:
+            isterm G
+                  w1
+                  (Subst
+                     (Subst
+                        C1
+                        (sbshift
+                           G
+                           (Id
+                              (Subst A1 (sbweak G A1))
+                              (subst u1 (sbweak G A1))
+                              (var 0)
+                           )
+                           (sbzero G A1 u1)
+                        )
+                     )
+                     (sbzero G (Id A1 u1 u1) (refl A1 u1))
+                  )
+         premise:
+            isterm G
+                  w2
+                  (Subst
+                     (Subst
+                        C1
+                        (sbshift
+                           G
+                           (Id
+                              (Subst A1 (sbweak G A1))
+                              (subst u1 (sbweak G A1))
+                              (var 0)
+                           )
+                           (sbzero G A1 u1)
+                        )
+                     )
+                     (sbzero G (Id A1 u1 u1) (refl A1 u1))
+                  )
+         premise:
             eqterm G
                   w1
                   w2
