@@ -1434,13 +1434,61 @@ Proof.
           { eapply myTermTyConv ; [ eassumption | magic .. ]. }
           assert (isterm G (refl A2 u2) (Id A1 u1 u1)).
           { eapply myTermTyConv ; [ eapply TermRefl ; magic | magic .. ]. }
+          assert (issubst (sbweak G A2) (ctxextend G A1) G).
+          { eapply mySubstCtxConv ; magic. }
+          assert (istype (ctxextend G A1) (Subst A2 (sbweak G A2))).
+          { eapply myTySubst ; try magic ; try eassumption. }
+          assert (eqsubst (sbweak G A2) (sbweak G A1) (ctxextend G A1) G).
+          { eapply SubstSym ; try magic. }
+          assert (
+            eqtype (ctxextend G A1)
+                   (Subst A2 (sbweak G A2))
+                   (Subst A1 (sbweak G A1))
+          ).
+          { eapply myCongTySubst ; try eassumption ; magic. }
+          assert (
+            isterm (ctxextend G A1)
+                   (subst u2 (sbweak G A2)) (Subst A1 (sbweak G A1))
+          ).
+          { eapply myTermTyConv ; [
+              eapply myTermSubst ; try magic ; try eassumption
+            | try magic ; eassumption ..
+            ].
+          }
+          assert (
+            eqterm (ctxextend G A1)
+                   (subst u1 (sbweak G A1))
+                   (subst u2 (sbweak G A2))
+                   (Subst A1 (sbweak G A1))
+          ).
+          { eapply myCongTermSubst ; magic. }
           assert (
             eqtype
               (ctxextend G A1)
               (Id (Subst A1 (sbweak G A1)) (subst u1 (sbweak G A1)) (var 0))
               (Id (Subst A2 (sbweak G A2)) (subst u2 (sbweak G A2)) (var 0))
           ).
-          { admit. }
+          { eapply CongId ; try eassumption ; try magic. }
+          assert (issubst (sbzero G A2 u2) G (ctxextend G A1)).
+          { eapply mySubstCtxConv ; magic. }
+          assert (isterm (ctxextend G A1) (var 0) (Subst A2 (sbweak G A2))).
+          { eapply myTermTyConv ; [
+              eapply TermVarZero ; magic
+            | magic ..
+            ].
+          }
+          assert (
+            eqtype G
+                   (Subst (Id (Subst A1 (sbweak G A1))
+                              (subst u1 (sbweak G A1)) (var 0)
+                          )
+                          (sbzero G A1 u1)
+                   )
+                   (Id A1 u1 u1)
+          ).
+          { gopushsubst. eapply CongId ; try magic.
+            all:admit.
+          }
           assert (
             eqtype
               G
@@ -1473,9 +1521,10 @@ Proof.
             - eapply myCongTySubst ; try magic.
               + eapply myEqSubstCtxConv ; [
                   eapply myCongSubstShift ; try magic
-                | try magic ..
+                | try magic ; try eassumption ..
                 ].
-                all:admit.
+                * apply CtxRefl ; magic.
+                * admit.
               + eassumption.
               + admit.
               + admit.
