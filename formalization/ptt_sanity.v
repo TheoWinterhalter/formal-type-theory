@@ -1551,14 +1551,17 @@ Proof.
           assert (
             eqterm G
                    (subst (subst u2 (sbweak G A2)) (sbzero G A2 u2))
+                   u2
+                   (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+          ).
+          { eapply EqSubstWeakZero ; magic. }
+          assert (
+            eqterm G
+                   (subst (subst u2 (sbweak G A2)) (sbzero G A2 u2))
                    u1
                    (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
           ).
-          { eapply myEqTrans ; [
-              eapply EqSubstWeakZero ; try magic
-            | try magic ..
-            ].
-          }
+          { eapply myEqTrans ; [ eassumption | magic .. ]. }
           assert (isterm G (subst (var 0) (sbzero G A2 u2)) A2).
           { eapply myTermTyConv ; [
               eapply myTermSubst ; magic
@@ -1688,6 +1691,18 @@ Proof.
             eapply CtxRefl ; magic.
           }
           assert (
+            eqtype G
+                   (Subst
+                      (Id (Subst A2 (sbweak G A2))
+                          (subst u2 (sbweak G A2))
+                          (var 0)
+                      )
+                      (sbzero G A2 u2)
+                   )
+                   (Id A2 u2 u2)
+          ).
+          { gopushsubst. }
+          assert (
             istype G
                    (Subst
                       (Subst C2
@@ -1705,10 +1720,7 @@ Proof.
           { eapply myTySubst ; try magic.
             eapply myTySubst ; try magic.
             eapply mySubstCtxConv ; try magic.
-            - (* We probably can prove something here that makes it go
-                 away like in the previous assert. *)
-              admit.
-            - eapply CtxRefl ; magic.
+            eapply CtxRefl ; magic.
           }
           assert (
             isterm
