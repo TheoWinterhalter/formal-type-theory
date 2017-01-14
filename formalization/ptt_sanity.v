@@ -1478,16 +1478,153 @@ Proof.
             ].
           }
           assert (
+            eqtype G A1 (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 u1))
+          ).
+          { apply EqTyWeakZero ; magic. }
+          assert (
+            isterm G u1 (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 u1))
+          ).
+          { eapply myTermTyConv ; [ eassumption | magic .. ]. }
+          assert (
+            eqterm G
+                   (subst (subst u1 (sbweak G A1)) (sbzero G A1 u1))
+                   u1
+                   (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 u1))
+          ).
+          { eapply EqSubstWeakZero ; magic. }
+          assert (isterm G (subst (var 0) (sbzero G A1 u1)) A1).
+          { eapply myTermTyConv ; [
+              eapply myTermSubst ; magic
+            | magic ..
+            ].
+          }
+          assert (
+            eqterm G
+                   (subst (var 0) (sbzero G A1 u1))
+                   u1
+                   (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 u1))
+          ).
+          { eapply myEqTyConv ; [
+              eapply EqSubstZeroZero ; magic
+            | try magic ..
+            ].
+          }
+          assert (
             eqtype G
                    (Subst (Id (Subst A1 (sbweak G A1))
-                              (subst u1 (sbweak G A1)) (var 0)
+                              (subst u1 (sbweak G A1))
+                              (var 0)
                           )
                           (sbzero G A1 u1)
                    )
                    (Id A1 u1 u1)
           ).
-          { gopushsubst. eapply CongId ; try magic.
-            all:admit.
+          { gopushsubst. }
+          assert (
+            eqtype G A2 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+          ).
+          { apply EqTyWeakZero ; magic. }
+          assert (
+            eqtype G (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2)) A1
+          ).
+          { eapply myEqTyTrans ; [
+              eapply myEqTySym ; [ eassumption | magic .. ]
+            | magic ..
+            ].
+          }
+          assert (
+            isterm G u1 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+          ).
+          { eapply myTermTyConv ; [ eassumption | magic .. ]. }
+          assert (
+            isterm G u2 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+          ).
+          { eapply myTermTyConv ; [ eassumption | magic .. ]. }
+          assert (
+            eqterm G u2 u1 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+          ).
+          { eapply myEqSym ; [
+              eapply myEqTyConv ; [ eassumption | magic .. ]
+            | magic ..
+            ].
+          }
+          assert (
+            eqterm G
+                   (subst (subst u2 (sbweak G A2)) (sbzero G A2 u2))
+                   u1
+                   (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+          ).
+          { eapply myEqTrans ; [
+              eapply EqSubstWeakZero ; try magic
+            | try magic ..
+            ].
+          }
+          assert (isterm G (subst (var 0) (sbzero G A2 u2)) A2).
+          { eapply myTermTyConv ; [
+              eapply myTermSubst ; magic
+            | magic ..
+            ].
+          }
+          assert (
+            eqterm G
+                   (subst (var 0) (sbzero G A2 u2))
+                   u2
+                   (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+          ).
+          { eapply myEqTyConv ; [
+              eapply EqSubstZeroZero ; magic
+            | try magic ..
+            ].
+          }
+          assert (
+            eqterm G
+                   (subst (var 0) (sbzero G A2 u2))
+                   u1
+                   (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+          ).
+          { eapply myEqTrans ; [ eassumption | magic .. ]. }
+          assert (
+            eqtype G
+                   (Subst (Id (Subst A2 (sbweak G A2))
+                              (subst u2 (sbweak G A2))
+                              (var 0)
+                          )
+                          (sbzero G A2 u2)
+                   )
+                   (Id A1 u1 u1)
+          ).
+          { gopushsubst. }
+          assert (
+            istype (ctxextend G (Id A1 u1 u1))
+                   (Subst C1
+                          (sbshift G
+                                   (Id (Subst A1 (sbweak G A1))
+                                       (subst u1 (sbweak G A1))
+                                       (var 0)
+                                   )
+                                   (sbzero G A1 u1)
+                          )
+                   )
+          ).
+          { eapply myTySubst ; try magic.
+            eapply mySubstCtxConv ; try magic.
+            eapply CtxRefl ; magic.
+          }
+          assert (
+            istype (ctxextend G (Id A1 u1 u1))
+                   (Subst C2
+                          (sbshift G
+                                   (Id (Subst A2 (sbweak G A2))
+                                       (subst u2 (sbweak G A2))
+                                       (var 0)
+                                   )
+                                   (sbzero G A2 u2)
+                          )
+                   )
+          ).
+          { eapply myTySubst ; try magic.
+            eapply mySubstCtxConv ; try magic.
+            eapply CtxRefl ; magic.
           }
           assert (
             eqtype
@@ -1517,20 +1654,61 @@ Proof.
                  (sbzero G (Id A2 u2 u2) (refl A2 u2))
               )
           ).
-          { eapply myCongTySubst ; try magic.
+          { eapply myCongTySubst ; try magic ; try eassumption.
             - eapply myCongTySubst ; try magic.
               + eapply myEqSubstCtxConv ; [
                   eapply myCongSubstShift ; try magic
                 | try magic ; try eassumption ..
                 ].
                 * apply CtxRefl ; magic.
-                * admit.
+                * eapply mySubstCtxConv ; magic.
               + eassumption.
-              + admit.
-              + admit.
-            - admit.
-            - admit.
-            - admit.
+              + eapply mySubstCtxConv ; magic.
+              + eapply mySubstCtxConv ; magic.
+            - eapply mySubstCtxConv ; magic.
+          }
+          assert (
+            istype G
+                   (Subst
+                      (Subst C1
+                             (sbshift G
+                                      (Id (Subst A1 (sbweak G A1))
+                                          (subst u1 (sbweak G A1))
+                                          (var 0)
+                                      )
+                                      (sbzero G A1 u1)
+                             )
+                      )
+                      (sbzero G (Id A1 u1 u1) (refl A1 u1))
+                   )
+          ).
+          { eapply myTySubst ; try magic.
+            eapply myTySubst ; try magic.
+            eapply mySubstCtxConv ; try magic.
+            eapply CtxRefl ; magic.
+          }
+          assert (
+            istype G
+                   (Subst
+                      (Subst C2
+                             (sbshift G
+                                      (Id (Subst A2 (sbweak G A2))
+                                          (subst u2 (sbweak G A2))
+                                          (var 0)
+                                      )
+                                      (sbzero G A2 u2)
+                             )
+                      )
+                      (sbzero G (Id A2 u2 u2) (refl A2 u2))
+                   )
+          ).
+          { eapply myTySubst ; try magic.
+            eapply myTySubst ; try magic.
+            eapply mySubstCtxConv ; try magic.
+            - (* We probably can prove something here that makes it go
+                 away like in the previous assert. *)
+              admit.
+            - eapply CtxRefl ; magic.
           }
           assert (
             isterm
@@ -1552,8 +1730,7 @@ Proof.
               )
           ).
           { eapply myTermTyConv ; [ eassumption | try magic .. ].
-            (* The first goal should be handled as it is an hypothesis. *)
-            all:admit.
+            all:eassumption.
           }
           (* We can now proceed with the proof. *)
           eapply myTermTyConv ; [
