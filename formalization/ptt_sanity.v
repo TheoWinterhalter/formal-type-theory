@@ -1749,7 +1749,28 @@ Proof.
             eapply TermJ ; try magic
           | try magic ..
           ].
-          - admit.
+          - eapply myCongTySubst ; try magic.
+            + eapply myEqSubstCtxConv ; [
+                eapply CongSubstZero ; try magic
+              | try magic ..
+              ].
+              * eapply myTermTyConv ; [ eassumption | magic ..].
+              * eapply myEqSym ; [
+                  eapply myEqTyConv ; [ eassumption | magic ..]
+                | try magic ..
+                ].
+                (* I guess this should also be added since it appeared
+                   twice already. *)
+                eapply myTermTyConv ; [ eassumption | magic ..].
+              * apply EqCtxExtend ; try magic. gopushsubst.
+                (* I thought I proved it... *)
+                apply CongId ; try magic.
+                all:admit.
+              * eapply mySubstCtxConv ; magic.
+            + admit.
+            + admit.
+            + admit.
+            + admit.
           - admit.
           - admit.
           Unshelve. all:admit.
