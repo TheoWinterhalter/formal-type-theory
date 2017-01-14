@@ -944,6 +944,8 @@ Proof.
         - now apply sane_eqtype.
         - now apply sane_eqterm.
         - now apply sane_eqtype.
+        - now apply (ptt_sane_eqterm G w1 w2 _), sane_eqterm.
+        - now apply (ptt_sane_eqterm G w1 w2 _), sane_eqterm.
         - now apply sane_eqterm.
         - now apply sane_eqterm.
         - now apply sane_eqterm.
