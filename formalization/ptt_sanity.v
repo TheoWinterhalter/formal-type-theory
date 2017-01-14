@@ -1425,7 +1425,40 @@ Proof.
             + apply CtxRefl ; magic.
           Unshelve. all:magic.
         }
-      - { admit. }
+      - { eapply myTermTyConv ; [
+            eapply TermJ ; try magic
+          | try magic ..
+          ].
+          - eapply myTermTyConv ; [ eassumption | magic .. ].
+          - eapply myTermTyConv ; [ eassumption | try magic .. ].
+            + eapply myCongTySubst ; try magic.
+              * { eapply myEqSubstCtxConv ; [
+                    eapply CongSubstZero ; try magic
+                  | try magic ..
+                  ].
+                  - apply TyId ; try magic ;
+                    (eapply myTermTyConv ; [ eassumption | magic .. ]).
+                  - eapply myTermTyConv ; [
+                      eapply TermRefl ; try magic
+                    | try magic .. ].
+                    (* We keep proving the same thing over and over. *)
+                    all:admit.
+                  - admit.
+                  - admit.
+                }
+              * admit.
+              * admit.
+              * admit.
+              * admit.
+            + admit.
+            + admit.
+          - admit.
+          - admit.
+          - admit.
+          - admit.
+          - admit.
+          Unshelve. all:admit.
+        }
     }
 
   (* CongCond *)
