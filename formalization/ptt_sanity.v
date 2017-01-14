@@ -1425,35 +1425,92 @@ Proof.
             + apply CtxRefl ; magic.
           Unshelve. all:magic.
         }
-      - { eapply myTermTyConv ; [
+      - { (* Some preliminary results to just get the types right. *)
+          assert (isterm G u2 A2).
+          { eapply myTermTyConv ; [ eassumption | magic .. ]. }
+          assert (isterm G v2 A2).
+          { eapply myTermTyConv ; [ eassumption | magic .. ]. }
+          assert (isterm G p2 (Id A2 u2 v2)).
+          { eapply myTermTyConv ; [ eassumption | magic .. ]. }
+          assert (isterm G (refl A2 u2) (Id A1 u1 u1)).
+          { eapply myTermTyConv ; [ eapply TermRefl ; magic | magic .. ]. }
+          assert (
+            eqtype
+              (ctxextend G A1)
+              (Id (Subst A1 (sbweak G A1)) (subst u1 (sbweak G A1)) (var 0))
+              (Id (Subst A2 (sbweak G A2)) (subst u2 (sbweak G A2)) (var 0))
+          ).
+          { admit. }
+          assert (
+            eqtype
+              G
+              (Subst
+                 (Subst C1
+                        (sbshift G
+                                 (Id (Subst A1 (sbweak G A1))
+                                     (subst u1 (sbweak G A1))
+                                     (var 0)
+                                 )
+                                 (sbzero G A1 u1)
+                        )
+                 )
+                 (sbzero G (Id A1 u1 u1) (refl A1 u1))
+              )
+              (Subst
+                 (Subst C2
+                        (sbshift G
+                                 (Id (Subst A2 (sbweak G A2))
+                                     (subst u2 (sbweak G A2))
+                                     (var 0)
+                                 )
+                                 (sbzero G A2 u2)
+                        )
+                 )
+                 (sbzero G (Id A2 u2 u2) (refl A2 u2))
+              )
+          ).
+          { eapply myCongTySubst ; try magic.
+            - eapply myCongTySubst ; try magic.
+              + eapply myEqSubstCtxConv ; [
+                  eapply myCongSubstShift ; try magic
+                | try magic ..
+                ].
+                all:admit.
+              + eassumption.
+              + admit.
+              + admit.
+            - admit.
+            - admit.
+            - admit.
+          }
+          assert (
+            isterm
+              G
+              w2
+              (Subst
+                 (Subst
+                    C2
+                    (sbshift
+                       G
+                       (Id
+                          (Subst A2 (sbweak G A2))
+                          (subst u2 (sbweak G A2))
+                          (var 0)
+                       )
+                       (sbzero G A2 u2))
+                 )
+                 (sbzero G (Id A2 u2 u2) (refl A2 u2))
+              )
+          ).
+          { eapply myTermTyConv ; [ eassumption | try magic .. ].
+            (* The first goal should be handled as it is an hypothesis. *)
+            all:admit.
+          }
+          (* We can now proceed with the proof. *)
+          eapply myTermTyConv ; [
             eapply TermJ ; try magic
           | try magic ..
           ].
-          - eapply myTermTyConv ; [ eassumption | magic .. ].
-          - eapply myTermTyConv ; [ eassumption | try magic .. ].
-            + eapply myCongTySubst ; try magic.
-              * { eapply myEqSubstCtxConv ; [
-                    eapply CongSubstZero ; try magic
-                  | try magic ..
-                  ].
-                  - apply TyId ; try magic ;
-                    (eapply myTermTyConv ; [ eassumption | magic .. ]).
-                  - eapply myTermTyConv ; [
-                      eapply TermRefl ; try magic
-                    | try magic .. ].
-                    (* We keep proving the same thing over and over. *)
-                    all:admit.
-                  - admit.
-                  - admit.
-                }
-              * admit.
-              * admit.
-              * admit.
-              * admit.
-            + admit.
-            + admit.
-          - admit.
-          - admit.
           - admit.
           - admit.
           - admit.
