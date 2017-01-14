@@ -1325,7 +1325,48 @@ Proof.
 
   (* CongJ *)
   - { split.
-      - { admit. }
+      - { eapply myTermTyConv ; [
+            eapply TermJ ; try magic
+          | try magic ..
+          ].
+          - admit.
+            (* It seems that CongJ is missing some premises! *)
+          - apply EqTyRefl ; try magic.
+            eapply myTySubst ; try magic.
+            eapply myTySubst ; try magic.
+            eapply mySubstCtxConv ; [
+              eapply mySubstShift ; magic
+            | try magic ..
+            ].
+            + apply EqCtxExtend ; try magic.
+              gopushsubst.
+              eapply CongId ; try magic.
+              all:admit.
+            + apply CtxRefl ; magic.
+          - eapply myTySubst ; try magic.
+            eapply myTySubst ; try magic.
+            eapply mySubstCtxConv ; [
+              eapply mySubstShift ; magic
+            | try magic ..
+            ].
+            + apply EqCtxExtend ; try magic.
+              gopushsubst.
+              eapply CongId ; try magic.
+              all:admit.
+            + apply CtxRefl ; magic.
+          - eapply myTySubst ; try magic.
+            eapply myTySubst ; try magic.
+            eapply mySubstCtxConv ; [
+              eapply mySubstShift ; magic
+            | try magic ..
+            ].
+            + apply EqCtxExtend ; try magic.
+              gopushsubst.
+              eapply CongId ; try magic.
+              all:admit.
+            + apply CtxRefl ; magic.
+          Unshelve. all:admit.
+        }
       - { admit. }
     }
 
