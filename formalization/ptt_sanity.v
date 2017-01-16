@@ -1791,6 +1791,43 @@ Proof.
             | magic ..
             ].
           }
+          assert (eqterm G v1 v2 A2).
+          { eapply myEqTyConv ; [ eassumption | magic .. ]. }
+          assert (isterm G v1 A2).
+          { eapply myTermTyConv ; [ eassumption | magic .. ]. }
+          assert (eqterm G v2 v1 A2).
+          { eapply myEqSym ; [ eassumption | magic .. ]. }
+          assert (issubst (sbweak G A1) (ctxextend G A2) G).
+          { eapply mySubstCtxConv ; magic. }
+          assert (istype (ctxextend G A2) (Subst A1 (sbweak G A1))).
+          { eapply myTySubst ; try magic ; try eassumption. }
+          assert (eqsubst (sbweak G A1) (sbweak G A2) (ctxextend G A2) G).
+          { eapply SubstSym ; try magic. }
+          assert (
+            isterm (ctxextend G A2)
+                   (subst u1 (sbweak G A1))
+                   (Subst A2 (sbweak G A2))
+          ).
+          { eapply myTermTyConv ; [
+              eapply myTermSubst ; try magic ; try eassumption
+            | try magic ; try eassumption ..
+            ].
+            eapply myCongTySubst ; try magic. eassumption.
+          }
+          assert (eqterm G u1 u2 A2).
+          { eapply myEqTyConv ; [ exact H | magic .. ]. }
+          assert (isterm G u1 A2).
+          { eapply myTermTyConv ; [ exact i4 | magic .. ]. }
+          assert (eqterm G u2 u1 A2).
+          { eapply myEqSym ; [ eassumption | magic .. ]. }
+          assert (
+            isterm (ctxextend G A2) (var 0) (Subst A1 (sbweak G A1))
+          ).
+          { eapply myTermTyConv ; [
+              eapply TermVarZero ; magic
+            | magic ..
+            ].
+          }
           (* We can now proceed with the proof. *)
           eapply myTermTyConv ; [
             eapply TermJ ; try magic
@@ -1807,7 +1844,21 @@ Proof.
                 ].
               * apply EqCtxExtend ; try magic. gopushsubst.
               * eapply mySubstCtxConv ; magic.
-            + admit.
+            + eapply myCongTySubst ; try magic.
+              * { eapply myEqSubstCtxConv ; [
+                    eapply myCongSubstShift ; try magic
+                  | try magic ; try eassumption ..
+                  ].
+                  - apply CongId ; try magic.
+                    (* Maybe enhance magic for this? *)
+                    eapply myCongTermSubst ; try magic ; try eassumption.
+                  - eapply mySubstCtxConv ; try magic.
+                  - eapply mySubstCtxConv ; try magic.
+                    eapply EqCtxExtend ; try magic.
+                    admit.
+                }
+              * admit.
+              * admit.
             + admit.
             + admit.
             + admit.
