@@ -1828,6 +1828,8 @@ Proof.
             | magic ..
             ].
           }
+          assert (issubst (sbzero G A2 v2) G (ctxextend G A1)).
+          { eapply mySubstCtxConv ; magic. }
           (* We can now proceed with the proof. *)
           eapply myTermTyConv ; [
             eapply TermJ ; try magic
@@ -1849,18 +1851,30 @@ Proof.
                     eapply myCongSubstShift ; try magic
                   | try magic ; try eassumption ..
                   ].
-                  - eapply mySubstCtxConv ; try magic.
-                  - eapply mySubstCtxConv ; try magic.
-                    eapply EqCtxExtend ; try magic.
-                    admit.
+                  - eapply mySubstCtxConv ; magic.
+                  - eapply mySubstCtxConv ; magic.
                 }
-              * admit.
-              * admit.
-            + admit.
-            + admit.
-            + admit.
-          - admit.
-          - admit.
+              * eapply myEqTyCtxConv ; [
+                  eapply myEqTySym ; [ eassumption | magic .. ]
+                | magic ..
+                ].
+              * eapply mySubstCtxConv ; magic.
+            + eapply myTyCtxConv ; [
+                eapply myTySubst ; magic
+              | magic ..
+              ].
+            + eapply mySubstCtxConv ; try magic.
+              admit.
+            + eapply mySubstCtxConv ; try magic.
+              admit.
+          - eapply myTySubst ; try magic.
+            eapply myTySubst ; try magic.
+            eapply mySubstCtxConv ; try magic.
+            all:admit.
+          - eapply myTySubst ; try magic.
+            eapply myTySubst ; try magic.
+            eapply mySubstCtxConv ; try magic.
+            all:admit.
           Unshelve. all:admit.
         }
     }
