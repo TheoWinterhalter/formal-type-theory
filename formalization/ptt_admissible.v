@@ -188,13 +188,6 @@ Proof.
           - magic.
           - magic.
         }
-      * eapply myCongTermSubst ; [
-          eapply mySubstSym ; [
-            eapply WeakNat ; magic
-          | magic ..
-          ]
-        | magic ..
-        ].
       * { eapply myTermTyConv.
           - eapply myTermSubst ; try magic.
             eapply myTermSubst ; try magic.

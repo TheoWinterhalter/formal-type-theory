@@ -1849,9 +1849,6 @@ Proof.
                     eapply myCongSubstShift ; try magic
                   | try magic ; try eassumption ..
                   ].
-                  - apply CongId ; try magic.
-                    (* Maybe enhance magic for this? *)
-                    eapply myCongTermSubst ; try magic ; try eassumption.
                   - eapply mySubstCtxConv ; try magic.
                   - eapply mySubstCtxConv ; try magic.
                     eapply EqCtxExtend ; try magic.

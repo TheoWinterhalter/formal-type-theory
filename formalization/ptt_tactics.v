@@ -319,7 +319,10 @@ Ltac magicn n :=
   | |- eqtype ?G (Subst ?A ?sbs) (Subst ?B ?sbt) =>
     eapply myCongTySubst ; magicn n
   (* To be continued... *)
-  (* Equality of terms to do *)
+  (* Equality of terms *)
+  | |- eqterm ?G (subst ?u ?sbs) (subst ?v ?sbt) ?A =>
+    eapply myCongTermSubst ; magicn n
+  (* To be continues... *)
   (* When all else fails. *)
   (* This part will hopefully be gone at some point. *)
   | _ =>
