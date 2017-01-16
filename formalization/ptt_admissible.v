@@ -586,8 +586,7 @@ Proof.
                 (sbzero D A v)))
       (ctxextend D (Id A u v))
   ).
-  (* { now apply EqCtxExtend. } *)
-  admit.
+  { magic. }
   assert (isctx (ctxextend D A)).
   { now apply CtxExtend. }
   assert (isctx
@@ -620,15 +619,15 @@ Proof.
       sbs
       G D
   ).
-  (* { eapply SubstTrans. *)
-  (*   - eapply CongSubstComp. *)
-  (*     + eapply WeakZero. magic. *)
-  (*     + eapply SubstRefl. assumption. *)
-  (*   - eapply SubstTrans. *)
-  (*     + eapply CompIdRight. assumption. *)
-  (*     + eapply SubstRefl. assumption. *)
-  (* } *)
-  { admit. }
+  { eapply mySubstTrans ; [
+      eapply myCongSubstComp ; [
+        eapply WeakZero ; magic
+      | eapply SubstRefl ; magic
+      | magic ..
+      ]
+    | magic ..
+    ].
+  }
   assert (eqtype D A A).
   { apply EqTyRefl ; assumption. }
   assert (eqtype G
@@ -637,6 +636,15 @@ Proof.
   { gocompsubst. gocompsubst. }
   assert (eqterm D u u A).
   { apply EqRefl ; assumption. }
+  (* assert ( *)
+  (*   isterm G *)
+  (*          (subst (subst (subst u sbs) (sbweak G (Subst A sbs))) *)
+  (*                 (sbzero G (Subst A sbs) (subst v sbs))) *)
+  (*          (Subst (Subst A sbs) *)
+  (*                 (sbcomp (sbweak G (Subst A sbs)) *)
+  (*                         (sbzero G (Subst A sbs) (subst v sbs)))) *)
+  (* ). *)
+  (* { admit. } *)
   assert (
     eqterm G
     (subst (subst (subst u sbs) (sbweak G (Subst A sbs)))
@@ -644,6 +652,7 @@ Proof.
     (Subst (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
        (sbzero G (Subst A sbs) (subst v sbs)))
   ).
+  (* { gocompsubst. *)
   (* { gocompsubst. gocompsubst. eapply CongTermSubst ; eassumption. } *)
   { admit. }
   assert (
