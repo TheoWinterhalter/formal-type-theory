@@ -1744,6 +1744,53 @@ Proof.
           { eapply myTermTyConv ; [ eassumption | try magic .. ].
             all:eassumption.
           }
+          (* Some extra lemmata. *)
+          assert (isterm G p1 (Id A2 u2 v2)).
+          { eapply myTermTyConv ; [ eassumption | magic ..]. }
+          assert (
+            eqtype G A2 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+          ).
+          { apply EqTyWeakZero ; magic. }
+          assert (
+            eqtype G (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2)) A1
+          ).
+          { eapply myEqTyTrans ; [
+              eapply myEqTySym ; [ eassumption | magic .. ]
+            | magic ..
+            ].
+          }
+          assert (
+            isterm G u2 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+          ).
+          { eapply myTermTyConv ; [ exact i5 | magic .. ]. }
+          assert (
+            isterm G v2 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+          ).
+          { eapply myTermTyConv ; [ exact i7 | magic .. ]. }
+          assert (
+            eqterm G
+                   (subst (subst u2 (sbweak G A2)) (sbzero G A2 v2))
+                   u2
+                   (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+          ).
+          { eapply EqSubstWeakZero ; magic. }
+          assert (isterm G (subst (var 0) (sbzero G A2 v2)) A2).
+          { eapply myTermTyConv ; [
+              eapply myTermSubst ; magic
+            | magic ..
+            ].
+          }
+          assert (
+            eqterm G
+                   (subst (var 0) (sbzero G A2 v2))
+                   v2
+                   (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+          ).
+          { eapply myEqTyConv ; [
+              eapply EqSubstZeroZero ; magic
+            | magic ..
+            ].
+          }
           (* We can now proceed with the proof. *)
           eapply myTermTyConv ; [
             eapply TermJ ; try magic
@@ -1754,18 +1801,11 @@ Proof.
                 eapply CongSubstZero ; try magic
               | try magic ..
               ].
-              * eapply myTermTyConv ; [ eassumption | magic ..].
               * eapply myEqSym ; [
                   eapply myEqTyConv ; [ eassumption | magic ..]
                 | try magic ..
                 ].
-                (* I guess this should also be added since it appeared
-                   twice already. *)
-                eapply myTermTyConv ; [ eassumption | magic ..].
               * apply EqCtxExtend ; try magic. gopushsubst.
-                (* I thought I proved it... *)
-                apply CongId ; try magic.
-                all:admit.
               * eapply mySubstCtxConv ; magic.
             + admit.
             + admit.
