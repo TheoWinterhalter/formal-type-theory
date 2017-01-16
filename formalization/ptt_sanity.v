@@ -848,8 +848,15 @@ Proof.
               | try magic ..
               ].
               * eassumption.
-              * (* This seems to be what used to be called JTyConv! *)
-                admit.
+              * { eapply myEqTyTrans ; [
+                    eapply JTyConv ; try magic ; eassumption
+                  | try magic ..
+                  ].
+                  - admit.
+                  - admit.
+                  - admit.
+                  - admit.
+                }
               * eapply TySubst ; try magic.
                 eapply TySubst ; try magic.
                 { eapply mySubstCtxConv ; try magic.
@@ -950,7 +957,11 @@ Proof.
               | try magic ..
               ].
               gopushsubst.
-          - admit. (* Still JTyConv? *)
+          - eapply myEqTySym ; try magic.
+            + eapply JTyConv ; try magic.
+              eassumption.
+            + admit.
+            + admit.
           - assumption.
           - eapply myTySubst ; try magic.
             + eapply mySubstCtxConv ; [
