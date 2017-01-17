@@ -9,7 +9,6 @@ Inductive isctx : context -> Type :=
 
      | CtxExtend :
          forall {G A},
-           isctx G ->
            istype G A ->
            isctx (ctxextend G A)
 

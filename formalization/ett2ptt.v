@@ -43,7 +43,7 @@ Proof.
     (* CtxExtend *)
     - {
         intros ; apply ptt.CtxExtend.
-        + now apply sane_isctx.
+        + now apply (ptt_sane_istype G A), sane_istype.
         + now apply sane_istype.
       }
   }
