@@ -104,12 +104,15 @@ endif
 VFILES:=syntax.v\
   ett.v\
   ptt.v\
+  myptt.v\
+  ptt_tactics.v\
+  ptt_admissible.v\
+  ptt_inversion.v\
+  ptt_sanity.v\
   ptt2ett.v\
   ett2ptt.v\
   ctt.v\
   itt.v\
-  preadmissibility.v\
-  sanity.v\
   eval.v\
   translation.v
 

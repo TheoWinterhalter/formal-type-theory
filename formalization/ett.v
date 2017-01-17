@@ -9,7 +9,6 @@ Inductive isctx : context -> Type :=
 
      | CtxExtend :
          forall {G A},
-           isctx G ->
            istype G A ->
            isctx (ctxextend G A)
 
@@ -136,7 +135,6 @@ with isterm : context -> term -> type -> Type :=
 
      | TermApp :
          forall {G A B u v},
-           istype (ctxextend G A) B ->
            isterm G u (Prod A B) ->
            isterm G v A ->
            isterm G (app u A B v) (Subst B (sbzero G A v))

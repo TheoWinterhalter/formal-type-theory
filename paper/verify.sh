@@ -6,7 +6,7 @@
 sanityRules=$(sed -n 's/^.*section\*{Rule {\\rl\([A-Za-z]+\)}.*$/\1/p' sanity.tex)
 rulesRules=$(sed -n 's/^.*\\rl\([A-Za-z]+\)}.*$/\1/p' rules.tex)
 ttRules=$(sed -n 's/^.*\\show\([A-Za-z]+\)}.*$/\1/p' tt.tex)
-coqRules=$(sed -n 's/^.*| \([A-Za-z]+\) :.*$//p' ../formalization/reflections.v)
+coqRules=$(sed -n 's/^.*| \([A-Za-z]+\) :.*$//p' ../formalization/ett.v)
 
 echo "Checking sanity.tex against rules.tex:"
 diff <(echo "$rulesRules") <(echo "$sanityRules")

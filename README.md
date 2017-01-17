@@ -8,3 +8,8 @@ The ultimate goal is to be able to eliminate equality reflection, hopefully usin
 * `paper` contains a LaTeX version of the rules (of ETT).
 
 Refer to the `README` inside the folder to get more information about its strucutre.
+
+## Branches of interest
+
+* `master` contains the current status of the sanity formalization,
+* `translation` is the branch where the translation is being made, it also contains a definition of ITT.

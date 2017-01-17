@@ -108,6 +108,7 @@ Ltac pushsubst1 :=
     ]
   | _ => fail
   end.
+
 (* Some admissibility lemmata. *)
 Lemma EqTyWeakNat :
   forall {G D A B sbs},
