@@ -1681,8 +1681,65 @@ Proof.
     - assumption.
     - magic.
   }
+  assert (
+    istype G
+   (Subst
+      (Subst
+         (Subst C
+            (sbshift (ctxextend G (Subst A sbs))
+               (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+               (sbshift G A sbs)))
+         (sbshift G
+            (Id (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+               (subst (subst u sbs) (sbweak G (Subst A sbs)))
+               (var 0)) (sbzero G (Subst A sbs) (subst v sbs))))
+      (sbzero G (Id (Subst A sbs) (subst u sbs) (subst v sbs)) (subst p sbs)))
+  ).
+  { eapply myTySubst ; try magic.
+    eapply myTySubst ; try magic.
+    eapply mySubstCtxConv ; magic.
+    Unshelve. assumption.
+  }
+  assert (
+    issubst
+    (sbshift G
+       (Id (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+          (subst (subst u sbs) (sbweak G (Subst A sbs)))
+          (var 0)) (sbzero G (Subst A sbs) (subst v sbs)))
+    (ctxextend G (Id (Subst A sbs) (subst u sbs) (subst v sbs)))
+    (ctxextend (ctxextend G (Subst A sbs))
+       (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+          (sbshift G A sbs)))
+  ).
+  { eapply mySubstCtxConv ; magic.
+    Unshelve. assumption.
+  }
   (* Now let's proceed with the proof. *)
-  gocompsubst. gocompsubst. gocompsubst.
+  (* We start by composing all the substitutions so we can forget about
+     the types. *)
+  gocompsubst ; try assumption.
+  gocompsubst ; try assumption.
+  gocompsubst ; try assumption.
+  gocompsubst ; try assumption.
+  (* Now we can focus on susbtitutions. *)
+  eapply myCongTySubst ; try magic.
+  (* We go from the rhs. *)
+  eapply mySubstSym ; try magic.
+  eapply mySubstTrans ; [
+    (* Then we only look on the lhs of the composition. *)
+    eapply myCongSubstComp ; [
+      (* We exchange the substitutionss. *)
+      eapply mySubstSym ; [
+        eapply ShiftZero ; magic
+      | magic ..
+      ]
+    | (* We don't touch the rhs. *)
+      eapply SubstRefl ; magic
+    | magic ..
+    ]
+  | try magic ..
+  ].
+
   all:admit.
   (* - eapply SubstCtxConv ; magic. *)
   (* - gocompsubst. *)
@@ -1701,6 +1758,9 @@ Proof.
   (*           - (* We don't touch the rhs. *) *)
   (*             eapply SubstRefl. eassumption. *)
   (*         } *)
+
+  (* WE ARE HERE. *)
+
   (*         (* We're using associativity to look at the rhs. *) *)
   (*         eapply SubstTrans. *)
   (*         { eapply CompAssoc ; magic. } *)
