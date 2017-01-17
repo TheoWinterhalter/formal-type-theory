@@ -604,3 +604,24 @@ Proof.
   intros.
   eapply @CongSubstComp with (D := D) ; assumption.
 Defined.
+
+Lemma myCompAssoc :
+  rule
+    parameters: {G D E F sbs sbt sbr},
+    premise: issubst sbs G D
+    premise: issubst sbt D E
+    premise: issubst sbr E F
+    premise: isctx G
+    premise: isctx D
+    premise: isctx E
+    premise: isctx F
+    conclusion:
+      eqsubst (sbcomp sbr (sbcomp sbt sbs))
+              (sbcomp (sbcomp sbr sbt) sbs)
+              G
+              F
+  endrule.
+Proof.
+  intros.
+  eapply @CompAssoc with (D := D) (E := E) (F := F) ; assumption.
+Defined.
