@@ -7,7 +7,8 @@ The ultimate goal is to be able to eliminate equality reflection, hopefully usin
 * `formalization` contains a coq formalization of various types theories and the ongoing translation,
 * `paper` contains a LaTeX version of the rules (of ETT).
 
-Refer to the `README` inside the folder to get more information about its strucutre.
+Refer to the `README` inside the folder to get more information about its strucutre.  
+*[**TODO**: Explain how to use the script to generate the LaTeX.]*
 
 ## Branches of interest
 
