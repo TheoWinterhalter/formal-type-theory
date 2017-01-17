@@ -13,7 +13,7 @@ The purpose here is to state and prove theorems about the sanity of different ty
 * `ptt_sanity.v`: Sanity theorem for PTT,
 * `ett2ptt.v`: Translation from ETT to PTT, this is a sanity result as it means that we can elaborate the missing premises,
 * `ptt2ett.v`: Translation from PTT to ETT,
-* `uniqueness.v`: Proof of uniqueness of typing for ETT.
+* `uniqueness.v`: Proof of uniqueness of typing for ETT (*WIP*).
 
 ## Translation
 
