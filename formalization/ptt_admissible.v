@@ -1714,6 +1714,215 @@ Proof.
   { eapply mySubstCtxConv ; magic.
     Unshelve. assumption.
   }
+  assert (
+    issubst
+    (sbshift G
+       (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+          (sbzero D A v)) sbs) (ctxextend G (Subst (Id A u v) sbs))
+    (ctxextend D (Id A u v))
+  ).
+  { eapply mySubstCtxConv ; magic.
+    Unshelve. assumption.
+  }
+  assert (
+    eqtype G
+    (Subst
+       (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+          (sbzero D A v)) sbs)
+    (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+       (sbcomp (sbzero D A v) sbs))
+  ).
+  { gocompsubst. Unshelve. assumption. }
+  assert (
+    eqctx
+    (ctxextend G
+       (Subst
+          (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+             (sbzero D A v)) sbs))
+    (ctxextend G
+       (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+          (sbcomp (sbzero D A v) sbs)))
+  ).
+  { eapply EqCtxExtend ; try magic. assumption. }
+  assert (
+    issubst
+   (sbcomp
+      (sbshift D (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+         (sbzero D A v))
+      (sbshift G
+         (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+            (sbzero D A v)) sbs))
+   (ctxextend G
+      (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+         (sbcomp (sbzero D A v) sbs)))
+   (ctxextend (ctxextend D A)
+      (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))
+  ).
+  { eapply mySubstCtxConv ; try magic. assumption. }
+  assert (
+    issubst
+    (sbshift G (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+       (sbcomp (sbzero D A v) sbs)) (ctxextend G (Subst (Id A u v) sbs))
+    (ctxextend (ctxextend D A)
+       (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))
+  ).
+  { eapply mySubstCtxConv ; try magic. assumption. }
+  assert (
+    issubst
+    (sbshift G (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+       (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
+    (ctxextend G
+       (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+          (sbcomp (sbzero D A v) sbs)))
+    (ctxextend (ctxextend D A)
+       (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))
+  ).
+  { eapply mySubstCtxConv ; magic. }
+  assert (
+    issubst
+    (sbshift G (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+       (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
+    (ctxextend G (Subst (Id A u v) sbs))
+    (ctxextend (ctxextend D A)
+       (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))
+  ).
+  { eapply mySubstCtxConv ; try magic. assumption. }
+  assert (
+    eqtype G
+    (Subst
+       (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+          (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs)))
+    (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+       (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
+  ).
+  { gocompsubst. Unshelve. assumption. }
+  assert (
+    eqctx
+    (ctxextend G
+       (Subst
+          (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+             (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs))))
+    (ctxextend G
+       (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+          (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs)))))
+  ).
+  { eapply EqCtxExtend ; try magic. assumption. }
+  assert (
+    issubst
+   (sbcomp
+      (sbshift (ctxextend G (Subst A sbs))
+         (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+         (sbshift G A sbs))
+      (sbshift G
+         (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+            (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs))))
+   (ctxextend G
+      (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+         (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs)))))
+   (ctxextend (ctxextend D A)
+      (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))
+  ).
+  { eapply mySubstCtxConv ; try magic. assumption. }
+  assert (
+    issubst
+    (sbcomp
+       (sbshift (ctxextend G (Subst A sbs))
+          (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+          (sbshift G A sbs))
+       (sbshift G
+          (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+             (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs))))
+    (ctxextend G (Subst (Id A u v) sbs))
+    (ctxextend (ctxextend D A)
+       (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))
+  ).
+  { eapply mySubstCtxConv ; try magic. assumption. }
+  assert (
+    issubst
+    (sbshift G
+       (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+          (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs)))
+    (ctxextend G (Subst (Id A u v) sbs))
+    (ctxextend (ctxextend G (Subst A sbs))
+       (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+          (sbshift G A sbs)))
+  ).
+  { eapply mySubstCtxConv ; try magic. assumption.
+    Unshelve. all:assumption.
+  }
+  assert (
+    issubst
+   (sbshift G
+      (Id (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+         (subst (subst u sbs) (sbweak G (Subst A sbs)))
+         (var 0)) (sbzero G (Subst A sbs) (subst v sbs)))
+   (ctxextend G
+      (Subst
+         (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+            (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs))))
+   (ctxextend (ctxextend G (Subst A sbs))
+      (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
+         (sbshift G A sbs)))
+  ).
+  { eapply mySubstCtxConv ; magic.
+    Unshelve. all:assumption.
+  }
+  assert (
+    issubst
+      (sbzero G
+              (Id (Subst A sbs) (subst u sbs) (subst v sbs))
+              (subst p sbs)
+      )
+      G
+      (ctxextend G (Subst (Id A u v) sbs))
+  ).
+  { eapply mySubstCtxConv ; magic. }
+  assert (
+    eqtype G
+    (Subst
+       (Subst (Subst (Subst (Subst A (sbweak D A)) (sbzero D A v)) sbs)
+          (sbweak G (Subst A sbs))) (sbzero G (Subst A sbs) (subst v sbs)))
+    (Subst A sbs)
+  ).
+  { gocompsubst. gocompsubst. Unshelve. assumption. }
+  assert (
+    isterm G
+    (subst (subst (subst u sbs) (sbweak G (Subst A sbs)))
+       (sbzero G (Subst A sbs) (subst v sbs))) (Subst A sbs)
+  ).
+  { eapply myTermTyConv ; [
+      eapply myTermSubst ; [
+        magic
+      | eapply myTermSubst ; [
+          magic
+        | eapply myTermSubst ; [ magic | eassumption | magic .. ]
+        | magic ..
+        ]
+      | magic ..
+      ]
+    | try magic ..
+    ].
+    assumption.
+  }
+  assert (
+    eqtype G (Subst A sbs)
+   (Subst (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+      (sbzero G (Subst A sbs) (subst v sbs)))
+  ).
+  { gocompsubst. gocompsubst. Unshelve. assumption. }
+  assert (
+     eqterm G (subst u sbs)
+   (subst (subst (subst u sbs) (sbweak G (Subst A sbs)))
+      (sbzero G (Subst A sbs) (subst v sbs))) (Subst A sbs)
+  ).
+  { eapply myEqSym ; try magic. eapply EqSubstWeakZero ; magic. }
+  assert (
+     eqterm G
+            (subst v sbs)
+            (subst (var 0) (sbzero G (Subst A sbs) (subst v sbs)))
+            (Subst A sbs)
+  ).
+  { eapply myEqSym ; try magic. eapply EqSubstZeroZero ; magic. }
   (* Now let's proceed with the proof. *)
   (* We start by composing all the substitutions so we can forget about
      the types. *)
@@ -1739,124 +1948,107 @@ Proof.
     ]
   | try magic ..
   ].
-
-  all:admit.
-  (* - eapply SubstCtxConv ; magic. *)
-  (* - gocompsubst. *)
-  (*   + eapply SubstComp. *)
-  (*     * magic. *)
-  (*     * eapply SubstCtxConv ; magic. *)
-  (*   + eapply CongTySubst. *)
-  (*     * (* Now we're back to where we're supposed to be, *)
-  (*              where the proof is in my notebook. *) *)
-  (*       (* We go from the rhs. *) *)
-  (*       { eapply SubstSym. eapply SubstTrans. *)
-  (*         { (* Then we only look on the lhs of the composition. *) *)
-  (*           eapply CongSubstComp. *)
-  (*           - (* We exchange the substs. *) *)
-  (*             eapply SubstSym. eapply ShiftZero ; assumption. *)
-  (*           - (* We don't touch the rhs. *) *)
-  (*             eapply SubstRefl. eassumption. *)
-  (*         } *)
-
-  (* WE ARE HERE. *)
-
-  (*         (* We're using associativity to look at the rhs. *) *)
-  (*         eapply SubstTrans. *)
-  (*         { eapply CompAssoc ; magic. } *)
-  (*         (* We can now have a look at the rhs of the composition. *) *)
-  (*         eapply SubstTrans. *)
-  (*         { eapply CongSubstComp. *)
-  (*           - (* On the left we remain unchanged. *) *)
-  (*             eapply SubstRefl. magic. *)
-  (*           - (* On the right we have a composition of shifts, thus we *)
-  (*                use fonctoriality to progress. *)
-  (*                However we need to apply congruence again to rewrite *)
-  (*                the type in the left shift. *)
-  (*              *) *)
-  (*             eapply CongSubstComp. *)
-  (*             + eapply @CongSubstShift *)
-  (*               with (A2 := Subst *)
-  (*                            (Id (Subst A (sbweak D A)) *)
-  (*                                (subst u (sbweak D A)) *)
-  (*                                (var 0)) *)
-  (*                            (sbzero D A v) *)
-  (*                    ). *)
-  (*               * eassumption. *)
-  (*               * eapply SubstRefl ; eassumption. *)
-  (*               * apply EqTySym. assumption. *)
-  (*             + (* We don't change the other substitution. *) *)
-  (*               eapply SubstRefl. magic. *)
-  (*         } *)
-  (*         (* Now that we rewrote the type, we can use fonctoriality. *) *)
-  (*         (* Note this could be meged with the next couple steps. *) *)
-  (*         eapply SubstTrans. *)
-  (*         { eapply CongSubstComp. *)
-  (*           - (* On the left we remain unchanged. *) *)
-  (*             eapply SubstRefl. magic. *)
-  (*           - eapply EqSubstCtxConv. *)
-  (*             + eapply CompShift ; magic. *)
-  (*             + assumption. *)
-  (*             + apply CtxRefl. assumption. *)
-  (*         } *)
-  (*         (* Now that we have a composition inside the shift, we want *)
-  (*            to proceed with an exchange by using ShiftZero. *) *)
-  (*         eapply SubstTrans. *)
-  (*         { eapply CongSubstComp. *)
-  (*           - (* We leave the left unchanged. *) *)
-  (*             eapply SubstRefl. magic. *)
-  (*           - eapply EqSubstCtxConv. *)
-  (*             + eapply CongSubstShift. *)
-  (*               * eassumption. *)
-  (*               * eapply SubstSym. now eapply ShiftZero. *)
-  (*               * apply EqTyRefl. assumption. *)
-  (*             + assumption. *)
-  (*             + apply CtxRefl. assumption. *)
-  (*         } *)
-  (*         (* Now we need to apply CompShift again to put the composition outside *)
-  (*            and apply associativity. *) *)
-  (*         eapply SubstTrans. *)
-  (*         { eapply CongSubstComp. *)
-  (*           - (* On the left we remain unchanged. *) *)
-  (*             eapply SubstRefl. magic. *)
-  (*           - eapply SubstSym. eapply EqSubstCtxConv. *)
-  (*             + eapply CompShift ; magic. *)
-  (*             + assumption. *)
-  (*             + apply CtxRefl. assumption. *)
-  (*         } *)
-  (*         (* Now, it's time to apply associativity guys. *) *)
-  (*         eapply SubstTrans. *)
-  (*         { eapply SubstSym. eapply CompAssoc. *)
-  (*           - magic. *)
-  (*           - eapply SubstCtxConv. *)
-  (*             + magic. *)
-  (*             + assumption. *)
-  (*             + eapply CtxRefl. assumption. *)
-  (*           - magic. *)
-  (*         } *)
-  (*         (* Now we should finally have the same structure for the substitutions *)
-  (*            and thus be able to apply congruences. *) *)
-  (*         eapply CongSubstComp. *)
-  (*         - eapply CongSubstComp. *)
-  (*           + eapply CongSubstZero. *)
-  (*             * eassumption. *)
-  (*             * assumption. *)
-  (*             * apply EqRefl. magic. *)
-  (*           + { eapply EqSubstCtxConv. *)
-  (*               - eapply CongSubstShift. *)
-  (*                 + assumption. *)
-  (*                 + eapply SubstRefl. magic. *)
-  (*                 + apply EqTySym. assumption. *)
-  (*               - apply EqCtxExtend. *)
-  (*                 + assumption. *)
-  (*                 + assumption. *)
-  (*               - apply CtxRefl. assumption. *)
-  (*             } *)
-  (*         - apply SubstRefl. apply SubstShift. *)
-  (*           + magic. *)
-  (*           + assumption. *)
-  (*       } *)
-  (*     * eapply EqTyRefl. eassumption. *)
+  (* We're using associativity to look at the rhs. *)
+  eapply mySubstTrans ; [
+    eapply myCompAssoc ; magic
+  | try magic ..
+  ].
+  (* We can now have a look at the rhs of the composition. *)
+  eapply mySubstTrans ; [
+    eapply myCongSubstComp ; [
+      (* On the left we remain unchanged. *)
+      eapply SubstRefl ; magic
+    | (* On the right we have a composition of shifts, thus we use
+         fonctoriality to progress.
+         However we need to apply congruence again to rewrite
+         the type in the left shift. *)
+      eapply myCongSubstComp ; [
+        eapply @myCongSubstShift
+        with (A2 := Subst
+                     (Id (Subst A (sbweak D A))
+                         (subst u (sbweak D A))
+                         (var 0))
+                     (sbzero D A v)
+             ) ; try magic ;
+        (apply CtxRefl ; magic)
+      | (* We don't change the other substitution. *)
+        apply SubstRefl ; magic
+      | magic ..
+      ]
+    | magic ..
+    ]
+  | try magic ..
+  ].
+  (* Now that we rewrote the type, we can use fonctoriality. *)
+  (* Note this could be meged with the next couple steps. *)
+  eapply mySubstTrans ; [
+    eapply myCongSubstComp ; [
+      (* On the left we remain unchanged. *)
+      eapply SubstRefl ; magic
+    | eapply myEqSubstCtxConv ; [
+        eapply CompShift ; magic
+      | try magic ; assumption ..
+      ]
+    | magic ..
+    ]
+  | try magic ..
+  ].
+  (* Now that we have a composition inside the shift, we want
+     to proceed with an exchange by using ShiftZero. *)
+  eapply mySubstTrans ; [
+    eapply myCongSubstComp ; [
+      (* We leave the left unchanged. *)
+      eapply SubstRefl ; magic
+    | eapply myEqSubstCtxConv ; [
+        eapply myCongSubstShift ; [
+          eassumption
+        | eapply mySubstSym ; [
+            eapply ShiftZero ; magic
+          | magic ..
+          ]
+        | magic ..
+        ]
+      | try magic ; assumption ..
+      ]
+    | magic ..
+    ]
+  | try magic ..
+  ].
+  (* Now we need to apply CompShift again to put the composition outside
+     and apply associativity. *)
+  eapply mySubstTrans ; [
+    eapply myCongSubstComp ; [
+      (* On the left we remain unchanged. *)
+      eapply SubstRefl ; magic
+    | eapply mySubstSym ; [
+        eapply myEqSubstCtxConv ; [
+          eapply CompShift ; magic
+        | try magic ; assumption ..
+        ]
+      | magic ..
+      ]
+    | magic ..
+    ]
+  | try magic ..
+  ].
+  (* Now, it's time to apply associativity guys. *)
+  eapply mySubstTrans ; [
+    eapply mySubstSym ; [
+      eapply myCompAssoc ; magic
+    | magic ..
+    ]
+  | try magic ..
+  ].
+  (* Now we should finally have the same structure for the substitutions
+     and thus be able to apply congruences. *)
+  eapply myCongSubstComp ; try magic.
+  eapply myCongSubstComp ; try magic ; try assumption.
+  - eapply myEqSubstCtxConv ; [
+      eapply myCongSubstShift ; magic
+    | try magic ; assumption ..
+    ].
+  - eapply mySubstCtxConv ; try magic.
+    eapply EqCtxExtend ; try magic.
+    gopushsubst. gopushsubst. eapply CongId ; try magic ; try assumption.
   Unshelve. all:assumption.
-(* Defined. *)
-Admitted.
+Defined.
