@@ -145,7 +145,6 @@ with isterm : context -> term -> type -> Type :=
 
      | TermJ :
          forall {G A C u v w p},
-           istype G A ->
            isterm G u A ->
            istype
              (ctxextend
