@@ -957,11 +957,6 @@ Proof.
     ].
     Unshelve. magic.
   }
-  (* { eapply EqTyConv. *)
-  (*   - eapply EqSubstWeakNat ; eassumption. *)
-  (*   - apply EqTySym. assumption. *)
-  (* } *)
-  { admit. }
   assert (eqterm (ctxextend G (Subst A sbs)) (subst (var 0) (sbshift G A sbs))
     (var 0) (Subst (Subst A (sbweak D A)) (sbshift G A sbs))).
   (* { eapply EqTyConv. *)
