@@ -74,7 +74,6 @@ with istype : context -> type -> Type :=
 
      | TyId :
          forall {G A u v},
-           istype G A ->
            isterm G u A ->
            isterm G v A ->
            istype G (Id A u v)
