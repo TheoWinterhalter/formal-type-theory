@@ -235,15 +235,30 @@ Ltac magicn n :=
     assumption || shelve
   (* Substitutions *)
   | |- issubst (sbzero ?G ?A ?u) ?G1 ?G2 =>
-    eapply SubstZero ; magicn n
+    first [
+      eapply SubstZero ; magicn n
+    | eassumption
+    ]
   | |- issubst (sbweak ?G ?A) ?G1 ?G2 =>
-    eapply SubstWeak ; magicn n
+    first [
+      eapply SubstWeak ; magicn n
+    | eassumption
+    ]
   | |- issubst (sbshift ?G ?A ?sbs) ?G1 ?G2 =>
-    eapply mySubstShift ; magicn n
+    first [
+      eapply mySubstShift ; magicn n
+    | eassumption
+    ]
   | |- issubst (sbid ?G) ?G1 ?G2 =>
-    eapply SubstId ; magicn n
+    first [
+      eapply SubstId ; magicn n
+    | eassumption
+    ]
   | |- issubst (sbcomp ?sbt ?sbs) ?G1 ?G2 =>
-    eapply mySubstComp ; magicn n
+    first [
+      eapply mySubstComp ; magicn n
+    | eassumption
+    ]
   | |- issubst ?sbs ?G1 ?G2 =>
     (* Dangerous I would like to do it only when sbs is a variable. *)
     eassumption
@@ -304,7 +319,10 @@ Ltac magicn n :=
   | |- eqtype ?G (Subst ?A ?sbs) (Subst ?B ?sbt) =>
     eapply myCongTySubst ; magicn n
   (* To be continued... *)
-  (* Equality of terms to do *)
+  (* Equality of terms *)
+  | |- eqterm ?G (subst ?u ?sbs) (subst ?v ?sbt) ?A =>
+    eapply myCongTermSubst ; magicn n
+  (* To be continues... *)
   (* When all else fails. *)
   (* This part will hopefully be gone at some point. *)
   | _ =>

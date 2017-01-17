@@ -546,3 +546,82 @@ Lemma myEqSym :
 Proof.
   intros. apply EqSym ; assumption.
 Defined.
+
+Lemma myEqTyCtxConv :
+  rule
+    parameters: {G D A B},
+    premise: eqtype G A B
+    premise: eqctx G D
+    premise: istype G A
+    premise: istype G B
+    premise: isctx G
+    premise: isctx D
+    conclusion:
+      eqtype D A B
+  endrule.
+Proof.
+  intros. eapply EqTyCtxConv ; [ exact H3 | assumption .. ].
+Defined.
+
+Lemma mySubstTrans :
+  rule
+    parameters: {G D sb1 sb2 sb3},
+    premise: eqsubst sb1 sb2 G D
+    premise: eqsubst sb2 sb3 G D
+    premise: issubst sb1 G D
+    premise: issubst sb2 G D
+    premise: issubst sb3 G D
+    premise: isctx G
+    premise: isctx D
+    conclusion:
+      eqsubst sb1 sb3 G D
+  endrule.
+Proof.
+  intros.
+  eapply SubstTrans ;
+    [ assumption .. | exact H2 | assumption | assumption | assumption ].
+Defined.
+
+Lemma myCongSubstComp :
+  rule
+    parameters: {G D E sbs1 sbs2 sbt1 sbt2},
+    premise: eqsubst sbs1 sbs2 G D
+    premise: eqsubst sbt1 sbt2 D E
+    premise: issubst sbs1 G D
+    premise: issubst sbs2 G D
+    premise: issubst sbt1 D E
+    premise: issubst sbt2 D E
+    premise: isctx G
+    premise: isctx D
+    premise: isctx E
+    conclusion:
+      eqsubst (sbcomp sbt1 sbs1)
+              (sbcomp sbt2 sbs2)
+              G
+              E
+  endrule.
+Proof.
+  intros.
+  eapply @CongSubstComp with (D := D) ; assumption.
+Defined.
+
+Lemma myCompAssoc :
+  rule
+    parameters: {G D E F sbs sbt sbr},
+    premise: issubst sbs G D
+    premise: issubst sbt D E
+    premise: issubst sbr E F
+    premise: isctx G
+    premise: isctx D
+    premise: isctx E
+    premise: isctx F
+    conclusion:
+      eqsubst (sbcomp sbr (sbcomp sbt sbs))
+              (sbcomp (sbcomp sbr sbt) sbs)
+              G
+              F
+  endrule.
+Proof.
+  intros.
+  eapply @CompAssoc with (D := D) (E := E) (F := F) ; assumption.
+Defined.
