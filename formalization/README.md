@@ -15,10 +15,6 @@ The purpose here is to state and prove theorems about the sanity of different ty
 * `ptt2ett.v`: Translation from PTT to ETT,
 * `uniqueness.v`: Proof of uniqueness of typing for ETT.
 
-The following are obsolete (kept around as long as they are not completely subsumed):
-* `preadmissibility.v`: Some admissibility rules for ETT, used for the sanity theorem,
-* `sanity.v`: Sanity theorem for ETT.
-
 ## Translation
 
 The main translation goes from PTT to CTT, the complete scheme being:
