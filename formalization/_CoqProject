@@ -11,4 +11,6 @@ ptt_sanity.v
 ptt2ett.v
 ett2ptt.v
 ctt.v
+itt.v
+eval.v
 translation.v

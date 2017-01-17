@@ -112,6 +112,8 @@ VFILES:=syntax.v\
   ptt2ett.v\
   ett2ptt.v\
   ctt.v\
+  itt.v\
+  eval.v\
   translation.v
 
 ifneq ($(filter-out archclean clean cleanall printenv,$(MAKECMDGOALS)),)
