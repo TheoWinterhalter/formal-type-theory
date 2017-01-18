@@ -266,21 +266,6 @@ Proof.
   apply CongSubstZero ; assumption.
 Defined.
 
-Lemma myTyCtxConv :
-  forall {G D A},
-    istype G A ->
-    eqctx G D ->
-    isctx G ->
-    isctx D ->
-    istype D A.
-Proof.
-  intros.
-  eapply TyCtxConv ; [
-    exact H1
-  | assumption ..
-  ].
-Defined.
-
 Lemma myCongSubstShift :
   forall {G1 G2 D A1 A2 sbs1 sbs2},
     eqctx G1 G2 ->

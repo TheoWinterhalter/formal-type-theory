@@ -112,8 +112,6 @@ Proof.
                               (subst u (sbweak G A))
                               (var 0))
                            (sbzero G A v))).
-    - magic3.
-    - magic.
     - eapply myTySubst ; magic3.
     - apply EqCtxExtend ; try magic.
       assert (eqtype G A (Subst A (sbcomp (sbweak G A) (sbzero G A v)))).
@@ -200,6 +198,8 @@ Proof.
         * assumption.
         * magic.
         * assumption.
+    - magic3.
+    - magic.
   }
 
   (* TermExfalso *)
@@ -866,7 +866,7 @@ Proof.
                         ].
                         gopushsubst.
                     + apply EqTyRefl ; try magic.
-                      eapply myTyCtxConv ; [
+                      eapply TyCtxConv ; [
                         eapply myTySubst ; [
                           magic
                         | eapply myTySubst ; [
@@ -2421,7 +2421,7 @@ Proof.
             + magic.
         }
         Unshelve. all:magic.
-        Unshelve. all:eapply myTyCtxConv ; [ eassumption | magic .. ].
+        Unshelve. all:eapply TyCtxConv ; [ eassumption | magic .. ].
     }
 
   (* CongRefl *)
@@ -3053,7 +3053,7 @@ Proof.
                 | magic ..
                 ].
               * eapply SubstCtxConv ; magic.
-            + eapply myTyCtxConv ; [
+            + eapply TyCtxConv ; [
                 eapply myTySubst ; magic
               | magic ..
               ].
@@ -3073,7 +3073,7 @@ Proof.
             + apply CtxRefl ; magic.
           Unshelve. all:magic.
           Unshelve.
-          all:eapply myTyCtxConv ; [ eassumption | magic .. ].
+          all:eapply TyCtxConv ; [ eassumption | magic .. ].
         }
     }
 

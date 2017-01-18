@@ -91,10 +91,10 @@ with istype : context -> type -> Type :=
      | TyCtxConv :
        rule
          parameters: {G D A},
-         premise: isctx G
-         premise: isctx D
          premise: istype G A
          premise: eqctx G D
+         premise: isctx G
+         premise: isctx D
          conclusion:
            istype D A
        endrule

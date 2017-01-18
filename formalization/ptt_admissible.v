@@ -121,7 +121,7 @@ Proof.
   assert (issubst sbs1 G2 D).
   { eapply SubstCtxConv ; magic. }
   assert (istype (ctxextend D A1) B2).
-  { eapply myTyCtxConv ; [
+  { eapply TyCtxConv ; [
       eassumption
     | magic ..
     ].
@@ -154,9 +154,9 @@ Lemma EqTyCongWeak :
 Proof.
   intros.
   assert (istype G1 A2).
-  { eapply myTyCtxConv ; [ eassumption | magic .. ]. }
+  { eapply TyCtxConv ; [ eassumption | magic .. ]. }
   assert (istype G1 B2).
-  { eapply myTyCtxConv ; [ eassumption | magic .. ]. }
+  { eapply TyCtxConv ; [ eassumption | magic .. ]. }
   eapply myCongTySubst ; [
     magic ..
   | eapply SubstCtxConv ; magic
@@ -424,13 +424,13 @@ Lemma EqTermCongWeak :
 Proof.
   intros.
   assert (istype G1 A2).
-  { eapply myTyCtxConv ; [
+  { eapply TyCtxConv ; [
       eassumption
     | magic ..
     ].
   }
   assert (istype G1 B2).
-  { eapply myTyCtxConv ; [
+  { eapply TyCtxConv ; [
       eassumption
     | magic ..
     ].

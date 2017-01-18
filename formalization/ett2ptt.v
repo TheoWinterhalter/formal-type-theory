@@ -121,10 +121,10 @@ Proof.
 
     (* TyCtxConv *)
     { apply (@ptt.TyCtxConv G D).
-      - now apply (ptt_sane_eqctx G D), sane_eqctx.
-      - now apply (ptt_sane_eqctx G D), sane_eqctx.
       - now apply sane_istype.
       - now apply sane_eqctx.
+      - now apply (ptt_sane_eqctx G D), sane_eqctx.
+      - now apply (ptt_sane_eqctx G D), sane_eqctx.
     }
 
     (* TySubst *)

@@ -45,17 +45,17 @@ Proof.
       - apply (@TyCtxConv G0 G) ; auto.
         now apply (TyProdInversion G0 A B).
       - apply (@TyCtxConv (ctxextend G0 A) (ctxextend G A)).
-        + apply CtxExtend ; auto.
-          now apply (TyProdInversion G0 A B).
-        + apply CtxExtend.
-          * assumption.
-          * apply (@TyCtxConv G0 G) ; auto.
-            now apply (TyProdInversion G0 A B).
         + now apply (TyProdInversion G0 A B).
         + apply EqCtxExtend ; auto.
           * now apply (TyProdInversion G0 A B).
           * now apply (TyProdInversion G0 A B).
           * apply EqTyRefl ; auto.
+            now apply (TyProdInversion G0 A B).
+        + apply CtxExtend ; auto.
+          now apply (TyProdInversion G0 A B).
+        + apply CtxExtend.
+          * assumption.
+          * apply (@TyCtxConv G0 G) ; auto.
             now apply (TyProdInversion G0 A B).
     }
 
