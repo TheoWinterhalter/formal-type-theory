@@ -807,7 +807,6 @@ with eqterm : context -> term -> term -> type -> Type :=
 
      | JRefl :
          forall {G A C u w},
-           istype G A ->
            isterm G u A ->
            istype
              (ctxextend
