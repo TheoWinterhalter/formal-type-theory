@@ -214,8 +214,10 @@ Proof.
 
     (* TermAbs *)
     - { apply ptt.TermAbs.
-        - now apply (@ptt_sane_istype G A), sane_istype.
-        - now apply sane_istype.
+        - now apply (ptt_CtxExtendInversion G A),
+                    (ptt_sane_isterm _ u B), sane_isterm.
+        - now apply (ptt_CtxExtendInversion G A),
+                    (ptt_sane_isterm _ u B), sane_isterm.
         - now apply (@ptt_sane_isterm (ctxextend G A) u B), sane_isterm.
         - now apply sane_isterm.
       }

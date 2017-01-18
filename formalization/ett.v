@@ -127,7 +127,6 @@ with isterm : context -> term -> type -> Type :=
 
      | TermAbs :
          forall {G A u B},
-           istype G A ->
            isterm (ctxextend G A) u B ->
            isterm G (lam A B u) (Prod A B)
 
