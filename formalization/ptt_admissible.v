@@ -273,7 +273,7 @@ Lemma EqSubstWeakZero :
 Proof.
   intros.
   gocompsubst ; try eassumption ; try magic.
-  - eapply myEqTrans.
+  - eapply EqTrans.
     + eapply myCongTermSubst ; [
         eapply WeakZero ; magic
       | magic ..
@@ -1202,7 +1202,7 @@ Proof.
            (Subst A sbs)
   ).
   { eapply myEqSym ; try magic.
-    eapply myEqTrans ; [
+    eapply EqTrans ; [
       eapply EqTyConv ; [
         eapply myEqSym ; [
           eapply myEqSubstComp ; [
@@ -1440,14 +1440,14 @@ Proof.
     (Subst (Subst A (sbweak D A))
        (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
   ).
-  { eapply myEqTrans ; [
+  { eapply EqTrans ; [
       eapply myEqSym ; [
         eapply myEqSubstComp ; [ shelve | magic .. ]
       | magic ..
       ]
     | try magic ..
     ].
-    eapply myEqTrans ; [
+    eapply EqTrans ; [
       eapply EqTyConv ; [
         eapply myCongTermSubst ; [
           eapply SubstRefl ; magic

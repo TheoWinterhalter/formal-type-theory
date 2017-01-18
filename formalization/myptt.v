@@ -5,27 +5,6 @@
 Require Import syntax.
 Require Import ptt.
 
-Lemma myEqTrans :
-  forall {G A u v w},
-    eqterm G u v A ->
-    eqterm G v w A ->
-    isctx G ->
-    istype G A ->
-    isterm G u A ->
-    isterm G v A ->
-    isterm G w A ->
-    eqterm G u w A.
-Proof.
-  intros. eapply EqTrans.
-  - assumption.
-  - assumption.
-  - assumption.
-  - exact H4.
-  - assumption.
-  - assumption.
-  - assumption.
-Defined.
-
 Lemma myEqSubstComp :
   forall {G D E A u sbs sbt},
     isterm E u A ->

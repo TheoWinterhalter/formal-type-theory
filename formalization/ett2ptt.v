@@ -658,13 +658,13 @@ Proof.
 
     (* EqTrans *)
     - { apply (@ptt.EqTrans G A u v w).
+        - now apply sane_eqterm.
+        - now apply sane_eqterm.
         - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
         - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
         - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
         - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
         - now apply (@ptt_sane_eqterm G v w A), sane_eqterm.
-        - now apply sane_eqterm.
-        - now apply sane_eqterm.
       }
 
     (* EqIdSubst *)

@@ -888,13 +888,13 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqTrans :
        rule
          parameters: {G A u v w},
+         premise: eqterm G u v A
+         premise: eqterm G v w A
          premise: isctx G
          premise: istype G A
          premise: isterm G u A
          premise: isterm G v A
          premise: isterm G w A
-         premise: eqterm G u v A
-         premise: eqterm G v w A
          conclusion:
            eqterm G u w A
        endrule

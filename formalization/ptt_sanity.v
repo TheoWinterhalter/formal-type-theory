@@ -132,7 +132,7 @@ Proof.
         * assumption.
         * magic.
       + { gocompsubst.
-          - eapply myEqTrans.
+          - eapply EqTrans.
             + eapply myCongTermSubst.
               * eapply WeakZero ; magic.
               * eapply EqRefl ; magic.
@@ -2689,7 +2689,7 @@ Proof.
                    u1
                    (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
           ).
-          { eapply myEqTrans ; [ eassumption | magic .. ]. }
+          { eapply EqTrans ; [ eassumption | magic .. ]. }
           assert (isterm G (subst (var 0) (sbzero G A2 u2)) A2).
           { eapply TermTyConv ; [
               eapply TermSubst ; magic
@@ -2713,7 +2713,7 @@ Proof.
                    u1
                    (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
           ).
-          { eapply myEqTrans ; [ eassumption | magic .. ]. }
+          { eapply EqTrans ; [ eassumption | magic .. ]. }
           assert (
             eqtype G
                    (Subst (Id (Subst A2 (sbweak G A2))
@@ -2976,7 +2976,7 @@ Proof.
                    u1
                    (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
           ).
-          { eapply @myEqTrans with (v:=u2) ; magic. }
+          { eapply @EqTrans with (v:=u2) ; magic. }
           assert (
             eqterm G v2 v1 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
           ).
@@ -2987,7 +2987,7 @@ Proof.
                    v1
                    (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
           ).
-          { eapply @myEqTrans with (v:=v2) ; magic. }
+          { eapply @EqTrans with (v:=v2) ; magic. }
           assert (
             eqtype G A1 (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 v1))
           ).
