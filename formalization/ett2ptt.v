@@ -417,13 +417,13 @@ Proof.
 
     (* CompAssoc *)
     - { apply (@ptt.CompAssoc G D E F).
+        - now apply sane_issubst.
+        - now apply sane_issubst.
+        - now apply sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbr E F), sane_issubst.
         - now apply (@ptt_sane_issubst sbr E F), sane_issubst.
-        - now apply sane_issubst.
-        - now apply sane_issubst.
-        - now apply sane_issubst.
       }
 
     (* WeakNat *)

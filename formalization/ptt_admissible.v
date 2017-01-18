@@ -659,7 +659,7 @@ Proof.
     ].
     eapply mySubstSym ; try magic.
     eapply SubstTrans ; [
-      eapply myCompAssoc ; magic
+      eapply CompAssoc ; magic
     | try magic ..
     ].
     eapply SubstTrans ; [
@@ -1068,7 +1068,7 @@ Proof.
     eqsubst (sbcomp (sbweak D A) (sbcomp (sbzero D A v) sbs)) sbs G D
   ).
   { eapply SubstTrans ; [
-      eapply myCompAssoc ; magic
+      eapply CompAssoc ; magic
     | eapply SubstTrans ; [
         eapply CongSubstComp ; [
           eapply SubstRefl ; magic
@@ -1383,7 +1383,7 @@ Proof.
       D
   ).
   { eapply SubstTrans ; [
-      eapply myCompAssoc ; magic
+      eapply CompAssoc ; magic
     | try magic ..
     ].
     eapply SubstTrans ; [
@@ -1396,7 +1396,7 @@ Proof.
     ].
     eapply mySubstSym ; try magic.
     eapply SubstTrans ; [
-      eapply myCompAssoc ; magic
+      eapply CompAssoc ; magic
     | magic ..
     ].
     Unshelve. magic.
@@ -1950,7 +1950,7 @@ Proof.
   ].
   (* We're using associativity to look at the rhs. *)
   eapply SubstTrans ; [
-    eapply myCompAssoc ; magic
+    eapply CompAssoc ; magic
   | try magic ..
   ].
   (* We can now have a look at the rhs of the composition. *)
@@ -2034,7 +2034,7 @@ Proof.
   (* Now, it's time to apply associativity guys. *)
   eapply SubstTrans ; [
     eapply mySubstSym ; [
-      eapply myCompAssoc ; magic
+      eapply CompAssoc ; magic
     | magic ..
     ]
   | try magic ..

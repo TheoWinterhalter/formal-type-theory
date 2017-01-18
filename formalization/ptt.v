@@ -537,13 +537,13 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | CompAssoc :
        rule
          parameters: {G D E F sbs sbt sbr},
+         premise: issubst sbs G D
+         premise: issubst sbt D E
+         premise: issubst sbr E F
          premise: isctx G
          premise: isctx D
          premise: isctx E
          premise: isctx F
-         premise: issubst sbs G D
-         premise: issubst sbt D E
-         premise: issubst sbr E F
          conclusion:
            eqsubst (sbcomp sbr (sbcomp sbt sbs))
                    (sbcomp (sbcomp sbr sbt) sbs)
