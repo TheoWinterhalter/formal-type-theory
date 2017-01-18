@@ -354,15 +354,15 @@ Proof.
 
     (* CongSubstZero *)
     - { apply (@ptt.CongSubstZero G1 G2).
-        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
-        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
-        - now apply (@ptt_sane_eqtype G1 A1 A2), sane_eqtype.
-        - now apply (@ptt_sane_eqtype G1 A1 A2), sane_eqtype.
-        - now apply (@ptt_sane_eqterm G1 u1 u2 A1), sane_eqterm.
-        - now apply (@ptt_sane_eqterm G1 u1 u2 A1), sane_eqterm.
         - now apply sane_eqctx.
         - now apply sane_eqtype.
         - now apply sane_eqterm.
+        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
+        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
+        - now apply (@ptt_sane_eqtype G1 A1 A2), sane_eqtype.
+        - now apply (@ptt_sane_eqtype G1 A1 A2), sane_eqtype.
+        - now apply (@ptt_sane_eqterm G1 u1 u2 A1), sane_eqterm.
+        - now apply (@ptt_sane_eqterm G1 u1 u2 A1), sane_eqterm.
       }
 
     (* CongSubstWeak *)

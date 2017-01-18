@@ -853,7 +853,7 @@ Proof.
                   | try magic ..
                   ].
                   - eapply myCongTySubst ; try magic.
-                    + eapply myCongSubstZero ; try magic.
+                    + eapply CongSubstZero ; try magic.
                       * gopushsubst.
                         eapply TermTyConv ; [
                           eapply TermSubst ; magic
@@ -2168,7 +2168,7 @@ Proof.
                     | try magic ..
                     ].
                     + eapply myCongTySubst ; try magic.
-                      * { eapply myCongSubstZero ; try magic.
+                      * { eapply CongSubstZero ; try magic.
                           - gopushsubst.
                           - gopushsubst.
                             + eapply TermTyConv ; [
@@ -2211,7 +2211,7 @@ Proof.
                 | try magic ..
                 ].
                 - eapply myCongTySubst ; try magic.
-                  + { eapply myCongSubstZero ; try magic.
+                  + { eapply CongSubstZero ; try magic.
                       - gopushsubst.
                       - gopushsubst.
                         + eapply TermTyConv ; [
@@ -2260,7 +2260,7 @@ Proof.
                 | try magic ..
                 ].
                 + eapply myCongTySubst ; try magic.
-                  * eapply myCongSubstZero ; try magic.
+                  * eapply CongSubstZero ; try magic.
                     gopushsubst.
                   * { eapply SubstCtxConv ; try magic.
                       - eapply SubstZero ; try magic.
@@ -2380,7 +2380,7 @@ Proof.
             ].
           - eapply myCongTySubst ; try magic.
             + eapply myEqSubstCtxConv ; [
-               eapply myCongSubstZero ; try magic
+               eapply CongSubstZero ; try magic
               | try magic ..
               ].
               * eapply myEqTyConv ; [

@@ -206,26 +206,6 @@ Proof.
   - assumption.
 Defined.
 
-Lemma myCongSubstZero :
-  forall {G1 G2 A1 A2 u1 u2},
-    eqctx G1 G2 ->
-    eqtype G1 A1 A2 ->
-    eqterm G1 u1 u2 A1 ->
-    isctx G1 ->
-    isctx G2 ->
-    istype G1 A1 ->
-    istype G1 A2 ->
-    isterm G1 u1 A1 ->
-    isterm G1 u2 A1 ->
-    eqsubst (sbzero G1 A1 u1)
-            (sbzero G2 A2 u2)
-            G1
-            (ctxextend G1 A1).
-Proof.
-  intros.
-  apply CongSubstZero ; assumption.
-Defined.
-
 Lemma myCongSubstShift :
   forall {G1 G2 D A1 A2 sbs1 sbs2},
     eqctx G1 G2 ->

@@ -447,15 +447,15 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | CongSubstZero :
        rule
          parameters: {G1 G2 A1 A2 u1 u2},
+         premise: eqctx G1 G2
+         premise: eqtype G1 A1 A2
+         premise: eqterm G1 u1 u2 A1
          premise: isctx G1
          premise: isctx G2
          premise: istype G1 A1
          premise: istype G1 A2
          premise: isterm G1 u1 A1
          premise: isterm G1 u2 A1
-         premise: eqctx G1 G2
-         premise: eqtype G1 A1 A2
-         premise: eqterm G1 u1 u2 A1
          conclusion:
            eqsubst (sbzero G1 A1 u1)
                    (sbzero G2 A2 u2)
