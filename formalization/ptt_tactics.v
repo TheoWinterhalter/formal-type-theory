@@ -163,14 +163,14 @@ Ltac pushsubst1 :=
     ]
   | |- eqtype ?G (Subst Bool ?sbs) ?A =>
     eapply EqTyTrans ; [
-      eapply myEqTySubstBool
+      eapply EqTySubstBool
     | idtac ..
     ]
   | |- eqtype ?G ?A (Subst Bool ?sbs) =>
     eapply EqTySym ; [
       idtac ..
     | eapply EqTyTrans ; [
-        eapply myEqTySubstBool
+        eapply EqTySubstBool
       | idtac ..
       ]
     ]
