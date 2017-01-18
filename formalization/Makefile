@@ -111,6 +111,7 @@ VFILES:=syntax.v\
   ptt_sanity.v\
   ptt2ett.v\
   ett2ptt.v\
+  ett_sanity.v\
   ctt.v\
   itt.v\
   eval.v\
