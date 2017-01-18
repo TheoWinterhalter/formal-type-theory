@@ -5,19 +5,6 @@
 Require Import syntax.
 Require Import ptt.
 
-(* TySubst and TermSubst ask questions in the wrong order when eapplied. *)
-
-Lemma myTermSubst :
-  forall {G D A u sbs},
-    issubst sbs G D ->
-    isterm D u A ->
-    isctx G ->
-    istype D A ->
-    isctx D ->
-    isterm G (subst u sbs) (Subst A sbs).
-Proof.
-  intros ; eapply TermSubst ; eassumption.
-Defined.
 
 (* Same for some other substitution tasks. *)
 
