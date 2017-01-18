@@ -6,16 +6,6 @@ Require Import syntax.
 Require Import ptt.
 
 (* TySubst and TermSubst ask questions in the wrong order when eapplied. *)
-Lemma myTySubst :
-  forall {G D A sbs},
-    issubst sbs G D ->
-    istype D A ->
-    isctx G ->
-    isctx D ->
-    istype G (Subst A sbs).
-Proof.
-  intros ; eapply TySubst ; eassumption.
-Defined.
 
 Lemma myTermSubst :
   forall {G D A u sbs},

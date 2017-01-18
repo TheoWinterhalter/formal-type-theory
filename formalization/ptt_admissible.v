@@ -1695,8 +1695,8 @@ Proof.
                (var 0)) (sbzero G (Subst A sbs) (subst v sbs))))
       (sbzero G (Id (Subst A sbs) (subst u sbs) (subst v sbs)) (subst p sbs)))
   ).
-  { eapply myTySubst ; try magic.
-    eapply myTySubst ; try magic.
+  { eapply TySubst ; try magic.
+    eapply TySubst ; try magic.
     eapply SubstCtxConv ; magic.
     Unshelve. assumption.
   }

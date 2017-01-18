@@ -102,10 +102,10 @@ with istype : context -> type -> Type :=
      | TySubst :
        rule
          parameters: {G D A sbs},
-         premise: isctx G
-         premise: isctx D
          premise: issubst sbs G D
          premise: istype D A
+         premise: isctx G
+         premise: isctx D
          conclusion:
            istype G (Subst A sbs)
        endrule

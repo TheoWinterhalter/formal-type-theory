@@ -264,7 +264,7 @@ Ltac magicn n :=
     eassumption
   (* Types *)
   | |- istype ?G (Subst ?A ?sbs) =>
-    eapply myTySubst ; magicn n
+    eapply TySubst ; magicn n
   | |- istype ?G (Prod ?A ?B) =>
     eapply TyProd ; magicn n
   | |- istype ?G (Id ?A ?u ?v) =>

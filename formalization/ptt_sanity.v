@@ -73,17 +73,17 @@ Proof.
 
   (* TermVarZero *)
   { eapply TySubst.
-    - now apply (@CtxExtend G A).
-    - eassumption.
     - now eapply SubstWeak.
     - assumption.
+    - now apply (@CtxExtend G A).
+    - eassumption.
   }
 
   (* TermVarSucc *)
   { apply (@TySubst (ctxextend G B) G).
-    - now apply CtxExtend.
-    - assumption.
     - now apply SubstWeak.
+    - assumption.
+    - now apply CtxExtend.
     - assumption.
   }
 
@@ -92,10 +92,10 @@ Proof.
 
   (* TermApp *)
   { apply (@TySubst G (ctxextend G A)).
-    - assumption.
-    - now apply CtxExtend.
     - now apply SubstZero.
     - assumption.
+    - assumption.
+    - now apply CtxExtend.
   }
 
   (* TermRefl *)
@@ -112,7 +112,7 @@ Proof.
                               (subst u (sbweak G A))
                               (var 0))
                            (sbzero G A v))).
-    - eapply myTySubst ; magic3.
+    - eapply TySubst ; magic3.
     - apply EqCtxExtend ; try magic.
       assert (eqtype G A (Subst A (sbcomp (sbweak G A) (sbzero G A v)))).
       { apply compWeakZero ; assumption. }
@@ -216,15 +216,15 @@ Proof.
 
   (* TermCond *)
   { eapply (@TySubst G (ctxextend G Bool)).
-    + assumption.
-    + apply CtxExtend.
-      * assumption.
-      * now apply TyBool.
     + apply SubstZero.
       * assumption.
       * now apply TyBool.
       * assumption.
     + assumption.
+    + assumption.
+    + apply CtxExtend.
+      * assumption.
+      * now apply TyBool.
   }
 Defined.
 
@@ -260,10 +260,10 @@ Proof.
   (* EqTyIdSubst *)
   { split.
     - eapply TySubst.
-      + assumption.
-      + eassumption.
       + now apply SubstId.
       + assumption.
+      + assumption.
+      + eassumption.
     - assumption.
   }
 
@@ -281,10 +281,10 @@ Proof.
     - { apply TyProd ; auto.
         + now apply (@TySubst G D).
         + apply (@TySubst _ (ctxextend D A)) ; auto.
+          * now apply SubstShift.
           * apply CtxExtend ; auto.
             now apply (@TySubst G D).
           * now apply CtxExtend.
-          * now apply SubstShift.
       }
   }
 
@@ -678,28 +678,28 @@ Proof.
             + magic.
             + constructor.
               * assumption.
-              * eapply myTySubst ; eassumption.
-            + eapply myTySubst ; try eassumption ; magic.
+              * eapply TySubst ; eassumption.
+            + eapply TySubst ; try eassumption ; magic.
             + magic.
           - apply EqTyWeakNat ; magic.
           - constructor.
             + assumption.
-            + eapply myTySubst ; eassumption.
-          - eapply myTySubst.
+            + eapply TySubst ; eassumption.
+          - eapply TySubst.
             + eapply SubstShift ; eassumption.
-            + eapply myTySubst ; magic.
+            + eapply TySubst ; magic.
             + constructor.
               * assumption.
-              * eapply myTySubst ; eassumption.
+              * eapply TySubst ; eassumption.
             + magic.
-          - eapply myTySubst.
+          - eapply TySubst.
             + eapply SubstWeak.
-              * eapply myTySubst ; eassumption.
+              * eapply TySubst ; eassumption.
               * assumption.
-            + eapply myTySubst ; eassumption.
+            + eapply TySubst ; eassumption.
             + constructor. (* There may be room for maigc improvement here *)
               * assumption.
-              * eapply myTySubst ; eassumption.
+              * eapply TySubst ; eassumption.
             + magic.
         }
       - { magic. }
@@ -760,8 +760,8 @@ Proof.
   (* EqSubstJ *)
   - { split.
       - { eapply myTermSubst ; try magic.
-          eapply myTySubst ; try magic.
-          eapply myTySubst ; try magic.
+          eapply TySubst ; try magic.
+          eapply TySubst ; try magic.
           eapply SubstCtxConv ; try magic.
           - apply EqCtxExtend ; try magic.
             gopushsubst.
@@ -794,7 +794,7 @@ Proof.
         }
       - { eapply myTermTyConv.
           - eapply TermJ ; try magic.
-            + eapply myTySubst ; try magic.
+            + eapply TySubst ; try magic.
               eapply SubstCtxConv ; try magic.
               * apply EqCtxExtend ; try magic.
                 gopushsubst.
@@ -867,9 +867,9 @@ Proof.
                         gopushsubst.
                     + apply EqTyRefl ; try magic.
                       eapply TyCtxConv ; [
-                        eapply myTySubst ; [
+                        eapply TySubst ; [
                           magic
-                        | eapply myTySubst ; [
+                        | eapply TySubst ; [
                             try magic
                           | eassumption
                           | magic ..
@@ -999,7 +999,7 @@ Proof.
                               eapply myEqTySym ; try magic.
                               eapply EqTyWeakZero ; magic.
                         }
-                    + eapply myTySubst ; try magic.
+                    + eapply TySubst ; try magic.
                       eapply SubstCtxConv ; try magic.
                       * eapply EqCtxExtend ; try magic.
                         gopushsubst.
@@ -1256,9 +1256,9 @@ Proof.
                       | try magic ..
                       ].
                       gopushsubst.
-                  - eapply myTySubst ; try magic.
-                    eapply myTySubst ; try magic.
-                    eapply myTySubst ; try magic.
+                  - eapply TySubst ; try magic.
+                    eapply TySubst ; try magic.
+                    eapply TySubst ; try magic.
                     eapply SubstCtxConv ; try magic.
                     + eapply EqCtxExtend ; try magic.
                       gopushsubst.
@@ -1298,7 +1298,7 @@ Proof.
                             eapply EqTyWeakZero ; magic.
                       }
                     + apply CtxRefl ; magic.
-                  - eapply myTySubst ; try magic.
+                  - eapply TySubst ; try magic.
                     + eapply SubstZero ; try magic.
                       eapply myTermTyConv ; [
                         eapply myTermSubst ; [
@@ -1309,7 +1309,7 @@ Proof.
                       | try magic ..
                       ].
                       gopushsubst.
-                    + eapply myTySubst ; try magic.
+                    + eapply TySubst ; try magic.
                       eapply SubstCtxConv ; try magic.
                       * eapply EqCtxExtend ; try magic.
                         gopushsubst.
@@ -1432,8 +1432,8 @@ Proof.
                               ].
                               eapply EqTyWeakNat ; magic.
                         }
-                  - eapply myTySubst ; try magic.
-                    eapply myTySubst ; try magic.
+                  - eapply TySubst ; try magic.
+                    eapply TySubst ; try magic.
                     eapply SubstCtxConv ; try magic.
                     + eapply EqCtxExtend ; try magic.
                       gopushsubst.
@@ -1746,9 +1746,9 @@ Proof.
           - eapply myEqTySym ; try magic.
             + eapply JTyConv ; try magic.
               eassumption.
-            + eapply myTySubst ; try magic.
-              eapply myTySubst ; try magic.
-              eapply myTySubst ; try magic.
+            + eapply TySubst ; try magic.
+              eapply TySubst ; try magic.
+              eapply TySubst ; try magic.
               eapply SubstCtxConv ; try magic.
               * eapply EqCtxExtend ; try magic.
                 gopushsubst.
@@ -1788,7 +1788,7 @@ Proof.
                       eapply EqTyWeakZero ; magic.
                 }
               * apply CtxRefl ; magic.
-            + { eapply myTySubst ; try magic.
+            + { eapply TySubst ; try magic.
                 - eapply SubstCtxConv ; [
                     eapply SubstZero ; try magic
                   | try magic ..
@@ -1799,7 +1799,7 @@ Proof.
                     ].
                     gopushsubst.
                   + apply CtxRefl ; magic.
-                - eapply myTySubst ; try magic.
+                - eapply TySubst ; try magic.
                   eapply SubstCtxConv ; try magic.
                   + eapply EqCtxExtend ; try magic.
                     gopushsubst.
@@ -1924,7 +1924,7 @@ Proof.
                 Unshelve. all:magic.
               }
           - assumption.
-          - eapply myTySubst ; try magic.
+          - eapply TySubst ; try magic.
             + eapply SubstCtxConv ; [
                 eapply SubstZero ; try magic
               | try magic ..
@@ -1939,7 +1939,7 @@ Proof.
                 ].
                 gopushsubst.
               * apply CtxRefl ; magic.
-            + eapply myTySubst ; try magic.
+            + eapply TySubst ; try magic.
               eapply SubstCtxConv ; try magic.
               * eapply EqCtxExtend ; try magic.
                 gopushsubst.
@@ -2030,9 +2030,9 @@ Proof.
                       ].
                       eapply EqTyWeakNat ; magic.
                 }
-          - eapply myTySubst ; try magic.
-            eapply myTySubst ; try magic.
-            eapply myTySubst ; try magic.
+          - eapply TySubst ; try magic.
+            eapply TySubst ; try magic.
+            eapply TySubst ; try magic.
             eapply SubstCtxConv ; try magic.
             + eapply EqCtxExtend ; try magic.
               gopushsubst.
@@ -2138,7 +2138,7 @@ Proof.
             ].
             + eassumption.
             + gopushsubst.
-          - eapply myTySubst ; try magic.
+          - eapply TySubst ; try magic.
             eapply SubstCtxConv ; try magic.
             + apply EqCtxExtend ; try magic ; try gopushsubst.
             + apply CtxRefl ; magic.
@@ -2148,15 +2148,15 @@ Proof.
             ].
             + eassumption.
             + apply EqTySym ; try magic.
-              * eapply myTySubst ; try magic.
-                eapply myTySubst ; try magic.
+              * eapply TySubst ; try magic.
+                eapply TySubst ; try magic.
                 { eapply SubstCtxConv ; try magic.
                   - apply EqCtxExtend ; try magic ; try gopushsubst.
                   - apply CtxRefl ; magic.
                 }
               * { apply EqTySym ; try magic.
-                  - eapply myTySubst ; try magic.
-                    eapply myTySubst ; try magic.
+                  - eapply TySubst ; try magic.
+                    eapply TySubst ; try magic.
                     eapply SubstCtxConv ; try magic.
                     + apply EqCtxExtend ; try magic ; try gopushsubst.
                     + apply CtxRefl ; magic.
@@ -2186,15 +2186,15 @@ Proof.
                       * eapply SubstCtxConv ; try magic.
                         apply EqCtxExtend ; try magic.
                         gopushsubst.
-                    + eapply myTySubst ; try magic.
-                      eapply myTySubst ; try magic.
+                    + eapply TySubst ; try magic.
+                      eapply TySubst ; try magic.
                       eapply SubstCtxConv ; try magic.
                       * apply EqCtxExtend ; try magic.
                         gopushsubst.
                       * apply CtxRefl ; magic.
                 }
-            + eapply myTySubst ; try magic.
-              eapply myTySubst ; try magic.
+            + eapply TySubst ; try magic.
+              eapply TySubst ; try magic.
               eapply SubstCtxConv ; try magic.
               * apply EqCtxExtend ; try magic.
                 gopushsubst.
@@ -2229,20 +2229,20 @@ Proof.
                   + eapply SubstCtxConv ; try magic.
                     apply EqCtxExtend ; try magic.
                     gopushsubst.
-                - eapply myTySubst ; try magic.
-                  eapply myTySubst ; try magic.
+                - eapply TySubst ; try magic.
+                  eapply TySubst ; try magic.
                   eapply SubstCtxConv ; try magic.
                   + apply EqCtxExtend ; try magic.
                     gopushsubst.
                   + apply CtxRefl ; magic.
               }
-            + eapply myTySubst ; try magic.
-              eapply myTySubst ; try magic.
+            + eapply TySubst ; try magic.
+              eapply TySubst ; try magic.
               eapply SubstCtxConv ; try magic.
               * apply EqCtxExtend ; try magic. gopushsubst.
               * apply CtxRefl ; magic.
           - { apply EqTySym ; try magic.
-              - eapply myTySubst ; try magic.
+              - eapply TySubst ; try magic.
                 eapply SubstCtxConv ; try magic.
                 + eapply SubstZero ; try magic.
                   eapply myTermTyConv ; [
@@ -2273,7 +2273,7 @@ Proof.
                       - apply CtxRefl ; magic.
                       - apply EqCtxExtend ; try magic ; try gopushsubst.
                     }
-                + eapply myTySubst ; try magic.
+                + eapply TySubst ; try magic.
                   eapply SubstCtxConv ; try magic.
                   * eapply SubstZero ; try magic.
                     eapply myTermTyConv ; [
@@ -2284,7 +2284,7 @@ Proof.
                   * apply CtxRefl ; magic.
                   * apply EqCtxExtend ; try magic ; try gopushsubst.
             }
-          - eapply myTySubst ; try magic.
+          - eapply TySubst ; try magic.
             eapply SubstCtxConv ; try magic.
             * eapply SubstZero ; try magic.
               eapply myTermTyConv ; [
@@ -2410,7 +2410,7 @@ Proof.
                 ].
               * magic.
               * magic.
-          - eapply myTySubst.
+          - eapply TySubst.
             + eapply SubstZero ; try magic.
               eapply myTermTyConv ; [
                 eassumption
@@ -2458,8 +2458,8 @@ Proof.
           | try magic ..
           ].
           - apply EqTyRefl ; try magic.
-            eapply myTySubst ; try magic.
-            eapply myTySubst ; try magic.
+            eapply TySubst ; try magic.
+            eapply TySubst ; try magic.
             eapply SubstCtxConv ; [
               eapply SubstShift ; magic
             | try magic ..
@@ -2489,8 +2489,8 @@ Proof.
                   apply EqTyWeakZero ; magic.
                 }
             + apply CtxRefl ; magic.
-          - eapply myTySubst ; try magic.
-            eapply myTySubst ; try magic.
+          - eapply TySubst ; try magic.
+            eapply TySubst ; try magic.
             eapply SubstCtxConv ; [
               eapply SubstShift ; magic
             | try magic ..
@@ -2520,8 +2520,8 @@ Proof.
                   apply EqTyWeakZero ; magic.
                 }
             + apply CtxRefl ; magic.
-          - eapply myTySubst ; try magic.
-            eapply myTySubst ; try magic.
+          - eapply TySubst ; try magic.
+            eapply TySubst ; try magic.
             eapply SubstCtxConv ; [
               eapply SubstShift ; magic
             | try magic ..
@@ -2565,7 +2565,7 @@ Proof.
           assert (issubst (sbweak G A2) (ctxextend G A1) G).
           { eapply SubstCtxConv ; magic. }
           assert (istype (ctxextend G A1) (Subst A2 (sbweak G A2))).
-          { eapply myTySubst ; try magic ; try eassumption. }
+          { eapply TySubst ; try magic ; try eassumption. }
           assert (eqsubst (sbweak G A2) (sbweak G A1) (ctxextend G A1) G).
           { eapply SubstSym ; try magic. }
           assert (
@@ -2737,7 +2737,7 @@ Proof.
                           )
                    )
           ).
-          { eapply myTySubst ; try magic.
+          { eapply TySubst ; try magic.
             eapply SubstCtxConv ; try magic.
             eapply CtxRefl ; magic.
           }
@@ -2753,7 +2753,7 @@ Proof.
                           )
                    )
           ).
-          { eapply myTySubst ; try magic.
+          { eapply TySubst ; try magic.
             eapply SubstCtxConv ; try magic.
             eapply CtxRefl ; magic.
           }
@@ -2813,8 +2813,8 @@ Proof.
                       (sbzero G (Id A1 u1 u1) (refl A1 u1))
                    )
           ).
-          { eapply myTySubst ; try magic.
-            eapply myTySubst ; try magic.
+          { eapply TySubst ; try magic.
+            eapply TySubst ; try magic.
             eapply SubstCtxConv ; try magic.
             eapply CtxRefl ; magic.
           }
@@ -2845,8 +2845,8 @@ Proof.
                       (sbzero G (Id A2 u2 u2) (refl A2 u2))
                    )
           ).
-          { eapply myTySubst ; try magic.
-            eapply myTySubst ; try magic.
+          { eapply TySubst ; try magic.
+            eapply TySubst ; try magic.
             eapply SubstCtxConv ; try magic.
             eapply CtxRefl ; magic.
           }
@@ -2928,7 +2928,7 @@ Proof.
           assert (issubst (sbweak G A1) (ctxextend G A2) G).
           { eapply SubstCtxConv ; magic. }
           assert (istype (ctxextend G A2) (Subst A1 (sbweak G A1))).
-          { eapply myTySubst ; try magic ; try eassumption. }
+          { eapply TySubst ; try magic ; try eassumption. }
           assert (eqsubst (sbweak G A1) (sbweak G A2) (ctxextend G A2) G).
           { eapply SubstSym ; try magic. }
           assert (
@@ -3054,20 +3054,20 @@ Proof.
                 ].
               * eapply SubstCtxConv ; magic.
             + eapply TyCtxConv ; [
-                eapply myTySubst ; magic
+                eapply TySubst ; magic
               | magic ..
               ].
             + eapply SubstCtxConv ; try magic.
               apply EqCtxExtend ; try magic. gopushsubst.
             + eapply SubstCtxConv ; try magic.
               apply EqCtxExtend ; try magic. gopushsubst.
-          - eapply myTySubst ; try magic.
-            eapply myTySubst ; try magic.
+          - eapply TySubst ; try magic.
+            eapply TySubst ; try magic.
             eapply SubstCtxConv ; try magic.
             + apply EqCtxExtend ; try magic. gopushsubst.
             + apply CtxRefl ; magic.
-          - eapply myTySubst ; try magic.
-            eapply myTySubst ; try magic.
+          - eapply TySubst ; try magic.
+            eapply TySubst ; try magic.
             eapply SubstCtxConv ; try magic.
             + apply EqCtxExtend ; try magic. gopushsubst.
             + apply CtxRefl ; magic.

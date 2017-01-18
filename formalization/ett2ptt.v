@@ -129,10 +129,10 @@ Proof.
 
     (* TySubst *)
     { apply (@ptt.TySubst G D).
-      - now apply (ptt_sane_issubst sbs G D), sane_issubst.
-      - now apply (ptt_sane_istype D A), sane_istype.
       - now apply sane_issubst.
       - now apply sane_istype.
+      - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+      - now apply (ptt_sane_istype D A), sane_istype.
     }
 
     (* TyProd *)
