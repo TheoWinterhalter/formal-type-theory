@@ -2379,7 +2379,7 @@ Proof.
             | magic ..
             ].
           - eapply myCongTySubst ; try magic.
-            + eapply myEqSubstCtxConv ; [
+            + eapply EqSubstCtxConv ; [
                eapply CongSubstZero ; try magic
               | try magic ..
               ].
@@ -2787,7 +2787,7 @@ Proof.
           ).
           { eapply myCongTySubst ; try magic ; try eassumption.
             - eapply myCongTySubst ; try magic.
-              + eapply myEqSubstCtxConv ; [
+              + eapply EqSubstCtxConv ; [
                   eapply CongSubstShift ; try magic
                 | try magic ; try eassumption ..
                 ].
@@ -3030,7 +3030,7 @@ Proof.
           | try magic ..
           ].
           - eapply myCongTySubst ; try magic.
-            + eapply myEqSubstCtxConv ; [
+            + eapply EqSubstCtxConv ; [
                 eapply CongSubstZero ; try magic
               | try magic ..
               ].
@@ -3041,7 +3041,7 @@ Proof.
               * apply EqCtxExtend ; try magic. gopushsubst.
               * eapply SubstCtxConv ; magic.
             + eapply myCongTySubst ; try magic.
-              * { eapply myEqSubstCtxConv ; [
+              * { eapply EqSubstCtxConv ; [
                     eapply CongSubstShift ; try magic
                   | try magic ; try eassumption ..
                   ].

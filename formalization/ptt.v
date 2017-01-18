@@ -521,15 +521,15 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | EqSubstCtxConv :
        rule
          parameters: {G1 G2 D1 D2 sbs sbt},
+         premise: eqsubst sbs sbt G1 D1
+         premise: eqctx G1 G2
+         premise: eqctx D1 D2
          premise: isctx G1
          premise: isctx G2
          premise: isctx D1
          premise: isctx D2
          premise: issubst sbs G1 D1
          premise: issubst sbt G1 D1
-         premise: eqsubst sbs sbt G1 D1
-         premise: eqctx G1 G2
-         premise: eqctx D1 D2
          conclusion:
            eqsubst sbs sbt G2 D2
        endrule

@@ -206,28 +206,6 @@ Proof.
   - assumption.
 Defined.
 
-Lemma myEqSubstCtxConv :
-  forall {G1 G2 D1 D2 sbs sbt},
-    eqsubst sbs sbt G1 D1 ->
-    eqctx G1 G2 ->
-    eqctx D1 D2 ->
-    isctx G1 ->
-    isctx G2 ->
-    isctx D1 ->
-    isctx D2 ->
-    issubst sbs G1 D1 ->
-    issubst sbt G1 D1 ->
-    eqsubst sbs sbt G2 D2.
-Proof.
-  intros.
-  eapply EqSubstCtxConv ; [
-    exact H2
-  | assumption
-  | exact H4
-  | assumption ..
-  ].
-Defined.
-
 Lemma mySubstSym :
   forall {G D sbs sbt},
     eqsubst sbs sbt G D ->

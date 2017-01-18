@@ -128,7 +128,7 @@ Proof.
   }
   assert (eqsubst sbs2 sbs1 G2 D).
   { apply SubstSym ; try assumption.
-    eapply myEqSubstCtxConv ; magic.
+    eapply EqSubstCtxConv ; magic.
   }
   eapply myCongTySubst ; [
     magic ..
@@ -1985,7 +1985,7 @@ Proof.
     eapply CongSubstComp ; [
       (* On the left we remain unchanged. *)
       eapply SubstRefl ; magic
-    | eapply myEqSubstCtxConv ; [
+    | eapply EqSubstCtxConv ; [
         eapply CompShift ; magic
       | try magic ; assumption ..
       ]
@@ -1999,7 +1999,7 @@ Proof.
     eapply CongSubstComp ; [
       (* We leave the left unchanged. *)
       eapply SubstRefl ; magic
-    | eapply myEqSubstCtxConv ; [
+    | eapply EqSubstCtxConv ; [
         eapply CongSubstShift ; [
           eassumption
         | eapply mySubstSym ; [
@@ -2021,7 +2021,7 @@ Proof.
       (* On the left we remain unchanged. *)
       eapply SubstRefl ; magic
     | eapply mySubstSym ; [
-        eapply myEqSubstCtxConv ; [
+        eapply EqSubstCtxConv ; [
           eapply CompShift ; magic
         | try magic ; assumption ..
         ]
@@ -2043,7 +2043,7 @@ Proof.
      and thus be able to apply congruences. *)
   eapply CongSubstComp ; try magic.
   eapply CongSubstComp ; try magic ; try assumption.
-  - eapply myEqSubstCtxConv ; [
+  - eapply EqSubstCtxConv ; [
       eapply CongSubstShift ; magic
     | try magic ; assumption ..
     ].

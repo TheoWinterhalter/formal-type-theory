@@ -404,15 +404,15 @@ Proof.
 
     (* EqSubstCtxConv *)
     - { apply (@ptt.EqSubstCtxConv G1 G2 D1 D2).
-        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
-        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
-        - now apply (@ptt_sane_eqctx D1 D2), sane_eqctx.
-        - now apply (@ptt_sane_eqctx D1 D2), sane_eqctx.
-        - now apply (@ptt_sane_eqsubst sbs sbt G1 D1), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbs sbt G1 D1), sane_eqsubst.
         - now apply sane_eqsubst.
         - now apply sane_eqctx.
         - now apply sane_eqctx.
+        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
+        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
+        - now apply (@ptt_sane_eqctx D1 D2), sane_eqctx.
+        - now apply (@ptt_sane_eqctx D1 D2), sane_eqctx.
+        - now apply (@ptt_sane_eqsubst sbs sbt G1 D1), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs sbt G1 D1), sane_eqsubst.
       }
 
     (* CompAssoc *)
