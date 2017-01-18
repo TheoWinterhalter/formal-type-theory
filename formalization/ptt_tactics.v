@@ -279,7 +279,7 @@ Ltac magicn n :=
     assumption || shelve
   (* Terms *)
   | |- isterm ?G (subst ?u ?sbs) (Subst ?A ?sbs) =>
-    eapply myTermSubst ; magicn n
+    eapply TermSubst ; magicn n
   | |- isterm (ctxextend ?G ?A) (var 0) (Subst ?A (sbweak ?G ?A)) =>
     apply TermVarZero ; magicn n
   | |- isterm (ctxextend ?G ?B) (var (S ?k)) (Subst ?A (sbweak ?G ?B)) =>

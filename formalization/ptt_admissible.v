@@ -180,8 +180,8 @@ Proof.
   - gocompsubst ; try eassumption ; try magic.
     + gocompsubst ; try eassumption ; try magic.
       * { eapply TermTyConv.
-          - eapply myTermSubst ; try magic.
-            eapply myTermSubst ; try magic.
+          - eapply TermSubst ; try magic.
+            eapply TermSubst ; try magic.
             eassumption.
           - gocompsubst.
           - magic.
@@ -189,8 +189,8 @@ Proof.
           - magic.
         }
       * { eapply TermTyConv.
-          - eapply myTermSubst ; try magic.
-            eapply myTermSubst ; try magic.
+          - eapply TermSubst ; try magic.
+            eapply TermSubst ; try magic.
             eassumption.
           - gocompsubst.
           - magic.
@@ -198,7 +198,7 @@ Proof.
           - magic.
         }
       * { eapply TermTyConv.
-          - eapply myTermSubst ; try magic.
+          - eapply TermSubst ; try magic.
             eassumption.
           - magic.
           - magic.
@@ -207,7 +207,7 @@ Proof.
         }
       * gocompsubst.
       * { eapply TermTyConv.
-          - eapply myTermSubst ; try magic.
+          - eapply TermSubst ; try magic.
             eassumption.
           - gocompsubst.
           - magic.
@@ -215,8 +215,8 @@ Proof.
           - magic.
         }
     + { eapply TermTyConv.
-        - eapply myTermSubst ; try magic.
-          eapply myTermSubst ; try magic.
+        - eapply TermSubst ; try magic.
+          eapply TermSubst ; try magic.
           eassumption.
         - gocompsubst.
         - magic.
@@ -224,8 +224,8 @@ Proof.
         - magic.
       }
     + { eapply TermTyConv.
-        - eapply myTermSubst ; try magic.
-          eapply myTermSubst ; try magic.
+        - eapply TermSubst ; try magic.
+          eapply TermSubst ; try magic.
           eassumption.
         - gocompsubst.
         - magic.
@@ -233,8 +233,8 @@ Proof.
         - magic.
       }
     + { eapply TermTyConv.
-        - eapply myTermSubst ; try magic.
-          eapply myTermSubst ; try magic.
+        - eapply TermSubst ; try magic.
+          eapply TermSubst ; try magic.
           eassumption.
         - apply EqTySym ; try magic. apply EqTyWeakNat ; magic.
         - magic.
@@ -247,8 +247,8 @@ Proof.
   - magic.
   - magic.
   - { eapply TermTyConv.
-      - eapply myTermSubst ; try magic.
-        eapply myTermSubst ; try magic.
+      - eapply TermSubst ; try magic.
+        eapply TermSubst ; try magic.
         eassumption.
       - apply EqTySym ; try magic. apply EqTyWeakNat ; magic.
       - magic.
@@ -288,7 +288,7 @@ Proof.
     + magic.
     + magic.
     + eapply TermTyConv ; [
-        eapply myTermSubst ; try eassumption ; try magic
+        eapply TermSubst ; try eassumption ; try magic
       | try magic ..
       ].
       apply EqTySym ; magic.
@@ -298,8 +298,8 @@ Proof.
       ].
       apply compWeakZero ; magic.
   - eapply TermTyConv ; [
-      (eapply myTermSubst ; try magic) ;
-      (eapply myTermSubst ; try magic) ;
+      (eapply TermSubst ; try magic) ;
+      (eapply TermSubst ; try magic) ;
       eassumption
     | try magic ..
     ].
@@ -337,16 +337,16 @@ Proof.
   intros.
   gocompsubst.
   - eapply TermTyConv ; [
-      (eapply myTermSubst ; try magic) ;
-      (eapply myTermSubst ; try magic) ;
+      (eapply TermSubst ; try magic) ;
+      (eapply TermSubst ; try magic) ;
       eassumption
     | try magic ..
     ].
     apply EqTyShiftZero ; magic.
   - gocompsubst.
     + eapply TermTyConv ; [
-        (eapply myTermSubst ; try magic) ;
-        (eapply myTermSubst ; try magic) ;
+        (eapply TermSubst ; try magic) ;
+        (eapply TermSubst ; try magic) ;
         eassumption
       | try magic ..
       ].
@@ -357,45 +357,45 @@ Proof.
       | magic ..
       ].
     + eapply TermTyConv ; [
-        (eapply myTermSubst ; try magic) ;
-        (eapply myTermSubst ; try magic) ;
+        (eapply TermSubst ; try magic) ;
+        (eapply TermSubst ; try magic) ;
         eassumption
       | try magic ..
       ].
       gocompsubst.
     + eapply TermTyConv ; [
-        (eapply myTermSubst ; try magic) ;
+        (eapply TermSubst ; try magic) ;
         eassumption
       | try magic ..
       ].
     + eapply TermTyConv ; [
-        (eapply myTermSubst ; try magic) ;
+        (eapply TermSubst ; try magic) ;
         eassumption
       | try magic ..
       ].
     + gocompsubst.
     + eapply TermTyConv ; [
-        (eapply myTermSubst ; try magic) ;
-        (eapply myTermSubst ; try magic) ;
+        (eapply TermSubst ; try magic) ;
+        (eapply TermSubst ; try magic) ;
         eassumption
       | try magic ..
       ].
     + eapply TermTyConv ; [
-        (eapply myTermSubst ; try magic) ;
+        (eapply TermSubst ; try magic) ;
         eassumption
       | try magic ..
       ].
       gocompsubst.
   - eapply TermTyConv ; [
-      (eapply myTermSubst ; try magic) ;
-      (eapply myTermSubst ; try magic) ;
+      (eapply TermSubst ; try magic) ;
+      (eapply TermSubst ; try magic) ;
       eassumption
     | try magic ..
     ].
     gocompsubst.
   - eapply TermTyConv ; [
-      (eapply myTermSubst ; try magic) ;
-      (eapply myTermSubst ; try magic) ;
+      (eapply TermSubst ; try magic) ;
+      (eapply TermSubst ; try magic) ;
       eassumption
     | try magic ..
     ].
@@ -549,7 +549,7 @@ Proof.
   { apply EqSubstWeakZero ; try assumption. magic. }
   assert (isterm D (subst (var 0) (sbzero D A v)) A).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; magic
+      eapply TermSubst ; magic
     | magic ..
     ].
   }
@@ -700,7 +700,7 @@ Proof.
                           (sbzero G (Subst A sbs) (subst v sbs))))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      eapply TermSubst ; [ magic | eassumption | magic .. ]
     | try magic ..
     ].
     gocompsubst. gocompsubst. gocompsubst.
@@ -715,11 +715,11 @@ Proof.
                           (sbzero G (Subst A sbs) (subst v sbs))))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [
+      eapply TermSubst ; [
         magic
-      | eapply myTermSubst ; [
+      | eapply TermSubst ; [
           magic
-        | eapply myTermSubst ; [ magic | eassumption | magic .. ]
+        | eapply TermSubst ; [ magic | eassumption | magic .. ]
         | magic ..
         ]
       | magic ..
@@ -788,7 +788,7 @@ Proof.
            )
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      eapply TermSubst ; [ magic | eassumption | magic .. ]
     | try magic ..
     ].
     gocompsubst. gocompsubst.
@@ -803,7 +803,7 @@ Proof.
                                   (sbzero G (Subst A sbs) (subst v sbs)))))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      eapply TermSubst ; [ magic | eassumption | magic .. ]
     | magic ..
     ].
   }
@@ -823,7 +823,7 @@ Proof.
            (Subst A sbs)
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      eapply TermSubst ; [ magic | eassumption | magic .. ]
     | try magic ..
     ].
     eassumption.
@@ -854,7 +854,7 @@ Proof.
        (sbzero G (Subst A sbs) (subst v sbs)))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      eapply TermSubst ; [ magic | eassumption | magic .. ]
     | try magic ..
     ].
     assumption.
@@ -866,7 +866,7 @@ Proof.
                   (sbzero G (Subst A sbs) (subst v sbs)))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      eapply TermSubst ; [ magic | eassumption | magic .. ]
     | try magic ..
     ].
     assumption.
@@ -945,9 +945,9 @@ Proof.
        (sbweak G (Subst A sbs)))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [
+      eapply TermSubst ; [
         magic
-      | eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      | eapply TermSubst ; [ magic | eassumption | magic .. ]
       | magic ..
       ]
     | try magic ..
@@ -978,7 +978,7 @@ Proof.
            (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [
+      eapply TermSubst ; [
         magic
       | eapply TermVarZero ; magic
       | magic ..
@@ -1002,9 +1002,9 @@ Proof.
     (Subst (Subst A (sbweak D A)) (sbshift G A sbs))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [
+      eapply TermSubst ; [
         magic
-      | eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      | eapply TermSubst ; [ magic | eassumption | magic .. ]
       | magic ..
       ]
     | try magic ..
@@ -1102,9 +1102,9 @@ Proof.
                   (sbcomp (sbweak D A) (sbcomp (sbzero D A v) sbs)))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [
+      eapply TermSubst ; [
         magic
-      | eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      | eapply TermSubst ; [ magic | eassumption | magic .. ]
       | magic ..
       ]
     | try magic ..
@@ -1117,7 +1117,7 @@ Proof.
        (sbcomp (sbweak D A) (sbcomp (sbzero D A v) sbs)))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      eapply TermSubst ; [ magic | eassumption | magic .. ]
     | magic ..
     ].
     Unshelve. assumption.
@@ -1134,7 +1134,7 @@ Proof.
        (sbcomp (sbzero D A v) sbs))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      eapply TermSubst ; [ magic | eassumption | magic .. ]
     | try magic ..
     ].
     assumption.
@@ -1171,7 +1171,7 @@ Proof.
     isterm G (subst (var 0) (sbcomp (sbzero D A v) sbs)) (Subst A sbs)
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [
+      eapply TermSubst ; [
         magic
       | eapply TermVarZero ; magic
       | magic ..
@@ -1190,7 +1190,7 @@ Proof.
     (Subst (Subst A (sbweak D A)) (sbcomp (sbzero D A v) sbs))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [ eassumption | eassumption | magic .. ]
+      eapply TermSubst ; [ eassumption | eassumption | magic .. ]
     | try magic ..
     ].
     assumption.
@@ -1223,9 +1223,9 @@ Proof.
     (Subst A sbs)
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [
+      eapply TermSubst ; [
         magic
-      | eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      | eapply TermSubst ; [ magic | eassumption | magic .. ]
       | magic ..
       ]
     | try magic ..
@@ -1288,8 +1288,8 @@ Proof.
           (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs)))))
   ).
   { eapply TermTyConv ; [
-      (eapply myTermSubst ; try magic) ;
-      (eapply myTermSubst ; try magic) ;
+      (eapply TermSubst ; try magic) ;
+      (eapply TermSubst ; try magic) ;
       eassumption
     | try magic ..
     ].
@@ -1303,7 +1303,7 @@ Proof.
           (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs)))))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      eapply TermSubst ; [ magic | eassumption | magic .. ]
     | magic ..
     ].
     Unshelve. assumption.
@@ -1337,9 +1337,9 @@ Proof.
        (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [
+      eapply TermSubst ; [
         magic
-       | eapply myTermSubst ; [
+       | eapply TermSubst ; [
            magic
          | eapply TermVarZero ; magic
          | magic ..
@@ -1362,7 +1362,7 @@ Proof.
       (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [
+      eapply TermSubst ; [
         magic
       | eassumption
       | magic ..
@@ -1417,7 +1417,7 @@ Proof.
       (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [
+      eapply TermSubst ; [
         magic
       | eapply TermVarZero ; magic
       | magic ..
@@ -1471,7 +1471,7 @@ Proof.
        (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      eapply TermSubst ; [ magic | eassumption | magic .. ]
     | try magic ..
     ].
     assumption.
@@ -1510,7 +1510,7 @@ Proof.
     isterm G (subst p sbs) (Id (Subst A sbs) (subst u sbs) (subst v sbs))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      eapply TermSubst ; [ magic | eassumption | magic .. ]
     | magic ..
     ].
   }
@@ -1528,11 +1528,11 @@ Proof.
        (sbzero G (Subst A sbs) (subst v sbs))) (Subst A sbs)
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [
+      eapply TermSubst ; [
         magic
-      | eapply myTermSubst ; [
+      | eapply TermSubst ; [
           magic
-        | eapply myTermSubst ; [ magic | eassumption | magic .. ]
+        | eapply TermSubst ; [ magic | eassumption | magic .. ]
         | magic ..
         ]
       | magic ..
@@ -1553,9 +1553,9 @@ Proof.
        (sbzero G (Subst A sbs) (subst v sbs))) (Subst A sbs)
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [
+      eapply TermSubst ; [
         magic
-      | eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      | eapply TermSubst ; [ magic | eassumption | magic .. ]
       | magic ..
       ]
     | try magic ..
@@ -1585,11 +1585,11 @@ Proof.
        (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [
+      eapply TermSubst ; [
         magic
-      | eapply myTermSubst ; [
+      | eapply TermSubst ; [
           magic
-        | eapply myTermSubst ; [ magic | eassumption | magic .. ]
+        | eapply TermSubst ; [ magic | eassumption | magic .. ]
         | magic ..
         ]
       | magic ..
@@ -1619,7 +1619,7 @@ Proof.
        (sbzero G (Subst A sbs) (subst v sbs)))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      eapply TermSubst ; [ magic | eassumption | magic .. ]
     | try magic ..
     ].
     assumption.
@@ -1638,7 +1638,7 @@ Proof.
        (sbzero G (Subst A sbs) (subst v sbs)))
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [ magic | eassumption | magic .. ]
+      eapply TermSubst ; [ magic | eassumption | magic .. ]
     | try magic ..
     ].
     assumption.
@@ -1891,11 +1891,11 @@ Proof.
        (sbzero G (Subst A sbs) (subst v sbs))) (Subst A sbs)
   ).
   { eapply TermTyConv ; [
-      eapply myTermSubst ; [
+      eapply TermSubst ; [
         magic
-      | eapply myTermSubst ; [
+      | eapply TermSubst ; [
           magic
-        | eapply myTermSubst ; [ magic | eassumption | magic .. ]
+        | eapply TermSubst ; [ magic | eassumption | magic .. ]
         | magic ..
         ]
       | magic ..

@@ -186,11 +186,11 @@ with isterm : context -> term -> type -> Type :=
      | TermSubst :
        rule
          parameters: {G D A u sbs},
-         premise: isctx G
-         premise: isctx D
-         premise: istype D A
          premise: issubst sbs G D
          premise: isterm D u A
+         premise: isctx G
+         premise: istype D A
+         premise: isctx D
          conclusion:
            isterm G (subst u sbs) (Subst A sbs)
        endrule
