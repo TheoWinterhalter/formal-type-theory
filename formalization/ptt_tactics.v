@@ -321,7 +321,7 @@ Ltac magicn n :=
   (* To be continued... *)
   (* Equality of terms *)
   | |- eqterm ?G (subst ?u ?sbs) (subst ?v ?sbt) ?A =>
-    eapply myCongTermSubst ; magicn n
+    eapply CongTermSubst ; magicn n
   (* To be continues... *)
   (* When all else fails. *)
   (* This part will hopefully be gone at some point. *)

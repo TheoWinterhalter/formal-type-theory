@@ -979,15 +979,15 @@ Proof.
 
     (* CongTermSubst *)
     - { apply (@ptt.CongTermSubst G D).
-        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqterm D u1 u2 A), sane_eqterm.
-        - now apply (@ptt_sane_eqterm D u1 u2 A), sane_eqterm.
-        - now apply (@ptt_sane_eqterm D u1 u2 A), sane_eqterm.
-        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
         - now apply sane_eqsubst.
         - now apply sane_eqterm.
+        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqterm D u1 u2 A), sane_eqterm.
+        - now apply (@ptt_sane_eqterm D u1 u2 A), sane_eqterm.
+        - now apply (@ptt_sane_eqterm D u1 u2 A), sane_eqterm.
+        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
       }
   }
 

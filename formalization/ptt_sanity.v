@@ -133,7 +133,7 @@ Proof.
         * magic.
       + { gocompsubst.
           - eapply EqTrans.
-            + eapply myCongTermSubst.
+            + eapply CongTermSubst.
               * eapply WeakZero ; magic.
               * eapply EqRefl ; magic.
               * assumption.
@@ -2589,7 +2589,7 @@ Proof.
                    (subst u2 (sbweak G A2))
                    (Subst A1 (sbweak G A1))
           ).
-          { eapply myCongTermSubst ; magic. }
+          { eapply CongTermSubst ; magic. }
           assert (
             eqtype
               (ctxextend G A1)

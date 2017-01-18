@@ -274,7 +274,7 @@ Proof.
   intros.
   gocompsubst ; try eassumption ; try magic.
   - eapply EqTrans.
-    + eapply myCongTermSubst ; [
+    + eapply CongTermSubst ; [
         eapply WeakZero ; magic
       | magic ..
       ].
@@ -352,7 +352,7 @@ Proof.
       ].
       gocompsubst.
     + eassumption.
-    + eapply myCongTermSubst ; [
+    + eapply CongTermSubst ; [
         eapply ShiftZero ; magic
       | magic ..
       ].
@@ -444,7 +444,7 @@ Proof.
     | magic ..
     ].
   }
-  eapply myCongTermSubst ; [
+  eapply CongTermSubst ; [
     eapply CongSubstWeak ; magic
   | try magic ..
   ].
@@ -1449,7 +1449,7 @@ Proof.
     ].
     eapply EqTrans ; [
       eapply EqTyConv ; [
-        eapply myCongTermSubst ; [
+        eapply CongTermSubst ; [
           eapply SubstRefl ; magic
         | eapply EqSubstShiftZero ; magic
         | magic ..

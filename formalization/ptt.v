@@ -1594,6 +1594,8 @@ with eqterm : context -> term -> term -> type -> Type :=
      | CongTermSubst :
        rule
          parameters: {G D A u1 u2 sbs sbt},
+         premise: eqsubst sbs sbt G D
+         premise: eqterm D u1 u2 A
          premise: isctx G
          premise: isctx D
          premise: istype D A
@@ -1601,8 +1603,6 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: isterm D u2 A
          premise: issubst sbs G D
          premise: issubst sbt G D
-         premise: eqsubst sbs sbt G D
-         premise: eqterm D u1 u2 A
          conclusion:
            eqterm G
                   (subst u1 sbs)
