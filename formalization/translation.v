@@ -697,7 +697,7 @@ Proof.
         + todo. (* Same again. *)
 
       (* TyProd *)
-      - destruct (trans_type G G' A H Ht) as [A' [HAisA' fA]].
+      - destruct (trans_type G G' A H0 Ht) as [A' [HAisA' fA]].
         pose (Gx := syntax.ctxextend G A).
         pose (Gx' := C.ctxextend G' A').
         assert (Hex : istrans_ctx Gx Gx').
@@ -710,7 +710,7 @@ Proof.
             + destruct Ht. assumption.
             + destruct HAisA'. assumption.
         }
-        destruct (trans_type Gx Gx' B H0 Hex) as [B' [HBisB' fB]].
+        destruct (trans_type Gx Gx' B H Hex) as [B' [HBisB' fB]].
         exists (C.Coerce (C.idTy (eval_ctx G')) (C.Prod A' B')).
         split.
         + { split.

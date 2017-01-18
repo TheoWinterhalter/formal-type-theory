@@ -113,9 +113,9 @@ with istype : context -> type -> Type :=
      | TyProd :
        rule
          parameters: {G A B},
-         premise: isctx G
-         premise: istype G A
          premise: istype (ctxextend G A) B
+         premise: istype G A
+         premise: isctx G
          conclusion:
            istype G (Prod A B)
        endrule

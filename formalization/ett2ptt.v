@@ -137,11 +137,11 @@ Proof.
 
     (* TyProd *)
     { apply ptt.TyProd.
-      - now apply (ptt_CtxExtendInversion G A),
-                  (ptt_sane_istype _ B), sane_istype.
-      - now apply (ptt_CtxExtendInversion G A),
-                  (ptt_sane_istype _ B), sane_istype.
       - now apply sane_istype.
+      - now apply (ptt_CtxExtendInversion G A),
+                  (ptt_sane_istype _ B), sane_istype.
+      - now apply (ptt_CtxExtendInversion G A),
+                  (ptt_sane_istype _ B), sane_istype.
     }
 
     (* TyId *)

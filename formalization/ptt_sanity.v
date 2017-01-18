@@ -279,12 +279,12 @@ Proof.
   { split.
     - { apply (@TySubst G D) ; auto using TyProd. }
     - { apply TyProd ; auto.
-        + now apply (@TySubst G D).
         + apply (@TySubst _ (ctxextend D A)) ; auto.
           * now apply SubstShift.
           * apply CtxExtend ; auto.
             now apply (@TySubst G D).
           * now apply CtxExtend.
+        + now apply (@TySubst G D).
       }
   }
 
