@@ -731,7 +731,9 @@ Proof.
     - { apply (@ptt.EqSubstAbs G D).
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
-        - now apply sane_istype.
+        - now apply (ptt_CtxExtendInversion D A),
+                    (ptt_sane_isterm _ u B),
+                    sane_isterm.
         - now apply (@ptt_sane_isterm (ctxextend D A) u B), sane_isterm.
         - now apply sane_isterm.
         - now apply sane_issubst.
