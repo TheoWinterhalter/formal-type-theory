@@ -1048,11 +1048,11 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstRefl :
        rule
          parameters: {G D A u sbs},
+         premise: issubst sbs G D
+         premise: isterm D u A
          premise: isctx G
          premise: isctx D
          premise: istype D A
-         premise: isterm D u A
-         premise: issubst sbs G D
          conclusion:
            eqterm G
                   (subst (refl A u) sbs)

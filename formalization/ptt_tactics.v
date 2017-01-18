@@ -176,13 +176,13 @@ Ltac pushsubst1 :=
     ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
     eapply EqTrans ; [
-      eapply myEqSubstRefl
+      eapply EqSubstRefl
     | idtac ..
     ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
     eapply EqTyConv ; [
       eapply EqTrans ; [
-        eapply myEqSubstRefl
+        eapply EqSubstRefl
       | idtac ..
       ]
     | idtac ..
