@@ -227,23 +227,6 @@ Proof.
   apply CongSubstShift ; assumption.
 Defined.
 
-Lemma myCongSubstWeak :
-  forall {G1 G2 A1 A2},
-    eqctx G1 G2 ->
-    eqtype G1 A1 A2 ->
-    isctx G1 ->
-    isctx G2 ->
-    istype G1 A1 ->
-    istype G1 A2 ->
-    eqsubst (sbweak G1 A1)
-            (sbweak G2 A2)
-            (ctxextend G1 A1)
-            G1.
-Proof.
-  intros.
-  apply CongSubstWeak ; assumption.
-Defined.
-
 Lemma myEqSubstCtxConv :
   forall {G1 G2 D1 D2 sbs sbt},
     eqsubst sbs sbt G1 D1 ->

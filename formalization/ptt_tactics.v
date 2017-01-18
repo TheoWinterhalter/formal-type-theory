@@ -307,7 +307,7 @@ Ltac magicn n :=
   | |- eqsubst (sbzero ?G1 ?A1 ?u1) (sbzero ?G2 ?A2 ?u2) ?D ?E =>
     eapply CongSubstZero ; magicn n
   | |- eqsubst (sbweak ?G1 ?A1) (sbweak ?G2 ?A2) ?D ?E =>
-    eapply myCongSubstWeak ; magicn n
+    eapply CongSubstWeak ; magicn n
   | |- eqsubst (sbshift ?G1 ?A1 ?sbs1) (sbshift ?G2 ?A2 ?sbs2) ?D ?E =>
     eapply myCongSubstShift ; magicn n
   (* We should probably avoid using congruence on composition. *)

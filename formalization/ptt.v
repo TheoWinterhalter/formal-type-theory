@@ -466,12 +466,12 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | CongSubstWeak :
        rule
          parameters: {G1 G2 A1 A2},
+         premise: eqctx G1 G2
+         premise: eqtype G1 A1 A2
          premise: isctx G1
          premise: isctx G2
          premise: istype G1 A1
          premise: istype G1 A2
-         premise: eqctx G1 G2
-         premise: eqtype G1 A1 A2
          conclusion:
            eqsubst (sbweak G1 A1)
                    (sbweak G2 A2)
