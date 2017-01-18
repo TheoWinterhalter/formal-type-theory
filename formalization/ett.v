@@ -430,7 +430,6 @@ with eqtype : context -> type -> type -> Type :=
      | EqTySubstId :
          forall {G D A u v sbs},
            issubst sbs G D ->
-           istype D A ->
            isterm D u A ->
            isterm D v A ->
            eqtype G

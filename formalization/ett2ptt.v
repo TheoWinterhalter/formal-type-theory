@@ -543,7 +543,7 @@ Proof.
       - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
       - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
       - now apply sane_issubst.
-      - now apply sane_istype.
+      - now apply (@ptt_sane_isterm D u A), sane_isterm.
       - now apply sane_isterm.
       - now apply sane_isterm.
     }
