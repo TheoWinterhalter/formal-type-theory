@@ -309,7 +309,7 @@ Ltac magicn n :=
   | |- eqsubst (sbweak ?G1 ?A1) (sbweak ?G2 ?A2) ?D ?E =>
     eapply CongSubstWeak ; magicn n
   | |- eqsubst (sbshift ?G1 ?A1 ?sbs1) (sbshift ?G2 ?A2 ?sbs2) ?D ?E =>
-    eapply myCongSubstShift ; magicn n
+    eapply CongSubstShift ; magicn n
   (* We should probably avoid using congruence on composition. *)
   (* To be continued... *)
   (* Equality of types *)

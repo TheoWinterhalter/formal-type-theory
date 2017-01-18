@@ -377,16 +377,16 @@ Proof.
 
     (* CongSubstShift *)
     - { apply ptt.CongSubstShift.
-        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
-        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
-        - now apply (@ptt_sane_eqtype D A1 A2), sane_eqtype.
-        - now apply (@ptt_sane_eqtype D A1 A2), sane_eqtype.
-        - now apply (@ptt_sane_eqtype D A1 A2), sane_eqtype.
-        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G1 D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G1 D), sane_eqsubst.
         - now apply sane_eqctx.
         - now apply sane_eqsubst.
         - now apply sane_eqtype.
+        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
+        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
+        - now apply (@ptt_sane_eqtype D A1 A2), sane_eqtype.
+        - now apply (@ptt_sane_eqtype D A1 A2), sane_eqtype.
+        - now apply (@ptt_sane_eqtype D A1 A2), sane_eqtype.
+        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G1 D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G1 D), sane_eqsubst.
       }
 
     (* CongSubstComp *)

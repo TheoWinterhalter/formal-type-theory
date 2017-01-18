@@ -206,27 +206,6 @@ Proof.
   - assumption.
 Defined.
 
-Lemma myCongSubstShift :
-  forall {G1 G2 D A1 A2 sbs1 sbs2},
-    eqctx G1 G2 ->
-    eqsubst sbs1 sbs2 G1 D ->
-    eqtype D A1 A2 ->
-    isctx G1 ->
-    isctx G2 ->
-    isctx D ->
-    istype D A1 ->
-    istype D A2 ->
-    issubst sbs1 G1 D ->
-    issubst sbs2 G1 D ->
-    eqsubst (sbshift G1 A1 sbs1)
-            (sbshift G2 A2 sbs2)
-            (ctxextend G1 (Subst A1 sbs1))
-            (ctxextend D A1).
-Proof.
-  intros.
-  apply CongSubstShift ; assumption.
-Defined.
-
 Lemma myEqSubstCtxConv :
   forall {G1 G2 D1 D2 sbs sbt},
     eqsubst sbs sbt G1 D1 ->

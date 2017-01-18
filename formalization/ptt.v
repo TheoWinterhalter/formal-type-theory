@@ -482,6 +482,9 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | CongSubstShift :
        rule
          parameters: {G1 G2 D A1 A2 sbs1 sbs2},
+         premise: eqctx G1 G2
+         premise: eqsubst sbs1 sbs2 G1 D
+         premise: eqtype D A1 A2
          premise: isctx G1
          premise: isctx G2
          premise: isctx D
@@ -489,9 +492,6 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
          premise: istype D A2
          premise: issubst sbs1 G1 D
          premise: issubst sbs2 G1 D
-         premise: eqctx G1 G2
-         premise: eqsubst sbs1 sbs2 G1 D
-         premise: eqtype D A1 A2
          conclusion:
            eqsubst (sbshift G1 A1 sbs1)
                    (sbshift G2 A2 sbs2)

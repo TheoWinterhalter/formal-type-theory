@@ -1963,7 +1963,7 @@ Proof.
          However we need to apply congruence again to rewrite
          the type in the left shift. *)
       eapply myCongSubstComp ; [
-        eapply @myCongSubstShift
+        eapply @CongSubstShift
         with (A2 := Subst
                      (Id (Subst A (sbweak D A))
                          (subst u (sbweak D A))
@@ -2000,7 +2000,7 @@ Proof.
       (* We leave the left unchanged. *)
       eapply SubstRefl ; magic
     | eapply myEqSubstCtxConv ; [
-        eapply myCongSubstShift ; [
+        eapply CongSubstShift ; [
           eassumption
         | eapply mySubstSym ; [
             eapply ShiftZero ; magic
@@ -2044,7 +2044,7 @@ Proof.
   eapply myCongSubstComp ; try magic.
   eapply myCongSubstComp ; try magic ; try assumption.
   - eapply myEqSubstCtxConv ; [
-      eapply myCongSubstShift ; magic
+      eapply CongSubstShift ; magic
     | try magic ; assumption ..
     ].
   - eapply SubstCtxConv ; try magic.

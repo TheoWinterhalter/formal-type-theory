@@ -2788,7 +2788,7 @@ Proof.
           { eapply myCongTySubst ; try magic ; try eassumption.
             - eapply myCongTySubst ; try magic.
               + eapply myEqSubstCtxConv ; [
-                  eapply myCongSubstShift ; try magic
+                  eapply CongSubstShift ; try magic
                 | try magic ; try eassumption ..
                 ].
                 * apply CtxRefl ; magic.
@@ -3042,7 +3042,7 @@ Proof.
               * eapply SubstCtxConv ; magic.
             + eapply myCongTySubst ; try magic.
               * { eapply myEqSubstCtxConv ; [
-                    eapply myCongSubstShift ; try magic
+                    eapply CongSubstShift ; try magic
                   | try magic ; try eassumption ..
                   ].
                   - eapply SubstCtxConv ; magic.
