@@ -619,7 +619,7 @@ Proof.
       sbs
       G D
   ).
-  { eapply mySubstTrans ; [
+  { eapply SubstTrans ; [
       eapply myCongSubstComp ; [
         eapply WeakZero ; magic
       | eapply SubstRefl ; magic
@@ -649,7 +649,7 @@ Proof.
       G
       D
   ).
-  { eapply mySubstTrans ; [
+  { eapply SubstTrans ; [
       eapply myCongSubstComp ; [
         eapply WeakZero ; magic
       | eapply SubstRefl ; magic
@@ -658,11 +658,11 @@ Proof.
     | try magic ..
     ].
     eapply mySubstSym ; try magic.
-    eapply mySubstTrans ; [
+    eapply SubstTrans ; [
       eapply myCompAssoc ; magic
     | try magic ..
     ].
-    eapply mySubstTrans ; [
+    eapply SubstTrans ; [
       eapply myCongSubstComp ; [
         eapply SubstRefl ; magic
       | eapply WeakZero ; magic
@@ -670,7 +670,7 @@ Proof.
       ]
     | try magic ..
     ].
-    eapply mySubstTrans ; [
+    eapply SubstTrans ; [
       eapply CompIdLeft ; magic
     | magic ..
     ].
@@ -744,7 +744,7 @@ Proof.
       D
   ).
   { eapply myCongSubstComp ; [
-      eapply mySubstTrans ; [
+      eapply SubstTrans ; [
         eapply myCongSubstComp ; [
           eapply WeakZero ; magic
         | eapply SubstRefl ; magic
@@ -1067,9 +1067,9 @@ Proof.
   assert (
     eqsubst (sbcomp (sbweak D A) (sbcomp (sbzero D A v) sbs)) sbs G D
   ).
-  { eapply mySubstTrans ; [
+  { eapply SubstTrans ; [
       eapply myCompAssoc ; magic
-    | eapply mySubstTrans ; [
+    | eapply SubstTrans ; [
         eapply myCongSubstComp ; [
           eapply SubstRefl ; magic
         | eapply WeakZero ; magic
@@ -1253,7 +1253,7 @@ Proof.
     sbs
     G D
   ).
-  { eapply mySubstTrans ; [
+  { eapply SubstTrans ; [
       eapply myCongSubstComp ; [
         eapply ShiftZero ; magic
       | eapply SubstRefl ; magic
@@ -1382,11 +1382,11 @@ Proof.
       G
       D
   ).
-  { eapply mySubstTrans ; [
+  { eapply SubstTrans ; [
       eapply myCompAssoc ; magic
     | try magic ..
     ].
-    eapply mySubstTrans ; [
+    eapply SubstTrans ; [
       eapply myCongSubstComp ; [
         eapply SubstRefl ; magic
       | eapply WeakNat ; magic
@@ -1395,7 +1395,7 @@ Proof.
     | try magic ..
     ].
     eapply mySubstSym ; try magic.
-    eapply mySubstTrans ; [
+    eapply SubstTrans ; [
       eapply myCompAssoc ; magic
     | magic ..
     ].
@@ -1934,7 +1934,7 @@ Proof.
   eapply myCongTySubst ; try magic.
   (* We go from the rhs. *)
   eapply mySubstSym ; try magic.
-  eapply mySubstTrans ; [
+  eapply SubstTrans ; [
     (* Then we only look on the lhs of the composition. *)
     eapply myCongSubstComp ; [
       (* We exchange the substitutionss. *)
@@ -1949,12 +1949,12 @@ Proof.
   | try magic ..
   ].
   (* We're using associativity to look at the rhs. *)
-  eapply mySubstTrans ; [
+  eapply SubstTrans ; [
     eapply myCompAssoc ; magic
   | try magic ..
   ].
   (* We can now have a look at the rhs of the composition. *)
-  eapply mySubstTrans ; [
+  eapply SubstTrans ; [
     eapply myCongSubstComp ; [
       (* On the left we remain unchanged. *)
       eapply SubstRefl ; magic
@@ -1981,7 +1981,7 @@ Proof.
   ].
   (* Now that we rewrote the type, we can use fonctoriality. *)
   (* Note this could be meged with the next couple steps. *)
-  eapply mySubstTrans ; [
+  eapply SubstTrans ; [
     eapply myCongSubstComp ; [
       (* On the left we remain unchanged. *)
       eapply SubstRefl ; magic
@@ -1995,7 +1995,7 @@ Proof.
   ].
   (* Now that we have a composition inside the shift, we want
      to proceed with an exchange by using ShiftZero. *)
-  eapply mySubstTrans ; [
+  eapply SubstTrans ; [
     eapply myCongSubstComp ; [
       (* We leave the left unchanged. *)
       eapply SubstRefl ; magic
@@ -2016,7 +2016,7 @@ Proof.
   ].
   (* Now we need to apply CompShift again to put the composition outside
      and apply associativity. *)
-  eapply mySubstTrans ; [
+  eapply SubstTrans ; [
     eapply myCongSubstComp ; [
       (* On the left we remain unchanged. *)
       eapply SubstRefl ; magic
@@ -2032,7 +2032,7 @@ Proof.
   | try magic ..
   ].
   (* Now, it's time to apply associativity guys. *)
-  eapply mySubstTrans ; [
+  eapply SubstTrans ; [
     eapply mySubstSym ; [
       eapply myCompAssoc ; magic
     | magic ..

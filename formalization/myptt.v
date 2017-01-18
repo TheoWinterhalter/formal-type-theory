@@ -433,25 +433,6 @@ Proof.
   intros. eapply EqTyCtxConv ; [ exact H3 | assumption .. ].
 Defined.
 
-Lemma mySubstTrans :
-  rule
-    parameters: {G D sb1 sb2 sb3},
-    premise: eqsubst sb1 sb2 G D
-    premise: eqsubst sb2 sb3 G D
-    premise: issubst sb1 G D
-    premise: issubst sb2 G D
-    premise: issubst sb3 G D
-    premise: isctx G
-    premise: isctx D
-    conclusion:
-      eqsubst sb1 sb3 G D
-  endrule.
-Proof.
-  intros.
-  eapply SubstTrans ;
-    [ assumption .. | exact H2 | assumption | assumption | assumption ].
-Defined.
-
 Lemma myCongSubstComp :
   rule
     parameters: {G D E sbs1 sbs2 sbt1 sbt2},

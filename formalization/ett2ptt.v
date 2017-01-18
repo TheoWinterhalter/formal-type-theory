@@ -343,13 +343,13 @@ Proof.
 
     (* SubstTrans *)
     - { apply (@ptt.SubstTrans G D sb1 sb2 sb3).
-        - now apply (@ptt_sane_eqsubst sb1 sb2 G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sb1 sb2 G D), sane_eqsubst.
+        - now apply sane_eqsubst.
+        - now apply sane_eqsubst.
         - now apply (@ptt_sane_eqsubst sb1 sb2 G D), sane_eqsubst.
         - now apply (@ptt_sane_eqsubst sb1 sb2 G D), sane_eqsubst.
         - now apply (@ptt_sane_eqsubst sb2 sb3 G D), sane_eqsubst.
-        - now apply sane_eqsubst.
-        - now apply sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sb1 sb2 G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sb1 sb2 G D), sane_eqsubst.
       }
 
     (* CongSubstZero *)

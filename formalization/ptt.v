@@ -433,13 +433,13 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | SubstTrans :
        rule
          parameters: {G D sb1 sb2 sb3},
-         premise: isctx G
-         premise: isctx D
+         premise: eqsubst sb1 sb2 G D
+         premise: eqsubst sb2 sb3 G D
          premise: issubst sb1 G D
          premise: issubst sb2 G D
          premise: issubst sb3 G D
-         premise: eqsubst sb1 sb2 G D
-         premise: eqsubst sb2 sb3 G D
+         premise: isctx G
+         premise: isctx D
          conclusion:
            eqsubst sb1 sb3 G D
        endrule
