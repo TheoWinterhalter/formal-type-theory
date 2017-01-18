@@ -697,12 +697,12 @@ with eqtype : context -> type -> type -> Type :=
      | EqTySubstComp :
        rule
          parameters: {G D E A sbs sbt},
-         premise: isctx G
-         premise: isctx D
-         premise: isctx E
          premise: istype E A
          premise: issubst sbs G D
          premise: issubst sbt D E
+         premise: isctx G
+         premise: isctx D
+         premise: isctx E
          conclusion:
            eqtype G
                   (Subst (Subst A sbt) sbs)

@@ -18,7 +18,7 @@ Lemma eqtype_subst_left :
 Proof.
   intros.
   eapply EqTyTrans ; [
-    eapply myEqTySubstComp ; eassumption
+    eapply EqTySubstComp ; eassumption
   | assumption ..
   ].
 Defined.
@@ -44,7 +44,7 @@ Proof.
   assert (hh : eqtype G (Subst A (sbcomp sbt sbs)) (Subst (Subst A sbt) sbs)).
   { apply EqTySym ; [
       assumption ..
-    | eapply myEqTySubstComp ; eassumption
+    | eapply EqTySubstComp ; eassumption
     ].
   }
   assert (h : eqterm G (subst u (sbcomp sbt sbs)) v (Subst (Subst A sbt) sbs)).
@@ -54,7 +54,7 @@ Proof.
     + eapply myEqSubstComp ; eassumption.
     + apply EqTySym ; [
         assumption ..
-      | eapply myEqTySubstComp ; eassumption
+      | eapply EqTySubstComp ; eassumption
       ].
     + assumption.
     + assumption.

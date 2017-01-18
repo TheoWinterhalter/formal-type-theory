@@ -521,12 +521,12 @@ Proof.
 
     (* EqTySubstComp *)
     { apply (@ptt.EqTySubstComp G D E).
-      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
-      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
-      - now apply (@ptt_sane_issubst sbt D E), sane_issubst.
       - now apply sane_istype.
       - now apply sane_issubst.
       - now apply sane_issubst.
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
+      - now apply (@ptt_sane_issubst sbt D E), sane_issubst.
     }
 
     (* EqTySubstProd *)
