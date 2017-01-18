@@ -154,21 +154,6 @@ Proof.
   intros. apply SubstSym ; assumption.
 Defined.
 
-Lemma myEqTySubstEmpty :
-  forall {G D sbs},
-    issubst sbs G D ->
-    isctx G ->
-    isctx D ->
-    eqtype G
-           (Subst Empty sbs)
-           Empty.
-Proof.
-  intros. eapply EqTySubstEmpty.
-  - assumption.
-  - exact H1.
-  - assumption.
-Defined.
-
 Lemma myEqTySubstUnit :
   forall {G D sbs},
     issubst sbs G D ->

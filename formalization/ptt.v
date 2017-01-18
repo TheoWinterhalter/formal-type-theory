@@ -742,9 +742,9 @@ with eqtype : context -> type -> type -> Type :=
      | EqTySubstEmpty :
        rule
          parameters: {G D sbs},
+         premise: issubst sbs G D
          premise: isctx G
          premise: isctx D
-         premise: issubst sbs G D
          conclusion:
            eqtype G
                   (Subst Empty sbs)

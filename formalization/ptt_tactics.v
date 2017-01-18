@@ -137,14 +137,14 @@ Ltac pushsubst1 :=
     ]
   | |- eqtype ?G (Subst Empty ?sbs) ?A =>
     eapply EqTyTrans ; [
-      eapply myEqTySubstEmpty
+      eapply EqTySubstEmpty
     | idtac ..
     ]
   | |- eqtype ?G ?A (Subst Empty ?sbs) =>
     eapply EqTySym ; [
       idtac ..
     | eapply EqTyTrans ; [
-        eapply myEqTySubstEmpty
+        eapply EqTySubstEmpty
       | idtac ..
       ]
     ]
