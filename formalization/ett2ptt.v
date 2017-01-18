@@ -676,13 +676,13 @@ Proof.
 
     (* EqSubstComp *)
     - { apply (@ptt.EqSubstComp G D E A u sbs sbt).
+        - now apply sane_isterm.
+        - now apply sane_issubst.
+        - now apply sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbt D E), sane_issubst.
         - now apply (@ptt_sane_isterm E u A), sane_isterm.
-        - now apply sane_isterm.
-        - now apply sane_issubst.
-        - now apply sane_issubst.
       }
 
     (* EqSubstWeak *)

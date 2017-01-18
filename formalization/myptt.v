@@ -5,30 +5,6 @@
 Require Import syntax.
 Require Import ptt.
 
-Lemma myEqSubstComp :
-  forall {G D E A u sbs sbt},
-    isterm E u A ->
-    issubst sbs G D ->
-    issubst sbt D E ->
-    isctx G ->
-    isctx D ->
-    isctx E ->
-    istype E A ->
-    eqterm G
-           (subst (subst u sbt) sbs)
-           (subst u (sbcomp sbt sbs))
-           (Subst A (sbcomp sbt sbs)).
-Proof.
-  intros. eapply EqSubstComp.
-  - assumption.
-  - exact H3.
-  - exact H4.
-  - assumption.
-  - assumption.
-  - assumption.
-  - assumption.
-Defined.
-
 Lemma myEqSubstRefl :
   forall {G D A u sbs},
     issubst sbs G D ->

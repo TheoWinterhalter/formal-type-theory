@@ -51,7 +51,7 @@ Proof.
   { eapply EqTyConv ; eassumption. }
   eapply EqTrans.
   - eapply EqTyConv.
-    + eapply myEqSubstComp ; eassumption.
+    + eapply EqSubstComp ; eassumption.
     + apply EqTySym ; [
         assumption ..
       | eapply EqTySubstComp ; eassumption

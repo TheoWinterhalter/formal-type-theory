@@ -916,13 +916,13 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstComp :
        rule
          parameters: {G D E A u sbs sbt},
+         premise: isterm E u A
+         premise: issubst sbs G D
+         premise: issubst sbt D E
          premise: isctx G
          premise: isctx D
          premise: isctx E
          premise: istype E A
-         premise: isterm E u A
-         premise: issubst sbs G D
-         premise: issubst sbt D E
          conclusion:
            eqterm G
                   (subst (subst u sbt) sbs)

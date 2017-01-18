@@ -1205,7 +1205,7 @@ Proof.
     eapply EqTrans ; [
       eapply EqTyConv ; [
         eapply myEqSym ; [
-          eapply myEqSubstComp ; [
+          eapply EqSubstComp ; [
             shelve
           | eassumption
           | magic ..
@@ -1442,7 +1442,7 @@ Proof.
   ).
   { eapply EqTrans ; [
       eapply myEqSym ; [
-        eapply myEqSubstComp ; [ shelve | magic .. ]
+        eapply EqSubstComp ; [ shelve | magic .. ]
       | magic ..
       ]
     | try magic ..
