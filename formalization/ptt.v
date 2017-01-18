@@ -713,11 +713,11 @@ with eqtype : context -> type -> type -> Type :=
      | EqTySubstProd :
        rule
          parameters: {G D A B sbs},
-         premise: isctx G
-         premise: isctx D
          premise: issubst sbs G D
          premise: istype D A
          premise: istype (ctxextend D A) B
+         premise: isctx G
+         premise: isctx D
          conclusion:
            eqtype G
                   (Subst (Prod A B) sbs)

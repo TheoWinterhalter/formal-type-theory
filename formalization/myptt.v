@@ -175,25 +175,6 @@ Proof.
   intros. apply SubstSym ; assumption.
 Defined.
 
-Lemma myEqTySubstProd :
-  forall {G D A B sbs},
-    issubst sbs G D ->
-    istype D A ->
-    istype (ctxextend D A) B ->
-    isctx G ->
-    isctx D ->
-    eqtype G
-           (Subst (Prod A B) sbs)
-           (Prod (Subst A sbs) (Subst B (sbshift G A sbs))).
-Proof.
-  intros.
-  eapply EqTySubstProd ; [
-    assumption
-  | exact H3
-  | assumption ..
-  ].
-Defined.
-
 Lemma myEqTySubstEmpty :
   forall {G D sbs},
     issubst sbs G D ->

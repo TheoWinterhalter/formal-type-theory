@@ -124,14 +124,14 @@ Ltac pushsubst1 :=
     ]
   | |- eqtype ?G (Subst (Prod ?A ?B) ?sbs) ?C =>
     eapply EqTyTrans ; [
-      eapply myEqTySubstProd
+      eapply EqTySubstProd
     | idtac ..
     ]
   | |- eqtype ?G ?A (Subst (Prod ?B ?C) ?sbs) =>
     eapply EqTySym ; [
       idtac ..
     | eapply EqTyTrans ; [
-        eapply myEqTySubstProd
+        eapply EqTySubstProd
       | idtac ..
       ]
     ]
