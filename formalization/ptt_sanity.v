@@ -2353,7 +2353,7 @@ Proof.
             eapply TermAbs ; try magic
           | magic ..
           ].
-          eapply myTermCtxConv ; [
+          eapply TermCtxConv ; [
             eapply TermTyConv ; [
               eassumption
             | magic ..

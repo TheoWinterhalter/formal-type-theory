@@ -321,22 +321,6 @@ Proof.
   intros. apply SubstSym ; assumption.
 Defined.
 
-Lemma myTermCtxConv :
-  forall {G D A u},
-    isterm G u A ->
-    eqctx G D ->
-    isctx G ->
-    isctx D ->
-    istype G A ->
-    isterm D u A.
-Proof.
-  intros.
-  eapply TermCtxConv ; [
-    exact H1
-  | assumption ..
-  ].
-Defined.
-
 Lemma myEqTySubstProd :
   forall {G D A B sbs},
     issubst sbs G D ->

@@ -174,11 +174,11 @@ with isterm : context -> term -> type -> Type :=
      | TermCtxConv :
        rule
          parameters: {G D A u},
+         premise: isterm G u A
+         premise: eqctx G D
          premise: isctx G
          premise: isctx D
          premise: istype G A
-         premise: isterm G u A
-         premise: eqctx G D
          conclusion:
            isterm D u A
        endrule

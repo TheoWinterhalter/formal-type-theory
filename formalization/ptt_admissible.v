@@ -437,7 +437,7 @@ Proof.
   }
   assert (isterm G1 u2 B1).
   { eapply TermTyConv ; [
-      eapply myTermCtxConv ; [
+      eapply TermCtxConv ; [
         eassumption
       | magic ..
       ]
