@@ -596,7 +596,6 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstApp :
          forall {G D A B u v sbs},
            issubst sbs G D ->
-           istype (ctxextend D A) B ->
            isterm D u (Prod A B) ->
            isterm D v A ->
            eqterm G

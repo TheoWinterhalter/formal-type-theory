@@ -744,7 +744,9 @@ Proof.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_isterm D v A), sane_isterm.
-        - now apply sane_istype.
+        - now apply (ptt_TyProdInversion D A B),
+                    (ptt_sane_isterm D u _),
+                    sane_isterm.
         - now apply sane_isterm.
         - now apply sane_isterm.
         - now apply sane_issubst.
