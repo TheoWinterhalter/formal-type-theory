@@ -173,11 +173,11 @@ Proof.
 
     (* TermTyConv *)
     - { apply (@ptt.TermTyConv G A B).
+        - now apply sane_isterm.
+        - now apply sane_eqtype.
         - now apply (@ptt_sane_isterm G u A), sane_isterm.
         - now apply (@ptt_sane_isterm G u A), sane_isterm.
         - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
-        - now apply sane_isterm.
-        - now apply sane_eqtype.
       }
 
     (* TermCtxConv *)

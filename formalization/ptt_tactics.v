@@ -64,9 +64,9 @@ Proof.
   - assumption.
   - assumption.
   - assumption.
-  - eapply myTermTyConv ; eassumption.
-  - eapply myTermTyConv ; eassumption.
-  - eapply myTermTyConv ; eassumption.
+  - eapply TermTyConv ; eassumption.
+  - eapply TermTyConv ; eassumption.
+  - eapply TermTyConv ; eassumption.
 Defined.
 
 Ltac compsubst1 :=

@@ -127,23 +127,6 @@ Proof.
   - assumption.
 Defined.
 
-Lemma myTermTyConv :
-  forall {G A B u},
-    isterm G u A ->
-    eqtype G A B ->
-    isctx G ->
-    istype G A ->
-    istype G B ->
-    isterm G u B.
-Proof.
-  intros. eapply TermTyConv.
-  - assumption.
-  - exact H2.
-  - assumption.
-  - assumption.
-  - assumption.
-Defined.
-
 Lemma myCongTySubst :
   forall {G D A B sbs sbt},
     eqsubst sbs sbt G D ->
