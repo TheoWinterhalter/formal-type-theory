@@ -86,7 +86,7 @@ Hypothesis eqTyCongShift' :
            (Subst B1 (sbshift G1 A1 sbs))
            (Subst B2 (sbshift G2 A2 sbs)).
 
-(* A hack to be able to admit cases and still have Coq verify
+(* A hack to be able to allow cases and still have Coq verify
    that the fixpoints are well-defined. *)
 Hypothesis temporary :
   forall {G A B}, eqtype G A B.
@@ -326,7 +326,6 @@ Corollary unique_term {G A B u} :
   isterm G u A ->
   isterm G u B ->
   eqtype G A B.
-
 Proof.
   intros H1 H2.
   eapply unique_term_ctx.
