@@ -92,7 +92,7 @@ Proof.
   }
   eapply myCongTySubst ; [
     magic ..
-  | eapply mySubstCtxConv ; magic
+  | eapply SubstCtxConv ; magic
   ].
 Defined.
 
@@ -117,9 +117,9 @@ Lemma EqTyCongShift :
 Proof.
   intros.
   assert (issubst sbs2 G1 D).
-  { eapply mySubstCtxConv ; magic. }
+  { eapply SubstCtxConv ; magic. }
   assert (issubst sbs1 G2 D).
-  { eapply mySubstCtxConv ; magic. }
+  { eapply SubstCtxConv ; magic. }
   assert (istype (ctxextend D A1) B2).
   { eapply myTyCtxConv ; [
       eassumption
@@ -132,7 +132,7 @@ Proof.
   }
   eapply myCongTySubst ; [
     magic ..
-  | eapply mySubstCtxConv ; magic
+  | eapply SubstCtxConv ; magic
   ].
   Unshelve. all:assumption.
 Defined.
@@ -159,7 +159,7 @@ Proof.
   { eapply myTyCtxConv ; [ eassumption | magic .. ]. }
   eapply myCongTySubst ; [
     magic ..
-  | eapply mySubstCtxConv ; magic
+  | eapply SubstCtxConv ; magic
   ].
 Defined.
 
@@ -448,7 +448,7 @@ Proof.
     eapply CongSubstWeak ; magic
   | try magic ..
   ].
-  eapply mySubstCtxConv ; [
+  eapply SubstCtxConv ; [
     eapply SubstWeak ; magic
   | magic ..
   ].
@@ -1052,7 +1052,7 @@ Proof.
          (ctxextend D A)
          (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))
   ).
-  { eapply mySubstCtxConv ; magic. }
+  { eapply SubstCtxConv ; magic. }
   assert (istype D (Id A u v)).
   { magic. }
   assert (isctx (ctxextend G (Subst (Id A u v) sbs))).
@@ -1063,7 +1063,7 @@ Proof.
        (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
           (sbzero D A v)))
   ).
-  { eapply mySubstCtxConv ; magic. }
+  { eapply SubstCtxConv ; magic. }
   assert (
     eqsubst (sbcomp (sbweak D A) (sbcomp (sbzero D A v) sbs)) sbs G D
   ).
@@ -1697,7 +1697,7 @@ Proof.
   ).
   { eapply myTySubst ; try magic.
     eapply myTySubst ; try magic.
-    eapply mySubstCtxConv ; magic.
+    eapply SubstCtxConv ; magic.
     Unshelve. assumption.
   }
   assert (
@@ -1711,7 +1711,7 @@ Proof.
        (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
           (sbshift G A sbs)))
   ).
-  { eapply mySubstCtxConv ; magic.
+  { eapply SubstCtxConv ; magic.
     Unshelve. assumption.
   }
   assert (
@@ -1721,7 +1721,7 @@ Proof.
           (sbzero D A v)) sbs) (ctxextend G (Subst (Id A u v) sbs))
     (ctxextend D (Id A u v))
   ).
-  { eapply mySubstCtxConv ; magic.
+  { eapply SubstCtxConv ; magic.
     Unshelve. assumption.
   }
   assert (
@@ -1758,7 +1758,7 @@ Proof.
    (ctxextend (ctxextend D A)
       (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))
   ).
-  { eapply mySubstCtxConv ; try magic. assumption. }
+  { eapply SubstCtxConv ; try magic. assumption. }
   assert (
     issubst
     (sbshift G (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
@@ -1766,7 +1766,7 @@ Proof.
     (ctxextend (ctxextend D A)
        (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))
   ).
-  { eapply mySubstCtxConv ; try magic. assumption. }
+  { eapply SubstCtxConv ; try magic. assumption. }
   assert (
     issubst
     (sbshift G (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
@@ -1777,7 +1777,7 @@ Proof.
     (ctxextend (ctxextend D A)
        (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))
   ).
-  { eapply mySubstCtxConv ; magic. }
+  { eapply SubstCtxConv ; magic. }
   assert (
     issubst
     (sbshift G (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
@@ -1786,7 +1786,7 @@ Proof.
     (ctxextend (ctxextend D A)
        (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))
   ).
-  { eapply mySubstCtxConv ; try magic. assumption. }
+  { eapply SubstCtxConv ; try magic. assumption. }
   assert (
     eqtype G
     (Subst
@@ -1822,7 +1822,7 @@ Proof.
    (ctxextend (ctxextend D A)
       (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))
   ).
-  { eapply mySubstCtxConv ; try magic. assumption. }
+  { eapply SubstCtxConv ; try magic. assumption. }
   assert (
     issubst
     (sbcomp
@@ -1836,7 +1836,7 @@ Proof.
     (ctxextend (ctxextend D A)
        (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)))
   ).
-  { eapply mySubstCtxConv ; try magic. assumption. }
+  { eapply SubstCtxConv ; try magic. assumption. }
   assert (
     issubst
     (sbshift G
@@ -1847,7 +1847,7 @@ Proof.
        (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
           (sbshift G A sbs)))
   ).
-  { eapply mySubstCtxConv ; try magic. assumption.
+  { eapply SubstCtxConv ; try magic. assumption.
     Unshelve. all:assumption.
   }
   assert (
@@ -1864,7 +1864,7 @@ Proof.
       (Subst (Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0))
          (sbshift G A sbs)))
   ).
-  { eapply mySubstCtxConv ; magic.
+  { eapply SubstCtxConv ; magic.
     Unshelve. all:assumption.
   }
   assert (
@@ -1876,7 +1876,7 @@ Proof.
       G
       (ctxextend G (Subst (Id A u v) sbs))
   ).
-  { eapply mySubstCtxConv ; magic. }
+  { eapply SubstCtxConv ; magic. }
   assert (
     eqtype G
     (Subst
@@ -2047,7 +2047,7 @@ Proof.
       eapply myCongSubstShift ; magic
     | try magic ; assumption ..
     ].
-  - eapply mySubstCtxConv ; try magic.
+  - eapply SubstCtxConv ; try magic.
     eapply EqCtxExtend ; try magic.
     gopushsubst. gopushsubst. eapply CongId ; try magic ; try assumption.
   Unshelve. all:assumption.

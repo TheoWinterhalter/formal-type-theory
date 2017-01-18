@@ -246,7 +246,7 @@ Ltac magicn n :=
     ]
   | |- issubst (sbshift ?G ?A ?sbs) ?G1 ?G2 =>
     first [
-      eapply mySubstShift ; magicn n
+      eapply SubstShift ; magicn n
     | eassumption
     ]
   | |- issubst (sbid ?G) ?G1 ?G2 =>
@@ -256,7 +256,7 @@ Ltac magicn n :=
     ]
   | |- issubst (sbcomp ?sbt ?sbs) ?G1 ?G2 =>
     first [
-      eapply mySubstComp ; magicn n
+      eapply SubstComp ; magicn n
     | eassumption
     ]
   | |- issubst ?sbs ?G1 ?G2 =>

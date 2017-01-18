@@ -23,9 +23,9 @@ with issubst : substitution -> context -> context -> Type :=
      | SubstZero :
          rule
            parameters: {G u A},
-           premise: isctx G
-           premise: istype G A
            premise: isterm G u A
+           premise: istype G A
+           premise: isctx G
            conclusion:
              issubst (sbzero G A u) G (ctxextend G A)
          endrule
@@ -33,8 +33,8 @@ with issubst : substitution -> context -> context -> Type :=
      | SubstWeak :
        rule
          parameters: {G A},
-         premise: isctx G
          premise: istype G A
+         premise: isctx G
          conclusion:
            issubst (sbweak G A) (ctxextend G A) G
        endrule
@@ -42,10 +42,10 @@ with issubst : substitution -> context -> context -> Type :=
      | SubstShift :
        rule
          parameters: {G D A sbs},
-         premise: isctx G
-         premise: isctx D
          premise: issubst sbs G D
          premise: istype D A
+         premise: isctx G
+         premise: isctx D
          conclusion:
            issubst (sbshift G A sbs)
                    (ctxextend G (Subst A sbs))
@@ -62,11 +62,11 @@ with issubst : substitution -> context -> context -> Type :=
      | SubstComp :
        rule
          parameters: {G D E sbs sbt},
+         premise: issubst sbs G D
+         premise: issubst sbt D E
          premise: isctx G
          premise: isctx D
          premise: isctx E
-         premise: issubst sbs G D
-         premise: issubst sbt D E
          conclusion:
            issubst (sbcomp sbt sbs) G E
        endrule
@@ -74,13 +74,13 @@ with issubst : substitution -> context -> context -> Type :=
      | SubstCtxConv :
        rule
          parameters: {G1 G2 D1 D2 sbs},
+         premise: issubst sbs G1 D1
+         premise: eqctx G1 G2
+         premise: eqctx D1 D2
          premise: isctx G1
          premise: isctx G2
          premise: isctx D1
          premise: isctx D2
-         premise: issubst sbs G1 D1
-         premise: eqctx G1 G2
-         premise: eqctx D1 D2
          conclusion:
            issubst sbs G2 D2
        endrule

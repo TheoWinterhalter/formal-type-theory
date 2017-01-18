@@ -30,35 +30,6 @@ Proof.
 Defined.
 
 (* Same for some other substitution tasks. *)
-Lemma mySubstShift :
-  forall {G D A sbs},
-    issubst sbs G D ->
-    istype D A ->
-    isctx G ->
-    isctx D ->
-    issubst (sbshift G A sbs)
-            (ctxextend G (Subst A sbs))
-            (ctxextend D A).
-Proof.
-  intros ; eapply SubstShift ; eassumption.
-Defined.
-
-Lemma mySubstComp :
-  forall {G D E sbs sbt},
-    issubst sbs G D ->
-    issubst sbt D E ->
-    isctx G ->
-    isctx D ->
-    isctx E ->
-    issubst (sbcomp sbt sbs) G E.
-Proof.
-  intros ; eapply SubstComp.
-  - assumption.
-  - exact H2.
-  - assumption.
-  - assumption.
-  - assumption.
-Defined.
 
 Lemma myEqTyTrans :
   forall {G A B C},
@@ -293,26 +264,6 @@ Lemma myCongSubstZero :
 Proof.
   intros.
   apply CongSubstZero ; assumption.
-Defined.
-
-Lemma mySubstCtxConv :
-  forall {G1 G2 D1 D2 sbs},
-    issubst sbs G1 D1 ->
-    eqctx G1 G2 ->
-    eqctx D1 D2 ->
-    isctx G1 ->
-           isctx G2 ->
-           isctx D1 ->
-           isctx D2 ->
-    issubst sbs G2 D2.
-Proof.
-  intros.
-  eapply SubstCtxConv ; [
-    exact H2
-  | assumption
-  | exact H4
-  | assumption ..
-  ].
 Defined.
 
 Lemma myTyCtxConv :

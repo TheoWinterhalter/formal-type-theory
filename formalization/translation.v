@@ -495,7 +495,7 @@ Proof.
 
       (* SubstZero *)
       - destruct (trans_type G G' A i0 Ht) as (A' & HAisA' & _).
-        destruct (trans_term G u A G' A' i1 Ht HAisA') as (u' & Huisu' & _).
+        destruct (trans_term G u A G' A' i Ht HAisA') as (u' & Huisu' & _).
         exists (C.ctxextend G' A').
         { split.
           - constructor.

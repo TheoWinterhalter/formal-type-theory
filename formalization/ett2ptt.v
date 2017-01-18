@@ -54,30 +54,30 @@ Proof.
 
     (* SubstZero *)
     - { apply ptt.SubstZero.
-        + eapply ptt_sane_isterm.
-          eapply sane_isterm ; eassumption.
-        + eapply ptt_sane_isterm.
-          eapply sane_isterm ; eassumption.
         + now apply sane_isterm.
+        + eapply ptt_sane_isterm.
+          eapply sane_isterm ; eassumption.
+        + eapply ptt_sane_isterm.
+          eapply sane_isterm ; eassumption.
       }
 
     (* SubstWeak *)
     - {
         apply ptt.SubstWeak.
+        + now apply sane_istype.
         + eapply ptt_sane_istype.
           eapply sane_istype ; eassumption.
-        + now apply sane_istype.
       }
 
     (* SubstShift. *)
     - {
         apply ptt.SubstShift.
+        + now apply sane_issubst.
+        + now apply sane_istype.
         + eapply (ptt_sane_issubst sbs G D).
           now apply sane_issubst.
         + eapply (ptt_sane_istype D A).
           now apply sane_istype.
-        + now apply sane_issubst.
-        + now apply sane_istype.
       }
 
      (* SubstId *)
@@ -89,30 +89,30 @@ Proof.
      (* SubstComp *)
      - {
          apply (@ptt.SubstComp G D E).
+         - now apply sane_issubst.
+         - now apply sane_issubst.
          - apply (ptt_sane_issubst sbs G D).
            now apply sane_issubst.
          - apply (ptt_sane_issubst sbt D E).
            now apply sane_issubst.
          - apply (ptt_sane_issubst sbt D E).
            now apply sane_issubst.
-         - now apply sane_issubst.
-         - now apply sane_issubst.
        }
 
      (* SubstCtxConv *)
      - {
          apply (@ptt.SubstCtxConv G1 G2 D1 D2).
-         - apply (ptt_sane_eqctx G1 G2).
-           now apply sane_eqctx.
-         - apply (ptt_sane_eqctx G1 G2).
-           now apply sane_eqctx.
-         - apply (ptt_sane_eqctx D1 D2).
-           now apply sane_eqctx.
-         - apply (ptt_sane_eqctx D1 D2).
-           now apply sane_eqctx.
          - now apply sane_issubst.
          - now apply sane_eqctx.
          - now apply sane_eqctx.
+         - apply (ptt_sane_eqctx G1 G2).
+           now apply sane_eqctx.
+         - apply (ptt_sane_eqctx G1 G2).
+           now apply sane_eqctx.
+         - apply (ptt_sane_eqctx D1 D2).
+           now apply sane_eqctx.
+         - apply (ptt_sane_eqctx D1 D2).
+           now apply sane_eqctx.
        }
   }
 
