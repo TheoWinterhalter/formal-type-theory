@@ -68,7 +68,6 @@ with istype : context -> type -> Type :=
 
      | TyProd :
          forall {G A B},
-           istype G A ->
            istype (ctxextend G A) B ->
            istype G (Prod A B)
 

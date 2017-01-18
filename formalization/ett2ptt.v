@@ -12,8 +12,9 @@ Definition ptt_sane_eqsubst := ptt_sanity.sane_eqsubst.
 Definition ptt_sane_eqterm  := ptt_sanity.sane_eqterm.
 
 (* Same for inversion *)
-Definition ptt_TyProdInversion := ptt_inversion.TyProdInversion.
-Definition ptt_TyIdInversion   := ptt_inversion.TyIdInversion.
+Definition ptt_CtxExtendInversion := ptt_inversion.CtxExtendInversion.
+Definition ptt_TyProdInversion    := ptt_inversion.TyProdInversion.
+Definition ptt_TyIdInversion      := ptt_inversion.TyIdInversion.
 
 
 Fixpoint sane_isctx G (P : ett.isctx G) {struct P} : ptt.isctx G
@@ -136,8 +137,10 @@ Proof.
 
     (* TyProd *)
     { apply ptt.TyProd.
-      - now apply (ptt_sane_istype G A), sane_istype.
-      - now apply sane_istype.
+      - now apply (ptt_CtxExtendInversion G A),
+                  (ptt_sane_istype _ B), sane_istype.
+      - now apply (ptt_CtxExtendInversion G A),
+                  (ptt_sane_istype _ B), sane_istype.
       - now apply sane_istype.
     }
 
