@@ -3048,7 +3048,7 @@ Proof.
                   - eapply SubstCtxConv ; magic.
                   - eapply SubstCtxConv ; magic.
                 }
-              * eapply myEqTyCtxConv ; [
+              * eapply EqTyCtxConv ; [
                   eapply myEqTySym ; [ eassumption | magic .. ]
                 | magic ..
                 ].

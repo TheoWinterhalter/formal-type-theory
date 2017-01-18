@@ -481,12 +481,12 @@ Proof.
 
     (* EqTyCtxConv *)
     { apply (@ptt.EqTyCtxConv G D).
-      - now apply (ptt_sane_eqctx G D), sane_eqctx.
-      - now apply (ptt_sane_eqctx G D), sane_eqctx.
-      - now apply (ptt_sane_eqtype G A B), sane_eqtype.
-      - now apply (ptt_sane_eqtype G A B), sane_eqtype.
       - now apply sane_eqtype.
       - now apply sane_eqctx.
+      - now apply (ptt_sane_eqtype G A B), sane_eqtype.
+      - now apply (ptt_sane_eqtype G A B), sane_eqtype.
+      - now apply (ptt_sane_eqctx G D), sane_eqctx.
+      - now apply (ptt_sane_eqctx G D), sane_eqctx.
     }
 
     (* EqTyRefl *)

@@ -640,12 +640,12 @@ with eqtype : context -> type -> type -> Type :=
      | EqTyCtxConv :
        rule
          parameters: {G D A B},
-         premise: isctx G
-         premise: isctx D
-         premise: istype G A
-         premise: istype G B
          premise: eqtype G A B
          premise: eqctx G D
+         premise: istype G A
+         premise: istype G B
+         premise: isctx G
+         premise: isctx D
          conclusion:
            eqtype D A B
        endrule
