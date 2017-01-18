@@ -154,21 +154,6 @@ Proof.
   intros. apply SubstSym ; assumption.
 Defined.
 
-Lemma myEqTySubstUnit :
-  forall {G D sbs},
-    issubst sbs G D ->
-    isctx G ->
-    isctx D ->
-    eqtype G
-           (Subst Unit sbs)
-           Unit.
-Proof.
-  intros. eapply EqTySubstUnit.
-  - assumption.
-  - exact H1.
-  - assumption.
-Defined.
-
 Lemma myEqTySubstBool :
   forall {G D sbs},
     issubst sbs G D ->
