@@ -17,7 +17,7 @@ Lemma eqtype_subst_left :
     eqtype G (Subst (Subst A sbt) sbs) B.
 Proof.
   intros.
-  eapply myEqTyTrans ; [
+  eapply EqTyTrans ; [
     eapply myEqTySubstComp ; eassumption
   | assumption ..
   ].
@@ -101,7 +101,7 @@ Ltac compsubst1 :=
 Ltac pushsubst1 :=
   match goal with
   | |- eqtype ?G (Subst (Subst ?A ?sbs) ?sbt) ?B =>
-    eapply myEqTyTrans ; [
+    eapply EqTyTrans ; [
       eapply myCongTySubst ; [
         eapply SubstRefl
       | pushsubst1
@@ -110,66 +110,66 @@ Ltac pushsubst1 :=
     | idtac ..
     ]
   | |- eqtype ?G (Subst (Id ?A ?u ?v) ?sbs) ?B =>
-    eapply myEqTyTrans ; [
+    eapply EqTyTrans ; [
       eapply myEqTySubstId
     | idtac ..
     ]
   | |- eqtype ?G ?A (Subst (Id ?B ?u ?v) ?sbs) =>
     eapply EqTySym ; [
       idtac ..
-    | eapply myEqTyTrans ; [
+    | eapply EqTyTrans ; [
         eapply myEqTySubstId
       | idtac ..
       ]
     ]
   | |- eqtype ?G (Subst (Prod ?A ?B) ?sbs) ?C =>
-    eapply myEqTyTrans ; [
+    eapply EqTyTrans ; [
       eapply myEqTySubstProd
     | idtac ..
     ]
   | |- eqtype ?G ?A (Subst (Prod ?B ?C) ?sbs) =>
     eapply EqTySym ; [
       idtac ..
-    | eapply myEqTyTrans ; [
+    | eapply EqTyTrans ; [
         eapply myEqTySubstProd
       | idtac ..
       ]
     ]
   | |- eqtype ?G (Subst Empty ?sbs) ?A =>
-    eapply myEqTyTrans ; [
+    eapply EqTyTrans ; [
       eapply myEqTySubstEmpty
     | idtac ..
     ]
   | |- eqtype ?G ?A (Subst Empty ?sbs) =>
     eapply EqTySym ; [
       idtac ..
-    | eapply myEqTyTrans ; [
+    | eapply EqTyTrans ; [
         eapply myEqTySubstEmpty
       | idtac ..
       ]
     ]
   | |- eqtype ?G (Subst Unit ?sbs) ?A =>
-    eapply myEqTyTrans ; [
+    eapply EqTyTrans ; [
       eapply myEqTySubstUnit
     | idtac ..
     ]
   | |- eqtype ?G ?A (Subst Unit ?sbs) =>
     eapply EqTySym ; [
       idtac ..
-    | eapply myEqTyTrans ; [
+    | eapply EqTyTrans ; [
         eapply myEqTySubstUnit
       | idtac ..
       ]
     ]
   | |- eqtype ?G (Subst Bool ?sbs) ?A =>
-    eapply myEqTyTrans ; [
+    eapply EqTyTrans ; [
       eapply myEqTySubstBool
     | idtac ..
     ]
   | |- eqtype ?G ?A (Subst Bool ?sbs) =>
     eapply EqTySym ; [
       idtac ..
-    | eapply myEqTyTrans ; [
+    | eapply EqTyTrans ; [
         eapply myEqTySubstBool
       | idtac ..
       ]

@@ -627,22 +627,22 @@ Proof.
             + now apply TermVarZero.
             + apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
           - apply (@EqTyTrans G _ (Subst A (sbid G))) ; auto.
-            + apply (@TySubst _ (ctxextend G A)) ; auto using CtxExtend.
-              * now apply SubstZero.
-              * apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
-            + apply (@TySubst _ G) ; auto using SubstId.
             + { apply (@EqTyTrans _ _ (Subst A (sbcomp (sbweak G A) (sbzero G A u)))) ; auto.
+                - apply (@EqTySubstComp G (ctxextend G A) G) ;
+                    auto using CtxExtend, (@SubstComp G (ctxextend G A)) , SubstWeak, SubstZero.
+                - apply (@CongTySubst G G) ;
+                    auto using CtxExtend, (@SubstComp G (ctxextend G A)) , SubstWeak, SubstZero, SubstId, EqTyRefl, WeakZero.
                 - apply (@TySubst _ (ctxextend G A)) ; auto using CtxExtend, SubstZero.
                   apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
                 - apply (@TySubst _ G) ; auto.
                   + apply (@SubstComp _ (ctxextend G A)) ; auto using CtxExtend, SubstWeak, SubstZero.
                 - apply (@TySubst _ G) ; auto using SubstId.
-                - apply (@EqTySubstComp G (ctxextend G A) G) ;
-                  auto using CtxExtend, (@SubstComp G (ctxextend G A)) , SubstWeak, SubstZero.
-                - apply (@CongTySubst G G) ;
-                  auto using CtxExtend, (@SubstComp G (ctxextend G A)) , SubstWeak, SubstZero, SubstId, EqTyRefl, WeakZero.
               }
             + now apply EqTyIdSubst.
+            + apply (@TySubst _ (ctxextend G A)) ; auto using CtxExtend.
+              * now apply SubstZero.
+              * apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
+            + apply (@TySubst _ G) ; auto using SubstId.
           - assumption.
           - apply (@TySubst _ (ctxextend G A)) ; auto using CtxExtend.
             + now apply SubstZero.
@@ -848,7 +848,7 @@ Proof.
               | try magic ..
               ].
               * eassumption.
-              * { eapply myEqTyTrans ; [
+              * { eapply EqTyTrans ; [
                     eapply JTyConv ; try magic ; eassumption
                   | try magic ..
                   ].
@@ -2160,7 +2160,7 @@ Proof.
                     eapply SubstCtxConv ; try magic.
                     + apply EqCtxExtend ; try magic ; try gopushsubst.
                     + apply CtxRefl ; magic.
-                  - eapply myEqTyTrans ; [
+                  - eapply EqTyTrans ; [
                       eapply myEqTySym ; [
                         eapply EqTyShiftZero ; magic
                       | magic ..
@@ -2203,7 +2203,7 @@ Proof.
               eapply TermSubst ; [ eassumption | eassumption | magic .. ]
             | try magic ..
             ].
-            + { eapply myEqTyTrans ; [
+            + { eapply EqTyTrans ; [
                   eapply myEqTySym ; [
                     eapply EqTyShiftZero ; magic
                   | magic ..
@@ -2252,7 +2252,7 @@ Proof.
                   gopushsubst.
                 + apply CtxRefl ; magic.
                 + apply EqCtxExtend ; try magic ; try gopushsubst.
-              - eapply myEqTyTrans ; [
+              - eapply EqTyTrans ; [
                   eapply myEqTySym ; [
                     eapply EqTyShiftZero ; magic
                   | magic ..
@@ -2655,7 +2655,7 @@ Proof.
           assert (
             eqtype G (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2)) A1
           ).
-          { eapply myEqTyTrans ; [
+          { eapply EqTyTrans ; [
               eapply myEqTySym ; [ eassumption | magic .. ]
             | magic ..
             ].
@@ -2882,7 +2882,7 @@ Proof.
           assert (
             eqtype G (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2)) A1
           ).
-          { eapply myEqTyTrans ; [
+          { eapply EqTyTrans ; [
               eapply myEqTySym ; [ eassumption | magic .. ]
             | magic ..
             ].

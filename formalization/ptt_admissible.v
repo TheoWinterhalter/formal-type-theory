@@ -29,7 +29,7 @@ Lemma compWeakZero :
 Proof.
   intros.
   eapply EqTySym ; try magic.
-  eapply myEqTyTrans ; [
+  eapply EqTyTrans ; [
     eapply myCongTySubst ; [
       eapply WeakZero ; magic
     | magic ..

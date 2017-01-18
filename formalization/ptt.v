@@ -673,12 +673,12 @@ with eqtype : context -> type -> type -> Type :=
      | EqTyTrans :
        rule
          parameters: {G A B C},
+         premise: eqtype G A B
+         premise: eqtype G B C
          premise: isctx G
          premise: istype G A
          premise: istype G B
          premise: istype G C
-         premise: eqtype G A B
-         premise: eqtype G B C
          conclusion:
            eqtype G A C
        endrule

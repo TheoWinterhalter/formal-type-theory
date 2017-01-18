@@ -5,28 +5,6 @@
 Require Import syntax.
 Require Import ptt.
 
-
-(* Same for some other substitution tasks. *)
-
-Lemma myEqTyTrans :
-  forall {G A B C},
-    eqtype G A B ->
-    eqtype G B C ->
-    isctx G ->
-    istype G A ->
-    istype G B ->
-    istype G C ->
-    eqtype G A C.
-Proof.
-  intros ; eapply EqTyTrans.
-  - assumption.
-  - assumption.
-  - exact H3.
-  - assumption.
-  - assumption.
-  - assumption.
-Defined.
-
 Lemma myEqTySubstComp :
   forall {G D E A sbs sbt},
     istype E A ->

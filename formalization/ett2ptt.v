@@ -505,12 +505,12 @@ Proof.
 
     (* EqTyTrans *)
     { apply (@ptt.EqTyTrans G A B C).
+      - now apply sane_eqtype.
+      - now apply sane_eqtype.
       - now apply (ptt_sane_eqtype G A B), sane_eqtype.
       - now apply (ptt_sane_eqtype G A B), sane_eqtype.
       - now apply (ptt_sane_eqtype G A B), sane_eqtype.
       - now apply (ptt_sane_eqtype G B C), sane_eqtype.
-      - now apply sane_eqtype.
-      - now apply sane_eqtype.
     }
 
     (* EqTyIdSubst *)
