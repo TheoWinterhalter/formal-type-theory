@@ -1188,9 +1188,9 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstFalse :
        rule
          parameters: {G D sbs},
+         premise: issubst sbs G D
          premise: isctx G
          premise: isctx D
-         premise: issubst sbs G D
          conclusion:
            eqterm G
                   (subst false sbs)

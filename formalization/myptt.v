@@ -56,22 +56,6 @@ Proof.
   intros. apply (EqTySym H2 H0 H1 H).
 Defined.
 
-Lemma myEqSubstFalse :
-  forall {G D sbs},
-    issubst sbs G D ->
-    isctx G ->
-    isctx D ->
-    eqterm G
-           (subst false sbs)
-           false
-           Bool.
-Proof.
-  intros. eapply EqSubstFalse.
-  - assumption.
-  - exact H1.
-  - assumption.
-Defined.
-
 Lemma myEqSym :
   forall {G A u v},
     eqterm G v u A ->
