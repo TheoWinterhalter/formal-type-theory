@@ -199,7 +199,7 @@ def section(title, src):
         conclusion = m.group('conclusion')
         print (rule2latex(rulename, premises, conclusion))
 
-    print (r'\newcommand{\show{0}Rules}{'.format(title.capitalize()))
+    print (r'\newcommand{{\show{0}Rules}}{{'.format(title.capitalize()))
 
     for rule in rules:
         rulename = rule[0]
@@ -217,6 +217,7 @@ with open(filename, "r") as f:
     src = f.read()
 
 # Split into sections
-    sections = re.split(r'(Inductive|with)\s+(\w+)[^:\n]+:\s', src)
-    for s in sections:
-        print (s[:30] if s else None)
+    # sections = re.split(r'(Inductive|with)\s+(\w+)[^:\n]+:\s', src)
+    # for s in sections:
+    #     print (s[:30] if s else None)
+section("everything", src)
