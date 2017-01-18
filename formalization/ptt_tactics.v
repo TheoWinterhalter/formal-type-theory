@@ -189,13 +189,13 @@ Ltac pushsubst1 :=
     ]
   | |- eqterm ?G (subst true ?sbs) ?u ?A =>
     eapply EqTrans ; [
-      eapply myEqSubstTrue
+      eapply EqSubstTrue
     | idtac ..
     ]
   | |- eqterm ?G (subst true ?sbs) ?u ?A =>
     eapply EqTyConv ; [
       eapply EqTrans ; [
-        eapply myEqSubstTrue
+        eapply EqSubstTrue
       | idtac ..
       ]
     | idtac ..

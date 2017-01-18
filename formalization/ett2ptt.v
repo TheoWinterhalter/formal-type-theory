@@ -792,9 +792,9 @@ Proof.
 
     (* EqSubstTrue *)
     - { apply (@ptt.EqSubstTrue G D).
-        - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
-        - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply sane_issubst.
+        - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
       }
 
     (* EqSubstFalse *)
