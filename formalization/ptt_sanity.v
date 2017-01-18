@@ -167,7 +167,7 @@ Proof.
             + magic.
             + eapply TermTyConv.
               * eapply TermSubst ; try eassumption ; try magic.
-              * eapply myCongTySubst ; try eassumption ; try magic.
+              * eapply CongTySubst ; try eassumption ; try magic.
               * assumption.
               * magic.
               * magic.
@@ -852,7 +852,7 @@ Proof.
                     eapply JTyConv ; try magic ; eassumption
                   | try magic ..
                   ].
-                  - eapply myCongTySubst ; try magic.
+                  - eapply CongTySubst ; try magic.
                     + eapply CongSubstZero ; try magic.
                       * gopushsubst.
                         eapply TermTyConv ; [
@@ -2167,7 +2167,7 @@ Proof.
                       ]
                     | try magic ..
                     ].
-                    + eapply myCongTySubst ; try magic.
+                    + eapply CongTySubst ; try magic.
                       * { eapply CongSubstZero ; try magic.
                           - gopushsubst.
                           - gopushsubst.
@@ -2210,7 +2210,7 @@ Proof.
                   ]
                 | try magic ..
                 ].
-                - eapply myCongTySubst ; try magic.
+                - eapply CongTySubst ; try magic.
                   + { eapply CongSubstZero ; try magic.
                       - gopushsubst.
                       - gopushsubst.
@@ -2259,7 +2259,7 @@ Proof.
                   ]
                 | try magic ..
                 ].
-                + eapply myCongTySubst ; try magic.
+                + eapply CongTySubst ; try magic.
                   * eapply CongSubstZero ; try magic.
                     gopushsubst.
                   * { eapply SubstCtxConv ; try magic.
@@ -2378,7 +2378,7 @@ Proof.
               eassumption
             | magic ..
             ].
-          - eapply myCongTySubst ; try magic.
+          - eapply CongTySubst ; try magic.
             + eapply EqSubstCtxConv ; [
                eapply CongSubstZero ; try magic
               | try magic ..
@@ -2573,7 +2573,7 @@ Proof.
                    (Subst A2 (sbweak G A2))
                    (Subst A1 (sbweak G A1))
           ).
-          { eapply myCongTySubst ; try eassumption ; magic. }
+          { eapply CongTySubst ; try eassumption ; magic. }
           assert (
             isterm (ctxextend G A1)
                    (subst u2 (sbweak G A2)) (Subst A1 (sbweak G A1))
@@ -2785,8 +2785,8 @@ Proof.
                  (sbzero G (Id A2 u2 u2) (refl A2 u2))
               )
           ).
-          { eapply myCongTySubst ; try magic ; try eassumption.
-            - eapply myCongTySubst ; try magic.
+          { eapply CongTySubst ; try magic ; try eassumption.
+            - eapply CongTySubst ; try magic.
               + eapply EqSubstCtxConv ; [
                   eapply CongSubstShift ; try magic
                 | try magic ; try eassumption ..
@@ -2940,7 +2940,7 @@ Proof.
               eapply TermSubst ; try magic ; try eassumption
             | try magic ; try eassumption ..
             ].
-            eapply myCongTySubst ; try magic. eassumption.
+            eapply CongTySubst ; try magic. eassumption.
           }
           assert (eqterm G u1 u2 A2).
           { eapply myEqTyConv ; [ exact H | magic .. ]. }
@@ -3029,7 +3029,7 @@ Proof.
             eapply TermJ ; try magic
           | try magic ..
           ].
-          - eapply myCongTySubst ; try magic.
+          - eapply CongTySubst ; try magic.
             + eapply EqSubstCtxConv ; [
                 eapply CongSubstZero ; try magic
               | try magic ..
@@ -3040,7 +3040,7 @@ Proof.
                 ].
               * apply EqCtxExtend ; try magic. gopushsubst.
               * eapply SubstCtxConv ; magic.
-            + eapply myCongTySubst ; try magic.
+            + eapply CongTySubst ; try magic.
               * { eapply EqSubstCtxConv ; [
                     eapply CongSubstShift ; try magic
                   | try magic ; try eassumption ..

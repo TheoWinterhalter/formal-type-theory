@@ -71,29 +71,6 @@ Proof.
   - assumption.
 Defined.
 
-Lemma myCongTySubst :
-  forall {G D A B sbs sbt},
-    eqsubst sbs sbt G D ->
-    eqtype D A B ->
-    isctx G ->
-    isctx D ->
-    istype D A ->
-    istype D B ->
-    issubst sbs G D ->
-    issubst sbt G D ->
-    eqtype G (Subst A sbs) (Subst B sbt).
-Proof.
-  intros. eapply CongTySubst.
-  - assumption.
-  - exact H2.
-  - assumption.
-  - assumption.
-  - assumption.
-  - assumption.
-  - assumption.
-  - assumption.
-Defined.
-
 Lemma myEqSubstRefl :
   forall {G D A u sbs},
     issubst sbs G D ->

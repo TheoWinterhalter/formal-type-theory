@@ -820,14 +820,14 @@ with eqtype : context -> type -> type -> Type :=
      | CongTySubst :
        rule
          parameters: {G D A B sbs sbt},
+         premise: eqsubst sbs sbt G D
+         premise: eqtype D A B
          premise: isctx G
          premise: isctx D
          premise: istype D A
          premise: istype D B
          premise: issubst sbs G D
          premise: issubst sbt G D
-         premise: eqtype D A B
-         premise: eqsubst sbs sbt G D
          conclusion:
            eqtype G (Subst A sbs) (Subst B sbt)
        endrule

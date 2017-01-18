@@ -102,7 +102,7 @@ Ltac pushsubst1 :=
   match goal with
   | |- eqtype ?G (Subst (Subst ?A ?sbs) ?sbt) ?B =>
     eapply EqTyTrans ; [
-      eapply myCongTySubst ; [
+      eapply CongTySubst ; [
         eapply SubstRefl
       | pushsubst1
       | idtac ..
@@ -317,7 +317,7 @@ Ltac magicn n :=
     apply EqTyIdSubst ; magicn n
   (* EqTySubst* ? *)
   | |- eqtype ?G (Subst ?A ?sbs) (Subst ?B ?sbt) =>
-    eapply myCongTySubst ; magicn n
+    eapply CongTySubst ; magicn n
   (* To be continued... *)
   (* Equality of terms *)
   | |- eqterm ?G (subst ?u ?sbs) (subst ?v ?sbt) ?A =>

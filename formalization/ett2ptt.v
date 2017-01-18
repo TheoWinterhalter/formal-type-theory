@@ -604,14 +604,14 @@ Proof.
 
     (* CongTySubst *)
     { apply (@ptt.CongTySubst G D).
-      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
-      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
-      - now apply (@ptt_sane_eqtype D A B), sane_eqtype.
-      - now apply (@ptt_sane_eqtype D A B), sane_eqtype.
-      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
-      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
-      - now apply sane_eqtype.
       - now apply sane_eqsubst.
+      - now apply sane_eqtype.
+      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
+      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
+      - now apply (@ptt_sane_eqtype D A B), sane_eqtype.
+      - now apply (@ptt_sane_eqtype D A B), sane_eqtype.
+      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
+      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
     }
   }
 

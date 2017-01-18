@@ -30,7 +30,7 @@ Proof.
   intros.
   eapply EqTySym ; try magic.
   eapply EqTyTrans ; [
-    eapply myCongTySubst ; [
+    eapply CongTySubst ; [
       eapply WeakZero ; magic
     | magic ..
     ]
@@ -90,7 +90,7 @@ Proof.
     | magic ..
     ].
   }
-  eapply myCongTySubst ; [
+  eapply CongTySubst ; [
     magic ..
   | eapply SubstCtxConv ; magic
   ].
@@ -130,7 +130,7 @@ Proof.
   { apply SubstSym ; try assumption.
     eapply EqSubstCtxConv ; magic.
   }
-  eapply myCongTySubst ; [
+  eapply CongTySubst ; [
     magic ..
   | eapply SubstCtxConv ; magic
   ].
@@ -157,7 +157,7 @@ Proof.
   { eapply TyCtxConv ; [ eassumption | magic .. ]. }
   assert (istype G1 B2).
   { eapply TyCtxConv ; [ eassumption | magic .. ]. }
-  eapply myCongTySubst ; [
+  eapply CongTySubst ; [
     magic ..
   | eapply SubstCtxConv ; magic
   ].
@@ -691,7 +691,7 @@ Proof.
                   )
            )
   ).
-  { eapply myCongTySubst ; [ eassumption | magic .. ]. }
+  { eapply CongTySubst ; [ eassumption | magic .. ]. }
   assert (
     isterm G
            (subst u sbs)
@@ -771,7 +771,7 @@ Proof.
                           (sbcomp (sbweak G (Subst A sbs))
                                   (sbzero G (Subst A sbs) (subst v sbs)))))
   ).
-  { eapply myCongTySubst ; [ eassumption | magic .. ]. }
+  { eapply CongTySubst ; [ eassumption | magic .. ]. }
   assert (
     isterm G
            (subst (subst u sbs)
@@ -1931,7 +1931,7 @@ Proof.
   gocompsubst ; try assumption.
   gocompsubst ; try assumption.
   (* Now we can focus on susbtitutions. *)
-  eapply myCongTySubst ; try magic.
+  eapply CongTySubst ; try magic.
   (* We go from the rhs. *)
   eapply mySubstSym ; try magic.
   eapply SubstTrans ; [
