@@ -114,27 +114,6 @@ Proof.
   - assumption.
 Defined.
 
-Lemma myEqTySubstId :
-  forall {G D A u v sbs},
-    issubst sbs G D ->
-    istype D A ->
-    isterm D u A ->
-    isterm D v A ->
-    isctx G ->
-    isctx D ->
-    eqtype G
-           (Subst (Id A u v) sbs)
-           (Id (Subst A sbs) (subst u sbs) (subst v sbs)).
-Proof.
-  intros. eapply EqTySubstId.
-  - assumption.
-  - exact H4.
-  - assumption.
-  - assumption.
-  - assumption.
-  - assumption.
-Defined.
-
 Lemma myCongTermSubst :
   forall {G D A u1 u2 sbs sbt},
     eqsubst sbs sbt G D ->

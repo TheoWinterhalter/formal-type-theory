@@ -727,12 +727,12 @@ with eqtype : context -> type -> type -> Type :=
      | EqTySubstId :
        rule
          parameters: {G D A u v sbs},
-         premise: isctx G
-         premise: isctx D
          premise: issubst sbs G D
          premise: istype D A
          premise: isterm D u A
          premise: isterm D v A
+         premise: isctx G
+         premise: isctx D
          conclusion:
            eqtype G
                   (Subst (Id A u v) sbs)
