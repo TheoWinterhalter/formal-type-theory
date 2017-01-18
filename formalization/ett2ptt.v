@@ -293,9 +293,9 @@ Proof.
 
     (* CtxSym *)
     - { apply ptt.CtxSym.
-        - now apply (@ptt_sane_eqctx G D), sane_eqctx.
-        - now apply (@ptt_sane_eqctx G D), sane_eqctx.
         - now apply sane_eqctx.
+        - now apply (@ptt_sane_eqctx G D), sane_eqctx.
+        - now apply (@ptt_sane_eqctx G D), sane_eqctx.
       }
 
     (* CtxTrans *)

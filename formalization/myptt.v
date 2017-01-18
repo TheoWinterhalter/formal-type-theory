@@ -286,16 +286,6 @@ Proof.
   ].
 Defined.
 
-Lemma myCtxSym :
-  forall {G D},
-    eqctx G D ->
-    isctx G ->
-    isctx D ->
-    eqctx D G.
-Proof.
-  intros. apply CtxSym ; assumption.
-Defined.
-
 Lemma mySubstSym :
   forall {G D sbs sbt},
     eqsubst sbs sbt G D ->

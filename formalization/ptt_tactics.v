@@ -291,7 +291,7 @@ Ltac magicn n :=
   | |- eqctx (ctxextend ?G ?A) (ctxextend ?D ?B) =>
     first [
       apply EqCtxExtend ; magicn n
-    | apply myCtxSym ; [ apply EqCtxExtend ; magicn n | magicn n .. ]
+    | apply CtxSym ; [ apply EqCtxExtend ; magicn n | magicn n .. ]
     ]
   | |- eqctx ?G ?G =>
     apply CtxRefl ; magicn n
@@ -301,8 +301,8 @@ Ltac magicn n :=
     (* assumption *)
     (* In the first case we don't want to use magic in order to avoid symmetry
        again. *)
-    (* || apply myCtxSym ; [ assumption | magicn n .. ] *)
-    first [ assumption | apply myCtxSym ; [ assumption | magicn n .. ] ]
+    (* || apply CtxSym ; [ assumption | magicn n .. ] *)
+    first [ assumption | apply CtxSym ; [ assumption | magicn n .. ] ]
   (* Equality of substitutions *)
   | |- eqsubst (sbzero ?G1 ?A1 ?u1) (sbzero ?G2 ?A2 ?u2) ?D ?E =>
     eapply myCongSubstZero ; magicn n

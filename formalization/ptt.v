@@ -368,9 +368,9 @@ with eqctx : context -> context -> Type :=
      | CtxSym :
        rule
          parameters: {G D},
+         premise: eqctx G D
          premise: isctx G
          premise: isctx D
-         premise: eqctx G D
          conclusion:
            eqctx D G
        endrule
