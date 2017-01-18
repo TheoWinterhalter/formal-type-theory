@@ -2,6 +2,12 @@
 
 Require Import syntax ptt.
 
+Definition CtxExtendInversion G A (H : isctx (ctxextend G A)) :
+  isctx G * istype G A.
+Proof.
+  inversion H. easy.
+Defined.
+
 Fixpoint TyIdInversion G A u v (H : istype G (Id A u v)) {struct H} :
   isctx G * istype G A * isterm G u A * isterm G v A.
 Proof.
