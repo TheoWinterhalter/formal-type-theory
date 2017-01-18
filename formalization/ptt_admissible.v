@@ -620,7 +620,7 @@ Proof.
       G D
   ).
   { eapply SubstTrans ; [
-      eapply myCongSubstComp ; [
+      eapply CongSubstComp ; [
         eapply WeakZero ; magic
       | eapply SubstRefl ; magic
       | magic ..
@@ -650,7 +650,7 @@ Proof.
       D
   ).
   { eapply SubstTrans ; [
-      eapply myCongSubstComp ; [
+      eapply CongSubstComp ; [
         eapply WeakZero ; magic
       | eapply SubstRefl ; magic
       | magic ..
@@ -663,7 +663,7 @@ Proof.
     | try magic ..
     ].
     eapply SubstTrans ; [
-      eapply myCongSubstComp ; [
+      eapply CongSubstComp ; [
         eapply SubstRefl ; magic
       | eapply WeakZero ; magic
       | magic ..
@@ -743,9 +743,9 @@ Proof.
       G
       D
   ).
-  { eapply myCongSubstComp ; [
+  { eapply CongSubstComp ; [
       eapply SubstTrans ; [
-        eapply myCongSubstComp ; [
+        eapply CongSubstComp ; [
           eapply WeakZero ; magic
         | eapply SubstRefl ; magic
         | magic ..
@@ -916,8 +916,8 @@ Proof.
        (sbcomp (sbzero D A v) (sbcomp (sbweak D A) (sbshift G A sbs))))
     (ctxextend G (Subst A sbs)) D
   ).
-  { eapply myCongSubstComp ; [
-      eapply myCongSubstComp ; [
+  { eapply CongSubstComp ; [
+      eapply CongSubstComp ; [
         eapply mySubstSym ; magic
       | eapply SubstRefl ; magic
       | magic ..
@@ -1070,7 +1070,7 @@ Proof.
   { eapply SubstTrans ; [
       eapply myCompAssoc ; magic
     | eapply SubstTrans ; [
-        eapply myCongSubstComp ; [
+        eapply CongSubstComp ; [
           eapply SubstRefl ; magic
         | eapply WeakZero ; magic
         | magic ..
@@ -1254,7 +1254,7 @@ Proof.
     G D
   ).
   { eapply SubstTrans ; [
-      eapply myCongSubstComp ; [
+      eapply CongSubstComp ; [
         eapply ShiftZero ; magic
       | eapply SubstRefl ; magic
       | magic ..
@@ -1387,7 +1387,7 @@ Proof.
     | try magic ..
     ].
     eapply SubstTrans ; [
-      eapply myCongSubstComp ; [
+      eapply CongSubstComp ; [
         eapply SubstRefl ; magic
       | eapply WeakNat ; magic
       | magic ..
@@ -1604,7 +1604,7 @@ Proof.
        (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
     (sbcomp (sbweak D A) (sbcomp (sbzero D A v) sbs)) G D
   ).
-  { eapply myCongSubstComp ; magic. }
+  { eapply CongSubstComp ; magic. }
   assert (
     eqtype G (Subst (Subst (Subst A (sbweak D A)) (sbzero D A v)) sbs)
     (Subst (Subst (Subst A (sbweak D A)) (sbshift G A sbs))
@@ -1936,7 +1936,7 @@ Proof.
   eapply mySubstSym ; try magic.
   eapply SubstTrans ; [
     (* Then we only look on the lhs of the composition. *)
-    eapply myCongSubstComp ; [
+    eapply CongSubstComp ; [
       (* We exchange the substitutionss. *)
       eapply mySubstSym ; [
         eapply ShiftZero ; magic
@@ -1955,14 +1955,14 @@ Proof.
   ].
   (* We can now have a look at the rhs of the composition. *)
   eapply SubstTrans ; [
-    eapply myCongSubstComp ; [
+    eapply CongSubstComp ; [
       (* On the left we remain unchanged. *)
       eapply SubstRefl ; magic
     | (* On the right we have a composition of shifts, thus we use
          fonctoriality to progress.
          However we need to apply congruence again to rewrite
          the type in the left shift. *)
-      eapply myCongSubstComp ; [
+      eapply CongSubstComp ; [
         eapply @CongSubstShift
         with (A2 := Subst
                      (Id (Subst A (sbweak D A))
@@ -1982,7 +1982,7 @@ Proof.
   (* Now that we rewrote the type, we can use fonctoriality. *)
   (* Note this could be meged with the next couple steps. *)
   eapply SubstTrans ; [
-    eapply myCongSubstComp ; [
+    eapply CongSubstComp ; [
       (* On the left we remain unchanged. *)
       eapply SubstRefl ; magic
     | eapply myEqSubstCtxConv ; [
@@ -1996,7 +1996,7 @@ Proof.
   (* Now that we have a composition inside the shift, we want
      to proceed with an exchange by using ShiftZero. *)
   eapply SubstTrans ; [
-    eapply myCongSubstComp ; [
+    eapply CongSubstComp ; [
       (* We leave the left unchanged. *)
       eapply SubstRefl ; magic
     | eapply myEqSubstCtxConv ; [
@@ -2017,7 +2017,7 @@ Proof.
   (* Now we need to apply CompShift again to put the composition outside
      and apply associativity. *)
   eapply SubstTrans ; [
-    eapply myCongSubstComp ; [
+    eapply CongSubstComp ; [
       (* On the left we remain unchanged. *)
       eapply SubstRefl ; magic
     | eapply mySubstSym ; [
@@ -2041,8 +2041,8 @@ Proof.
   ].
   (* Now we should finally have the same structure for the substitutions
      and thus be able to apply congruences. *)
-  eapply myCongSubstComp ; try magic.
-  eapply myCongSubstComp ; try magic ; try assumption.
+  eapply CongSubstComp ; try magic.
+  eapply CongSubstComp ; try magic ; try assumption.
   - eapply myEqSubstCtxConv ; [
       eapply CongSubstShift ; magic
     | try magic ; assumption ..

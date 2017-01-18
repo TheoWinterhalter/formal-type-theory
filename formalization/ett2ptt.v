@@ -391,15 +391,15 @@ Proof.
 
     (* CongSubstComp *)
     - { apply (@ptt.CongSubstComp G D E).
-        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbt1 sbt2 D E), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbt1 sbt2 D E), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbt1 sbt2 D E), sane_eqsubst.
         - now apply sane_eqsubst.
         - now apply sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbt1 sbt2 D E), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbt1 sbt2 D E), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbt1 sbt2 D E), sane_eqsubst.
       }
 
     (* EqSubstCtxConv *)

@@ -502,15 +502,15 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | CongSubstComp :
        rule
          parameters: {G D E sbs1 sbs2 sbt1 sbt2},
-         premise: isctx G
-         premise: isctx D
-         premise: isctx E
+         premise: eqsubst sbs1 sbs2 G D
+         premise: eqsubst sbt1 sbt2 D E
          premise: issubst sbs1 G D
          premise: issubst sbs2 G D
          premise: issubst sbt1 D E
          premise: issubst sbt2 D E
-         premise: eqsubst sbs1 sbs2 G D
-         premise: eqsubst sbt1 sbt2 D E
+         premise: isctx G
+         premise: isctx D
+         premise: isctx E
          conclusion:
            eqsubst (sbcomp sbt1 sbs1)
                    (sbcomp sbt2 sbs2)

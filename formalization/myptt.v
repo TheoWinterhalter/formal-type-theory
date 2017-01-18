@@ -375,29 +375,6 @@ Proof.
   intros. eapply EqTyCtxConv ; [ exact H3 | assumption .. ].
 Defined.
 
-Lemma myCongSubstComp :
-  rule
-    parameters: {G D E sbs1 sbs2 sbt1 sbt2},
-    premise: eqsubst sbs1 sbs2 G D
-    premise: eqsubst sbt1 sbt2 D E
-    premise: issubst sbs1 G D
-    premise: issubst sbs2 G D
-    premise: issubst sbt1 D E
-    premise: issubst sbt2 D E
-    premise: isctx G
-    premise: isctx D
-    premise: isctx E
-    conclusion:
-      eqsubst (sbcomp sbt1 sbs1)
-              (sbcomp sbt2 sbs2)
-              G
-              E
-  endrule.
-Proof.
-  intros.
-  eapply @CongSubstComp with (D := D) ; assumption.
-Defined.
-
 Lemma myCompAssoc :
   rule
     parameters: {G D E F sbs sbt sbr},
