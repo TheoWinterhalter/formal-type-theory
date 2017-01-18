@@ -26,27 +26,6 @@ Proof.
   - assumption.
 Defined.
 
-Lemma myEqTyConv :
-  forall {G A B u v},
-    eqterm G u v A ->
-    eqtype G A B ->
-    isctx G ->
-    istype G A ->
-    istype G B ->
-    isterm G u A ->
-    isterm G v A ->
-    eqterm G u v B.
-Proof.
-  intros. eapply EqTyConv.
-  - assumption.
-  - exact H2.
-  - assumption.
-  - assumption.
-  - assumption.
-  - assumption.
-  - assumption.
-Defined.
-
 Lemma myEqSubstComp :
   forall {G D E A u sbs sbt},
     isterm E u A ->

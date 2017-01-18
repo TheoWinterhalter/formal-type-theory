@@ -176,7 +176,7 @@ Lemma EqSubstWeakNat :
            (subst (subst u sbs) (sbweak G (Subst A sbs)))
            (Subst (Subst B sbs) (sbweak G (Subst A sbs))).
 Proof.
-  intros. eapply myEqTyConv.
+  intros. eapply EqTyConv.
   - gocompsubst ; try eassumption ; try magic.
     + gocompsubst ; try eassumption ; try magic.
       * { eapply TermTyConv.
@@ -555,7 +555,7 @@ Proof.
   }
   assert (eqterm D (subst (var 0) (sbzero D A v)) v
     (Subst (Subst A (sbweak D A)) (sbzero D A v))).
-  { eapply myEqTyConv ; [
+  { eapply EqTyConv ; [
       eapply EqSubstZeroZero ; magic
     | magic ..
     ].
@@ -834,7 +834,7 @@ Proof.
     (Subst (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
        (sbzero G (Subst A sbs) (subst v sbs)))
   ).
-  { eapply myEqTyConv ; [
+  { eapply EqTyConv ; [
       eapply EqSubstZeroZero ; magic
     | eapply myEqTySym ; try magic ; eassumption
     | magic ..
@@ -960,7 +960,7 @@ Proof.
     (subst (subst u sbs) (sbweak G (Subst A sbs)))
     (Subst (Subst A (sbweak D A)) (sbshift G A sbs))
   ).
-  { eapply myEqTyConv ; [
+  { eapply EqTyConv ; [
       eapply EqSubstWeakNat ; try magic ; eassumption
     | try magic ; try eassumption ..
     ].
@@ -989,7 +989,7 @@ Proof.
   }
   assert (eqterm (ctxextend G (Subst A sbs)) (subst (var 0) (sbshift G A sbs))
     (var 0) (Subst (Subst A (sbweak D A)) (sbshift G A sbs))).
-  { eapply myEqTyConv ; [
+  { eapply EqTyConv ; [
       eapply EqSubstShiftZero ; magic
     | try magic ..
     ].
@@ -1152,7 +1152,7 @@ Proof.
   ).
   { (* gocompsubst ; try eassumption ; try magic. *)
 
-    eapply myEqTyConv ; [
+    eapply EqTyConv ; [
       eapply myEqSym ; [
         eapply eqterm_subst_left ; try magic ; try eassumption ; magic
       | magic ..
@@ -1203,7 +1203,7 @@ Proof.
   ).
   { eapply myEqSym ; try magic.
     eapply myEqTrans ; [
-      eapply myEqTyConv ; [
+      eapply EqTyConv ; [
         eapply myEqSym ; [
           eapply myEqSubstComp ; [
             shelve
@@ -1448,7 +1448,7 @@ Proof.
     | try magic ..
     ].
     eapply myEqTrans ; [
-      eapply myEqTyConv ; [
+      eapply EqTyConv ; [
         eapply myCongTermSubst ; [
           eapply SubstRefl ; magic
         | eapply EqSubstShiftZero ; magic
@@ -1458,7 +1458,7 @@ Proof.
       ]
     | try magic ..
     ].
-    eapply myEqTyConv ; [
+    eapply EqTyConv ; [
       eapply EqSubstZeroZero ; magic
     | try magic ..
     ].

@@ -838,13 +838,13 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqTyConv :
        rule
          parameters: {G A B u v},
+         premise: eqterm G u v A
+         premise: eqtype G A B
          premise: isctx G
          premise: istype G A
          premise: istype G B
          premise: isterm G u A
          premise: isterm G v A
-         premise: eqterm G u v A
-         premise: eqtype G A B
          conclusion:
            eqterm G u v B
        endrule

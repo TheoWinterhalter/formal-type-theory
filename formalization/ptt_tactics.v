@@ -48,9 +48,9 @@ Proof.
     ].
   }
   assert (h : eqterm G (subst u (sbcomp sbt sbs)) v (Subst (Subst A sbt) sbs)).
-  { eapply myEqTyConv ; eassumption. }
+  { eapply EqTyConv ; eassumption. }
   eapply myEqTrans.
-  - eapply myEqTyConv.
+  - eapply EqTyConv.
     + eapply myEqSubstComp ; eassumption.
     + apply EqTySym ; [
         assumption ..
@@ -80,14 +80,14 @@ Ltac compsubst1 :=
   | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) (Subst (Subst ?A ?sbt) ?sbs) =>
     eapply EqSym ; try eapply eqterm_subst_left
   | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v ?A =>
-    eapply myEqTyConv ; [
+    eapply EqTyConv ; [
       try eapply eqterm_subst_left
     | idtac ..
     ]
   | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) ?A =>
     eapply EqSym ; [
       idtac ..
-    | eapply myEqTyConv ; [
+    | eapply EqTyConv ; [
         try eapply eqterm_subst_left
       | idtac ..
       ]
@@ -180,7 +180,7 @@ Ltac pushsubst1 :=
     | idtac ..
     ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
-    eapply myEqTyConv ; [
+    eapply EqTyConv ; [
       eapply myEqTrans ; [
         eapply myEqSubstRefl
       | idtac ..
@@ -193,7 +193,7 @@ Ltac pushsubst1 :=
     | idtac ..
     ]
   | |- eqterm ?G (subst true ?sbs) ?u ?A =>
-    eapply myEqTyConv ; [
+    eapply EqTyConv ; [
       eapply myEqTrans ; [
         eapply myEqSubstTrue
       | idtac ..
@@ -206,7 +206,7 @@ Ltac pushsubst1 :=
     | idtac ..
     ]
   | |- eqterm ?G (subst false ?sbs) ?u ?A =>
-    eapply myEqTyConv ; [
+    eapply EqTyConv ; [
       eapply myEqTrans ; [
         eapply myEqSubstFalse
       | idtac ..

@@ -620,13 +620,13 @@ Proof.
 
     (* EqTyConv *)
     - { apply (@ptt.EqTyConv G A B).
-        - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
-        - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
-        - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
-        - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
-        - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
         - now apply sane_eqterm.
         - now apply sane_eqtype.
+        - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
+        - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
+        - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
+        - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
+        - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
     }
 
     (* EqCtxConv *)
