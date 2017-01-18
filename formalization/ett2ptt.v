@@ -817,8 +817,8 @@ Proof.
 
     (* EqTermExfalso *)
     - { apply (@ptt.EqTermExfalso G A u v w).
-        - now apply (@ptt_sane_istype G A), sane_istype.
-        - now apply sane_istype.
+        - now apply (ptt_sane_isterm G u A), sane_isterm.
+        - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply sane_isterm.
         - now apply sane_isterm.
         - now apply sane_isterm.

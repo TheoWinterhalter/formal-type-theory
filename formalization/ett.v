@@ -743,7 +743,6 @@ with eqterm : context -> term -> term -> type -> Type :=
 
      | EqTermExfalso :
          forall {G A u v w},
-           istype G A ->
            isterm G u A ->
            isterm G v A ->
            isterm G w Empty ->
