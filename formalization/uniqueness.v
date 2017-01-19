@@ -223,7 +223,7 @@ Fixpoint unique_term_ctx G u A (H1 : ptt.isterm G u A) {struct H1}:
     ett.eqtype G A B
 
 with unique_subst G D1 sbs (H1 : ptt.issubst sbs G D1) {struct H1}:
-  forall G' D2 (H2 : ptt.eqctx G G') (H3 : ptt.issubst sbs G' D2),
+  forall G' D2 (H2 : ptt.issubst sbs G' D2) (H3 : ptt.eqctx G G'),
     ett.eqctx D1 D2.
 
 Proof.
@@ -249,8 +249,8 @@ Proof.
         unique_subst G D1 sbs
                      H1
                      G' D2
-                     (ett2ptt.sane_eqctx G G' H2)
-                     (ett2ptt.sane_issubst sbs G' D2 H3)
+                     (ett2ptt.sane_issubst sbs G' D2 H2)
+                     (ett2ptt.sane_eqctx G G' H3)
     ).
 
     (* H1: TermTyConv *)
@@ -285,11 +285,11 @@ Proof.
             * { apply ett.CtxSym.
                 apply (@unique_subst' G _ sbs) with (G' := G).
                 - hyp.
-                - apply ett.CtxRefl. hyp.
                 - eapply substCtxConv'.
                   + eapply ett.CtxSym.
                     ehyp.
                   + hyp.
+                - apply ett.CtxRefl. hyp.
               }
       }
 
@@ -496,28 +496,39 @@ Proof.
 
  (* unique_subst *)
  { destruct H1 ;
-   simple refine (fix unique_subst' G' D2' H2' H3' {struct H3'} := _).
+   simple refine (fix unique_subst'' G' D2' H2' H3' {struct H2'} := _) ;
+   pose (
+     unique_subst' G' D2' H2' H3' :=
+       unique_subst'' G' D2' H2'
+                      (ett2ptt.sane_eqctx _ G' H3')
+   ).
 
    (* H1: SubstZero *)
-   - { inversion_clear H3'.
+   - { inversion_clear H2'.
        - apply ett.CtxRefl, ett.CtxExtend ; hyp.
-       - assert (ptt.eqctx G G1).
-         { eapply ett2ptt.sane_eqctx.
-           eapply ett.CtxTrans.
+       - assert (ett.eqctx G G1).
+         { eapply ett.CtxTrans.
            - ehyp.
            - apply ett.CtxSym. hyp.
          }
-         pose (unique_subst' _ _ H6 H).
+         pose (unique_subst' _ _ H H6).
          eapply ett.CtxTrans.
          + ehyp.
          + hyp.
      }
 
    (* H1: SubstWeak *)
-   - (* { inversion_clear H2. *)
-     (*   now apply eqctx_refl, (@sane_istype D2 A). *)
-     (* } *)
-     todo.
+   - { inversion_clear H2'.
+       - apply ett.CtxRefl. hyp.
+       - eapply ett.CtxTrans.
+         + eapply unique_subst'.
+           * ehyp.
+           * { eapply ett.CtxTrans.
+               - ehyp.
+               - apply ett.CtxSym. hyp.
+             }
+         + hyp.
+     }
 
    (* H1: SubstShift *)
    - (* { inversion_clear H2. *)
