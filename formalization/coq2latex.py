@@ -156,23 +156,30 @@ def parseExpr(tok):
         die ("premature end")
     return e
 
-def rule2latex(name, premises, conclusion):
+def ruleTag(prefix, rulename):
+    return prefix + "-" + "-".join((w.lower() for w in re.findall(r'[A-Z][a-z]+', rulename)))
+
+def rule2latex(prefix, name, premises, conclusion):
     premises = [str(parseExpr(TokenStream(premise))) for premise in premises]
     conclusion = str(parseExpr(TokenStream(conclusion)))
     return Template(
-r"""\newcommand{\rl$name}{\referTo{$name}{rul:$name}}
-\newcommand{\show$name}{%
-    \infer[\rulename{$name}]
+r"""\newcommand{\rl$Prefix$name}{\referTo{$name}{rul:$name}}
+\newcommand{\show$Prefix$name}{%
+    \infer
     { $premises}
     {$conclusion}
 }
 """).substitute({"name" : name,
-                  "premises" : " \\\\\n".join(premises),
-                  "conclusion" : conclusion})
+                 "Prefix" : prefix.capitalize(),
+                 "premises" : " \\\\\n".join(premises),
+                 "conclusion" : conclusion})
 
 
-def section(title, src):
+def section(title, prefix, src):
     """Process one inductive definition."""
+
+    print ('\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    print ('% {0}\n'.format(title))
 
     rules = re.findall(
             r'^\s*\|\s+'                   # the beginning of a rule
@@ -197,13 +204,24 @@ def section(title, src):
         premises = re.split(r'\s*premise:\s*', m.group('premises'))
         if len(premises) > 0 and not premises[0]: premises.pop(0)
         conclusion = m.group('conclusion')
-        print (rule2latex(rulename, premises, conclusion))
+        print (rule2latex(prefix, rulename, premises, conclusion))
 
-    print (r'\newcommand{{\show{0}Rules}}{{'.format(title.capitalize()))
+    print (Template(r"\newcommand{\show${Prefix}${Title}Rules}{").substitute({
+        'Prefix' : prefix.capitalize(),
+        'Title' : title.capitalize()
+    }))
 
     for rule in rules:
         rulename = rule[0]
-        print(r'$$\show{0}$$'.format(rulename))
+        print(Template(r"""\begin{equation}
+                           \show$Prefix$name
+                           \tag{\textsc{$ruleTag}}
+                           \end{equation}"""
+        ).substitute({
+            'Prefix' : prefix.capitalize(),
+            'ruleTag' : ruleTag(prefix, rulename),
+            'name' : rulename}
+        ))
 
     print (r'}')
 
@@ -213,11 +231,13 @@ def section(title, src):
 # load the source file
 filename = sys.argv[1]
 
+prefix = re.match('^(\w+)\.v$', filename).group(1)
+
 with open(filename, "r") as f:
     src = f.read()
 
-# Split into sections
-    # sections = re.split(r'(Inductive|with)\s+(\w+)[^:\n]+:\s', src)
-    # for s in sections:
-    #     print (s[:30] if s else None)
-section("everything", src)
+sections = re.split(r'Inductive|with', src)[1:]
+for sect in sections:
+    m = re.match(r'^\s+(\w+)\s+:', sect) or die ("Could not find section title")
+    title = m.group(1)
+    section(title, prefix, sect)
