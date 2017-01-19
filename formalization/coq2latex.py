@@ -157,7 +157,7 @@ def parseExpr(tok):
     return e
 
 def ruleTag(prefix, rulename):
-    return prefix + "-" + "-".join((w.lower() for w in re.findall(r'[A-Z][a-z]+', rulename)))
+    return prefix + "-" + "-".join((w.lower() for w in re.findall(r'[A-Z][a-z]*', rulename)))
 
 def rule2latex(prefix, name, premises, conclusion):
     premises = [str(parseExpr(TokenStream(premise))) for premise in premises]
