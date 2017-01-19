@@ -6,6 +6,6 @@ formalization/ptt.tex: formalization/ptt.v
 formalization/ett.tex: formalization/ett.v
 	cd ./formalization && ./coq2latex.py ett.v > ett.tex
 
-rules.pdf: formalization/rules.tex formalization/ptt.v formalization/ett.v
+rules.pdf: formalization/rules.tex formalization/ptt.tex formalization/ett.tex
 	cd ./formalization && pdflatex rules.tex
 	mv formalization/rules.pdf .
