@@ -223,7 +223,7 @@ Fixpoint unique_term_ctx G u A (H1 : ptt.isterm G u A) {struct H1}:
     ett.eqtype G A B
 
 with unique_subst G D1 sbs (H1 : ptt.issubst sbs G D1) {struct H1}:
-  forall D2 (H2 : ptt.issubst sbs G D2),
+  forall G' D2 (H2 : ptt.eqctx G G') (H3 : ptt.issubst sbs G' D2),
     ett.eqctx D1 D2.
 
 Proof.
@@ -233,26 +233,24 @@ Proof.
     pose (
       unique_term' B' D' H1 H2 :=
         unique_term'' B' D'
-                      (* (ett2ptt.sane_isterm D' _ B' H1) *)
                       H1
                       (ett2ptt.sane_eqctx D' _ H2)
     ) ;
     pose (
       unique_term_ctx' G u A H1 B D H2 H3 :=
         unique_term_ctx G u A
-                        (* (ett2ptt.sane_isterm G u A H1) *)
                         H1
                         B D
                         (ett2ptt.sane_isterm D u B H2)
                         (ett2ptt.sane_eqctx D G H3)
     ) ;
     pose (
-      unique_subst' G D1 sbs H1 D2 H2 :=
+      unique_subst' G D1 sbs H1 G' D2 H2 H3 :=
         unique_subst G D1 sbs
-                     (* (ett2ptt.sane_issubst sbs G D1 H1) *)
                      H1
-                     D2
-                     (ett2ptt.sane_issubst sbs G D2 H2)
+                     G' D2
+                     (ett2ptt.sane_eqctx G G' H2)
+                     (ett2ptt.sane_issubst sbs G' D2 H3)
     ).
 
     (* H1: TermTyConv *)
@@ -285,8 +283,9 @@ Proof.
             * hyp.
             * ehyp.
             * { apply ett.CtxSym.
-                apply (unique_subst' G _ sbs).
+                apply (@unique_subst' G _ sbs) with (G' := G).
                 - hyp.
+                - apply ett.CtxRefl. hyp.
                 - eapply substCtxConv'.
                   + eapply ett.CtxSym.
                     ehyp.
@@ -496,20 +495,22 @@ Proof.
   }
 
  (* unique_subst *)
- { intros D2 H2.
-   destruct H1.
+ { destruct H1 ;
+   simple refine (fix unique_subst' G' D2' H2' H3' {struct H3'} := _).
 
    (* H1: SubstZero *)
-   - { inversion_clear H2.
+   - { inversion_clear H3'.
        - apply ett.CtxRefl, ett.CtxExtend ; hyp.
-       - pose (unique_subst _ _ _ H (ctxextend G A)).
-         apply ett.CtxSym. eapply ett.CtxTrans.
-         + eapply ett.CtxSym. ehyp.
-         + apply e. apply ett2ptt.sane_issubst.
-           eapply ett.SubstCtxConv.
-           * eapply ett.SubstZero. hyp.
-           * apply ett.CtxSym. hyp.
-           * apply ett.CtxRefl. apply ett.CtxExtend. hyp.
+       - assert (ptt.eqctx G G1).
+         { eapply ett2ptt.sane_eqctx.
+           eapply ett.CtxTrans.
+           - ehyp.
+           - apply ett.CtxSym. hyp.
+         }
+         pose (unique_subst' _ _ H6 H).
+         eapply ett.CtxTrans.
+         + ehyp.
+         + hyp.
      }
 
    (* H1: SubstWeak *)
