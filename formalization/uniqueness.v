@@ -496,29 +496,47 @@ Proof.
   }
 
  (* unique_subst *)
- (* { intros D2 H2. *)
- (*   destruct H1. *)
+ { intros D2 H2.
+   destruct H1.
 
- (*   (* H1: SubstZero *) *)
- (*   - { inversion_clear H2. *)
- (*       apply eqctx_refl, CtxExtend; now apply (@sane_isterm G A u). *)
- (*     } *)
+   (* H1: SubstZero *)
+   - { inversion_clear H2.
+       - apply ett.CtxRefl, ett.CtxExtend ; hyp.
+       - pose (unique_subst _ _ _ H (ctxextend G A)).
+         apply ett.CtxSym. eapply ett.CtxTrans.
+         + eapply ett.CtxSym. ehyp.
+         + apply e. apply ett2ptt.sane_issubst.
+           eapply ett.SubstCtxConv.
+           * eapply ett.SubstZero. hyp.
+           * apply ett.CtxSym. hyp.
+           * apply ett.CtxRefl. apply ett.CtxExtend. hyp.
+     }
 
- (*   (* H1: SubstWeak *) *)
- (*   - { inversion_clear H2. *)
- (*       now apply eqctx_refl, (@sane_istype D2 A). *)
- (*     } *)
+   (* H1: SubstWeak *)
+   - (* { inversion_clear H2. *)
+     (*   now apply eqctx_refl, (@sane_istype D2 A). *)
+     (* } *)
+     todo.
 
- (*   (* H2: SubstShift *) *)
- (*   - { inversion_clear H2. *)
- (*       apply eqCtxExtend'. *)
- (*       apply (unique_subst G _ sbs). *)
- (*       + assumption. *)
- (*       + assumption. *)
- (*       + now apply EqTyRefl. *)
- (*     } *)
- (* } *)
-  todo.
+   (* H1: SubstShift *)
+   - (* { inversion_clear H2. *)
+     (*   apply eqCtxExtend'. *)
+     (*   apply (unique_subst G _ sbs). *)
+     (*   + assumption. *)
+     (*   + assumption. *)
+     (*   + now apply EqTyRefl. *)
+     (* } *)
+     todo.
+
+   (* H1: SubstComp *)
+   - todo.
+
+   (* H1: SubstId *)
+   - todo.
+
+   (* H1: SubstCtxConv *)
+   - todo.
+ }
 
 Defined.
 
