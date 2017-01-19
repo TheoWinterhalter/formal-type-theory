@@ -112,6 +112,7 @@ VFILES:=syntax.v\
   ptt2ett.v\
   ett2ptt.v\
   ett_sanity.v\
+  uniqueness.v\
   ctt.v\
   itt.v\
   eval.v\

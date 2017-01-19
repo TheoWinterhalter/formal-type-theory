@@ -3,6 +3,7 @@
 Require Import syntax.
 Require ett ptt.
 Require ptt2ett ett2ptt.
+Require ett_sanity ptt_sanity.
 (* Require Import sanity. *)
 
 (* Auxiliary admissibility lemmas. *)
@@ -36,25 +37,42 @@ Require ptt2ett ett2ptt.
 
 (* Auxiliary inversion lemmas. *)
 
-(* Lemma eqctx_ctxextend G A G' A' : *)
-(*   eqctx (ctxextend G A) (ctxextend G' A') -> *)
-(*   ((G = G') * eqtype G A A')%type. *)
-(* Proof. *)
-(*   intro E. *)
-(*   inversion E. *)
-(*   split. *)
-(*   - exact eq_refl. *)
-(*   - assumption. *)
-(* Defined. *)
+Fixpoint eqctx_ctxextend G A G' A'
+         (H : ett.eqctx (ctxextend G A) (ctxextend G' A')) {struct H} :
+  (ett.eqctx G G' * ett.eqtype G A A')%type.
+Proof.
+  inversion H ; subst.
+  - split.
+    + apply ett.CtxRefl.
+      admit. (* sanity and inversion *)
+    + apply ett.EqTyRefl.
+      admit. (* sanity and inversion *)
+  - destruct (eqctx_ctxextend G' A' G A H0).
+    split.
+    + now apply ett.CtxSym.
+    + apply ett.EqTySym.
+      eapply ett.EqTyCtxConv ; eassumption.
+  - (* destruct (eqctx_ctxextend _ _ _ _ H0). *)
+    (* Do we need another inversion lemma here as well? *)
+    admit.
+  - split ; assumption.
+Admitted.
 
 
 (* It looks like we need to strengthen some inference
    rules, as follows: *)
 
-(* Is this one admissible? *)
-(* Hypothesis substCtxConv' : *)
-(*   forall G G' D sbs (E : eqctx G' G), *)
-(*     issubst sbs G D -> issubst sbs G' D. *)
+Lemma substCtxConv' :
+  forall G G' D sbs (E : ett.eqctx G' G),
+    ett.issubst sbs G D -> ett.issubst sbs G' D.
+Proof.
+  intros G G' D sbs E H.
+  eapply ett.SubstCtxConv.
+  - eassumption.
+  - now apply ett.CtxSym.
+  - apply ett.CtxRefl.
+    now apply (ett_sanity.sane_issubst sbs G D).
+Defined.
 
 (* Hypothesis eqCtxExtend' : *)
 (*   forall {G D A B}, *)
@@ -92,6 +110,8 @@ Require ptt2ett ett2ptt.
    that the fixpoints are well-defined. *)
 Hypothesis temporary :
   forall {A}, A.
+
+Ltac todo := exact temporary.
 
 (* Tactics to apply an hypothesis that could be in PTT instead of ETT. *)
 Ltac pttassumption :=
@@ -134,21 +154,64 @@ Ltac epttassumption :=
 
 Ltac ehyp := first [ eassumption | epttassumption ].
 
+(* A tactic to apply sanity in ptt. *)
+Ltac ptt_sane :=
+  match goal with
+  | H : ptt.issubst ?sbs ?G ?D |- ptt.isctx ?G =>
+    now apply (ptt_sanity.sane_issubst sbs G D)
+  | H : ptt.issubst ?sbs ?G ?D |- ptt.isctx ?D =>
+    now apply (ptt_sanity.sane_issubst sbs G D)
+  | H : ptt.istype ?G ?A |- ptt.isctx ?G =>
+    now apply (ptt_sanity.sane_istype G A)
+  | H : ptt.isterm ?G ?u ?A |- ptt.isctx ?G =>
+    now apply (ptt_sanity.sane_isterm G u A)
+  | H : ptt.isterm ?G ?u ?A |- ptt.istype ?G ?A =>
+    now apply (ptt_sanity.sane_isterm G u A)
+  | H : ptt.eqctx ?G ?D |- ptt.isctx ?G =>
+    now apply (ptt_sanity.sane_eqctx G D)
+  | H : ptt.eqctx ?G ?D |- ptt.isctx ?D =>
+    now apply (ptt_sanity.sane_eqctx G D)
+  | H : ptt.eqsubst ?sbs ?sbt ?G ?D |- ptt.isctx ?G =>
+    now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
+  | H : ptt.eqsubst ?sbs ?sbt ?G ?D |- ptt.isctx ?D =>
+    now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
+  | H : ptt.eqsubst ?sbs ?sbt ?G ?D |- ptt.issubst ?sbs ?G ?D =>
+    now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
+  | H : ptt.eqsubst ?sbs ?sbt ?G ?D |- ptt.issubst ?sbt ?G ?D =>
+    now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
+  | H : ptt.eqtype ?G ?A ?B |- ptt.isctx ?G =>
+    now apply (ptt_sanity.sane_eqtype G A B)
+  | H : ptt.eqtype ?G ?A ?B |- ptt.istype ?G ?A =>
+    now apply (ptt_sanity.sane_eqtype G A B)
+  | H : ptt.eqtype ?G ?A ?B |- ptt.istype ?G ?B =>
+    now apply (ptt_sanity.sane_eqtype G A B)
+  | H : ptt.eqterm ?G ?u ?v ?A |- ptt.isctx ?G =>
+    now apply (ptt_sanity.sane_eqterm G u v A)
+  | H : ptt.eqterm ?G ?u ?v ?A |- ptt.istype ?G ?A =>
+    now apply (ptt_sanity.sane_eqterm G u v A)
+  | H : ptt.eqterm ?G ?u ?v ?A |- ptt.isterm ?G ?u ?A =>
+    now apply (ptt_sanity.sane_eqterm G u v A)
+  | H : ptt.eqterm ?G ?u ?v ?A |- ptt.isterm ?G ?v ?A =>
+    now apply (ptt_sanity.sane_eqterm G u v A)
+  end.
+
+Ltac hyps := first [ hyp | ptt_sane ].
+
 (* Tactics for dealing with the conversion cases. *)
 
-(* Ltac doTyConv unique_term' := *)
-(*   eapply EqTyTrans ; *)
-(*   [ eapply unique_term' ; *)
-(*     [ eassumption *)
-(*     | assumption ] *)
-(*   | eapply EqTyCtxConv ; *)
-(*     [ eassumption *)
-(*     | assumption ] ]. *)
+Ltac doTyConv unique_term' :=
+  eapply ett.EqTyTrans ;
+  [ eapply unique_term' ;
+    [ ehyp
+    | hyp ]
+  | eapply ett.EqTyCtxConv ;
+    [ ehyp
+    | hyp ] ].
 
-(* Ltac doCtxConv D' unique_term' := *)
-(*   eapply unique_term' ; *)
-(*   [ eassumption *)
-(*   | now apply (eqctx_trans _ D') ]. *)
+Ltac doCtxConv D' unique_term' :=
+  eapply unique_term' ;
+  [ ehyp
+  | apply (@ett.CtxTrans _ D') ; hyp ].
 
 (* The version of the theorem that allows variation of the context. *)
 
@@ -169,16 +232,26 @@ Proof.
     pose (
       unique_term' B' D' H1 H2 :=
         unique_term'' B' D'
-                      (ett2ptt.sane_isterm D' _ B' H1)
+                      (* (ett2ptt.sane_isterm D' _ B' H1) *)
+                      H1
                       (ett2ptt.sane_eqctx D' _ H2)
     ) ;
     pose (
       unique_term_ctx' G u A H1 B D H2 H3 :=
         unique_term_ctx G u A
-                        (ett2ptt.sane_isterm G u A H1)
+                        (* (ett2ptt.sane_isterm G u A H1) *)
+                        H1
                         B D
                         (ett2ptt.sane_isterm D u B H2)
                         (ett2ptt.sane_eqctx D G H3)
+    ) ;
+    pose (
+      unique_subst' G D1 sbs H1 D2 H2 :=
+        unique_subst G D1 sbs
+                     (* (ett2ptt.sane_issubst sbs G D1 H1) *)
+                     H1
+                     D2
+                     (ett2ptt.sane_issubst sbs G D2 H2)
     ).
 
     (* H1: TermTyConv *)
@@ -205,18 +278,19 @@ Proof.
         - doTyConv unique_term'.
         - doCtxConv D' unique_term'.
 
-        - eapply CongTySubst.
-          + eassumption.
-          + eapply (unique_term_ctx _ u).
-            * exact H1.
-            * eassumption.
-            * { apply eqctx_sym.
-                apply (unique_subst G _ sbs).
-                - assumption.
+        - eapply ett.CongTySubst.
+          + eapply ett.SubstRefl. ehyp.
+          + eapply (unique_term_ctx' _ u).
+            * hyp.
+            * ehyp.
+            * { apply ett.CtxSym.
+                apply (unique_subst' G _ sbs).
+                - hyp.
                 - eapply substCtxConv'.
-                  + eapply eqctx_sym.
-                    eassumption.
-                  + assumption. }
+                  + eapply ett.CtxSym.
+                    ehyp.
+                  + hyp.
+              }
       }
 
     (* TermVarZero *)
@@ -224,170 +298,184 @@ Proof.
         - doTyConv unique_term'.
         - doCtxConv D' unique_term'.
 
-        - { assert (L : eqctx (ctxextend G0 A0) (ctxextend G A)).
-            - now rewrite H0.
+        - { assert (L : ett.eqctx (ctxextend G0 A0) (ctxextend G A)).
+            - rewrite H1. hyp.
             - destruct (eqctx_ctxextend _ _ _ _  L) as [E M].
-              rewrite E in * |- *.
-              apply eqTyCongWeak'.
-              + now apply EqTySym.
-              + now apply EqTySym.
+              eapply ett.CongTySubst.
+              + eapply ett.CongSubstWeak.
+                * now apply ett.CtxSym.
+                * apply ett.EqTySym.
+                  eapply ett.EqTyCtxConv ; eassumption.
+              + apply ett.EqTySym.
+                eapply ett.EqTyCtxConv ; eassumption.
           }
       }
 
 
     (* TermVarSucc *)
-      - { inversion H2'.
-          - doTyConv unique_term'.
-          - doCtxConv D' unique_term'.
+      - (* { inversion H2'. *)
+        (*   - doTyConv unique_term'. *)
+        (*   - doCtxConv D' unique_term'. *)
 
-          - { assert (L : eqctx (ctxextend G0 B0) (ctxextend G B)).
-              - now rewrite H2.
-              - destruct (eqctx_ctxextend _ _ _ _  L) as [E M].
-                rewrite E in * |- *.
-                apply eqTyCongWeak'.
-                + now apply EqTySym.
-                + eapply (unique_term_ctx _ (var k)).
-                  * assumption.
-                  * eassumption.
-                  * apply eqctx_refl.
-                    now apply (@sane_isterm G A (var k)).
-            }
-        }
+        (*   - { assert (L : eqctx (ctxextend G0 B0) (ctxextend G B)). *)
+        (*       - now rewrite H2. *)
+        (*       - destruct (eqctx_ctxextend _ _ _ _  L) as [E M]. *)
+        (*         rewrite E in * |- *. *)
+        (*         apply eqTyCongWeak'. *)
+        (*         + now apply EqTySym. *)
+        (*         + eapply (unique_term_ctx _ (var k)). *)
+        (*           * assumption. *)
+        (*           * eassumption. *)
+        (*           * apply eqctx_refl. *)
+        (*             now apply (@sane_isterm G A (var k)). *)
+        (*     } *)
+        (* } *)
+        todo.
 
       (* TermAbs *)
-      - { inversion_clear H2'.
-          - doTyConv unique_term'.
-          - doCtxConv D' unique_term'.
+      - (* { inversion_clear H2'. *)
+        (*   - doTyConv unique_term'. *)
+        (*   - doCtxConv D' unique_term'. *)
 
-          - apply EqTyRefl.
-            + apply TyProd.
-              * assumption.
-              * now apply (@sane_isterm (ctxextend G A) B u).
-        }
+        (*   - apply EqTyRefl. *)
+        (*     + apply TyProd. *)
+        (*       * assumption. *)
+        (*       * now apply (@sane_isterm (ctxextend G A) B u). *)
+        (* } *)
+        todo.
 
       (* TermApp *)
-      - { inversion_clear H2'.
-          - doTyConv unique_term'.
-          - doCtxConv D' unique_term'.
+      - (* { inversion_clear H2'. *)
+        (*   - doTyConv unique_term'. *)
+        (*   - doCtxConv D' unique_term'. *)
 
-          - { apply eqTyCongZero'.
-              - now apply eqctx_sym.
-              - now apply EqTyRefl, (@sane_isterm G A v).
-              - now apply EqRefl.
-              - now apply EqTyRefl.
-            }
-        }
+        (*   - { apply eqTyCongZero'. *)
+        (*       - now apply eqctx_sym. *)
+        (*       - now apply EqTyRefl, (@sane_isterm G A v). *)
+        (*       - now apply EqRefl. *)
+        (*       - now apply EqTyRefl. *)
+        (*     } *)
+        (* } *)
+        todo.
 
       (* TermRefl *)
-      - { inversion_clear H2'.
-          - doTyConv unique_term'.
-          - doCtxConv D' unique_term'.
+      - (* { inversion_clear H2'. *)
+        (*   - doTyConv unique_term'. *)
+        (*   - doCtxConv D' unique_term'. *)
 
-          - apply EqTyRefl, TyId.
-            + now apply (@sane_isterm G A u).
-            + assumption.
-            + assumption.
-        }
+        (*   - apply EqTyRefl, TyId. *)
+        (*     + now apply (@sane_isterm G A u). *)
+        (*     + assumption. *)
+        (*     + assumption. *)
+        (* } *)
+        todo.
 
       (* TermJ *)
-      - { inversion_clear H2'.
-          - doTyConv unique_term'.
-          - doCtxConv D' unique_term'.
+      - (* { inversion_clear H2'. *)
+        (*   - doTyConv unique_term'. *)
+        (*   - doCtxConv D' unique_term'. *)
 
-          - { apply eqTyCongZero'.
-              + now apply eqctx_sym.
-              + now apply EqTyRefl, TyId.
-              + apply EqRefl.
-                eapply TermCtxConv; eassumption.
-              + { apply temporary. }
-            }
-        }
+        (*   - { apply eqTyCongZero'. *)
+        (*       + now apply eqctx_sym. *)
+        (*       + now apply EqTyRefl, TyId. *)
+        (*       + apply EqRefl. *)
+        (*         eapply TermCtxConv; eassumption. *)
+        (*       + { apply temporary. } *)
+        (*     } *)
+        (* } *)
+        todo.
 
       (* TermExfalso *)
-      - { inversion_clear H2'.
-          - doTyConv unique_term'.
-          - doCtxConv D' unique_term'.
+      - (* { inversion_clear H2'. *)
+        (*   - doTyConv unique_term'. *)
+        (*   - doCtxConv D' unique_term'. *)
 
-          - { apply EqTyRefl.
-              eapply TyCtxConv.
-              + eassumption.
-              + assumption. }
-        }
+        (*   - { apply EqTyRefl. *)
+        (*       eapply TyCtxConv. *)
+        (*       + eassumption. *)
+        (*       + assumption. } *)
+        (* } *)
+        todo.
 
       (* TermUnit *)
-      - { inversion_clear H2'.
-          - doTyConv unique_term'.
-          - doCtxConv D' unique_term'.
+      - (* { inversion_clear H2'. *)
+        (*   - doTyConv unique_term'. *)
+        (*   - doCtxConv D' unique_term'. *)
 
-          - now apply EqTyRefl, TyUnit.
-        }
+        (*   - now apply EqTyRefl, TyUnit. *)
+        (* } *)
+        todo.
 
       (* TermTrue *)
-      - { inversion_clear H2'.
-          - doTyConv unique_term'.
-          - doCtxConv D' unique_term'.
+      - (* { inversion_clear H2'. *)
+        (*   - doTyConv unique_term'. *)
+        (*   - doCtxConv D' unique_term'. *)
 
-          - now apply EqTyRefl, TyBool.
-        }
+        (*   - now apply EqTyRefl, TyBool. *)
+        (* } *)
+        todo.
 
       (* TermFalse *)
-      - { inversion_clear H2'.
-          - doTyConv unique_term'.
-          - doCtxConv D' unique_term'.
+      - (* { inversion_clear H2'. *)
+        (*   - doTyConv unique_term'. *)
+        (*   - doCtxConv D' unique_term'. *)
 
-          - now apply EqTyRefl, TyBool.
-        }
+        (*   - now apply EqTyRefl, TyBool. *)
+        (* } *)
+        todo.
 
       (* TermCond *)
-      - { inversion_clear H2'.
-          - doTyConv unique_term'.
-          - doCtxConv D' unique_term'.
+      - (* { inversion_clear H2'. *)
+        (*   - doTyConv unique_term'. *)
+        (*   - doCtxConv D' unique_term'. *)
 
-          - { apply eqTyCongZero'.
-              + now apply eqctx_sym.
-              + now apply EqTyRefl, TyBool, (@sane_isterm G Bool u).
-              + now apply EqRefl.
-              + now apply EqTyRefl.
-            }
-        }
+        (*   - { apply eqTyCongZero'. *)
+        (*       + now apply eqctx_sym. *)
+        (*       + now apply EqTyRefl, TyBool, (@sane_isterm G Bool u). *)
+        (*       + now apply EqRefl. *)
+        (*       + now apply EqTyRefl. *)
+        (*     } *)
+        (* } *)
+        todo.
   }
 
  (* unique_subst *)
- { intros D2 H2.
-   destruct H1.
+ (* { intros D2 H2. *)
+ (*   destruct H1. *)
 
-   (* H1: SubstZero *)
-   - { inversion_clear H2.
-       apply eqctx_refl, CtxExtend; now apply (@sane_isterm G A u).
-     }
+ (*   (* H1: SubstZero *) *)
+ (*   - { inversion_clear H2. *)
+ (*       apply eqctx_refl, CtxExtend; now apply (@sane_isterm G A u). *)
+ (*     } *)
 
-   (* H1: SubstWeak *)
-   - { inversion_clear H2.
-       now apply eqctx_refl, (@sane_istype D2 A).
-     }
+ (*   (* H1: SubstWeak *) *)
+ (*   - { inversion_clear H2. *)
+ (*       now apply eqctx_refl, (@sane_istype D2 A). *)
+ (*     } *)
 
-   (* H2: SubstShift *)
-   - { inversion_clear H2.
-       apply eqCtxExtend'.
-       apply (unique_subst G _ sbs).
-       + assumption.
-       + assumption.
-       + now apply EqTyRefl.
-     }
- }
+ (*   (* H2: SubstShift *) *)
+ (*   - { inversion_clear H2. *)
+ (*       apply eqCtxExtend'. *)
+ (*       apply (unique_subst G _ sbs). *)
+ (*       + assumption. *)
+ (*       + assumption. *)
+ (*       + now apply EqTyRefl. *)
+ (*     } *)
+ (* } *)
+  todo.
 
 Defined.
 
 (* The main theorem as it will probably be used. *)
-Corollary unique_term {G A B u} :
-  isterm G u A ->
-  isterm G u B ->
-  eqtype G A B.
+(* Corollary unique_term {G A B u} : *)
+(*   isterm G u A -> *)
+(*   isterm G u B -> *)
+(*   eqtype G A B. *)
 
-Proof.
-  intros H1 H2.
-  eapply unique_term_ctx.
-  - eassumption.
-  - eassumption.
-  - now apply eqctx_refl, (@sane_isterm G A u).
-Defined.
+(* Proof. *)
+(*   intros H1 H2. *)
+(*   eapply unique_term_ctx. *)
+(*   - eassumption. *)
+(*   - eassumption. *)
+(*   - now apply eqctx_refl, (@sane_isterm G A u). *)
+(* Defined. *)
