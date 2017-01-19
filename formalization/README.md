@@ -3,18 +3,26 @@
 ## Sanity
 
 The purpose here is to state and prove theorems about the sanity of different type theories.
+
+### Theories
 * `syntax.v`: Syntax of our type theories with type annotations,
 * `ett.v`: Typing rules of ETT (Extensional Type Theory) using syntax from `syntax.v`,
-* `ptt.v`: Typing rules of PTT (Paranoid Type Theory) using the same syntax, it has more premises to make sure everything is sane,
-* `myptt.v`: **Temporary** file presenting some of PTT rules with a different order for the premises,
+* `ptt.v`: Typing rules of PTT (Paranoid Type Theory) using the same syntax, it has more premises to make sure everything is sane.
+
+### Admissibility in PTT
+* `myptt.v`: **Temporary** file presenting some of PTT rules with a different order for the premises as admissible lemmata,
 * `ptt_tactics.v`: Tactics designed to prove judgements in PTT,
 * `ptt_admissible.v`: Admissible rules in PTT that are useful in the proof of sanity (*might be temporary?*),
-* `ptt_inversion.v`: Inversion lemmata for PTT,
+* `ptt_inversion.v`: Inversion lemmata for PTT.
+
+### Sanity Theorem
 * `ptt_sanity.v`: Sanity theorem for PTT,
 * `ett2ptt.v`: Translation from ETT to PTT, this is a sanity result as it means that we can elaborate the missing premises,
 * `ptt2ett.v`: Translation from PTT to ETT,
-* `ett_sanity.v`: Sanity theorems for ETT as corollary of the translations and sanity of PTT,
-* `uniqueness.v`: Proof of uniqueness of typing for ETT (*WIP*).
+* `ett_sanity.v`: Sanity theorems for ETT as corollary of the translations and sanity of PTT.
+
+### Uniqueness of Typing
+* `uniqueness.v`: Proof of uniqueness of typing for ETT/PTT.
 
 ## Translation
 
@@ -24,3 +32,9 @@ ETT → **PTT → CTT** → ITT
 * `itt.v`: ITT (Intentional Type Theory), its syntax and typing rules, doesn't have equality reflection or type annotations on application when compared with ETT,
 * `eval.v`: Evaluate coercions of CTT to get ITT expressions,
 * `translation.v`: Proof of translation between PTT and CTT (CTT is only typed through it's evaluation into ITT).
+
+## LaTeX Generation
+
+* `coq2latex.py`: a script meant to extract the rules from `ett.v` and `ptt.v` to build TeX files that list these rules in *readable* format,
+* `mathpartir.sty`: a LaTeX package used for typesetting the rules,
+* `rules.tex`: LaTeX file that includes the result of the python script so that you can get one PDF with both PTT and ETT.
