@@ -102,6 +102,8 @@ Ltac pttassumption :=
     exact (ptt2ett.sane_issubst sbs G D H)
   | [ H : ptt.istype ?G ?A |- ett.istype ?G ?A ] =>
     exact (ptt2ett.sane_istype G A H)
+  | [ H : ptt.isterm ?G ?u ?A |- ett.isterm ?G ?u ?A ] =>
+    exact (ptt2ett.sane_isterm G u A H)
   | [ H : ptt.eqctx ?G ?D |- ett.eqctx ?G ?D ] =>
     exact (ptt2ett.sane_eqctx G D H)
   | [ H : ptt.eqtype ?G ?A ?B |- ett.eqtype ?G ?A ?B ] =>
@@ -111,6 +113,26 @@ Ltac pttassumption :=
   end.
 
 Ltac hyp := first [ assumption | pttassumption ].
+
+Ltac epttassumption :=
+  match goal with
+  | [ H : ptt.isctx ?G |- ett.isctx _ ] =>
+    exact (ptt2ett.sane_isctx G H)
+  | [ H : ptt.issubst ?sbs ?G ?D |- ett.issubst _ _ _ ] =>
+    exact (ptt2ett.sane_issubst sbs G D H)
+  | [ H : ptt.istype ?G ?A |- ett.istype _ _ ] =>
+    exact (ptt2ett.sane_istype G A H)
+  | [ H : ptt.isterm ?G ?u ?A |- ett.isterm _ _ _ ] =>
+    exact (ptt2ett.sane_isterm G u A H)
+  | [ H : ptt.eqctx ?G ?D |- ett.eqctx _ _ ] =>
+    exact (ptt2ett.sane_eqctx G D H)
+  | [ H : ptt.eqtype ?G ?A ?B |- ett.eqtype _ _ _ ] =>
+    exact (ptt2ett.sane_eqtype G A B H)
+  | [ H : ptt.eqterm ?G ?u ?v ?A |- ett.eqterm _ _ _ _ ] =>
+    exact (ptt2ett.sane_eqterm G u v A H)
+  end.
+
+Ltac ehyp := first [ eassumption | epttassumption ].
 
 (* Tactics for dealing with the conversion cases. *)
 
@@ -170,14 +192,12 @@ Proof.
     - {
         eapply ett.EqTyCtxConv.
         - eapply unique_term_ctx'.
-          + eassumption.
-          + eassumption.
-          + (* We still end up having to prove annoying things in ptt,
-               should we go in ett instead? *)
-            apply (@ptt.CtxTrans _ D).
-            * assumption.
-            * now apply eqctx_sym.
-        - assumption.
+          + ehyp.
+          + ehyp.
+          + apply (@ett.CtxTrans _ D).
+            * hyp.
+            * apply ett.CtxSym. hyp.
+        - hyp.
       }
 
     (* TermSubst *)
@@ -363,6 +383,7 @@ Corollary unique_term {G A B u} :
   isterm G u A ->
   isterm G u B ->
   eqtype G A B.
+
 Proof.
   intros H1 H2.
   eapply unique_term_ctx.
