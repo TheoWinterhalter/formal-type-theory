@@ -5,6 +5,7 @@ Require ett ptt.
 Require ptt2ett ett2ptt.
 Require ptt_admissible.
 Require ett_sanity ptt_sanity.
+Require ptt_inversion.
 (* Require Import sanity. *)
 
 (* Auxiliary admissibility lemmas. *)
@@ -38,26 +39,105 @@ Require ett_sanity ptt_sanity.
 
 (* Auxiliary inversion lemmas. *)
 
-Fixpoint eqctx_ctxextend G A G' A'
-         (H : ett.eqctx (ctxextend G A) (ctxextend G' A')) {struct H} :
+Fixpoint eqctx_ctxextend_left G A D
+         (H : ett.eqctx (ctxextend G A) D) {struct H} :
+  { G' : context &
+    { A' : type &
+      (D = ctxextend G' A') * ett.eqctx G G' * ett.eqtype G A A'
+    }
+  }%type
+
+with eqctx_ctxextend_right D G A
+                           (H : ett.eqctx D (ctxextend G A)) {struct H} :
+  { G' : context &
+    { A' : type &
+      (D = ctxextend G' A') * ett.eqctx G G' * ett.eqtype G A A'
+    }
+  }%type.
+Proof.
+  (**** left ****)
+  - { inversion_clear H.
+
+      (* CtxRefl *)
+      - exists G, A. repeat split.
+        + apply ett.CtxRefl.
+          eapply ptt2ett.sane_isctx.
+          apply (ptt_inversion.CtxExtendInversion G A).
+          now eapply ett2ptt.sane_isctx.
+        + apply ett.EqTyRefl.
+          eapply ptt2ett.sane_istype.
+          apply (ptt_inversion.CtxExtendInversion G A).
+          now eapply ett2ptt.sane_isctx.
+
+      (* CtxSym *)
+      - destruct (eqctx_ctxextend_right _ _ _ H0) as [G' [A' [[eq HG] HA]]].
+        exists G', A'. repeat split ; assumption.
+
+      (* CtxTrans *)
+      - destruct (eqctx_ctxextend_left _ _ _ H0) as [G' [A' [[eq HG] HA]]].
+        subst.
+        destruct (eqctx_ctxextend_left _ _ _ H1) as [G'' [A'' [[eq' HG'] HA']]].
+        exists G'', A''. repeat split.
+        + assumption.
+        + eapply ett.CtxTrans ; eassumption.
+        + eapply ett.EqTyTrans.
+          * eassumption.
+          * eapply ett.EqTyCtxConv ; try eassumption.
+            apply ett.CtxSym ; assumption.
+
+      (* EqCtxExtend *)
+      - exists D0, B. repeat split ; assumption.
+
+    }
+
+  (**** right ****)
+  - { inversion_clear H.
+
+      (* CtxRefl *)
+      - exists G, A. repeat split.
+        + apply ett.CtxRefl.
+          eapply ptt2ett.sane_isctx.
+          apply (ptt_inversion.CtxExtendInversion G A).
+          now eapply ett2ptt.sane_isctx.
+        + apply ett.EqTyRefl.
+          eapply ptt2ett.sane_istype.
+          apply (ptt_inversion.CtxExtendInversion G A).
+          now eapply ett2ptt.sane_isctx.
+
+      (* CtxSym *)
+      - destruct (eqctx_ctxextend_left _ _ _ H0) as [G' [A' [[eq HG] HA]]].
+        exists G', A'. repeat split ; assumption.
+
+      (* CtxTrans *)
+      - destruct (eqctx_ctxextend_right _ _ _ H1) as [G' [A' [[eq HG] HA]]].
+        subst.
+        destruct (eqctx_ctxextend_right _ _ _ H0) as [G'' [A'' [[eq' HG'] HA']]].
+        exists G'', A''. repeat split.
+        + assumption.
+        + eapply ett.CtxTrans ; eassumption.
+        + eapply ett.EqTyTrans.
+          * eassumption.
+          * eapply ett.EqTyCtxConv ; try eassumption.
+            apply ett.CtxSym ; assumption.
+
+      (* EqCtxExtend *)
+      - exists G0, A0. repeat split.
+        + now apply ett.CtxSym.
+        + apply ett.EqTySym.
+          eapply ett.EqTyCtxConv ; eassumption.
+
+    }
+
+Defined.
+
+Definition eqctx_ctxextend G A G' A'
+         (H : ett.eqctx (ctxextend G A) (ctxextend G' A')) :
   (ett.eqctx G G' * ett.eqtype G A A')%type.
 Proof.
-  inversion H ; subst.
-  - split.
-    + apply ett.CtxRefl.
-      admit. (* sanity and inversion *)
-    + apply ett.EqTyRefl.
-      admit. (* sanity and inversion *)
-  - destruct (eqctx_ctxextend G' A' G A H0).
-    split.
-    + now apply ett.CtxSym.
-    + apply ett.EqTySym.
-      eapply ett.EqTyCtxConv ; eassumption.
-  - (* destruct (eqctx_ctxextend _ _ _ _ H0). *)
-    (* Do we need another inversion lemma here as well? *)
-    admit.
-  - split ; assumption.
-Admitted.
+  destruct (eqctx_ctxextend_left _ _ _ H) as [G'' [A'' [[eq HG] HA]]].
+  inversion eq. subst.
+  split ; assumption.
+Defined.
 
 
 (* It looks like we need to strengthen some inference
