@@ -1,143 +1,180 @@
 (* Uniqueness of typing. *)
 
-Require Import ett.
-Require Import sanity.
+Require Import syntax.
+Require ett ptt.
+Require ptt2ett ett2ptt.
+(* Require Import sanity. *)
 
 (* Auxiliary admissibility lemmas. *)
 
-Lemma eqctx_sym {G D} : eqctx G D -> eqctx D G.
-Proof.
-  intros [|? ? ? ?].  
-  - apply EqCtxEmpty.
-  - now apply EqCtxExtend, EqTySym.
-Defined.
+(* Lemma eqctx_sym {G D} : eqctx G D -> eqctx D G. *)
+(* Proof. *)
+(*   intros [|? ? ? ?]. *)
+(*   - apply EqCtxEmpty. *)
+(*   - now apply EqCtxExtend, EqTySym. *)
+(* Defined. *)
 
-Lemma eqctx_refl G : isctx G -> eqctx G G.
-Proof.
-  intros [|? ? ? ?].
-  - apply EqCtxEmpty.
-  - now apply EqCtxExtend, EqTyRefl.
-Defined.
+(* Lemma eqctx_refl G : isctx G -> eqctx G G. *)
+(* Proof. *)
+(*   intros [|? ? ? ?]. *)
+(*   - apply EqCtxEmpty. *)
+(*   - now apply EqCtxExtend, EqTyRefl. *)
+(* Defined. *)
 
-Lemma eqctx_trans G D E :
-  eqctx G D -> eqctx D E -> eqctx G E.
-Proof.
-  intros [|? ? ? ?].
-  - intro H ; exact H.
-  - intro H.
-    inversion H.
-    apply EqCtxExtend.
-    eapply EqTyTrans.
-    + eassumption.
-    + assumption.
-Defined.
+(* Lemma eqctx_trans G D E : *)
+(*   eqctx G D -> eqctx D E -> eqctx G E. *)
+(* Proof. *)
+(*   intros [|? ? ? ?]. *)
+(*   - intro H ; exact H. *)
+(*   - intro H. *)
+(*     inversion H. *)
+(*     apply EqCtxExtend. *)
+(*     eapply EqTyTrans. *)
+(*     + eassumption. *)
+(*     + assumption. *)
+(* Defined. *)
 
 (* Auxiliary inversion lemmas. *)
 
-Lemma eqctx_ctxextend G A G' A' :
-  eqctx (ctxextend G A) (ctxextend G' A') ->
-  ((G = G') * eqtype G A A')%type.
-Proof.
-  intro E.
-  inversion E.
-  split.
-  - exact eq_refl.
-  - assumption.
-Defined.
+(* Lemma eqctx_ctxextend G A G' A' : *)
+(*   eqctx (ctxextend G A) (ctxextend G' A') -> *)
+(*   ((G = G') * eqtype G A A')%type. *)
+(* Proof. *)
+(*   intro E. *)
+(*   inversion E. *)
+(*   split. *)
+(*   - exact eq_refl. *)
+(*   - assumption. *)
+(* Defined. *)
 
 
 (* It looks like we need to strengthen some inference
    rules, as follows: *)
 
 (* Is this one admissible? *)
-Hypothesis substCtxConv' :
-  forall G G' D sbs (E : eqctx G' G),
-    issubst sbs G D -> issubst sbs G' D.
+(* Hypothesis substCtxConv' : *)
+(*   forall G G' D sbs (E : eqctx G' G), *)
+(*     issubst sbs G D -> issubst sbs G' D. *)
 
-Hypothesis eqCtxExtend' :
-  forall {G D A B},
-    eqctx G D ->
-    eqtype G A B ->
-    eqctx (ctxextend G A) (ctxextend D B).
+(* Hypothesis eqCtxExtend' : *)
+(*   forall {G D A B}, *)
+(*     eqctx G D -> *)
+(*     eqtype G A B -> *)
+(*     eqctx (ctxextend G A) (ctxextend D B). *)
 
-Hypothesis eqTyCongWeak' :
-  forall { G A A' B B' },
-  eqtype G A A' ->
-  eqtype G B B' ->
-  eqtype (ctxextend G A) (Subst B (sbweak G A)) (Subst B' (sbweak G A')).
+(* Hypothesis eqTyCongWeak' : *)
+(*   forall { G A A' B B' }, *)
+(*   eqtype G A A' -> *)
+(*   eqtype G B B' -> *)
+(*   eqtype (ctxextend G A) (Subst B (sbweak G A)) (Subst B' (sbweak G A')). *)
 
-Hypothesis eqTyCongZero' :
-  forall {G1 G2 A1 A2 B1 B2 u1 u2},
-    eqctx G1 G2 ->
-    eqtype G1 A1 B1 ->
-    eqterm G1 u1 u2 A1 ->
-    eqtype (ctxextend G1 A1) A2 B2 ->
-    eqtype G1
-           (Subst A2 (sbzero G1 A1 u1))
-           (Subst B2 (sbzero G2 B1 u2)).
+(* Hypothesis eqTyCongZero' : *)
+(*   forall {G1 G2 A1 A2 B1 B2 u1 u2}, *)
+(*     eqctx G1 G2 -> *)
+(*     eqtype G1 A1 B1 -> *)
+(*     eqterm G1 u1 u2 A1 -> *)
+(*     eqtype (ctxextend G1 A1) A2 B2 -> *)
+(*     eqtype G1 *)
+(*            (Subst A2 (sbzero G1 A1 u1)) *)
+(*            (Subst B2 (sbzero G2 B1 u2)). *)
 
-Hypothesis eqTyCongShift' :
-  forall {G1 G2 D A1 A2 B1 B2 sbs},
-    eqctx G1 G2 ->
-    issubst sbs G1 D ->
-    eqtype D A1 A2 ->
-    eqtype (ctxextend D A1) B1 B2 ->
-    eqtype (ctxextend G1 (Subst A1 sbs))
-           (Subst B1 (sbshift G1 A1 sbs))
-           (Subst B2 (sbshift G2 A2 sbs)).
+(* Hypothesis eqTyCongShift' : *)
+(*   forall {G1 G2 D A1 A2 B1 B2 sbs}, *)
+(*     eqctx G1 G2 -> *)
+(*     issubst sbs G1 D -> *)
+(*     eqtype D A1 A2 -> *)
+(*     eqtype (ctxextend D A1) B1 B2 -> *)
+(*     eqtype (ctxextend G1 (Subst A1 sbs)) *)
+(*            (Subst B1 (sbshift G1 A1 sbs)) *)
+(*            (Subst B2 (sbshift G2 A2 sbs)). *)
 
 (* A hack to be able to allow cases and still have Coq verify
    that the fixpoints are well-defined. *)
 Hypothesis temporary :
-  forall {G A B}, eqtype G A B.
+  forall {A}, A.
+
+(* Tactics to apply an hypothesis that could be in PTT instead of ETT. *)
+Ltac pttassumption :=
+  match goal with
+  | [ H : ptt.isctx ?G |- ett.isctx ?G ] =>
+    exact (ptt2ett.sane_isctx G H)
+  | [ H : ptt.issubst ?sbs ?G ?D |- ett.issubst ?sbs ?G ?D ] =>
+    exact (ptt2ett.sane_issubst sbs G D H)
+  | [ H : ptt.istype ?G ?A |- ett.istype ?G ?A ] =>
+    exact (ptt2ett.sane_istype G A H)
+  | [ H : ptt.eqctx ?G ?D |- ett.eqctx ?G ?D ] =>
+    exact (ptt2ett.sane_eqctx G D H)
+  | [ H : ptt.eqtype ?G ?A ?B |- ett.eqtype ?G ?A ?B ] =>
+    exact (ptt2ett.sane_eqtype G A B H)
+  | [ H : ptt.eqterm ?G ?u ?v ?A |- ett.eqterm ?G ?u ?v ?A ] =>
+    exact (ptt2ett.sane_eqterm G u v A H)
+  end.
+
+Ltac hyp := first [ assumption | pttassumption ].
 
 (* Tactics for dealing with the conversion cases. *)
 
-Ltac doTyConv unique_term' :=
-  eapply EqTyTrans ;
-  [ eapply unique_term' ;
-    [ eassumption
-    | assumption ]
-  | eapply EqTyCtxConv ;
-    [ eassumption
-    | assumption ] ].
+(* Ltac doTyConv unique_term' := *)
+(*   eapply EqTyTrans ; *)
+(*   [ eapply unique_term' ; *)
+(*     [ eassumption *)
+(*     | assumption ] *)
+(*   | eapply EqTyCtxConv ; *)
+(*     [ eassumption *)
+(*     | assumption ] ]. *)
 
-Ltac doCtxConv D' unique_term' :=
-  eapply unique_term' ;
-  [ eassumption
-  | now apply (eqctx_trans _ D') ].
+(* Ltac doCtxConv D' unique_term' := *)
+(*   eapply unique_term' ; *)
+(*   [ eassumption *)
+(*   | now apply (eqctx_trans _ D') ]. *)
 
 (* The version of the theorem that allows variation of the context. *)
 
-Fixpoint unique_term_ctx G u A (H1 : isterm G u A) {struct H1}:
+Fixpoint unique_term_ctx G u A (H1 : ptt.isterm G u A) {struct H1}:
   forall B D,
-    isterm D u B ->
-    eqctx D G ->
-    eqtype G A B
+    ptt.isterm D u B ->
+    ptt.eqctx D G ->
+    ett.eqtype G A B
 
-with unique_subst G D1 sbs (H1 : issubst sbs G D1) {struct H1}:
-  forall D2 (H2 : issubst sbs G D2),
-    eqctx D1 D2.
+with unique_subst G D1 sbs (H1 : ptt.issubst sbs G D1) {struct H1}:
+  forall D2 (H2 : ptt.issubst sbs G D2),
+    ett.eqctx D1 D2.
 
 Proof.
   (* unique_term *)
   { destruct H1 ;
-    simple refine (fix unique_term' B' D' H2' H3' {struct H2'}:= _).
+    simple refine (fix unique_term'' B' D' H2' H3' {struct H2'} := _) ;
+    pose (
+      unique_term' B' D' H1 H2 :=
+        unique_term'' B' D'
+                      (ett2ptt.sane_isterm D' _ B' H1)
+                      (ett2ptt.sane_eqctx D' _ H2)
+    ) ;
+    pose (
+      unique_term_ctx' G u A H1 B D H2 H3 :=
+        unique_term_ctx G u A
+                        (ett2ptt.sane_isterm G u A H1)
+                        B D
+                        (ett2ptt.sane_isterm D u B H2)
+                        (ett2ptt.sane_eqctx D G H3)
+    ).
 
-    (* H1: TermTyConv *)    
-    - { 
-        apply (@EqTyTrans G _ A B').
-        + now apply EqTySym.
+    (* H1: TermTyConv *)
+    - {
+        apply (@ett.EqTyTrans G _ A B').
+        + apply ett.EqTySym. hyp.
         + eapply (unique_term_ctx G u A) ; eassumption.
       }
 
     (* TermCtxConv *)
-    - { 
-        eapply EqTyCtxConv.
-        - eapply unique_term_ctx.
+    - {
+        eapply ett.EqTyCtxConv.
+        - eapply unique_term_ctx'.
           + eassumption.
           + eassumption.
-          + apply (eqctx_trans _ D).
+          + (* We still end up having to prove annoying things in ptt,
+               should we go in ett instead? *)
+            apply (@ptt.CtxTrans _ D).
             * assumption.
             * now apply eqctx_sym.
         - assumption.
@@ -316,7 +353,7 @@ Proof.
        + assumption.
        + assumption.
        + now apply EqTyRefl.
-     }       
+     }
  }
 
 Defined.
