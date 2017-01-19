@@ -132,8 +132,8 @@ Proof.
         * assumption.
         * magic.
       + { gocompsubst.
-          - eapply myEqTrans.
-            + eapply myCongTermSubst.
+          - eapply EqTrans.
+            + eapply CongTermSubst.
               * eapply WeakZero ; magic.
               * eapply EqRefl ; magic.
               * assumption.
@@ -143,7 +143,7 @@ Proof.
               * assumption.
               * magic.
               * magic.
-            + eapply myEqTyConv.
+            + eapply EqTyConv.
               * eapply EqIdSubst ; eassumption.
               * assumption.
               * assumption.
@@ -167,7 +167,7 @@ Proof.
             + magic.
             + eapply TermTyConv.
               * eapply TermSubst ; try eassumption ; try magic.
-              * eapply myCongTySubst ; try eassumption ; try magic.
+              * eapply CongTySubst ; try eassumption ; try magic.
               * assumption.
               * magic.
               * magic.
@@ -185,7 +185,7 @@ Proof.
             + magic.
           - eapply TermTyConv ; try eassumption ; try magic.
         }
-      + eapply myEqTyConv ; try eassumption ; try magic.
+      + eapply EqTyConv ; try eassumption ; try magic.
         eapply TermTyConv.
         * { eapply TermSubst.
             - magic.
@@ -627,22 +627,22 @@ Proof.
             + now apply TermVarZero.
             + apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
           - apply (@EqTyTrans G _ (Subst A (sbid G))) ; auto.
-            + apply (@TySubst _ (ctxextend G A)) ; auto using CtxExtend.
-              * now apply SubstZero.
-              * apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
-            + apply (@TySubst _ G) ; auto using SubstId.
             + { apply (@EqTyTrans _ _ (Subst A (sbcomp (sbweak G A) (sbzero G A u)))) ; auto.
+                - apply (@EqTySubstComp G (ctxextend G A) G) ;
+                    auto using CtxExtend, (@SubstComp G (ctxextend G A)) , SubstWeak, SubstZero.
+                - apply (@CongTySubst G G) ;
+                    auto using CtxExtend, (@SubstComp G (ctxextend G A)) , SubstWeak, SubstZero, SubstId, EqTyRefl, WeakZero.
                 - apply (@TySubst _ (ctxextend G A)) ; auto using CtxExtend, SubstZero.
                   apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
                 - apply (@TySubst _ G) ; auto.
                   + apply (@SubstComp _ (ctxextend G A)) ; auto using CtxExtend, SubstWeak, SubstZero.
                 - apply (@TySubst _ G) ; auto using SubstId.
-                - apply (@EqTySubstComp G (ctxextend G A) G) ;
-                  auto using CtxExtend, (@SubstComp G (ctxextend G A)) , SubstWeak, SubstZero.
-                - apply (@CongTySubst G G) ;
-                  auto using CtxExtend, (@SubstComp G (ctxextend G A)) , SubstWeak, SubstZero, SubstId, EqTyRefl, WeakZero.
               }
             + now apply EqTyIdSubst.
+            + apply (@TySubst _ (ctxextend G A)) ; auto using CtxExtend.
+              * now apply SubstZero.
+              * apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
+            + apply (@TySubst _ G) ; auto using SubstId.
           - assumption.
           - apply (@TySubst _ (ctxextend G A)) ; auto using CtxExtend.
             + now apply SubstZero.
@@ -777,7 +777,7 @@ Proof.
             + apply EqSubstWeakZero ; try magic.
               eapply TermTyConv ; [ eassumption | try magic .. ].
               apply EqTyWeakZero ; magic.
-            + eapply myEqTyConv ; [
+            + eapply EqTyConv ; [
                 eapply EqSubstZeroZero ; magic
               | try magic ..
               ].
@@ -815,7 +815,7 @@ Proof.
                     apply myEqTySym ; try magic.
                     apply EqTyWeakNat ; magic.
                   - apply EqTyWeakNat ; magic.
-                  - eapply myEqTyConv ; [
+                  - eapply EqTyConv ; [
                       eapply EqSubstWeakNat ; try magic
                     | try magic ..
                     ].
@@ -830,7 +830,7 @@ Proof.
                         eassumption.
                       * apply EqTyWeakNat ; magic.
                     + magic.
-                  - eapply myEqTyConv ; [
+                  - eapply EqTyConv ; [
                       eapply EqSubstShiftZero ; magic
                     | try magic ..
                     ].
@@ -848,12 +848,12 @@ Proof.
               | try magic ..
               ].
               * eassumption.
-              * { eapply myEqTyTrans ; [
+              * { eapply EqTyTrans ; [
                     eapply JTyConv ; try magic ; eassumption
                   | try magic ..
                   ].
-                  - eapply myCongTySubst ; try magic.
-                    + eapply myCongSubstZero ; try magic.
+                  - eapply CongTySubst ; try magic.
+                    + eapply CongSubstZero ; try magic.
                       * gopushsubst.
                         eapply TermTyConv ; [
                           eapply TermSubst ; magic
@@ -901,7 +901,7 @@ Proof.
                             ].
                             gocompsubst. gocompsubst.
                           - eapply EqTyWeakNat ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstWeakNat
                               ; try magic ; try eassumption
                             | try magic ..
@@ -921,7 +921,7 @@ Proof.
                               | try magic ..
                               ].
                               eapply EqTyWeakNat ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstShiftZero ; magic
                             | try magic ..
                             ].
@@ -960,7 +960,7 @@ Proof.
                             eapply EqTyWeakZero ; magic.
                           - eapply myEqTySym ; try magic.
                             eapply EqTyWeakZero ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstWeakZero
                               ; try magic ; try eassumption
                             | try magic ..
@@ -983,7 +983,7 @@ Proof.
                               | try magic ..
                               ].
                               eapply EqTyWeakZero ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstZeroZero ; magic
                             | try magic ..
                             ].
@@ -1024,7 +1024,7 @@ Proof.
                             eapply EqTyWeakZero ; magic.
                           - eapply myEqTySym ; try magic.
                             eapply EqTyWeakZero ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstWeakZero
                               ; try magic ; try eassumption
                             | try magic ..
@@ -1047,7 +1047,7 @@ Proof.
                               | try magic ..
                               ].
                               eapply EqTyWeakZero ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstZeroZero ; magic
                             | try magic ..
                             ].
@@ -1085,7 +1085,7 @@ Proof.
                             ].
                             gocompsubst. gocompsubst.
                           - eapply EqTyWeakNat ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstWeakNat
                               ; try magic ; try eassumption
                             | try magic ..
@@ -1105,7 +1105,7 @@ Proof.
                               | try magic ..
                               ].
                               eapply EqTyWeakNat ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstShiftZero ; magic
                             | try magic ..
                             ].
@@ -1146,7 +1146,7 @@ Proof.
                             eapply EqTyWeakZero ; magic.
                           - eapply myEqTySym ; try magic.
                             eapply EqTyWeakZero ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstWeakZero
                               ; try magic ; try eassumption
                             | try magic ..
@@ -1169,7 +1169,7 @@ Proof.
                               | try magic ..
                               ].
                               eapply EqTyWeakZero ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstZeroZero ; magic
                             | try magic ..
                             ].
@@ -1207,7 +1207,7 @@ Proof.
                             ].
                             gocompsubst. gocompsubst.
                           - eapply EqTyWeakNat ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstWeakNat
                               ; try magic ; try eassumption
                             | try magic ..
@@ -1227,7 +1227,7 @@ Proof.
                               | try magic ..
                               ].
                               eapply EqTyWeakNat ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstShiftZero ; magic
                             | try magic ..
                             ].
@@ -1281,7 +1281,7 @@ Proof.
                           | try magic ..
                           ].
                           eapply EqTyWeakZero ; magic.
-                        - eapply myEqTyConv ; [
+                        - eapply EqTyConv ; [
                             eapply EqSubstZeroZero ; magic
                           | try magic ..
                           ].
@@ -1334,7 +1334,7 @@ Proof.
                             eapply EqTyWeakZero ; magic.
                           - eapply myEqTySym ; try magic.
                             eapply EqTyWeakZero ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstWeakZero
                               ; try magic ; try eassumption
                             | try magic ..
@@ -1357,7 +1357,7 @@ Proof.
                               | try magic ..
                               ].
                               eapply EqTyWeakZero ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstZeroZero ; magic
                             | try magic ..
                             ].
@@ -1397,7 +1397,7 @@ Proof.
                             eapply myEqTySym ; try magic.
                             eapply EqTyWeakNat ; magic.
                           - eapply EqTyWeakNat ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstWeakNat ; try magic ; eassumption
                             | try magic ..
                             ].
@@ -1416,7 +1416,7 @@ Proof.
                               | try magic ..
                               ].
                               eapply EqTyWeakNat ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstShiftZero ; magic
                             | try magic ..
                             ].
@@ -1458,7 +1458,7 @@ Proof.
                           eapply EqTyWeakZero ; magic.
                         - eapply myEqTySym ; try magic.
                           eapply EqTyWeakZero ; magic.
-                        - eapply myEqTyConv ; [
+                        - eapply EqTyConv ; [
                             eapply EqSubstWeakZero
                             ; try magic ; try eassumption
                           | try magic ..
@@ -1481,7 +1481,7 @@ Proof.
                             | try magic ..
                             ].
                             eapply EqTyWeakZero ; magic.
-                        - eapply myEqTyConv ; [
+                        - eapply EqTyConv ; [
                             eapply EqSubstZeroZero ; magic
                           | try magic ..
                           ].
@@ -1521,7 +1521,7 @@ Proof.
                           eapply myEqTySym ; try magic.
                           eapply EqTyWeakNat ; magic.
                         - eapply EqTyWeakNat ; magic.
-                        - eapply myEqTyConv ; [
+                        - eapply EqTyConv ; [
                             eapply EqSubstWeakNat ; try magic ; eassumption
                           | try magic ..
                           ].
@@ -1540,7 +1540,7 @@ Proof.
                             | try magic ..
                             ].
                             eapply EqTyWeakNat ; magic.
-                        - eapply myEqTyConv ; [
+                        - eapply EqTyConv ; [
                             eapply EqSubstShiftZero ; magic
                           | try magic ..
                           ].
@@ -1581,7 +1581,7 @@ Proof.
                             | try magic ..
                             ].
                             eapply EqTyWeakZero ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstZeroZero ; magic
                             | try magic ..
                             ].
@@ -1623,7 +1623,7 @@ Proof.
                             | try magic ..
                             ].
                             eapply EqTyWeakZero ; magic.
-                          - eapply myEqTyConv ; [
+                          - eapply EqTyConv ; [
                               eapply EqSubstZeroZero ; magic
                             | try magic ..
                             ].
@@ -1663,7 +1663,7 @@ Proof.
                       * apply EqTyWeakZero ; magic.
                     + apply myEqTySym ; try magic.
                       apply EqTyWeakZero ; magic.
-                    + eapply myEqTyConv ; [
+                    + eapply EqTyConv ; [
                         eapply EqSubstWeakZero ; try magic
                       | try magic ..
                       ].
@@ -1677,7 +1677,7 @@ Proof.
                         | try magic ..
                         ].
                         apply EqTyWeakZero ; magic.
-                    + eapply myEqTyConv ; [
+                    + eapply EqTyConv ; [
                         eapply EqSubstZeroZero ; magic
                       | try magic ..
                       ].
@@ -1706,7 +1706,7 @@ Proof.
                       apply myEqTySym ; try magic.
                       apply EqTyWeakNat ; magic.
                     + apply EqTyWeakNat ; magic.
-                    + eapply myEqTyConv ; [
+                    + eapply EqTyConv ; [
                         eapply EqSubstWeakNat ; try magic
                       | try magic ..
                       ].
@@ -1722,7 +1722,7 @@ Proof.
                           - apply EqTyWeakNat ; magic.
                         }
                       * magic.
-                    + eapply myEqTyConv ; [
+                    + eapply EqTyConv ; [
                         eapply EqSubstShiftZero ; magic
                       | try magic ..
                       ].
@@ -1771,7 +1771,7 @@ Proof.
                     | try magic ..
                     ].
                     eapply EqTyWeakZero ; magic.
-                  - eapply myEqTyConv ; [
+                  - eapply EqTyConv ; [
                       eapply EqSubstZeroZero ; magic
                     | try magic ..
                     ].
@@ -1824,7 +1824,7 @@ Proof.
                         eapply EqTyWeakZero ; magic.
                       - eapply myEqTySym ; try magic.
                         eapply EqTyWeakZero ; magic.
-                      - eapply myEqTyConv ; [
+                      - eapply EqTyConv ; [
                           eapply EqSubstWeakZero
                           ; try magic ; try eassumption
                         | try magic ..
@@ -1847,7 +1847,7 @@ Proof.
                           | try magic ..
                           ].
                           eapply EqTyWeakZero ; magic.
-                      - eapply myEqTyConv ; [
+                      - eapply EqTyConv ; [
                           eapply EqSubstZeroZero ; magic
                         | try magic ..
                         ].
@@ -1885,7 +1885,7 @@ Proof.
                         ].
                         gocompsubst. gocompsubst.
                       - eapply EqTyWeakNat ; magic.
-                      - eapply myEqTyConv ; [
+                      - eapply EqTyConv ; [
                           eapply EqSubstWeakNat
                           ; try magic ; try eassumption
                         | try magic ..
@@ -1905,7 +1905,7 @@ Proof.
                           | try magic ..
                           ].
                           eapply EqTyWeakNat ; magic.
-                      - eapply myEqTyConv ; [
+                      - eapply EqTyConv ; [
                           eapply EqSubstShiftZero ; magic
                         | try magic ..
                         ].
@@ -1967,7 +1967,7 @@ Proof.
                     ].
                     + eassumption.
                     + eapply EqTyWeakZero ; magic.
-                  - eapply myEqTyConv ; [
+                  - eapply EqTyConv ; [
                       eapply EqSubstZeroZero ; magic
                     | try magic ..
                     ].
@@ -1999,7 +1999,7 @@ Proof.
                     eapply myEqTySym ; try magic.
                     eapply EqTyWeakNat ; magic.
                   - eapply EqTyWeakNat ; magic.
-                  - eapply myEqTyConv ; [
+                  - eapply EqTyConv ; [
                       eapply EqSubstWeakNat ; try eassumption ; magic
                     | try magic ..
                     ].
@@ -2018,7 +2018,7 @@ Proof.
                       | try magic ..
                       ].
                       eapply EqTyWeakNat ; magic.
-                  - eapply myEqTyConv ; [
+                  - eapply EqTyConv ; [
                       eapply EqSubstShiftZero ; magic
                     | try magic ..
                     ].
@@ -2057,7 +2057,7 @@ Proof.
                   | try magic ..
                   ].
                   eapply EqTyWeakZero ; magic.
-                - eapply myEqTyConv ; [
+                - eapply EqTyConv ; [
                     eapply EqSubstZeroZero ; magic
                   | try magic ..
                   ].
@@ -2160,15 +2160,15 @@ Proof.
                     eapply SubstCtxConv ; try magic.
                     + apply EqCtxExtend ; try magic ; try gopushsubst.
                     + apply CtxRefl ; magic.
-                  - eapply myEqTyTrans ; [
+                  - eapply EqTyTrans ; [
                       eapply myEqTySym ; [
                         eapply EqTyShiftZero ; magic
                       | magic ..
                       ]
                     | try magic ..
                     ].
-                    + eapply myCongTySubst ; try magic.
-                      * { eapply myCongSubstZero ; try magic.
+                    + eapply CongTySubst ; try magic.
+                      * { eapply CongSubstZero ; try magic.
                           - gopushsubst.
                           - gopushsubst.
                             + eapply TermTyConv ; [
@@ -2203,15 +2203,15 @@ Proof.
               eapply TermSubst ; [ eassumption | eassumption | magic .. ]
             | try magic ..
             ].
-            + { eapply myEqTyTrans ; [
+            + { eapply EqTyTrans ; [
                   eapply myEqTySym ; [
                     eapply EqTyShiftZero ; magic
                   | magic ..
                   ]
                 | try magic ..
                 ].
-                - eapply myCongTySubst ; try magic.
-                  + { eapply myCongSubstZero ; try magic.
+                - eapply CongTySubst ; try magic.
+                  + { eapply CongSubstZero ; try magic.
                       - gopushsubst.
                       - gopushsubst.
                         + eapply TermTyConv ; [
@@ -2252,15 +2252,15 @@ Proof.
                   gopushsubst.
                 + apply CtxRefl ; magic.
                 + apply EqCtxExtend ; try magic ; try gopushsubst.
-              - eapply myEqTyTrans ; [
+              - eapply EqTyTrans ; [
                   eapply myEqTySym ; [
                     eapply EqTyShiftZero ; magic
                   | magic ..
                   ]
                 | try magic ..
                 ].
-                + eapply myCongTySubst ; try magic.
-                  * eapply myCongSubstZero ; try magic.
+                + eapply CongTySubst ; try magic.
+                  * eapply CongSubstZero ; try magic.
                     gopushsubst.
                   * { eapply SubstCtxConv ; try magic.
                       - eapply SubstZero ; try magic.
@@ -2378,12 +2378,12 @@ Proof.
               eassumption
             | magic ..
             ].
-          - eapply myCongTySubst ; try magic.
-            + eapply myEqSubstCtxConv ; [
-               eapply myCongSubstZero ; try magic
+          - eapply CongTySubst ; try magic.
+            + eapply EqSubstCtxConv ; [
+               eapply CongSubstZero ; try magic
               | try magic ..
               ].
-              * eapply myEqTyConv ; [
+              * eapply EqTyConv ; [
                   eapply EqSym ; try magic ; try eassumption
                 | magic ..
                 ].
@@ -2437,11 +2437,11 @@ Proof.
             + eapply TermTyConv ; [ eassumption | magic .. ].
             + eapply TermTyConv ; [ eassumption | magic .. ].
             + eapply TermTyConv ; [ eassumption | magic .. ].
-            + eapply myEqTyConv ; [
+            + eapply EqTyConv ; [
                 eapply myEqSym ; [ eassumption | magic .. ]
               | magic ..
               ].
-            + eapply myEqTyConv ; [
+            + eapply EqTyConv ; [
                 eapply myEqSym ; [ eassumption | magic .. ]
               | magic ..
               ].
@@ -2476,7 +2476,7 @@ Proof.
               * apply EqSubstWeakZero ; try magic.
                 eapply TermTyConv ; [ eassumption | try magic .. ].
                 apply EqTyWeakZero ; magic.
-              * eapply myEqTyConv ; [
+              * eapply EqTyConv ; [
                   eapply EqSubstZeroZero ; magic
                 | try magic ..
                 ].
@@ -2507,7 +2507,7 @@ Proof.
               * apply EqSubstWeakZero ; try magic.
                 eapply TermTyConv ; [ eassumption | try magic .. ].
                 apply EqTyWeakZero ; magic.
-              * eapply myEqTyConv ; [
+              * eapply EqTyConv ; [
                   eapply EqSubstZeroZero ; magic
                 | try magic ..
                 ].
@@ -2538,7 +2538,7 @@ Proof.
               * apply EqSubstWeakZero ; try magic.
                 eapply TermTyConv ; [ eassumption | try magic .. ].
                 apply EqTyWeakZero ; magic.
-              * eapply myEqTyConv ; [
+              * eapply EqTyConv ; [
                   eapply EqSubstZeroZero ; magic
                 | try magic ..
                 ].
@@ -2573,7 +2573,7 @@ Proof.
                    (Subst A2 (sbweak G A2))
                    (Subst A1 (sbweak G A1))
           ).
-          { eapply myCongTySubst ; try eassumption ; magic. }
+          { eapply CongTySubst ; try eassumption ; magic. }
           assert (
             isterm (ctxextend G A1)
                    (subst u2 (sbweak G A2)) (Subst A1 (sbweak G A1))
@@ -2589,7 +2589,7 @@ Proof.
                    (subst u2 (sbweak G A2))
                    (Subst A1 (sbweak G A1))
           ).
-          { eapply myCongTermSubst ; magic. }
+          { eapply CongTermSubst ; magic. }
           assert (
             eqtype
               (ctxextend G A1)
@@ -2632,7 +2632,7 @@ Proof.
                    u1
                    (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 u1))
           ).
-          { eapply myEqTyConv ; [
+          { eapply EqTyConv ; [
               eapply EqSubstZeroZero ; magic
             | try magic ..
             ].
@@ -2655,7 +2655,7 @@ Proof.
           assert (
             eqtype G (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2)) A1
           ).
-          { eapply myEqTyTrans ; [
+          { eapply EqTyTrans ; [
               eapply myEqTySym ; [ eassumption | magic .. ]
             | magic ..
             ].
@@ -2672,7 +2672,7 @@ Proof.
             eqterm G u2 u1 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
           ).
           { eapply myEqSym ; [
-              eapply myEqTyConv ; [ eassumption | magic .. ]
+              eapply EqTyConv ; [ eassumption | magic .. ]
             | magic ..
             ].
           }
@@ -2689,7 +2689,7 @@ Proof.
                    u1
                    (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
           ).
-          { eapply myEqTrans ; [ eassumption | magic .. ]. }
+          { eapply EqTrans ; [ eassumption | magic .. ]. }
           assert (isterm G (subst (var 0) (sbzero G A2 u2)) A2).
           { eapply TermTyConv ; [
               eapply TermSubst ; magic
@@ -2702,7 +2702,7 @@ Proof.
                    u2
                    (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
           ).
-          { eapply myEqTyConv ; [
+          { eapply EqTyConv ; [
               eapply EqSubstZeroZero ; magic
             | try magic ..
             ].
@@ -2713,7 +2713,7 @@ Proof.
                    u1
                    (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
           ).
-          { eapply myEqTrans ; [ eassumption | magic .. ]. }
+          { eapply EqTrans ; [ eassumption | magic .. ]. }
           assert (
             eqtype G
                    (Subst (Id (Subst A2 (sbweak G A2))
@@ -2785,10 +2785,10 @@ Proof.
                  (sbzero G (Id A2 u2 u2) (refl A2 u2))
               )
           ).
-          { eapply myCongTySubst ; try magic ; try eassumption.
-            - eapply myCongTySubst ; try magic.
-              + eapply myEqSubstCtxConv ; [
-                  eapply myCongSubstShift ; try magic
+          { eapply CongTySubst ; try magic ; try eassumption.
+            - eapply CongTySubst ; try magic.
+              + eapply EqSubstCtxConv ; [
+                  eapply CongSubstShift ; try magic
                 | try magic ; try eassumption ..
                 ].
                 * apply CtxRefl ; magic.
@@ -2882,7 +2882,7 @@ Proof.
           assert (
             eqtype G (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2)) A1
           ).
-          { eapply myEqTyTrans ; [
+          { eapply EqTyTrans ; [
               eapply myEqTySym ; [ eassumption | magic .. ]
             | magic ..
             ].
@@ -2914,13 +2914,13 @@ Proof.
                    v2
                    (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
           ).
-          { eapply myEqTyConv ; [
+          { eapply EqTyConv ; [
               eapply EqSubstZeroZero ; magic
             | magic ..
             ].
           }
           assert (eqterm G v1 v2 A2).
-          { eapply myEqTyConv ; [ eassumption | magic .. ]. }
+          { eapply EqTyConv ; [ eassumption | magic .. ]. }
           assert (isterm G v1 A2).
           { eapply TermTyConv ; [ eassumption | magic .. ]. }
           assert (eqterm G v2 v1 A2).
@@ -2940,10 +2940,10 @@ Proof.
               eapply TermSubst ; try magic ; try eassumption
             | try magic ; try eassumption ..
             ].
-            eapply myCongTySubst ; try magic. eassumption.
+            eapply CongTySubst ; try magic. eassumption.
           }
           assert (eqterm G u1 u2 A2).
-          { eapply myEqTyConv ; [ exact H | magic .. ]. }
+          { eapply EqTyConv ; [ exact H | magic .. ]. }
           assert (isterm G u1 A2).
           { eapply TermTyConv ; [ exact i4 | magic .. ]. }
           assert (eqterm G u2 u1 A2).
@@ -2969,25 +2969,25 @@ Proof.
           assert (
             eqterm G u2 u1 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
           ).
-          { eapply myEqTyConv ; [ eassumption | magic .. ]. }
+          { eapply EqTyConv ; [ eassumption | magic .. ]. }
           assert (
             eqterm G
                    (subst (subst u2 (sbweak G A2)) (sbzero G A2 v2))
                    u1
                    (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
           ).
-          { eapply @myEqTrans with (v:=u2) ; magic. }
+          { eapply @EqTrans with (v:=u2) ; magic. }
           assert (
             eqterm G v2 v1 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
           ).
-          { eapply myEqTyConv ; [ eassumption | magic .. ]. }
+          { eapply EqTyConv ; [ eassumption | magic .. ]. }
           assert (
             eqterm G
                    (subst (var 0) (sbzero G A2 v2))
                    v1
                    (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
           ).
-          { eapply @myEqTrans with (v:=v2) ; magic. }
+          { eapply @EqTrans with (v:=v2) ; magic. }
           assert (
             eqtype G A1 (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 v1))
           ).
@@ -3019,7 +3019,7 @@ Proof.
                    v1
                    (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 v1))
           ).
-          { eapply myEqTyConv ; [
+          { eapply EqTyConv ; [
               eapply EqSubstZeroZero ; magic
             | magic ..
             ].
@@ -3029,26 +3029,26 @@ Proof.
             eapply TermJ ; try magic
           | try magic ..
           ].
-          - eapply myCongTySubst ; try magic.
-            + eapply myEqSubstCtxConv ; [
+          - eapply CongTySubst ; try magic.
+            + eapply EqSubstCtxConv ; [
                 eapply CongSubstZero ; try magic
               | try magic ..
               ].
               * eapply myEqSym ; [
-                  eapply myEqTyConv ; [ eassumption | magic ..]
+                  eapply EqTyConv ; [ eassumption | magic ..]
                 | try magic ..
                 ].
               * apply EqCtxExtend ; try magic. gopushsubst.
               * eapply SubstCtxConv ; magic.
-            + eapply myCongTySubst ; try magic.
-              * { eapply myEqSubstCtxConv ; [
-                    eapply myCongSubstShift ; try magic
+            + eapply CongTySubst ; try magic.
+              * { eapply EqSubstCtxConv ; [
+                    eapply CongSubstShift ; try magic
                   | try magic ; try eassumption ..
                   ].
                   - eapply SubstCtxConv ; magic.
                   - eapply SubstCtxConv ; magic.
                 }
-              * eapply myEqTyCtxConv ; [
+              * eapply EqTyCtxConv ; [
                   eapply myEqTySym ; [ eassumption | magic .. ]
                 | magic ..
                 ].

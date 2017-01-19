@@ -17,8 +17,8 @@ Lemma eqtype_subst_left :
     eqtype G (Subst (Subst A sbt) sbs) B.
 Proof.
   intros.
-  eapply myEqTyTrans ; [
-    eapply myEqTySubstComp ; eassumption
+  eapply EqTyTrans ; [
+    eapply EqTySubstComp ; eassumption
   | assumption ..
   ].
 Defined.
@@ -44,17 +44,17 @@ Proof.
   assert (hh : eqtype G (Subst A (sbcomp sbt sbs)) (Subst (Subst A sbt) sbs)).
   { apply EqTySym ; [
       assumption ..
-    | eapply myEqTySubstComp ; eassumption
+    | eapply EqTySubstComp ; eassumption
     ].
   }
   assert (h : eqterm G (subst u (sbcomp sbt sbs)) v (Subst (Subst A sbt) sbs)).
-  { eapply myEqTyConv ; eassumption. }
-  eapply myEqTrans.
-  - eapply myEqTyConv.
-    + eapply myEqSubstComp ; eassumption.
+  { eapply EqTyConv ; eassumption. }
+  eapply EqTrans.
+  - eapply EqTyConv.
+    + eapply EqSubstComp ; eassumption.
     + apply EqTySym ; [
         assumption ..
-      | eapply myEqTySubstComp ; eassumption
+      | eapply EqTySubstComp ; eassumption
       ].
     + assumption.
     + assumption.
@@ -80,14 +80,14 @@ Ltac compsubst1 :=
   | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) (Subst (Subst ?A ?sbt) ?sbs) =>
     eapply EqSym ; try eapply eqterm_subst_left
   | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v ?A =>
-    eapply myEqTyConv ; [
+    eapply EqTyConv ; [
       try eapply eqterm_subst_left
     | idtac ..
     ]
   | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) ?A =>
     eapply EqSym ; [
       idtac ..
-    | eapply myEqTyConv ; [
+    | eapply EqTyConv ; [
         try eapply eqterm_subst_left
       | idtac ..
       ]
@@ -101,8 +101,8 @@ Ltac compsubst1 :=
 Ltac pushsubst1 :=
   match goal with
   | |- eqtype ?G (Subst (Subst ?A ?sbs) ?sbt) ?B =>
-    eapply myEqTyTrans ; [
-      eapply myCongTySubst ; [
+    eapply EqTyTrans ; [
+      eapply CongTySubst ; [
         eapply SubstRefl
       | pushsubst1
       | idtac ..
@@ -110,105 +110,105 @@ Ltac pushsubst1 :=
     | idtac ..
     ]
   | |- eqtype ?G (Subst (Id ?A ?u ?v) ?sbs) ?B =>
-    eapply myEqTyTrans ; [
-      eapply myEqTySubstId
+    eapply EqTyTrans ; [
+      eapply EqTySubstId
     | idtac ..
     ]
   | |- eqtype ?G ?A (Subst (Id ?B ?u ?v) ?sbs) =>
     eapply EqTySym ; [
       idtac ..
-    | eapply myEqTyTrans ; [
-        eapply myEqTySubstId
+    | eapply EqTyTrans ; [
+        eapply EqTySubstId
       | idtac ..
       ]
     ]
   | |- eqtype ?G (Subst (Prod ?A ?B) ?sbs) ?C =>
-    eapply myEqTyTrans ; [
-      eapply myEqTySubstProd
+    eapply EqTyTrans ; [
+      eapply EqTySubstProd
     | idtac ..
     ]
   | |- eqtype ?G ?A (Subst (Prod ?B ?C) ?sbs) =>
     eapply EqTySym ; [
       idtac ..
-    | eapply myEqTyTrans ; [
-        eapply myEqTySubstProd
+    | eapply EqTyTrans ; [
+        eapply EqTySubstProd
       | idtac ..
       ]
     ]
   | |- eqtype ?G (Subst Empty ?sbs) ?A =>
-    eapply myEqTyTrans ; [
-      eapply myEqTySubstEmpty
+    eapply EqTyTrans ; [
+      eapply EqTySubstEmpty
     | idtac ..
     ]
   | |- eqtype ?G ?A (Subst Empty ?sbs) =>
     eapply EqTySym ; [
       idtac ..
-    | eapply myEqTyTrans ; [
-        eapply myEqTySubstEmpty
+    | eapply EqTyTrans ; [
+        eapply EqTySubstEmpty
       | idtac ..
       ]
     ]
   | |- eqtype ?G (Subst Unit ?sbs) ?A =>
-    eapply myEqTyTrans ; [
-      eapply myEqTySubstUnit
+    eapply EqTyTrans ; [
+      eapply EqTySubstUnit
     | idtac ..
     ]
   | |- eqtype ?G ?A (Subst Unit ?sbs) =>
     eapply EqTySym ; [
       idtac ..
-    | eapply myEqTyTrans ; [
-        eapply myEqTySubstUnit
+    | eapply EqTyTrans ; [
+        eapply EqTySubstUnit
       | idtac ..
       ]
     ]
   | |- eqtype ?G (Subst Bool ?sbs) ?A =>
-    eapply myEqTyTrans ; [
-      eapply myEqTySubstBool
+    eapply EqTyTrans ; [
+      eapply EqTySubstBool
     | idtac ..
     ]
   | |- eqtype ?G ?A (Subst Bool ?sbs) =>
     eapply EqTySym ; [
       idtac ..
-    | eapply myEqTyTrans ; [
-        eapply myEqTySubstBool
+    | eapply EqTyTrans ; [
+        eapply EqTySubstBool
       | idtac ..
       ]
     ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
-    eapply myEqTrans ; [
-      eapply myEqSubstRefl
+    eapply EqTrans ; [
+      eapply EqSubstRefl
     | idtac ..
     ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
-    eapply myEqTyConv ; [
-      eapply myEqTrans ; [
-        eapply myEqSubstRefl
+    eapply EqTyConv ; [
+      eapply EqTrans ; [
+        eapply EqSubstRefl
       | idtac ..
       ]
     | idtac ..
     ]
   | |- eqterm ?G (subst true ?sbs) ?u ?A =>
-    eapply myEqTrans ; [
-      eapply myEqSubstTrue
+    eapply EqTrans ; [
+      eapply EqSubstTrue
     | idtac ..
     ]
   | |- eqterm ?G (subst true ?sbs) ?u ?A =>
-    eapply myEqTyConv ; [
-      eapply myEqTrans ; [
-        eapply myEqSubstTrue
+    eapply EqTyConv ; [
+      eapply EqTrans ; [
+        eapply EqSubstTrue
       | idtac ..
       ]
     | idtac ..
     ]
   | |- eqterm ?G (subst false ?sbs) ?u ?A =>
-    eapply myEqTrans ; [
-      eapply myEqSubstFalse
+    eapply EqTrans ; [
+      eapply EqSubstFalse
     | idtac ..
     ]
   | |- eqterm ?G (subst false ?sbs) ?u ?A =>
-    eapply myEqTyConv ; [
-      eapply myEqTrans ; [
-        eapply myEqSubstFalse
+    eapply EqTyConv ; [
+      eapply EqTrans ; [
+        eapply EqSubstFalse
       | idtac ..
       ]
     | idtac ..
@@ -291,7 +291,7 @@ Ltac magicn n :=
   | |- eqctx (ctxextend ?G ?A) (ctxextend ?D ?B) =>
     first [
       apply EqCtxExtend ; magicn n
-    | apply myCtxSym ; [ apply EqCtxExtend ; magicn n | magicn n .. ]
+    | apply CtxSym ; [ apply EqCtxExtend ; magicn n | magicn n .. ]
     ]
   | |- eqctx ?G ?G =>
     apply CtxRefl ; magicn n
@@ -301,15 +301,15 @@ Ltac magicn n :=
     (* assumption *)
     (* In the first case we don't want to use magic in order to avoid symmetry
        again. *)
-    (* || apply myCtxSym ; [ assumption | magicn n .. ] *)
-    first [ assumption | apply myCtxSym ; [ assumption | magicn n .. ] ]
+    (* || apply CtxSym ; [ assumption | magicn n .. ] *)
+    first [ assumption | apply CtxSym ; [ assumption | magicn n .. ] ]
   (* Equality of substitutions *)
   | |- eqsubst (sbzero ?G1 ?A1 ?u1) (sbzero ?G2 ?A2 ?u2) ?D ?E =>
-    eapply myCongSubstZero ; magicn n
+    eapply CongSubstZero ; magicn n
   | |- eqsubst (sbweak ?G1 ?A1) (sbweak ?G2 ?A2) ?D ?E =>
-    eapply myCongSubstWeak ; magicn n
+    eapply CongSubstWeak ; magicn n
   | |- eqsubst (sbshift ?G1 ?A1 ?sbs1) (sbshift ?G2 ?A2 ?sbs2) ?D ?E =>
-    eapply myCongSubstShift ; magicn n
+    eapply CongSubstShift ; magicn n
   (* We should probably avoid using congruence on composition. *)
   (* To be continued... *)
   (* Equality of types *)
@@ -317,11 +317,11 @@ Ltac magicn n :=
     apply EqTyIdSubst ; magicn n
   (* EqTySubst* ? *)
   | |- eqtype ?G (Subst ?A ?sbs) (Subst ?B ?sbt) =>
-    eapply myCongTySubst ; magicn n
+    eapply CongTySubst ; magicn n
   (* To be continued... *)
   (* Equality of terms *)
   | |- eqterm ?G (subst ?u ?sbs) (subst ?v ?sbt) ?A =>
-    eapply myCongTermSubst ; magicn n
+    eapply CongTermSubst ; magicn n
   (* To be continues... *)
   (* When all else fails. *)
   (* This part will hopefully be gone at some point. *)

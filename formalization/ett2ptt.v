@@ -293,9 +293,9 @@ Proof.
 
     (* CtxSym *)
     - { apply ptt.CtxSym.
-        - now apply (@ptt_sane_eqctx G D), sane_eqctx.
-        - now apply (@ptt_sane_eqctx G D), sane_eqctx.
         - now apply sane_eqctx.
+        - now apply (@ptt_sane_eqctx G D), sane_eqctx.
+        - now apply (@ptt_sane_eqctx G D), sane_eqctx.
       }
 
     (* CtxTrans *)
@@ -343,87 +343,87 @@ Proof.
 
     (* SubstTrans *)
     - { apply (@ptt.SubstTrans G D sb1 sb2 sb3).
-        - now apply (@ptt_sane_eqsubst sb1 sb2 G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sb1 sb2 G D), sane_eqsubst.
+        - now apply sane_eqsubst.
+        - now apply sane_eqsubst.
         - now apply (@ptt_sane_eqsubst sb1 sb2 G D), sane_eqsubst.
         - now apply (@ptt_sane_eqsubst sb1 sb2 G D), sane_eqsubst.
         - now apply (@ptt_sane_eqsubst sb2 sb3 G D), sane_eqsubst.
-        - now apply sane_eqsubst.
-        - now apply sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sb1 sb2 G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sb1 sb2 G D), sane_eqsubst.
       }
 
     (* CongSubstZero *)
     - { apply (@ptt.CongSubstZero G1 G2).
-        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
-        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
-        - now apply (@ptt_sane_eqtype G1 A1 A2), sane_eqtype.
-        - now apply (@ptt_sane_eqtype G1 A1 A2), sane_eqtype.
-        - now apply (@ptt_sane_eqterm G1 u1 u2 A1), sane_eqterm.
-        - now apply (@ptt_sane_eqterm G1 u1 u2 A1), sane_eqterm.
         - now apply sane_eqctx.
         - now apply sane_eqtype.
         - now apply sane_eqterm.
+        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
+        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
+        - now apply (@ptt_sane_eqtype G1 A1 A2), sane_eqtype.
+        - now apply (@ptt_sane_eqtype G1 A1 A2), sane_eqtype.
+        - now apply (@ptt_sane_eqterm G1 u1 u2 A1), sane_eqterm.
+        - now apply (@ptt_sane_eqterm G1 u1 u2 A1), sane_eqterm.
       }
 
     (* CongSubstWeak *)
     - { apply ptt.CongSubstWeak.
-        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
-        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
-        - now apply (@ptt_sane_eqtype G1 A1 A2), sane_eqtype.
-        - now apply (@ptt_sane_eqtype G1 A1 A2), sane_eqtype.
         - now apply sane_eqctx.
         - now apply sane_eqtype.
+        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
+        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
+        - now apply (@ptt_sane_eqtype G1 A1 A2), sane_eqtype.
+        - now apply (@ptt_sane_eqtype G1 A1 A2), sane_eqtype.
       }
 
     (* CongSubstShift *)
     - { apply ptt.CongSubstShift.
-        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
-        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
-        - now apply (@ptt_sane_eqtype D A1 A2), sane_eqtype.
-        - now apply (@ptt_sane_eqtype D A1 A2), sane_eqtype.
-        - now apply (@ptt_sane_eqtype D A1 A2), sane_eqtype.
-        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G1 D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G1 D), sane_eqsubst.
         - now apply sane_eqctx.
         - now apply sane_eqsubst.
         - now apply sane_eqtype.
+        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
+        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
+        - now apply (@ptt_sane_eqtype D A1 A2), sane_eqtype.
+        - now apply (@ptt_sane_eqtype D A1 A2), sane_eqtype.
+        - now apply (@ptt_sane_eqtype D A1 A2), sane_eqtype.
+        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G1 D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G1 D), sane_eqsubst.
       }
 
     (* CongSubstComp *)
     - { apply (@ptt.CongSubstComp G D E).
-        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbt1 sbt2 D E), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbt1 sbt2 D E), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbt1 sbt2 D E), sane_eqsubst.
         - now apply sane_eqsubst.
         - now apply sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbt1 sbt2 D E), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbt1 sbt2 D E), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbt1 sbt2 D E), sane_eqsubst.
       }
 
     (* EqSubstCtxConv *)
     - { apply (@ptt.EqSubstCtxConv G1 G2 D1 D2).
-        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
-        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
-        - now apply (@ptt_sane_eqctx D1 D2), sane_eqctx.
-        - now apply (@ptt_sane_eqctx D1 D2), sane_eqctx.
-        - now apply (@ptt_sane_eqsubst sbs sbt G1 D1), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbs sbt G1 D1), sane_eqsubst.
         - now apply sane_eqsubst.
         - now apply sane_eqctx.
         - now apply sane_eqctx.
+        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
+        - now apply (@ptt_sane_eqctx G1 G2), sane_eqctx.
+        - now apply (@ptt_sane_eqctx D1 D2), sane_eqctx.
+        - now apply (@ptt_sane_eqctx D1 D2), sane_eqctx.
+        - now apply (@ptt_sane_eqsubst sbs sbt G1 D1), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs sbt G1 D1), sane_eqsubst.
       }
 
     (* CompAssoc *)
     - { apply (@ptt.CompAssoc G D E F).
+        - now apply sane_issubst.
+        - now apply sane_issubst.
+        - now apply sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbr E F), sane_issubst.
         - now apply (@ptt_sane_issubst sbr E F), sane_issubst.
-        - now apply sane_issubst.
-        - now apply sane_issubst.
-        - now apply sane_issubst.
       }
 
     (* WeakNat *)
@@ -481,12 +481,12 @@ Proof.
 
     (* EqTyCtxConv *)
     { apply (@ptt.EqTyCtxConv G D).
-      - now apply (ptt_sane_eqctx G D), sane_eqctx.
-      - now apply (ptt_sane_eqctx G D), sane_eqctx.
-      - now apply (ptt_sane_eqtype G A B), sane_eqtype.
-      - now apply (ptt_sane_eqtype G A B), sane_eqtype.
       - now apply sane_eqtype.
       - now apply sane_eqctx.
+      - now apply (ptt_sane_eqtype G A B), sane_eqtype.
+      - now apply (ptt_sane_eqtype G A B), sane_eqtype.
+      - now apply (ptt_sane_eqctx G D), sane_eqctx.
+      - now apply (ptt_sane_eqctx G D), sane_eqctx.
     }
 
     (* EqTyRefl *)
@@ -505,12 +505,12 @@ Proof.
 
     (* EqTyTrans *)
     { apply (@ptt.EqTyTrans G A B C).
+      - now apply sane_eqtype.
+      - now apply sane_eqtype.
       - now apply (ptt_sane_eqtype G A B), sane_eqtype.
       - now apply (ptt_sane_eqtype G A B), sane_eqtype.
       - now apply (ptt_sane_eqtype G A B), sane_eqtype.
       - now apply (ptt_sane_eqtype G B C), sane_eqtype.
-      - now apply sane_eqtype.
-      - now apply sane_eqtype.
     }
 
     (* EqTyIdSubst *)
@@ -521,52 +521,52 @@ Proof.
 
     (* EqTySubstComp *)
     { apply (@ptt.EqTySubstComp G D E).
-      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
-      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
-      - now apply (@ptt_sane_issubst sbt D E), sane_issubst.
       - now apply sane_istype.
       - now apply sane_issubst.
       - now apply sane_issubst.
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
+      - now apply (@ptt_sane_issubst sbt D E), sane_issubst.
     }
 
     (* EqTySubstProd *)
     { apply (@ptt.EqTySubstProd G D).
-      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
-      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
       - now apply sane_issubst.
       - now apply sane_istype.
       - now apply sane_istype.
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
     }
 
     (* EqTySubstId *)
     { apply (@ptt.EqTySubstId G D).
-      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
-      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
       - now apply sane_issubst.
       - now apply (@ptt_sane_isterm D u A), sane_isterm.
       - now apply sane_isterm.
       - now apply sane_isterm.
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
     }
 
     (* EqTySubstEmpty *)
     { apply (@ptt.EqTySubstEmpty G D).
-      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
-      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
       - now apply sane_issubst.
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
     }
 
     (* EqTySubstUnit *)
     { apply (@ptt.EqTySubstUnit G D).
-      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
-      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
       - now apply sane_issubst.
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
     }
 
     (* EqTySubstBool *)
     { apply (@ptt.EqTySubstBool G D).
-      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
-      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
       - now apply sane_issubst.
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
     }
 
     (* EqTyExfalso *)
@@ -604,14 +604,14 @@ Proof.
 
     (* CongTySubst *)
     { apply (@ptt.CongTySubst G D).
-      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
-      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
-      - now apply (@ptt_sane_eqtype D A B), sane_eqtype.
-      - now apply (@ptt_sane_eqtype D A B), sane_eqtype.
-      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
-      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
-      - now apply sane_eqtype.
       - now apply sane_eqsubst.
+      - now apply sane_eqtype.
+      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
+      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
+      - now apply (@ptt_sane_eqtype D A B), sane_eqtype.
+      - now apply (@ptt_sane_eqtype D A B), sane_eqtype.
+      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
+      - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
     }
   }
 
@@ -620,13 +620,13 @@ Proof.
 
     (* EqTyConv *)
     - { apply (@ptt.EqTyConv G A B).
-        - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
-        - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
-        - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
-        - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
-        - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
         - now apply sane_eqterm.
         - now apply sane_eqtype.
+        - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
+        - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
+        - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
+        - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
+        - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
     }
 
     (* EqCtxConv *)
@@ -658,13 +658,13 @@ Proof.
 
     (* EqTrans *)
     - { apply (@ptt.EqTrans G A u v w).
+        - now apply sane_eqterm.
+        - now apply sane_eqterm.
         - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
         - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
         - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
         - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
         - now apply (@ptt_sane_eqterm G v w A), sane_eqterm.
-        - now apply sane_eqterm.
-        - now apply sane_eqterm.
       }
 
     (* EqIdSubst *)
@@ -676,13 +676,13 @@ Proof.
 
     (* EqSubstComp *)
     - { apply (@ptt.EqSubstComp G D E A u sbs sbt).
+        - now apply sane_isterm.
+        - now apply sane_issubst.
+        - now apply sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbt D E), sane_issubst.
         - now apply (@ptt_sane_isterm E u A), sane_isterm.
-        - now apply sane_isterm.
-        - now apply sane_issubst.
-        - now apply sane_issubst.
       }
 
     (* EqSubstWeak *)
@@ -754,11 +754,11 @@ Proof.
 
     (* EqSubstRefl *)
     - { apply (@ptt.EqSubstRefl G D).
+        - now apply sane_issubst.
+        - now apply sane_isterm.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_isterm D u A), sane_isterm.
-        - now apply sane_isterm.
-        - now apply sane_issubst.
       }
 
     (* EqSubstJ *)
@@ -792,16 +792,16 @@ Proof.
 
     (* EqSubstTrue *)
     - { apply (@ptt.EqSubstTrue G D).
-        - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
-        - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply sane_issubst.
+        - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
       }
 
     (* EqSubstFalse *)
     - { apply (@ptt.EqSubstFalse G D).
-        - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
-        - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply sane_issubst.
+        - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
+        - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
       }
 
     (* EqSubstCond *)
@@ -979,15 +979,15 @@ Proof.
 
     (* CongTermSubst *)
     - { apply (@ptt.CongTermSubst G D).
-        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqterm D u1 u2 A), sane_eqterm.
-        - now apply (@ptt_sane_eqterm D u1 u2 A), sane_eqterm.
-        - now apply (@ptt_sane_eqterm D u1 u2 A), sane_eqterm.
-        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
-        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
         - now apply sane_eqsubst.
         - now apply sane_eqterm.
+        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqterm D u1 u2 A), sane_eqterm.
+        - now apply (@ptt_sane_eqterm D u1 u2 A), sane_eqterm.
+        - now apply (@ptt_sane_eqterm D u1 u2 A), sane_eqterm.
+        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
+        - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
       }
   }
 

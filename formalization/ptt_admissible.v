@@ -29,8 +29,8 @@ Lemma compWeakZero :
 Proof.
   intros.
   eapply EqTySym ; try magic.
-  eapply myEqTyTrans ; [
-    eapply myCongTySubst ; [
+  eapply EqTyTrans ; [
+    eapply CongTySubst ; [
       eapply WeakZero ; magic
     | magic ..
     ]
@@ -90,7 +90,7 @@ Proof.
     | magic ..
     ].
   }
-  eapply myCongTySubst ; [
+  eapply CongTySubst ; [
     magic ..
   | eapply SubstCtxConv ; magic
   ].
@@ -128,9 +128,9 @@ Proof.
   }
   assert (eqsubst sbs2 sbs1 G2 D).
   { apply SubstSym ; try assumption.
-    eapply myEqSubstCtxConv ; magic.
+    eapply EqSubstCtxConv ; magic.
   }
-  eapply myCongTySubst ; [
+  eapply CongTySubst ; [
     magic ..
   | eapply SubstCtxConv ; magic
   ].
@@ -157,7 +157,7 @@ Proof.
   { eapply TyCtxConv ; [ eassumption | magic .. ]. }
   assert (istype G1 B2).
   { eapply TyCtxConv ; [ eassumption | magic .. ]. }
-  eapply myCongTySubst ; [
+  eapply CongTySubst ; [
     magic ..
   | eapply SubstCtxConv ; magic
   ].
@@ -176,7 +176,7 @@ Lemma EqSubstWeakNat :
            (subst (subst u sbs) (sbweak G (Subst A sbs)))
            (Subst (Subst B sbs) (sbweak G (Subst A sbs))).
 Proof.
-  intros. eapply myEqTyConv.
+  intros. eapply EqTyConv.
   - gocompsubst ; try eassumption ; try magic.
     + gocompsubst ; try eassumption ; try magic.
       * { eapply TermTyConv.
@@ -273,8 +273,8 @@ Lemma EqSubstWeakZero :
 Proof.
   intros.
   gocompsubst ; try eassumption ; try magic.
-  - eapply myEqTrans.
-    + eapply myCongTermSubst ; [
+  - eapply EqTrans.
+    + eapply CongTermSubst ; [
         eapply WeakZero ; magic
       | magic ..
       ].
@@ -352,7 +352,7 @@ Proof.
       ].
       gocompsubst.
     + eassumption.
-    + eapply myCongTermSubst ; [
+    + eapply CongTermSubst ; [
         eapply ShiftZero ; magic
       | magic ..
       ].
@@ -444,7 +444,7 @@ Proof.
     | magic ..
     ].
   }
-  eapply myCongTermSubst ; [
+  eapply CongTermSubst ; [
     eapply CongSubstWeak ; magic
   | try magic ..
   ].
@@ -555,7 +555,7 @@ Proof.
   }
   assert (eqterm D (subst (var 0) (sbzero D A v)) v
     (Subst (Subst A (sbweak D A)) (sbzero D A v))).
-  { eapply myEqTyConv ; [
+  { eapply EqTyConv ; [
       eapply EqSubstZeroZero ; magic
     | magic ..
     ].
@@ -619,8 +619,8 @@ Proof.
       sbs
       G D
   ).
-  { eapply mySubstTrans ; [
-      eapply myCongSubstComp ; [
+  { eapply SubstTrans ; [
+      eapply CongSubstComp ; [
         eapply WeakZero ; magic
       | eapply SubstRefl ; magic
       | magic ..
@@ -649,8 +649,8 @@ Proof.
       G
       D
   ).
-  { eapply mySubstTrans ; [
-      eapply myCongSubstComp ; [
+  { eapply SubstTrans ; [
+      eapply CongSubstComp ; [
         eapply WeakZero ; magic
       | eapply SubstRefl ; magic
       | magic ..
@@ -658,19 +658,19 @@ Proof.
     | try magic ..
     ].
     eapply mySubstSym ; try magic.
-    eapply mySubstTrans ; [
-      eapply myCompAssoc ; magic
+    eapply SubstTrans ; [
+      eapply CompAssoc ; magic
     | try magic ..
     ].
-    eapply mySubstTrans ; [
-      eapply myCongSubstComp ; [
+    eapply SubstTrans ; [
+      eapply CongSubstComp ; [
         eapply SubstRefl ; magic
       | eapply WeakZero ; magic
       | magic ..
       ]
     | try magic ..
     ].
-    eapply mySubstTrans ; [
+    eapply SubstTrans ; [
       eapply CompIdLeft ; magic
     | magic ..
     ].
@@ -691,7 +691,7 @@ Proof.
                   )
            )
   ).
-  { eapply myCongTySubst ; [ eassumption | magic .. ]. }
+  { eapply CongTySubst ; [ eassumption | magic .. ]. }
   assert (
     isterm G
            (subst u sbs)
@@ -743,9 +743,9 @@ Proof.
       G
       D
   ).
-  { eapply myCongSubstComp ; [
-      eapply mySubstTrans ; [
-        eapply myCongSubstComp ; [
+  { eapply CongSubstComp ; [
+      eapply SubstTrans ; [
+        eapply CongSubstComp ; [
           eapply WeakZero ; magic
         | eapply SubstRefl ; magic
         | magic ..
@@ -771,7 +771,7 @@ Proof.
                           (sbcomp (sbweak G (Subst A sbs))
                                   (sbzero G (Subst A sbs) (subst v sbs)))))
   ).
-  { eapply myCongTySubst ; [ eassumption | magic .. ]. }
+  { eapply CongTySubst ; [ eassumption | magic .. ]. }
   assert (
     isterm G
            (subst (subst u sbs)
@@ -834,7 +834,7 @@ Proof.
     (Subst (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
        (sbzero G (Subst A sbs) (subst v sbs)))
   ).
-  { eapply myEqTyConv ; [
+  { eapply EqTyConv ; [
       eapply EqSubstZeroZero ; magic
     | eapply myEqTySym ; try magic ; eassumption
     | magic ..
@@ -916,8 +916,8 @@ Proof.
        (sbcomp (sbzero D A v) (sbcomp (sbweak D A) (sbshift G A sbs))))
     (ctxextend G (Subst A sbs)) D
   ).
-  { eapply myCongSubstComp ; [
-      eapply myCongSubstComp ; [
+  { eapply CongSubstComp ; [
+      eapply CongSubstComp ; [
         eapply mySubstSym ; magic
       | eapply SubstRefl ; magic
       | magic ..
@@ -960,7 +960,7 @@ Proof.
     (subst (subst u sbs) (sbweak G (Subst A sbs)))
     (Subst (Subst A (sbweak D A)) (sbshift G A sbs))
   ).
-  { eapply myEqTyConv ; [
+  { eapply EqTyConv ; [
       eapply EqSubstWeakNat ; try magic ; eassumption
     | try magic ; try eassumption ..
     ].
@@ -989,7 +989,7 @@ Proof.
   }
   assert (eqterm (ctxextend G (Subst A sbs)) (subst (var 0) (sbshift G A sbs))
     (var 0) (Subst (Subst A (sbweak D A)) (sbshift G A sbs))).
-  { eapply myEqTyConv ; [
+  { eapply EqTyConv ; [
       eapply EqSubstShiftZero ; magic
     | try magic ..
     ].
@@ -1067,10 +1067,10 @@ Proof.
   assert (
     eqsubst (sbcomp (sbweak D A) (sbcomp (sbzero D A v) sbs)) sbs G D
   ).
-  { eapply mySubstTrans ; [
-      eapply myCompAssoc ; magic
-    | eapply mySubstTrans ; [
-        eapply myCongSubstComp ; [
+  { eapply SubstTrans ; [
+      eapply CompAssoc ; magic
+    | eapply SubstTrans ; [
+        eapply CongSubstComp ; [
           eapply SubstRefl ; magic
         | eapply WeakZero ; magic
         | magic ..
@@ -1152,7 +1152,7 @@ Proof.
   ).
   { (* gocompsubst ; try eassumption ; try magic. *)
 
-    eapply myEqTyConv ; [
+    eapply EqTyConv ; [
       eapply myEqSym ; [
         eapply eqterm_subst_left ; try magic ; try eassumption ; magic
       | magic ..
@@ -1202,10 +1202,10 @@ Proof.
            (Subst A sbs)
   ).
   { eapply myEqSym ; try magic.
-    eapply myEqTrans ; [
-      eapply myEqTyConv ; [
+    eapply EqTrans ; [
+      eapply EqTyConv ; [
         eapply myEqSym ; [
-          eapply myEqSubstComp ; [
+          eapply EqSubstComp ; [
             shelve
           | eassumption
           | magic ..
@@ -1253,8 +1253,8 @@ Proof.
     sbs
     G D
   ).
-  { eapply mySubstTrans ; [
-      eapply myCongSubstComp ; [
+  { eapply SubstTrans ; [
+      eapply CongSubstComp ; [
         eapply ShiftZero ; magic
       | eapply SubstRefl ; magic
       | magic ..
@@ -1382,12 +1382,12 @@ Proof.
       G
       D
   ).
-  { eapply mySubstTrans ; [
-      eapply myCompAssoc ; magic
+  { eapply SubstTrans ; [
+      eapply CompAssoc ; magic
     | try magic ..
     ].
-    eapply mySubstTrans ; [
-      eapply myCongSubstComp ; [
+    eapply SubstTrans ; [
+      eapply CongSubstComp ; [
         eapply SubstRefl ; magic
       | eapply WeakNat ; magic
       | magic ..
@@ -1395,8 +1395,8 @@ Proof.
     | try magic ..
     ].
     eapply mySubstSym ; try magic.
-    eapply mySubstTrans ; [
-      eapply myCompAssoc ; magic
+    eapply SubstTrans ; [
+      eapply CompAssoc ; magic
     | magic ..
     ].
     Unshelve. magic.
@@ -1440,16 +1440,16 @@ Proof.
     (Subst (Subst A (sbweak D A))
        (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
   ).
-  { eapply myEqTrans ; [
+  { eapply EqTrans ; [
       eapply myEqSym ; [
-        eapply myEqSubstComp ; [ shelve | magic .. ]
+        eapply EqSubstComp ; [ shelve | magic .. ]
       | magic ..
       ]
     | try magic ..
     ].
-    eapply myEqTrans ; [
-      eapply myEqTyConv ; [
-        eapply myCongTermSubst ; [
+    eapply EqTrans ; [
+      eapply EqTyConv ; [
+        eapply CongTermSubst ; [
           eapply SubstRefl ; magic
         | eapply EqSubstShiftZero ; magic
         | magic ..
@@ -1458,7 +1458,7 @@ Proof.
       ]
     | try magic ..
     ].
-    eapply myEqTyConv ; [
+    eapply EqTyConv ; [
       eapply EqSubstZeroZero ; magic
     | try magic ..
     ].
@@ -1604,7 +1604,7 @@ Proof.
        (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst v sbs))))
     (sbcomp (sbweak D A) (sbcomp (sbzero D A v) sbs)) G D
   ).
-  { eapply myCongSubstComp ; magic. }
+  { eapply CongSubstComp ; magic. }
   assert (
     eqtype G (Subst (Subst (Subst A (sbweak D A)) (sbzero D A v)) sbs)
     (Subst (Subst (Subst A (sbweak D A)) (sbshift G A sbs))
@@ -1931,12 +1931,12 @@ Proof.
   gocompsubst ; try assumption.
   gocompsubst ; try assumption.
   (* Now we can focus on susbtitutions. *)
-  eapply myCongTySubst ; try magic.
+  eapply CongTySubst ; try magic.
   (* We go from the rhs. *)
   eapply mySubstSym ; try magic.
-  eapply mySubstTrans ; [
+  eapply SubstTrans ; [
     (* Then we only look on the lhs of the composition. *)
-    eapply myCongSubstComp ; [
+    eapply CongSubstComp ; [
       (* We exchange the substitutionss. *)
       eapply mySubstSym ; [
         eapply ShiftZero ; magic
@@ -1949,21 +1949,21 @@ Proof.
   | try magic ..
   ].
   (* We're using associativity to look at the rhs. *)
-  eapply mySubstTrans ; [
-    eapply myCompAssoc ; magic
+  eapply SubstTrans ; [
+    eapply CompAssoc ; magic
   | try magic ..
   ].
   (* We can now have a look at the rhs of the composition. *)
-  eapply mySubstTrans ; [
-    eapply myCongSubstComp ; [
+  eapply SubstTrans ; [
+    eapply CongSubstComp ; [
       (* On the left we remain unchanged. *)
       eapply SubstRefl ; magic
     | (* On the right we have a composition of shifts, thus we use
          fonctoriality to progress.
          However we need to apply congruence again to rewrite
          the type in the left shift. *)
-      eapply myCongSubstComp ; [
-        eapply @myCongSubstShift
+      eapply CongSubstComp ; [
+        eapply @CongSubstShift
         with (A2 := Subst
                      (Id (Subst A (sbweak D A))
                          (subst u (sbweak D A))
@@ -1981,11 +1981,11 @@ Proof.
   ].
   (* Now that we rewrote the type, we can use fonctoriality. *)
   (* Note this could be meged with the next couple steps. *)
-  eapply mySubstTrans ; [
-    eapply myCongSubstComp ; [
+  eapply SubstTrans ; [
+    eapply CongSubstComp ; [
       (* On the left we remain unchanged. *)
       eapply SubstRefl ; magic
-    | eapply myEqSubstCtxConv ; [
+    | eapply EqSubstCtxConv ; [
         eapply CompShift ; magic
       | try magic ; assumption ..
       ]
@@ -1995,12 +1995,12 @@ Proof.
   ].
   (* Now that we have a composition inside the shift, we want
      to proceed with an exchange by using ShiftZero. *)
-  eapply mySubstTrans ; [
-    eapply myCongSubstComp ; [
+  eapply SubstTrans ; [
+    eapply CongSubstComp ; [
       (* We leave the left unchanged. *)
       eapply SubstRefl ; magic
-    | eapply myEqSubstCtxConv ; [
-        eapply myCongSubstShift ; [
+    | eapply EqSubstCtxConv ; [
+        eapply CongSubstShift ; [
           eassumption
         | eapply mySubstSym ; [
             eapply ShiftZero ; magic
@@ -2016,12 +2016,12 @@ Proof.
   ].
   (* Now we need to apply CompShift again to put the composition outside
      and apply associativity. *)
-  eapply mySubstTrans ; [
-    eapply myCongSubstComp ; [
+  eapply SubstTrans ; [
+    eapply CongSubstComp ; [
       (* On the left we remain unchanged. *)
       eapply SubstRefl ; magic
     | eapply mySubstSym ; [
-        eapply myEqSubstCtxConv ; [
+        eapply EqSubstCtxConv ; [
           eapply CompShift ; magic
         | try magic ; assumption ..
         ]
@@ -2032,19 +2032,19 @@ Proof.
   | try magic ..
   ].
   (* Now, it's time to apply associativity guys. *)
-  eapply mySubstTrans ; [
+  eapply SubstTrans ; [
     eapply mySubstSym ; [
-      eapply myCompAssoc ; magic
+      eapply CompAssoc ; magic
     | magic ..
     ]
   | try magic ..
   ].
   (* Now we should finally have the same structure for the substitutions
      and thus be able to apply congruences. *)
-  eapply myCongSubstComp ; try magic.
-  eapply myCongSubstComp ; try magic ; try assumption.
-  - eapply myEqSubstCtxConv ; [
-      eapply myCongSubstShift ; magic
+  eapply CongSubstComp ; try magic.
+  eapply CongSubstComp ; try magic ; try assumption.
+  - eapply EqSubstCtxConv ; [
+      eapply CongSubstShift ; magic
     | try magic ; assumption ..
     ].
   - eapply SubstCtxConv ; try magic.

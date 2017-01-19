@@ -368,9 +368,9 @@ with eqctx : context -> context -> Type :=
      | CtxSym :
        rule
          parameters: {G D},
+         premise: eqctx G D
          premise: isctx G
          premise: isctx D
-         premise: eqctx G D
          conclusion:
            eqctx D G
        endrule
@@ -433,13 +433,13 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | SubstTrans :
        rule
          parameters: {G D sb1 sb2 sb3},
-         premise: isctx G
-         premise: isctx D
+         premise: eqsubst sb1 sb2 G D
+         premise: eqsubst sb2 sb3 G D
          premise: issubst sb1 G D
          premise: issubst sb2 G D
          premise: issubst sb3 G D
-         premise: eqsubst sb1 sb2 G D
-         premise: eqsubst sb2 sb3 G D
+         premise: isctx G
+         premise: isctx D
          conclusion:
            eqsubst sb1 sb3 G D
        endrule
@@ -447,15 +447,15 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | CongSubstZero :
        rule
          parameters: {G1 G2 A1 A2 u1 u2},
+         premise: eqctx G1 G2
+         premise: eqtype G1 A1 A2
+         premise: eqterm G1 u1 u2 A1
          premise: isctx G1
          premise: isctx G2
          premise: istype G1 A1
          premise: istype G1 A2
          premise: isterm G1 u1 A1
          premise: isterm G1 u2 A1
-         premise: eqctx G1 G2
-         premise: eqtype G1 A1 A2
-         premise: eqterm G1 u1 u2 A1
          conclusion:
            eqsubst (sbzero G1 A1 u1)
                    (sbzero G2 A2 u2)
@@ -466,12 +466,12 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | CongSubstWeak :
        rule
          parameters: {G1 G2 A1 A2},
+         premise: eqctx G1 G2
+         premise: eqtype G1 A1 A2
          premise: isctx G1
          premise: isctx G2
          premise: istype G1 A1
          premise: istype G1 A2
-         premise: eqctx G1 G2
-         premise: eqtype G1 A1 A2
          conclusion:
            eqsubst (sbweak G1 A1)
                    (sbweak G2 A2)
@@ -482,6 +482,9 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | CongSubstShift :
        rule
          parameters: {G1 G2 D A1 A2 sbs1 sbs2},
+         premise: eqctx G1 G2
+         premise: eqsubst sbs1 sbs2 G1 D
+         premise: eqtype D A1 A2
          premise: isctx G1
          premise: isctx G2
          premise: isctx D
@@ -489,9 +492,6 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
          premise: istype D A2
          premise: issubst sbs1 G1 D
          premise: issubst sbs2 G1 D
-         premise: eqctx G1 G2
-         premise: eqsubst sbs1 sbs2 G1 D
-         premise: eqtype D A1 A2
          conclusion:
            eqsubst (sbshift G1 A1 sbs1)
                    (sbshift G2 A2 sbs2)
@@ -502,15 +502,15 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | CongSubstComp :
        rule
          parameters: {G D E sbs1 sbs2 sbt1 sbt2},
-         premise: isctx G
-         premise: isctx D
-         premise: isctx E
+         premise: eqsubst sbs1 sbs2 G D
+         premise: eqsubst sbt1 sbt2 D E
          premise: issubst sbs1 G D
          premise: issubst sbs2 G D
          premise: issubst sbt1 D E
          premise: issubst sbt2 D E
-         premise: eqsubst sbs1 sbs2 G D
-         premise: eqsubst sbt1 sbt2 D E
+         premise: isctx G
+         premise: isctx D
+         premise: isctx E
          conclusion:
            eqsubst (sbcomp sbt1 sbs1)
                    (sbcomp sbt2 sbs2)
@@ -521,15 +521,15 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | EqSubstCtxConv :
        rule
          parameters: {G1 G2 D1 D2 sbs sbt},
+         premise: eqsubst sbs sbt G1 D1
+         premise: eqctx G1 G2
+         premise: eqctx D1 D2
          premise: isctx G1
          premise: isctx G2
          premise: isctx D1
          premise: isctx D2
          premise: issubst sbs G1 D1
          premise: issubst sbt G1 D1
-         premise: eqsubst sbs sbt G1 D1
-         premise: eqctx G1 G2
-         premise: eqctx D1 D2
          conclusion:
            eqsubst sbs sbt G2 D2
        endrule
@@ -537,13 +537,13 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | CompAssoc :
        rule
          parameters: {G D E F sbs sbt sbr},
+         premise: issubst sbs G D
+         premise: issubst sbt D E
+         premise: issubst sbr E F
          premise: isctx G
          premise: isctx D
          premise: isctx E
          premise: isctx F
-         premise: issubst sbs G D
-         premise: issubst sbt D E
-         premise: issubst sbr E F
          conclusion:
            eqsubst (sbcomp sbr (sbcomp sbt sbs))
                    (sbcomp (sbcomp sbr sbt) sbs)
@@ -640,12 +640,12 @@ with eqtype : context -> type -> type -> Type :=
      | EqTyCtxConv :
        rule
          parameters: {G D A B},
-         premise: isctx G
-         premise: isctx D
-         premise: istype G A
-         premise: istype G B
          premise: eqtype G A B
          premise: eqctx G D
+         premise: istype G A
+         premise: istype G B
+         premise: isctx G
+         premise: isctx D
          conclusion:
            eqtype D A B
        endrule
@@ -673,12 +673,12 @@ with eqtype : context -> type -> type -> Type :=
      | EqTyTrans :
        rule
          parameters: {G A B C},
+         premise: eqtype G A B
+         premise: eqtype G B C
          premise: isctx G
          premise: istype G A
          premise: istype G B
          premise: istype G C
-         premise: eqtype G A B
-         premise: eqtype G B C
          conclusion:
            eqtype G A C
        endrule
@@ -697,12 +697,12 @@ with eqtype : context -> type -> type -> Type :=
      | EqTySubstComp :
        rule
          parameters: {G D E A sbs sbt},
-         premise: isctx G
-         premise: isctx D
-         premise: isctx E
          premise: istype E A
          premise: issubst sbs G D
          premise: issubst sbt D E
+         premise: isctx G
+         premise: isctx D
+         premise: isctx E
          conclusion:
            eqtype G
                   (Subst (Subst A sbt) sbs)
@@ -713,11 +713,11 @@ with eqtype : context -> type -> type -> Type :=
      | EqTySubstProd :
        rule
          parameters: {G D A B sbs},
-         premise: isctx G
-         premise: isctx D
          premise: issubst sbs G D
          premise: istype D A
          premise: istype (ctxextend D A) B
+         premise: isctx G
+         premise: isctx D
          conclusion:
            eqtype G
                   (Subst (Prod A B) sbs)
@@ -727,12 +727,12 @@ with eqtype : context -> type -> type -> Type :=
      | EqTySubstId :
        rule
          parameters: {G D A u v sbs},
-         premise: isctx G
-         premise: isctx D
          premise: issubst sbs G D
          premise: istype D A
          premise: isterm D u A
          premise: isterm D v A
+         premise: isctx G
+         premise: isctx D
          conclusion:
            eqtype G
                   (Subst (Id A u v) sbs)
@@ -742,9 +742,9 @@ with eqtype : context -> type -> type -> Type :=
      | EqTySubstEmpty :
        rule
          parameters: {G D sbs},
+         premise: issubst sbs G D
          premise: isctx G
          premise: isctx D
-         premise: issubst sbs G D
          conclusion:
            eqtype G
                   (Subst Empty sbs)
@@ -754,9 +754,9 @@ with eqtype : context -> type -> type -> Type :=
      | EqTySubstUnit :
        rule
          parameters: {G D sbs},
+         premise: issubst sbs G D
          premise: isctx G
          premise: isctx D
-         premise: issubst sbs G D
          conclusion:
            eqtype G
                   (Subst Unit sbs)
@@ -766,9 +766,9 @@ with eqtype : context -> type -> type -> Type :=
      | EqTySubstBool :
        rule
          parameters: {G D sbs},
+         premise: issubst sbs G D
          premise: isctx G
          premise: isctx D
-         premise: issubst sbs G D
          conclusion:
            eqtype G
                   (Subst Bool sbs)
@@ -820,14 +820,14 @@ with eqtype : context -> type -> type -> Type :=
      | CongTySubst :
        rule
          parameters: {G D A B sbs sbt},
+         premise: eqsubst sbs sbt G D
+         premise: eqtype D A B
          premise: isctx G
          premise: isctx D
          premise: istype D A
          premise: istype D B
          premise: issubst sbs G D
          premise: issubst sbt G D
-         premise: eqtype D A B
-         premise: eqsubst sbs sbt G D
          conclusion:
            eqtype G (Subst A sbs) (Subst B sbt)
        endrule
@@ -838,13 +838,13 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqTyConv :
        rule
          parameters: {G A B u v},
+         premise: eqterm G u v A
+         premise: eqtype G A B
          premise: isctx G
          premise: istype G A
          premise: istype G B
          premise: isterm G u A
          premise: isterm G v A
-         premise: eqterm G u v A
-         premise: eqtype G A B
          conclusion:
            eqterm G u v B
        endrule
@@ -888,13 +888,13 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqTrans :
        rule
          parameters: {G A u v w},
+         premise: eqterm G u v A
+         premise: eqterm G v w A
          premise: isctx G
          premise: istype G A
          premise: isterm G u A
          premise: isterm G v A
          premise: isterm G w A
-         premise: eqterm G u v A
-         premise: eqterm G v w A
          conclusion:
            eqterm G u w A
        endrule
@@ -916,13 +916,13 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstComp :
        rule
          parameters: {G D E A u sbs sbt},
+         premise: isterm E u A
+         premise: issubst sbs G D
+         premise: issubst sbt D E
          premise: isctx G
          premise: isctx D
          premise: isctx E
          premise: istype E A
-         premise: isterm E u A
-         premise: issubst sbs G D
-         premise: issubst sbt D E
          conclusion:
            eqterm G
                   (subst (subst u sbt) sbs)
@@ -1048,11 +1048,11 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstRefl :
        rule
          parameters: {G D A u sbs},
+         premise: issubst sbs G D
+         premise: isterm D u A
          premise: isctx G
          premise: isctx D
          premise: istype D A
-         premise: isterm D u A
-         premise: issubst sbs G D
          conclusion:
            eqterm G
                   (subst (refl A u) sbs)
@@ -1175,9 +1175,9 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstTrue :
        rule
          parameters: {G D sbs},
+         premise: issubst sbs G D
          premise: isctx G
          premise: isctx D
-         premise: issubst sbs G D
          conclusion:
            eqterm G
                   (subst true sbs)
@@ -1188,9 +1188,9 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstFalse :
        rule
          parameters: {G D sbs},
+         premise: issubst sbs G D
          premise: isctx G
          premise: isctx D
-         premise: issubst sbs G D
          conclusion:
            eqterm G
                   (subst false sbs)
@@ -1594,6 +1594,8 @@ with eqterm : context -> term -> term -> type -> Type :=
      | CongTermSubst :
        rule
          parameters: {G D A u1 u2 sbs sbt},
+         premise: eqsubst sbs sbt G D
+         premise: eqterm D u1 u2 A
          premise: isctx G
          premise: isctx D
          premise: istype D A
@@ -1601,8 +1603,6 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: isterm D u2 A
          premise: issubst sbs G D
          premise: issubst sbt G D
-         premise: eqsubst sbs sbt G D
-         premise: eqterm D u1 u2 A
          conclusion:
            eqterm G
                   (subst u1 sbs)
