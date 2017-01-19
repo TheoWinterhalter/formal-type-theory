@@ -214,6 +214,18 @@ Ltac doCtxConv D' unique_term' :=
   [ ehyp
   | apply (@ett.CtxTrans _ D') ; hyp ].
 
+Ltac doSubstConv unique_subst' :=
+  eapply ett.CtxTrans ; [
+    eapply unique_subst' ; [
+      ehyp
+    | eapply ett.CtxTrans ; [
+        ehyp
+      | apply ett.CtxSym ; hyp
+      ]
+    ]
+  | hyp
+  ].
+
 (* The version of the theorem that allows variation of the context. *)
 
 Fixpoint unique_term_ctx G u A (H1 : ptt.isterm G u A) {struct H1}:
@@ -506,62 +518,66 @@ Proof.
    (* H1: SubstZero *)
    - { inversion_clear H2'.
        - apply ett.CtxRefl, ett.CtxExtend ; hyp.
-       - assert (ett.eqctx G G1).
-         { eapply ett.CtxTrans.
-           - ehyp.
-           - apply ett.CtxSym. hyp.
-         }
-         pose (unique_subst' _ _ H H6).
-         eapply ett.CtxTrans.
-         + ehyp.
-         + hyp.
+       - doSubstConv unique_subst'.
      }
 
    (* H1: SubstWeak *)
    - { inversion_clear H2'.
        - apply ett.CtxRefl. hyp.
-       - eapply ett.CtxTrans.
-         + eapply unique_subst'.
-           * ehyp.
-           * { eapply ett.CtxTrans.
-               - ehyp.
-               - apply ett.CtxSym. hyp.
-             }
-         + hyp.
+       - doSubstConv unique_subst'.
      }
 
    (* H1: SubstShift *)
-   - (* { inversion_clear H2. *)
-     (*   apply eqCtxExtend'. *)
-     (*   apply (unique_subst G _ sbs). *)
-     (*   + assumption. *)
-     (*   + assumption. *)
-     (*   + now apply EqTyRefl. *)
-     (* } *)
-     todo.
-
-   (* H1: SubstComp *)
-   - todo.
+   - { inversion_clear H2'.
+       - apply ett.EqCtxExtend.
+         + apply (@unique_subst G _ sbs) with (G'0 := G).
+           * hyp.
+           * hyp.
+           * apply ptt.CtxRefl. hyp.
+         + apply ett.EqTyRefl. hyp.
+       - doSubstConv unique_subst'.
+     }
 
    (* H1: SubstId *)
-   - todo.
+   - { inversion_clear H2'.
+       - apply ett.CtxRefl. hyp.
+       - doSubstConv unique_subst'.
+     }
+
+   (* H1: SubstComp *)
+   - { inversion_clear H2'.
+       - eapply (unique_subst _ _ _ H1_0).
+         + ehyp.
+         + eapply ett2ptt.sane_eqctx.
+           eapply (unique_subst _ _ _ H1_).
+           * ehyp.
+           * hyp.
+       - doSubstConv unique_subst'.
+     }
 
    (* H1: SubstCtxConv *)
-   - todo.
+   - eapply @ett.CtxTrans with (D := D1).
+     + eapply ett.CtxSym. hyp.
+     + eapply unique_subst.
+       * ehyp.
+       * ehyp.
+       * apply ett2ptt.sane_eqctx.
+         eapply @ett.CtxTrans with (D := G2) ; hyp.
+
  }
 
 Defined.
 
 (* The main theorem as it will probably be used. *)
-(* Corollary unique_term {G A B u} : *)
-(*   isterm G u A -> *)
-(*   isterm G u B -> *)
-(*   eqtype G A B. *)
+Corollary unique_term {G A B u} :
+  ptt.isterm G u A ->
+  ptt.isterm G u B ->
+  ett.eqtype G A B.
 
-(* Proof. *)
-(*   intros H1 H2. *)
-(*   eapply unique_term_ctx. *)
-(*   - eassumption. *)
-(*   - eassumption. *)
-(*   - now apply eqctx_refl, (@sane_isterm G A u). *)
-(* Defined. *)
+Proof.
+  intros H1 H2.
+  eapply unique_term_ctx.
+  - eassumption.
+  - eassumption.
+  - apply ptt.CtxRefl. hyps.
+Defined.
