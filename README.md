@@ -5,10 +5,17 @@ The ultimate goal is to be able to eliminate equality reflection, hopefully usin
 ## Structure of the repository
 
 * `formalization` contains a coq formalization of various types theories and the ongoing translation,
-* `paper` contains a LaTeX version of the rules (of ETT).
+* `paper` contains a LaTeX version of the rules (of ETT) (This is old and might need to be removed).
 
-Refer to the `README` inside the folder to get more information about its strucutre.  
-*[**TODO**: Explain how to use the script to generate the LaTeX.]*
+Refer to the `README` inside the folder to get more information about its strucutre.
+
+## Getting the rules in LaTeX / PDF
+
+By typing 
+```bash
+make rules.pdf
+```
+in the root directory, you run a python script that extracts ETT and PTT from their respective coq files and then compiles them into a PDF file.
 
 ## Branches of interest
 
