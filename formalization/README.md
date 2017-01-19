@@ -27,7 +27,8 @@ The purpose here is to state and prove theorems about the sanity of different ty
 ## Translation
 
 The main translation goes from PTT to CTT, the complete scheme being:
-ETT → **PTT → CTT** → ITT
+ETT → **PTT → CTT** → ITT.
+This translation is still very much a *work in progress*.
 * `ctt.v`: Syntax and typing rules of CTT (Coercive Type Theory) that goes with explicit coercions,
 * `itt.v`: ITT (Intentional Type Theory), its syntax and typing rules, doesn't have equality reflection or type annotations on application when compared with ETT,
 * `eval.v`: Evaluate coercions of CTT to get ITT expressions,
