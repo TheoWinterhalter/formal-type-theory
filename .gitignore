@@ -186,3 +186,5 @@ TSWLatexianTemp*
 *~[0-9]*
 
 *.pdf
+
+formalization/*.tex
