@@ -6,36 +6,6 @@ Require ptt2ett ett2ptt.
 Require ptt_admissible.
 Require ett_sanity ptt_sanity.
 Require ptt_inversion.
-(* Require Import sanity. *)
-
-(* Auxiliary admissibility lemmas. *)
-
-(* Lemma eqctx_sym {G D} : eqctx G D -> eqctx D G. *)
-(* Proof. *)
-(*   intros [|? ? ? ?]. *)
-(*   - apply EqCtxEmpty. *)
-(*   - now apply EqCtxExtend, EqTySym. *)
-(* Defined. *)
-
-(* Lemma eqctx_refl G : isctx G -> eqctx G G. *)
-(* Proof. *)
-(*   intros [|? ? ? ?]. *)
-(*   - apply EqCtxEmpty. *)
-(*   - now apply EqCtxExtend, EqTyRefl. *)
-(* Defined. *)
-
-(* Lemma eqctx_trans G D E : *)
-(*   eqctx G D -> eqctx D E -> eqctx G E. *)
-(* Proof. *)
-(*   intros [|? ? ? ?]. *)
-(*   - intro H ; exact H. *)
-(*   - intro H. *)
-(*     inversion H. *)
-(*     apply EqCtxExtend. *)
-(*     eapply EqTyTrans. *)
-(*     + eassumption. *)
-(*     + assumption. *)
-(* Defined. *)
 
 (* Auxiliary inversion lemmas. *)
 
@@ -154,45 +124,6 @@ Proof.
   - apply ett.CtxRefl.
     now apply (ett_sanity.sane_issubst sbs G D).
 Defined.
-
-(* Hypothesis eqCtxExtend' : *)
-(*   forall {G D A B}, *)
-(*     eqctx G D -> *)
-(*     eqtype G A B -> *)
-(*     eqctx (ctxextend G A) (ctxextend D B). *)
-
-(* Hypothesis eqTyCongWeak' : *)
-(*   forall { G A A' B B' }, *)
-(*   eqtype G A A' -> *)
-(*   eqtype G B B' -> *)
-(*   eqtype (ctxextend G A) (Subst B (sbweak G A)) (Subst B' (sbweak G A')). *)
-
-(* Hypothesis eqTyCongZero' : *)
-(*   forall {G1 G2 A1 A2 B1 B2 u1 u2}, *)
-(*     eqctx G1 G2 -> *)
-(*     eqtype G1 A1 B1 -> *)
-(*     eqterm G1 u1 u2 A1 -> *)
-(*     eqtype (ctxextend G1 A1) A2 B2 -> *)
-(*     eqtype G1 *)
-(*            (Subst A2 (sbzero G1 A1 u1)) *)
-(*            (Subst B2 (sbzero G2 B1 u2)). *)
-
-(* Hypothesis eqTyCongShift' : *)
-(*   forall {G1 G2 D A1 A2 B1 B2 sbs}, *)
-(*     eqctx G1 G2 -> *)
-(*     issubst sbs G1 D -> *)
-(*     eqtype D A1 A2 -> *)
-(*     eqtype (ctxextend D A1) B1 B2 -> *)
-(*     eqtype (ctxextend G1 (Subst A1 sbs)) *)
-(*            (Subst B1 (sbshift G1 A1 sbs)) *)
-(*            (Subst B2 (sbshift G2 A2 sbs)). *)
-
-(* A hack to be able to allow cases and still have Coq verify
-   that the fixpoints are well-defined. *)
-Hypothesis temporary :
-  forall {A}, A.
-
-Ltac todo := exact temporary.
 
 (* Tactics to apply an hypothesis that could be in PTT instead of ETT. *)
 Ltac pttassumption :=
