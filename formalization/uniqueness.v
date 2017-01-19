@@ -3,7 +3,7 @@
 Require Import syntax.
 Require ett ptt.
 Require ptt2ett ett2ptt.
-Require ett_sanity.
+Require ett_sanity ptt_sanity.
 (* Require Import sanity. *)
 
 (* Auxiliary admissibility lemmas. *)
@@ -154,6 +154,49 @@ Ltac epttassumption :=
 
 Ltac ehyp := first [ eassumption | epttassumption ].
 
+(* A tactic to apply sanity in ptt. *)
+Ltac ptt_sane :=
+  match goal with
+  | H : ptt.issubst ?sbs ?G ?D |- ptt.isctx ?G =>
+    now apply (ptt_sanity.sane_issubst sbs G D)
+  | H : ptt.issubst ?sbs ?G ?D |- ptt.isctx ?D =>
+    now apply (ptt_sanity.sane_issubst sbs G D)
+  | H : ptt.istype ?G ?A |- ptt.isctx ?G =>
+    now apply (ptt_sanity.sane_istype G A)
+  | H : ptt.isterm ?G ?u ?A |- ptt.isctx ?G =>
+    now apply (ptt_sanity.sane_isterm G u A)
+  | H : ptt.isterm ?G ?u ?A |- ptt.istype ?G ?A =>
+    now apply (ptt_sanity.sane_isterm G u A)
+  | H : ptt.eqctx ?G ?D |- ptt.isctx ?G =>
+    now apply (ptt_sanity.sane_eqctx G D)
+  | H : ptt.eqctx ?G ?D |- ptt.isctx ?D =>
+    now apply (ptt_sanity.sane_eqctx G D)
+  | H : ptt.eqsubst ?sbs ?sbt ?G ?D |- ptt.isctx ?G =>
+    now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
+  | H : ptt.eqsubst ?sbs ?sbt ?G ?D |- ptt.isctx ?D =>
+    now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
+  | H : ptt.eqsubst ?sbs ?sbt ?G ?D |- ptt.issubst ?sbs ?G ?D =>
+    now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
+  | H : ptt.eqsubst ?sbs ?sbt ?G ?D |- ptt.issubst ?sbt ?G ?D =>
+    now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
+  | H : ptt.eqtype ?G ?A ?B |- ptt.isctx ?G =>
+    now apply (ptt_sanity.sane_eqtype G A B)
+  | H : ptt.eqtype ?G ?A ?B |- ptt.istype ?G ?A =>
+    now apply (ptt_sanity.sane_eqtype G A B)
+  | H : ptt.eqtype ?G ?A ?B |- ptt.istype ?G ?B =>
+    now apply (ptt_sanity.sane_eqtype G A B)
+  | H : ptt.eqterm ?G ?u ?v ?A |- ptt.isctx ?G =>
+    now apply (ptt_sanity.sane_eqterm G u v A)
+  | H : ptt.eqterm ?G ?u ?v ?A |- ptt.istype ?G ?A =>
+    now apply (ptt_sanity.sane_eqterm G u v A)
+  | H : ptt.eqterm ?G ?u ?v ?A |- ptt.isterm ?G ?u ?A =>
+    now apply (ptt_sanity.sane_eqterm G u v A)
+  | H : ptt.eqterm ?G ?u ?v ?A |- ptt.isterm ?G ?v ?A =>
+    now apply (ptt_sanity.sane_eqterm G u v A)
+  end.
+
+Ltac hyps := first [ hyp | ptt_sane ].
+
 (* Tactics for dealing with the conversion cases. *)
 
 Ltac doTyConv unique_term' :=
@@ -189,13 +232,15 @@ Proof.
     pose (
       unique_term' B' D' H1 H2 :=
         unique_term'' B' D'
-                      (ett2ptt.sane_isterm D' _ B' H1)
+                      (* (ett2ptt.sane_isterm D' _ B' H1) *)
+                      H1
                       (ett2ptt.sane_eqctx D' _ H2)
     ) ;
     pose (
       unique_term_ctx' G u A H1 B D H2 H3 :=
         unique_term_ctx G u A
-                        (ett2ptt.sane_isterm G u A H1)
+                        (* (ett2ptt.sane_isterm G u A H1) *)
+                        H1
                         B D
                         (ett2ptt.sane_isterm D u B H2)
                         (ett2ptt.sane_eqctx D G H3)
@@ -203,7 +248,8 @@ Proof.
     pose (
       unique_subst' G D1 sbs H1 D2 H2 :=
         unique_subst G D1 sbs
-                     (ett2ptt.sane_issubst sbs G D1 H1)
+                     (* (ett2ptt.sane_issubst sbs G D1 H1) *)
+                     H1
                      D2
                      (ett2ptt.sane_issubst sbs G D2 H2)
     ).
