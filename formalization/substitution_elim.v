@@ -52,6 +52,30 @@ Proof.
 
 Defined.
 
+Fixpoint TermAppInversion G A B u v T
+         (H : ptt.isterm G (app u A B v) T) {struct H} :
+  ptt.isctx G *
+  ptt.istype G A *
+  ptt.istype (ctxextend G A) B *
+  ptt.isterm G u (Prod A B) *
+  ptt.isterm G v A *
+  ptt.eqtype G (Subst B (sbzero G A v)) T.
+Proof.
+  inversion H.
+
+  - { destruct (@TermAppInversion _ _ _ _ _ _ H0) as [[[[[? ?] ?] ?] ?] ?].
+      repeat split ; try assumption.
+      eapply ptt.EqTyTrans ; [
+        eassumption
+      | try assumption ..
+      ].
+      eapply ptt.TySubst ; try eassumption.
+      - admit.
+      - admit.
+    }
+
+Admitted.
+
 
 Inductive subst_free_term : term -> Type :=
   | subst_free_var :
@@ -185,7 +209,16 @@ Proof.
         }
 
       (* app *)
-      - todo.
+      - { destruct (elim_term u1) as [v1 [sv1 fv1]].
+          destruct (elim_type t) as [A [sA fA]].
+          destruct (elim_type t0) as [B [sB fB]].
+          destruct (elim_term u2) as [v2 [sv2 fv2]].
+          exists (app v1 A B v2). split.
+          - now constructor.
+          - intros G T h.
+            (* We need an inversion lemma for app. *)
+            todo.
+        }
 
       (* refl *)
       - todo.
