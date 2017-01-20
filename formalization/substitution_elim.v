@@ -222,6 +222,26 @@ with subst_free_type : type -> Type :=
 Hypothesis temporary : forall {A}, A.
 Ltac todo := exact temporary.
 
+(* A tactic to handle most elim cases. *)
+
+(* Ltac auto_elim elim_term elim_type terms types (* inv *) := *)
+(*   (* First we elim subst in every argument. *) *)
+(*   let rec elim_terms terms := *)
+(*       match terms with *)
+(*       | nil => idtac *)
+(*       | cons ?u ?l => destruct (elim_term u) as [? [? ?]] ; *)
+(*                      elim_terms l *)
+(*       | _ => fail *)
+(*       end *)
+(*   in elim_terms terms ; *)
+(*   let rec elim_types types := *)
+(*       match types with *)
+(*       | nil => idtac *)
+(*       | cons ?A ?l => destruct (elim_type A) as [? [? ?]] ; *)
+(*                      elim_types l *)
+(*       end *)
+(*   in elim_types types. *)
+
 Fixpoint elim_term u :
   { v : term &
     subst_free_term v *
@@ -246,7 +266,8 @@ Proof.
           hyp.
 
       (* lam *)
-      - { destruct (elim_type t) as [A [sA fA]].
+      - { (* auto_elim elim_term elim_type cons(u,nil) cons(t,cons(t0,nil)). *)
+          destruct (elim_type t) as [A [sA fA]].
           destruct (elim_type t0) as [B [sB fB]].
           destruct (elim_term u) as [v [sv fv]].
           exists (lam A B v). split.
