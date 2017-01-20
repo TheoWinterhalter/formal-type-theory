@@ -70,9 +70,39 @@ Proof.
       | try assumption ..
       ].
       eapply ptt.TySubst ; try eassumption.
-      - admit.
-      - admit.
+      - eapply ptt.SubstZero ; eassumption.
+      - eapply ptt.CtxExtend ; assumption.
     }
+
+  - { destruct (@TermAppInversion _ _ _ _ _ _ H0) as [[[[[? ?] ?] ?] ?] ?].
+      assert (ptt.eqctx (ctxextend G0 A) (ctxextend G A)).
+      { eapply ptt.EqCtxExtend ; try assumption.
+        eapply ptt.EqTyRefl ; assumption.
+      }
+      assert (ptt.isctx (ctxextend G0 A)).
+      { eapply ptt.CtxExtend ; assumption. }
+      assert (ptt.isctx (ctxextend G A)).
+      { eapply ptt.CtxExtend ; try assumption.
+        eapply ptt.TyCtxConv ; eassumption.
+      }
+      repeat split.
+      - assumption.
+      - eapply ptt.TyCtxConv ; eassumption.
+      - eapply ptt.TyCtxConv ; eassumption.
+      - eapply ptt.TermCtxConv ; try eassumption.
+        eapply ptt.TyCtxConv ; [
+          eapply ptt.TyProd ; eassumption
+        | try eassumption ..
+        ].
+        apply ptt.CtxRefl ; assumption.
+      - eapply ptt.TermCtxConv ; try eassumption.
+      - eapply ptt.EqTyCtxConv ; try eassumption.
+        + eapply ptt.EqTyTrans ; try eassumption.
+          * { eapply ptt.CongTySubst ; try eassumption.
+              - eapply ptt.EqSubstCtxConv ; [
+                  eapply ptt.CongSubstZero ; try eassumption
+                | try eassumption ..
+                ].
 
 Admitted.
 
