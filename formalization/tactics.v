@@ -3,6 +3,7 @@
 Require Import syntax.
 Require ett ptt.
 Require ptt2ett ett2ptt.
+Require ett_sanity.
 
 (* Tactics to apply an hypothesis that could be in PTT instead of ETT. *)
 Ltac pttassumption :=
@@ -87,3 +88,44 @@ Ltac ptt_sane :=
   end.
 
 Ltac hyps := first [ hyp | ptt_sane ].
+
+(* A tactic to apply sanity in ett. *)
+Ltac ett_sane :=
+  match goal with
+  | H : ett.issubst ?sbs ?G ?D |- ett.isctx ?G =>
+    now apply (ett_sanity.sane_issubst sbs G D)
+  | H : ett.issubst ?sbs ?G ?D |- ett.isctx ?D =>
+    now apply (ett_sanity.sane_issubst sbs G D)
+  | H : ett.istype ?G ?A |- ett.isctx ?G =>
+    now apply (ett_sanity.sane_istype G A)
+  | H : ett.isterm ?G ?u ?A |- ett.isctx ?G =>
+    now apply (ett_sanity.sane_isterm G u A)
+  | H : ett.isterm ?G ?u ?A |- ett.istype ?G ?A =>
+    now apply (ett_sanity.sane_isterm G u A)
+  | H : ett.eqctx ?G ?D |- ett.isctx ?G =>
+    now apply (ett_sanity.sane_eqctx G D)
+  | H : ett.eqctx ?G ?D |- ett.isctx ?D =>
+    now apply (ett_sanity.sane_eqctx G D)
+  | H : ett.eqsubst ?sbs ?sbt ?G ?D |- ett.isctx ?G =>
+    now apply (ett_sanity.sane_eqsubst sbs sbt G D)
+  | H : ett.eqsubst ?sbs ?sbt ?G ?D |- ett.isctx ?D =>
+    now apply (ett_sanity.sane_eqsubst sbs sbt G D)
+  | H : ett.eqsubst ?sbs ?sbt ?G ?D |- ett.issubst ?sbs ?G ?D =>
+    now apply (ett_sanity.sane_eqsubst sbs sbt G D)
+  | H : ett.eqsubst ?sbs ?sbt ?G ?D |- ett.issubst ?sbt ?G ?D =>
+    now apply (ett_sanity.sane_eqsubst sbs sbt G D)
+  | H : ett.eqtype ?G ?A ?B |- ett.isctx ?G =>
+    now apply (ett_sanity.sane_eqtype G A B)
+  | H : ett.eqtype ?G ?A ?B |- ett.istype ?G ?A =>
+    now apply (ett_sanity.sane_eqtype G A B)
+  | H : ett.eqtype ?G ?A ?B |- ett.istype ?G ?B =>
+    now apply (ett_sanity.sane_eqtype G A B)
+  | H : ett.eqterm ?G ?u ?v ?A |- ett.isctx ?G =>
+    now apply (ett_sanity.sane_eqterm G u v A)
+  | H : ett.eqterm ?G ?u ?v ?A |- ett.istype ?G ?A =>
+    now apply (ett_sanity.sane_eqterm G u v A)
+  | H : ett.eqterm ?G ?u ?v ?A |- ett.isterm ?G ?u ?A =>
+    now apply (ett_sanity.sane_eqterm G u v A)
+  | H : ett.eqterm ?G ?u ?v ?A |- ett.isterm ?G ?v ?A =>
+    now apply (ett_sanity.sane_eqterm G u v A)
+  end.

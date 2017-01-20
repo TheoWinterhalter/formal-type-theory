@@ -7,7 +7,7 @@ Require Import tactics.
 (* We prove the inversion lemmata here before putting them in ptt_inversion *)
 (* This will speed up the compilation process a bit. *)
 
-Fixpoint TermAbsInversion G A B u T (H : ptt.isterm G (lam A B u) T) {struct H} :
+Fixpoint TermAbsInversion {G A B u T} (H : ptt.isterm G (lam A B u) T) {struct H} :
   ptt.isctx G *
   ptt.istype G A *
   ptt.istype (ctxextend G A) B *
@@ -52,7 +52,7 @@ Proof.
 
 Defined.
 
-Fixpoint TermAppInversion G A B u v T
+Fixpoint TermAppInversion {G A B u v T}
          (H : ptt.isterm G (app u A B v) T) {struct H} :
   ptt.isctx G *
   ptt.istype G A *
@@ -106,7 +106,7 @@ Proof.
 
 Admitted.
 
-Fixpoint TermReflInversion G A u T
+Fixpoint TermReflInversion {G A u T}
          (H : ptt.isterm G (refl A u) T) {struct H} :
   ptt.isctx G *
   ptt.istype G A *
@@ -122,6 +122,128 @@ Proof.
       | try assumption ..
       ].
       eapply ptt.TyId ; eassumption.
+    }
+
+  - admit.
+
+  - admit.
+
+Admitted.
+
+Fixpoint TermJInversion {G A u C w v p T}
+         (H : ptt.isterm G (j A u C w v p) T) {struct H} :
+  ptt.isctx G *
+  ptt.istype G A *
+  ptt.isterm G u A *
+  ptt.istype
+    (ctxextend
+       (ctxextend G A)
+       (Id
+          (Subst A (sbweak G A))
+          (subst u (sbweak G A))
+          (var 0)
+       )
+    )
+    C *
+  ptt.isterm G
+             w
+             (Subst
+                (Subst
+                   C
+                   (sbshift
+                      G
+                      (Id
+                         (Subst A (sbweak G A))
+                         (subst u (sbweak G A))
+                         (var 0)
+                      )
+                      (sbzero G A u)
+                   )
+                )
+                (sbzero G (Id A u u) (refl A u))
+             ) *
+  ptt.isterm G v A *
+  ptt.isterm G p (Id A u v) *
+  ptt.eqtype G
+             (Subst
+                (Subst
+                   C
+                   (sbshift
+                      G
+                      (Id
+                         (Subst A (sbweak G A))
+                         (subst u (sbweak G A))
+                         (var 0)
+                      )
+                      (sbzero G A v)
+                   )
+                )
+                (sbzero G (Id A u v) p)
+             )
+             T.
+Proof.
+  inversion H.
+
+  - { destruct (@TermJInversion _ _ _ _ _ _ _ _ H0)
+        as [[[[[[[? ?] ?] ?] ?] ?] ?] ?].
+      repeat split ; try assumption.
+      eapply ptt.EqTyTrans ; [
+        eassumption
+      | try assumption ..
+      ].
+      admit.
+    }
+
+  - admit.
+
+  - admit.
+
+Admitted.
+
+Fixpoint TermExfalsoInversion {G A u T}
+         (H : ptt.isterm G (exfalso A u) T) {struct H} :
+  ptt.isctx G *
+  ptt.istype G A *
+  ptt.isterm G u Empty *
+  ptt.eqtype G A T.
+Proof.
+  inversion H.
+
+  - { destruct (@TermExfalsoInversion _ _ _ _ H0) as [[[? ?] ?] ?].
+      repeat split ; try assumption.
+      eapply ptt.EqTyTrans ; [
+        eassumption
+      | try assumption ..
+      ].
+    }
+
+  - admit.
+
+  - admit.
+
+Admitted.
+
+Fixpoint TermCondInversion {G C u v w T}
+         (H : ptt.isterm G (cond C u v w) T) {struct H} :
+  ptt.isctx G *
+  ptt.isterm G u Bool *
+  ptt.istype (ctxextend G Bool) C *
+  ptt.isterm G v (Subst C (sbzero G Bool true)) *
+  ptt.isterm G w (Subst C (sbzero G Bool false)) *
+  ptt.eqtype G (Subst C (sbzero G Bool u)) T.
+Proof.
+  inversion H.
+
+  - { destruct (@TermCondInversion _ _ _ _ _ _ H0) as [[[[[? ?] ?] ?] ?] ?].
+      repeat split ; try assumption.
+      eapply ptt.EqTyTrans ; [
+        eassumption
+      | try assumption ..
+      ].
+      eapply ptt.TySubst ; try eassumption.
+      - admit.
+      - eapply ptt.CtxExtend ; try eassumption.
+        eapply ptt.TyBool. assumption.
     }
 
   - admit.
@@ -274,7 +396,7 @@ Proof.
           - now constructor.
           - intros G T h.
             destruct (ptt_sanity.sane_isterm G (lam t t0 u) T h).
-            destruct (@TermAbsInversion _ _ _ _ _ h) as [[[[? ?] ?] ?] ?].
+            destruct (TermAbsInversion h) as [[[[? ?] ?] ?] ?].
             eapply ett.EqTyConv.
             + eapply ett.CongAbs.
               * now apply fA.
@@ -291,7 +413,7 @@ Proof.
           exists (app v1 A B v2). split.
           - now constructor.
           - intros G T h.
-            destruct (@TermAppInversion _ _ _ _ _ _ h) as [[[[[? ?] ?] ?] ?] ?].
+            destruct (TermAppInversion h) as [[[[[? ?] ?] ?] ?] ?].
             eapply ett.EqTyConv.
             + eapply ett.CongApp.
               * now apply fA.
@@ -307,7 +429,7 @@ Proof.
           exists (refl A v). split.
           - now constructor.
           - intros G T h.
-            destruct (@TermReflInversion _ _ _ _ h) as [[[? ?] ?] ?].
+            destruct (TermReflInversion h) as [[[? ?] ?] ?].
             eapply ett.EqTyConv.
             + eapply ett.CongRefl.
               * now apply fv.
@@ -316,7 +438,26 @@ Proof.
         }
 
       (* j *)
-      - todo.
+      - { destruct (elim_type t) as [? [? ?]].
+          destruct (elim_term u1) as [? [? ?]].
+          destruct (elim_type t0) as [? [? ?]].
+          destruct (elim_term u2) as [? [? ?]].
+          destruct (elim_term u3) as [? [? ?]].
+          destruct (elim_term u4) as [? [? ?]].
+          exists (j x x0 x1 x2 x3 x4). split.
+          - now constructor.
+          - intros G T h.
+            destruct (TermJInversion h) as [[[[[[[? ?] ?] ?] ?] ?] ?] ?].
+            eapply ett.EqTyConv.
+            + eapply ett.CongJ.
+              * now apply e.
+              * now apply e0.
+              * now apply e1.
+              * now apply e2.
+              * now apply e3.
+              * now apply e4.
+            + hyp.
+        }
 
       (* subst *)
       - (* What would we do here? Go though another destruction of u?
@@ -324,7 +465,25 @@ Proof.
         todo.
 
       (* exfalso *)
-      - todo.
+      - { destruct (elim_type t) as [? [? ?]].
+          destruct (elim_term u) as [? [? ?]].
+          exists (exfalso x x0). split.
+          - now constructor.
+          - intros G T h.
+            destruct (TermExfalsoInversion h) as [[[? ?] ?] ?].
+            pose proof (e _ i0).
+            pose proof (e0 _ _ i1).
+
+            eapply ett.EqTyConv.
+            + eapply ett.EqTermExfalso.
+              * eapply ett.TermExfalso ; hyp.
+              * { eapply ett.TermTyConv.
+                  - eapply ett.TermExfalso ; ett_sane.
+                  - now apply ett.EqTySym.
+                }
+              * ehyp.
+            + hyp.
+        }
 
       (* unit *)
       - { exists unit. split.
@@ -345,7 +504,23 @@ Proof.
         }
 
       (* cond *)
-      - todo.
+      - { destruct (elim_type t) as [A [sA fA]].
+          destruct (elim_term u1) as [v1 [sv1 fv1]].
+          destruct (elim_term u2) as [v2 [sv2 fv2]].
+          destruct (elim_term u3) as [v3 [sv3 fv3]].
+          exists (cond A v1 v2 v3). split.
+          - now constructor.
+          - intros G T h.
+            destruct (TermCondInversion h) as [[[[[? ?] ?] ?] ?] ?].
+            pose proof (fA _ i1).
+            pose proof (fv1 _ _ i0).
+            pose proof (fv2 _ _ i2).
+            pose proof (fv3 _ _ i3).
+
+            eapply ett.EqTyConv.
+            + eapply ett.CongCond ; assumption.
+            + hyp.
+        }
     }
 
   (* elim_type *)
