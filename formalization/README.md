@@ -24,6 +24,9 @@ The purpose here is to state and prove theorems about the sanity of different ty
 ### Uniqueness of Typing
 * `uniqueness.v`: Proof of uniqueness of typing for ETT/PTT.
 
+### Elimination of Substitutions (*WIP*)
+* `substitution_elim.v`: Proof that substitutions can be eliminated (*WIP*).
+
 ## Translation
 
 The main translation goes from PTT to CTT, the complete scheme being:
