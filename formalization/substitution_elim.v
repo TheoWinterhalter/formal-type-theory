@@ -106,6 +106,30 @@ Proof.
 
 Admitted.
 
+Fixpoint TermReflInversion G A u T
+         (H : ptt.isterm G (refl A u) T) {struct H} :
+  ptt.isctx G *
+  ptt.istype G A *
+  ptt.isterm G u A *
+  ptt.eqtype G (Id A u u) T.
+Proof.
+  inversion H.
+
+  - { destruct (@TermReflInversion _ _ _ _ H0) as [[[? ?] ?] ?].
+      repeat split ; try assumption.
+      eapply ptt.EqTyTrans ; [
+        eassumption
+      | try assumption ..
+      ].
+      eapply ptt.TyId ; eassumption.
+    }
+
+  - admit.
+
+  - admit.
+
+Admitted.
+
 
 Inductive subst_free_term : term -> Type :=
   | subst_free_var :
@@ -246,12 +270,29 @@ Proof.
           exists (app v1 A B v2). split.
           - now constructor.
           - intros G T h.
-            (* We need an inversion lemma for app. *)
-            todo.
+            destruct (@TermAppInversion _ _ _ _ _ _ h) as [[[[[? ?] ?] ?] ?] ?].
+            eapply ett.EqTyConv.
+            + eapply ett.CongApp.
+              * now apply fA.
+              * now apply fB.
+              * now apply fv1.
+              * now apply fv2.
+            + hyp.
         }
 
       (* refl *)
-      - todo.
+      - { destruct (elim_type t) as [A [sA fA]].
+          destruct (elim_term u) as [v [sv fv]].
+          exists (refl A v). split.
+          - now constructor.
+          - intros G T h.
+            destruct (@TermReflInversion _ _ _ _ h) as [[[? ?] ?] ?].
+            eapply ett.EqTyConv.
+            + eapply ett.CongRefl.
+              * now apply fv.
+              * now apply fA.
+            + hyp.
+        }
 
       (* j *)
       - todo.
@@ -265,13 +306,22 @@ Proof.
       - todo.
 
       (* unit *)
-      - exists unit. todo.
+      - { exists unit. split.
+          - now constructor.
+          - intros G A h. constructor. hyp.
+        }
 
       (* true *)
-      - exists true. todo.
+      - { exists true. split.
+          - now constructor.
+          - intros G A h. constructor. hyp.
+        }
 
       (* false *)
-      - exists false. todo.
+      - { exists false. split.
+          - now constructor.
+          - intros G A h. constructor. hyp.
+        }
 
       (* cond *)
       - todo.
