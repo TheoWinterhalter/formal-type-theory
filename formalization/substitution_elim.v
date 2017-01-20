@@ -4,6 +4,55 @@ Require Import ptt_inversion.
 Require ptt_sanity.
 Require Import tactics.
 
+(* We prove the inversion lemmata here before putting them in ptt_inversion *)
+(* This will speed up the compilation process a bit. *)
+
+Fixpoint TermAbsInversion G A B u T (H : ptt.isterm G (lam A B u) T) {struct H} :
+  ptt.isctx G *
+  ptt.istype G A *
+  ptt.istype (ctxextend G A) B *
+  ptt.isterm (ctxextend G A) u B *
+  ptt.eqtype G (Prod A B) T.
+Proof.
+  inversion H.
+
+  - { destruct (@TermAbsInversion _ _ _ _ _ H0) as [[[[? ?] ?] ?] ?].
+      repeat split ; try assumption.
+      eapply ptt.EqTyTrans ; [
+        eassumption
+      | try assumption ..
+      ].
+      eapply ptt.TyProd ; assumption.
+    }
+
+  - { destruct (@TermAbsInversion _ _ _ _ _ H0) as [[[[? ?] ?] ?] ?].
+      assert (ptt.eqctx (ctxextend G0 A) (ctxextend G A)).
+      { eapply ptt.EqCtxExtend ; try assumption.
+        eapply ptt.EqTyRefl ; assumption.
+      }
+      assert (ptt.isctx (ctxextend G0 A)).
+      { eapply ptt.CtxExtend ; assumption. }
+      assert (ptt.isctx (ctxextend G A)).
+      { eapply ptt.CtxExtend ; try assumption.
+        eapply ptt.TyCtxConv ; eassumption.
+      }
+      repeat split.
+      - assumption.
+      - eapply ptt.TyCtxConv ; eassumption.
+      - eapply ptt.TyCtxConv ; eassumption.
+      - eapply ptt.TermCtxConv ; eassumption.
+      - eapply ptt.EqTyCtxConv ; try eassumption.
+        eapply ptt.TyProd ; assumption.
+    }
+
+  - { repeat split ; try assumption.
+      apply ptt.EqTyRefl ; try assumption.
+      apply ptt.TyProd ; assumption.
+    }
+
+Defined.
+
+
 Inductive subst_free_term : term -> Type :=
   | subst_free_var :
       forall n,
@@ -126,12 +175,13 @@ Proof.
           - now constructor.
           - intros G T h.
             destruct (ptt_sanity.sane_isterm G (lam t t0 u) T h).
+            destruct (@TermAbsInversion _ _ _ _ _ h) as [[[[? ?] ?] ?] ?].
             eapply ett.EqTyConv.
             + eapply ett.CongAbs.
-              * apply fA. todo. (* We need another inversion lemma. *)
-              * apply fB. todo.
-              * apply fv. todo.
-            + todo. (* Also part of the inversion lemma. *)
+              * now apply fA.
+              * now apply fB.
+              * now apply fv.
+            + hyp.
         }
 
       (* app *)
