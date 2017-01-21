@@ -344,6 +344,106 @@ with subst_free_type : type -> Type :=
 Hypothesis temporary : forall {A}, A.
 Ltac todo := exact temporary.
 
+(* In order to apply substitution to a term, we use substitutions
+   without annotations. *)
+Inductive meta_subst :=
+| msbzero  : term -> meta_subst
+| msbweak  : meta_subst
+| msbshift : meta_subst -> meta_subst
+| msbid    : meta_subst
+| msbcomp  : meta_subst -> meta_subst -> meta_subst.
+
+Fixpoint erase_subst (sbs : substitution) : meta_subst :=
+  match sbs with
+  | sbzero G A u    => msbzero u
+  | sbweak G A      => msbweak
+  | sbshift G A sbs => msbshift (erase_subst sbs)
+  | sbid G          => msbid
+  | sbcomp sbs sbt  => msbcomp (erase_subst sbs) (erase_subst sbt)
+  end.
+
+(* Apply a meta_subst to a variable. *)
+Fixpoint apply_meta_subst_var (n : nat) (sbs : meta_subst) {struct sbs} : term :=
+  match sbs with
+  | msbzero u =>
+    match n with
+    | 0 => u
+    | S k => var k
+    end
+  | msbweak => var (S n)
+  | msbshift sbs =>
+    match n with
+    | 0 => temporary (* This case can't happen so we probably
+                       need more hypotheses or be sure to deal with outside. *)
+    | S k => var k
+    end
+  | msbid => var n
+  | msbcomp sbt sbs => temporary (* We have to be also dependent on
+                                   apply_meta_subst_var here... *)
+  end.
+
+(* Temporarily we don't prove anything about typing. *)
+Fixpoint apply_meta_subst (u : term) (sbs : meta_subst) {struct u} : term :=
+  match u with
+  | var n => apply_meta_subst_var n sbs
+  | lam A B u =>
+    let A' := apply_meta_Subst A sbs in
+    let B' := apply_meta_Subst B (msbshift sbs) in
+    let u' := apply_meta_subst u (msbshift sbs) in
+    lam A' B' u'
+  | app u A B v =>
+    let u' := apply_meta_subst u sbs in
+    let A' := apply_meta_Subst A sbs in
+    let B' := apply_meta_Subst B (msbshift sbs) in
+    let v' := apply_meta_subst v sbs in
+    app u' A' B' v'
+  | refl A u =>
+    let A' := apply_meta_Subst A sbs in
+    let u' := apply_meta_subst u sbs in
+    refl A' u'
+  | j A u C w v p =>
+    let A' := apply_meta_Subst A sbs in
+    let u' := apply_meta_subst u sbs in
+    let C' := apply_meta_Subst C (msbshift (msbshift sbs)) in
+    let w' := apply_meta_subst w sbs in
+    let v' := apply_meta_subst v sbs in
+    let p' := apply_meta_subst p sbs in
+    j A' u' C' w' v' p'
+  | subst u sbt =>
+    apply_meta_subst u (msbcomp (erase_subst sbt) sbs)
+  | exfalso A u =>
+    let A' := apply_meta_Subst A sbs in
+    let u' := apply_meta_subst u sbs in
+    exfalso A' u'
+  | unit => unit
+  | true => true
+  | false => false
+  | cond C u v w =>
+    let C' := apply_meta_Subst C (msbshift sbs) in
+    let u' := apply_meta_subst u sbs in
+    let v' := apply_meta_subst v sbs in
+    let w' := apply_meta_subst w sbs in
+    cond C' u' v' w'
+  end
+
+with apply_meta_Subst (A : type) (sbs : meta_subst) {struct A} : type :=
+  match A with
+  | Prod A B =>
+    let A' := apply_meta_Subst A sbs in
+    let B' := apply_meta_Subst B (msbshift sbs) in
+    Prod A' B'
+  | Id A u v =>
+    let A' := apply_meta_Subst A sbs in
+    let u' := apply_meta_subst u sbs in
+    let v' := apply_meta_subst v sbs in
+    Id A' u' v'
+  | Subst A sbt =>
+    apply_meta_Subst A (msbcomp (erase_subst sbt) sbs)
+  | Empty => Empty
+  | Unit => Unit
+  | Bool => Bool
+  end.
+
 (* Fixpoint apply_subst u sbs {struct u} : *)
 (*   { v : term & *)
 (*     subst_free_term v * *)
