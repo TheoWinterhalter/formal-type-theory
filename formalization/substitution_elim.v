@@ -1,9 +1,8 @@
 Require Import syntax.
-Require ett ptt.
-Require Import ptt_inversion.
+Require Import ett.
+Require ptt.
 Require ptt_sanity.
 Require Import tactics.
-Require Import inversion.
 
 
 Inductive subst_free_term : term -> Type :=
@@ -97,393 +96,179 @@ with subst_free_type : type -> Type :=
 Hypothesis temporary : forall {A}, A.
 Ltac todo := exact temporary.
 
-(* In order to apply substitution to a term, we use substitutions
-   without annotations. *)
-Inductive meta_subst :=
-| msbzero  : term -> meta_subst
-| msbweak  : meta_subst
-| msbshift : meta_subst -> meta_subst
-| msbid    : meta_subst
-| msbcomp  : meta_subst -> meta_subst -> meta_subst.
+(* When dealing with substitutions we need to shift them when they go through
+   types and terms, and this requires information about contexts.
+ *)
+Fixpoint elim_term {G A u} (H : ptt.isterm G u A) {struct H} :
+  { v : term & subst_free_term v * eqterm G u v A }%type
 
-Fixpoint erase_subst (sbs : substitution) : meta_subst :=
-  match sbs with
-  | sbzero G A u    => msbzero u
-  | sbweak G A      => msbweak
-  | sbshift G A sbs => msbshift (erase_subst sbs)
-  | sbid G          => msbid
-  | sbcomp sbs sbt  => msbcomp (erase_subst sbs) (erase_subst sbt)
-  end.
-
-(* Apply a meta_subst to a variable. *)
-Fixpoint apply_meta_subst_var (n : nat) (sbs : meta_subst) {struct sbs} : term :=
-  match sbs with
-  | msbzero u =>
-    match n with
-    | 0 => u
-    | S k => var k
-    end
-  | msbweak => var (S n)
-  | msbshift sbs =>
-    match n with
-    | 0 => temporary (* This case can't happen so we probably
-                       need more hypotheses or be sure to deal with outside. *)
-    | S k => var k
-    end
-  | msbid => var n
-  | msbcomp sbt sbs =>
-    apply_meta_subst (apply_meta_subst_var n sbt) sbs
-  end
-
-(* Temporarily we don't prove anything about typing. *)
-with apply_meta_subst (u : term) (sbs : meta_subst) {struct u} : term :=
-  match u with
-  | var n => apply_meta_subst_var n sbs
-  | lam A B u =>
-    let A' := apply_meta_Subst A sbs in
-    let B' := apply_meta_Subst B (msbshift sbs) in
-    let u' := apply_meta_subst u (msbshift sbs) in
-    lam A' B' u'
-  | app u A B v =>
-    let u' := apply_meta_subst u sbs in
-    let A' := apply_meta_Subst A sbs in
-    let B' := apply_meta_Subst B (msbshift sbs) in
-    let v' := apply_meta_subst v sbs in
-    app u' A' B' v'
-  | refl A u =>
-    let A' := apply_meta_Subst A sbs in
-    let u' := apply_meta_subst u sbs in
-    refl A' u'
-  | j A u C w v p =>
-    let A' := apply_meta_Subst A sbs in
-    let u' := apply_meta_subst u sbs in
-    let C' := apply_meta_Subst C (msbshift (msbshift sbs)) in
-    let w' := apply_meta_subst w sbs in
-    let v' := apply_meta_subst v sbs in
-    let p' := apply_meta_subst p sbs in
-    j A' u' C' w' v' p'
-  | subst u sbt =>
-    apply_meta_subst u (msbcomp (erase_subst sbt) sbs)
-  | exfalso A u =>
-    let A' := apply_meta_Subst A sbs in
-    let u' := apply_meta_subst u sbs in
-    exfalso A' u'
-  | unit => unit
-  | true => true
-  | false => false
-  | cond C u v w =>
-    let C' := apply_meta_Subst C (msbshift sbs) in
-    let u' := apply_meta_subst u sbs in
-    let v' := apply_meta_subst v sbs in
-    let w' := apply_meta_subst w sbs in
-    cond C' u' v' w'
-  end
-
-with apply_meta_Subst (A : type) (sbs : meta_subst) {struct A} : type :=
-  match A with
-  | Prod A B =>
-    let A' := apply_meta_Subst A sbs in
-    let B' := apply_meta_Subst B (msbshift sbs) in
-    Prod A' B'
-  | Id A u v =>
-    let A' := apply_meta_Subst A sbs in
-    let u' := apply_meta_subst u sbs in
-    let v' := apply_meta_subst v sbs in
-    Id A' u' v'
-  | Subst A sbt =>
-    apply_meta_Subst A (msbcomp (erase_subst sbt) sbs)
-  | Empty => Empty
-  | Unit => Unit
-  | Bool => Bool
-  end.
-
-(* Fixpoint apply_subst u sbs {struct u} : *)
-(*   { v : term & *)
-(*     subst_free_term v * *)
-(*     (forall G A, ptt.isterm G (subst u sbs) A -> ett.eqterm G (subst u sbs) v A) *)
-(*   }%type *)
-
-(* with apply_Subst A sbs {struct A} : *)
-(*   { B : type & *)
-(*     subst_free_type B * *)
-(*     (forall G, ptt.istype G (Subst A sbs) -> ett.eqtype G (Subst A sbs) B) *)
-(*   }%type. *)
-(* Proof. *)
-(*   (* apply_subst *) *)
-(*   - { simple refine ( *)
-(*         match u with *)
-(*         | var n => existT _ temporary _ *)
-
-(*         | lam A B u => *)
-(*           let [A' hA] := apply_Subst A sbs in *)
-(*           let [B' hB] := apply_Susbt B (sbshift _ A sbs) in *)
-(*           let [u' hu] := apply_subst u (sbshift _ A sbs) in *)
-(*           existT _ (lam A' B' u') _ *)
-
-(*         | app u A B v => *)
-(*           let [u' hu] := apply_subst u sbs in *)
-(*           let [A' hA] := apply_subst A sbs in *)
-(*           let [B' hB] := apply_Subst B (sbshift _ A sbs) in *)
-(*           let [v' hv] := apply_subst v sbs in *)
-(*           existT _ (app u' A' B' v') _ *)
-(*                  _ *)
-(*         | refl A u => *)
-(*           existT _ *)
-(*                  (refl (Subst A sbs) (subst u sbs)) *)
-(*                  _ *)
-(*         | j A u C w v p => *)
-(*           existT _ *)
-(*                  (j (Subst A sbs) *)
-(*                     (subst u sbs) *)
-(*                     (Subst C *)
-(*                            (sbshift *)
-(*                               (ctxextend _ *)
-(*                                          (Subst A sbs)) *)
-(*                               (Id *)
-(*                                  (Subst A (sbweak _ A)) *)
-(*                                  (subst u (sbweak _ A)) *)
-(*                                  (var 0) *)
-(*                               ) *)
-(*                               (sbshift _ A sbs) *)
-(*                            ) *)
-(*                     ) *)
-(*                     (subst w sbs) *)
-(*                     (subst v sbs) *)
-(*                     (subst p sbs) *)
-(*                  ) *)
-(*                  _ *)
-(*         | subst u sbt => existT _ (subst u (sbcomp sbt sbs)) _ *)
-(*         | exfalso A u => *)
-(*           existT _ *)
-(*                  (exfalso (Subst A sbs) (subst u sbs)) *)
-(*                  _ *)
-(*         | unit => existT _ unit _ *)
-(*         | true => existT _ true _ *)
-(*         | false => existT _ false _ *)
-(*         | cond C u v w => *)
-(*           existT _ *)
-(*                  (cond (Subst C (sbshift _ Bool sbs)) *)
-(*                        (subst u sbs) *)
-(*                        (subst v sbs) *)
-(*                        (subst w sbs)) *)
-(*                  _ *)
-(*         end *)
-(*       ). *)
-
-(*       (* var *) *)
-(*       - todo. *)
-
-(*       (* We can't guess the contexts... *) *)
-(*       - todo. *)
-(*       - todo. *)
-
-(*       (* lam *) *)
-(*       - { split. *)
-(*           - todo. *)
-(*           - todo. *)
-(*         } *)
-
-(*       - todo. *)
-(*       - todo. *)
-(*       - todo. *)
-(*       - todo. *)
-(*       - todo. *)
-(*       - todo. *)
-(*       - todo. *)
-(*       - todo. *)
-(*       - todo. *)
-(*       - todo. *)
-(*       - todo. *)
-(*       - todo. *)
-(*       - todo. *)
-(*       - todo. *)
-(*       - todo. *)
-(*     } *)
-
-(*   - { todo. } *)
-
-(* Admitted. *)
-
-(* A tactic to handle most elim cases. *)
-
-(* Ltac auto_elim elim_term elim_type terms types (* inv *) := *)
-(*   (* First we elim subst in every argument. *) *)
-(*   let rec elim_terms terms := *)
-(*       match terms with *)
-(*       | nil => idtac *)
-(*       | cons ?u ?l => destruct (elim_term u) as [? [? ?]] ; *)
-(*                      elim_terms l *)
-(*       | _ => fail *)
-(*       end *)
-(*   in elim_terms terms ; *)
-(*   let rec elim_types types := *)
-(*       match types with *)
-(*       | nil => idtac *)
-(*       | cons ?A ?l => destruct (elim_type A) as [? [? ?]] ; *)
-(*                      elim_types l *)
-(*       end *)
-(*   in elim_types types. *)
-
-Fixpoint elim_term u :
-  { v : term &
-    subst_free_term v *
-    (forall G A, ptt.isterm G u A -> ett.eqterm G u v A)
-  }%type
-
-with elim_type A :
-  { B : type &
-    subst_free_type B *
-    (forall G, ptt.istype G A -> ett.eqtype G A B)
-  }%type.
-
+with elim_type {G A} (H : ptt.istype G A) {struct H} :
+  { B : type & subst_free_type B * eqtype G A B }%type.
 Proof.
   (* elim_term *)
-  - { destruct u.
+  - { destruct H.
 
-      (* var *)
-      - exists (var n). split.
-        + constructor.
-        + intros G A H.
-          apply ett.EqRefl.
-          hyp.
-
-      (* lam *)
-      - { (* auto_elim elim_term elim_type cons(u,nil) cons(t,cons(t0,nil)). *)
-          destruct (elim_type t) as [A [sA fA]].
-          destruct (elim_type t0) as [B [sB fB]].
-          destruct (elim_term u) as [v [sv fv]].
-          exists (lam A B v). split.
-          - now constructor.
-          - intros G T h.
-            destruct (ptt_sanity.sane_isterm G (lam t t0 u) T h).
-            destruct (TermAbsInversion h) as [[[[? ?] ?] ?] ?].
-            eapply ett.EqTyConv.
-            + eapply ett.CongAbs.
-              * now apply fA.
-              * now apply fB.
-              * now apply fv.
-            + hyp.
+      (* TermTyConv *)
+      - { destruct (elim_term _ _ _ H) as [v [sv ev]].
+          exists v.  split.
+          - assumption.
+          - eapply EqTyConv ; ehyp.
         }
 
-      (* app *)
-      - { destruct (elim_term u1) as [v1 [sv1 fv1]].
-          destruct (elim_type t) as [A [sA fA]].
-          destruct (elim_type t0) as [B [sB fB]].
-          destruct (elim_term u2) as [v2 [sv2 fv2]].
-          exists (app v1 A B v2). split.
-          - now constructor.
-          - intros G T h.
-            destruct (TermAppInversion h) as [[[[[? ?] ?] ?] ?] ?].
-            eapply ett.EqTyConv.
-            + eapply ett.CongApp.
-              * now apply fA.
-              * now apply fB.
-              * now apply fv1.
-              * now apply fv2.
-            + hyp.
+      (* TermCtxConv *)
+      - { destruct (elim_term _ _ _ H) as [v [sv ev]].
+          exists v.  split.
+          - assumption.
+          - eapply EqCtxConv ; ehyp.
         }
 
-      (* refl *)
-      - { destruct (elim_type t) as [A [sA fA]].
-          destruct (elim_term u) as [v [sv fv]].
-          exists (refl A v). split.
-          - now constructor.
-          - intros G T h.
-            destruct (TermReflInversion h) as [[[? ?] ?] ?].
-            eapply ett.EqTyConv.
-            + eapply ett.CongRefl.
-              * now apply fv.
-              * now apply fA.
-            + hyp.
+      (* TermSubst *)
+      - { (* Here we need to 'apply' the substitution. *)
+          todo.
         }
 
-      (* j *)
-      - { destruct (elim_type t) as [? [? ?]].
-          destruct (elim_term u1) as [? [? ?]].
-          destruct (elim_type t0) as [? [? ?]].
-          destruct (elim_term u2) as [? [? ?]].
-          destruct (elim_term u3) as [? [? ?]].
-          destruct (elim_term u4) as [? [? ?]].
-          exists (j x x0 x1 x2 x3 x4). split.
+      (* TermVarZero *)
+      - { exists (var 0). split.
           - now constructor.
-          - intros G T h.
-            destruct (TermJInversion h) as [[[[[[[? ?] ?] ?] ?] ?] ?] ?].
-            eapply ett.EqTyConv.
-            + eapply ett.CongJ.
-              * now apply e.
-              * now apply e0.
-              * now apply e1.
-              * now apply e2.
-              * now apply e3.
-              * now apply e4.
-            + hyp.
+          - apply EqRefl. apply TermVarZero. hyp.
         }
 
-      (* subst *)
-      - (* What would we do here? Go though another destruction of u?
-         When does it end? *)
-        todo.
-
-      (* exfalso *)
-      - { destruct (elim_type t) as [? [? ?]].
-          destruct (elim_term u) as [? [? ?]].
-          exists (exfalso x x0). split.
+      (* TermVarSucc *)
+      - { exists (var (S k)). split.
           - now constructor.
-          - intros G T h.
-            destruct (TermExfalsoInversion h) as [[[? ?] ?] ?].
-            pose proof (e _ i0).
-            pose proof (e0 _ _ i1).
-
-            eapply ett.EqTyConv.
-            + eapply ett.EqTermExfalso.
-              * eapply ett.TermExfalso ; hyp.
-              * { eapply ett.TermTyConv.
-                  - eapply ett.TermExfalso ; ett_sane.
-                  - now apply ett.EqTySym.
-                }
-              * ehyp.
-            + hyp.
+          - apply EqRefl. apply TermVarSucc ; hyp.
         }
 
-      (* unit *)
+      (* TermAbs *)
+      - { destruct (elim_type _ _ i0) as [A' [sA eA]].
+          destruct (elim_type _ _ i1) as [B' [sB eB]].
+          destruct (elim_term _ _ _ H) as [u' [su eu]].
+          exists (lam A' B' u'). split.
+          - now constructor.
+          - eapply CongAbs ; hyp.
+        }
+
+      (* TermApp *)
+      - { destruct (elim_term _ _ _ H) as [u' [su eu]].
+          destruct (elim_type _ _ i0) as [A' [sA eA]].
+          destruct (elim_type _ _ i1) as [B' [sB eB]].
+          destruct (elim_term _ _ _ H0) as [v' [sv ev]].
+          exists (app u' A' B' v'). split.
+          - now constructor.
+          - eapply CongApp ; hyp.
+        }
+
+      (* TermRefl *)
+      - { destruct (elim_type _ _ i0) as [A' [sA eA]].
+          destruct (elim_term _ _ _ H) as [u' [su eu]].
+          exists (refl A' u'). split.
+          - now constructor.
+          - eapply CongRefl ; hyp.
+        }
+
+      (* TermJ *)
+      - { destruct (elim_type _ _ i0) as [A' [sA eA]].
+          destruct (elim_term _ _ _ H) as [u' [su eu]].
+          destruct (elim_type _ _ i1) as [C' [sC eC]].
+          destruct (elim_term _ _ _ H0) as [w' [sw ew]].
+          destruct (elim_term _ _ _ H1) as [v' [sv ev]].
+          destruct (elim_term _ _ _ H2) as [p' [sp ep]].
+          exists (j A' u' C' w' v' p'). split.
+          - now constructor.
+          - eapply CongJ ; hyp.
+        }
+
+      (* TermExfalso *)
+      - { destruct (elim_type _ _ i0) as [A' [sA eA]].
+          destruct (elim_term _ _ _ H) as [u' [su eu]].
+          exists (exfalso A' u'). split.
+          - now constructor.
+          - eapply EqTermExfalso.
+            + eapply TermExfalso ; hyp.
+            + eapply TermTyConv.
+              * eapply TermExfalso ; ett_sane.
+              * now apply EqTySym.
+            + ehyp.
+        }
+
+      (* TermUnit *)
       - { exists unit. split.
           - now constructor.
-          - intros G A h. constructor. hyp.
+          - apply EqRefl. apply TermUnit. hyp.
         }
 
-      (* true *)
+      (* TermTrue *)
       - { exists true. split.
           - now constructor.
-          - intros G A h. constructor. hyp.
+          - apply EqRefl. apply TermTrue. hyp.
         }
 
-      (* false *)
+      (* TermTrue *)
       - { exists false. split.
           - now constructor.
-          - intros G A h. constructor. hyp.
+          - apply EqRefl. apply TermFalse. hyp.
         }
 
-      (* cond *)
-      - { destruct (elim_type t) as [A [sA fA]].
-          destruct (elim_term u1) as [v1 [sv1 fv1]].
-          destruct (elim_term u2) as [v2 [sv2 fv2]].
-          destruct (elim_term u3) as [v3 [sv3 fv3]].
-          exists (cond A v1 v2 v3). split.
+      (* TermCond *)
+      - { destruct (elim_type _ _ i0) as [C' [sC eC]].
+          destruct (elim_term _ _ _ H) as [u' [su eu]].
+          destruct (elim_term _ _ _ H0) as [v' [sv ev]].
+          destruct (elim_term _ _ _ H1) as [w' [sw ew]].
+          exists (cond C' u' v' w'). split.
           - now constructor.
-          - intros G T h.
-            destruct (TermCondInversion h) as [[[[[? ?] ?] ?] ?] ?].
-            pose proof (fA _ i1).
-            pose proof (fv1 _ _ i0).
-            pose proof (fv2 _ _ i2).
-            pose proof (fv3 _ _ i3).
-
-            eapply ett.EqTyConv.
-            + eapply ett.CongCond ; assumption.
-            + hyp.
+          - apply CongCond ; hyp.
         }
+
     }
 
   (* elim_type *)
-  - { todo. }
+  - { destruct H.
+
+      (* TyCtxConv *)
+      - { destruct (elim_type _ _ H) as [A' [sA eA]].
+          exists A'. split.
+          - assumption.
+          - eapply EqTyCtxConv ; ehyp.
+        }
+
+      (* TySubst *)
+      - { todo. (* Same here we need to apply. *) }
+
+      (* TyProd *)
+      - { destruct (elim_type _ _ H0) as [A' [sA eA]].
+          destruct (elim_type _ _ H) as [B' [sB eB]].
+          exists (Prod A' B'). split.
+          - now constructor.
+          - eapply CongProd ; hyp.
+        }
+
+      (* TyId *)
+      - { destruct (elim_type _ _ H) as [A' [sA eA]].
+          destruct (elim_term _ _ _ i0) as [u' [su eu]].
+          destruct (elim_term _ _ _ i1) as [v' [sv ev]].
+          exists (Id A' u' v'). split.
+          - now constructor.
+          - eapply CongId ; hyp.
+        }
+
+      (* TyEmpty *)
+      - { exists Empty. split.
+          - now constructor.
+          - apply EqTyRefl. apply TyEmpty. hyp.
+        }
+
+      (* TyUnit *)
+      - { exists Unit. split.
+          - now constructor.
+          - apply EqTyRefl. apply TyUnit. hyp.
+        }
+
+      (* TyBool *)
+      - { exists Bool. split.
+          - now constructor.
+          - apply EqTyRefl. apply TyBool. hyp.
+        }
+
+    }
 
 Defined.
