@@ -24,7 +24,26 @@ Ltac pttassumption :=
     exact (ptt2ett.sane_eqterm G u v A H)
   end.
 
-Ltac hyp := first [ assumption | pttassumption ].
+(* The converse. *)
+Ltac ettassumption :=
+  match goal with
+  | [ H : ett.isctx ?G |- ptt.isctx ?G ] =>
+    exact (ett2ptt.sane_isctx G H)
+  | [ H : ett.issubst ?sbs ?G ?D |- ptt.issubst ?sbs ?G ?D ] =>
+    exact (ett2ptt.sane_issubst sbs G D H)
+  | [ H : ett.istype ?G ?A |- ptt.istype ?G ?A ] =>
+    exact (ett2ptt.sane_istype G A H)
+  | [ H : ett.isterm ?G ?u ?A |- ptt.isterm ?G ?u ?A ] =>
+    exact (ett2ptt.sane_isterm G u A H)
+  | [ H : ett.eqctx ?G ?D |- ptt.eqctx ?G ?D ] =>
+    exact (ett2ptt.sane_eqctx G D H)
+  | [ H : ett.eqtype ?G ?A ?B |- ptt.eqtype ?G ?A ?B ] =>
+    exact (ett2ptt.sane_eqtype G A B H)
+  | [ H : ett.eqterm ?G ?u ?v ?A |- ptt.eqterm ?G ?u ?v ?A ] =>
+    exact (ett2ptt.sane_eqterm G u v A H)
+  end.
+
+Ltac hyp := first [ assumption | pttassumption | ettassumption ].
 
 Ltac epttassumption :=
   match goal with
@@ -44,7 +63,25 @@ Ltac epttassumption :=
     exact (ptt2ett.sane_eqterm G u v A H)
   end.
 
-Ltac ehyp := first [ eassumption | epttassumption ].
+Ltac eettassumption :=
+  match goal with
+  | [ H : ett.isctx ?G |- ptt.isctx _ ] =>
+    exact (ett2ptt.sane_isctx G H)
+  | [ H : ett.issubst ?sbs ?G ?D |- ptt.issubst _ _ _ ] =>
+    exact (ett2ptt.sane_issubst sbs G D H)
+  | [ H : ett.istype ?G ?A |- ptt.istype _ _ ] =>
+    exact (ett2ptt.sane_istype G A H)
+  | [ H : ett.isterm ?G ?u ?A |- ptt.isterm _ _ _ ] =>
+    exact (ett2ptt.sane_isterm G u A H)
+  | [ H : ett.eqctx ?G ?D |- ptt.eqctx _ _ ] =>
+    exact (ett2ptt.sane_eqctx G D H)
+  | [ H : ett.eqtype ?G ?A ?B |- ptt.eqtype _ _ _ ] =>
+    exact (ett2ptt.sane_eqtype G A B H)
+  | [ H : ett.eqterm ?G ?u ?v ?A |- ptt.eqterm _ _ _ _ ] =>
+    exact (ett2ptt.sane_eqterm G u v A H)
+  end.
+
+Ltac ehyp := first [ eassumption | epttassumption | eettassumption ].
 
 (* A tactic to apply sanity in ptt. *)
 Ltac ptt_sane :=

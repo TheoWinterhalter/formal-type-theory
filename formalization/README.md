@@ -21,8 +21,9 @@ The purpose here is to state and prove theorems about the sanity of different ty
 * `ptt2ett.v`: Translation from PTT to ETT,
 * `ett_sanity.v`: Sanity theorems for ETT as corollary of the translations and sanity of PTT.
 
-### Useful Tactics
-* `tactics.v`: Some useful tactics to handle sanity and translation PTT ↔ ETT.
+### Useful Results
+* `tactics.v`: Some useful tactics to handle sanity and translation PTT ↔ ETT,
+* `inversion.v`: Inversion lemmata.
 
 ### Uniqueness of Typing
 * `uniqueness.v`: Proof of uniqueness of typing for ETT/PTT.

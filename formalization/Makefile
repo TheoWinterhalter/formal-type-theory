@@ -113,6 +113,7 @@ VFILES:=syntax.v\
   ett2ptt.v\
   ett_sanity.v\
   tactics.v\
+  inversion.v\
   uniqueness.v\
   substitution_elim.v\
   ctt.v\
