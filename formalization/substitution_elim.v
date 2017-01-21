@@ -96,6 +96,82 @@ with subst_free_type : type -> Type :=
 Hypothesis temporary : forall {A}, A.
 Ltac todo := exact temporary.
 
+Fixpoint apply_subst_var {G D A n sbs}
+  (H1 : ptt.isterm D (var n) A) (H2 : ptt.issubst sbs G D) {struct H2} :
+  { v : term &
+    subst_free_term v * eqterm G (subst (var n) sbs) v (Subst A sbs)
+  }%type.
+Proof.
+  destruct H2.
+
+  (* SubstZero *)
+  - { destruct n.
+      (* n = 0 *)
+      - (* 1st problem: We need to strip u of its substitutions. *)
+        todo.
+      (* n = S k *)
+      - exists (var n). split.
+        + now constructor.
+        + eapply EqSubstZeroSucc.
+          * (* Do we need inversion to conclude here? *)
+            todo.
+          * hyp.
+    }
+
+  (* SubstWeak *)
+  - { exists (var (S n)). split.
+      - now constructor.
+      - eapply EqSubstWeak ; hyp.
+    }
+
+  (* SubstShift *)
+  - { destruct n.
+      (* n = 0 *)
+      - exists (var 0). split.
+        + now constructor.
+        + eapply EqTyConv ; [ eapply EqSubstShiftZero ; ehyp | .. ].
+          eapply EqTySym.
+          eapply EqTyTrans
+          ; [ .. | pex ; eapply ptt_admissible.EqTyWeakNat ]
+          ; try ehyp.
+          (* We want an inversion lemma to know that A = A0[w]. *)
+          todo.
+      (* n = S k *)
+      - (* We also need the same thing. *)
+        (* Furthermore we will need to compute (var n)[sbs] and then
+           compute the result[w]. This will prove problematic as
+           well. *)
+        todo.
+    }
+
+  (* SubstId *)
+  - { exists (var n). split.
+      - now constructor.
+      - eapply EqIdSubst.
+        eapply TermTyConv.
+        + ehyp.
+        + apply EqTySym. apply EqTyIdSubst. pex. ptt_sane.
+    }
+
+  (* SubstComp *)
+  - { (* We also need to compute (var n)[sbt] → v and then v[sbs] which
+         we can't do without depending on the other functions. *)
+      todo.
+    }
+
+  (* SubstCtxConv *)
+  - { assert (ptt.isterm D1 (var n) A).
+      { pex. eapply TermCtxConv ; try ehyp.
+        apply CtxSym. hyp.
+      }
+      destruct (apply_subst_var _ _ _ _ _ H H2) as [v [sv ev]].
+      exists v. split.
+      - assumption.
+      - eapply EqCtxConv ; ehyp.
+    }
+
+Defined.
+
 Fixpoint apply_subst {G D A u sbs}
   (H1 : ptt.isterm D u A) (H2 : ptt.issubst sbs G D) {struct H1} :
   { v : term & subst_free_term v * eqterm G (subst u sbs) v (Subst A sbs) }%type
@@ -141,10 +217,16 @@ Proof.
         }
 
       (* TermVarZero *)
-      - todo. (* We need to handle variables separately. *)
+      - { eapply apply_subst_var.
+          - eapply ptt.TermVarZero ; hyp.
+          - hyp.
+        }
 
       (* TermVarSucc *)
-      - todo. (* Same here. *)
+      - { eapply apply_subst_var.
+          - eapply ptt.TermVarSucc ; hyp.
+          - hyp.
+        }
 
       (* TermAbs *)
       - { destruct (apply_Subst _ _ _ _ i0 H2) as [A' [sA eA]].
