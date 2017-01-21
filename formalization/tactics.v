@@ -166,3 +166,26 @@ Ltac ett_sane :=
   | H : ett.eqterm ?G ?u ?v ?A |- ett.isterm ?G ?v ?A =>
     now apply (ett_sanity.sane_eqterm G u v A)
   end.
+
+(* A tactic to change between ett and ptt *)
+Ltac pex :=
+  match goal with
+  (* Prove in ETT instead of PTT *)
+  | |- ptt.isctx _         => apply ett2ptt.sane_isctx
+  | |- ptt.issubst _ _ _   => apply ett2ptt.sane_issubst
+  | |- ptt.istype _ _      => apply ett2ptt.sane_istype
+  | |- ptt.isterm _ _ _    => apply ett2ptt.sane_isterm
+  | |- ptt.eqctx _ _       => apply ett2ptt.sane_eqctx
+  | |- ptt.eqsubst _ _ _ _ => apply ett2ptt.sane_eqsubst
+  | |- ptt.eqtype _ _ _    => apply ett2ptt.sane_eqtype
+  | |- ptt.eqterm _ _ _ _  => apply ett2ptt.sane_eqterm
+  (* Prove in PTT instead of ETT *)
+  | |- ett.isctx _         => apply ptt2ett.sane_isctx
+  | |- ett.issubst _ _ _   => apply ptt2ett.sane_issubst
+  | |- ett.istype _ _      => apply ptt2ett.sane_istype
+  | |- ett.isterm _ _ _    => apply ptt2ett.sane_isterm
+  | |- ett.eqctx _ _       => apply ptt2ett.sane_eqctx
+  | |- ett.eqsubst _ _ _ _ => apply ptt2ett.sane_eqsubst
+  | |- ett.eqtype _ _ _    => apply ptt2ett.sane_eqtype
+  | |- ett.eqterm _ _ _ _  => apply ptt2ett.sane_eqterm
+  end.

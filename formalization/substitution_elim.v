@@ -96,6 +96,106 @@ with subst_free_type : type -> Type :=
 Hypothesis temporary : forall {A}, A.
 Ltac todo := exact temporary.
 
+Fixpoint apply_subst {G D A u sbs}
+  (H1 : ptt.isterm D u A) (H2 : ptt.issubst sbs G D) {struct H1} :
+  { v : term & subst_free_term v * eqterm G (subst u sbs) v (Subst A sbs) }%type
+
+with apply_Subst {G D A sbs}
+  (H1 : ptt.istype D A) (H2 : ptt.issubst sbs G D) {struct H1} :
+  { B : type & subst_free_type B * eqtype G (Subst A sbs) B }%type.
+Proof.
+  (* apply_subst *)
+  - { destruct H1.
+
+      (* TermTyConv *)
+      - { destruct (apply_subst _ _ _ _ _ H1 H2) as [u' [su eu]].
+          exists u'. split.
+          - assumption.
+          - eapply EqTyConv ; try ehyp.
+            eapply CongTySubst.
+            + eapply SubstRefl. ehyp.
+            + hyp.
+        }
+
+      (* TermCtxConv *)
+      - { assert (ptt.issubst sbs G G0).
+          { pex. eapply SubstCtxConv.
+            - ehyp.
+            - apply CtxRefl. pex. ptt_sane.
+            - apply CtxSym. hyp.
+          }
+          destruct (apply_subst _ _ _ _ _ H1 H) as [u' [su eu]].
+          exists u'. split ; assumption.
+        }
+
+      (* TermSubst *)
+      - { assert (ptt.issubst (sbcomp sbs0 sbs) G D).
+          { pex. eapply SubstComp ; ehyp. }
+          destruct (apply_subst _ _ _ _ _ H1 H) as [u' [su eu]].
+          exists u'. split.
+          - assumption.
+          - eapply EqTyConv.
+            + eapply EqTrans ; [ .. | ehyp ].
+              eapply EqSubstComp ; ehyp.
+            + apply EqTySym. eapply EqTySubstComp ; ehyp.
+        }
+
+      (* TermVarZero *)
+      - todo. (* We need to handle variables separately. *)
+
+      (* TermVarSucc *)
+      - todo. (* Same here. *)
+
+      (* TermAbs *)
+      - { destruct (apply_Subst _ _ _ _ i0 H2) as [A' [sA eA]].
+          assert (
+            ptt.issubst (sbshift G A sbs)
+                        (ctxextend G (Subst A sbs))
+                        (ctxextend G0 A)
+          ).
+          { pex. apply SubstShift ; hyp. }
+          destruct (apply_Subst _ _ _ _ i1 H) as [B' [sB eB]].
+          destruct (apply_subst _ _ _ _ _ H1 H) as [u' [su eu]].
+          exists (lam A' B' u'). split.
+          - now constructor.
+          - eapply EqTyConv.
+            + eapply EqTrans ; [ eapply EqSubstAbs ; ehyp | .. ].
+              eapply CongAbs ; hyp.
+            + apply EqTySym. eapply EqTySubstProd ; ehyp.
+        }
+
+      (* TermApp *)
+      - todo.
+
+      (* TermRefl *)
+      - todo.
+
+      (* TermJ *)
+      - todo.
+
+      (* TermExfalso *)
+      - todo.
+
+      (* TermUnit *)
+      - todo.
+
+      (* TermTrue *)
+      - todo.
+
+      (* TermTrue *)
+      - todo.
+
+      (* TermCond *)
+      - todo.
+
+    }
+
+  (* apply_Subst *)
+  - todo.
+
+Defined.
+
+
 (* When dealing with substitutions we need to shift them when they go through
    types and terms, and this requires information about contexts.
  *)
@@ -123,8 +223,8 @@ Proof.
         }
 
       (* TermSubst *)
-      - { (* Here we need to 'apply' the substitution. *)
-          todo.
+      - { destruct (apply_subst H i) as [v [sv ev]].
+          exists v. split ; assumption.
         }
 
       (* TermVarZero *)
@@ -232,7 +332,9 @@ Proof.
         }
 
       (* TySubst *)
-      - { todo. (* Same here we need to apply. *) }
+      - { destruct (apply_Subst H i) as [B [sB eB]].
+          exists B. split ; assumption.
+        }
 
       (* TyProd *)
       - { destruct (elim_type _ _ H0) as [A' [sA eA]].
