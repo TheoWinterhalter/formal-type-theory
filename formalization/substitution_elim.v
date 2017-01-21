@@ -378,12 +378,12 @@ Fixpoint apply_meta_subst_var (n : nat) (sbs : meta_subst) {struct sbs} : term :
     | S k => var k
     end
   | msbid => var n
-  | msbcomp sbt sbs => temporary (* We have to be also dependent on
-                                   apply_meta_subst_var here... *)
-  end.
+  | msbcomp sbt sbs =>
+    apply_meta_subst (apply_meta_subst_var n sbt) sbs
+  end
 
 (* Temporarily we don't prove anything about typing. *)
-Fixpoint apply_meta_subst (u : term) (sbs : meta_subst) {struct u} : term :=
+with apply_meta_subst (u : term) (sbs : meta_subst) {struct u} : term :=
   match u with
   | var n => apply_meta_subst_var n sbs
   | lam A B u =>
