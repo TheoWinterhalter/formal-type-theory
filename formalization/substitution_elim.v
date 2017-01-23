@@ -247,29 +247,183 @@ Proof.
         }
 
       (* TermApp *)
-      - todo.
+      - { assert (
+            ptt.issubst (sbshift G A sbs)
+                        (ctxextend G (Subst A sbs))
+                        (ctxextend G0 A)
+          ).
+          { pex. apply SubstShift ; hyp. }
+          destruct (apply_subst _ _ _ _ _ H1_ H2) as [u' [su eu]].
+          destruct (apply_Subst _ _ _ _ i0 H2) as [A' [sA eA]].
+          destruct (apply_Subst _ _ _ _ i1 H) as [B' [sB eB]].
+          destruct (apply_subst _ _ _ _ _ H1_0 H2) as [v' [sv ev]].
+          exists (app u' A' B' v'). split.
+          - now constructor.
+          - eapply EqTrans ; [ eapply EqSubstApp ; ehyp | .. ].
+            eapply EqTyConv.
+            + eapply CongApp ; try ehyp.
+              eapply EqTyConv ; [ ehyp | .. ].
+              eapply EqTySubstProd ; ehyp.
+            + pex. eapply ptt_admissible.EqTyShiftZero ; try hyp.
+              ptt_sane.
+        }
 
       (* TermRefl *)
-      - todo.
+      - { destruct (apply_Subst _ _ _ _ i0 H2) as [A' [? ?]].
+          destruct (apply_subst _ _ _ _ _ H1 H2) as [u' [? ?]].
+          exists (refl A' u'). split.
+          - now constructor.
+          - eapply EqTyConv.
+            + eapply EqTrans ; [ eapply EqSubstRefl ; ehyp | .. ].
+              eapply CongRefl ; hyp.
+            + apply EqTySym. eapply EqTySubstId ; ehyp.
+        }
 
       (* TermJ *)
       - todo.
 
       (* TermExfalso *)
-      - todo.
+      - { destruct (apply_Subst _ _ _ _ i0 H2) as [A' [? ?]].
+          destruct (apply_subst _ _ _ _ _ H1 H2) as [u' [? ?]].
+          exists (exfalso A' u'). split.
+          - now constructor.
+          - eapply EqTermExfalso.
+            + eapply TermSubst ; try ehyp.
+              eapply TermExfalso ; hyp.
+            + eapply TermTyConv.
+              * eapply TermExfalso ; [ ett_sane | .. ].
+                eapply @TermTyConv with (A := Subst Empty sbs)
+                ; [ ett_sane | .. ].
+                eapply EqTySubstEmpty. ehyp.
+              * apply EqTySym. hyp.
+            + eapply TermTyConv.
+              * eapply TermSubst ; ehyp.
+              * eapply EqTySubstEmpty. ehyp.
+        }
 
       (* TermUnit *)
-      - todo.
+      - { exists unit. split.
+          - now constructor.
+          - eapply EqTyConv.
+            + eapply EqSubstUnit. ehyp.
+            + apply EqTySym. eapply EqTySubstUnit. ehyp.
+        }
 
       (* TermTrue *)
-      - todo.
+      - { exists true. split.
+          - now constructor.
+          - eapply EqTyConv.
+            + eapply EqSubstTrue. ehyp.
+            + apply EqTySym. eapply EqTySubstBool. ehyp.
+        }
 
-      (* TermTrue *)
-      - todo.
+      (* TermFalse *)
+      - { exists false. split.
+          - now constructor.
+          - eapply EqTyConv.
+            + eapply EqSubstFalse. ehyp.
+            + apply EqTySym. eapply EqTySubstBool. ehyp.
+        }
 
       (* TermCond *)
-      - todo.
-
+      - { assert (
+            ptt.issubst (sbshift G Bool sbs)
+                        (ctxextend G (Subst Bool sbs))
+                        (ctxextend G0 Bool)
+          ).
+          { pex. apply SubstShift ; try hyp.
+            apply TyBool ; hyp.
+          }
+          destruct (apply_Subst _ _ _ _ i0 H) as [C' [? ?]].
+          destruct (apply_subst _ _ _ _ _ H1_ H2) as [u' [? ?]].
+          destruct (apply_subst _ _ _ _ _ H1_0 H2) as [v' [? ?]].
+          destruct (apply_subst _ _ _ _ _ H1_1 H2) as [w' [? ?]].
+          exists (cond C' u' v' w'). split.
+          - now constructor.
+          - eapply EqTrans ; [ eapply EqSubstCond ; ehyp | .. ].
+            eapply EqTyConv.
+            + eapply CongCond.
+              * eapply EqTyConv ; [ ehyp | eapply EqTySubstBool ; ehyp ].
+              * eapply EqTyCtxConv ; [ ehyp | .. ].
+                eapply EqCtxExtend ; [ apply CtxRefl ; ett_sane | .. ].
+                eapply EqTySubstBool ; ehyp.
+              * eapply EqTyConv ; [ ehyp | .. ].
+                apply EqTySym.
+                { eapply EqTyTrans ; [
+                    ..
+                  | pex ; apply ptt_admissible.EqTyShiftZero ; try ehyp
+                  ].
+                  - eapply CongTySubst.
+                    + eapply CongSubstZero.
+                      * apply CtxRefl. ett_sane.
+                      * apply EqTySym. eapply EqTySubstBool. ehyp.
+                      * apply EqSym. eapply EqSubstTrue. ehyp.
+                    + apply EqTyRefl. eapply TySubst ; try ehyp.
+                      eapply SubstCtxConv
+                      ; [ eapply SubstShift ; try ehyp | .. ].
+                      * apply TyBool. hyp.
+                      * { apply EqCtxExtend.
+                          - apply CtxRefl. ett_sane.
+                          - eapply EqTySubstBool. ehyp.
+                        }
+                      * apply CtxRefl. apply CtxExtend.
+                        apply TyBool. hyp.
+                  - pex. apply TyBool. hyp.
+                  - pex. apply TermTrue. hyp.
+                  - pex. ett_sane.
+                }
+              * eapply EqTyConv ; [ ehyp | .. ].
+                apply EqTySym.
+                { eapply EqTyTrans ; [
+                    ..
+                  | pex ; apply ptt_admissible.EqTyShiftZero ; try ehyp
+                  ].
+                  - eapply CongTySubst.
+                    + eapply CongSubstZero.
+                      * apply CtxRefl. ett_sane.
+                      * apply EqTySym. eapply EqTySubstBool. ehyp.
+                      * apply EqSym. eapply EqSubstFalse. ehyp.
+                    + apply EqTyRefl. eapply TySubst ; try ehyp.
+                      eapply SubstCtxConv
+                      ; [ eapply SubstShift ; try ehyp | .. ].
+                      * apply TyBool. hyp.
+                      * { apply EqCtxExtend.
+                          - apply CtxRefl. ett_sane.
+                          - eapply EqTySubstBool. ehyp.
+                        }
+                      * apply CtxRefl. apply CtxExtend.
+                        apply TyBool. hyp.
+                  - pex. apply TyBool. hyp.
+                  - pex. apply TermFalse. hyp.
+                  - pex. ett_sane.
+                }
+            + { eapply EqTyTrans ; [
+                    ..
+                  | pex ; apply ptt_admissible.EqTyShiftZero ; try ehyp
+                  ].
+                  - eapply CongTySubst.
+                    + eapply CongSubstZero.
+                      * apply CtxRefl. ett_sane.
+                      * apply EqTySym. eapply EqTySubstBool. ehyp.
+                      * apply EqRefl.
+                        eapply TermTyConv ; [
+                           eapply TermSubst ; ehyp
+                         | eapply EqTySubstBool ; ehyp
+                        ].
+                    + apply EqTyRefl. eapply TySubst ; try ehyp.
+                      eapply SubstCtxConv
+                      ; [ eapply SubstShift ; try ehyp | .. ].
+                      * apply TyBool. hyp.
+                      * { apply EqCtxExtend.
+                          - apply CtxRefl. ett_sane.
+                          - eapply EqTySubstBool. ehyp.
+                        }
+                      * apply CtxRefl. apply CtxExtend.
+                        apply TyBool. hyp.
+                  - pex. apply TyBool. hyp.
+                  - pex. ett_sane.
+              }
+        }
     }
 
   (* apply_Subst *)
