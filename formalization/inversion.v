@@ -54,7 +54,7 @@ Fixpoint TermAppInversion {G A B u v T}
   istype (ctxextend G A) B *
   isterm G u (Prod A B) *
   isterm G v A *
-  eqtype G (Subst B (sbzero G A v)) T.
+  eqtype G (Subst B (sbzero' G A v)) T.
 Proof.
   inversion H.
 
@@ -144,8 +144,8 @@ Fixpoint TermJInversion {G A u C w v p T}
     (ctxextend
        (ctxextend G A)
        (Id
-          (Subst A (sbweak G A))
-          (subst u (sbweak G A))
+          (Subst A (sbweak' G A))
+          (subst u (sbweak' G A))
           (var 0)
        )
     )
@@ -155,17 +155,17 @@ Fixpoint TermJInversion {G A u C w v p T}
              (Subst
                 (Subst
                    C
-                   (sbshift
+                   (sbshift'
                       G
                       (Id
-                         (Subst A (sbweak G A))
-                         (subst u (sbweak G A))
+                         (Subst A (sbweak' G A))
+                         (subst u (sbweak' G A))
                          (var 0)
                       )
-                      (sbzero G A u)
+                      (sbzero' G A u)
                    )
                 )
-                (sbzero G (Id A u u) (refl A u))
+                (sbzero' G (Id A u u) (refl A u))
              ) *
   isterm G v A *
   isterm G p (Id A u v) *
@@ -173,17 +173,17 @@ Fixpoint TermJInversion {G A u C w v p T}
              (Subst
                 (Subst
                    C
-                   (sbshift
+                   (sbshift'
                       G
                       (Id
-                         (Subst A (sbweak G A))
-                         (subst u (sbweak G A))
+                         (Subst A (sbweak' G A))
+                         (subst u (sbweak' G A))
                          (var 0)
                       )
-                      (sbzero G A v)
+                      (sbzero' G A v)
                    )
                 )
-                (sbzero G (Id A u v) p)
+                (sbzero' G (Id A u v) p)
              )
              T.
 Proof.
@@ -203,12 +203,12 @@ Proof.
       assert (
           eqctx
             (ctxextend (ctxextend G0 A)
-                       (Id (Subst A (sbweak G0 A))
-                           (subst u (sbweak G0 A))
+                       (Id (Subst A (sbweak' G0 A))
+                           (subst u (sbweak' G0 A))
                            (var 0)))
             (ctxextend (ctxextend G A)
-                       (Id (Subst A (sbweak G A))
-                           (subst u (sbweak G A))
+                       (Id (Subst A (sbweak' G A))
+                           (subst u (sbweak' G A))
                            (var 0)))
       ).
       { eapply EqCtxExtend.
@@ -455,9 +455,9 @@ Fixpoint TermCondInversion {G C u v w T}
   isctx G *
   isterm G u Bool *
   istype (ctxextend G Bool) C *
-  isterm G v (Subst C (sbzero G Bool true)) *
-  isterm G w (Subst C (sbzero G Bool false)) *
-  eqtype G (Subst C (sbzero G Bool u)) T.
+  isterm G v (Subst C (sbzero' G Bool true)) *
+  isterm G w (Subst C (sbzero' G Bool false)) *
+  eqtype G (Subst C (sbzero' G Bool u)) T.
 Proof.
   inversion H.
 

@@ -234,22 +234,22 @@ Ltac magicn n :=
     (* And not eassumption so we don't select some random context. *)
     assumption || shelve
   (* Substitutions *)
-  | |- issubst (sbzero ?G ?A ?u) ?G1 ?G2 =>
+  | |- issubst (sbzero ?u) ?G1 ?G2 =>
     first [
       eapply SubstZero ; magicn n
     | eassumption
     ]
-  | |- issubst (sbweak ?G ?A) ?G1 ?G2 =>
+  | |- issubst (sbweak) ?G1 ?G2 =>
     first [
       eapply SubstWeak ; magicn n
     | eassumption
     ]
-  | |- issubst (sbshift ?G ?A ?sbs) ?G1 ?G2 =>
+  | |- issubst (sbshift ?sbs) ?G1 ?G2 =>
     first [
       eapply SubstShift ; magicn n
     | eassumption
     ]
-  | |- issubst (sbid ?G) ?G1 ?G2 =>
+  | |- issubst (sbid) ?G1 ?G2 =>
     first [
       eapply SubstId ; magicn n
     | eassumption
@@ -280,9 +280,9 @@ Ltac magicn n :=
   (* Terms *)
   | |- isterm ?G (subst ?u ?sbs) (Subst ?A ?sbs) =>
     eapply TermSubst ; magicn n
-  | |- isterm (ctxextend ?G ?A) (var 0) (Subst ?A (sbweak ?G ?A)) =>
+  | |- isterm (ctxextend ?G ?A) (var 0) (Subst ?A sbweak) =>
     apply TermVarZero ; magicn n
-  | |- isterm (ctxextend ?G ?B) (var (S ?k)) (Subst ?A (sbweak ?G ?B)) =>
+  | |- isterm (ctxextend ?G ?B) (var (S ?k)) (Subst ?A sbweak) =>
     apply TermVarSucc ; magicn n
   (* To be continued... *)
   (* Equality of contexts *)
@@ -304,16 +304,16 @@ Ltac magicn n :=
     (* || apply CtxSym ; [ assumption | magicn n .. ] *)
     first [ assumption | apply CtxSym ; [ assumption | magicn n .. ] ]
   (* Equality of substitutions *)
-  | |- eqsubst (sbzero ?G1 ?A1 ?u1) (sbzero ?G2 ?A2 ?u2) ?D ?E =>
+  | |- eqsubst (sbzero ?u1) (sbzero ?u2) ?D ?E =>
     eapply CongSubstZero ; magicn n
-  | |- eqsubst (sbweak ?G1 ?A1) (sbweak ?G2 ?A2) ?D ?E =>
+  | |- eqsubst sbweak sbweak ?D ?E =>
     eapply CongSubstWeak ; magicn n
-  | |- eqsubst (sbshift ?G1 ?A1 ?sbs1) (sbshift ?G2 ?A2 ?sbs2) ?D ?E =>
+  | |- eqsubst (sbshift ?sbs1) (sbshift ?sbs2) ?D ?E =>
     eapply CongSubstShift ; magicn n
   (* We should probably avoid using congruence on composition. *)
   (* To be continued... *)
   (* Equality of types *)
-  | |- eqtype ?G (Subst ?A (sbid ?G)) ?B =>
+  | |- eqtype ?G (Subst ?A (sbid)) ?B =>
     apply EqTyIdSubst ; magicn n
   (* EqTySubst* ? *)
   | |- eqtype ?G (Subst ?A ?sbs) (Subst ?B ?sbt) =>

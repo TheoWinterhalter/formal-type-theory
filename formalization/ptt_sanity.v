@@ -108,15 +108,15 @@ Proof.
               ctxextend G
                         (Subst
                            (Id
-                              (Subst A (sbweak G A))
-                              (subst u (sbweak G A))
+                              (Subst A (sbweak' G A))
+                              (subst u (sbweak' G A))
                               (var 0))
-                           (sbzero G A v))).
+                           (sbzero' G A v))).
     - eapply TySubst ; magic3.
     - apply EqCtxExtend ; try magic.
-      assert (eqtype G A (Subst A (sbcomp (sbweak G A) (sbzero G A v)))).
+      assert (eqtype G A (Subst A (sbcomp (sbweak' G A) (sbzero' G A v)))).
       { apply compWeakZero ; assumption. }
-      assert (eqtype G A (Subst (Subst A (sbweak G A)) (sbzero G A v))).
+      assert (eqtype G A (Subst (Subst A (sbweak' G A)) (sbzero' G A v))).
       { apply EqTyWeakZero ; assumption. }
       gopushsubst. apply CongId ; try magic.
       + eapply TermTyConv.
@@ -582,7 +582,7 @@ Proof.
 
   (* EqIdSubst *)
   - { split.
-      - { apply (@TermTyConv G (Subst A (sbid G)) A).
+      - { apply (@TermTyConv G (Subst A (sbid' G)) A).
           - apply (@TermSubst G G) ; auto using SubstId.
           - now apply EqTyIdSubst.
           - assumption.
@@ -621,13 +621,13 @@ Proof.
 
   (* EqSubstZeroZero *)
   - { split.
-      - { apply (@TermTyConv G (Subst (Subst A (sbweak G A)) (sbzero G A u))).
+      - { apply (@TermTyConv G (Subst (Subst A (sbweak' G A)) (sbzero' G A u))).
           - apply (@TermSubst _ (ctxextend G A)) ; auto using CtxExtend.
             + now apply SubstZero.
             + now apply TermVarZero.
             + apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
-          - apply (@EqTyTrans G _ (Subst A (sbid G))) ; auto.
-            + { apply (@EqTyTrans _ _ (Subst A (sbcomp (sbweak G A) (sbzero G A u)))) ; auto.
+          - apply (@EqTyTrans G _ (Subst A (sbid' G))) ; auto.
+            + { apply (@EqTyTrans _ _ (Subst A (sbcomp (sbweak' G A) (sbzero' G A u)))) ; auto.
                 - apply (@EqTySubstComp G (ctxextend G A) G) ;
                     auto using CtxExtend, (@SubstComp G (ctxextend G A)) , SubstWeak, SubstZero.
                 - apply (@CongTySubst G G) ;
@@ -655,7 +655,7 @@ Proof.
 
   (* EqSubstZeroSucc *)
   - { split.
-      - { apply (@TermTyConv G (Subst (Subst A (sbweak G B)) (sbzero G B u))).
+      - { apply (@TermTyConv G (Subst (Subst A (sbweak' G B)) (sbzero' G B u))).
           - apply (@TermSubst G (ctxextend G B)) ; auto using CtxExtend.
             + now apply SubstZero.
             + now apply TermVarSucc.
@@ -2562,21 +2562,21 @@ Proof.
           { eapply TermTyConv ; [ eassumption | magic .. ]. }
           assert (isterm G (refl A2 u2) (Id A1 u1 u1)).
           { eapply TermTyConv ; [ eapply TermRefl ; magic | magic .. ]. }
-          assert (issubst (sbweak G A2) (ctxextend G A1) G).
+          assert (issubst (sbweak' G A2) (ctxextend G A1) G).
           { eapply SubstCtxConv ; magic. }
-          assert (istype (ctxextend G A1) (Subst A2 (sbweak G A2))).
+          assert (istype (ctxextend G A1) (Subst A2 (sbweak' G A2))).
           { eapply TySubst ; try magic ; try eassumption. }
-          assert (eqsubst (sbweak G A2) (sbweak G A1) (ctxextend G A1) G).
+          assert (eqsubst (sbweak' G A2) (sbweak' G A1) (ctxextend G A1) G).
           { eapply SubstSym ; try magic. }
           assert (
             eqtype (ctxextend G A1)
-                   (Subst A2 (sbweak G A2))
-                   (Subst A1 (sbweak G A1))
+                   (Subst A2 (sbweak' G A2))
+                   (Subst A1 (sbweak' G A1))
           ).
           { eapply CongTySubst ; try eassumption ; magic. }
           assert (
             isterm (ctxextend G A1)
-                   (subst u2 (sbweak G A2)) (Subst A1 (sbweak G A1))
+                   (subst u2 (sbweak' G A2)) (Subst A1 (sbweak' G A1))
           ).
           { eapply TermTyConv ; [
               eapply TermSubst ; try magic ; try eassumption
@@ -2585,42 +2585,42 @@ Proof.
           }
           assert (
             eqterm (ctxextend G A1)
-                   (subst u1 (sbweak G A1))
-                   (subst u2 (sbweak G A2))
-                   (Subst A1 (sbweak G A1))
+                   (subst u1 (sbweak' G A1))
+                   (subst u2 (sbweak' G A2))
+                   (Subst A1 (sbweak' G A1))
           ).
           { eapply CongTermSubst ; magic. }
           assert (
             eqtype
               (ctxextend G A1)
-              (Id (Subst A1 (sbweak G A1)) (subst u1 (sbweak G A1)) (var 0))
-              (Id (Subst A2 (sbweak G A2)) (subst u2 (sbweak G A2)) (var 0))
+              (Id (Subst A1 (sbweak' G A1)) (subst u1 (sbweak' G A1)) (var 0))
+              (Id (Subst A2 (sbweak' G A2)) (subst u2 (sbweak' G A2)) (var 0))
           ).
           { eapply CongId ; try eassumption ; try magic. }
-          assert (issubst (sbzero G A2 u2) G (ctxextend G A1)).
+          assert (issubst (sbzero' G A2 u2) G (ctxextend G A1)).
           { eapply SubstCtxConv ; magic. }
-          assert (isterm (ctxextend G A1) (var 0) (Subst A2 (sbweak G A2))).
+          assert (isterm (ctxextend G A1) (var 0) (Subst A2 (sbweak' G A2))).
           { eapply TermTyConv ; [
               eapply TermVarZero ; magic
             | magic ..
             ].
           }
           assert (
-            eqtype G A1 (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 u1))
+            eqtype G A1 (Subst (Subst A1 (sbweak' G A1)) (sbzero' G A1 u1))
           ).
           { apply EqTyWeakZero ; magic. }
           assert (
-            isterm G u1 (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 u1))
+            isterm G u1 (Subst (Subst A1 (sbweak' G A1)) (sbzero' G A1 u1))
           ).
           { eapply TermTyConv ; [ eassumption | magic .. ]. }
           assert (
             eqterm G
-                   (subst (subst u1 (sbweak G A1)) (sbzero G A1 u1))
+                   (subst (subst u1 (sbweak' G A1)) (sbzero' G A1 u1))
                    u1
-                   (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 u1))
+                   (Subst (Subst A1 (sbweak' G A1)) (sbzero' G A1 u1))
           ).
           { eapply EqSubstWeakZero ; magic. }
-          assert (isterm G (subst (var 0) (sbzero G A1 u1)) A1).
+          assert (isterm G (subst (var 0) (sbzero' G A1 u1)) A1).
           { eapply TermTyConv ; [
               eapply TermSubst ; magic
             | magic ..
@@ -2628,9 +2628,9 @@ Proof.
           }
           assert (
             eqterm G
-                   (subst (var 0) (sbzero G A1 u1))
+                   (subst (var 0) (sbzero' G A1 u1))
                    u1
-                   (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 u1))
+                   (Subst (Subst A1 (sbweak' G A1)) (sbzero' G A1 u1))
           ).
           { eapply EqTyConv ; [
               eapply EqSubstZeroZero ; magic
@@ -2639,21 +2639,21 @@ Proof.
           }
           assert (
             eqtype G
-                   (Subst (Id (Subst A1 (sbweak G A1))
-                              (subst u1 (sbweak G A1))
+                   (Subst (Id (Subst A1 (sbweak' G A1))
+                              (subst u1 (sbweak' G A1))
                               (var 0)
                           )
-                          (sbzero G A1 u1)
+                          (sbzero' G A1 u1)
                    )
                    (Id A1 u1 u1)
           ).
           { gopushsubst. }
           assert (
-            eqtype G A2 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+            eqtype G A2 (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 u2))
           ).
           { apply EqTyWeakZero ; magic. }
           assert (
-            eqtype G (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2)) A1
+            eqtype G (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 u2)) A1
           ).
           { eapply EqTyTrans ; [
               eapply myEqTySym ; [ eassumption | magic .. ]
@@ -2661,15 +2661,15 @@ Proof.
             ].
           }
           assert (
-            isterm G u1 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+            isterm G u1 (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 u2))
           ).
           { eapply TermTyConv ; [ eassumption | magic .. ]. }
           assert (
-            isterm G u2 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+            isterm G u2 (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 u2))
           ).
           { eapply TermTyConv ; [ eassumption | magic .. ]. }
           assert (
-            eqterm G u2 u1 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+            eqterm G u2 u1 (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 u2))
           ).
           { eapply myEqSym ; [
               eapply EqTyConv ; [ eassumption | magic .. ]
@@ -2678,19 +2678,19 @@ Proof.
           }
           assert (
             eqterm G
-                   (subst (subst u2 (sbweak G A2)) (sbzero G A2 u2))
+                   (subst (subst u2 (sbweak' G A2)) (sbzero' G A2 u2))
                    u2
-                   (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+                   (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 u2))
           ).
           { eapply EqSubstWeakZero ; magic. }
           assert (
             eqterm G
-                   (subst (subst u2 (sbweak G A2)) (sbzero G A2 u2))
+                   (subst (subst u2 (sbweak' G A2)) (sbzero' G A2 u2))
                    u1
-                   (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+                   (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 u2))
           ).
           { eapply EqTrans ; [ eassumption | magic .. ]. }
-          assert (isterm G (subst (var 0) (sbzero G A2 u2)) A2).
+          assert (isterm G (subst (var 0) (sbzero' G A2 u2)) A2).
           { eapply TermTyConv ; [
               eapply TermSubst ; magic
             | magic ..
@@ -2698,9 +2698,9 @@ Proof.
           }
           assert (
             eqterm G
-                   (subst (var 0) (sbzero G A2 u2))
+                   (subst (var 0) (sbzero' G A2 u2))
                    u2
-                   (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+                   (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 u2))
           ).
           { eapply EqTyConv ; [
               eapply EqSubstZeroZero ; magic
@@ -2709,18 +2709,18 @@ Proof.
           }
           assert (
             eqterm G
-                   (subst (var 0) (sbzero G A2 u2))
+                   (subst (var 0) (sbzero' G A2 u2))
                    u1
-                   (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 u2))
+                   (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 u2))
           ).
           { eapply EqTrans ; [ eassumption | magic .. ]. }
           assert (
             eqtype G
-                   (Subst (Id (Subst A2 (sbweak G A2))
-                              (subst u2 (sbweak G A2))
+                   (Subst (Id (Subst A2 (sbweak' G A2))
+                              (subst u2 (sbweak' G A2))
                               (var 0)
                           )
-                          (sbzero G A2 u2)
+                          (sbzero' G A2 u2)
                    )
                    (Id A1 u1 u1)
           ).
@@ -2728,12 +2728,12 @@ Proof.
           assert (
             istype (ctxextend G (Id A1 u1 u1))
                    (Subst C1
-                          (sbshift G
-                                   (Id (Subst A1 (sbweak G A1))
-                                       (subst u1 (sbweak G A1))
+                          (sbshift' G
+                                   (Id (Subst A1 (sbweak' G A1))
+                                       (subst u1 (sbweak' G A1))
                                        (var 0)
                                    )
-                                   (sbzero G A1 u1)
+                                   (sbzero' G A1 u1)
                           )
                    )
           ).
@@ -2744,12 +2744,12 @@ Proof.
           assert (
             istype (ctxextend G (Id A1 u1 u1))
                    (Subst C2
-                          (sbshift G
-                                   (Id (Subst A2 (sbweak G A2))
-                                       (subst u2 (sbweak G A2))
+                          (sbshift' G
+                                   (Id (Subst A2 (sbweak' G A2))
+                                       (subst u2 (sbweak' G A2))
                                        (var 0)
                                    )
-                                   (sbzero G A2 u2)
+                                   (sbzero' G A2 u2)
                           )
                    )
           ).
@@ -2762,27 +2762,27 @@ Proof.
               G
               (Subst
                  (Subst C1
-                        (sbshift G
-                                 (Id (Subst A1 (sbweak G A1))
-                                     (subst u1 (sbweak G A1))
+                        (sbshift' G
+                                 (Id (Subst A1 (sbweak' G A1))
+                                     (subst u1 (sbweak' G A1))
                                      (var 0)
                                  )
-                                 (sbzero G A1 u1)
+                                 (sbzero' G A1 u1)
                         )
                  )
-                 (sbzero G (Id A1 u1 u1) (refl A1 u1))
+                 (sbzero' G (Id A1 u1 u1) (refl A1 u1))
               )
               (Subst
                  (Subst C2
-                        (sbshift G
-                                 (Id (Subst A2 (sbweak G A2))
-                                     (subst u2 (sbweak G A2))
+                        (sbshift' G
+                                 (Id (Subst A2 (sbweak' G A2))
+                                     (subst u2 (sbweak' G A2))
                                      (var 0)
                                  )
-                                 (sbzero G A2 u2)
+                                 (sbzero' G A2 u2)
                         )
                  )
-                 (sbzero G (Id A2 u2 u2) (refl A2 u2))
+                 (sbzero' G (Id A2 u2 u2) (refl A2 u2))
               )
           ).
           { eapply CongTySubst ; try magic ; try eassumption.
@@ -2802,15 +2802,15 @@ Proof.
             istype G
                    (Subst
                       (Subst C1
-                             (sbshift G
-                                      (Id (Subst A1 (sbweak G A1))
-                                          (subst u1 (sbweak G A1))
+                             (sbshift' G
+                                      (Id (Subst A1 (sbweak' G A1))
+                                          (subst u1 (sbweak' G A1))
                                           (var 0)
                                       )
-                                      (sbzero G A1 u1)
+                                      (sbzero' G A1 u1)
                              )
                       )
-                      (sbzero G (Id A1 u1 u1) (refl A1 u1))
+                      (sbzero' G (Id A1 u1 u1) (refl A1 u1))
                    )
           ).
           { eapply TySubst ; try magic.
@@ -2821,11 +2821,11 @@ Proof.
           assert (
             eqtype G
                    (Subst
-                      (Id (Subst A2 (sbweak G A2))
-                          (subst u2 (sbweak G A2))
+                      (Id (Subst A2 (sbweak' G A2))
+                          (subst u2 (sbweak' G A2))
                           (var 0)
                       )
-                      (sbzero G A2 u2)
+                      (sbzero' G A2 u2)
                    )
                    (Id A2 u2 u2)
           ).
@@ -2834,15 +2834,15 @@ Proof.
             istype G
                    (Subst
                       (Subst C2
-                             (sbshift G
-                                      (Id (Subst A2 (sbweak G A2))
-                                          (subst u2 (sbweak G A2))
+                             (sbshift' G
+                                      (Id (Subst A2 (sbweak' G A2))
+                                          (subst u2 (sbweak' G A2))
                                           (var 0)
                                       )
-                                      (sbzero G A2 u2)
+                                      (sbzero' G A2 u2)
                              )
                       )
-                      (sbzero G (Id A2 u2 u2) (refl A2 u2))
+                      (sbzero' G (Id A2 u2 u2) (refl A2 u2))
                    )
           ).
           { eapply TySubst ; try magic.
@@ -2857,16 +2857,16 @@ Proof.
               (Subst
                  (Subst
                     C2
-                    (sbshift
+                    (sbshift'
                        G
                        (Id
-                          (Subst A2 (sbweak G A2))
-                          (subst u2 (sbweak G A2))
+                          (Subst A2 (sbweak' G A2))
+                          (subst u2 (sbweak' G A2))
                           (var 0)
                        )
-                       (sbzero G A2 u2))
+                       (sbzero' G A2 u2))
                  )
-                 (sbzero G (Id A2 u2 u2) (refl A2 u2))
+                 (sbzero' G (Id A2 u2 u2) (refl A2 u2))
               )
           ).
           { eapply TermTyConv ; [ eassumption | try magic .. ].
@@ -2876,11 +2876,11 @@ Proof.
           assert (isterm G p1 (Id A2 u2 v2)).
           { eapply TermTyConv ; [ eassumption | magic ..]. }
           assert (
-            eqtype G A2 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+            eqtype G A2 (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 v2))
           ).
           { apply EqTyWeakZero ; magic. }
           assert (
-            eqtype G (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2)) A1
+            eqtype G (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 v2)) A1
           ).
           { eapply EqTyTrans ; [
               eapply myEqTySym ; [ eassumption | magic .. ]
@@ -2888,21 +2888,21 @@ Proof.
             ].
           }
           assert (
-            isterm G u2 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+            isterm G u2 (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 v2))
           ).
           { eapply TermTyConv ; [ exact i5 | magic .. ]. }
           assert (
-            isterm G v2 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+            isterm G v2 (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 v2))
           ).
           { eapply TermTyConv ; [ exact i7 | magic .. ]. }
           assert (
             eqterm G
-                   (subst (subst u2 (sbweak G A2)) (sbzero G A2 v2))
+                   (subst (subst u2 (sbweak' G A2)) (sbzero' G A2 v2))
                    u2
-                   (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+                   (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 v2))
           ).
           { eapply EqSubstWeakZero ; magic. }
-          assert (isterm G (subst (var 0) (sbzero G A2 v2)) A2).
+          assert (isterm G (subst (var 0) (sbzero' G A2 v2)) A2).
           { eapply TermTyConv ; [
               eapply TermSubst ; magic
             | magic ..
@@ -2910,9 +2910,9 @@ Proof.
           }
           assert (
             eqterm G
-                   (subst (var 0) (sbzero G A2 v2))
+                   (subst (var 0) (sbzero' G A2 v2))
                    v2
-                   (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+                   (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 v2))
           ).
           { eapply EqTyConv ; [
               eapply EqSubstZeroZero ; magic
@@ -2925,16 +2925,16 @@ Proof.
           { eapply TermTyConv ; [ eassumption | magic .. ]. }
           assert (eqterm G v2 v1 A2).
           { eapply myEqSym ; [ eassumption | magic .. ]. }
-          assert (issubst (sbweak G A1) (ctxextend G A2) G).
+          assert (issubst (sbweak' G A1) (ctxextend G A2) G).
           { eapply SubstCtxConv ; magic. }
-          assert (istype (ctxextend G A2) (Subst A1 (sbweak G A1))).
+          assert (istype (ctxextend G A2) (Subst A1 (sbweak' G A1))).
           { eapply TySubst ; try magic ; try eassumption. }
-          assert (eqsubst (sbweak G A1) (sbweak G A2) (ctxextend G A2) G).
+          assert (eqsubst (sbweak' G A1) (sbweak' G A2) (ctxextend G A2) G).
           { eapply SubstSym ; try magic. }
           assert (
             isterm (ctxextend G A2)
-                   (subst u1 (sbweak G A1))
-                   (Subst A2 (sbweak G A2))
+                   (subst u1 (sbweak' G A1))
+                   (Subst A2 (sbweak' G A2))
           ).
           { eapply TermTyConv ; [
               eapply TermSubst ; try magic ; try eassumption
@@ -2949,65 +2949,65 @@ Proof.
           assert (eqterm G u2 u1 A2).
           { eapply myEqSym ; [ eassumption | magic .. ]. }
           assert (
-            isterm (ctxextend G A2) (var 0) (Subst A1 (sbweak G A1))
+            isterm (ctxextend G A2) (var 0) (Subst A1 (sbweak' G A1))
           ).
           { eapply TermTyConv ; [
               eapply TermVarZero ; magic
             | magic ..
             ].
           }
-          assert (issubst (sbzero G A2 v2) G (ctxextend G A1)).
+          assert (issubst (sbzero' G A2 v2) G (ctxextend G A1)).
           { eapply SubstCtxConv ; magic. }
           assert (
-            isterm G u1 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+            isterm G u1 (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 v2))
           ).
           { eapply TermTyConv ; [ eassumption | magic .. ]. }
           assert (
-            isterm G v1 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+            isterm G v1 (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 v2))
           ).
           { eapply TermTyConv ; [ eassumption | magic .. ]. }
           assert (
-            eqterm G u2 u1 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+            eqterm G u2 u1 (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 v2))
           ).
           { eapply EqTyConv ; [ eassumption | magic .. ]. }
           assert (
             eqterm G
-                   (subst (subst u2 (sbweak G A2)) (sbzero G A2 v2))
+                   (subst (subst u2 (sbweak' G A2)) (sbzero' G A2 v2))
                    u1
-                   (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+                   (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 v2))
           ).
           { eapply @EqTrans with (v:=u2) ; magic. }
           assert (
-            eqterm G v2 v1 (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+            eqterm G v2 v1 (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 v2))
           ).
           { eapply EqTyConv ; [ eassumption | magic .. ]. }
           assert (
             eqterm G
-                   (subst (var 0) (sbzero G A2 v2))
+                   (subst (var 0) (sbzero' G A2 v2))
                    v1
-                   (Subst (Subst A2 (sbweak G A2)) (sbzero G A2 v2))
+                   (Subst (Subst A2 (sbweak' G A2)) (sbzero' G A2 v2))
           ).
           { eapply @EqTrans with (v:=v2) ; magic. }
           assert (
-            eqtype G A1 (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 v1))
+            eqtype G A1 (Subst (Subst A1 (sbweak' G A1)) (sbzero' G A1 v1))
           ).
           { apply EqTyWeakZero ; magic. }
           assert (
-            isterm G u1 (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 v1))
+            isterm G u1 (Subst (Subst A1 (sbweak' G A1)) (sbzero' G A1 v1))
           ).
           { eapply TermTyConv ; [ exact i4 | magic .. ]. }
           assert (
-            isterm G v1 (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 v1))
+            isterm G v1 (Subst (Subst A1 (sbweak' G A1)) (sbzero' G A1 v1))
           ).
           { eapply TermTyConv ; [ exact i6 | magic .. ]. }
           assert (
             eqterm G
-                   (subst (subst u1 (sbweak G A1)) (sbzero G A1 v1))
+                   (subst (subst u1 (sbweak' G A1)) (sbzero' G A1 v1))
                    u1
-                   (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 v1))
+                   (Subst (Subst A1 (sbweak' G A1)) (sbzero' G A1 v1))
           ).
           { eapply EqSubstWeakZero ; magic. }
-          assert (isterm G (subst (var 0) (sbzero G A1 v1)) A1).
+          assert (isterm G (subst (var 0) (sbzero' G A1 v1)) A1).
           { eapply TermTyConv ; [
               eapply TermSubst ; magic
             | magic ..
@@ -3015,9 +3015,9 @@ Proof.
           }
           assert (
             eqterm G
-                   (subst (var 0) (sbzero G A1 v1))
+                   (subst (var 0) (sbzero' G A1 v1))
                    v1
-                   (Subst (Subst A1 (sbweak G A1)) (sbzero G A1 v1))
+                   (Subst (Subst A1 (sbweak' G A1)) (sbzero' G A1 v1))
           ).
           { eapply EqTyConv ; [
               eapply EqSubstZeroZero ; magic
