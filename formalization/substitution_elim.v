@@ -427,7 +427,73 @@ Proof.
     }
 
   (* apply_Subst *)
-  - todo.
+  - { destruct H1.
+
+      (* TyCtxConv *)
+      - { assert (ptt.issubst sbs G G0).
+          { pex. eapply SubstCtxConv.
+            - ehyp.
+            - apply CtxRefl. pex. ptt_sane.
+            - apply CtxSym. hyp.
+          }
+          destruct (apply_Subst _ _ _ _ H1 H) as [A' [? ?]].
+          exists A'. split ; assumption.
+        }
+
+      (* TySubst *)
+      - { assert (ptt.issubst (sbcomp sbs0 sbs) G D).
+          { pex. eapply SubstComp ; ehyp. }
+          destruct (apply_Subst _ _ _ _ H1 H) as [A' [? ?]].
+          exists A'. split.
+          - assumption.
+          - eapply EqTyTrans ; [ .. | ehyp ].
+            eapply EqTySubstComp ; ehyp.
+        }
+
+      (* TyProd *)
+      - { assert (
+            ptt.issubst (sbshift G A sbs)
+                        (ctxextend G (Subst A sbs))
+                        (ctxextend G0 A)
+          ).
+          { pex. apply SubstShift ; hyp. }
+          destruct (apply_Subst _ _ _ _ H1_0 H2) as [A' [? ?]].
+          destruct (apply_Subst _ _ _ _ H1_ H) as [B' [? ?]].
+          exists (Prod A' B'). split.
+          - now constructor.
+          - eapply EqTyTrans ; [ eapply EqTySubstProd ; ehyp | .. ].
+            eapply CongProd ; hyp.
+        }
+
+      (* TyId *)
+      - { destruct (apply_Subst _ _ _ _ H1 H2) as [A' [? ?]].
+          destruct (apply_subst _ _ _ _ _ i0 H2) as [u' [? ?]].
+          destruct (apply_subst _ _ _ _ _ i1 H2) as [v' [? ?]].
+          exists (Id A' u' v'). split.
+          - now constructor.
+          - eapply EqTyTrans ; [ eapply EqTySubstId ; ehyp | .. ].
+            eapply CongId ; hyp.
+        }
+
+      (* TyEmpty *)
+      - { exists Empty. split.
+          - now constructor.
+          - eapply EqTySubstEmpty. ehyp.
+        }
+
+      (* TyUnit *)
+      - { exists Unit. split.
+          - now constructor.
+          - eapply EqTySubstUnit. ehyp.
+        }
+
+      (* TyBool *)
+      - { exists Bool. split.
+          - now constructor.
+          - eapply EqTySubstBool. ehyp.
+        }
+
+    }
 
 Defined.
 
