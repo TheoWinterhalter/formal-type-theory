@@ -1896,6 +1896,63 @@ Proof.
    (ctxextend (ctxextend D A) (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
   { eapply SubstCtxConv ; try magic. assumption. Unshelve. all:assumption. }
+  assert (
+    eqtype G
+    (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0))
+       (sbcomp (sbshift sbs) (sbzero (subst v sbs))))
+    (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero v)) sbs)
+  ).
+  { gocompsubst. Unshelve. assumption. }
+  assert (
+    eqctx
+    (ctxextend G
+       (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0))
+          (sbcomp (sbshift sbs) (sbzero (subst v sbs)))))
+    (ctxextend G
+       (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero v))
+          sbs))
+  ).
+  { eapply EqCtxExtend ; magic. }
+  assert (
+    issubst (sbshift (sbcomp (sbshift sbs) (sbzero (subst v sbs))))
+    (ctxextend G
+       (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero v))
+          sbs))
+    (ctxextend (ctxextend D A) (Id (Subst A sbweak) (subst u sbweak) (var 0)))
+  ).
+  { eapply SubstCtxConv ; try magic. assumption. Unshelve. all:magic. }
+  assert (
+    eqtype G
+    (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbshift sbs))
+       (sbzero (subst v sbs)))
+    (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero v)) sbs)
+  ).
+  { gocompsubst. }
+  assert (
+    eqctx
+    (ctxextend G
+       (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbshift sbs))
+          (sbzero (subst v sbs))))
+    (ctxextend G
+       (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero v))
+          sbs))
+  ).
+  { eapply EqCtxExtend ; magic. }
+  assert (
+    issubst (sbcomp (sbshift (sbshift sbs)) (sbshift (sbzero (subst v sbs))))
+    (ctxextend G
+       (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero v))
+          sbs))
+    (ctxextend (ctxextend D A) (Id (Subst A sbweak) (subst u sbweak) (var 0)))
+  ).
+  { eapply SubstCtxConv ; try magic. assumption. Unshelve. all:magic. }
+  assert (
+    issubst (sbcomp (sbshift (sbshift sbs)) (sbshift (sbzero (subst v sbs))))
+   (ctxextend G
+      (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero v)) sbs))
+   (ctxextend (ctxextend D A) (Id (Subst A sbweak) (subst u sbweak) (var 0)))
+  ).
+  { eapply SubstCtxConv ; try magic. assumption. Unshelve. all:magic. }
   (* Now let's proceed with the proof. *)
   (* We start by composing all the substitutions so we can forget about
      the types. *)
@@ -1975,14 +2032,13 @@ Proof.
       eapply SubstRefl ; magic
     | eapply EqSubstCtxConv ; [
         eapply CongSubstShift ; [
-          eassumption
-        | eapply mySubstSym ; [
+          eapply mySubstSym ; [
             eapply ShiftZero ; magic
           | magic ..
           ]
         | magic ..
         ]
-      | try magic ; assumption ..
+      | try magic ; eassumption ..
       ]
     | magic ..
     ]
@@ -1997,7 +2053,7 @@ Proof.
     | eapply mySubstSym ; [
         eapply EqSubstCtxConv ; [
           eapply CompShift ; magic
-        | try magic ; assumption ..
+        | try magic ; eassumption ..
         ]
       | magic ..
       ]
@@ -2015,14 +2071,26 @@ Proof.
   ].
   (* Now we should finally have the same structure for the substitutions
      and thus be able to apply congruences. *)
-  eapply CongSubstComp ; try magic.
-  eapply CongSubstComp ; try magic ; try assumption.
-  - eapply EqSubstCtxConv ; [
-      eapply CongSubstShift ; magic
-    | try magic ; assumption ..
-    ].
-  - eapply SubstCtxConv ; try magic.
-    eapply EqCtxExtend ; try magic.
-    gopushsubst. gopushsubst. eapply CongId ; try magic ; try assumption.
-  Unshelve. all:assumption.
+  (* eapply CongSubstComp ; try magic. *)
+  (* eapply CongSubstComp ; try magic ; try assumption. *)
+  (* - eapply EqSubstCtxConv ; [ *)
+  (*     eapply CongSubstShift ; magic *)
+  (*   | try magic ; assumption .. *)
+  (*   ]. *)
+  (* - eapply SubstCtxConv ; try magic. *)
+  (*   eapply EqCtxExtend ; try magic. *)
+  (*   gopushsubst. gopushsubst. eapply CongId ; try magic ; try assumption. *)
+  Unshelve.
+  all:
+    match goal with
+    | |- type => idtac
+    | |- ?G => try eassumption
+    end.
+  all:
+    match goal with
+    | |- type => idtac
+    | |- ?G => magic
+    end.
+  Unshelve.
+  all: eapply TermTyConv ; [ exact H5 | magic .. ].
 Defined.
