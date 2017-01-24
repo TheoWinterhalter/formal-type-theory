@@ -361,7 +361,7 @@ Ltac magicn n :=
     | |- eqsubst sbid (sbcomp sbweak (sbzero ?u)) ?G ?D =>
       eapply mySubstSym ; [
         eapply WeakZero ; magicn n
-      | magicn n
+      | magicn n ..
       ]
     | |- eqsubst (sbzero ?u1) (sbzero ?u2) ?D ?E =>
       eapply CongSubstZero ; magicn n

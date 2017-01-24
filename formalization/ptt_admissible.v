@@ -271,9 +271,8 @@ Proof.
     + magic.
     + eapply TermTyConv ; [
         eapply TermSubst ; try eassumption ; try magic
-      | try magic ..
+      | magic ..
       ].
-      apply EqTySym ; magic.
     + eapply TermTyConv ; [
         eassumption
       | try magic ..

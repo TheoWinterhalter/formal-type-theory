@@ -108,16 +108,16 @@ Proof.
               ctxextend G
                         (Subst
                            (Id
-                              (Subst A (sbweak' G A))
-                              (subst u (sbweak' G A))
+                              (Subst A sbweak)
+                              (subst u sbweak)
                               (var 0))
-                           (sbzero' G A v))).
+                           (sbzero v))).
     - eapply TySubst ; magic3.
     - apply EqCtxExtend ; try magic.
-      assert (eqtype G A (Subst A (sbcomp (sbweak' G A) (sbzero' G A v)))).
-      { apply compWeakZero ; assumption. }
-      assert (eqtype G A (Subst (Subst A (sbweak' G A)) (sbzero' G A v))).
-      { apply EqTyWeakZero ; assumption. }
+      assert (eqtype G A (Subst A (sbcomp sbweak (sbzero v)))).
+      { eapply compWeakZero ; eassumption. }
+      assert (eqtype G A (Subst (Subst A sbweak) (sbzero v))).
+      { eapply EqTyWeakZero ; eassumption. }
       gopushsubst. apply CongId ; try magic.
       + eapply TermTyConv.
         * eassumption.
@@ -179,7 +179,7 @@ Proof.
               * assumption.
               * magic.
               * magic.
-            + gocompsubst. Unshelve. assumption.
+            + gocompsubst. Unshelve. all:assumption.
             + assumption.
             + magic.
             + magic.
@@ -416,51 +416,21 @@ Proof.
 
   (* CongSubstZero *)
   - { split.
-      - now apply SubstZero.
-      - apply (@SubstCtxConv G2 G1 (ctxextend G2 A2) (ctxextend G1 A1)) ;
-          auto using CtxExtend, CtxRefl, CtxSym.
-        + apply SubstZero ;
-            auto using (@TyCtxConv G1 G2), (@TermCtxConv G1 G2), (@TermTyConv G1 A1 A2).
-        + apply EqCtxExtend ;
-            auto using (@TyCtxConv G1 G2), CtxSym, (@EqTyCtxConv G1 G2), EqTySym.
-        + apply CtxExtend ; auto using (@TyCtxConv G1 G2).
+      - magic.
+      - magic.
     }
 
   (* CongSubstWeak *)
   - { split.
-      - now apply SubstWeak.
-      - apply (@SubstCtxConv (ctxextend G2 A2) (ctxextend G1 A1) G2 G1) ;
-          auto using CtxExtend, CtxRefl.
-        + apply SubstWeak ; auto.
-          now apply (@TyCtxConv G1, G2).
-        + apply EqCtxExtend ; auto using (@TyCtxConv G1 G2), CtxSym.
-          apply (@EqTyCtxConv G1 G2) ; auto using EqTySym.
-        + now apply CtxSym.
-        + apply CtxExtend ; auto.
-          now apply (@TyCtxConv G1 G2).
+      - magic.
+      - magic.
     }
 
   (* CongSubstShift *)
   - { split.
-      - now apply SubstShift.
-      - apply (@SubstCtxConv (ctxextend G2 (Subst A2 sbs2)) _ (ctxextend D A2) _) ;
-          auto using CtxExtend.
-        + apply SubstShift ; auto.
-          apply (@SubstCtxConv G1 _ D D) ; auto using CtxRefl.
-        + apply EqCtxExtend ; auto.
-          * apply (@TySubst G2 D) ; auto.
-            apply (@SubstCtxConv G1 _ D D); auto using CtxRefl.
-          * apply (@TyCtxConv G1 G2); auto.
-            now apply (@TySubst G1 D).
-          * now apply CtxSym.
-          * apply (@EqTyCtxConv G1 G2); auto using (@TySubst G1 D).
-            apply (@CongTySubst G1 D) ; auto using EqTySym, SubstSym.
-        + apply EqCtxExtend ; auto using EqTySym, CtxRefl.
-        + apply CtxExtend ; auto.
-          apply (@TyCtxConv G1 G2) ; auto.
-          now apply (@TySubst G1 D).
-        + apply CtxExtend ; auto.
-          now apply (@TySubst G1 D).
+      - magic.
+      - eapply SubstCtxConv ; magic.
+        Unshelve. all:assumption.
     }
 
   (* CongSubstComp *)
@@ -621,51 +591,31 @@ Proof.
 
   (* EqSubstZeroZero *)
   - { split.
-      - { apply (@TermTyConv G (Subst (Subst A (sbweak' G A)) (sbzero' G A u))).
-          - apply (@TermSubst _ (ctxextend G A)) ; auto using CtxExtend.
-            + now apply SubstZero.
-            + now apply TermVarZero.
-            + apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
-          - apply (@EqTyTrans G _ (Subst A (sbid' G))) ; auto.
-            + { apply (@EqTyTrans _ _ (Subst A (sbcomp (sbweak' G A) (sbzero' G A u)))) ; auto.
-                - apply (@EqTySubstComp G (ctxextend G A) G) ;
-                    auto using CtxExtend, (@SubstComp G (ctxextend G A)) , SubstWeak, SubstZero.
-                - apply (@CongTySubst G G) ;
-                    auto using CtxExtend, (@SubstComp G (ctxextend G A)) , SubstWeak, SubstZero, SubstId, EqTyRefl, WeakZero.
-                - apply (@TySubst _ (ctxextend G A)) ; auto using CtxExtend, SubstZero.
-                  apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
-                - apply (@TySubst _ G) ; auto.
-                  + apply (@SubstComp _ (ctxextend G A)) ; auto using CtxExtend, SubstWeak, SubstZero.
-                - apply (@TySubst _ G) ; auto using SubstId.
-              }
-            + now apply EqTyIdSubst.
-            + apply (@TySubst _ (ctxextend G A)) ; auto using CtxExtend.
-              * now apply SubstZero.
-              * apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
-            + apply (@TySubst _ G) ; auto using SubstId.
-          - assumption.
-          - apply (@TySubst _ (ctxextend G A)) ; auto using CtxExtend.
-            + now apply SubstZero.
-            + apply (@TySubst _ G) ; auto using CtxExtend.
-              now apply SubstWeak.
-          - assumption.
+      - { eapply TermTyConv ; [
+            eapply TermSubst ; magic
+          | try magic ..
+          ].
+          eapply EqTySym ; try magic.
+          eapply EqTyWeakZero ; magic.
+          Unshelve. assumption.
         }
       - { assumption. }
     }
 
   (* EqSubstZeroSucc *)
   - { split.
-      - { apply (@TermTyConv G (Subst (Subst A (sbweak' G B)) (sbzero' G B u))).
+      - { apply (@TermTyConv G (Subst (Subst A sbweak) (sbzero u))).
           - apply (@TermSubst G (ctxextend G B)) ; auto using CtxExtend.
             + now apply SubstZero.
             + now apply TermVarSucc.
             + apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
           - apply EqTySym ; try magic.
-            apply EqTyWeakZero ; magic.
+            eapply EqTyWeakZero ; magic.
           - assumption.
           - apply (@TySubst _ (ctxextend G B)) ; auto using CtxExtend, SubstZero.
             apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
           - assumption.
+          Unshelve. assumption.
         }
       - { assumption. }
     }
@@ -681,7 +631,7 @@ Proof.
               * eapply TySubst ; eassumption.
             + eapply TySubst ; try eassumption ; magic.
             + magic.
-          - apply EqTyWeakNat ; magic.
+          - eapply EqTyWeakNat ; magic.
           - constructor.
             + assumption.
             + eapply TySubst ; eassumption.
@@ -713,7 +663,8 @@ Proof.
             eassumption
           | try magic ..
           ].
-          apply EqTyWeakNat ; magic.
+          eapply EqTyWeakNat ; magic.
+          Unshelve. all:magic.
         }
       - { magic. }
     }
@@ -741,7 +692,7 @@ Proof.
             gopushsubst
           | try magic ..
           ].
-          apply EqTyShiftZero ; magic.
+          eapply EqTyShiftZero ; magic.
           Unshelve. all:magic.
         }
     }
@@ -763,48 +714,52 @@ Proof.
           eapply TySubst ; try magic.
           eapply TySubst ; try magic.
           eapply SubstCtxConv ; try magic.
-          - apply EqCtxExtend ; try magic.
+          - apply @EqCtxExtend
+            with (A := Subst (Id (Subst A sbweak) (subst u sbweak) (var 0))
+                            (sbzero v)
+            ) ; try magic.
             gopushsubst.
             apply CongId ; try magic.
             + eapply TermTyConv ; [ eassumption | try magic .. ].
-              apply EqTyWeakZero ; magic.
+              eapply EqTyWeakZero ; magic.
             + eapply TermTyConv ; [ eassumption | try magic .. ].
-              apply EqTyWeakZero ; magic.
+              eapply EqTyWeakZero ; magic.
             + apply myEqTySym ; [
-                apply EqTyWeakZero ; magic
+                eapply EqTyWeakZero ; magic
               | magic ..
               ].
-            + apply EqSubstWeakZero ; try magic.
+            + eapply EqSubstWeakZero ; try magic.
               eapply TermTyConv ; [ eassumption | try magic .. ].
-              apply EqTyWeakZero ; magic.
+              eapply EqTyWeakZero ; magic.
             + eapply EqTyConv ; [
                 eapply EqSubstZeroZero ; magic
               | try magic ..
               ].
-              * apply EqTyWeakZero ; magic.
+              * eapply EqTyWeakZero ; magic.
               * eapply TermTyConv ; [
                   eapply TermSubst ; magic
                 | try magic ..
                 ].
                 apply myEqTySym ; [
-                  apply EqTyWeakZero ; magic
+                  eapply EqTyWeakZero ; magic
                 | magic ..
                 ].
           - apply CtxRefl ; magic.
+          Unshelve. all:magic.
         }
       - { eapply TermTyConv.
           - eapply TermJ ; try magic.
             + eapply TySubst ; try magic.
               eapply SubstCtxConv ; try magic.
-              * apply EqCtxExtend ; try magic.
+              * apply @EqCtxExtend
+                with (A := Subst (Id (Subst A sbweak) (subst u sbweak) (var 0))
+                                (sbshift sbs)) ; try magic.
                 gopushsubst.
                 { eapply CongId ; try magic.
                   - eapply TermTyConv.
-                    + eapply TermSubst ; try magic.
-                      eapply TermSubst ; try magic.
-                      eassumption.
+                    + eapply TermSubst ; magic.
                     + apply myEqTySym ; try magic.
-                      apply EqTyWeakNat ; magic.
+                      eapply EqTyWeakNat ; magic.
                     + magic.
                     + magic.
                     + magic.
@@ -813,835 +768,500 @@ Proof.
                     | try magic ..
                     ].
                     apply myEqTySym ; try magic.
-                    apply EqTyWeakNat ; magic.
-                  - apply EqTyWeakNat ; magic.
+                    eapply EqTyWeakNat ; magic.
+                  - eapply EqTyWeakNat ; magic.
                   - eapply EqTyConv ; [
                       eapply EqSubstWeakNat ; try magic
                     | try magic ..
                     ].
-                    + eassumption.
                     + apply myEqTySym ; try magic.
-                      apply EqTyWeakNat ; magic.
+                      eapply EqTyWeakNat ; magic.
                     + eapply TermTyConv ; [
                         eapply TermSubst ; try magic
                       | try magic ..
                       ].
-                      * eapply TermSubst ; try magic.
-                        eassumption.
-                      * apply EqTyWeakNat ; magic.
-                    + magic.
+                      * eapply EqTyWeakNat ; magic.
                   - eapply EqTyConv ; [
                       eapply EqSubstShiftZero ; magic
                     | try magic ..
                     ].
                     + apply myEqTySym ; try magic.
-                      apply EqTyWeakNat ; magic.
+                      eapply EqTyWeakNat ; magic.
                     + eapply TermTyConv ; [
                         eapply TermSubst ; magic
                       | try magic ..
                       ].
-                      apply EqTyWeakNat ; magic.
+                      eapply EqTyWeakNat ; magic.
                 }
               * apply CtxRefl ; magic.
             + eapply TermTyConv ; [
                 eapply TermSubst ; try magic
               | try magic ..
               ].
-              * eassumption.
+              * eapply TySubst ; try magic.
+                eapply TySubst ; try magic.
+                { eapply SubstCtxConv ; try magic.
+                  - apply @EqCtxExtend
+                    with (A := Subst (Id (Subst A sbweak)
+                                    (subst u sbweak)
+                                    (var 0))
+                                (sbzero u))
+                    ; try magic.
+                    gopushsubst.
+                    apply CongId ; try magic.
+                    + eapply TermTyConv ; [
+                        eassumption
+                      | try magic ..
+                      ].
+                      eapply EqTyWeakZero ; magic.
+                    + eapply TermTyConv ; [
+                        eassumption
+                      | try magic ..
+                      ].
+                      eapply EqTyWeakZero ; magic.
+                    + apply myEqTySym ; try magic.
+                      eapply EqTyWeakZero ; magic.
+                    + eapply EqTyConv ; [
+                        eapply EqSubstWeakZero ; try magic
+                      | try magic ..
+                      ].
+                      * eapply EqTyWeakZero ; magic.
+                      * eapply TermTyConv ; [
+                          eapply TermSubst ; try magic ; try eassumption
+                        | try magic ..
+                        ].
+                        apply myEqTySym ; try magic.
+                        eapply EqTyWeakZero ; magic.
+                    + eapply EqTyConv ; [
+                        eapply EqSubstZeroZero ; magic
+                      | try magic ..
+                      ].
+                      * eapply EqTyWeakZero ; magic.
+                      * eapply TermTyConv ; [
+                          eapply TermSubst ; try magic ; try eassumption
+                        | try magic ..
+                        ].
+                        apply myEqTySym ; try magic.
+                        eapply EqTyWeakZero ; magic.
+                  - apply CtxRefl. magic.
+                }
               * { eapply EqTyTrans ; [
                     eapply JTyConv ; try magic ; eassumption
                   | try magic ..
                   ].
                   - eapply CongTySubst ; try magic.
                     + eapply CongSubstZero ; try magic.
-                      * gopushsubst.
-                        eapply TermTyConv ; [
-                          eapply TermSubst ; magic
-                        | try magic ..
-                        ].
-                        gopushsubst.
+                      * { gopushsubst.
+                          - eapply TermTyConv ; [
+                              eapply TermSubst ; magic
+                            | try magic ..
+                            ].
+                            gopushsubst.
+                          - admit.
+                          - eapply TermTyConv ; try magic.
+                            gopushsubst.
+                        }
                       * eapply TermTyConv ; [
                           eapply TermSubst ; magic
                         | try magic ..
                         ].
                         gopushsubst.
-                    + apply EqTyRefl ; try magic.
-                      eapply TyCtxConv ; [
-                        eapply TySubst ; [
-                          magic
-                        | eapply TySubst ; [
-                            try magic
-                          | eassumption
-                          | magic ..
-                          ]
-                        | magic ..
-                        ]
-                      | try magic ..
-                      ].
-                      * eapply SubstCtxConv ; try magic.
-                        eapply EqCtxExtend ; try magic.
-                        gopushsubst.
-                        { apply CongId ; try magic.
-                          - eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eapply TermSubst ; [
-                                  magic
-                                | eassumption
-                                | magic ..
-                                ]
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            gocompsubst. gocompsubst.
-                          - eapply TermTyConv ; [
-                              eapply TermVarZero ; magic
-                            | try magic ..
-                            ].
-                            gocompsubst. gocompsubst.
-                          - eapply EqTyWeakNat ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstWeakNat
-                              ; try magic ; try eassumption
-                            | try magic ..
-                            ].
-                            + eapply myEqTySym ; try magic.
-                              eapply EqTyWeakNat ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eapply TermSubst ; [
-                                    magic
-                                  | eassumption
-                                  | magic ..
-                                  ]
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakNat ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstShiftZero ; magic
-                            | try magic ..
-                            ].
-                            + eapply myEqTySym ; try magic.
-                              eapply EqTyWeakNat ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eapply TermVarZero ; magic
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakNat ; magic.
-                        }
-                      * eapply EqCtxExtend ; try magic.
-                        gopushsubst.
-                        { apply CongId ; try magic.
-                          - eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eassumption
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                          - eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eassumption
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                          - eapply myEqTySym ; try magic.
-                            eapply EqTyWeakZero ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstWeakZero
-                              ; try magic ; try eassumption
-                            | try magic ..
-                            ].
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eassumption
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakZero ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eassumption
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakZero ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstZeroZero ; magic
-                            | try magic ..
-                            ].
-                            + eapply EqTyWeakZero ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eapply TermVarZero ; magic
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply myEqTySym ; try magic.
-                              eapply EqTyWeakZero ; magic.
-                        }
-                    + eapply TySubst ; try magic.
-                      eapply SubstCtxConv ; try magic.
-                      * eapply EqCtxExtend ; try magic.
-                        gopushsubst.
-                        { apply CongId ; try magic.
-                          - eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eassumption
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                          - eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eassumption
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                          - eapply myEqTySym ; try magic.
-                            eapply EqTyWeakZero ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstWeakZero
-                              ; try magic ; try eassumption
-                            | try magic ..
-                            ].
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eassumption
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakZero ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eassumption
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakZero ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstZeroZero ; magic
-                            | try magic ..
-                            ].
-                            + eapply EqTyWeakZero ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eapply TermVarZero ; magic
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply myEqTySym ; try magic.
-                              eapply EqTyWeakZero ; magic.
-                        }
-                      * eapply EqCtxExtend ; try magic.
-                        gopushsubst.
-                        { apply CongId ; try magic.
-                          - eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eapply TermSubst ; [
-                                  magic
-                                | eassumption
-                                | magic ..
-                                ]
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            gocompsubst. gocompsubst.
-                          - eapply TermTyConv ; [
-                              eapply TermVarZero ; magic
-                            | try magic ..
-                            ].
-                            gocompsubst. gocompsubst.
-                          - eapply EqTyWeakNat ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstWeakNat
-                              ; try magic ; try eassumption
-                            | try magic ..
-                            ].
-                            + eapply myEqTySym ; try magic.
-                              eapply EqTyWeakNat ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eapply TermSubst ; [
-                                    magic
-                                  | eassumption
-                                  | magic ..
-                                  ]
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakNat ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstShiftZero ; magic
-                            | try magic ..
-                            ].
-                            + eapply myEqTySym ; try magic.
-                              eapply EqTyWeakNat ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eapply TermVarZero ; magic
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakNat ; magic.
-                        }
-                    + eapply TySubst ; try magic.
-                      eapply SubstCtxConv ; try magic.
-                      * eapply EqCtxExtend ; try magic.
-                        gopushsubst.
-                        { eapply CongId ; try magic.
-                          - eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eassumption
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                          - eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eassumption
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                          - eapply myEqTySym ; try magic.
-                            eapply EqTyWeakZero ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstWeakZero
-                              ; try magic ; try eassumption
-                            | try magic ..
-                            ].
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eassumption
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakZero ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eassumption
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakZero ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstZeroZero ; magic
-                            | try magic ..
-                            ].
-                            + eapply EqTyWeakZero ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eapply TermVarZero ; magic
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply myEqTySym ; try magic.
-                              eapply EqTyWeakZero ; magic.
-                        }
-                      * eapply EqCtxExtend ; try magic.
-                        gopushsubst.
-                        { apply CongId ; try magic.
-                          - eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eapply TermSubst ; [
-                                  magic
-                                | eassumption
-                                | magic ..
-                                ]
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            gocompsubst. gocompsubst.
-                          - eapply TermTyConv ; [
-                              eapply TermVarZero ; magic
-                            | try magic ..
-                            ].
-                            gocompsubst. gocompsubst.
-                          - eapply EqTyWeakNat ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstWeakNat
-                              ; try magic ; try eassumption
-                            | try magic ..
-                            ].
-                            + eapply myEqTySym ; try magic.
-                              eapply EqTyWeakNat ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eapply TermSubst ; [
-                                    magic
-                                  | eassumption
-                                  | magic ..
-                                  ]
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakNat ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstShiftZero ; magic
-                            | try magic ..
-                            ].
-                            + eapply myEqTySym ; try magic.
-                              eapply EqTyWeakNat ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eapply TermVarZero ; magic
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakNat ; magic.
-                        }
+                        admit.
+                      * eapply TermTyConv ; [
+                          eapply TermRefl ; magic
+                        | try magic ..
+                        ].
+                        admit.
                     + eapply SubstCtxConv ; [
                         eapply SubstZero ; try magic
-                      | magic ..
-                      ].
-                      eapply TermTyConv ; [
-                        eapply TermSubst ; [
-                          magic
-                        | eapply TermRefl ; magic
-                        | magic ..
-                        ]
                       | try magic ..
                       ].
-                      gopushsubst.
+                      admit.
+                    + eapply SubstCtxConv ; [
+                        eapply SubstZero ; try magic
+                      | try magic ..
+                      ].
+                      admit.
                   - eapply TySubst ; try magic.
                     eapply TySubst ; try magic.
                     eapply TySubst ; try magic.
                     eapply SubstCtxConv ; try magic.
-                    + eapply EqCtxExtend ; try magic.
-                      gopushsubst.
-                      { apply CongId ; try magic.
-                        - eapply TermTyConv ; [
-                            eassumption
-                          | try magic ..
-                          ].
-                          eapply EqTyWeakZero ; magic.
-                        - eapply TermTyConv ; [
-                            eassumption
-                          | try magic ..
-                          ].
-                          eapply EqTyWeakZero ; magic.
-                        - eapply myEqTySym ; try magic.
-                          eapply EqTyWeakZero ; magic.
-                        - eapply EqSubstWeakZero ; try magic.
-                          eapply TermTyConv ; [
-                            eassumption
-                          | try magic ..
-                          ].
-                          eapply EqTyWeakZero ; magic.
-                        - eapply EqTyConv ; [
-                            eapply EqSubstZeroZero ; magic
-                          | try magic ..
-                          ].
-                          + eapply EqTyWeakZero ; magic.
-                          + eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eapply TermVarZero ; magic
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            eapply myEqTySym ; try magic.
-                            eapply EqTyWeakZero ; magic.
-                      }
+                    (* + eapply EqCtxExtend ; try magic. *)
+                    (*   gopushsubst. *)
+                    (*   { apply CongId ; try magic. *)
+                    (*     - eapply TermTyConv ; [ *)
+                    (*         eassumption *)
+                    (*       | try magic .. *)
+                    (*       ]. *)
+                    (*       eapply EqTyWeakZero ; magic. *)
+                    (*     - eapply TermTyConv ; [ *)
+                    (*         eassumption *)
+                    (*       | try magic .. *)
+                    (*       ]. *)
+                    (*       eapply EqTyWeakZero ; magic. *)
+                    (*     - eapply myEqTySym ; try magic. *)
+                    (*       eapply EqTyWeakZero ; magic. *)
+                    (*     - eapply EqSubstWeakZero ; try magic. *)
+                    (*       eapply TermTyConv ; [ *)
+                    (*         eassumption *)
+                    (*       | try magic .. *)
+                    (*       ]. *)
+                    (*       eapply EqTyWeakZero ; magic. *)
+                    (*     - eapply EqTyConv ; [ *)
+                    (*         eapply EqSubstZeroZero ; magic *)
+                    (*       | try magic .. *)
+                    (*       ]. *)
+                    (*       + eapply EqTyWeakZero ; magic. *)
+                    (*       + eapply TermTyConv ; [ *)
+                    (*           eapply TermSubst ; [ *)
+                    (*             magic *)
+                    (*           | eapply TermVarZero ; magic *)
+                    (*           | magic .. *)
+                    (*           ] *)
+                    (*         | try magic .. *)
+                    (*         ]. *)
+                    (*         eapply myEqTySym ; try magic. *)
+                    (*         eapply EqTyWeakZero ; magic. *)
+                    (*   } *)
+                    + admit.
                     + apply CtxRefl ; magic.
                   - eapply TySubst ; try magic.
-                    + eapply SubstZero ; try magic.
-                      eapply TermTyConv ; [
-                        eapply TermSubst ; [
-                          magic
-                        | eapply TermRefl ; magic
-                        | magic ..
-                        ]
-                      | try magic ..
-                      ].
-                      gopushsubst.
-                    + eapply TySubst ; try magic.
-                      eapply SubstCtxConv ; try magic.
-                      * eapply EqCtxExtend ; try magic.
-                        gopushsubst.
-                        { apply CongId ; try magic.
-                          - eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eassumption
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                          - eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eassumption
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                          - eapply myEqTySym ; try magic.
-                            eapply EqTyWeakZero ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstWeakZero
-                              ; try magic ; try eassumption
-                            | try magic ..
-                            ].
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eassumption
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakZero ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eassumption
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakZero ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstZeroZero ; magic
-                            | try magic ..
-                            ].
-                            + eapply EqTyWeakZero ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eapply TermVarZero ; magic
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply myEqTySym ; try magic.
-                              eapply EqTyWeakZero ; magic.
-                        }
-                      * eapply EqCtxExtend ; try magic.
-                        gopushsubst.
-                        { apply CongId ; try magic.
-                          - eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eapply TermSubst ; [
-                                  magic
-                                | eassumption
-                                | magic ..
-                                ]
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            eapply myEqTySym ; try magic.
-                            eapply EqTyWeakNat ; magic.
-                          - eapply TermTyConv ; [
-                              eapply TermVarZero ; magic
-                            | try magic ..
-                            ].
-                            eapply myEqTySym ; try magic.
-                            eapply EqTyWeakNat ; magic.
-                          - eapply EqTyWeakNat ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstWeakNat ; try magic ; eassumption
-                            | try magic ..
-                            ].
-                            + eapply myEqTySym ; try magic.
-                              eapply EqTyWeakNat ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eapply TermSubst ; [
-                                    magic
-                                  | eassumption
-                                  | magic ..
-                                  ]
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakNat ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstShiftZero ; magic
-                            | try magic ..
-                            ].
-                            + eapply myEqTySym ; try magic.
-                              eapply EqTyWeakNat ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eapply TermVarZero ; magic
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply EqTyWeakNat ; magic.
-                        }
+                    eapply TySubst ; try magic.
+                    eapply SubstCtxConv ; try magic.
+                    (* * eapply EqCtxExtend ; try magic. *)
+                    (*   gopushsubst. *)
+                    (*     { apply CongId ; try magic. *)
+                    (*       - eapply TermTyConv ; [ *)
+                    (*           eapply TermSubst ; [ *)
+                    (*             magic *)
+                    (*           | eassumption *)
+                    (*           | magic .. *)
+                    (*           ] *)
+                    (*         | try magic .. *)
+                    (*         ]. *)
+                    (*         eapply EqTyWeakZero ; magic. *)
+                    (*       - eapply TermTyConv ; [ *)
+                    (*           eapply TermSubst ; [ *)
+                    (*             magic *)
+                    (*           | eassumption *)
+                    (*           | magic .. *)
+                    (*           ] *)
+                    (*         | try magic .. *)
+                    (*         ]. *)
+                    (*         eapply EqTyWeakZero ; magic. *)
+                    (*       - eapply myEqTySym ; try magic. *)
+                    (*         eapply EqTyWeakZero ; magic. *)
+                    (*       - eapply EqTyConv ; [ *)
+                    (*           eapply EqSubstWeakZero *)
+                    (*           ; try magic ; try eassumption *)
+                    (*         | try magic .. *)
+                    (*         ]. *)
+                    (*         + eapply TermTyConv ; [ *)
+                    (*             eapply TermSubst ; [ *)
+                    (*               magic *)
+                    (*             | eassumption *)
+                    (*             | magic .. *)
+                    (*             ] *)
+                    (*           | try magic .. *)
+                    (*           ]. *)
+                    (*           eapply EqTyWeakZero ; magic. *)
+                    (*         + eapply TermTyConv ; [ *)
+                    (*             eapply TermSubst ; [ *)
+                    (*               magic *)
+                    (*             | eassumption *)
+                    (*             | magic .. *)
+                    (*             ] *)
+                    (*           | try magic .. *)
+                    (*           ]. *)
+                    (*           eapply EqTyWeakZero ; magic. *)
+                    (*       - eapply EqTyConv ; [ *)
+                    (*           eapply EqSubstZeroZero ; magic *)
+                    (*         | try magic .. *)
+                    (*         ]. *)
+                    (*         + eapply EqTyWeakZero ; magic. *)
+                    (*         + eapply TermTyConv ; [ *)
+                    (*             eapply TermSubst ; [ *)
+                    (*               magic *)
+                    (*             | eapply TermVarZero ; magic *)
+                    (*             | magic .. *)
+                    (*             ] *)
+                    (*           | try magic .. *)
+                    (*           ]. *)
+                    (*           eapply myEqTySym ; try magic. *)
+                    (*           eapply EqTyWeakZero ; magic. *)
+                    (*     } *)
+                    admit.
+                      (* * eapply EqCtxExtend ; try magic. *)
+                      (*   gopushsubst. *)
+                      (*   { apply CongId ; try magic. *)
+                      (*     - eapply TermTyConv ; [ *)
+                      (*         eapply TermSubst ; [ *)
+                      (*           magic *)
+                      (*         | eapply TermSubst ; [ *)
+                      (*             magic *)
+                      (*           | eassumption *)
+                      (*           | magic .. *)
+                      (*           ] *)
+                      (*         | magic .. *)
+                      (*         ] *)
+                      (*       | try magic .. *)
+                      (*       ]. *)
+                      (*       eapply myEqTySym ; try magic. *)
+                      (*       eapply EqTyWeakNat ; magic. *)
+                      (*     - eapply TermTyConv ; [ *)
+                      (*         eapply TermVarZero ; magic *)
+                      (*       | try magic .. *)
+                      (*       ]. *)
+                      (*       eapply myEqTySym ; try magic. *)
+                      (*       eapply EqTyWeakNat ; magic. *)
+                      (*     - eapply EqTyWeakNat ; magic. *)
+                      (*     - eapply EqTyConv ; [ *)
+                      (*         eapply EqSubstWeakNat ; try magic ; eassumption *)
+                      (*       | try magic .. *)
+                      (*       ]. *)
+                      (*       + eapply myEqTySym ; try magic. *)
+                      (*         eapply EqTyWeakNat ; magic. *)
+                      (*       + eapply TermTyConv ; [ *)
+                      (*           eapply TermSubst ; [ *)
+                      (*             magic *)
+                      (*           | eapply TermSubst ; [ *)
+                      (*               magic *)
+                      (*             | eassumption *)
+                      (*             | magic .. *)
+                      (*             ] *)
+                      (*           | magic .. *)
+                      (*           ] *)
+                      (*         | try magic .. *)
+                      (*         ]. *)
+                      (*         eapply EqTyWeakNat ; magic. *)
+                      (*     - eapply EqTyConv ; [ *)
+                      (*         eapply EqSubstShiftZero ; magic *)
+                      (*       | try magic .. *)
+                      (*       ]. *)
+                      (*       + eapply myEqTySym ; try magic. *)
+                      (*         eapply EqTyWeakNat ; magic. *)
+                      (*       + eapply TermTyConv ; [ *)
+                      (*           eapply TermSubst ; [ *)
+                      (*             magic *)
+                      (*           | eapply TermVarZero ; magic *)
+                      (*           | magic .. *)
+                      (*           ] *)
+                      (*         | try magic .. *)
+                      (*         ]. *)
+                      (*         eapply EqTyWeakNat ; magic. *)
+                      (*   } *)
                   - eapply TySubst ; try magic.
                     eapply TySubst ; try magic.
                     eapply SubstCtxConv ; try magic.
-                    + eapply EqCtxExtend ; try magic.
-                      gopushsubst.
-                      { apply CongId ; try magic.
-                        - eapply TermTyConv ; [
-                            eapply TermSubst ; [
-                              magic
-                            | eassumption
-                            | magic ..
-                            ]
-                          | try magic ..
-                          ].
-                          eapply EqTyWeakZero ; magic.
-                        - eapply TermTyConv ; [
-                            eapply TermSubst ; [
-                              magic
-                            | eassumption
-                            | magic ..
-                            ]
-                          | try magic ..
-                          ].
-                          eapply EqTyWeakZero ; magic.
-                        - eapply myEqTySym ; try magic.
-                          eapply EqTyWeakZero ; magic.
-                        - eapply EqTyConv ; [
-                            eapply EqSubstWeakZero
-                            ; try magic ; try eassumption
-                          | try magic ..
-                          ].
-                          + eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eassumption
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                          + eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eassumption
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                        - eapply EqTyConv ; [
-                            eapply EqSubstZeroZero ; magic
-                          | try magic ..
-                          ].
-                          + eapply EqTyWeakZero ; magic.
-                          + eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eapply TermVarZero ; magic
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            eapply myEqTySym ; try magic.
-                            eapply EqTyWeakZero ; magic.
-                      }
-                    + eapply EqCtxExtend ; try magic.
-                      gopushsubst.
-                      { apply CongId ; try magic.
-                        - eapply TermTyConv ; [
-                            eapply TermSubst ; [
-                              magic
-                            | eapply TermSubst ; [
-                                magic
-                              | eassumption
-                              | magic ..
-                              ]
-                            | magic ..
-                            ]
-                          | try magic ..
-                          ].
-                          eapply myEqTySym ; try magic.
-                          eapply EqTyWeakNat ; magic.
-                        - eapply TermTyConv ; [
-                            eapply TermVarZero ; magic
-                          | try magic ..
-                          ].
-                          eapply myEqTySym ; try magic.
-                          eapply EqTyWeakNat ; magic.
-                        - eapply EqTyWeakNat ; magic.
-                        - eapply EqTyConv ; [
-                            eapply EqSubstWeakNat ; try magic ; eassumption
-                          | try magic ..
-                          ].
-                          + eapply myEqTySym ; try magic.
-                            eapply EqTyWeakNat ; magic.
-                          + eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eapply TermSubst ; [
-                                  magic
-                                | eassumption
-                                | magic ..
-                                ]
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakNat ; magic.
-                        - eapply EqTyConv ; [
-                            eapply EqSubstShiftZero ; magic
-                          | try magic ..
-                          ].
-                          + eapply myEqTySym ; try magic.
-                            eapply EqTyWeakNat ; magic.
-                          + eapply TermTyConv ; [
-                              eapply TermSubst ; [
-                                magic
-                              | eapply TermVarZero ; magic
-                              | magic ..
-                              ]
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakNat ; magic.
-                      }
-                  Unshelve. all:try magic.
-                  * eapply TySubst ; try magic.
-                    eapply TySubst ; try magic.
-                    { eapply SubstCtxConv ; try magic.
-                      - eapply EqCtxExtend ; try magic.
-                        gopushsubst.
-                        { apply CongId ; try magic.
-                          - eapply TermTyConv ; [
-                              eassumption
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                          - eapply TermTyConv ; [
-                              eassumption
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                          - eapply myEqTySym ; try magic.
-                            eapply EqTyWeakZero ; magic.
-                          - eapply EqSubstWeakZero ; try magic.
-                            eapply TermTyConv ; [
-                              eassumption
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstZeroZero ; magic
-                            | try magic ..
-                            ].
-                            + eapply EqTyWeakZero ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eapply TermVarZero ; magic
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply myEqTySym ; try magic.
-                              eapply EqTyWeakZero ; magic.
-                        }
-                      - apply CtxRefl ; magic.
-                    }
-                  * eapply TySubst ; try magic.
-                    eapply TySubst ; try magic.
-                    { eapply SubstCtxConv ; try magic.
-                      - eapply EqCtxExtend ; try magic.
-                        gopushsubst.
-                        { apply CongId ; try magic.
-                          - eapply TermTyConv ; [
-                              eassumption
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                          - eapply TermTyConv ; [
-                              eassumption
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                          - eapply myEqTySym ; try magic.
-                            eapply EqTyWeakZero ; magic.
-                          - eapply EqSubstWeakZero ; try magic.
-                            eapply TermTyConv ; [
-                              eassumption
-                            | try magic ..
-                            ].
-                            eapply EqTyWeakZero ; magic.
-                          - eapply EqTyConv ; [
-                              eapply EqSubstZeroZero ; magic
-                            | try magic ..
-                            ].
-                            + eapply EqTyWeakZero ; magic.
-                            + eapply TermTyConv ; [
-                                eapply TermSubst ; [
-                                  magic
-                                | eapply TermVarZero ; magic
-                                | magic ..
-                                ]
-                              | try magic ..
-                              ].
-                              eapply myEqTySym ; try magic.
-                              eapply EqTyWeakZero ; magic.
-                        }
-                      - apply CtxRefl ; magic.
-                    }
-                  Unshelve. all:magic.
+                    (* + eapply EqCtxExtend ; try magic. *)
+                    (*   gopushsubst. *)
+                    (*   { apply CongId ; try magic. *)
+                    (*     - eapply TermTyConv ; [ *)
+                    (*         eapply TermSubst ; [ *)
+                    (*           magic *)
+                    (*         | eassumption *)
+                    (*         | magic .. *)
+                    (*         ] *)
+                    (*       | try magic .. *)
+                    (*       ]. *)
+                    (*       eapply EqTyWeakZero ; magic. *)
+                    (*     - eapply TermTyConv ; [ *)
+                    (*         eapply TermSubst ; [ *)
+                    (*           magic *)
+                    (*         | eassumption *)
+                    (*         | magic .. *)
+                    (*         ] *)
+                    (*       | try magic .. *)
+                    (*       ]. *)
+                    (*       eapply EqTyWeakZero ; magic. *)
+                    (*     - eapply myEqTySym ; try magic. *)
+                    (*       eapply EqTyWeakZero ; magic. *)
+                    (*     - eapply EqTyConv ; [ *)
+                    (*         eapply EqSubstWeakZero *)
+                    (*         ; try magic ; try eassumption *)
+                    (*       | try magic .. *)
+                    (*       ]. *)
+                    (*       + eapply TermTyConv ; [ *)
+                    (*           eapply TermSubst ; [ *)
+                    (*             magic *)
+                    (*           | eassumption *)
+                    (*           | magic .. *)
+                    (*           ] *)
+                    (*         | try magic .. *)
+                    (*         ]. *)
+                    (*         eapply EqTyWeakZero ; magic. *)
+                    (*       + eapply TermTyConv ; [ *)
+                    (*           eapply TermSubst ; [ *)
+                    (*             magic *)
+                    (*           | eassumption *)
+                    (*           | magic .. *)
+                    (*           ] *)
+                    (*         | try magic .. *)
+                    (*         ]. *)
+                    (*         eapply EqTyWeakZero ; magic. *)
+                    (*     - eapply EqTyConv ; [ *)
+                    (*         eapply EqSubstZeroZero ; magic *)
+                    (*       | try magic .. *)
+                    (*       ]. *)
+                    (*       + eapply EqTyWeakZero ; magic. *)
+                    (*       + eapply TermTyConv ; [ *)
+                    (*           eapply TermSubst ; [ *)
+                    (*             magic *)
+                    (*           | eapply TermVarZero ; magic *)
+                    (*           | magic .. *)
+                    (*           ] *)
+                    (*         | try magic .. *)
+                    (*         ]. *)
+                    (*         eapply myEqTySym ; try magic. *)
+                    (*         eapply EqTyWeakZero ; magic. *)
+                    (*   } *)
+                    + admit.
+                    (* + eapply EqCtxExtend ; try magic. *)
+                  (*     gopushsubst. *)
+                  (*     { apply CongId ; try magic. *)
+                  (*       - eapply TermTyConv ; [ *)
+                  (*           eapply TermSubst ; [ *)
+                  (*             magic *)
+                  (*           | eapply TermSubst ; [ *)
+                  (*               magic *)
+                  (*             | eassumption *)
+                  (*             | magic .. *)
+                  (*             ] *)
+                  (*           | magic .. *)
+                  (*           ] *)
+                  (*         | try magic .. *)
+                  (*         ]. *)
+                  (*         eapply myEqTySym ; try magic. *)
+                  (*         eapply EqTyWeakNat ; magic. *)
+                  (*       - eapply TermTyConv ; [ *)
+                  (*           eapply TermVarZero ; magic *)
+                  (*         | try magic .. *)
+                  (*         ]. *)
+                  (*         eapply myEqTySym ; try magic. *)
+                  (*         eapply EqTyWeakNat ; magic. *)
+                  (*       - eapply EqTyWeakNat ; magic. *)
+                  (*       - eapply EqTyConv ; [ *)
+                  (*           eapply EqSubstWeakNat ; try magic ; eassumption *)
+                  (*         | try magic .. *)
+                  (*         ]. *)
+                  (*         + eapply myEqTySym ; try magic. *)
+                  (*           eapply EqTyWeakNat ; magic. *)
+                  (*         + eapply TermTyConv ; [ *)
+                  (*             eapply TermSubst ; [ *)
+                  (*               magic *)
+                  (*             | eapply TermSubst ; [ *)
+                  (*                 magic *)
+                  (*               | eassumption *)
+                  (*               | magic .. *)
+                  (*               ] *)
+                  (*             | magic .. *)
+                  (*             ] *)
+                  (*           | try magic .. *)
+                  (*           ]. *)
+                  (*           eapply EqTyWeakNat ; magic. *)
+                  (*       - eapply EqTyConv ; [ *)
+                  (*           eapply EqSubstShiftZero ; magic *)
+                  (*         | try magic .. *)
+                  (*         ]. *)
+                  (*         + eapply myEqTySym ; try magic. *)
+                  (*           eapply EqTyWeakNat ; magic. *)
+                  (*         + eapply TermTyConv ; [ *)
+                  (*             eapply TermSubst ; [ *)
+                  (*               magic *)
+                  (*             | eapply TermVarZero ; magic *)
+                  (*             | magic .. *)
+                  (*             ] *)
+                  (*           | try magic .. *)
+                  (*           ]. *)
+                  (*           eapply EqTyWeakNat ; magic. *)
+                  (*     } *)
+                  (* Unshelve. all:try magic. *)
+                  (* * eapply TySubst ; try magic. *)
+                  (*   eapply TySubst ; try magic. *)
+                  (*   { eapply SubstCtxConv ; try magic. *)
+                  (*     - eapply EqCtxExtend ; try magic. *)
+                  (*       gopushsubst. *)
+                  (*       { apply CongId ; try magic. *)
+                  (*         - eapply TermTyConv ; [ *)
+                  (*             eassumption *)
+                  (*           | try magic .. *)
+                  (*           ]. *)
+                  (*           eapply EqTyWeakZero ; magic. *)
+                  (*         - eapply TermTyConv ; [ *)
+                  (*             eassumption *)
+                  (*           | try magic .. *)
+                  (*           ]. *)
+                  (*           eapply EqTyWeakZero ; magic. *)
+                  (*         - eapply myEqTySym ; try magic. *)
+                  (*           eapply EqTyWeakZero ; magic. *)
+                  (*         - eapply EqSubstWeakZero ; try magic. *)
+                  (*           eapply TermTyConv ; [ *)
+                  (*             eassumption *)
+                  (*           | try magic .. *)
+                  (*           ]. *)
+                  (*           eapply EqTyWeakZero ; magic. *)
+                  (*         - eapply EqTyConv ; [ *)
+                  (*             eapply EqSubstZeroZero ; magic *)
+                  (*           | try magic .. *)
+                  (*           ]. *)
+                  (*           + eapply EqTyWeakZero ; magic. *)
+                  (*           + eapply TermTyConv ; [ *)
+                  (*               eapply TermSubst ; [ *)
+                  (*                 magic *)
+                  (*               | eapply TermVarZero ; magic *)
+                  (*               | magic .. *)
+                  (*               ] *)
+                  (*             | try magic .. *)
+                  (*             ]. *)
+                  (*             eapply myEqTySym ; try magic. *)
+                  (*             eapply EqTyWeakZero ; magic. *)
+                  (*       } *)
+                  (*     - apply CtxRefl ; magic. *)
+                  (*   } *)
+                  (* * eapply TySubst ; try magic. *)
+                  (*   eapply TySubst ; try magic. *)
+                  (*   { eapply SubstCtxConv ; try magic. *)
+                  (*     - eapply EqCtxExtend ; try magic. *)
+                  (*       gopushsubst. *)
+                  (*       { apply CongId ; try magic. *)
+                  (*         - eapply TermTyConv ; [ *)
+                  (*             eassumption *)
+                  (*           | try magic .. *)
+                  (*           ]. *)
+                  (*           eapply EqTyWeakZero ; magic. *)
+                  (*         - eapply TermTyConv ; [ *)
+                  (*             eassumption *)
+                  (*           | try magic .. *)
+                  (*           ]. *)
+                  (*           eapply EqTyWeakZero ; magic. *)
+                  (*         - eapply myEqTySym ; try magic. *)
+                  (*           eapply EqTyWeakZero ; magic. *)
+                  (*         - eapply EqSubstWeakZero ; try magic. *)
+                  (*           eapply TermTyConv ; [ *)
+                  (*             eassumption *)
+                  (*           | try magic .. *)
+                  (*           ]. *)
+                  (*           eapply EqTyWeakZero ; magic. *)
+                  (*         - eapply EqTyConv ; [ *)
+                  (*             eapply EqSubstZeroZero ; magic *)
+                  (*           | try magic .. *)
+                  (*           ]. *)
+                  (*           + eapply EqTyWeakZero ; magic. *)
+                  (*           + eapply TermTyConv ; [ *)
+                  (*               eapply TermSubst ; [ *)
+                  (*                 magic *)
+                  (*               | eapply TermVarZero ; magic *)
+                  (*               | magic .. *)
+                  (*               ] *)
+                  (*             | try magic .. *)
+                  (*             ]. *)
+                  (*             eapply myEqTySym ; try magic. *)
+                  (*             eapply EqTyWeakZero ; magic. *)
+                  (*       } *)
+                  (*     - apply CtxRefl ; magic. *)
+                  (*   } *)
+                  (* Unshelve. all:magic. *)
+                      Unshelve. all:admit..
                 }
               * eapply TySubst ; try magic.
                 eapply TySubst ; try magic.
