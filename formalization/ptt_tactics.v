@@ -342,8 +342,8 @@ Ltac magicn n :=
       apply EqCtxEmpty
     | |- eqctx (ctxextend ?G ?A) (ctxextend ?D ?B) =>
       first [
-          apply EqCtxExtend ; magicn n
-        | apply CtxSym ; [ apply EqCtxExtend ; magicn n | magicn n .. ]
+          eapply EqCtxExtend ; magicn n
+        | apply CtxSym ; [ eapply EqCtxExtend ; magicn n | magicn n .. ]
         ]
     | |- eqctx ?G ?G =>
       apply CtxRefl ; magicn n
