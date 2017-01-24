@@ -38,6 +38,7 @@ Proof.
     ]
   | magic ..
   ].
+  Unshelve. assumption.
 Defined.
 
 Lemma EqTyWeakZero :
@@ -46,10 +47,11 @@ Lemma EqTyWeakZero :
     istype G A ->
     istype G B ->
     isterm G u B ->
-    eqtype G A (Subst (Subst A (sbweak' G B)) (sbzero' G B u)).
+    eqtype G A (Subst (Subst A sbweak) (sbzero u)).
 Proof.
   intros.
-  gocompsubst. eapply EqTySym ; try magic. apply compWeakZero ; magic.
+  gocompsubst. eapply EqTySym ; try magic. eapply compWeakZero ; magic.
+  Unshelve. assumption.
 Defined.
 
 Lemma EqTyShiftZero :
@@ -62,8 +64,8 @@ Lemma EqTyShiftZero :
     isctx D ->
     eqtype
       G
-      (Subst (Subst B (sbshift' G A sbs)) (sbzero' G (Subst A sbs) (subst v sbs)))
-      (Subst (Subst B (sbzero' D A v)) sbs).
+      (Subst (Subst B (sbshift sbs)) (sbzero (subst v sbs)))
+      (Subst (Subst B (sbzero v)) sbs).
 Proof.
   intros. gocompsubst. gocompsubst.
   Unshelve. magic.
@@ -82,8 +84,8 @@ Lemma EqTyCongZero :
     isterm G u1 A1 ->
     isterm G u2 B1 ->
     eqtype G
-           (Subst A2 (sbzero' G A1 u1))
-           (Subst B2 (sbzero' G B1 u2)).
+           (Subst A2 (sbzero u1))
+           (Subst B2 (sbzero u2)).
 Proof.
   intros.
   assert (isterm G u2 A1).
@@ -96,6 +98,7 @@ Proof.
     magic ..
   | eapply SubstCtxConv ; magic
   ].
+  Unshelve. assumption.
 Defined.
 
 Lemma EqTyCongShift :
@@ -114,8 +117,8 @@ Lemma EqTyCongShift :
     istype (ctxextend D A1) B1 ->
     istype (ctxextend D A2) B2 ->
     eqtype (ctxextend G1 (Subst A1 sbs1))
-           (Subst B1 (sbshift' G1 A1 sbs1))
-           (Subst B2 (sbshift' G2 A2 sbs2)).
+           (Subst B1 (sbshift sbs1))
+           (Subst B2 (sbshift sbs2)).
 Proof.
   intros.
   assert (issubst sbs2 G1 D).
@@ -151,18 +154,15 @@ Lemma EqTyCongWeak :
     istype G2 A2 ->
     istype G2 B2 ->
     eqtype (ctxextend G1 A1)
-           (Subst B1 (sbweak' G1 A1))
-           (Subst B2 (sbweak' G2 A2)).
+           (Subst B1 sbweak)
+           (Subst B2 sbweak).
 Proof.
   intros.
   assert (istype G1 A2).
   { eapply TyCtxConv ; [ eassumption | magic .. ]. }
   assert (istype G1 B2).
   { eapply TyCtxConv ; [ eassumption | magic .. ]. }
-  eapply CongTySubst ; [
-    magic ..
-  | eapply SubstCtxConv ; magic
-  ].
+  eapply CongTySubst ; magic.
 Defined.
 
 Lemma EqSubstWeakNat :
@@ -174,85 +174,65 @@ Lemma EqSubstWeakNat :
     isctx G ->
     isctx D ->
     eqterm (ctxextend G (Subst A sbs))
-           (subst (subst u (sbweak' D A)) (sbshift' G A sbs))
-           (subst (subst u sbs) (sbweak' G (Subst A sbs)))
-           (Subst (Subst B sbs) (sbweak' G (Subst A sbs))).
+           (subst (subst u sbweak) (sbshift sbs))
+           (subst (subst u sbs) sbweak)
+           (Subst (Subst B sbs) sbweak).
 Proof.
   intros. eapply EqTyConv.
   - gocompsubst ; try eassumption ; try magic.
     + gocompsubst ; try eassumption ; try magic.
       * { eapply TermTyConv.
-          - eapply TermSubst ; try magic.
-            eapply TermSubst ; try magic.
-            eassumption.
+          - magic.
           - gocompsubst.
           - magic.
           - magic.
           - magic.
         }
       * { eapply TermTyConv.
-          - eapply TermSubst ; try magic.
-            eapply TermSubst ; try magic.
-            eassumption.
+          - magic.
           - gocompsubst.
           - magic.
           - magic.
           - magic.
         }
-      * { eapply TermTyConv.
-          - eapply TermSubst ; try magic.
-            eassumption.
-          - magic.
-          - magic.
-          - magic.
-          - magic.
-        }
+      * eapply TermTyConv ; magic.
       * gocompsubst.
       * { eapply TermTyConv.
-          - eapply TermSubst ; try magic.
-            eassumption.
+          - magic.
           - gocompsubst.
           - magic.
           - magic.
           - magic.
         }
     + { eapply TermTyConv.
-        - eapply TermSubst ; try magic.
-          eapply TermSubst ; try magic.
-          eassumption.
+        - magic.
         - gocompsubst.
         - magic.
         - magic.
         - magic.
       }
     + { eapply TermTyConv.
-        - eapply TermSubst ; try magic.
-          eapply TermSubst ; try magic.
-          eassumption.
+        - magic.
         - gocompsubst.
         - magic.
         - magic.
         - magic.
       }
     + { eapply TermTyConv.
-        - eapply TermSubst ; try magic.
-          eapply TermSubst ; try magic.
-          eassumption.
-        - apply EqTySym ; try magic. apply EqTyWeakNat ; magic.
+        - magic.
+        - apply EqTySym ; try magic. eapply EqTyWeakNat ; magic.
         - magic.
         - magic.
         - magic.
       }
-  - apply EqTyWeakNat ; magic.
+  - eapply EqTyWeakNat ; magic.
   - magic.
   - magic.
   - magic.
   - magic.
   - { eapply TermTyConv.
-      - eapply TermSubst ; try magic.
-        eapply TermSubst ; try magic.
-        eassumption.
-      - apply EqTySym ; try magic. apply EqTyWeakNat ; magic.
+      - magic.
+      - apply EqTySym ; try magic. eapply EqTyWeakNat ; magic.
       - magic.
       - magic.
       - magic.
@@ -269,7 +249,7 @@ Lemma EqSubstWeakZero :
     isterm G v B ->
     isctx G ->
     eqterm G
-           (subst (subst u (sbweak' G B)) (sbzero' G B v))
+           (subst (subst u sbweak) (sbzero v))
            u
            A.
 Proof.
@@ -285,7 +265,7 @@ Proof.
         eassumption
       | try magic ..
       ].
-      apply compWeakZero ; magic.
+      eapply compWeakZero ; magic.
     + assumption.
     + magic.
     + magic.
@@ -298,7 +278,7 @@ Proof.
         eassumption
       | try magic ..
       ].
-      apply compWeakZero ; magic.
+      eapply compWeakZero ; magic.
   - eapply TermTyConv ; [
       (eapply TermSubst ; try magic) ;
       (eapply TermSubst ; try magic) ;
@@ -310,14 +290,14 @@ Proof.
       eassumption
     | try magic ..
     ].
-    apply compWeakZero ; magic.
+    eapply compWeakZero ; magic.
   - apply EqTySym ; try magic.
-    apply EqTyWeakZero ; magic.
+    eapply EqTyWeakZero ; magic.
   - eapply TermTyConv ; [
       eassumption
     | try magic ..
     ].
-    apply EqTyWeakZero ; magic.
+    eapply EqTyWeakZero ; magic.
   Unshelve. all:magic.
 Defined.
 
@@ -332,9 +312,9 @@ Lemma EqTermShiftZero :
     isctx D ->
     eqterm
       G
-      (subst (subst u (sbshift' G A sbs)) (sbzero' G (Subst A sbs) (subst v sbs)))
-      (subst (subst u (sbzero' D A v)) sbs)
-      (Subst (Subst B (sbzero' D A v)) sbs).
+      (subst (subst u (sbshift sbs)) (sbzero (subst v sbs)))
+      (subst (subst u (sbzero v)) sbs)
+      (Subst (Subst B (sbzero v)) sbs).
 Proof.
   intros.
   gocompsubst.
@@ -344,7 +324,7 @@ Proof.
       eassumption
     | try magic ..
     ].
-    apply EqTyShiftZero ; magic.
+    eapply EqTyShiftZero ; magic.
   - gocompsubst.
     + eapply TermTyConv ; [
         (eapply TermSubst ; try magic) ;
@@ -353,11 +333,6 @@ Proof.
       | try magic ..
       ].
       gocompsubst.
-    + eassumption.
-    + eapply CongTermSubst ; [
-        eapply ShiftZero ; magic
-      | magic ..
-      ].
     + eapply TermTyConv ; [
         (eapply TermSubst ; try magic) ;
         (eapply TermSubst ; try magic) ;
@@ -370,18 +345,7 @@ Proof.
         eassumption
       | try magic ..
       ].
-    + eapply TermTyConv ; [
-        (eapply TermSubst ; try magic) ;
-        eassumption
-      | try magic ..
-      ].
     + gocompsubst.
-    + eapply TermTyConv ; [
-        (eapply TermSubst ; try magic) ;
-        (eapply TermSubst ; try magic) ;
-        eassumption
-      | try magic ..
-      ].
     + eapply TermTyConv ; [
         (eapply TermSubst ; try magic) ;
         eassumption
@@ -420,9 +384,9 @@ Lemma EqTermCongWeak :
     isterm G1 u1 B1 ->
     isterm G2 u2 B2 ->
     eqterm (ctxextend G1 A1)
-           (subst u1 (sbweak' G1 A1))
-           (subst u2 (sbweak' G2 A2))
-           (Subst B1 (sbweak' G1 A1)).
+           (subst u1 sbweak)
+           (subst u2 sbweak)
+           (Subst B1 sbweak).
 Proof.
   intros.
   assert (istype G1 A2).
@@ -448,10 +412,6 @@ Proof.
   }
   eapply CongTermSubst ; [
     eapply CongSubstWeak ; magic
-  | try magic ..
-  ].
-  eapply SubstCtxConv ; [
-    eapply SubstWeak ; magic
   | magic ..
   ].
 Defined.
@@ -470,7 +430,7 @@ Lemma JTyConv :
     istype
       (ctxextend
          (ctxextend D A)
-         (Id (Subst A (sbweak' D A)) (subst u (sbweak' D A)) (var 0))
+         (Id (Subst A sbweak) (subst u sbweak) (var 0))
       )
       C ->
     isterm
@@ -479,10 +439,8 @@ Lemma JTyConv :
       (Subst
          (Subst
             C
-            (sbshift'
-               D
-               (Id (Subst A (sbweak' D A)) (subst u (sbweak' D A)) (var 0))
-               (sbzero' D A u))) (sbzero' D (Id A u u) (refl A u))) ->
+            (sbshift (sbzero u)))
+         (sbzero (refl A u))) ->
     isterm D v A ->
     isterm D p (Id A u v) ->
     eqtype
@@ -490,38 +448,25 @@ Lemma JTyConv :
       (Subst
          (Subst
             (Subst C
-                   (sbshift'
-                      D
-                      (Id (Subst A (sbweak' D A)) (subst u (sbweak' D A)) (var 0))
-                      (sbzero' D A v)
+                   (sbshift (sbzero v)
                    )
             )
-            (sbzero' D (Id A u v) p)
+            (sbzero p)
          )
          sbs
       )
       (Subst
          (Subst
             (Subst C
-                   (sbshift'
-                      (ctxextend G (Subst A sbs))
-                      (Id (Subst A (sbweak' D A)) (subst u (sbweak' D A)) (var 0))
-                      (sbshift' G A sbs)
+                   (sbshift
+                      (sbshift sbs)
                    )
             )
-            (sbshift'
-               G
-               (Id
-                  (Subst (Subst A sbs) (sbweak' G (Subst A sbs)))
-                  (subst (subst u sbs) (sbweak' G (Subst A sbs)))
-                  (var 0)
-               )
-               (sbzero' G (Subst A sbs) (subst v sbs))
+            (sbshift
+               (sbzero (subst v sbs))
             )
          )
-         (sbzero'
-            G
-            (Id (Subst A sbs) (subst u sbs) (subst v sbs))
+         (sbzero
             (subst p sbs)
          )
       ).
@@ -532,48 +477,59 @@ Proof.
   { now apply TermRefl. }
   assert (
     istype (ctxextend D A)
-           (Id (Subst A (sbweak' D A)) (subst u (sbweak' D A)) (var 0))
+           (Id (Subst A sbweak) (subst u sbweak) (var 0))
   ).
   { apply TyId ; magic. }
   assert (eqctx D D).
   { now apply CtxRefl. }
-  assert (eqtype D (Subst (Subst A (sbweak' D A)) (sbzero' D A v)) A).
+  assert (eqtype D (Subst (Subst A sbweak) (sbzero v)) A).
   { apply myEqTySym ; try magic.
-    now apply EqTyWeakZero.
+    eapply EqTyWeakZero ; magic.
+    Unshelve. assumption.
   }
-  assert (isterm D u (Subst (Subst A (sbweak' D A)) (sbzero' D A v))).
+  assert (isterm D u (Subst (Subst A sbweak) (sbzero v))).
   { eapply TermTyConv ; [ eassumption | magic .. ]. }
   assert (
     eqterm D
-           (subst (subst u (sbweak' D A)) (sbzero' D A v)) u
-           (Subst (Subst A (sbweak' D A)) (sbzero' D A v))
+           (subst (subst u sbweak) (sbzero v)) u
+           (Subst (Subst A sbweak) (sbzero v))
   ).
-  { apply EqSubstWeakZero ; try assumption. magic. }
-  assert (isterm D (subst (var 0) (sbzero' D A v)) A).
+  { eapply EqSubstWeakZero ; try assumption ; magic.
+    Unshelve. assumption.
+  }
+  assert (isterm D (subst (var 0) (sbzero v)) A).
   { eapply TermTyConv ; [
       eapply TermSubst ; magic
     | magic ..
     ].
   }
-  assert (eqterm D (subst (var 0) (sbzero' D A v)) v
-    (Subst (Subst A (sbweak' D A)) (sbzero' D A v))).
+  assert (eqterm D (subst (var 0) (sbzero v)) v
+    (Subst (Subst A sbweak) (sbzero v))).
   { eapply EqTyConv ; [
       eapply EqSubstZeroZero ; magic
     | magic ..
     ].
+    Unshelve. assumption.
   }
-  assert (isterm D v (Subst (Subst A (sbweak' D A)) (sbzero' D A v))).
+  assert (isterm D v (Subst (Subst A sbweak) (sbzero v))).
   { eapply TermTyConv ; [ eassumption | magic .. ]. }
   assert (
     eqtype
       D
       (Id
-         (Subst (Subst A (sbweak' D A)) (sbzero' D A v))
-         (subst (subst u (sbweak' D A)) (sbzero' D A v))
-         (subst (var 0) (sbzero' D A v)))
+         (Subst (Subst A sbweak) (sbzero v))
+         (subst (subst u sbweak) (sbzero v))
+         (subst (var 0) (sbzero v)))
       (Id A u v)
   ).
-  { magic. }
+  { (* eapply CongId. *)
+    (* - magic. *)
+    (* - eapply TySubst. *)
+    (*   + eapply SubstZero. *)
+    (*     * magic. *)
+    (*     * (* We are asked to type the same type... *) *)
+    fail. (* There is a loop so let's stop here. *)
+    magic. }
   assert (
     eqtype D
     (Subst (Id (Subst A (sbweak' D A)) (subst u (sbweak' D A)) (var 0))

@@ -153,7 +153,7 @@ with isterm : context -> term -> type -> Type :=
        rule
          parameters: {G A},
          premise: istype G A
-         conclusion: 
+         conclusion:
            isterm (ctxextend G A) (var 0) (Subst A sbweak)
        endrule
 
@@ -339,43 +339,39 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
 
      | CongSubstZero :
        rule
-         parameters: {G1 G2 A1 A2 u1 u2},
-         premise: eqctx G1 G2
-         premise: eqtype G1 A1 A2
-         premise: eqterm G1 u1 u2 A1
+         parameters: {G A u1 u2},
+         premise: eqterm G u1 u2 A
          conclusion:
            eqsubst
              (sbzero u1)
              (sbzero u2)
-             G1
-             (ctxextend G1 A1)
+             G
+             (ctxextend G A)
        endrule
 
      | CongSubstWeak :
        rule
-         parameters: {G1 G2 A1 A2},
-         premise: eqctx G1 G2
-         premise: eqtype G1 A1 A2
+         parameters: {G A},
+         premise: istype G A
          conclusion:
            eqsubst
              sbweak
              sbweak
-             (ctxextend G1 A1)
-             G1
+             (ctxextend G A)
+             G
        endrule
 
      | CongSubstShift :
        rule
-         parameters: {G1 G2 D A1 A2 sbs1 sbs2},
-         premise: eqctx G1 G2
-         premise: eqsubst sbs1 sbs2 G1 D
-         premise: eqtype D A1 A2
-         conclusion:                         
+         parameters: {G D A sbs1 sbs2},
+         premise: eqsubst sbs1 sbs2 G D
+         premise: istype D A
+         conclusion:
            eqsubst
              (sbshift sbs1)
              (sbshift sbs2)
-             (ctxextend G1 (Subst A1 sbs1))
-             (ctxextend D A1)
+             (ctxextend G (Subst A sbs1))
+             (ctxextend D A)
        endrule
 
      | CongSubstComp :
