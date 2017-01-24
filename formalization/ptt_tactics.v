@@ -231,7 +231,7 @@ Ltac magicn n :=
     | |- isctx ctxempty =>
       apply CtxEmpty
     | |- isctx (ctxextend ?G ?A) =>
-      apply CtxExtend ; magicn n
+      eapply CtxExtend ; magicn n
     | |- isctx ?G =>
       (* And not eassumption so we don't select some random context. *)
       assumption || shelve
@@ -323,6 +323,13 @@ Ltac magicn n :=
         ]
     | |- isterm ?G (cond ?C ?u ?v ?w) ?T =>
       eapply TermCond ; magicn n
+    | [ H : isterm ?G ?v ?A, H' : isterm ?G ?v ?B |- isterm ?G ?v ?C ] =>
+      (* We have several options so we don't take any risk. *)
+      first [
+        is_var A ; exact H
+      | is_var B ; exact H'
+      | shelve
+      ]
     | |- isterm ?G ?u ?A =>
       first [
         (* If u is an existential variable we don't touch it. *)
