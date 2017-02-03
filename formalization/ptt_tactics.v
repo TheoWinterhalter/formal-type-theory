@@ -1,5 +1,5 @@
 (* Tactics and auxiliary lemmas for ptt. *)
-Require Import syntax ptt myptt.
+Require Import syntax ptt.
 
 (* Some tactic to compose substitutions. *)
 Lemma eqtype_subst_left :
@@ -42,7 +42,7 @@ Lemma eqterm_subst_left :
 Proof.
   intros.
   assert (hh : eqtype G (Subst A (sbcomp sbt sbs)) (Subst (Subst A sbt) sbs)).
-  { apply myEqTySym ; [
+  { apply EqTySym ; [
       eapply EqTySubstComp ; eassumption
     | assumption ..
     ].
@@ -52,7 +52,7 @@ Proof.
   eapply EqTrans.
   - eapply EqTyConv.
     + eapply EqSubstComp ; eassumption.
-    + apply myEqTySym ; [
+    + apply EqTySym ; [
         eapply EqTySubstComp ; eassumption
       | assumption ..
       ].
@@ -74,15 +74,15 @@ Ltac compsubst1 :=
   | |- eqtype ?G (Subst (Subst ?A ?sbt) ?sbs) ?B =>
     eapply eqtype_subst_left
   | |- eqtype ?G ?A (Subst (Subst ?B ?sbt) ?sbs) =>
-    eapply myEqTySym ; try eapply eqtype_subst_left
+    eapply EqTySym ; try eapply eqtype_subst_left
   | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v (Subst (Subst ?A ?sbt) ?sbs) =>
     eapply eqterm_subst_left
   | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) (Subst (Subst ?A ?sbt) ?sbs) =>
-    eapply myEqSym ; try eapply eqterm_subst_left
+    eapply EqSym ; try eapply eqterm_subst_left
   | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v ?A =>
     eapply EqTyConv ; [ try eapply eqterm_subst_left | .. ]
   | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) ?A =>
-    eapply myEqSym ; [
+    eapply EqSym ; [
       eapply EqTyConv ; [ try eapply eqterm_subst_left | .. ]
     | ..
     ]
@@ -106,36 +106,36 @@ Ltac pushsubst1 :=
   | |- eqtype ?G (Subst (Id ?A ?u ?v) ?sbs) ?B =>
     eapply EqTyTrans ; [ eapply EqTySubstId | .. ]
   | |- eqtype ?G ?A (Subst (Id ?B ?u ?v) ?sbs) =>
-    eapply myEqTySym ; [
+    eapply EqTySym ; [
       eapply EqTyTrans ; [ eapply EqTySubstId | .. ]
     | ..
     ]
   | |- eqtype ?G (Subst (Prod ?A ?B) ?sbs) ?C =>
     eapply EqTyTrans ; [ eapply EqTySubstProd | .. ]
   | |- eqtype ?G ?A (Subst (Prod ?B ?C) ?sbs) =>
-    eapply myEqTySym ; [ eapply EqTyTrans ; [ eapply EqTySubstProd | .. ] | .. ]
+    eapply EqTySym ; [ eapply EqTyTrans ; [ eapply EqTySubstProd | .. ] | .. ]
   | |- eqtype ?G (Subst ?E ?sbs) Empty =>
     eapply EqTySubstEmpty
   | |- eqtype ?G (Subst Empty ?sbs) ?A =>
     eapply EqTyTrans ; [ eapply EqTySubstEmpty | .. ]
   | |- eqtype ?G Empty (Subst ?E ?sbs) =>
-    eapply myEqTySym ; [ eapply EqTySubstEmpty | .. ]
+    eapply EqTySym ; [ eapply EqTySubstEmpty | .. ]
   | |- eqtype ?G ?A (Subst Empty ?sbs) =>
-    eapply myEqTySym ; [
+    eapply EqTySym ; [
       eapply EqTyTrans ; [ eapply EqTySubstEmpty | .. ]
     | ..
     ]
   | |- eqtype ?G (Subst Unit ?sbs) ?A =>
     eapply EqTyTrans ; [ eapply EqTySubstUnit | .. ]
   | |- eqtype ?G ?A (Subst Unit ?sbs) =>
-    eapply myEqTySym ; [
+    eapply EqTySym ; [
       eapply EqTyTrans ; [ eapply EqTySubstUnit | .. ]
     | ..
     ]
   | |- eqtype ?G (Subst Bool ?sbs) ?A =>
     eapply EqTyTrans ; [ eapply EqTySubstBool | .. ]
   | |- eqtype ?G ?A (Subst Bool ?sbs) =>
-    eapply myEqTySym ; [
+    eapply EqTySym ; [
       eapply EqTyTrans ; [ eapply EqTySubstBool | .. ]
     | ..
     ]
@@ -423,14 +423,14 @@ Ltac magicn n try shelf tysym :=
     | |- eqsubst (sbcomp sbweak (sbshift ?sbs)) (sbcomp ?sbs sbweak) ?G ?D =>
       eapply WeakNat ; magicn n try shelf tysym
     | |- eqsubst (sbcomp ?sbs sbweak) (sbcomp sbweak (sbshift ?sbs)) ?G ?D =>
-      eapply mySubstSym ; [
+      eapply SubstSym ; [
         eapply WeakNat ; magicn n try shelf tysym
       | magicn n try shelf tysym ..
       ]
     | |- eqsubst (sbcomp sbweak (sbzero ?u)) sbid ?G ?D =>
       eapply WeakZero ; magicn n try shelf tysym
     | |- eqsubst sbid (sbcomp sbweak (sbzero ?u)) ?G ?D =>
-      eapply mySubstSym ; [
+      eapply SubstSym ; [
         eapply WeakZero ; magicn n try shelf tysym
       | magicn n try shelf tysym ..
       ]
@@ -444,9 +444,9 @@ Ltac magicn n try shelf tysym :=
       tryif (is_var sbs ; is_var sbt)
       then first [
         eassumption
-      | eapply mySubstSym ; [ eassumption | magicn n try shelf tysym .. ]
+      | eapply SubstSym ; [ eassumption | magicn n try shelf tysym .. ]
       | eapply EqSubstCtxConv ; [ eassumption | magicn n try shelf tysym .. ]
-      | eapply mySubstSym ; [
+      | eapply SubstSym ; [
           eapply EqSubstCtxConv ; [ eassumption | magicn n try shelf tysym .. ]
         | magicn n try shelf tysym ..
         ]
@@ -482,7 +482,7 @@ Ltac magicn n try shelf tysym :=
       else pushsubst1 ; magicn n try shelf tysym
     | |- eqtype ?G ?A (Subst ?B ?sbs) =>
       (* We know how to deal with the symmetric case. *)
-      cando tysym ; eapply myEqTySym ; [
+      cando tysym ; eapply EqTySym ; [
         magicn n try shelf false
       | magicn n try shelf tysym ..
       ]
@@ -494,7 +494,7 @@ Ltac magicn n try shelf tysym :=
           eassumption
         | eapply EqTyRefl ; magicn n try shelf tysym
         | cando tysym ;
-          eapply myEqTySym ; [ eassumption | magicn n try shelf false .. ]
+          eapply EqTySym ; [ eassumption | magicn n try shelf false .. ]
         ]
       ) else (
         match eval compute in n with

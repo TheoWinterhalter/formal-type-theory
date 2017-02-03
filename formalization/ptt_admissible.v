@@ -1,6 +1,6 @@
 (* Admissibile ptt rules. *)
 
-Require Import syntax ptt myptt ptt_tactics.
+Require Import syntax ptt ptt_tactics.
 
 
 
@@ -59,7 +59,7 @@ Lemma EqTyShiftZero :
       (Subst (Subst B (sbzero v)) sbs).
 Proof.
   intros. magic.
-  Unshelve. strictmagic.
+  Unshelve. all:strictmagic.
 Defined.
 
 Lemma EqTyCongZero :
@@ -78,7 +78,9 @@ Lemma EqTyCongZero :
            (Subst A2 (sbzero u1))
            (Subst B2 (sbzero u2)).
 Proof.
-  intros. magic.
+  intros. trymagic. fail.
+
+
   Unshelve. assumption.
 Defined.
 
