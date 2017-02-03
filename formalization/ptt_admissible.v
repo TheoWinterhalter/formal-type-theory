@@ -139,89 +139,9 @@ Lemma EqSubstWeakNat :
            (subst (subst u sbs) sbweak)
            (Subst (Subst B sbs) sbweak).
 Proof.
-  intros.
-  compsubst1 ; try strictmagic.
-  (* compsubst1 ; try magic. *)
-  (* Somehow, magic or trymagic deduce wrong things and yield unprovable
-     goals. *)
-  - (* Here trymagic goes wrong. It should compsubst1 again. *)
-    (* The problem is that equality of terms is underspecified. *)
-    (* trymagic. *)
-    compsubst1 ; try strictmagic.
-    all:magic.
-  - eapply TermTyConv ; magic.
-  - eapply TermTyConv ; magic.
-  - eapply TermTyConv ; magic. (* TODO: Add this behavior. *)
-
+  intros. magic.
   Unshelve. all:strictmagic.
-
-  (* trymagic. *)
-
-  fail.
-
-eapply EqTyConv.
-  - gocompsubst ; try eassumption ; try magic.
-    + gocompsubst ; try eassumption ; try magic.
-      * { eapply TermTyConv.
-          - magic.
-          - gocompsubst.
-          - magic.
-          - magic.
-          - magic.
-        }
-      * { eapply TermTyConv.
-          - magic.
-          - gocompsubst.
-          - magic.
-          - magic.
-          - magic.
-        }
-      * eapply TermTyConv ; magic.
-      * gocompsubst.
-      * { eapply TermTyConv.
-          - magic.
-          - gocompsubst.
-          - magic.
-          - magic.
-          - magic.
-        }
-    + { eapply TermTyConv.
-        - magic.
-        - gocompsubst.
-        - magic.
-        - magic.
-        - magic.
-      }
-    + { eapply TermTyConv.
-        - magic.
-        - gocompsubst.
-        - magic.
-        - magic.
-        - magic.
-      }
-    + { eapply EqTyRefl ; magic. }
-    + { eapply TermTyConv.
-        - magic.
-        - apply EqTySym ; try magic. eapply EqTyWeakNat ; magic.
-        - magic.
-        - magic.
-        - magic.
-      }
-  - eapply EqTyWeakNat ; magic.
-  - magic.
-  - magic.
-  - magic.
-  - magic.
-  - { eapply TermTyConv.
-      - magic.
-      - apply EqTySym ; try magic. eapply EqTyWeakNat ; magic.
-      - magic.
-      - magic.
-      - magic.
-    }
-  Unshelve. all:magic.
 Defined.
-
 
 Lemma EqSubstWeakZero :
   forall {G A B u v},
@@ -235,7 +155,10 @@ Lemma EqSubstWeakZero :
            u
            A.
 Proof.
-  intros.
+  intros. trymagic.
+
+  fail.
+
   gocompsubst ; try eassumption ; try magic.
   - eapply EqTrans.
     + eapply CongTermSubst ; [

@@ -506,7 +506,7 @@ Ltac magicn n try shelf tysym :=
     (*! Equality of terms !*)
     | |- eqterm ?G (subst (subst ?u ?sbs) ?sbt) ?v ?A =>
       compsubst1 ; magicn n try shelf tysym
-    | |- eqterm ?G ?u (subst (subst ?u ?sbs) ?sbt) ?A =>
+    | |- eqterm ?G ?u (subst (subst ?v ?sbs) ?sbt) ?A =>
       compsubst1 ; magicn n try shelf tysym
     (* We need to rethink the line below and only apply cong when it's ok. *)
     | |- eqterm ?G (subst ?u ?sbs) (subst ?v ?sbt) ?A =>
