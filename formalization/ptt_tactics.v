@@ -255,7 +255,7 @@ Ltac simplify :=
 (* It is basically a type checker that doesn't do the smart things,
    namely type and context conversions (and it doesn't rely on reflection
    obviously). *)
-Ltac magicn n try shelf :=
+Ltac magicn n try shelf tysym :=
   first [
     assumption
   | (* We have several things we need to do to the tactic:
@@ -278,35 +278,35 @@ Ltac magicn n try shelf :=
     | |- isctx ctxempty =>
       apply CtxEmpty
     | |- isctx (ctxextend ?G ?A) =>
-      eapply CtxExtend ; magicn n try shelf
+      eapply CtxExtend ; magicn n try shelf tysym
     | |- isctx ?G =>
       (* And not eassumption so we don't select some random context. *)
       assumption || cando shelf ; shelve
     (*! Substitutions !*)
     | |- issubst (sbzero ?u) ?G1 ?G2 =>
       first [
-          eapply SubstZero ; magicn n try shelf
+          eapply SubstZero ; magicn n try shelf tysym
         | eassumption
         ]
     | |- issubst sbweak ?G1 ?G2 =>
       first [
-          eapply SubstWeak ; magicn n try shelf
+          eapply SubstWeak ; magicn n try shelf tysym
         | assumption
         | cando shelf ; shelve
         ]
     | |- issubst (sbshift ?sbs) ?G1 ?G2 =>
       first [
-          eapply SubstShift ; magicn n try shelf
+          eapply SubstShift ; magicn n try shelf tysym
         | eassumption
         ]
     | |- issubst (sbid) ?G1 ?G2 =>
       first [
-          eapply SubstId ; magicn n try shelf
+          eapply SubstId ; magicn n try shelf tysym
         | eassumption
         ]
     | |- issubst (sbcomp ?sbt ?sbs) ?G1 ?G2 =>
       first [
-          eapply SubstComp ; magicn n try shelf
+          eapply SubstComp ; magicn n try shelf tysym
         | eassumption
         ]
     | |- issubst ?sbs ?G1 ?G2 =>
@@ -315,17 +315,17 @@ Ltac magicn n try shelf :=
       is_var sbs ; eassumption
     (*! Types !*)
     | |- istype ?G (Subst ?A ?sbs) =>
-      eapply TySubst ; magicn n try shelf
+      eapply TySubst ; magicn n try shelf tysym
     | |- istype ?G (Prod ?A ?B) =>
-      eapply TyProd ; magicn n try shelf
+      eapply TyProd ; magicn n try shelf tysym
     | |- istype ?G (Id ?A ?u ?v) =>
-      eapply TyId ; magicn n try shelf
+      eapply TyId ; magicn n try shelf tysym
     | |- istype ?G Empty =>
-      eapply TyEmpty ; magicn n try shelf
+      eapply TyEmpty ; magicn n try shelf tysym
     | |- istype ?G Unit =>
-      eapply TyUnit ; magicn n try shelf
+      eapply TyUnit ; magicn n try shelf tysym
     | |- istype ?G Bool =>
-      eapply TyBool ; magicn n try shelf
+      eapply TyBool ; magicn n try shelf tysym
     | |- istype ?G ?A =>
       first [
         is_var A ; eassumption
@@ -334,47 +334,47 @@ Ltac magicn n try shelf :=
       ]
     (*! Terms !*)
     | |- isterm ?G (subst ?u ?sbs) ?A =>
-      eapply TermSubst ; magicn n try shelf
+      eapply TermSubst ; magicn n try shelf tysym
     | |- isterm (ctxextend ?G ?A) (var 0) ?T =>
-      eapply TermVarZero ; magicn n try shelf
+      eapply TermVarZero ; magicn n try shelf tysym
     | |- isterm (ctxextend ?G ?B) (var (S ?k)) (Subst ?A sbweak) =>
-      eapply TermVarSucc ; magicn n try shelf
+      eapply TermVarSucc ; magicn n try shelf tysym
     | |- isterm ?G (lam ?A ?B ?u) ?C =>
-      eapply TermAbs ; magicn n try shelf
+      eapply TermAbs ; magicn n try shelf tysym
     | |- isterm ?G (app ?u ?A ?B ?v) ?C =>
-      eapply TermApp ; magicn n try shelf
+      eapply TermApp ; magicn n try shelf tysym
     | |- isterm ?G (refl ?A ?u) ?B =>
-      eapply TermRefl ; magicn n try shelf
+      eapply TermRefl ; magicn n try shelf tysym
     | |- isterm ?G (j ?A ?u ?C ?w ?v ?p) ?T =>
-      eapply TermJ ; magicn n try shelf
+      eapply TermJ ; magicn n try shelf tysym
     | |- isterm ?G (exfalso ?A ?u) _ =>
-      eapply TermExfalso ; magicn n try shelf
+      eapply TermExfalso ; magicn n try shelf tysym
     | |- isterm ?G unit ?A =>
       first [
-          eapply TermUnit ; magicn n try shelf
+          eapply TermUnit ; magicn n try shelf tysym
         | eapply TermTyConv ; [
-            eapply TermUnit ; magicn n try shelf
-          | magicn n try shelf
+            eapply TermUnit ; magicn n try shelf tysym
+          | magicn n try shelf tysym
           ]
         ]
     | |- isterm ?G true ?A =>
       first [
-          eapply TermTrue ; magicn n try shelf
+          eapply TermTrue ; magicn n try shelf tysym
         | eapply TermTyConv ; [
-            eapply TermTrue ; magicn n try shelf
-          | magicn n try shelf
+            eapply TermTrue ; magicn n try shelf tysym
+          | magicn n try shelf tysym
           ]
         ]
     | |- isterm ?G false ?A =>
       first [
-          eapply TermFalse ; magicn n try shelf
+          eapply TermFalse ; magicn n try shelf tysym
         | eapply TermTyConv ; [
-            eapply TermFalse ; magicn n try shelf
-          | magicn n try shelf
+            eapply TermFalse ; magicn n try shelf tysym
+          | magicn n try shelf tysym
           ]
         ]
     | |- isterm ?G (cond ?C ?u ?v ?w) ?T =>
-      eapply TermCond ; magicn n try shelf
+      eapply TermCond ; magicn n try shelf tysym
     | [ H : isterm ?G ?v ?A, H' : isterm ?G ?v ?B |- isterm ?G ?v ?C ] =>
       (* We have several options so we don't take any risk. *)
       (* Eventually this should go away. I don't want to do the assert thing
@@ -394,7 +394,7 @@ Ltac magicn n try shelf :=
             eassumption
           | eapply TermTyConv ; [
               eassumption
-            | magicn n try shelf ..
+            | magicn n try shelf tysym ..
             ]
           ]
         | (* If we are typing a term variable then we shelve I guess. *)
@@ -407,41 +407,41 @@ Ltac magicn n try shelf :=
       apply EqCtxEmpty
     | |- eqctx (ctxextend ?G ?A) (ctxextend ?D ?B) =>
       first [
-          eapply EqCtxExtend ; magicn n try shelf
+          eapply EqCtxExtend ; magicn n try shelf tysym
         | apply CtxSym ;
-          [ eapply EqCtxExtend ; magicn n try shelf | magicn n try shelf .. ]
+          [ eapply EqCtxExtend ; magicn n try shelf tysym | magicn n try shelf tysym .. ]
         ]
     | |- eqctx ?G ?G =>
-      apply CtxRefl ; magicn n try shelf
+      apply CtxRefl ; magicn n try shelf tysym
     | |- eqctx ?G ?D =>
       (* When comparing two contexts that are unknown, we either know
        already, or we know the symmetry. *)
       (* assumption *)
       (* In the first case we don't want to use magic in order to avoid symmetry
        again. *)
-      (* || apply CtxSym ; [ assumption | magicn n try shelf .. ] *)
-      first [ assumption | apply CtxSym ; [ assumption | magicn n try shelf .. ] ]
+      (* || apply CtxSym ; [ assumption | magicn n try shelf tysym .. ] *)
+      first [ assumption | apply CtxSym ; [ assumption | magicn n try shelf tysym .. ] ]
     (*! Equality of substitutions !*)
     | |- eqsubst (sbcomp sbweak (sbzero ?u)) sbid ?G ?D =>
-      eapply WeakZero ; magicn n try shelf
+      eapply WeakZero ; magicn n try shelf tysym
     | |- eqsubst sbid (sbcomp sbweak (sbzero ?u)) ?G ?D =>
       eapply mySubstSym ; [
-        eapply WeakZero ; magicn n try shelf
-      | magicn n try shelf ..
+        eapply WeakZero ; magicn n try shelf tysym
+      | magicn n try shelf tysym ..
       ]
     | |- eqsubst (sbzero ?u1) (sbzero ?u2) ?D ?E =>
-      eapply CongSubstZero ; magicn n try shelf
+      eapply CongSubstZero ; magicn n try shelf tysym
     | |- eqsubst sbweak sbweak ?D ?E =>
-      eapply CongSubstWeak ; magicn n try shelf
+      eapply CongSubstWeak ; magicn n try shelf tysym
     | |- eqsubst (sbshift ?sbs1) (sbshift ?sbs2) ?D ?E =>
-      eapply CongSubstShift ; magicn n try shelf
+      eapply CongSubstShift ; magicn n try shelf tysym
     (* We should probably avoid using congruence on composition. *)
     (* To be continued... *)
     (*! Equality of types !*)
     | |- eqtype ?g (Subst (Subst ?A ?sbs) ?sbt) ?B =>
-      compsubst1 ; magicn n try shelf
+      compsubst1 ; magicn n try shelf tysym
     | |- eqtype ?g ?A (Subst (Subst ?B ?sbs) ?sbt) =>
-      compsubst1 ; magicn n try shelf
+      compsubst1 ; magicn n try shelf tysym
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)
       first [
@@ -449,46 +449,60 @@ Ltac magicn n try shelf :=
         first [
           is_var sbs ;
           first [
-            eapply CongTySubst ; magicn n try shelf
+            eapply CongTySubst ; magicn n try shelf tysym
           | eassumption
           ]
         | first [
-            (* eapply EqTyIdSubst ; magicn n try shelf *)
-            simplify ; magicn n try shelf
-          | eapply CongTySubst ; magicn n try shelf
+            (* eapply EqTyIdSubst ; magicn n try shelf tysym *)
+            simplify ; magicn n try shelf tysym
+          | eapply CongTySubst ; magicn n try shelf tysym
           ]
         ]
-      | pushsubst1 ; magicn n try shelf
+      | pushsubst1 ; magicn n try shelf tysym
+      ]
+    | |- eqtype ?G ?A (Subst ?B ?sbs) =>
+      (* We know how to deal with the symmetric case. *)
+      eapply EqTySym ; [
+        magicn n try shelf false
+      | magicn n try shelf tysym ..
       ]
     (* | |- eqtype ?G ?A ?B => *)
-    (*   (* We may have to test has_evar/is_var. *) *)
-    (*   first [ *)
-    (*     assumption *)
-    (*   | eapply EqTySym ; [ assumption | magicn n try shelf .. ] *)
-    (*   ] *)
+    (*   (* We only want to catch the variable case, so we will copy the _ *)
+    (*      case here (it's a lazymatch). *) *)
+    (*   tryif (is_var A ; is_var B) then ( *)
+    (*     first [ *)
+    (*       assumption *)
+    (*     | eapply EqTySym ; [ assumption | magicn n try shelf false .. ] *)
+    (*     ] *)
+    (*   ) else ( *)
+    (*     match eval compute in n with *)
+    (*     | 0 => assumption *)
+    (*     | S ?n => assumption || (constructor ; magicn n try shelf tysym) *)
+    (*     end *)
+    (*   ) *)
     (* To be continued... *)
     (*! Equality of terms !*)
     | |- eqterm ?G (subst ?u ?sbs) (subst ?v ?sbt) ?A =>
-      eapply CongTermSubst ; magicn n try shelf
+      eapply CongTermSubst ; magicn n try shelf tysym
     (* To be continues... *)
     (* When all else fails. *)
     (* This part will hopefully be gone at some point. *)
     | _ =>
       match eval compute in n with
       | 0 => assumption
-      | S ?n => assumption || (constructor ; magicn n try shelf)
+      | S ?n => assumption || (constructor ; magicn n try shelf tysym)
       end
     end
   | cando try
   ].
 
-Ltac magic2 := magicn (S (S 0)) false true.
-Ltac magic3 := magicn (S (S (S 0))) false true.
-Ltac magic4 := magicn (S (S (S (S 0)))) false true.
-Ltac magic5 := magicn (S (S (S (S (S 0))))) false true.
+Ltac magic2 := magicn (S (S 0)) false true true.
+Ltac magic3 := magicn (S (S (S 0))) false true true.
+Ltac magic4 := magicn (S (S (S (S 0)))) false true true.
+Ltac magic5 := magicn (S (S (S (S (S 0))))) false true true.
 Ltac magic := magic2. (* ; Unshelve ; magic2. *)
-Ltac trymagic := magicn (S (S 0)) true true.
-Ltac strictmagic := magicn (S (S 0)) false false.
+Ltac trymagic := magicn (S (S 0)) true true true.
+Ltac strictmagic := magicn (S (S 0)) false false true.
 
 (* With it we improve compsubst1 *)
 Ltac gocompsubst := compsubst1 ; try magic.
