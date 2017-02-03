@@ -511,9 +511,23 @@ Ltac magicn n try shelf tysym :=
     (* We need to rethink the line below and only apply cong when it's ok. *)
     | |- eqterm ?G (subst ?u ?sbs) (subst ?v ?sbt) ?A =>
       eapply CongTermSubst ; magicn n try shelf tysym
-    (* To be continues... *)
+    | |- eqterm ?G ?u ?v ?A =>
+      tryif (is_var u ; is_var v)
+      then first [
+        eassumption
+      | eapply EqTyConv ; [ eassumption | magicn n try shelf tysym ]
+      ]
+      else (
+          (* As always, this a temporary measure *)
+        match eval compute in n with
+        | 0 => assumption
+        | S ?n => assumption || (constructor ; magicn n try shelf tysym)
+        end
+      )
+    (* To be continued... *)
     (* When all else fails. *)
     (* This part will hopefully be gone at some point. *)
+    (* And replaced by fail probably. *)
     | _ =>
       match eval compute in n with
       | 0 => assumption

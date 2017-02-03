@@ -78,10 +78,7 @@ Lemma EqTyCongZero :
            (Subst A2 (sbzero u1))
            (Subst B2 (sbzero u2)).
 Proof.
-  intros. trymagic. fail.
-
-
-  Unshelve. assumption.
+  intros. magic.
 Defined.
 
 Lemma EqTyCongShift :
@@ -141,7 +138,7 @@ Lemma EqSubstWeakNat :
            (subst (subst u sbs) sbweak)
            (Subst (Subst B sbs) sbweak).
 Proof.
-  intros. magic.
+  intros. trymagic. fail.
   Unshelve. all:strictmagic.
 Defined.
 
