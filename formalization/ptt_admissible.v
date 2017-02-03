@@ -144,9 +144,23 @@ Proof.
   (* compsubst1 ; try magic. *)
   (* Somehow, magic or trymagic deduce wrong things and yield unprovable
      goals. *)
+  - eapply TermTyConv ; magic. (* TODO: Add this behavior. *)
+  - (* Here trymagic goes wrong. It should compsubst1 again. *)
+    (* The problem is that equality of terms is underspecified. *)
+    (* trymagic. *)
+    compsubst1 ; try strictmagic.
+    + eapply TermTyConv ; magic.
+    + magic.
+    + eapply TermTyConv ; magic.
+    + eapply TermTyConv ; magic.
+    + magic.
+    + eapply TermTyConv ; magic.
+  - eapply TermTyConv ; magic.
+  - eapply TermTyConv ; magic.
+
+  Unshelve. all:strictmagic.
 
   (* trymagic. *)
-  Focus 3. eapply TermTyConv ; trymagic.
 
   fail.
 
