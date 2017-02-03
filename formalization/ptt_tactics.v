@@ -95,6 +95,7 @@ Ltac compsubst1 :=
 (* Go lazy? *)
 Ltac pushsubst1 :=
   match goal with
+  (* Is this first goal ever necessary? *)
   | |- eqtype ?G (Subst (Subst ?A ?sbs) ?sbt) ?B =>
     eapply EqTyTrans ; [
       eapply CongTySubst ; [
@@ -511,6 +512,8 @@ Ltac magicn n try shelf tysym :=
         magicn n try shelf false
       | magicn n try shelf tysym ..
       ]
+    | |- eqtype ?G (Id ?A ?u ?v) (Id ?B ?w ?z) =>
+      eapply CongId ; magicn n try shelf tysym
     | |- eqtype ?G ?A ?B =>
       (* We only want to catch the variable case, so we will copy the _ *)
       (* case here (it's a lazymatch). *)

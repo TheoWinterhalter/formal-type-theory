@@ -102,7 +102,10 @@ Proof.
   { now apply TyId. }
 
   (* TermJ *)
-  { trymagic. fail.
+  { trymagic.
+    (* There might be something smart to do here... *)
+    (* Or just play a lie because we know what it's going to be. *)
+    fail.
 
 
 
