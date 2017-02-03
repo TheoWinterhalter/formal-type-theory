@@ -508,9 +508,28 @@ Ltac magicn n try shelf tysym :=
       compsubst1 ; magicn n try shelf tysym
     | |- eqterm ?G ?u (subst (subst ?v ?sbs) ?sbt) ?A =>
       compsubst1 ; magicn n try shelf tysym
-    (* We need to rethink the line below and only apply cong when it's ok. *)
-    | |- eqterm ?G (subst ?u ?sbs) (subst ?v ?sbt) ?A =>
-      eapply CongTermSubst ; magicn n try shelf tysym
+    | |- eqterm ?G (subst ?u ?sbs) ?v ?A =>
+      (* Maybe some type conversion somewhere. *)
+      tryif (is_var u)
+      then (
+        tryif (is_var sbs)
+        then first [
+          eapply CongTermSubst ; magicn n try shelf tysym
+        | eassumption
+        ]
+        else first [
+          simplify ; magicn n try shelf tysym
+        | eapply CongTermSubst ; magicn n try shelf tysym
+        ]
+      )
+      else pushsubst1 ; magicn n try shelf tysym
+    | |- eqterm ?G ?u (subst ?v ?sbs) ?A =>
+      (* We know how to deal with the symmetric case. *)
+      (* We use the token tysym, maybe we should have some dedicated tmsym... *)
+      cando tysym ; eapply EqSym ; [
+        magicn n try shelf false
+      | magicn n try shelf tysym ..
+      ]
     | |- eqterm ?G ?u ?v ?A =>
       tryif (is_var u ; is_var v)
       then first [

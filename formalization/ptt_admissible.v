@@ -154,54 +154,8 @@ Lemma EqSubstWeakZero :
            u
            A.
 Proof.
-  intros. trymagic.
-
-  fail.
-
-  gocompsubst ; try eassumption ; try magic.
-  - eapply EqTrans.
-    + eapply CongTermSubst ; [
-        eapply WeakZero ; magic
-      | magic ..
-      ].
-    + apply EqIdSubst ; try magic.
-      eapply TermTyConv ; [
-        eassumption
-      | try magic ..
-      ].
-      eapply compWeakZero ; magic.
-    + assumption.
-    + magic.
-    + magic.
-    + eapply TermTyConv ; [
-        eapply TermSubst ; try eassumption ; try magic
-      | magic ..
-      ].
-    + eapply TermTyConv ; [
-        eassumption
-      | try magic ..
-      ].
-      eapply compWeakZero ; magic.
-  - eapply TermTyConv ; [
-      (eapply TermSubst ; try magic) ;
-      (eapply TermSubst ; try magic) ;
-      eassumption
-    | try magic ..
-    ].
-    gocompsubst.
-  - eapply TermTyConv ; [
-      eassumption
-    | try magic ..
-    ].
-    eapply compWeakZero ; magic.
-  - apply EqTySym ; try magic.
-    eapply EqTyWeakZero ; magic.
-  - eapply TermTyConv ; [
-      eassumption
-    | try magic ..
-    ].
-    eapply EqTyWeakZero ; magic.
-  Unshelve. all:magic.
+  intros. magic.
+  Unshelve. all:strictmagic.
 Defined.
 
 Lemma EqTermShiftZero :
@@ -219,7 +173,12 @@ Lemma EqTermShiftZero :
       (subst (subst u (sbzero v)) sbs)
       (Subst (Subst B (sbzero v)) sbs).
 Proof.
-  intros.
+  intros. trymagic.
+
+
+  fail.
+
+
   gocompsubst.
   - eapply TermTyConv ; [
       (eapply TermSubst ; try magic) ;
