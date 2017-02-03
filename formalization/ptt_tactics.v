@@ -448,22 +448,19 @@ Ltac magicn n try shelf tysym :=
       compsubst1 ; magicn n try shelf tysym
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)
-      first [
-        is_var A ;
-        first [
-          is_var sbs ;
-          first [
-            eapply CongTySubst ; magicn n try shelf tysym
-          | eassumption
-          ]
-        | first [
-            (* eapply EqTyIdSubst ; magicn n try shelf tysym *)
-            simplify ; magicn n try shelf tysym
-          | eapply CongTySubst ; magicn n try shelf tysym
-          ]
+      tryif (is_var A)
+      then (
+        tryif (is_var sbs)
+        then first [
+          eapply CongTySubst ; magicn n try shelf tysym
+        | eassumption
         ]
-      | pushsubst1 ; magicn n try shelf tysym
-      ]
+        else first [
+          simplify ; magicn n try shelf tysym
+        | eapply CongTySubst ; magicn n try shelf tysym
+        ]
+      )
+      else pushsubst1 ; magicn n try shelf tysym
     | |- eqtype ?G ?A (Subst ?B ?sbs) =>
       (* We know how to deal with the symmetric case. *)
       cando tysym ; eapply EqTySym ; [
