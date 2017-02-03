@@ -248,6 +248,25 @@ Ltac simplify :=
         | ..
         ]
       end
+  | |- eqterm ?G (subst ?u ?sbs) ?v ?A =>
+    tryif (is_var sbs)
+    then idtac
+    else
+      lazymatch sbs with
+      | sbcomp sbweak (sbzero ?u) =>
+        eapply EqTrans ; [
+          eapply CongTermSubst ; [
+            eapply WeakZero
+          | ..
+          ]
+        | ..
+        ]
+      | sbid =>
+        eapply EqTrans ; [
+          eapply EqIdSubst
+        | ..
+        ]
+      end
   | _ => idtac
   end.
 
@@ -534,6 +553,11 @@ Ltac magicn n try shelf tysym :=
       )
     (* To be continued... *)
     (*! Equality of terms !*)
+    | |- eqterm ?G (subst (subst ?u ?sbs) ?sbt) ?v ?A =>
+      compsubst1 ; magicn n try shelf tysym
+    | |- eqterm ?G ?u (subst (subst ?u ?sbs) ?sbt) ?A =>
+      compsubst1 ; magicn n try shelf tysym
+    (* We need to rethink the line below and only apply cong when it's ok. *)
     | |- eqterm ?G (subst ?u ?sbs) (subst ?v ?sbt) ?A =>
       eapply CongTermSubst ; magicn n try shelf tysym
     (* To be continues... *)
@@ -552,7 +576,7 @@ Ltac magic2 := magicn (S (S 0)) false true true.
 Ltac magic3 := magicn (S (S (S 0))) false true true.
 Ltac magic4 := magicn (S (S (S (S 0)))) false true true.
 Ltac magic5 := magicn (S (S (S (S (S 0))))) false true true.
-Ltac magic := magic2. (* ; Unshelve ; magic2. *)
+Ltac magic := magic2.
 Ltac trymagic := magicn (S (S 0)) true true true.
 Ltac strictmagic := magicn (S (S 0)) false false true.
 
