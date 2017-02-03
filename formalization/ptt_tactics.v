@@ -298,6 +298,7 @@ Ltac magicn n try shelf tysym :=
       first [
           eapply SubstShift ; magicn n try shelf tysym
         | eassumption
+        | eapply SubstCtxConv ; magicn n try shelf tysym
         ]
     | |- issubst (sbid) ?G1 ?G2 =>
       first [
