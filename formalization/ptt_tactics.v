@@ -230,24 +230,24 @@ Ltac cando token :=
 Ltac simplify :=
   lazymatch goal with
   | |- eqtype ?G (Subst ?A ?sbs) ?B =>
-    first [
-      is_var sbs ; idtac
-      | lazymatch sbs with
-        | sbcomp sbweak (sbzero ?u) =>
-          eapply EqTyTrans ; [
-            eapply CongTySubst ; [
-              eapply WeakZero
-            | ..
-            ]
+    tryif (is_var sbs)
+    then idtac
+    else
+      lazymatch sbs with
+      | sbcomp sbweak (sbzero ?u) =>
+        eapply EqTyTrans ; [
+          eapply CongTySubst ; [
+            eapply WeakZero
           | ..
           ]
-        | sbid =>
-          eapply EqTyTrans ; [
-            eapply EqTyIdSubst
-          | ..
-          ]
-        end
-    ]
+        | ..
+        ]
+      | sbid =>
+        eapply EqTyTrans ; [
+          eapply EqTyIdSubst
+        | ..
+        ]
+      end
   | _ => idtac
   end.
 
@@ -442,9 +442,9 @@ Ltac magicn n try shelf tysym :=
     (* We should probably avoid using congruence on composition. *)
     (* To be continued... *)
     (*! Equality of types !*)
-    | |- eqtype ?g (Subst (Subst ?A ?sbs) ?sbt) ?B =>
+    | |- eqtype ?G (Subst (Subst ?A ?sbs) ?sbt) ?B =>
       compsubst1 ; magicn n try shelf tysym
-    | |- eqtype ?g ?A (Subst (Subst ?B ?sbs) ?sbt) =>
+    | |- eqtype ?G ?A (Subst (Subst ?B ?sbs) ?sbt) =>
       compsubst1 ; magicn n try shelf tysym
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)
