@@ -92,6 +92,7 @@ Ltac compsubst1 :=
 
 (* Some tactic to push substitutions inside one step. *)
 (* Partial for now. *)
+(* Go lazy? *)
 Ltac pushsubst1 :=
   match goal with
   | |- eqtype ?G (Subst (Subst ?A ?sbs) ?sbt) ?B =>
@@ -105,7 +106,14 @@ Ltac pushsubst1 :=
     ]
   | |- eqtype ?G (Subst (Id ?A ?u ?v) ?sbs) ?B =>
     eapply EqTyTrans ; [ eapply EqTySubstId | .. ]
+  | |- eqtype ?G (Subst ?A ?sbs) (Id ?B ?u ?v) =>
+    eapply EqTyTrans ; [ eapply EqTySubstId | .. ]
   | |- eqtype ?G ?A (Subst (Id ?B ?u ?v) ?sbs) =>
+    eapply EqTySym ; [
+      eapply EqTyTrans ; [ eapply EqTySubstId | .. ]
+    | ..
+    ]
+  | |- eqtype ?G (Id ?A ?u ?v) (Subst ?B) =>
     eapply EqTySym ; [
       eapply EqTyTrans ; [ eapply EqTySubstId | .. ]
     | ..
