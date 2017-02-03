@@ -16,7 +16,7 @@ Lemma EqTyWeakNat :
            (Subst (Subst B sbweak) (sbshift sbs))
            (Subst (Subst B sbs) sbweak).
 Proof.
-  intros. gocompsubst. gocompsubst.
+  intros. magic.
   Unshelve. assumption.
 Defined.
 
@@ -682,9 +682,7 @@ Proof.
     | try magic ..
     ].
     gocompsubst.
-    Unshelve. (* Investigate here. *)
-
-all:assumption.
+    Unshelve. all:assumption.
   }
   assert (
     eqsubst
