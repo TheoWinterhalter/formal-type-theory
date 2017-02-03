@@ -434,6 +434,15 @@ Ltac magicn n try shelf tysym :=
         eapply WeakZero ; magicn n try shelf tysym
       | magicn n try shelf tysym ..
       ]
+    | |- eqsubst (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs)))
+                (sbcomp (sbzero ?u) ?sbs) ?G ?D =>
+      eapply ShiftZero ; magicn n try shelf tysym
+    | |- eqsubst (sbcomp (sbzero ?u) ?sbs)
+                (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs))) ?G ?D =>
+      eapply SubstSym ; [
+        eapply ShiftZero ; magicn n try shelf tysym
+      | magicn n try shelf tysym ..
+      ]
     | |- eqsubst (sbzero ?u1) (sbzero ?u2) ?D ?E =>
       eapply CongSubstZero ; magicn n try shelf tysym
     | |- eqsubst sbweak sbweak ?D ?E =>
