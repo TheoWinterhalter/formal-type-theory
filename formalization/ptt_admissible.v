@@ -139,7 +139,14 @@ Lemma EqSubstWeakNat :
            (subst (subst u sbs) sbweak)
            (Subst (Subst B sbs) sbweak).
 Proof.
-  intros. trymagic.
+  intros.
+  compsubst1 ; try strictmagic.
+  (* compsubst1 ; try magic. *)
+  (* Somehow, magic or trymagic deduce wrong things and yield unprovable
+     goals. *)
+
+  (* trymagic. *)
+  Focus 3. eapply TermTyConv ; trymagic.
 
   fail.
 

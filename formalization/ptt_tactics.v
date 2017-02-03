@@ -80,17 +80,11 @@ Ltac compsubst1 :=
   | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) (Subst (Subst ?A ?sbt) ?sbs) =>
     eapply EqSym ; try eapply eqterm_subst_left
   | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v ?A =>
-    eapply EqTyConv ; [
-      try eapply eqterm_subst_left
-    | idtac ..
-    ]
+    eapply EqTyConv ; [ try eapply eqterm_subst_left | .. ]
   | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) ?A =>
     eapply EqSym ; [
-      idtac ..
-    | eapply EqTyConv ; [
-        try eapply eqterm_subst_left
-      | idtac ..
-      ]
+      ..
+    | eapply EqTyConv ; [ try eapply eqterm_subst_left | .. ]
     ]
   | _ => fail
   end.
@@ -105,115 +99,66 @@ Ltac pushsubst1 :=
       eapply CongTySubst ; [
         eapply SubstRefl
       | pushsubst1
-      | idtac ..
+      | ..
       ]
-    | idtac ..
+    | ..
     ]
   | |- eqtype ?G (Subst (Id ?A ?u ?v) ?sbs) ?B =>
-    eapply EqTyTrans ; [
-      eapply EqTySubstId
-    | idtac ..
-    ]
+    eapply EqTyTrans ; [ eapply EqTySubstId | .. ]
   | |- eqtype ?G ?A (Subst (Id ?B ?u ?v) ?sbs) =>
     eapply EqTySym ; [
-      idtac ..
-    | eapply EqTyTrans ; [
-        eapply EqTySubstId
-      | idtac ..
-      ]
+      ..
+    | eapply EqTyTrans ; [ eapply EqTySubstId | .. ]
     ]
   | |- eqtype ?G (Subst (Prod ?A ?B) ?sbs) ?C =>
-    eapply EqTyTrans ; [
-      eapply EqTySubstProd
-    | idtac ..
-    ]
+    eapply EqTyTrans ; [ eapply EqTySubstProd | .. ]
   | |- eqtype ?G ?A (Subst (Prod ?B ?C) ?sbs) =>
-    eapply EqTySym ; [
-      idtac ..
-    | eapply EqTyTrans ; [
-        eapply EqTySubstProd
-      | idtac ..
-      ]
-    ]
-  (* | |- eqtype ?G (Subst ?E ?sbs) Empty *)
+    eapply EqTySym ; [ .. | eapply EqTyTrans ; [ eapply EqTySubstProd | .. ] ]
+  | |- eqtype ?G (Subst ?E ?sbs) Empty =>
+    eapply EqTySubstEmpty
   | |- eqtype ?G (Subst Empty ?sbs) ?A =>
-    eapply EqTyTrans ; [
-      eapply EqTySubstEmpty
-    | idtac ..
-    ]
-  (* | |- eqtype ?G Empty (Subst ?E ?sbs) *)
+    eapply EqTyTrans ; [ eapply EqTySubstEmpty | .. ]
+  | |- eqtype ?G Empty (Subst ?E ?sbs) =>
+    eapply EqTySym ; [ eapply EqTySubstEmpty | .. ]
   | |- eqtype ?G ?A (Subst Empty ?sbs) =>
     eapply EqTySym ; [
-      idtac ..
-    | eapply EqTyTrans ; [
-        eapply EqTySubstEmpty
-      | idtac ..
-      ]
+      ..
+    | eapply EqTyTrans ; [ eapply EqTySubstEmpty | .. ]
     ]
   | |- eqtype ?G (Subst Unit ?sbs) ?A =>
-    eapply EqTyTrans ; [
-      eapply EqTySubstUnit
-    | idtac ..
-    ]
+    eapply EqTyTrans ; [ eapply EqTySubstUnit | .. ]
   | |- eqtype ?G ?A (Subst Unit ?sbs) =>
     eapply EqTySym ; [
-      idtac ..
-    | eapply EqTyTrans ; [
-        eapply EqTySubstUnit
-      | idtac ..
-      ]
+      ..
+    | eapply EqTyTrans ; [ eapply EqTySubstUnit | .. ]
     ]
   | |- eqtype ?G (Subst Bool ?sbs) ?A =>
-    eapply EqTyTrans ; [
-      eapply EqTySubstBool
-    | idtac ..
-    ]
+    eapply EqTyTrans ; [ eapply EqTySubstBool | .. ]
   | |- eqtype ?G ?A (Subst Bool ?sbs) =>
     eapply EqTySym ; [
-      idtac ..
-    | eapply EqTyTrans ; [
-        eapply EqTySubstBool
-      | idtac ..
-      ]
+      ..
+    | eapply EqTyTrans ; [ eapply EqTySubstBool | .. ]
     ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
-    eapply EqTrans ; [
-      eapply EqSubstRefl
-    | idtac ..
-    ]
+    eapply EqTrans ; [ eapply EqSubstRefl | .. ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
     eapply EqTyConv ; [
-      eapply EqTrans ; [
-        eapply EqSubstRefl
-      | idtac ..
-      ]
-    | idtac ..
+      eapply EqTrans ; [ eapply EqSubstRefl | .. ]
+    | ..
     ]
   | |- eqterm ?G (subst true ?sbs) ?u ?A =>
-    eapply EqTrans ; [
-      eapply EqSubstTrue
-    | idtac ..
-    ]
+    eapply EqTrans ; [ eapply EqSubstTrue | .. ]
   | |- eqterm ?G (subst true ?sbs) ?u ?A =>
     eapply EqTyConv ; [
-      eapply EqTrans ; [
-        eapply EqSubstTrue
-      | idtac ..
-      ]
-    | idtac ..
+      eapply EqTrans ; [ eapply EqSubstTrue | .. ]
+    | ..
     ]
   | |- eqterm ?G (subst false ?sbs) ?u ?A =>
-    eapply EqTrans ; [
-      eapply EqSubstFalse
-    | idtac ..
-    ]
+    eapply EqTrans ; [ eapply EqSubstFalse | .. ]
   | |- eqterm ?G (subst false ?sbs) ?u ?A =>
     eapply EqTyConv ; [
-      eapply EqTrans ; [
-        eapply EqSubstFalse
-      | idtac ..
-      ]
-    | idtac ..
+      eapply EqTrans ; [ eapply EqSubstFalse | .. ]
+    | ..
     ]
   | _ => fail
   end.
