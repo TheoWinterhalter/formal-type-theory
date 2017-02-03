@@ -411,19 +411,19 @@ Ltac magicn n try shelf tysym :=
     | |- eqctx (ctxextend ?G ?A) (ctxextend ?D ?B) =>
       first [
           eapply EqCtxExtend ; magicn n try shelf tysym
-        | apply CtxSym ;
-          [ eapply EqCtxExtend ; magicn n try shelf tysym | magicn n try shelf tysym .. ]
+        | apply CtxSym ; [
+            eapply EqCtxExtend ; magicn n try shelf tysym
+          | magicn n try shelf tysym ..
+          ]
         ]
     | |- eqctx ?G ?G =>
       apply CtxRefl ; magicn n try shelf tysym
     | |- eqctx ?G ?D =>
-      (* When comparing two contexts that are unknown, we either know
-       already, or we know the symmetry. *)
-      (* assumption *)
-      (* In the first case we don't want to use magic in order to avoid symmetry
-       again. *)
-      (* || apply CtxSym ; [ assumption | magicn n try shelf tysym .. ] *)
-      first [ assumption | apply CtxSym ; [ assumption | magicn n try shelf tysym .. ] ]
+      first [
+        assumption
+      | apply CtxSym ; [ assumption | magicn n try shelf tysym .. ]
+      | cando shelf ; shelve
+      ]
     (*! Equality of substitutions !*)
     | |- eqsubst (sbcomp sbweak (sbzero ?u)) sbid ?G ?D =>
       eapply WeakZero ; magicn n try shelf tysym
