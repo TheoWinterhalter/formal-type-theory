@@ -251,11 +251,28 @@ Ltac simplify :=
   | _ => idtac
   end.
 
+(* Checking if we're dealing with a suitable goal. *)
+(* This would be interesting in another file maybe? *)
+Ltac check_goal :=
+  match goal with
+  | |- isctx ?G => idtac
+  | |- issubst ?sbs ?G ?D => idtac
+  | |- istype ?G ?A => idtac
+  | |- isterm ?G ?u ?A => idtac
+  | |- eqctx ?G ?D => idtac
+  | |- eqsubst ?sbs ?sbt ?G ?D => idtac
+  | |- eqtype ?G ?A ?B => idtac
+  | |- eqterm ?G ?u ?v ?A => idtac
+  | _ => fail
+  end.
+
 (* Magic Tactic *)
 (* It is basically a type checker that doesn't do the smart things,
    namely type and context conversions (and it doesn't rely on reflection
    obviously). *)
 Ltac magicn n try shelf tysym :=
+  (* We only ever apply magic to suitable goals *)
+  check_goal ;
   first [
     assumption
   | (* We have several things we need to do to the tactic:

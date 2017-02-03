@@ -102,10 +102,10 @@ Lemma EqTyCongShift :
            (Subst B2 (sbshift sbs2)).
 Proof.
   intros. magic.
-  Unshelve. fail.
-  (* I don't know how contexts got shelved... *)
+  Unshelve. all:try strictmagic.
+  all:try strictmagic.
 
- all:try strictmagic.
+  fail.
 Defined.
 
 Lemma EqTyCongWeak :
