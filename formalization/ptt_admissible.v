@@ -218,6 +218,7 @@ Proof.
         - magic.
         - magic.
       }
+    + { eapply EqTyRefl ; magic. }
     + { eapply TermTyConv.
         - magic.
         - apply EqTySym ; try magic. eapply EqTyWeakNat ; magic.
@@ -681,7 +682,9 @@ Proof.
     | try magic ..
     ].
     gocompsubst.
-    Unshelve. all:assumption.
+    Unshelve. (* Investigate here. *)
+
+all:assumption.
   }
   assert (
     eqsubst

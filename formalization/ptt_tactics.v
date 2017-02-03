@@ -135,11 +135,13 @@ Ltac pushsubst1 :=
       | idtac ..
       ]
     ]
+  (* | |- eqtype ?G (Subst ?E ?sbs) Empty *)
   | |- eqtype ?G (Subst Empty ?sbs) ?A =>
     eapply EqTyTrans ; [
       eapply EqTySubstEmpty
     | idtac ..
     ]
+  (* | |- eqtype ?G Empty (Subst ?E ?sbs) *)
   | |- eqtype ?G ?A (Subst Empty ?sbs) =>
     eapply EqTySym ; [
       idtac ..
@@ -223,9 +225,20 @@ Ltac pushsubst1 :=
 Ltac magicn n :=
   first [
     assumption
-  | (* It would also be very nice if we could avoid using shelve...
-       In the meantime, we should provide a tactic that doesn't shelve
-       (in order to make sure we don't shelve stuff when solving the shelf). *)
+  | (* We have several things we need to do to the tactic:
+       * Only use assumption on the base cases (not on SubstZero and the like).
+       * Remove the _ case.
+       * Maybe add a token that states if we can use symmetry or not.
+       * Maybe add a token that states if we can shelve or not.
+       * Maybe add a token that states if we should allow not to solve the goal.
+       * Handle substitutions properly by pushing them in before comparing.
+       * Add special rules when dealing with substitution typing this can go
+         though special admissibility rules that factorize the number of
+         premises that would be needed to prove.
+       * Should it be able to use EqTyWeakNat?
+       * Add a token to solve equalities with only one side as reflexivity.
+         (Maybe shelve them in the meantime?)
+       * ... *)
     lazymatch goal with
     (*! Contexts !*)
     | |- isctx ctxempty =>
@@ -264,7 +277,8 @@ Ltac magicn n :=
         ]
     | |- issubst ?sbs ?G1 ?G2 =>
       (* Dangerous I would like to do it only when sbs is a variable. *)
-      eassumption
+      (* eassumption *)
+      is_var sbs ; eassumption
     (*! Types !*)
     | |- istype ?G (Subst ?A ?sbs) =>
       eapply TySubst ; magicn n
@@ -279,7 +293,11 @@ Ltac magicn n :=
     | |- istype ?G Bool =>
       eapply TyBool ; magicn n
     | |- istype ?G ?A =>
-      assumption || shelve
+      first [
+        is_var A ; eassumption
+      | assumption (* Maybe not necessary? *)
+      | shelve
+      ]
     (*! Terms !*)
     | |- isterm ?G (subst ?u ?sbs) ?A =>
       eapply TermSubst ; magicn n
@@ -325,6 +343,8 @@ Ltac magicn n :=
       eapply TermCond ; magicn n
     | [ H : isterm ?G ?v ?A, H' : isterm ?G ?v ?B |- isterm ?G ?v ?C ] =>
       (* We have several options so we don't take any risk. *)
+      (* Eventually this should go away. I don't want to do the assert thing
+         anymore. *)
       first [
         is_var A ; exact H
       | is_var B ; exact H'
@@ -372,16 +392,33 @@ Ltac magicn n :=
     (* We should probably avoid using congruence on composition. *)
     (* To be continued... *)
     (*! Equality of types !*)
-    | |- eqtype ?G (Subst ?A (sbid)) ?B =>
+    | |- eqtype ?G (Subst ?A ?sbs) ?B =>
+      (* We should push only if it makes sense. *)
       first [
-        eapply EqTyIdSubst ; magicn n
-      | eapply CongTySubst ; magicn n
+        is_var A ;
+        first [
+          is_var sbs ;
+          first [
+            eapply CongTySubst ; magicn n
+          | eassumption
+          ]
+        | first [
+            eapply EqTyIdSubst ; magicn n
+          | eapply CongTySubst ; magicn n
+          ]
+        ]
+      | pushsubst1 ; magicn n
       ]
-    (* EqTySubst* ? *)
-    | |- eqtype ?G (Subst ?A ?sbs) (Subst ?B ?sbt) =>
-      eapply CongTySubst ; magicn n
-    | |- eqtype _ (Id _ _ _) (Id _ _ _) =>
-      eapply CongId ; magicn n
+    (* | |- eqtype ?G (Subst ?A (sbid)) ?B => *)
+    (*   first [ *)
+    (*     eapply EqTyIdSubst ; magicn n *)
+    (*   | eapply CongTySubst ; magicn n *)
+    (*   ] *)
+    (* (* EqTySubst* ? *) *)
+    (* | |- eqtype ?G (Subst ?A ?sbs) (Subst ?B ?sbt) => *)
+    (*   eapply CongTySubst ; magicn n *)
+    (* | |- eqtype _ (Id _ _ _) (Id _ _ _) => *)
+    (*   eapply CongId ; magicn n *)
     (* To be continued... *)
     (*! Equality of terms !*)
     | |- eqterm ?G (subst ?u ?sbs) (subst ?v ?sbt) ?A =>
