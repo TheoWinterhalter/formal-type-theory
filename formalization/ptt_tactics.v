@@ -506,14 +506,22 @@ Ltac magicn n try shelf tysym :=
     | |- eqtype ?G ?A ?B =>
       (* We only want to catch the variable case, so we will copy the _ *)
       (* case here (it's a lazymatch). *)
-      tryif (is_var A ; is_var B) then (
+      tryif (is_var A ; is_var B)
+      then (
         first [
           eassumption
         | eapply EqTyRefl ; magicn n try shelf tysym
-        | cando tysym ;
-          eapply EqTySym ; [ eassumption | magicn n try shelf false .. ]
+        | eapply EqTySym ; [ eassumption | magicn n try shelf tysym .. ]
+        | eapply EqTyCtxConv ; [
+            first [
+              eassumption
+            | eapply EqTySym ; [ eassumption | magicn n try shelf tysym .. ]
+            ]
+          | magicn n try shelf tysym ..
+          ]
         ]
-      ) else (
+      )
+      else (
         match eval compute in n with
         | 0 => assumption
         | S ?n => assumption || (constructor ; magicn n try shelf tysym)

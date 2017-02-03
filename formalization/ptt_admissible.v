@@ -196,8 +196,7 @@ Lemma EqTermCongWeak :
            (subst u2 sbweak)
            (Subst B1 sbweak).
 Proof.
-  intros. trymagic. (* This is unsatisfying! *)
-  Unshelve. all:strictmagic.
+  intros. magic.
 Defined.
 
 
@@ -271,7 +270,7 @@ Proof.
   assert (eqctx D D).
   { now apply CtxRefl. }
   assert (eqtype D (Subst (Subst A sbweak) (sbzero v)) A).
-  { apply myEqTySym ; try magic.
+  { apply EqTySym ; try magic.
     eapply EqTyWeakZero ; magic.
     Unshelve. assumption.
   }
@@ -574,7 +573,7 @@ Proof.
   ).
   { eapply EqTyConv ; [
       eapply EqSubstZeroZero ; magic
-    | eapply myEqTySym ; try magic ; eassumption
+    | eapply EqTySym ; try magic ; eassumption
     | magic ..
     ].
     Unshelve. magic.
@@ -692,7 +691,7 @@ Proof.
     eqtype (ctxextend G (Subst A sbs)) (Subst (Subst A sbs) sbweak)
     (Subst (Subst A sbweak) (sbshift sbs))
   ).
-  { eapply myEqTySym ; [
+  { eapply EqTySym ; [
       eapply EqTyWeakNat ; magic
     | magic ..
     ].
@@ -719,7 +718,7 @@ Proof.
            (Subst (Subst A sbs) sbweak)
            (Subst (Subst A sbweak) (sbshift sbs))
   ).
-  { apply myEqTySym ; magic. }
+  { apply EqTySym ; magic. }
   assert (
     isterm (ctxextend G (Subst A sbs))
            (subst (var 0) (sbshift sbs))
@@ -1233,7 +1232,7 @@ Proof.
        (sbcomp (sbshift sbs) (sbzero (subst v sbs))))
     (Subst (Id A u v) sbs)
   ).
-  { gopushsubst. gopushsubst. apply myEqTySym ; magic. }
+  { gopushsubst. gopushsubst. apply EqTySym ; magic. }
   assert (
     eqctx
     (ctxextend G
@@ -1900,7 +1899,7 @@ Proof.
     ).
     { eapply SubstCtxConv ; try magic. magic. }
     assert (eqtype D (Subst (Subst A sbweak) (sbzero u)) A).
-    { eapply myEqTySym ; [
+    { eapply EqTySym ; [
         eapply EqTyWeakZero ; magic
       | magic ..
       ].
