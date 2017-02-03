@@ -543,7 +543,7 @@ Ltac magicn n try shelf tysym :=
       tryif (is_var u ; is_var v)
       then first [
         eassumption
-      | eapply EqRefl ; [ eassumption | magicn n try shelf tysym .. ]
+      | eapply EqRefl ; magicn n try shelf tysym
       | eapply EqTyConv ; [ eassumption | magicn n try shelf tysym .. ]
       ]
       else (

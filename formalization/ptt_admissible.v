@@ -173,62 +173,8 @@ Lemma EqTermShiftZero :
       (subst (subst u (sbzero v)) sbs)
       (Subst (Subst B (sbzero v)) sbs).
 Proof.
-  intros. trymagic.
-
-
-  fail.
-
-
-  gocompsubst.
-  - eapply TermTyConv ; [
-      (eapply TermSubst ; try magic) ;
-      (eapply TermSubst ; try magic) ;
-      eassumption
-    | try magic ..
-    ].
-    eapply EqTyShiftZero ; magic.
-  - gocompsubst.
-    + eapply TermTyConv ; [
-        (eapply TermSubst ; try magic) ;
-        (eapply TermSubst ; try magic) ;
-        eassumption
-      | try magic ..
-      ].
-      gocompsubst.
-    + eapply TermTyConv ; [
-        (eapply TermSubst ; try magic) ;
-        (eapply TermSubst ; try magic) ;
-        eassumption
-      | try magic ..
-      ].
-      gocompsubst.
-    + eapply TermTyConv ; [
-        (eapply TermSubst ; try magic) ;
-        eassumption
-      | try magic ..
-      ].
-    + gocompsubst.
-    + eapply TermTyConv ; [
-        (eapply TermSubst ; try magic) ;
-        eassumption
-      | try magic ..
-      ].
-      gocompsubst.
-  - eapply TermTyConv ; [
-      (eapply TermSubst ; try magic) ;
-      (eapply TermSubst ; try magic) ;
-      eassumption
-    | try magic ..
-    ].
-    gocompsubst.
-  - eapply TermTyConv ; [
-      (eapply TermSubst ; try magic) ;
-      (eapply TermSubst ; try magic) ;
-      eassumption
-    | try magic ..
-    ].
-    gocompsubst.
-  Unshelve. all:magic.
+  intros. magic.
+  Unshelve. all:strictmagic.
 Defined.
 
 Lemma EqTermCongWeak :
@@ -250,32 +196,8 @@ Lemma EqTermCongWeak :
            (subst u2 sbweak)
            (Subst B1 sbweak).
 Proof.
-  intros.
-  assert (istype G1 A2).
-  { eapply TyCtxConv ; [
-      eassumption
-    | magic ..
-    ].
-  }
-  assert (istype G1 B2).
-  { eapply TyCtxConv ; [
-      eassumption
-    | magic ..
-    ].
-  }
-  assert (isterm G1 u2 B1).
-  { eapply TermTyConv ; [
-      eapply TermCtxConv ; [
-        eassumption
-      | magic ..
-      ]
-    | magic ..
-    ].
-  }
-  eapply CongTermSubst ; [
-    eapply CongSubstWeak ; magic
-  | magic ..
-  ].
+  intros. magic.
+  Unshelve. fail.
 Defined.
 
 
