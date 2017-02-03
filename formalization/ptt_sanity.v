@@ -334,7 +334,7 @@ Proof.
   - { split.
       - magic.
       - eapply SubstCtxConv ; magic.
-        Unshelve. all:assumption.
+        Unshelve. all:strictmagic.
     }
 
   (* CongSubstComp *)
@@ -495,73 +495,38 @@ Proof.
 
   (* EqSubstZeroZero *)
   - { split.
-      - { eapply TermTyConv ; [
-            eapply TermSubst ; magic
-          | try magic ..
-          ].
-          eapply EqTySym ; try magic.
-          eapply EqTyWeakZero ; magic.
-          Unshelve. assumption.
+      - { magic.
+          Unshelve. all:strictmagic.
         }
       - { assumption. }
     }
 
   (* EqSubstZeroSucc *)
   - { split.
-      - { apply (@TermTyConv G (Subst (Subst A sbweak) (sbzero u))).
-          - apply (@TermSubst G (ctxextend G B)) ; auto using CtxExtend.
-            + now apply SubstZero.
-            + now apply TermVarSucc.
-            + apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
-          - apply EqTySym ; try magic.
-            eapply EqTyWeakZero ; magic.
-          - assumption.
-          - apply (@TySubst _ (ctxextend G B)) ; auto using CtxExtend, SubstZero.
-            apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
-          - assumption.
-          Unshelve. assumption.
+      - { magic.
+          Unshelve. all:strictmagic.
         }
       - { assumption. }
     }
 
   (* EqSubstShiftZero *)
   - { split.
-      - { eapply TermTyConv.
-          - eapply TermSubst.
-            + eapply SubstShift ; eassumption.
-            + magic.
-            + constructor.
-              * assumption.
-              * eapply TySubst ; eassumption.
-            + eapply TySubst ; try eassumption ; magic.
-            + magic.
-          - eapply EqTyWeakNat ; magic.
-          - constructor.
-            + assumption.
-            + eapply TySubst ; eassumption.
-          - eapply TySubst.
-            + eapply SubstShift ; eassumption.
-            + eapply TySubst ; magic.
-            + constructor.
-              * assumption.
-              * eapply TySubst ; eassumption.
-            + magic.
-          - eapply TySubst.
-            + eapply SubstWeak.
-              * eapply TySubst ; eassumption.
-              * assumption.
-            + eapply TySubst ; eassumption.
-            + constructor. (* There may be room for maigc improvement here *)
-              * assumption.
-              * eapply TySubst ; eassumption.
-            + magic.
+      - { magic.
+          Unshelve. all:strictmagic.
         }
       - { magic. }
     }
 
   (* EqSubstShiftSucc *)
   - { split.
-      - { eapply TermTyConv ; [
+      - { trymagic.
+          (* The subgoals aren't the right ones. *)
+          (* This calls investigation. Probably something to do with pushing
+             in var (S k)! *)
+
+          fail.
+
+eapply TermTyConv ; [
             (eapply TermSubst ; try magic) ;
             (eapply TermVarSucc ; try magic) ;
             eassumption
