@@ -138,7 +138,7 @@ Lemma EqSubstWeakNat :
            (subst (subst u sbs) sbweak)
            (Subst (Subst B sbs) sbweak).
 Proof.
-  intros. trymagic. fail.
+  intros. magic.
   Unshelve. all:strictmagic.
 Defined.
 
