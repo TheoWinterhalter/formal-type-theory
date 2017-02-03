@@ -1,5 +1,7 @@
 # Formalization of type theories and translation
 
+We formalized everything in Coq 8.6.
+
 ## Sanity
 
 The purpose here is to state and prove theorems about the sanity of different type theories.
