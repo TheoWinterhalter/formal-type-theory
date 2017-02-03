@@ -92,9 +92,9 @@ Ltac compsubst1 :=
 
 (* Some tactic to push substitutions inside one step. *)
 (* Partial for now. *)
-(* Go lazy? *)
 Ltac pushsubst1 :=
-  match goal with
+  lazymatch goal with
+  (*! Pushing in types !*)
   (* Is this first goal ever necessary? *)
   | |- eqtype ?G (Subst (Subst ?A ?sbs) ?sbt) ?B =>
     eapply EqTyTrans ; [
@@ -148,6 +148,17 @@ Ltac pushsubst1 :=
       eapply EqTyTrans ; [ eapply EqTySubstBool | .. ]
     | ..
     ]
+  (* Now, we deal with a very particuliar case. *)
+  | |- eqtype ?G (Subst ?A (sbzero ?u)) ?B =>
+    tryif (is_evar A ; is_var B)
+    then (
+      eapply @EqTyTrans with (B := Subst (Subst B sbweak) (sbzero u)) ; [
+        eapply EqTyRefl
+      | ..
+      ]
+    )
+    else fail
+  (*! Pushing in terms !*)
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
     eapply EqTrans ; [ eapply EqSubstRefl | .. ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
@@ -169,6 +180,25 @@ Ltac pushsubst1 :=
       eapply EqTrans ; [ eapply EqSubstFalse | .. ]
     | ..
     ]
+  (* Similarly, peculiar cases. *)
+  | |- eqterm ?G (subst ?w (sbzero ?u)) ?u ?A =>
+    tryif (is_evar w ; is_var u)
+    then (
+      eapply @EqTrans with (v := subst (var 0) (sbzero u)) ; [
+        eapply EqRefl
+      | ..
+      ]
+    )
+    else fail
+  | |- eqterm ?G (subst ?w (sbzero ?v)) ?u ?A =>
+    tryif (is_evar w ; is_var u)
+    then (
+      eapply @EqTrans with (v := subst (subst u sbweak) (sbzero v))  ; [
+        eapply EqRefl
+      | ..
+      ]
+    )
+    else fail
   | _ => fail
   end.
 
