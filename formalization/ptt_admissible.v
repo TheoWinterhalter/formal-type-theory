@@ -41,8 +41,7 @@ Lemma EqTyWeakZero :
     isterm G u B ->
     eqtype G A (Subst (Subst A sbweak) (sbzero u)).
 Proof.
-  intros.
-  gocompsubst. eapply EqTySym ; try magic. eapply compWeakZero ; magic.
+  intros. magic.
   Unshelve. assumption.
 Defined.
 
@@ -59,8 +58,8 @@ Lemma EqTyShiftZero :
       (Subst (Subst B (sbshift sbs)) (sbzero (subst v sbs)))
       (Subst (Subst B (sbzero v)) sbs).
 Proof.
-  intros. gocompsubst. gocompsubst.
-  Unshelve. magic.
+  intros. magic.
+  Unshelve. strictmagic.
 Defined.
 
 Lemma EqTyCongZero :
