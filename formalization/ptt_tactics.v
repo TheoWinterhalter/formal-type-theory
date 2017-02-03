@@ -426,6 +426,13 @@ Ltac magicn n try shelf tysym :=
       | cando shelf ; shelve
       ]
     (*! Equality of substitutions !*)
+    | |- eqsubst (sbcomp sbweak (sbshift ?sbs)) (sbcomp ?sbs sbweak) ?G ?D =>
+      eapply WeakNat ; magicn n try shelf tysym
+    | |- eqsubst (sbcomp ?sbs sbweak) (sbcomp sbweak (sbshift ?sbs)) ?G ?D =>
+      eapply mySubstSym ; [
+        eapply WeakNat ; magicn n try shelf tysym
+      | magicn n try shelf tysym ..
+      ]
     | |- eqsubst (sbcomp sbweak (sbzero ?u)) sbid ?G ?D =>
       eapply WeakZero ; magicn n try shelf tysym
     | |- eqsubst sbid (sbcomp sbweak (sbzero ?u)) ?G ?D =>
@@ -439,6 +446,24 @@ Ltac magicn n try shelf tysym :=
       eapply CongSubstWeak ; magicn n try shelf tysym
     | |- eqsubst (sbshift ?sbs1) (sbshift ?sbs2) ?D ?E =>
       eapply CongSubstShift ; magicn n try shelf tysym
+    | |- eqsubst ?sbs ?sbt ?G ?D =>
+      tryif (is_var sbs ; is_var sbt)
+      then first [
+        eassumption
+      | eapply mySubstSym ; [ eassumption | magicn n try shelf tysym .. ]
+      | eapply EqSubstCtxConv ; [ eassumption | magicn n try shelf tysym .. ]
+      | eapply mySubstSym ; [
+          eapply EqSubstCtxConv ; [ eassumption | magicn n try shelf tysym .. ]
+        | magicn n try shelf tysym ..
+        ]
+      ]
+      (* Again we cheat a bit a repeat the _ case here. *)
+      else (
+        match eval compute in n with
+        | 0 => assumption
+        | S ?n => assumption || (constructor ; magicn n try shelf tysym)
+        end
+      )
     (* We should probably avoid using congruence on composition. *)
     (* To be continued... *)
     (*! Equality of types !*)

@@ -101,31 +101,11 @@ Lemma EqTyCongShift :
            (Subst B1 (sbshift sbs1))
            (Subst B2 (sbshift sbs2)).
 Proof.
-  intros. trymagic.
+  intros. magic.
+  Unshelve. fail.
+  (* I don't know how contexts got shelved... *)
 
-
-  fail.
-
-
-  assert (issubst sbs2 G1 D).
-  { eapply SubstCtxConv ; magic. }
-  assert (issubst sbs1 G2 D).
-  { eapply SubstCtxConv ; magic. }
-  assert (istype (ctxextend D A1) B2).
-  { eapply TyCtxConv ; [
-      eassumption
-    | magic ..
-    ].
-  }
-  assert (eqsubst sbs2 sbs1 G2 D).
-  { apply SubstSym ; try assumption.
-    eapply EqSubstCtxConv ; magic.
-  }
-  eapply CongTySubst ; [
-    magic ..
-  | eapply SubstCtxConv ; magic
-  ].
-  Unshelve. all:assumption.
+ all:try strictmagic.
 Defined.
 
 Lemma EqTyCongWeak :
