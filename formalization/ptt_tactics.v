@@ -180,6 +180,10 @@ Ltac pushsubst1 :=
       eapply EqTrans ; [ eapply EqSubstFalse | .. ]
     | ..
     ]
+  | |- eqterm ?G (subst (var 0) (sbzero ?u)) ?v ?A =>
+    eapply EqTrans ; [ eapply EqSubstZeroZero | .. ]
+  | |- eqterm ?G ?u (subst (var 0) (sbzero ?v)) ?A =>
+    eapply EqSym ; [ eapply EqTrans ; [ eapply EqSubstZeroZero | .. ] | .. ]
   (* Similarly, peculiar cases. *)
   | |- eqterm ?G (subst ?w (sbzero ?u)) ?u ?A =>
     tryif (is_evar w ; is_var u)
