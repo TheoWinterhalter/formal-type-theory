@@ -310,9 +310,12 @@ Ltac magicn n try shelf tysym :=
         | eassumption
         ]
     | |- issubst ?sbs ?G1 ?G2 =>
-      (* Dangerous I would like to do it only when sbs is a variable. *)
-      (* eassumption *)
-      is_var sbs ; eassumption
+      tryif (is_var sbs) then (
+        first [
+          eassumption
+        | eapply SubstCtxConv ; magicn n try shelf tysym
+        ]
+      ) else (cando shelf ; shelve)
     (*! Types !*)
     | |- istype ?G (Subst ?A ?sbs) =>
       eapply TySubst ; magicn n try shelf tysym
