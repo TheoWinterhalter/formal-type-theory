@@ -70,21 +70,21 @@ Proof.
 Defined.
 
 Ltac compsubst1 :=
-  match goal with
+  lazymatch goal with
   | |- eqtype ?G (Subst (Subst ?A ?sbt) ?sbs) ?B =>
     eapply eqtype_subst_left
   | |- eqtype ?G ?A (Subst (Subst ?B ?sbt) ?sbs) =>
-    eapply EqTySym ; try eapply eqtype_subst_left
+    eapply myEqTySym ; try eapply eqtype_subst_left
   | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v (Subst (Subst ?A ?sbt) ?sbs) =>
     eapply eqterm_subst_left
   | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) (Subst (Subst ?A ?sbt) ?sbs) =>
-    eapply EqSym ; try eapply eqterm_subst_left
+    eapply myEqSym ; try eapply eqterm_subst_left
   | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v ?A =>
     eapply EqTyConv ; [ try eapply eqterm_subst_left | .. ]
   | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) ?A =>
-    eapply EqSym ; [
-      ..
-    | eapply EqTyConv ; [ try eapply eqterm_subst_left | .. ]
+    eapply myEqSym ; [
+      eapply EqTyConv ; [ try eapply eqterm_subst_left | .. ]
+    | ..
     ]
   | _ => fail
   end.
