@@ -2,7 +2,7 @@
 
 Require Import syntax.
 Require Import ptt.
-Require Import myptt ptt_tactics ptt_admissible.
+Require Import ptt_tactics ptt_admissible.
 
 Definition sane_issubst sbs G D :
   issubst sbs G D -> isctx G * isctx D.
@@ -102,7 +102,11 @@ Proof.
   { now apply TyId. }
 
   (* TermJ *)
-  { apply @TySubst with (D := ctxextend G (Id A u v)) ; try magic.
+  { trymagic. fail.
+
+
+
+    apply @TySubst with (D := ctxextend G (Id A u v)) ; try magic.
     apply @TyCtxConv
       with (G :=
               ctxextend G
