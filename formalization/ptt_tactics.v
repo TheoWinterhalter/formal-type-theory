@@ -383,23 +383,31 @@ Ltac magicn n try shelf tysym :=
       | cando shelf ; shelve
       ]
     | |- isterm ?G ?u ?A =>
-      first [
-        (* If u is an existential variable we don't touch it. *)
-        is_evar u ; cando shelf ; shelve
-      | (* Otherwise, we can try eassumption *)
-        first [
-          is_var u ; first [
+      tryif (is_evar u)
+      (* If u is an existential variable we don't touch it. *)
+      then (cando shelf ; shelve)
+      else (
+        tryif (is_var u)
+        then first [
+          eassumption
+        | eapply TermTyConv ; [
             eassumption
-          | eapply TermTyConv ; [
+          | magicn n try shelf tysym ..
+          ]
+        | eapply TermCtxConv ; [
+            eassumption
+          | magicn n try shelf tysym ..
+          ]
+        | eapply TermCtxConv ; [
+            eapply TermTyConv ; [
               eassumption
             | magicn n try shelf tysym ..
             ]
+          | magicn n try shelf tysym ..
           ]
-        | (* If we are typing a term variable then we shelve I guess. *)
-          cando shelf ; shelve
         ]
-        | eassumption
-      ]
+        else cando shelf ; shelve
+      )
     (*! Equality of contexts !*)
     | |- eqctx ctxempty ctxempty =>
       apply EqCtxEmpty

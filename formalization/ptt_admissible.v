@@ -196,8 +196,8 @@ Lemma EqTermCongWeak :
            (subst u2 sbweak)
            (Subst B1 sbweak).
 Proof.
-  intros. magic.
-  Unshelve. fail.
+  intros. trymagic. (* This is unsatisfying! *)
+  Unshelve. all:strictmagic.
 Defined.
 
 
