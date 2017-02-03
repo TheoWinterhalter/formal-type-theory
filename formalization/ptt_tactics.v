@@ -482,7 +482,7 @@ Ltac magicn n try shelf tysym :=
       else pushsubst1 ; magicn n try shelf tysym
     | |- eqtype ?G ?A (Subst ?B ?sbs) =>
       (* We know how to deal with the symmetric case. *)
-      cando tysym ; eapply EqTySym ; [
+      cando tysym ; eapply myEqTySym ; [
         magicn n try shelf false
       | magicn n try shelf tysym ..
       ]
@@ -494,7 +494,7 @@ Ltac magicn n try shelf tysym :=
           eassumption
         | eapply EqTyRefl ; magicn n try shelf tysym
         | cando tysym ;
-          eapply EqTySym ; [ eassumption | magicn n try shelf false .. ]
+          eapply myEqTySym ; [ eassumption | magicn n try shelf false .. ]
         ]
       ) else (
         match eval compute in n with
