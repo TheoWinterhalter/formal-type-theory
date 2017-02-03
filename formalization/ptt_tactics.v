@@ -42,9 +42,9 @@ Lemma eqterm_subst_left :
 Proof.
   intros.
   assert (hh : eqtype G (Subst A (sbcomp sbt sbs)) (Subst (Subst A sbt) sbs)).
-  { apply EqTySym ; [
-      assumption ..
-    | eapply EqTySubstComp ; eassumption
+  { apply myEqTySym ; [
+      eapply EqTySubstComp ; eassumption
+    | assumption ..
     ].
   }
   assert (h : eqterm G (subst u (sbcomp sbt sbs)) v (Subst (Subst A sbt) sbs)).
@@ -52,9 +52,9 @@ Proof.
   eapply EqTrans.
   - eapply EqTyConv.
     + eapply EqSubstComp ; eassumption.
-    + apply EqTySym ; [
-        assumption ..
-      | eapply EqTySubstComp ; eassumption
+    + apply myEqTySym ; [
+        eapply EqTySubstComp ; eassumption
+      | assumption ..
       ].
     + assumption.
     + assumption.
@@ -106,38 +106,38 @@ Ltac pushsubst1 :=
   | |- eqtype ?G (Subst (Id ?A ?u ?v) ?sbs) ?B =>
     eapply EqTyTrans ; [ eapply EqTySubstId | .. ]
   | |- eqtype ?G ?A (Subst (Id ?B ?u ?v) ?sbs) =>
-    eapply EqTySym ; [
-      ..
-    | eapply EqTyTrans ; [ eapply EqTySubstId | .. ]
+    eapply myEqTySym ; [
+      eapply EqTyTrans ; [ eapply EqTySubstId | .. ]
+    | ..
     ]
   | |- eqtype ?G (Subst (Prod ?A ?B) ?sbs) ?C =>
     eapply EqTyTrans ; [ eapply EqTySubstProd | .. ]
   | |- eqtype ?G ?A (Subst (Prod ?B ?C) ?sbs) =>
-    eapply EqTySym ; [ .. | eapply EqTyTrans ; [ eapply EqTySubstProd | .. ] ]
+    eapply myEqTySym ; [ eapply EqTyTrans ; [ eapply EqTySubstProd | .. ] | .. ]
   | |- eqtype ?G (Subst ?E ?sbs) Empty =>
     eapply EqTySubstEmpty
   | |- eqtype ?G (Subst Empty ?sbs) ?A =>
     eapply EqTyTrans ; [ eapply EqTySubstEmpty | .. ]
   | |- eqtype ?G Empty (Subst ?E ?sbs) =>
-    eapply EqTySym ; [ eapply EqTySubstEmpty | .. ]
+    eapply myEqTySym ; [ eapply EqTySubstEmpty | .. ]
   | |- eqtype ?G ?A (Subst Empty ?sbs) =>
-    eapply EqTySym ; [
-      ..
-    | eapply EqTyTrans ; [ eapply EqTySubstEmpty | .. ]
+    eapply myEqTySym ; [
+      eapply EqTyTrans ; [ eapply EqTySubstEmpty | .. ]
+    | ..
     ]
   | |- eqtype ?G (Subst Unit ?sbs) ?A =>
     eapply EqTyTrans ; [ eapply EqTySubstUnit | .. ]
   | |- eqtype ?G ?A (Subst Unit ?sbs) =>
-    eapply EqTySym ; [
-      ..
-    | eapply EqTyTrans ; [ eapply EqTySubstUnit | .. ]
+    eapply myEqTySym ; [
+      eapply EqTyTrans ; [ eapply EqTySubstUnit | .. ]
+    | ..
     ]
   | |- eqtype ?G (Subst Bool ?sbs) ?A =>
     eapply EqTyTrans ; [ eapply EqTySubstBool | .. ]
   | |- eqtype ?G ?A (Subst Bool ?sbs) =>
-    eapply EqTySym ; [
-      ..
-    | eapply EqTyTrans ; [ eapply EqTySubstBool | .. ]
+    eapply myEqTySym ; [
+      eapply EqTyTrans ; [ eapply EqTySubstBool | .. ]
+    | ..
     ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
     eapply EqTrans ; [ eapply EqSubstRefl | .. ]
