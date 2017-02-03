@@ -348,9 +348,16 @@ Ltac magicn n try shelf tysym :=
     | |- istype ?G Bool =>
       eapply TyBool ; magicn n try shelf tysym
     | |- istype ?G ?A =>
-      first [
-        is_var A ; eassumption
-      | assumption (* Maybe not necessary? *)
+      tryif (is_var A)
+      then first [
+        eassumption
+      | eapply TyCtxConv ; [
+          eassumption
+        | magicn n try shelf tysym ..
+        ]
+      ]
+      else first [
+        assumption
       | cando shelf ; shelve
       ]
     (*! Terms !*)

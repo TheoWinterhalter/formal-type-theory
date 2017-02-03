@@ -103,9 +103,9 @@ Lemma EqTyCongShift :
 Proof.
   intros. magic.
   Unshelve. all:try strictmagic.
-  all:try strictmagic.
-
-  fail.
+  (* I'm not very happy with the fact that I need to do it twice. *)
+  (* But we have to blame the 'context' goal. *)
+  all:strictmagic.
 Defined.
 
 Lemma EqTyCongWeak :
@@ -123,12 +123,7 @@ Lemma EqTyCongWeak :
            (Subst B1 sbweak)
            (Subst B2 sbweak).
 Proof.
-  intros.
-  assert (istype G1 A2).
-  { eapply TyCtxConv ; [ eassumption | magic .. ]. }
-  assert (istype G1 B2).
-  { eapply TyCtxConv ; [ eassumption | magic .. ]. }
-  eapply CongTySubst ; magic.
+  intros. magic.
 Defined.
 
 Lemma EqSubstWeakNat :
@@ -144,7 +139,11 @@ Lemma EqSubstWeakNat :
            (subst (subst u sbs) sbweak)
            (Subst (Subst B sbs) sbweak).
 Proof.
-  intros. eapply EqTyConv.
+  intros. trymagic.
+
+  fail.
+
+eapply EqTyConv.
   - gocompsubst ; try eassumption ; try magic.
     + gocompsubst ; try eassumption ; try magic.
       * { eapply TermTyConv.
