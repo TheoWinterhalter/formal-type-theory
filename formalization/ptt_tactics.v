@@ -462,24 +462,26 @@ Ltac magicn n try shelf tysym :=
       ]
     | |- eqtype ?G ?A (Subst ?B ?sbs) =>
       (* We know how to deal with the symmetric case. *)
-      eapply EqTySym ; [
+      cando tysym ; eapply EqTySym ; [
         magicn n try shelf false
       | magicn n try shelf tysym ..
       ]
-    (* | |- eqtype ?G ?A ?B => *)
-    (*   (* We only want to catch the variable case, so we will copy the _ *)
-    (*      case here (it's a lazymatch). *) *)
-    (*   tryif (is_var A ; is_var B) then ( *)
-    (*     first [ *)
-    (*       assumption *)
-    (*     | eapply EqTySym ; [ assumption | magicn n try shelf false .. ] *)
-    (*     ] *)
-    (*   ) else ( *)
-    (*     match eval compute in n with *)
-    (*     | 0 => assumption *)
-    (*     | S ?n => assumption || (constructor ; magicn n try shelf tysym) *)
-    (*     end *)
-    (*   ) *)
+    | |- eqtype ?G ?A ?B =>
+      (* We only want to catch the variable case, so we will copy the _ *)
+      (* case here (it's a lazymatch). *)
+      tryif (is_var A ; is_var B) then (
+        first [
+          eassumption
+        | eapply EqTyRefl ; magicn n try shelf tysym
+        | cando tysym ;
+          eapply EqTySym ; [ eassumption | magicn n try shelf false .. ]
+        ]
+      ) else (
+        match eval compute in n with
+        | 0 => assumption
+        | S ?n => assumption || (constructor ; magicn n try shelf tysym)
+        end
+      )
     (* To be continued... *)
     (*! Equality of terms !*)
     | |- eqterm ?G (subst ?u ?sbs) (subst ?v ?sbt) ?A =>

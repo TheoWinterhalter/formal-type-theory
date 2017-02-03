@@ -78,25 +78,7 @@ Lemma EqTyCongZero :
            (Subst A2 (sbzero u1))
            (Subst B2 (sbzero u2)).
 Proof.
-  intros. trymagic.
-  (* first [ *)
-  (*   assumption *)
-  (* | eapply EqTySym ; [ assumption | magicn n try shelf .. ] *)
-  (* ]. *)
-
-  fail.
-
-
-  assert (isterm G u2 A1).
-  { eapply TermTyConv ; [
-      eassumption
-    | magic ..
-    ].
-  }
-  eapply CongTySubst ; [
-    magic ..
-  | eapply SubstCtxConv ; magic
-  ].
+  intros. magic.
   Unshelve. assumption.
 Defined.
 
@@ -119,7 +101,12 @@ Lemma EqTyCongShift :
            (Subst B1 (sbshift sbs1))
            (Subst B2 (sbshift sbs2)).
 Proof.
-  intros.
+  intros. trymagic.
+
+
+  fail.
+
+
   assert (issubst sbs2 G1 D).
   { eapply SubstCtxConv ; magic. }
   assert (issubst sbs1 G2 D).
