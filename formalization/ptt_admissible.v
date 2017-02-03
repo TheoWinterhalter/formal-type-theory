@@ -149,12 +149,7 @@ Proof.
     (* The problem is that equality of terms is underspecified. *)
     (* trymagic. *)
     compsubst1 ; try strictmagic.
-    + eapply TermTyConv ; magic.
-    + magic.
-    + eapply TermTyConv ; magic.
-    + eapply TermTyConv ; magic.
-    + magic.
-    + eapply TermTyConv ; magic.
+    all:magic.
   - eapply TermTyConv ; magic.
   - eapply TermTyConv ; magic.
 

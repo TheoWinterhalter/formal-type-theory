@@ -326,7 +326,13 @@ Ltac magicn n try shelf tysym :=
       ]
     (*! Terms !*)
     | |- isterm ?G (subst ?u ?sbs) ?A =>
-      eapply TermSubst ; magicn n try shelf tysym
+      first [
+        eapply TermSubst ; magicn n try shelf tysym
+      | eapply TermTyConv ; [
+          eapply TermSubst ; magicn n try shelf tysym
+        | magicn n try shelf tysym ..
+        ]
+      ]
     | |- isterm (ctxextend ?G ?A) (var 0) ?T =>
       eapply TermVarZero ; magicn n try shelf tysym
     | |- isterm (ctxextend ?G ?B) (var (S ?k)) (Subst ?A sbweak) =>
