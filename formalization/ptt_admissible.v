@@ -29,15 +29,7 @@ Lemma compWeakZero :
     isterm G u B ->
     eqtype G A (Subst A (sbcomp (sbweak) (sbzero u))).
 Proof.
-  intros.
-  eapply EqTySym ; try magic.
-  eapply EqTyTrans ; [
-    eapply CongTySubst ; [
-      eapply WeakZero ; magic
-    | magic ..
-    ]
-  | magic ..
-  ].
+  intros. magic.
   Unshelve. assumption.
 Defined.
 

@@ -224,6 +224,33 @@ Ltac cando token :=
   | false => fail
   end.
 
+(* Simplify tactic *)
+(* Its purpose is simplifying substitutions in equalities,
+   assuming the substitution is on the left. *)
+Ltac simplify :=
+  lazymatch goal with
+  | |- eqtype ?G (Subst ?A ?sbs) ?B =>
+    first [
+      is_var sbs ; idtac
+      | lazymatch sbs with
+        | sbcomp sbweak (sbzero ?u) =>
+          eapply EqTyTrans ; [
+            eapply CongTySubst ; [
+              eapply WeakZero
+            | ..
+            ]
+          | ..
+          ]
+        | sbid =>
+          eapply EqTyTrans ; [
+            eapply EqTyIdSubst
+          | ..
+          ]
+        end
+    ]
+  | _ => idtac
+  end.
+
 (* Magic Tactic *)
 (* It is basically a type checker that doesn't do the smart things,
    namely type and context conversions (and it doesn't rely on reflection
@@ -414,7 +441,8 @@ Ltac magicn n try :=
           | eassumption
           ]
         | first [
-            eapply EqTyIdSubst ; magicn n try
+            (* eapply EqTyIdSubst ; magicn n try *)
+            simplify ; magicn n try
           | eapply CongTySubst ; magicn n try
           ]
         ]
