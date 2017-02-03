@@ -78,7 +78,15 @@ Lemma EqTyCongZero :
            (Subst A2 (sbzero u1))
            (Subst B2 (sbzero u2)).
 Proof.
-  intros.
+  intros. trymagic.
+  (* first [ *)
+  (*   assumption *)
+  (* | eapply EqTySym ; [ assumption | magicn n try shelf .. ] *)
+  (* ]. *)
+
+  fail.
+
+
   assert (isterm G u2 A1).
   { eapply TermTyConv ; [
       eassumption

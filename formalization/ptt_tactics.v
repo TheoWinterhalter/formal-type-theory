@@ -389,7 +389,18 @@ Ltac magicn n try shelf :=
         (* If u is an existential variable we don't touch it. *)
         is_evar u ; cando shelf ; shelve
       | (* Otherwise, we can try eassumption *)
-        eassumption
+        first [
+          is_var u ; first [
+            eassumption
+          | eapply TermTyConv ; [
+              eassumption
+            | magicn n try shelf ..
+            ]
+          ]
+        | (* If we are typing a term variable then we shelve I guess. *)
+          cando shelf ; shelve
+        ]
+        | eassumption
       ]
     (*! Equality of contexts !*)
     | |- eqctx ctxempty ctxempty =>
@@ -449,16 +460,12 @@ Ltac magicn n try shelf :=
         ]
       | pushsubst1 ; magicn n try shelf
       ]
-    (* | |- eqtype ?G (Subst ?A (sbid)) ?B => *)
+    (* | |- eqtype ?G ?A ?B => *)
+    (*   (* We may have to test has_evar/is_var. *) *)
     (*   first [ *)
-    (*     eapply EqTyIdSubst ; magicn n try shelf *)
-    (*   | eapply CongTySubst ; magicn n try shelf *)
+    (*     assumption *)
+    (*   | eapply EqTySym ; [ assumption | magicn n try shelf .. ] *)
     (*   ] *)
-    (* (* EqTySubst* ? *) *)
-    (* | |- eqtype ?G (Subst ?A ?sbs) (Subst ?B ?sbt) => *)
-    (*   eapply CongTySubst ; magicn n try shelf *)
-    (* | |- eqtype _ (Id _ _ _) (Id _ _ _) => *)
-    (*   eapply CongId ; magicn n try shelf *)
     (* To be continued... *)
     (*! Equality of terms !*)
     | |- eqterm ?G (subst ?u ?sbs) (subst ?v ?sbt) ?A =>
