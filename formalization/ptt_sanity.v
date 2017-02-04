@@ -519,40 +519,23 @@ Proof.
 
   (* EqSubstShiftSucc *)
   - { split.
-      - { trymagic.
-          (* The subgoals aren't the right ones. *)
-          (* This calls investigation. Probably something to do with pushing
-             in var (S k)! *)
-
-          fail.
-
-eapply TermTyConv ; [
-            (eapply TermSubst ; try magic) ;
-            (eapply TermVarSucc ; try magic) ;
-            eassumption
-          | try magic ..
-          ].
-          eapply EqTyWeakNat ; magic.
-          Unshelve. all:magic.
+      - { magic.
+          Unshelve. all:strictmagic.
         }
       - { magic. }
     }
 
   (* EqSubstAbs *)
   - { split.
-      - { eapply TermTyConv ; [
-            eapply TermSubst ; magic
-          | try magic ..
-          ].
-          gopushsubst.
-        }
+      - { magic. }
       - { magic. }
     }
 
   (* EqSubstApp *)
   - { split.
       - { magic. }
-      - { eapply TermTyConv ; [
+      - { fail.
+eapply TermTyConv ; [
             (eapply TermApp ; try magic) ;
             (eapply TermTyConv ; [
               (eapply TermSubst ; try eassumption) ; magic

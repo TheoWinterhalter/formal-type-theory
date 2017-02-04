@@ -525,6 +525,19 @@ Ltac magicn n try shelf tysym :=
       compsubst1 ; magicn n try shelf tysym
     | |- eqtype ?G ?A (Subst (Subst ?B ?sbs) ?sbt) =>
       compsubst1 ; magicn n try shelf tysym
+    (* A weird case perhaps. *)
+    (* It feels like we should improve the case where is_var A and
+       not is_var sbs below. *)
+    | |- eqtype ?G (Subst ?B (sbcomp ?sbs sbweak)) (Subst ?A (sbshift ?sbs)) =>
+    tryif (is_evar A ; is_var B)
+    then (
+      eapply @EqTyTrans with (B := Subst (Subst B sbweak) (sbshift sbs)) ; [
+        idtac
+      | eapply EqTyRefl
+      | ..
+      ] ; magicn n try shelf tysym
+    )
+    else fail
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)
       tryif (is_var A)
