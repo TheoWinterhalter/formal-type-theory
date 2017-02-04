@@ -731,6 +731,33 @@ Proof.
                      (* Here magic elaborates var 0 where it should come up
                         with subst u1 sbweak. The safest here would be to
                         shelve. *)
+                                                      compsubst1.
+                                                    ++++++ magic.
+                                                    ++++++ magic.
+                                                    ++++++ magic.
+                                                    ++++++ magic.
+                                                    ++++++ (* Here *)
+                                                      simplify.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** (* HERE *)
+                                                      simplify.
+                                                    ------- magic.
+                                                    ------- magic.
+                                                    ------- magic.
+                                                    ------- eapply EqSym.
+                                                    +++++++ (* HERE *)
+                                                      (* pushsubst1. *)
+                    (* pushsubst1 here is the faulty call! *)
  (* magic. *) fail.
                              +++ (* This is already wrong. *)
                                  eapply EqCtxExtend.
