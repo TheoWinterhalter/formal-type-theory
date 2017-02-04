@@ -379,7 +379,11 @@ Ltac magicn n try shelf tysym :=
         ]
       ]
     | |- isterm (ctxextend ?G ?A) (var 0) ?T =>
-      eapply TermVarZero ; magicn n try shelf tysym
+      first [
+        eapply TermVarZero ; magicn n try shelf tysym
+      | eapply TermTyConv ; [ eapply TermVarZero | .. ] ;
+        magicn n try shelf tysym
+      ]
     | |- isterm (ctxextend ?G ?B) (var (S ?k)) (Subst ?A sbweak) =>
       eapply TermVarSucc ; magicn n try shelf tysym
     | |- isterm ?G (lam ?A ?B ?u) ?C =>
@@ -401,7 +405,10 @@ Ltac magicn n try shelf tysym :=
       | eapply TermTyConv ; [ eapply TermRefl | .. ] ; magicn n try shelf tysym
       ]
     | |- isterm ?G (j ?A ?u ?C ?w ?v ?p) ?T =>
-      eapply TermJ ; magicn n try shelf tysym
+      first [
+        eapply TermJ ; magicn n try shelf tysym
+      | eapply TermTyConv ; [ eapply TermJ | .. ] ; magicn n try shelf tysym
+      ]
     | |- isterm ?G (exfalso ?A ?u) _ =>
       eapply TermExfalso ; magicn n try shelf tysym
     | |- isterm ?G unit ?A =>
@@ -562,15 +569,15 @@ Ltac magicn n try shelf tysym :=
     (* It feels like we should improve the case where is_var A and
        not is_var sbs below. *)
     | |- eqtype ?G (Subst ?B (sbcomp ?sbs sbweak)) (Subst ?A (sbshift ?sbs)) =>
-    tryif (is_evar A ; is_var B)
-    then (
-      eapply @EqTyTrans with (B := Subst (Subst B sbweak) (sbshift sbs)) ; [
-        idtac
-      | eapply EqTyRefl
-      | ..
-      ] ; magicn n try shelf tysym
-    )
-    else fail
+      tryif (is_evar A ; is_var B)
+      then (
+        eapply @EqTyTrans with (B := Subst (Subst B sbweak) (sbshift sbs)) ; [
+          idtac
+        | eapply EqTyRefl
+        | ..
+        ] ; magicn n try shelf tysym
+      )
+      else fail
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)
       tryif (is_var A)
