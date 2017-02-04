@@ -152,7 +152,8 @@ Ltac pushsubst1 :=
     ]
   (* Now, we deal with a very particuliar case. *)
   | |- eqtype ?G (Subst ?A (sbzero ?u)) ?B' =>
-    tryif (is_evar A ; is_var B')
+    (* tryif (is_evar A ; is_var B') *)
+    tryif (is_evar A)
     then (
       eapply @EqTyTrans with (B := Subst (Subst B' sbweak) (sbzero u)) ; [
         eapply EqTyRefl
