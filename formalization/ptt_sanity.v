@@ -541,115 +541,52 @@ Proof.
 
   (* EqSubstRefl *)
   - { split.
-      - { trymagic. fail.
-
-
-eapply TermTyConv ; [
-            eapply TermSubst ; magic
-          | try magic ..
-          ].
-          gopushsubst.
-          Unshelve. all:assumption.
+      - { magic.
+          Unshelve. all:strictmagic.
         }
       - { magic. }
     }
 
   (* EqSubstJ *)
   - { split.
-      - { eapply TermSubst ; try magic.
-          eapply TySubst ; try magic.
-          eapply TySubst ; try magic.
-          eapply SubstCtxConv ; try magic.
-          - apply @EqCtxExtend
-            with (A := Subst (Id (Subst A sbweak) (subst u sbweak) (var 0))
-                            (sbzero v)
-            ) ; try magic.
-            gopushsubst.
-            apply CongId ; try magic.
-            + eapply TermTyConv ; [ eassumption | try magic .. ].
-              eapply EqTyWeakZero ; magic.
-            + eapply TermTyConv ; [ eassumption | try magic .. ].
-              eapply EqTyWeakZero ; magic.
-            + apply myEqTySym ; [
-                eapply EqTyWeakZero ; magic
-              | magic ..
-              ].
-            + eapply EqSubstWeakZero ; try magic.
-              eapply TermTyConv ; [ eassumption | try magic .. ].
-              eapply EqTyWeakZero ; magic.
-            + eapply EqTyConv ; [
-                eapply EqSubstZeroZero ; magic
-              | try magic ..
-              ].
-              * eapply EqTyWeakZero ; magic.
-              * eapply TermTyConv ; [
-                  eapply TermSubst ; magic
-                | try magic ..
-                ].
-                apply myEqTySym ; [
-                  eapply EqTyWeakZero ; magic
-                | magic ..
-                ].
-          - apply CtxRefl ; magic.
-          Unshelve. all:magic.
+      - { magic.
+          Unshelve. all:strictmagic.
         }
-      - eapply JTyConv ; magic.
+      - (* TODO: Do something about JTyConv as it is not proven. *)
+        eapply JTyConv ; magic.
         Unshelve. assumption.
     }
 
   (* EqSubstExfalso *)
   - { split.
       - { magic. }
-      - { eapply TermTyConv ; [
-            apply TermExfalso ; try magic
-          | try magic ..
-          ].
-          eapply TermTyConv ; [
-            eapply TermSubst ; try magic
-          | try magic ..
-          ].
-          gopushsubst.
-          Unshelve. assumption.
-        }
+      - { magic. }
     }
 
   (* EqSubstUnit *)
   - { split.
-      - { eapply TermTyConv ; [
-            eapply TermSubst ; try magic
-          | try magic ..
-          ].
-          gopushsubst.
-        }
+      - { magic. }
       - { magic. }
     }
 
   (* EqSubstTrue *)
   - { split.
-      - { eapply TermTyConv ; [
-            eapply TermSubst ; try magic
-          | try magic ..
-          ].
-          gopushsubst.
-        }
+      - { magic. }
       - { magic. }
     }
 
   (* EqSubstFalse *)
   - { split.
-      - { eapply TermTyConv ; [
-            eapply TermSubst ; try magic
-          | try magic ..
-          ].
-          gopushsubst.
-        }
+      - { magic. }
       - { magic. }
     }
 
   (* EqSubstCond *)
   - { split.
       - { magic. }
-      - { eapply TermTyConv ; [
+      - { trymagic. fail.
+
+eapply TermTyConv ; [
             apply TermCond ; try magic
           | try magic ..
           ].

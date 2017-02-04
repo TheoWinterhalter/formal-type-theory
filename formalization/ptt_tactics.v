@@ -503,6 +503,8 @@ Ltac magicn n try shelf tysym :=
       eapply CongSubstWeak ; magicn n try shelf tysym
     | |- eqsubst (sbshift ?sbs1) (sbshift ?sbs2) ?D ?E =>
       eapply CongSubstShift ; magicn n try shelf tysym
+    | |- eqsubst ?sbs ?sbs ?G ?D =>
+      eapply SubstRefl ; magicn n try shelf tysym
     | |- eqsubst ?sbs ?sbt ?G ?D =>
       tryif (is_var sbs ; is_var sbt)
       then first [
