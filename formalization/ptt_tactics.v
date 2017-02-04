@@ -538,6 +538,10 @@ Ltac magicn n try shelf tysym :=
         | magicn n try shelf tysym ..
         ]
       ]
+    (* This is a dangerous case. We need to take care of everything involving
+       composition before this one. *)
+    | |- eqsubst (sbcomp ?sb1 ?sb2) (sbcomp ?sb3 ?sb4) ?G ?D =>
+      eapply CongSubstComp ; magicn n try shelf tysym
     | |- eqsubst ?sbs ?sbs ?G ?D =>
       eapply SubstRefl ; magicn n try shelf tysym
     | |- eqsubst ?sbs ?sbt ?G ?D =>
