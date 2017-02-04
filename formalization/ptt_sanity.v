@@ -695,8 +695,45 @@ Proof.
                          --- magic.
                          --- eapply SubstCtxConv.
                              +++ magic.
-                             +++ magic.
-                             +++ eapply EqCtxExtend.
+                             +++ (* This is where thing go wrong. *)
+                                 (* magic. *)
+                                 eapply EqCtxExtend.
+                                 *** magic.
+                                 *** magic.
+                                 *** magic.
+                                 *** magic.
+                                 *** magic.
+                                 *** pushsubst1.
+                                     ---- magic.
+                                     ---- magic.
+                                     ---- magic.
+                                     ---- magic.
+                                     ---- magic.
+                                     ---- magic.
+                                     ---- eapply EqTySym.
+                                          ++++ pushsubst1.
+                                               **** magic.
+                                               **** magic.
+                                               **** magic.
+                                               **** magic.
+                                               **** magic.
+                                               **** magic.
+                                               **** eapply CongId.
+                                                    ------ magic.
+                                                    ------ magic.
+                                                    ------ magic.
+                                                    ------ magic.
+                                                    ------ magic.
+                                                    ------ magic.
+                                                    ------ magic.
+                                                    ------ magic.
+                                                    ------ (* This is IT. *)
+                     (* Here magic elaborates var 0 where it should come up
+                        with subst u1 sbweak. The safest here would be to
+                        shelve. *)
+ (* magic. *) fail.
+                             +++ (* This is already wrong. *)
+                                 eapply EqCtxExtend.
                                  *** magic.
                                  *** magic.
                                  *** magic.
