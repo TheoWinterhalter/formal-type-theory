@@ -141,6 +141,8 @@ Ltac pushsubst1 :=
       eapply EqTyTrans ; [ eapply EqTySubstUnit | .. ]
     | ..
     ]
+  | |- eqtype ?G (Subst ?A ?sbs) Bool =>
+    eapply EqTySubstBool
   | |- eqtype ?G (Subst Bool ?sbs) ?A =>
     eapply EqTyTrans ; [ eapply EqTySubstBool | .. ]
   | |- eqtype ?G ?A (Subst Bool ?sbs) =>
@@ -418,7 +420,11 @@ Ltac magicn n try shelf tysym :=
           ]
         ]
     | |- isterm ?G (cond ?C ?u ?v ?w) ?T =>
-      eapply TermCond ; magicn n try shelf tysym
+      first [
+        eapply TermCond ; magicn n try shelf tysym
+      | eapply TermTyConv ; [ eapply TermCond | .. ] ;
+        magicn n try shelf tysym
+      ]
     | [ H : isterm ?G ?v ?A, H' : isterm ?G ?v ?B |- isterm ?G ?v ?C ] =>
       (* We have several options so we don't take any risk. *)
       (* Eventually this should go away. I don't want to do the assert thing
@@ -491,6 +497,13 @@ Ltac magicn n try shelf tysym :=
     | |- eqsubst (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs)))
                 (sbcomp (sbzero ?u) ?sbs) ?G ?D =>
       eapply ShiftZero ; magicn n try shelf tysym
+    | |- eqsubst (sbcomp (sbshift ?sbs) (sbzero ?v))
+                (sbcomp (sbzero ?u) ?sbs) ?G ?D =>
+      eapply @SubstTrans
+      with (sb2 := sbcomp (sbshift sbs) (sbzero (subst u sbs))) ; [
+        eapply CongSubstComp ; magicn n try shelf tysym
+      | magicn n try shelf tysym ..
+      ]
     | |- eqsubst (sbcomp (sbzero ?u) ?sbs)
                 (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs))) ?G ?D =>
       eapply SubstSym ; [
@@ -502,7 +515,13 @@ Ltac magicn n try shelf tysym :=
     | |- eqsubst sbweak sbweak ?D ?E =>
       eapply CongSubstWeak ; magicn n try shelf tysym
     | |- eqsubst (sbshift ?sbs1) (sbshift ?sbs2) ?D ?E =>
-      eapply CongSubstShift ; magicn n try shelf tysym
+      first [
+        eapply CongSubstShift ; magicn n try shelf tysym
+      | eapply EqSubstCtxConv ; [
+          eapply CongSubstShift ; magicn n try shelf tysym
+        | magicn n try shelf tysym ..
+        ]
+      ]
     | |- eqsubst ?sbs ?sbs ?G ?D =>
       eapply SubstRefl ; magicn n try shelf tysym
     | |- eqsubst ?sbs ?sbt ?G ?D =>
@@ -566,6 +585,8 @@ Ltac magicn n try shelf tysym :=
       ]
     | |- eqtype ?G (Id ?A ?u ?v) (Id ?B ?w ?z) =>
       eapply CongId ; magicn n try shelf tysym
+    | |- eqtype ?G Bool Bool =>
+      eapply EqTyRefl ; magicn n try shelf tysym
     | |- eqtype ?G ?A ?B =>
       (* We only want to catch the variable case, so we will copy the _ *)
       (* case here (it's a lazymatch). *)
