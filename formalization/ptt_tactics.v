@@ -196,10 +196,10 @@ Ltac pushsubst1 :=
       ]
     )
     else fail
-  | |- eqterm ?G (subst ?w (sbzero ?v)) ?u ?A =>
+  | |- eqterm ?G (subst ?w (sbzero ?v')) ?u ?A =>
     tryif (is_evar w ; is_var u)
     then (
-      eapply @EqTrans with (v := subst (subst u sbweak) (sbzero v))  ; [
+      eapply @EqTrans with (v := subst (subst u sbweak) (sbzero v'))  ; [
         eapply EqRefl
       | ..
       ]
