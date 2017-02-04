@@ -340,6 +340,7 @@ Ltac magicn n try shelf tysym :=
        * Add a token to solve equalities with only one side as reflexivity.
          (Maybe shelve them in the meantime?)
        * Maybe shelve only when try token is false.
+       * Put tysym token back to true whenever progress is made.
        * ... *)
     lazymatch goal with
     (*! Contexts !*)
@@ -483,6 +484,7 @@ Ltac magicn n try shelf tysym :=
       | eapply TermTyConv ; [ eapply TermCond | .. ] ;
         magicn n try shelf tysym
       ]
+    (* This might go away some day. *)
     | [ H : isterm ?G ?v ?A, H' : isterm ?G ?v ?B |- isterm ?G ?v ?C ] =>
       (* We have several options so we don't take any risk. *)
       (* Eventually this should go away. I don't want to do the assert thing

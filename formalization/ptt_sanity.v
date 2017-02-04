@@ -664,6 +664,68 @@ Proof.
           - magic.
           - magic.
           - (* We are lucky, it seems to fail soon enough. *)
+            eapply TermTyConv ; [ eassumption | .. ].
+            + (* Again lucky. *)
+              compsubst1.
+              * magic.
+              * magic.
+              * magic.
+              * (* Nice. *)
+                compsubst1.
+                -- magic.
+                -- magic.
+                -- magic.
+                -- (* Let's go deepeer *)
+                   eapply CongTySubst.
+                   ++ (* Hm... *)
+                      eapply CongSubstComp.
+                      ** magic.
+                      ** (* Over here. *)
+                         eapply EqSubstCtxConv ; [
+                           eapply CongSubstShift ; magic
+                         | ..
+                         ].
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- eapply SubstCtxConv.
+                             +++ magic.
+                             +++ eapply EqCtxExtend.
+                                 *** magic.
+                                 *** magic.
+                                 *** magic.
+                                 *** magic.
+                                 *** magic.
+                                 *** pushsubst1.
+                                     ---- magic.
+                                     ---- magic.
+                                     ---- magic.
+                                     ---- magic.
+                                     ---- magic.
+                                     ---- magic.
+                                     ---- eapply EqTySym.
+                                          ++++ pushsubst1.
+                                               **** magic.
+                                               **** magic.
+                                               **** magic.
+                                               **** magic.
+                                               **** magic.
+                                               **** magic.
+                                               **** eapply CongId.
+                                                    ----- magic.
+                                                    ----- magic.
+                                                    ----- magic.
+                                                    ----- magic.
+                                                    ----- magic.
+                                                    ----- magic.
+                                                    ----- magic.
+                                                    ----- magic.
+                                                    ----- fail.
+
             fail.
 
           trymagic.
