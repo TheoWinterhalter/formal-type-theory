@@ -659,22 +659,7 @@ Proof.
   - { split.
       - { magic. }
       - { trymagic.
-          - pushsubst1.
-            (* Here we witness an impressive bug !
-               | |- eqtype ?G (Subst ?A (sbzero ?u)) ?B =>
-                tryif (is_evar A ; is_var B)
-                then (
-                  eapply @EqTyTrans with (B := Subst (Subst B sbweak) (sbzero u)) ; [
-                    eapply EqTyRefl
-                  | ..
-                  ]
-                )
-                else fail
 
-                In this case, the B on the left of ':=' is actually replaced
-                by A1...
-
-             *)
 
           fail.
 
