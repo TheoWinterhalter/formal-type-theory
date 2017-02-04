@@ -658,8 +658,17 @@ Proof.
   (* CongJ *)
   - { split.
       - { magic. }
-      - { trymagic.
-          magic.
+      - { eapply TermTyConv ; [ eapply TermJ | .. ].
+          - magic.
+          - magic.
+          - magic.
+          - magic.
+          - (* We are lucky, it seems to fail soon enough. *)
+            fail.
+
+          trymagic.
+          (* It generates only one subgoal, but it is not provable.
+             This requires some more investigation. *)
 
 
           fail.
