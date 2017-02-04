@@ -658,7 +658,8 @@ Proof.
   (* CongJ *)
   - { split.
       - { magic. }
-      - { eapply TermTyConv ; [ eapply TermJ | .. ].
+      - { (* trymagic. *)
+          eapply TermTyConv ; [ eapply TermJ | .. ].
           - magic.
           - magic.
           - magic.
@@ -694,37 +695,24 @@ Proof.
                          --- magic.
                          --- eapply SubstCtxConv.
                              +++ magic.
+                             +++ magic.
                              +++ eapply EqCtxExtend.
                                  *** magic.
                                  *** magic.
                                  *** magic.
                                  *** magic.
                                  *** magic.
-                                 *** pushsubst1.
+                                 *** eapply CongId.
                                      ---- magic.
                                      ---- magic.
                                      ---- magic.
                                      ---- magic.
                                      ---- magic.
                                      ---- magic.
-                                     ---- eapply EqTySym.
-                                          ++++ pushsubst1.
-                                               **** magic.
-                                               **** magic.
-                                               **** magic.
-                                               **** magic.
-                                               **** magic.
-                                               **** magic.
-                                               **** eapply CongId.
-                                                    ----- magic.
-                                                    ----- magic.
-                                                    ----- magic.
-                                                    ----- magic.
-                                                    ----- magic.
-                                                    ----- magic.
-                                                    ----- magic.
-                                                    ----- magic.
-                                                    ----- fail.
+                                     ---- magic.
+                                     ---- magic.
+                                     ---- (* Here it is, the unprovable goal! *)
+                                          fail.
 
             fail.
 
