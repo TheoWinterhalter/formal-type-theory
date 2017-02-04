@@ -659,7 +659,7 @@ Proof.
   - { split.
       - { magic. }
       - { trymagic.
-
+          magic.
 
 
           fail.

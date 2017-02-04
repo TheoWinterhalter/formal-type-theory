@@ -708,12 +708,15 @@ Ltac magicn n try shelf tysym :=
       then first [
         eassumption
       | eapply EqRefl ; magicn n try shelf tysym
-      (* Again, we use tysym instead of some tmsym *)
-      | cando tysym ; eapply EqSym ; [
-          magicn n try shelf false
+      | eapply EqSym ; [
+          eassumption
         | magicn n try shelf tysym ..
         ]
       | eapply EqTyConv ; [ eassumption | magicn n try shelf tysym .. ]
+      | eapply EqTyConv ; [
+          eapply EqSym ; [ eassumption | .. ]
+        | ..
+        ] ; magicn n try shelf tysym
       ]
       else (
           (* As always, this a temporary measure *)
