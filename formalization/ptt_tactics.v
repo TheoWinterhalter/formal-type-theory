@@ -383,7 +383,10 @@ Ltac magicn n try shelf tysym :=
     | |- isterm ?G (lam ?A ?B ?u) ?C =>
       eapply TermAbs ; magicn n try shelf tysym
     | |- isterm ?G (app ?u ?A ?B ?v) ?C =>
-      eapply TermApp ; magicn n try shelf tysym
+      first [
+        eapply TermApp ; magicn n try shelf tysym
+      | eapply TermTyConv ; [ eapply TermApp | .. ] ; magicn n try shelf tysym
+      ]
     | |- isterm ?G (refl ?A ?u) ?B =>
       eapply TermRefl ; magicn n try shelf tysym
     | |- isterm ?G (j ?A ?u ?C ?w ?v ?p) ?T =>

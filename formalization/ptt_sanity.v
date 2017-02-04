@@ -534,24 +534,17 @@ Proof.
   (* EqSubstApp *)
   - { split.
       - { magic. }
-      - { fail.
-eapply TermTyConv ; [
-            (eapply TermApp ; try magic) ;
-            (eapply TermTyConv ; [
-              (eapply TermSubst ; try eassumption) ; magic
-            | try magic ..
-            ]) ;
-            gopushsubst
-          | try magic ..
-          ].
-          eapply EqTyShiftZero ; magic.
-          Unshelve. all:magic.
+      - { magic.
+          Unshelve. all:strictmagic.
         }
     }
 
   (* EqSubstRefl *)
   - { split.
-      - { eapply TermTyConv ; [
+      - { trymagic. fail.
+
+
+eapply TermTyConv ; [
             eapply TermSubst ; magic
           | try magic ..
           ].
