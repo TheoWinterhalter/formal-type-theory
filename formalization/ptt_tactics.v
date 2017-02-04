@@ -383,7 +383,13 @@ Ltac magicn n try shelf tysym :=
     | |- isterm (ctxextend ?G ?B) (var (S ?k)) (Subst ?A sbweak) =>
       eapply TermVarSucc ; magicn n try shelf tysym
     | |- isterm ?G (lam ?A ?B ?u) ?C =>
-      eapply TermAbs ; magicn n try shelf tysym
+      first [
+        eapply TermAbs ; magicn n try shelf tysym
+      | eapply TermTyConv ; [
+          eapply TermAbs ; magicn n try shelf tysym
+        | magicn n try shelf tysym ..
+        ]
+      ]
     | |- isterm ?G (app ?u ?A ?B ?v) ?C =>
       first [
         eapply TermApp ; magicn n try shelf tysym
@@ -585,6 +591,8 @@ Ltac magicn n try shelf tysym :=
       ]
     | |- eqtype ?G (Id ?A ?u ?v) (Id ?B ?w ?z) =>
       eapply CongId ; magicn n try shelf tysym
+    | |- eqtype ?G (Prod ?A ?B) (Prod ?C ?D) =>
+      eapply CongProd ; magicn n try shelf tysym
     | |- eqtype ?G Bool Bool =>
       eapply EqTyRefl ; magicn n try shelf tysym
     | |- eqtype ?G ?A ?B =>
@@ -644,6 +652,11 @@ Ltac magicn n try shelf tysym :=
       then first [
         eassumption
       | eapply EqRefl ; magicn n try shelf tysym
+      (* Again, we use tysym instead of some tmsym *)
+      | cando tysym ; eapply EqSym ; [
+          magicn n try shelf false
+        | magicn n try shelf tysym ..
+        ]
       | eapply EqTyConv ; [ eassumption | magicn n try shelf tysym .. ]
       ]
       else (

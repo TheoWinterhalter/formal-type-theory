@@ -640,86 +640,21 @@ Proof.
   (* CongAbs *)
   - { split.
       - { magic. }
-      - { trymagic. fail.
-eapply TermTyConv ; [
-            eapply TermAbs ; try magic
-          | magic ..
-          ].
-          eapply TermCtxConv ; [
-            eapply TermTyConv ; [
-              eassumption
-            | magic ..
-            ]
-          | magic ..
-          ].
-        }
+      - { magic. }
     }
 
   (* CongApp *)
   - { split.
       - { magic. }
-      - { eapply TermTyConv ; [
-            eapply TermApp ; try magic
-          | try magic ..
-          ].
-          - eapply TermTyConv ; [
-              eassumption
-            | magic ..
-            ].
-          - eapply TermTyConv ; [
-              eassumption
-            | magic ..
-            ].
-          - eapply CongTySubst ; try magic.
-            + eapply EqSubstCtxConv ; [
-               eapply CongSubstZero ; try magic
-              | try magic ..
-              ].
-              * eapply EqTyConv ; [
-                  eapply EqSym ; try magic ; try eassumption
-                | magic ..
-                ].
-              * eapply TermTyConv ; [
-                  eassumption
-                | magic ..
-                ].
-              * eapply TermTyConv ; [
-                  eassumption
-                | magic ..
-                ].
-              * eapply SubstZero ; try magic.
-                eapply TermTyConv ; [
-                  eassumption
-                | magic ..
-                ].
-              * eapply SubstCtxConv ; magic.
-            + magic.
-            + eapply SubstCtxConv ; try magic.
-              * eapply SubstZero ; try magic.
-                eapply TermTyConv ; [
-                  eassumption
-                | magic ..
-                ].
-              * magic.
-              * magic.
-          - eapply TySubst.
-            + eapply SubstZero ; try magic.
-              eapply TermTyConv ; [
-                eassumption
-              | magic ..
-              ].
-            + magic.
-            + magic.
-            + magic.
-        }
-        Unshelve. all:magic.
-        Unshelve. all:eapply TyCtxConv ; [ eassumption | magic .. ].
+      - { magic. }
     }
 
   (* CongRefl *)
   - { split.
       - { magic. }
-      - { eapply TermTyConv ; [
+      - { trymagic. fail.
+
+          eapply TermTyConv ; [
             eapply TermRefl ; try magic
           | try magic ..
           ].
