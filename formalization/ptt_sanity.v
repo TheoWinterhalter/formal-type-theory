@@ -673,7 +673,60 @@ Proof.
             end.
             + magic.
             + magic.
-            + fail. magic. (* magic doesn't solve this case properly. *)
+            + compsubst1.
+              * magic.
+              * magic.
+              * magic.
+              * compsubst1.
+                -- magic.
+                -- magic.
+                -- magic.
+                -- simplify.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ simplify ; magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                -- magic.
+                -- magic.
+                -- magic.
+                -- magic.
+                -- magic.
+                -- magic.
+              * magic.
+              * magic.
+              * magic.
+              * magic.
+              * magic.
+              * magic.
+            + magic.
+            + magic.
+            + magic.
+            + magic.
+          -
+
+                  eapply CongTySubst.
+                   ++
+
+              fail. magic. (* magic doesn't solve this case properly. *)
 
 
           fail.
