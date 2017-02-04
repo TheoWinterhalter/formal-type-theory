@@ -659,6 +659,21 @@ Proof.
   - { split.
       - { magic. }
       - { trymagic.
+          - (* We need to update the corresponding case in pushsubst1 *)
+            match goal with
+            | |- eqtype ?G (Subst ?A (sbzero ?u)) ?B' =>
+              tryif (is_evar A)
+              then (
+                eapply @EqTyTrans with (B := Subst (Subst B' sbweak) (sbzero u)) ; [
+                  eapply EqTyRefl
+                | ..
+                ]
+              )
+              else fail
+            end.
+            + magic.
+            + magic.
+            + fail. magic. (* magic doesn't solve this case properly. *)
 
 
           fail.
