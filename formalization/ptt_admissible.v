@@ -391,26 +391,9 @@ Proof.
       | eapply SubstRefl ; magic
       | magic ..
       ]
-    | try magic ..
-    ].
-    eapply SubstSym ; try magic.
-    eapply SubstTrans ; [
-      eapply CompAssoc ; magic
-    | try magic ..
-    ].
-    eapply SubstTrans ; [
-      eapply CongSubstComp ; [
-        eapply SubstRefl ; magic
-      | eapply WeakZero ; magic
-      | magic ..
-      ]
-    | try magic ..
-    ].
-    eapply SubstTrans ; [
-      eapply CompIdLeft ; magic
     | magic ..
     ].
-    Unshelve. all:magic.
+    Unshelve. all:strictmagic.
   }
   assert (
     eqtype G
@@ -472,11 +455,36 @@ Proof.
         | eapply SubstRefl ; magic
         | magic ..
         ]
-      | try magic ..
+      | magic ..
       ]
     | eapply SubstRefl ; magic
     | magic ..
     ].
+
+    fail.
+
+
+    eapply SubstTrans ; [
+      eapply CongSubstComp ; [
+        idtac
+      | eapply WeakZero
+      | ..
+      ]
+    | ..
+    ] ; try magic.
+    match goal with
+    | |- eqsubst (sbcomp sbid ?sbs) ?sbt ?G ?D =>
+      eapply SubstTrans ; [
+        eapply CompIdLeft
+      | ..
+      ]
+    end.
+    eapply SubstTrans ; [
+      eapply CompIdLeft
+    | ..
+    ] ; magic.
+
+    trymagic.
     (* We need to improve simplify probably. *)
     simplify.
     Unshelve. all:magic.

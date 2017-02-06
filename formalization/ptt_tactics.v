@@ -600,6 +600,48 @@ Ltac magicn n try shelf tysym :=
         | magicn n try shelf true ..
         ]
       ]
+    (* Basically copying stuff over from simplify... There should be a way
+       to avoid that. *)
+    | |- eqsubst (sbcomp sbweak (sbcomp (sbzero ?u) ?sbs)) ?sbt ?G ?D =>
+      eapply SubstTrans ; [
+        eapply SubstTrans ; [
+          eapply CompAssoc
+        | eapply CongSubstComp ; [
+            idtac
+          | eapply WeakZero
+          | ..
+          ]
+        | ..
+        ]
+      | ..
+      ] ; magicn n try shelf true
+    | |- eqsubst (sbcomp (sbcomp sbweak (sbzero ?u)) ?sbs) ?sbt ?G ?D =>
+      eapply SubstTrans ; [
+        eapply CongSubstComp ; [
+          idtac
+        | eapply WeakZero
+        | ..
+        ]
+      | ..
+      ] ; magicn n try shelf true
+    | |- eqsubst (sbcomp ?sbs (sbcomp sbweak (sbzero ?u))) ?sbt ?G ?D =>
+      eapply SubstTrans ; [
+        eapply CongSubstComp ; [
+          eapply WeakZero
+        | ..
+        ]
+      | ..
+      ] ; magicn n try shelf true
+    | |- eqsubst (sbcomp sbid ?sbs) ?sbt ?G ?D =>
+      eapply SubstTrans ; [
+        eapply CompIdLeft
+      | ..
+      ] ; magicn n try shelf true
+    | |- eqsubst (sbcomp ?sbs sbid) ?sbt ?G ?D =>
+      eapply SubstTrans ; [
+        eapply CompIdRight
+      | ..
+      ] ; magicn n try shelf true
     (* This is a dangerous case. We need to take care of everything involving
        composition before this one. *)
     | |- eqsubst (sbcomp ?sb1 ?sb2) (sbcomp ?sb3 ?sb4) ?G ?D =>
