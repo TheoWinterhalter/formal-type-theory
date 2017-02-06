@@ -103,10 +103,10 @@ Proof.
 
   (* TermJ *)
   { magic.
+    Unshelve. all:try magic.
+    Unshelve. all:try magic.
     Unshelve. all:try strictmagic.
-    1: exact (var 0).
-    all:try strictmagic.
-    fail.
+    (* Very unsatisfying!! *)
   }
 
   (* TermExfalso *)
@@ -553,7 +553,10 @@ Proof.
   (* EqSubstJ *)
   - { split.
       - { magic.
+          Unshelve. all:try magic.
+          Unshelve. all:magic.
           Unshelve. all:strictmagic.
+          (* Again, I don't like it but well... *)
         }
       - (* TODO: Do something about JTyConv as it is not proven. *)
         eapply JTyConv ; magic.
