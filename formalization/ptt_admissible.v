@@ -273,9 +273,9 @@ Proof.
             (sbshift (sbzero (subst v sbs))))
          (sbzero (subst p sbs)))
   ).
-  { gocompsubst.
-    Focus 2. trymagic. (* Maybe allow for simplify and not only pushsubst1? *)
-    fail. (* magic already fails me? *)
+  { gocompsubst. 2:shelve.
+    gocompsubst. 2:shelve.
+    gocompsubst. (* Should I give up? *)
 
 
 
