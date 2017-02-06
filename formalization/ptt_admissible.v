@@ -926,7 +926,16 @@ Proof.
   ).
   { eapply EqSym ; try magic.
     (* Problem here. *)
-    Unshelve.
+    Unshelve. pushsubst1 ; try magic. magic.
+    Unshelve. all:try strictmagic. (* pushsubst1 ; try magic. *)
+    (* eapply EqSym ; try magic. *)
+    (* Unshelve. all:try strictmagic. *)
+    (* Was a loop... *)
+    fail.
+
+
+
+ pushsubst1.
     eapply EqTrans ; [
       eapply EqTyConv ; [
         eapply EqSym ; [
