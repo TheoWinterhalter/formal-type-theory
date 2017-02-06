@@ -257,8 +257,29 @@ Lemma JTyConv :
       (j (Subst A sbs) (subst u sbs) (Subst C (sbshift (sbshift sbs)))
          (subst w sbs) (subst v sbs) (subst p sbs))
       (Subst (Subst (Subst C (sbshift (sbzero v))) (sbzero p)) sbs).
-(* Proof. *)
-(*   intros. *)
+Proof.
+  intros.
+
+
+  (* We prove the left branch as an assumption to reuse it in the
+     right branch *)
+  assert (
+    eqtype
+      G
+      (Subst (Subst (Subst C (sbshift (sbzero v))) (sbzero p)) sbs)
+      (Subst
+         (Subst
+            (Subst C (sbshift (sbshift sbs)))
+            (sbshift (sbzero (subst v sbs))))
+         (sbzero (subst p sbs)))
+  ).
+  { gocompsubst.
+    Focus 2. trymagic. (* Maybe allow for simplify and not only pushsubst1? *)
+    fail. (* magic already fails me? *)
+
+
+
+
 (*   (*! First let's have some assertions that we won't keep proving. !*) *)
 (*   assert (isterm D (refl A u) (Id A u u)). *)
 (*   { now apply TermRefl. } *)

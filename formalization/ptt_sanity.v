@@ -558,9 +558,10 @@ Proof.
           Unshelve. all:strictmagic.
           (* Again, I don't like it but well... *)
         }
-      - (* TODO: Do something about JTyConv as it is not proven. *)
-        eapply JTyConv ; magic.
-        Unshelve. assumption.
+      - { (* TODO: Do something about JTyConv as it is not proven. *)
+          eapply JTyConv ; magic.
+          Unshelve. assumption.
+        }
     }
 
   (* EqSubstExfalso *)
