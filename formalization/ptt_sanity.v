@@ -103,7 +103,10 @@ Proof.
 
   (* TermJ *)
   { magic.
-    Unshelve. all:strictmagic.
+    Unshelve. all:try strictmagic.
+    1: exact (var 0).
+    all:try strictmagic.
+    fail.
   }
 
   (* TermExfalso *)
@@ -658,7 +661,8 @@ Proof.
   (* CongJ *)
   - { split.
       - { magic. }
-      - { (* trymagic. *)
+      - { trymagic.
+          (* trymagic. *)
           eapply TermTyConv ; [ eapply TermJ | .. ].
           - magic.
           - magic.

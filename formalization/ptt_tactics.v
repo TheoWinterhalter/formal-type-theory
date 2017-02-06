@@ -188,16 +188,21 @@ Ltac pushsubst1 :=
   | |- eqterm ?G ?u (subst (var 0) (sbzero ?v)) ?A =>
     eapply EqSym ; [ eapply EqTrans ; [ eapply EqSubstZeroZero | .. ] | .. ]
   (* Similarly, peculiar cases. *)
-  (* Unfortunately I have to remove them I think *)
   | |- eqterm ?G (subst ?w (sbzero ?u)) ?u ?A =>
-    tryif (is_evar w ; is_var u)
-    then (
-      eapply @EqTrans with (v := subst (var 0) (sbzero u)) ; [
-        eapply EqRefl
-      | ..
-      ]
-    )
-    else fail
+    (* Since it would imply a choice that I don't know how to enforce,
+       I have to remove this case. *)
+    (* tryif (is_evar w ; is_var u) *)
+    (* then first [ *)
+    (*   eapply @EqTrans with (v := subst (var 0) (sbzero u)) ; [ *)
+    (*     eapply EqRefl *)
+    (*   | .. *)
+    (*   ] *)
+    (* | eapply @EqTrans with (v := subst (subst u sbweak) (sbzero u))  ; [ *)
+    (*     eapply EqRefl *)
+    (*   | .. *)
+    (*   ] *)
+    (* ] *)
+    (* else *) fail
   | |- eqterm ?G (subst ?w (sbzero ?v')) ?u ?A =>
     tryif (is_evar w ; is_var u)
     then (
@@ -694,7 +699,10 @@ Ltac magicn n try shelf tysym :=
         | eapply CongTermSubst ; magicn n try shelf true
         ]
       )
-      else pushsubst1 ; magicn n try shelf true
+      else first [
+        pushsubst1 ; magicn n try shelf true
+      | cando shelf ; shelve
+      ]
     | |- eqterm ?G ?u (subst ?v ?sbs) ?A =>
       (* We know how to deal with the symmetric case. *)
       (* We use the token tysym, maybe we should have some dedicated tmsym... *)
