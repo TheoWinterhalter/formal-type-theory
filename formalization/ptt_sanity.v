@@ -665,6 +665,7 @@ Proof.
   - { split.
       - { magic. }
       - { trymagic.
+          all:trymagic.
           (* trymagic. *)
           eapply TermTyConv ; [ eapply TermJ | .. ].
           - magic.

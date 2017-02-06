@@ -188,7 +188,7 @@ Ltac pushsubst1 :=
   | |- eqterm ?G ?u (subst (var 0) (sbzero ?v)) ?A =>
     eapply EqSym ; [ eapply EqTrans ; [ eapply EqSubstZeroZero | .. ] | .. ]
   (* Similarly, peculiar cases. *)
-  | |- eqterm ?G (subst ?w (sbzero ?u)) ?u ?A =>
+  (* | |- eqterm ?G (subst ?w (sbzero ?u)) ?u ?A => *)
     (* Since it would imply a choice that I don't know how to enforce,
        I have to remove this case. *)
     (* tryif (is_evar w ; is_var u) *)
@@ -202,16 +202,16 @@ Ltac pushsubst1 :=
     (*   | .. *)
     (*   ] *)
     (* ] *)
-    (* else *) fail
-  | |- eqterm ?G (subst ?w (sbzero ?v')) ?u ?A =>
-    tryif (is_evar w ; is_var u)
-    then (
-      eapply @EqTrans with (v := subst (subst u sbweak) (sbzero v'))  ; [
-        eapply EqRefl
-      | ..
-      ]
-    )
-    else fail
+    (* else *) (* fail *)
+  (* | |- eqterm ?G (subst ?w (sbzero ?v')) ?u ?A => *)
+  (*   tryif (is_evar w ; is_var u) *)
+  (*   then ( *)
+  (*     eapply @EqTrans with (v := subst (subst u sbweak) (sbzero v'))  ; [ *)
+  (*       eapply EqRefl *)
+  (*     | .. *)
+  (*     ] *)
+  (*   ) *)
+  (*   else fail *)
   | _ => fail
   end.
 
