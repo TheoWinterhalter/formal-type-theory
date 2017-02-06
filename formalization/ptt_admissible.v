@@ -633,10 +633,11 @@ Proof.
     (Subst (Subst (Subst (Subst A sbweak) (sbzero v)) sbs)
        sbweak)
   ).
-  { fail.
+  { (* For some reason I would assume this proof should be magicable. *)
     gocompsubst. gocompsubst. gocompsubst. gocompsubst. gocompsubst.
-    gocompsubst.
-    Unshelve. assumption.
+    gocompsubst. simplify ; try magic. simplify ; try magic.
+    eapply EqTySym ; magic.
+    Unshelve. all:strictmagic.
   }
   assert (
     isterm (ctxextend G (Subst A sbs))
@@ -755,7 +756,7 @@ Proof.
     isterm (ctxextend D (Subst (Subst A sbweak) (sbzero v)))
     (var 0) (Subst A sbweak)
   ).
-  { eapply TermTyConv ; magic. }
+  { eapply TermTyConv ; magic. Unshelve. all:strictmagic. }
   assert (
     issubst
       (sbshift (sbzero v))
@@ -765,7 +766,7 @@ Proof.
          (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
   { eapply SubstCtxConv ; try magic ; try eassumption.
-    Unshelve. all:magic.
+    Unshelve. all:strictmagic.
   }
   assert (istype D (Id A u v)).
   { magic. }
@@ -778,7 +779,12 @@ Proof.
           (sbzero v)))
   ).
   { eapply SubstCtxConv ; magic.
-    Unshelve. all:assumption.
+    Unshelve. all:try magic.
+    Unshelve. all:try strictmagic.
+    all:(eapply TermTyConv ; try strictmagic).
+    all:(eapply EqTySym ; try strictmagic).
+    all:(simplify ; try strictmagic).
+    all:assumption.
   }
   assert (
     eqsubst (sbcomp sbweak (sbcomp (sbzero v) sbs)) sbs G D
@@ -802,7 +808,7 @@ Proof.
     (Subst (Subst (Subst (Subst A sbweak) (sbzero v)) sbweak)
        (sbcomp (sbzero v) sbs))
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { gocompsubst. Unshelve. all:assumption. }
   assert (
     eqtype G
     (Subst (Subst (Subst (Subst A sbweak) (sbzero v)) sbweak)
@@ -842,7 +848,7 @@ Proof.
     (Subst (Subst (Subst (Subst A sbweak) (sbzero v)) sbweak)
        (sbcomp (sbzero v) sbs))
   ).
-  { gocompsubst. Unshelve. magic. }
+  { gocompsubst. }
   assert (
     isterm G (subst u sbs)
     (Subst (Subst (Subst (Subst A sbweak) (sbzero v)) sbweak)
@@ -858,20 +864,20 @@ Proof.
     (Subst (Subst (Subst (Subst A sbweak) (sbzero v)) sbweak)
        (sbcomp (sbzero v) sbs)) (Subst A sbs)
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { gocompsubst. Unshelve. all:assumption. }
   assert (
     eqtype G (Subst (Subst A sbweak) (sbcomp (sbzero v) sbs)) (Subst A sbs)
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { gocompsubst. Unshelve. all:assumption. }
   assert (
     eqtype G (Subst (Subst A sbweak) (sbcomp (sbzero v) sbs))
     (Subst A (sbcomp sbweak (sbcomp (sbzero v) sbs)))
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { gocompsubst. Unshelve. all:assumption. }
   assert (
     eqtype G (Subst A sbs) (Subst (Subst A sbweak) (sbcomp (sbzero v) sbs))
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { gocompsubst. Unshelve. all:assumption. }
   assert (
     eqterm G (subst u sbs)
     (subst (subst u sbweak) (sbcomp (sbzero v) sbs))
@@ -885,7 +891,7 @@ Proof.
      eqtype G (Subst (Subst A sbweak) (sbcomp (sbzero v) sbs))
     (Subst A sbs)
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { gocompsubst. Unshelve. all:assumption. }
   assert (
     isterm G (subst (var 0) (sbcomp (sbzero v) sbs)) (Subst A sbs)
   ).
@@ -902,7 +908,7 @@ Proof.
     eqtype G (Subst A sbs)
     (Subst (Subst A sbweak) (sbcomp (sbzero v) sbs))
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { gocompsubst. Unshelve. all:assumption. }
   assert (
     isterm G (subst (subst (var 0) (sbzero v)) sbs)
     (Subst (Subst A sbweak) (sbcomp (sbzero v) sbs))
@@ -918,10 +924,12 @@ Proof.
            (subst (var 0) (sbcomp (sbzero v) sbs))
            (Subst A sbs)
   ).
-  { eapply myEqSym ; try magic.
+  { eapply EqSym ; try magic.
+    (* Problem here. *)
+    Unshelve.
     eapply EqTrans ; [
       eapply EqTyConv ; [
-        eapply myEqSym ; [
+        eapply EqSym ; [
           eapply EqSubstComp ; [
             shelve
           | eassumption
@@ -933,7 +941,8 @@ Proof.
       ]
     | magic ..
     ].
-    Unshelve. all:magic.
+    Unshelve. all:try magic.
+    Unshelve. fail.
   }
   assert (
      isterm G (subst (subst u sbweak) (sbcomp (sbzero v) sbs))
