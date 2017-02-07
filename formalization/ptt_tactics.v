@@ -382,7 +382,7 @@ Ltac simplify :=
   lazymatch goal with
   | |- eqtype ?G (Subst ?A ?sbs) ?B =>
     tryif (is_var sbs)
-    then idtac
+    then fail
     else
       lazymatch sbs with
       (* This case is unsatisfying... We would like to linearize substitutions
@@ -470,7 +470,7 @@ Ltac simplify :=
       end
   | |- eqterm ?G (subst ?u ?sbs) ?v ?A =>
     tryif (is_var sbs)
-    then idtac
+    then fail
     else
       lazymatch sbs with
       | sbcomp ?sbt (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs))) =>
@@ -555,7 +555,7 @@ Ltac simplify :=
         | ..
         ]
       end
-  | _ => idtac
+  | _ => fail
   end.
 
 (* Checking if we're dealing with a suitable goal. *)
