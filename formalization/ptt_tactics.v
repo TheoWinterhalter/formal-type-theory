@@ -90,6 +90,570 @@ Ltac compsubst1 :=
   end.
 
 
+Lemma EqCompZero :
+  forall {G D A u sbs},
+    issubst sbs G D ->
+    isterm D u A ->
+    istype D A ->
+    isctx G ->
+    isctx D ->
+    eqterm G
+           (subst (var 0) (sbcomp (sbzero u) sbs))
+           (subst u sbs)
+           (Subst A sbs).
+Proof.
+  intros.
+  eapply EqTrans.
+  - eapply EqSym.
+    + eapply EqTyConv ; [ eapply EqSubstComp | .. ].
+      * eapply TermVarZero.
+        -- exact H3.
+        -- exact H1.
+      * eassumption.
+      * eapply SubstZero ; eassumption.
+      * assumption.
+      * assumption.
+      * eapply CtxExtend ; assumption.
+      * eapply TySubst ; [
+          eapply SubstWeak ; eassumption
+        | try assumption ..
+        ].
+        eapply CtxExtend ; assumption.
+      * compsubst1.
+        -- eapply SubstComp.
+           ++ eassumption.
+           ++ eapply SubstZero ; eassumption.
+           ++ assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+        -- eapply SubstWeak ; assumption.
+        -- assumption.
+        -- eapply CongTySubst.
+           ++ eapply SubstTrans.
+              ** eapply CompAssoc.
+                 --- eassumption.
+                 --- eapply SubstZero ; eassumption.
+                 --- eapply SubstWeak ; eassumption.
+                 --- assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+                 --- assumption.
+              ** eapply SubstTrans.
+                 --- eapply CongSubstComp.
+                     +++ eapply SubstRefl ; [ .. | eassumption ] ; eassumption.
+                     +++ eapply WeakZero ; eassumption.
+                     +++ assumption.
+                     +++ assumption.
+                     +++ eapply SubstComp.
+                         *** eapply SubstZero ; eassumption.
+                         *** eapply SubstWeak ; eassumption.
+                         *** assumption.
+                         *** apply CtxExtend ; assumption.
+                         *** assumption.
+                     +++ apply SubstId. assumption.
+                     +++ assumption.
+                     +++ assumption.
+                     +++ assumption.
+                 --- eapply CompIdLeft ; assumption.
+                 --- eapply SubstComp.
+                     +++ eassumption.
+                     +++ eapply SubstComp.
+                         *** eapply SubstZero ; eassumption.
+                         *** eapply SubstWeak ; eassumption.
+                         *** assumption.
+                         *** apply CtxExtend ; assumption.
+                         *** assumption.
+                     +++ assumption.
+                     +++ assumption.
+                     +++ assumption.
+                 --- eapply SubstComp ; try eassumption.
+                     apply SubstId. assumption.
+                 --- assumption.
+                 --- assumption.
+                 --- assumption.
+              ** eapply SubstComp.
+                 --- eapply SubstComp.
+                     +++ eassumption.
+                     +++ eapply SubstZero ; eassumption.
+                     +++ assumption.
+                     +++ assumption.
+                     +++ apply CtxExtend ; assumption.
+                 --- eapply SubstWeak ; assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+                 --- assumption.
+              ** eapply SubstComp.
+                 --- eassumption.
+                 --- eapply SubstComp.
+                     +++ eapply SubstZero ; eassumption.
+                     +++ eapply SubstWeak ; assumption.
+                     +++ assumption.
+                     +++ apply CtxExtend ; assumption.
+                     +++ assumption.
+                 --- assumption.
+                 --- assumption.
+                 --- assumption.
+              ** assumption.
+              ** assumption.
+              ** assumption.
+           ++ apply EqTyRefl ; assumption.
+           ++ assumption.
+           ++ assumption.
+           ++ assumption.
+           ++ assumption.
+           ++ eapply SubstComp.
+              ** eapply SubstComp.
+                 --- eassumption.
+                 --- eapply SubstZero ; eassumption.
+                 --- assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+              ** eapply SubstWeak ; assumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+              ** assumption.
+           ++ assumption.
+        -- eapply TySubst ; eassumption.
+        -- assumption.
+        -- apply CtxExtend ; assumption.
+        -- assumption.
+        -- eapply TySubst.
+           ++ eapply SubstComp.
+              ** eassumption.
+              ** eapply SubstZero ; eassumption.
+              ** assumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+           ++ eapply TySubst.
+              ** eapply SubstWeak ; assumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+              ** assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+        -- eapply TySubst.
+           ++ eapply SubstComp.
+              ** eapply SubstComp.
+                 --- eassumption.
+                 --- eapply SubstZero ; eassumption.
+                 --- assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+              ** eapply SubstWeak ; eassumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+              ** assumption.
+           ++ assumption.
+           ++ assumption.
+           ++ assumption.
+      * assumption.
+      * eapply TySubst.
+        -- eapply SubstComp.
+           ++ eassumption.
+           ++ eapply SubstZero ; eassumption.
+           ++ assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+        -- eapply TySubst.
+           ++ eapply SubstWeak ; assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+           ++ assumption.
+        -- assumption.
+        -- apply CtxExtend ; assumption.
+      * eapply TySubst ; eassumption.
+      * eapply TermTyConv.
+        -- eapply TermSubst.
+           ++ eassumption.
+           ++ eapply TermSubst.
+              ** eapply SubstZero ; eassumption.
+              ** eapply TermVarZero ; assumption.
+              ** assumption.
+              ** eapply TySubst.
+                 --- eapply SubstWeak ; assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+                 --- assumption.
+              ** apply CtxExtend ; assumption.
+           ++ assumption.
+           ++ eapply TySubst.
+              ** eapply SubstZero ; eassumption.
+              ** eapply TySubst.
+                 --- eapply SubstWeak ; assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+                 --- assumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+           ++ assumption.
+        -- compsubst1.
+           ++ eassumption.
+           ++ eapply SubstZero ; eassumption.
+           ++ eapply TySubst.
+              ** eapply SubstWeak ; assumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+              ** assumption.
+           ++ apply EqTyRefl.
+              ** assumption.
+              ** eapply TySubst.
+                 --- eapply SubstComp.
+                     +++ eassumption.
+                     +++ eapply SubstZero ; eassumption.
+                     +++ assumption.
+                     +++ assumption.
+                     +++ apply CtxExtend ; assumption.
+                 --- eapply TySubst.
+                     +++ eapply SubstWeak ; assumption.
+                     +++ assumption.
+                     +++ apply CtxExtend ; assumption.
+                     +++ assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+           ++ eapply TySubst.
+              ** eapply SubstComp.
+                 --- eassumption.
+                 --- eapply SubstZero ; eassumption.
+                 --- assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+              ** eapply TySubst.
+                 --- eapply SubstWeak ; assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+                 --- assumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+           ++ assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+           ++ eapply TySubst.
+              ** eassumption.
+              ** eapply TySubst.
+                 --- eapply SubstZero ; eassumption.
+                 --- eapply TySubst.
+                     +++ eapply SubstWeak ; assumption.
+                     +++ assumption.
+                     +++ apply CtxExtend ; assumption.
+                     +++ assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+              ** assumption.
+              ** assumption.
+           ++ eapply TySubst.
+              ** eapply SubstComp.
+                 --- eassumption.
+                 --- eapply SubstZero ; eassumption.
+                 --- assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+              ** eapply TySubst.
+                 --- eapply SubstWeak ; assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+                 --- assumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+        -- assumption.
+        -- eapply TySubst.
+           ++ eassumption.
+           ++ eapply TySubst.
+              ** eapply SubstZero ; eassumption.
+              ** eapply TySubst.
+                 --- eapply SubstWeak ; assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+                 --- assumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+           ++ assumption.
+           ++ assumption.
+        -- eapply TySubst.
+           ++ eapply SubstComp.
+              ** eassumption.
+              ** eapply SubstZero ; eassumption.
+              ** assumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+           ++ eapply TySubst.
+              ** eapply SubstWeak ; eassumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+              ** assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+      * eapply TermSubst.
+        -- eapply SubstComp.
+           ++ eassumption.
+           ++ eapply SubstZero ; eassumption.
+           ++ assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+        -- eapply TermVarZero ; assumption.
+        -- assumption.
+        -- eapply TySubst.
+           ++ eapply SubstWeak ; assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+           ++ assumption.
+        -- apply CtxExtend ; assumption.
+    + eapply TermTyConv.
+      * eapply TermSubst.
+        -- eapply SubstComp.
+           ++ eassumption.
+           ++ eapply SubstZero ; eassumption.
+           ++ assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+        -- eapply TermVarZero ; assumption.
+        -- assumption.
+        -- eapply TySubst.
+           ++ eapply SubstWeak ; assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+           ++ assumption.
+        -- apply CtxExtend ; assumption.
+      * compsubst1.
+        -- eapply SubstComp.
+           ++ eassumption.
+           ++ eapply SubstZero ; eassumption.
+           ++ assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+        -- eapply SubstWeak ; assumption.
+        -- assumption.
+        -- eapply CongTySubst.
+           ++ eapply SubstTrans.
+              ** eapply CompAssoc.
+                 --- eassumption.
+                 --- eapply SubstZero ; eassumption.
+                 --- eapply SubstWeak ; assumption.
+                 --- assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+                 --- assumption.
+              ** eapply SubstTrans.
+                 --- eapply CongSubstComp.
+                     +++ eapply SubstRefl ; [ .. | eassumption ] ; eassumption.
+                     +++ eapply WeakZero ; eassumption.
+                     +++ assumption.
+                     +++ assumption.
+                     +++ eapply SubstComp.
+                         *** eapply SubstZero ; eassumption.
+                         *** eapply SubstWeak ; assumption.
+                         *** assumption.
+                         *** apply CtxExtend ; assumption.
+                         *** assumption.
+                     +++ apply SubstId. assumption.
+                     +++ assumption.
+                     +++ assumption.
+                     +++ assumption.
+                 --- eapply CompIdLeft ; assumption.
+                 --- eapply SubstComp.
+                     +++ eassumption.
+                     +++ eapply SubstComp.
+                         *** eapply SubstZero ; eassumption.
+                         *** eapply SubstWeak ; assumption.
+                         *** assumption.
+                         *** apply CtxExtend ; assumption.
+                         *** assumption.
+                     +++ assumption.
+                     +++ assumption.
+                     +++ assumption.
+                 --- eapply SubstComp.
+                     +++ eassumption.
+                     +++ eapply SubstId. assumption.
+                     +++ assumption.
+                     +++ assumption.
+                     +++ assumption.
+                 --- assumption.
+                 --- assumption.
+                 --- assumption.
+              ** eapply SubstComp.
+                 --- eapply SubstComp.
+                     +++ eassumption.
+                     +++ eapply SubstZero ; eassumption.
+                     +++ assumption.
+                     +++ assumption.
+                     +++ apply CtxExtend ; assumption.
+                 --- eapply SubstWeak ; assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+                 --- assumption.
+              ** eapply SubstComp.
+                 --- eassumption.
+                 --- eapply SubstComp.
+                     +++ eapply SubstZero ; eassumption.
+                     +++ eapply SubstWeak ; assumption.
+                     +++ assumption.
+                     +++ apply CtxExtend ; assumption.
+                     +++ assumption.
+                 --- assumption.
+                 --- assumption.
+                 --- assumption.
+              ** assumption.
+              ** assumption.
+              ** assumption.
+           ++ apply EqTyRefl ; assumption.
+           ++ assumption.
+           ++ assumption.
+           ++ assumption.
+           ++ assumption.
+           ++ eapply SubstComp.
+              ** eapply SubstComp.
+                 --- eassumption.
+                 --- eapply SubstZero ; eassumption.
+                 --- assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+              ** eapply SubstWeak ; assumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+              ** assumption.
+           ++ assumption.
+        -- eapply TySubst ; eassumption.
+        -- assumption.
+        -- apply CtxExtend ; assumption.
+        -- assumption.
+        -- eapply TySubst.
+           ++ eapply SubstComp.
+              ** eassumption.
+              ** eapply SubstZero ; eassumption.
+              ** assumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+           ++ eapply TySubst.
+              ** eapply SubstWeak ; assumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+              ** assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+        -- eapply TySubst.
+           ++ eapply SubstComp.
+              ** eapply SubstComp.
+                 --- eassumption.
+                 --- eapply SubstZero ; eassumption.
+                 --- assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+              ** eapply SubstWeak ; assumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+              ** assumption.
+           ++ assumption.
+           ++ assumption.
+           ++ assumption.
+      * assumption.
+      * eapply TySubst.
+        -- eapply SubstComp.
+           ++ eassumption.
+           ++ eapply SubstZero ; eassumption.
+           ++ assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+        -- eapply TySubst.
+           ++ eapply SubstWeak ; assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+           ++ assumption.
+        -- assumption.
+        -- apply CtxExtend ; assumption.
+      * eapply TySubst ; eassumption.
+    + eapply TermSubst.
+      * eassumption.
+      * eapply TermTyConv.
+        -- eapply TermSubst.
+           ++ eapply SubstZero ; eassumption.
+           ++ eapply TermVarZero ; assumption.
+           ++ assumption.
+           ++ eapply TySubst.
+              ** eapply SubstWeak ; eassumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+              ** assumption.
+           ++ apply CtxExtend ; assumption.
+        -- compsubst1.
+           ++ eapply SubstZero ; eassumption.
+           ++ eapply SubstWeak ; assumption.
+           ++ assumption.
+           ++ eapply EqTyTrans.
+              ** eapply CongTySubst.
+                 --- eapply WeakZero ; eassumption.
+                 --- apply EqTyRefl ; eassumption.
+                 --- assumption.
+                 --- assumption.
+                 --- assumption.
+                 --- assumption.
+                 --- eapply SubstComp.
+                     +++ eapply SubstZero ; eassumption.
+                     +++ eapply SubstWeak ; assumption.
+                     +++ assumption.
+                     +++ apply CtxExtend ; assumption.
+                     +++ assumption.
+                 --- apply SubstId. assumption.
+              ** apply EqTyIdSubst ; assumption.
+              ** assumption.
+              ** eapply TySubst.
+                 --- eapply SubstComp.
+                     +++ eapply SubstZero ; eassumption.
+                     +++ eapply SubstWeak ; assumption.
+                     +++ assumption.
+                     +++ apply CtxExtend ; assumption.
+                     +++ assumption.
+                 --- assumption.
+                 --- assumption.
+                 --- assumption.
+              ** eapply TySubst.
+                 --- eapply SubstId. assumption.
+                 --- assumption.
+                 --- assumption.
+                 --- assumption.
+              ** assumption.
+           ++ assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+           ++ assumption.
+           ++ eapply TySubst.
+              ** eapply SubstZero ; eassumption.
+              ** eapply TySubst.
+                 --- eapply SubstWeak ; assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+                 --- assumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+           ++ eapply TySubst.
+              ** eapply SubstComp.
+                 --- eapply SubstZero ; eassumption.
+                 --- eapply SubstWeak ; assumption.
+                 --- assumption.
+                 --- apply CtxExtend ; assumption.
+                 --- assumption.
+              ** assumption.
+              ** assumption.
+              ** assumption.
+        -- assumption.
+        -- eapply TySubst.
+           ++ eapply SubstZero ; eassumption.
+           ++ eapply TySubst.
+              ** eapply SubstWeak ; assumption.
+              ** assumption.
+              ** apply CtxExtend ; assumption.
+              ** assumption.
+           ++ assumption.
+           ++ apply CtxExtend ; assumption.
+        -- assumption.
+      * assumption.
+      * assumption.
+      * assumption.
+    + eapply TySubst ; eassumption.
+    + assumption.
+  -
+Admitted.
+
+
+
 (* Some tactic to push substitutions inside one step. *)
 (* Partial for now. *)
 Ltac pushsubst1 :=
@@ -198,7 +762,7 @@ Ltac pushsubst1 :=
       ]
     | eapply EqSubstZeroZero
     | ..
-    ]
+    ] HERE!!
   (* Similarly, peculiar cases. *)
   (* | |- eqterm ?G (subst ?w (sbzero ?u)) ?u ?A => *)
     (* Since it would imply a choice that I don't know how to enforce,
