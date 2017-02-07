@@ -341,6 +341,25 @@ Ltac pushsubst1 :=
       eapply EqCompZero
     | ..
     ]
+  | |- eqterm ?G (subst (var 0) (sbcomp (sbshift ?sbs) ?sbt)) ?v ?A =>
+    eapply EqTrans ; [
+      eapply EqTrans ; [
+        eapply EqSym ; [
+          eapply EqTyConv ; [ eapply EqSubstComp | .. ]
+        | ..
+        ]
+      | eapply EqTyConv ; [
+          eapply CongTermSubst ; [
+            idtac
+          | eapply EqSubstShiftZero
+          | ..
+          ]
+        | ..
+        ]
+      | ..
+      ]
+    | ..
+    ]
   (* Similarly, peculiar cases. *)
   (* | |- eqterm ?G (subst ?w (sbzero ?u)) ?u ?A => *)
     (* Since it would imply a choice that I don't know how to enforce,
@@ -984,6 +1003,10 @@ Ltac magicn n try shelf tysym :=
         tryif (is_var sbs)
         then first [
           eapply CongTermSubst ; magicn n try shelf true
+        | eapply EqTyConv ; [
+            eapply CongTermSubst
+          | ..
+          ] ; magicn n try shelf true
         | eassumption
         ]
         else first [
