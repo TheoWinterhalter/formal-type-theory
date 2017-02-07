@@ -1423,7 +1423,9 @@ Proof.
     (ctxextend D (Id A u v))
   ).
   { eapply SubstCtxConv ; magic.
-    Unshelve. all:try strictmagic. fail. (* magic should work on them by now *)
+    Unshelve. all:try strictmagic.
+    all:magic.
+    Unshelve. all:strictmagic.
   }
   assert (
     eqtype G
@@ -1433,7 +1435,9 @@ Proof.
     (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0))
        (sbcomp (sbzero v) sbs))
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { magic. Unshelve. all:try strictmagic.
+    gopushsubst.
+  }
   assert (
     eqctx
     (ctxextend G
