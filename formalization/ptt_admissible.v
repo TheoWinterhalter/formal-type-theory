@@ -1416,52 +1416,8 @@ Proof.
     1:exact (subst (var 0) (sbshift sbs)).
     all:try strictmagic.
     all:try magic.
-    gocompsubst.
-    - simplify ; try magic.
-      + simplify ; try magic.
-        * simplify ; try magic.
-          simplify ; try magic.
-          fail.
-          eapply EqTySym ; [ simplify | .. ] ; magic.
-          match goal with
-          | |- eqtype ?G (Subst ?A ?sbs) ?B =>
-            (* We should push only if it makes sense. *)
-            tryif (is_var A)
-            then (
-                tryif (is_var sbs)
-                then (
-                    match B with
-                    | Subst ?B ?sbt =>
-                      tryif (is_var B)
-                      then (
-                          tryif (is_var sbt)
-                          then (* first [ *)
-                               (*     eapply CongTySubst ; magic *)
-                               (*   | eassumption *)
-                               (*   ] *)
-                            fail
-                          else first [
-                                   eapply EqTySym ; [ simplify | .. ] ; magic
-                                 | eapply CongTySubst ; magic
-                                 ]
-                        )
-                      else (* pushsubst1 ; magic *) fail
-                    | _ =>
-                      (* first [ *)
-                      (*     eapply CongTySubst ; magic *)
-                      (*   | eassumption *)
-                      (*   ] *)
-                      fail
-                    end
-                  )
-                else (* first [ *)
-                     (*     simplify ; magic *)
-                     (*   | eapply CongTySubst ; magic *)
-                     (*   ] *) fail
-              )
-            else fail
-          end.
-          fail.
+    Unshelve. all:try strictmagic.
+    fail.
   }
   assert (
     issubst

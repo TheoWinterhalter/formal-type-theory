@@ -418,6 +418,22 @@ Ltac simplify :=
           ]
         | ..
         ]
+      | sbcomp (sbcomp ?sbt (sbshift ?sbs)) (sbzero (subst ?u ?sbs)) =>
+        eapply EqTyTrans ; [
+          eapply CongTySubst ; [
+            eapply SubstTrans ; [
+              eapply SubstSym ; [ eapply CompAssoc | .. ]
+            | eapply CongSubstComp ; [
+                eapply ShiftZero
+              | eapply SubstRefl
+              | ..
+              ]
+            | ..
+            ]
+          | ..
+          ]
+        | ..
+        ]
       | sbcomp sbweak (sbcomp (sbzero ?u) ?sbt) =>
         eapply EqTyTrans ; [
           eapply CongTySubst ; [
