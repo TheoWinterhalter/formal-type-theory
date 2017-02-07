@@ -1173,7 +1173,18 @@ Proof.
        (sbcomp (sbshift sbs) (sbzero (subst v sbs))))
     (Subst (Id A u v) sbs)
   ).
-  { gopushsubst. gopushsubst. apply EqTySym ; magic. }
+  { magic. Unshelve. all:try strictmagic.
+    eapply EqSym ; [ pushsubst1 | .. ].
+    - magic.
+    - magic.
+    - magic.
+    - magic.
+    - magic.
+    - magic.
+    - magic.
+    - (* This is where it goes wrong! *)
+      fail.
+  }
   assert (
     eqctx
     (ctxextend G

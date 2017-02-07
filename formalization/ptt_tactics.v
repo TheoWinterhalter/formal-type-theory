@@ -1077,14 +1077,45 @@ Ltac magicn n try shelf tysym :=
       tryif (is_var u)
       then (
         tryif (is_var sbs)
-        then first [
-          eapply CongTermSubst ; magicn n try shelf true
-        | eapply EqTyConv ; [
-            eapply CongTermSubst
-          | ..
-          ] ; magicn n try shelf true
-        | eassumption
-        ]
+        then (
+          match v with
+          | subst ?v ?sbt =>
+            tryif (is_var v)
+            then (
+              tryif (is_var sbt)
+              then first [
+                eapply CongTermSubst ; magicn n try shelf true
+              | eapply EqTyConv ; [
+                  eapply CongTermSubst
+                | ..
+                ] ; magicn n try shelf true
+              | eassumption
+              ]
+              else first [
+                eapply EqSym ; [ simplify | .. ] ; magicn n try shelf true
+              | eapply CongTermSubst ; magicn n try shelf true
+              | eapply EqTyConv ; [
+                  eapply CongTermSubst
+                | ..
+                ] ; magicn n try shelf true
+              ]
+            )
+            else first [
+              pushsubst1 ; magicn n try shelf true
+            | eapply EqSym ; [ pushsubst1 | .. ] ; magicn n try shelf true
+            | cando shelf ; shelve
+            ]
+          | _ =>
+            first [
+              eapply CongTermSubst ; magicn n try shelf true
+            | eapply EqTyConv ; [
+              eapply CongTermSubst
+              | ..
+              ] ; magicn n try shelf true
+            | eassumption
+            ]
+          end
+        )
         else first [
           simplify ; magicn n try shelf true
         | eapply CongTermSubst ; magicn n try shelf true
