@@ -1413,11 +1413,9 @@ Proof.
     ].
 
     Unshelve.
-    1:exact (subst (var 0) (sbshift sbs)).
     all:try strictmagic.
     all:try magic.
     Unshelve. all:try strictmagic.
-    fail.
   }
   assert (
     issubst
