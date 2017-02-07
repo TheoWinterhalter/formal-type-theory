@@ -473,6 +473,74 @@ Ltac simplify :=
     then idtac
     else
       lazymatch sbs with
+      | sbcomp ?sbt (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs))) =>
+        eapply EqTrans ; [
+          eapply CongTermSubst ; [
+            eapply CongSubstComp ; [
+              eapply ShiftZero
+            | eapply SubstRefl
+            | ..
+            ]
+          | ..
+          ]
+        | ..
+        ]
+      | sbcomp sbweak (sbcomp (sbzero ?u) ?sbt) =>
+        first [
+          eapply EqTrans ; [
+            eapply CongTermSubst ; [
+              eapply SubstTrans ; [
+                eapply CompAssoc
+              | eapply CongSubstComp ; [
+                  idtac
+                | eapply WeakZero
+                | ..
+                ]
+              | ..
+              ]
+            | ..
+            ]
+          | ..
+          ]
+        | eapply EqTrans ; [
+            eapply EqTyConv ; [
+              eapply CongTermSubst ; [
+                eapply SubstTrans ; [
+                  eapply CompAssoc
+                | eapply CongSubstComp ; [
+                    idtac
+                  | eapply WeakZero
+                  | ..
+                  ]
+                | ..
+                ]
+              | ..
+              ]
+            | ..
+            ]
+          | ..
+          ]
+        ]
+      | sbcomp sbid ?sbs =>
+        first [
+          eapply EqTrans ; [
+            eapply CongTermSubst ; [
+              eapply CompIdLeft
+            | ..
+            ]
+          | ..
+          ]
+        | eapply EqTrans ; [
+            eapply EqTyConv ; [
+              eapply CongTermSubst ; [
+                eapply CompIdLeft
+              | ..
+              ]
+            | ..
+            ]
+          | ..
+          ]
+        ]
       | sbcomp sbweak (sbzero ?u) =>
         eapply EqTrans ; [
           eapply CongTermSubst ; [
@@ -921,6 +989,10 @@ Ltac magicn n try shelf tysym :=
         else first [
           simplify ; magicn n try shelf true
         | eapply CongTermSubst ; magicn n try shelf true
+        | eapply EqTyConv ; [
+            eapply CongTermSubst
+          | ..
+          ] ; magicn n try shelf true
         ]
       )
       else first [

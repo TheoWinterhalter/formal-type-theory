@@ -986,14 +986,14 @@ Proof.
        (sbcomp sbweak
           (sbcomp (sbshift sbs) (sbzero (subst v sbs)))))
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { magic. Unshelve. all:strictmagic. }
   assert (
     eqtype
       G
       (Subst (Subst A sbweak) (sbcomp (sbshift sbs) (sbzero (subst v sbs))))
       (Subst A (sbcomp sbweak (sbcomp (sbshift sbs) (sbzero (subst v sbs)))))
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { magic. Unshelve. all:strictmagic. }
   assert (
     isterm G
     (subst (subst u sbweak)
@@ -1019,7 +1019,7 @@ Proof.
       eapply TermSubst ; [ magic | eassumption | magic .. ]
     | magic ..
     ].
-    Unshelve. assumption.
+    Unshelve. all:strictmagic.
   }
   assert (
     eqterm G
@@ -1029,7 +1029,7 @@ Proof.
     (Subst (Subst A sbweak)
        (sbcomp (sbshift sbs) (sbzero (subst v sbs))))
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { magic. Unshelve. all:strictmagic. }
   assert (
     isterm (ctxextend D A) (var 0) (Subst A sbweak)
   ).
