@@ -1423,7 +1423,7 @@ Proof.
     (ctxextend D (Id A u v))
   ).
   { eapply SubstCtxConv ; magic.
-    Unshelve. all:magic.
+    Unshelve. all:try strictmagic. fail. (* magic should work on them by now *)
   }
   assert (
     eqtype G
