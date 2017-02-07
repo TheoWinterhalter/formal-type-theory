@@ -338,16 +338,9 @@ Ltac pushsubst1 :=
     eapply EqSym ; [ eapply EqTrans ; [ eapply EqSubstZeroZero | .. ] | .. ]
   | |- eqterm ?G (subst (var 0) (sbcomp (sbzero ?u) ?sbt)) ?v ?A =>
     eapply EqTrans ; [
-      eapply EqTrans ; [
-        eapply EqSym ; [
-          eapply EqTyConv ; [ eapply EqSubstComp | .. ]
-        | ..
-        ]
-      | ..
-      ]
-    | eapply EqSubstZeroZero
+      eapply EqCompZero
     | ..
-    ] HERE!!
+    ]
   (* Similarly, peculiar cases. *)
   (* | |- eqterm ?G (subst ?w (sbzero ?u)) ?u ?A => *)
     (* Since it would imply a choice that I don't know how to enforce,

@@ -924,34 +924,8 @@ Proof.
            (subst (var 0) (sbcomp (sbzero v) sbs))
            (Subst A sbs)
   ).
-  { eapply EqSym ; try magic.
-    (* Problem here. *)
-    Unshelve. pushsubst1 ; try magic. magic.
-    Unshelve. all:try strictmagic. (* pushsubst1 ; try magic. *)
-    (* eapply EqSym ; try magic. *)
-    (* Unshelve. all:try strictmagic. *)
-    (* Was a loop... *)
-    fail.
-
-
-
- pushsubst1.
-    eapply EqTrans ; [
-      eapply EqTyConv ; [
-        eapply EqSym ; [
-          eapply EqSubstComp ; [
-            shelve
-          | eassumption
-          | magic ..
-          ]
-        | magic ..
-        ]
-      | try magic ; assumption ..
-      ]
-    | magic ..
-    ].
-    Unshelve. all:try magic.
-    Unshelve. fail.
+  { eapply EqSym ; magic.
+    Unshelve. assumption.
   }
   assert (
      isterm G (subst (subst u sbweak) (sbcomp (sbzero v) sbs))
