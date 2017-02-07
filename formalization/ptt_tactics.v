@@ -387,6 +387,18 @@ Ltac simplify :=
       lazymatch sbs with
       (* This case is unsatisfying... We would like to linearize substitutions
          when they are composed. *)
+      | sbcomp ?sbt (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs))) =>
+        eapply EqTyTrans ; [
+          eapply CongTySubst ; [
+            eapply CongSubstComp ; [
+              eapply ShiftZero
+            | eapply SubstRefl
+            | ..
+            ]
+          | ..
+          ]
+        | ..
+        ]
       | sbcomp sbweak (sbcomp (sbzero ?u) ?sbt) =>
         eapply EqTyTrans ; [
           eapply CongTySubst ; [

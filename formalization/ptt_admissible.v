@@ -945,14 +945,14 @@ Proof.
     (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0))
        (sbcomp (sbzero v) sbs)) (Subst (Id A u v) sbs)
   ).
-  { gopushsubst. gopushsubst. }
+  { magic. }
   assert (
     eqctx
     (ctxextend G
        (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0))
           (sbcomp (sbzero v) sbs))) (ctxextend G (Subst (Id A u v) sbs))
   ).
-  { eapply EqCtxExtend ; magic. }
+  { magic. }
   assert (
     eqsubst
     (sbcomp
@@ -977,7 +977,7 @@ Proof.
        (sbcomp (sbshift sbs) (sbzero (subst v sbs))))
     (Subst A sbs)
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { magic. Unshelve. all:strictmagic. }
   assert (
     eqtype G
     (Subst (Subst (Subst (Subst A sbweak) (sbzero v)) sbweak)
