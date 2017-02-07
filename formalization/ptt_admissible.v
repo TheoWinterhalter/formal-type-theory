@@ -1041,7 +1041,7 @@ Proof.
     (Subst (Subst A sbweak)
        (sbcomp (sbshift sbs) (sbzero (subst v sbs))))
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { magic. Unshelve. all:assumption. }
   assert (
     isterm G
     (subst (subst (var 0) (sbshift sbs))
@@ -1067,7 +1067,7 @@ Proof.
     (Subst (Subst A sbweak)
        (sbcomp (sbshift sbs) (sbzero (subst v sbs))))
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { magic. Unshelve. all:assumption. }
   assert (
     isterm G (subst v sbs)
    (Subst (Subst A sbweak)
@@ -1105,12 +1105,12 @@ Proof.
       ]
     | try magic ..
     ].
-    eapply mySubstSym ; try magic.
+    eapply SubstSym ; try magic.
     eapply SubstTrans ; [
       eapply CompAssoc ; magic
     | magic ..
     ].
-    Unshelve. magic.
+    Unshelve. all:strictmagic.
   }
   assert (
      eqtype G
@@ -1119,9 +1119,7 @@ Proof.
     (Subst (Subst A sbweak)
        (sbcomp (sbshift sbs) (sbzero (subst v sbs))))
   ).
-  { gocompsubst. gocompsubst. gocompsubst.
-    Unshelve. assumption.
-  }
+  { magic. Unshelve. all:strictmagic. }
   assert (
     isterm G (subst (var 0) (sbzero (subst v sbs)))
    (Subst (Subst A sbweak)
@@ -1141,7 +1139,7 @@ Proof.
     (Subst (Subst A sbweak)
        (sbcomp (sbshift sbs) (sbzero (subst v sbs))))
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { magic. Unshelve. all:assumption. }
   assert (
     eqterm G
     (subst (var 0)
@@ -1151,28 +1149,31 @@ Proof.
        (sbcomp (sbshift sbs) (sbzero (subst v sbs))))
   ).
   { eapply EqTrans ; [
-      eapply myEqSym ; [
+      eapply EqSym ; [
         eapply EqSubstComp ; [ shelve | magic .. ]
       | magic ..
       ]
     | try magic ..
     ].
-    eapply EqTrans ; [
-      eapply EqTyConv ; [
-        eapply CongTermSubst ; [
-          eapply SubstRefl ; magic
-        | eapply EqSubstShiftZero ; magic
-        | magic ..
+    Unshelve.
+    - strictmagic.
+    - fail. (* Improve magic? *)
+
+eapply EqTrans ; [
+        eapply EqTyConv ; [
+          eapply CongTermSubst ; [
+            eapply SubstRefl ; magic
+          | eapply EqSubstShiftZero ; magic
+          | magic ..
+          ]
+        | try magic ; assumption ..
         ]
-      | try magic ; assumption ..
-      ]
-    | try magic ..
-    ].
-    eapply EqTyConv ; [
-      eapply EqSubstZeroZero ; magic
-    | magic ..
-    ].
-    Unshelve. all:magic.
+      | try magic ..
+      ].
+      eapply EqTyConv ; [
+        eapply EqSubstZeroZero ; magic
+      | magic ..
+      ].
   }
   assert (
     isterm G (subst u sbs)
