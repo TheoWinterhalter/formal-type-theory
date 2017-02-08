@@ -649,6 +649,41 @@ Ltac check_goal :=
   | _ => fail
   end.
 
+(* Factorizing some cases *)
+Ltac eqtype_subst G A sbs B k n try shelf :=
+  tryif (is_var A)
+  then (
+    tryif (is_var sbs)
+    then (
+      match B with
+      | Subst ?B ?sbt =>
+        tryif (is_var B)
+        then (
+          tryif (is_var sbt)
+          then first [
+            eapply CongTySubst ; k n try shelf true
+          | eassumption
+          ]
+          else first [
+            eapply EqTySym ; [ simplify | .. ] ; k n try shelf true
+          | eapply CongTySubst ; k n try shelf true
+          ]
+        )
+        else pushsubst1 ; k n try shelf true
+      | _ =>
+        first [
+          eapply CongTySubst ; k n try shelf true
+        | eassumption
+        ]
+      end
+    )
+    else first [
+      simplify ; k n try shelf true
+    | eapply CongTySubst ; k n try shelf true
+    ]
+  )
+  else pushsubst1 ; k n try shelf true.
+
 (* Magic Tactic *)
 (* It is basically a type checker that doesn't do the smart things,
    namely type and context conversions (and it doesn't rely on reflection
@@ -986,50 +1021,65 @@ Ltac magicn n try shelf tysym :=
     (* A weird case perhaps. *)
     (* It feels like we should improve the case where is_var A and
        not is_var sbs below. *)
-    | |- eqtype ?G (Subst ?B (sbcomp ?sbs sbweak)) (Subst ?A (sbshift ?sbs)) =>
-      tryif (is_evar A ; is_var B)
+    | |- eqtype ?G (Subst ?B' (sbcomp ?sbs sbweak)) (Subst ?A (sbshift ?sbs)) =>
+      tryif (is_evar A ; is_var B')
       then (
-        eapply @EqTyTrans with (B := Subst (Subst B sbweak) (sbshift sbs)) ; [
+        eapply @EqTyTrans with (B := Subst (Subst B' sbweak) (sbshift sbs)) ; [
           idtac
         | eapply EqTyRefl
         | ..
         ] ; magicn n try shelf true
       )
       else fail
+    | |- eqtype ?G (Subst ?A (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs))))
+                  (Subst ?B' ?sbs) =>
+      tryif (is_evar A ; is_var B')
+      then (
+        eapply @EqTyTrans
+        with (B := Subst (Subst B' sbweak)
+                        (sbcomp (sbshift sbs) (sbzero (subst u sbs)))) ; [
+          eapply EqTyRefl
+        | ..
+        ] ; magicn n try shelf true
+      )
+      else eqtype_subst G A (sbcomp (sbshift sbs) (sbzero (subst u sbs)))
+                        (Subst B' sbs)
+                        magicn n try shelf
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)
-      tryif (is_var A)
-      then (
-        tryif (is_var sbs)
-        then (
-          match B with
-          | Subst ?B ?sbt =>
-            tryif (is_var B)
-            then (
-              tryif (is_var sbt)
-              then first [
-                eapply CongTySubst ; magicn n try shelf true
-              | eassumption
-              ]
-              else first [
-                eapply EqTySym ; [ simplify | .. ] ; magicn n try shelf true
-              | eapply CongTySubst ; magicn n try shelf true
-              ]
-            )
-            else pushsubst1 ; magicn n try shelf true
-          | _ =>
-            first [
-              eapply CongTySubst ; magicn n try shelf true
-            | eassumption
-            ]
-          end
-        )
-        else first [
-          simplify ; magicn n try shelf true
-        | eapply CongTySubst ; magicn n try shelf true
-        ]
-      )
-      else pushsubst1 ; magicn n try shelf true
+      eqtype_subst G A sbs B magicn n try shelf
+      (* tryif (is_var A) *)
+      (* then ( *)
+      (*   tryif (is_var sbs) *)
+      (*   then ( *)
+      (*     match B with *)
+      (*     | Subst ?B ?sbt => *)
+      (*       tryif (is_var B) *)
+      (*       then ( *)
+      (*         tryif (is_var sbt) *)
+      (*         then first [ *)
+      (*           eapply CongTySubst ; magicn n try shelf true *)
+      (*         | eassumption *)
+      (*         ] *)
+      (*         else first [ *)
+      (*           eapply EqTySym ; [ simplify | .. ] ; magicn n try shelf true *)
+      (*         | eapply CongTySubst ; magicn n try shelf true *)
+      (*         ] *)
+      (*       ) *)
+      (*       else pushsubst1 ; magicn n try shelf true *)
+      (*     | _ => *)
+      (*       first [ *)
+      (*         eapply CongTySubst ; magicn n try shelf true *)
+      (*       | eassumption *)
+      (*       ] *)
+      (*     end *)
+      (*   ) *)
+      (*   else first [ *)
+      (*     simplify ; magicn n try shelf true *)
+      (*   | eapply CongTySubst ; magicn n try shelf true *)
+      (*   ] *)
+      (* ) *)
+      (* else pushsubst1 ; magicn n try shelf true *)
     | |- eqtype ?G ?A (Subst ?B ?sbs) =>
       (* We know how to deal with the symmetric case. *)
       cando tysym ; eapply EqTySym ; [
