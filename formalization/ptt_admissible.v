@@ -1467,7 +1467,9 @@ Proof.
     (ctxextend (ctxextend D A)
        (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv ; magic. Unshelve. all:try strictmagic. fail. }
+  { eapply SubstCtxConv ; magic. Unshelve. all:try strictmagic.
+    all:magic. Unshelve. all:strictmagic.
+  }
   assert (
     issubst
     (sbshift
@@ -1478,7 +1480,19 @@ Proof.
     (ctxextend (ctxextend D A)
        (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv ; magic. Unshelve. all:magic. }
+  { eapply SubstCtxConv.
+    - magic.
+    - eapply EqCtxExtend.
+      + magic.
+      + magic.
+      + magic.
+      + magic.
+      + magic.
+      + (* Maybe we should shelve here? *)
+        fail.
+
+
+trymagic. eapply SubstCtxConv ; magic. Unshelve. all:magic. }
   assert (
     issubst
     (sbshift
