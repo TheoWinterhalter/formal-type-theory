@@ -1435,9 +1435,7 @@ Proof.
     (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0))
        (sbcomp (sbzero v) sbs))
   ).
-  { magic. Unshelve. all:try strictmagic.
-    gopushsubst.
-  }
+  { magic. Unshelve. all:strictmagic. }
   assert (
     eqctx
     (ctxextend G
@@ -1461,7 +1459,7 @@ Proof.
    (ctxextend (ctxextend D A)
       (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv ; try magic. assumption. Unshelve. all:magic. }
+  { eapply SubstCtxConv ; try magic. assumption. Unshelve. all:strictmagic. }
   assert (
     issubst
     (sbshift
@@ -1469,7 +1467,7 @@ Proof.
     (ctxextend (ctxextend D A)
        (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv ; try magic. assumption. Unshelve. all:magic. }
+  { eapply SubstCtxConv ; magic. Unshelve. all:try strictmagic. fail. }
   assert (
     issubst
     (sbshift
