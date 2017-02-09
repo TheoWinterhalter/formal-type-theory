@@ -650,7 +650,7 @@ Ltac check_goal :=
   end.
 
 (* Factorizing some cases *)
-Ltac eqtype_subst G A sbs B k n try shelf :=
+Ltac eqtype_subst G A sbs B k n try shelf tysym :=
   tryif (is_var A)
   then (
     tryif (is_var sbs)
@@ -682,7 +682,10 @@ Ltac eqtype_subst G A sbs B k n try shelf :=
     | eapply CongTySubst ; k n try shelf true
     ]
   )
-  else pushsubst1 ; k n try shelf true.
+  else first [
+    pushsubst1
+  | cando tysym ; eapply EqTySym ; [ simplify | .. ]
+  ] ; k n try shelf true
 
 (* Magic Tactic *)
 (* It is basically a type checker that doesn't do the smart things,
@@ -1030,9 +1033,9 @@ Ltac magicn n try shelf tysym :=
         | ..
         ] ; magicn n try shelf true
       )
-      else eqtype_subst G (Subst B' (sbcomp sbs sbweak))
+      else  G (Subst B' (sbcomp sbs sbweak))
                         (Subst A (sbshift sbs))
-                        magicn n try shelf
+                        magicn n try shelf tysym
     | |- eqtype ?G (Subst ?A (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs))))
                   (Subst ?B' ?sbs) =>
       tryif (is_evar A ; is_var B')
@@ -1046,10 +1049,10 @@ Ltac magicn n try shelf tysym :=
       )
       else eqtype_subst G A (sbcomp (sbshift sbs) (sbzero (subst u sbs)))
                         (Subst B' sbs)
-                        magicn n try shelf
+                        magicn n try shelf tysym
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)
-      eqtype_subst G A sbs B magicn n try shelf
+      eqtype_subst G A sbs B magicn n try shelf tysym
     | |- eqtype ?G ?A (Subst ?B ?sbs) =>
       (* We know how to deal with the symmetric case. *)
       cando tysym ; eapply EqTySym ; [

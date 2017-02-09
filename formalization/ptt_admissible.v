@@ -1488,7 +1488,106 @@ Proof.
       + magic.
       + magic.
       + magic.
-      + (* Maybe we should shelve here? *)
+      + eapply EqTySym ; [
+          eapply EqTyTrans ; [ eapply EqTySubstId | .. ]
+        | ..
+        ].
+        * magic.
+        * magic.
+        * magic.
+        * magic.
+        * magic.
+        * magic.
+        * eapply EqTySym.
+          -- eapply EqTyTrans ; [ eapply EqTySubstId | .. ].
+             ++ magic.
+             ++ magic.
+             ++ magic.
+             ++ magic.
+             ++ magic.
+             ++ magic.
+             ++ eapply CongId.
+                ** magic.
+                ** magic.
+                ** magic.
+                ** magic.
+                ** magic.
+                ** magic.
+                ** magic.
+                ** magic.
+                ** compsubst1.
+                   --- magic.
+                   --- magic.
+                   --- magic.
+                   --- magic.
+                   --- simplify.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ magic.
+                       +++ simplify.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** magic.
+                           *** eapply TermTyConv ; [
+                                 eapply TermSubst
+                               | ..
+                               ].
+                               ---- magic.
+                               ---- magic.
+                               ---- magic.
+                               ---- magic.
+                               ---- magic.
+                               ---- eapply EqTySym ; [ simplify | .. ] ; magic.
+                                    (* Did we solve it? *)
+
+(* Maybe we should shelve here? *)
         fail.
 
 
