@@ -435,19 +435,29 @@ Proof.
    (* H1: SubstWeak *)
    - { inversion H2'.
        - rewrite <- H2 in H3'.
-         (* We need EqCtxExtendInversion *)
-         fail.
+         destruct (eqctx_ctxextend G A G0 A0).
+         + hyp.
+         + subst. hyp.
        - doSubstConv unique_subst'.
      }
 
    (* H1: SubstShift *)
-   - { inversion_clear H2'.
-       - apply ett.EqCtxExtend.
-         + apply (@unique_subst G _ sbs) with (G'0 := G).
-           * hyp.
-           * hyp.
-           * apply ptt.CtxRefl. hyp.
-         + apply ett.EqTyRefl. hyp.
+   - { inversion H2'.
+       - rewrite <- H5 in H3'.
+         destruct (eqctx_ctxextend G (Subst A sbs) G0 (Subst A0 sbs)).
+         + hyp.
+         + apply ett.EqCtxExtend.
+           * apply (@unique_subst G _ sbs) with (G'0 := G).
+             -- hyp.
+             -- pex. eapply ett.SubstCtxConv.
+                ++ pex. exact H0.
+                ++ apply ett.CtxSym. hyp.
+                ++ apply ett.CtxRefl. hyp.
+             -- apply ptt.CtxRefl. hyp.
+           * (* Do we have any hope of ever concluding? *)
+             (* A[σ] = A0[σ] could hold for many reasons, some of which may
+                actually have different A and A0. *)
+             fail.
        - doSubstConv unique_subst'.
      }
 
