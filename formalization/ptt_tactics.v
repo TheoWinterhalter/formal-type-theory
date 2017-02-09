@@ -685,7 +685,7 @@ Ltac eqtype_subst G A sbs B k n try shelf tysym :=
   else first [
     pushsubst1
   | cando tysym ; eapply EqTySym ; [ simplify | .. ]
-  ] ; k n try shelf true
+  ] ; k n try shelf true.
 
 (* Magic Tactic *)
 (* It is basically a type checker that doesn't do the smart things,

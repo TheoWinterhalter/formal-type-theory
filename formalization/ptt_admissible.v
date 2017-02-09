@@ -1459,7 +1459,9 @@ Proof.
    (ctxextend (ctxextend D A)
       (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv ; try magic. assumption. Unshelve. all:strictmagic. }
+  { eapply SubstCtxConv ; magic. Unshelve. all:try strictmagic. all:magic.
+    Unshelve. all:strictmagic.
+  }
   assert (
     issubst
     (sbshift
@@ -1480,118 +1482,9 @@ Proof.
     (ctxextend (ctxextend D A)
        (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv.
-    - magic.
-    - eapply EqCtxExtend.
-      + magic.
-      + magic.
-      + magic.
-      + magic.
-      + magic.
-      + eapply EqTySym ; [
-          eapply EqTyTrans ; [ eapply EqTySubstId | .. ]
-        | ..
-        ].
-        * magic.
-        * magic.
-        * magic.
-        * magic.
-        * magic.
-        * magic.
-        * eapply EqTySym.
-          -- eapply EqTyTrans ; [ eapply EqTySubstId | .. ].
-             ++ magic.
-             ++ magic.
-             ++ magic.
-             ++ magic.
-             ++ magic.
-             ++ magic.
-             ++ eapply CongId.
-                ** magic.
-                ** magic.
-                ** magic.
-                ** magic.
-                ** magic.
-                ** magic.
-                ** magic.
-                ** magic.
-                ** compsubst1.
-                   --- magic.
-                   --- magic.
-                   --- magic.
-                   --- magic.
-                   --- simplify.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ magic.
-                       +++ simplify.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** magic.
-                           *** eapply TermTyConv ; [
-                                 eapply TermSubst
-                               | ..
-                               ].
-                               ---- magic.
-                               ---- magic.
-                               ---- magic.
-                               ---- magic.
-                               ---- magic.
-                               ---- eapply EqTySym ; [ simplify | .. ] ; magic.
-                                    (* Did we solve it? *)
-
-(* Maybe we should shelve here? *)
-        fail.
-
-
-trymagic. eapply SubstCtxConv ; magic. Unshelve. all:magic. }
+  { magic. Unshelve. all:try strictmagic. all:magic.
+    Unshelve. all:strictmagic.
+  }
   assert (
     issubst
     (sbshift
@@ -1600,7 +1493,7 @@ trymagic. eapply SubstCtxConv ; magic. Unshelve. all:magic. }
     (ctxextend (ctxextend D A)
        (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv ; try magic. assumption. Unshelve. all:magic. }
+  { magic. Unshelve. all:strictmagic. }
   assert (
     eqtype G
     (Subst
@@ -1609,7 +1502,7 @@ trymagic. eapply SubstCtxConv ; magic. Unshelve. all:magic. }
     (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0))
        (sbcomp (sbshift sbs) (sbzero (subst v sbs))))
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { magic. Unshelve. all:strictmagic. }
   assert (
     eqctx
     (ctxextend G
@@ -1620,7 +1513,7 @@ trymagic. eapply SubstCtxConv ; magic. Unshelve. all:magic. }
        (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0))
           (sbcomp (sbshift sbs) (sbzero (subst v sbs)))))
   ).
-  { eapply EqCtxExtend ; magic. }
+  { magic. }
   assert (
     issubst
    (sbcomp
@@ -1633,7 +1526,9 @@ trymagic. eapply SubstCtxConv ; magic. Unshelve. all:magic. }
    (ctxextend (ctxextend D A)
       (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv ; try magic. assumption. Unshelve. all:magic. }
+  { eapply SubstCtxConv ; try magic. Unshelve. all:try strictmagic.
+    all:magic. Unshelve. all:strictmagic.
+  }
   assert (
     issubst
     (sbcomp
@@ -1644,7 +1539,10 @@ trymagic. eapply SubstCtxConv ; magic. Unshelve. all:magic. }
     (ctxextend (ctxextend D A)
        (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv ; try magic. assumption. Unshelve. all:magic. }
+  { magic. Unshelve. all:try strictmagic. all:try magic.
+    Unshelve. all:try strictmagic. all:magic.
+    Unshelve. all:strictmagic.
+  }
   assert (
     issubst
     (sbshift (sbzero (subst v sbs)))
@@ -1653,8 +1551,8 @@ trymagic. eapply SubstCtxConv ; magic. Unshelve. all:magic. }
        (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0))
           (sbshift sbs)))
   ).
-  { eapply SubstCtxConv ; try magic. assumption.
-    Unshelve. all:magic.
+  { magic. Unshelve. all:try strictmagic. all:magic.
+    Unshelve. all:strictmagic.
   }
   assert (
     issubst
@@ -1667,9 +1565,7 @@ trymagic. eapply SubstCtxConv ; magic. Unshelve. all:magic. }
       (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0))
          (sbshift sbs)))
   ).
-  { eapply SubstCtxConv ; magic.
-    Unshelve. all:magic.
-  }
+  { magic. }
   assert (
     issubst
       (sbzero
@@ -1678,7 +1574,7 @@ trymagic. eapply SubstCtxConv ; magic. Unshelve. all:magic. }
       G
       (ctxextend G (Subst (Id A u v) sbs))
   ).
-  { eapply SubstCtxConv ; magic. Unshelve. all:magic. }
+  { magic. }
   assert (
     eqtype G
     (Subst
@@ -1686,7 +1582,7 @@ trymagic. eapply SubstCtxConv ; magic. Unshelve. all:magic. }
           sbweak) (sbzero (subst v sbs)))
     (Subst A sbs)
   ).
-  { gocompsubst. gocompsubst. Unshelve. assumption. }
+  { magic. Unshelve. all:strictmagic. }
   assert (
     isterm G
     (subst (subst (subst u sbs) sbweak)
@@ -1710,29 +1606,26 @@ trymagic. eapply SubstCtxConv ; magic. Unshelve. all:magic. }
    (Subst (Subst (Subst A sbs) sbweak)
       (sbzero (subst v sbs)))
   ).
-  { gocompsubst. gocompsubst. Unshelve. assumption. }
+  { magic. Unshelve. all:strictmagic. }
   assert (
      eqterm G (subst u sbs)
    (subst (subst (subst u sbs) sbweak)
       (sbzero (subst v sbs))) (Subst A sbs)
   ).
-  { eapply myEqSym ; try magic.
-    eapply EqSubstWeakZero ; magic.
-    Unshelve. magic.
-  }
+  { magic. Unshelve. all:strictmagic. }
   assert (
      eqterm G
             (subst v sbs)
             (subst (var 0) (sbzero (subst v sbs)))
             (Subst A sbs)
   ).
-  { eapply myEqSym ; try magic. eapply EqSubstZeroZero ; magic. }
+  { magic. Unshelve. all:strictmagic. }
   assert (
     eqtype G
     (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbcomp (sbzero v) sbs))
     (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero v)) sbs)
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { magic. Unshelve. all:strictmagic. }
   assert (
     eqctx
     (ctxextend G
@@ -1742,14 +1635,17 @@ trymagic. eapply SubstCtxConv ; magic. Unshelve. all:magic. }
        (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero v))
           sbs))
   ).
-  { eapply EqCtxExtend ; magic. }
+  { magic. }
   assert (
     issubst (sbshift (sbcomp (sbzero v) sbs))
    (ctxextend G
       (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero v)) sbs))
    (ctxextend (ctxextend D A) (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv ; try magic. assumption. Unshelve. all:assumption. }
+  { magic. Unshelve. all:try strictmagic. all:magic.
+    Unshelve. all:strictmagic.
+  }
+  (*! CONTINUE HERE !*)
   assert (
     eqtype G
     (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0))
