@@ -90,6 +90,155 @@ Ltac compsubst1 :=
   end.
 
 
+Lemma EqCompZero :
+  forall {G D A u sbs},
+    issubst sbs G D ->
+    isterm D u A ->
+    istype D A ->
+    isctx G ->
+    isctx D ->
+    eqterm G
+           (subst (var 0) (sbcomp (sbzero u) sbs))
+           (subst u sbs)
+           (Subst A sbs).
+Proof.
+  intros.
+  assert (istype G (Subst A sbs)).
+  { eapply TySubst ; eassumption. }
+  assert (isterm G (subst u sbs) (Subst A sbs)).
+  { eapply TermSubst ; eassumption. }
+  assert (issubst (sbzero u) D (ctxextend D A)).
+  { eapply SubstZero ; eassumption. }
+  assert (isctx (ctxextend D A)).
+  { eapply CtxExtend ; assumption. }
+  assert (issubst (sbcomp (sbzero u) sbs) G (ctxextend D A)).
+  { eapply SubstComp ; eassumption. }
+  assert (isterm (ctxextend D A) (var 0) (Subst A sbweak)).
+  { apply TermVarZero ; assumption. }
+  assert (issubst sbweak (ctxextend D A) D).
+  { eapply SubstWeak ; assumption. }
+  assert (istype (ctxextend D A) (Subst A sbweak)).
+  { eapply TySubst ; eassumption. }
+  assert (
+    isterm G
+           (subst (var 0) (sbcomp (sbzero u) sbs))
+           (Subst (Subst A sbweak) (sbcomp (sbzero u) sbs))
+  ).
+  { eapply TermSubst ; eassumption. }
+  assert (istype G (Subst (Subst A sbweak) (sbcomp (sbzero u) sbs))).
+  { eapply TySubst ; eassumption. }
+  assert (issubst (sbcomp sbweak (sbcomp (sbzero u) sbs)) G D).
+  { eapply SubstComp ; eassumption. }
+  assert (istype G (Subst A (sbcomp sbweak (sbcomp (sbzero u) sbs)))).
+  { eapply TySubst ; eassumption. }
+  assert (issubst (sbcomp sbweak (sbzero u)) D D).
+  { eapply SubstComp ; eassumption. }
+  assert (issubst sbid D D).
+  { apply SubstId. assumption. }
+  assert (issubst (sbcomp (sbcomp sbweak (sbzero u)) sbs) G D).
+  { eapply SubstComp ; eassumption. }
+  assert (issubst (sbcomp sbid sbs) G D).
+  { eapply SubstComp ; eassumption. }
+  assert (eqsubst (sbcomp sbweak (sbcomp (sbzero u) sbs)) sbs G D).
+  { eapply SubstTrans ; [
+      eapply CompAssoc
+    | eapply SubstTrans ; [
+        eapply CongSubstComp ; [
+          eapply SubstRefl
+        | eapply WeakZero
+        | ..
+        ]
+      | eapply CompIdLeft
+      | ..
+      ]
+    | ..
+    ] ; eassumption.
+  }
+  assert (eqtype D A A).
+  { eapply EqTyRefl ; assumption. }
+  assert (
+    eqtype G (Subst (Subst A sbweak) (sbcomp (sbzero u) sbs)) (Subst A sbs)
+  ).
+  { compsubst1 ; try eassumption.
+    eapply CongTySubst ; eassumption.
+  }
+  assert (isterm G (subst (var 0) (sbcomp (sbzero u) sbs)) (Subst A sbs)).
+  { eapply TermTyConv ; eassumption. }
+  assert (istype D (Subst (Subst A sbweak) (sbzero u))).
+  { eapply TySubst ; eassumption. }
+  assert (istype D (Subst A sbid)).
+  { eapply TySubst ; eassumption. }
+  assert (eqtype D (Subst A sbid) A).
+  { eapply EqTyIdSubst ; eassumption. }
+  assert (eqtype D A (Subst A sbid)).
+  { eapply EqTySym ; eassumption. }
+  assert (isterm D u (Subst A sbid)).
+  { eapply TermTyConv ; eassumption. }
+  assert (istype D (Subst A (sbcomp sbweak (sbzero u)))).
+  { eapply TySubst ; eassumption. }
+  assert (eqtype D (Subst (Subst A sbweak) (sbzero u)) A).
+  { eapply EqTyTrans ; [
+      compsubst1 ; [
+        eassumption
+      | eassumption
+      | assumption
+      | eapply CongTySubst ; [
+          eapply WeakZero ; [
+            assumption
+          | exact H1
+          | ..
+          ]
+        | eapply EqTyRefl
+        | ..
+        ]
+      | ..
+      ]
+    | ..
+    ] ; eassumption.
+  }
+  assert (isterm D (subst (var 0) (sbzero u)) A).
+  { eapply TermTyConv ; [
+      eapply TermSubst
+    | ..
+    ] ; eassumption.
+  }
+  assert (
+    eqtype G (Subst A sbs) (Subst (Subst A sbweak) (sbcomp (sbzero u) sbs))
+  ).
+  { eapply EqTySym ; eassumption. }
+  assert (
+    isterm G
+           (subst (subst (var 0) (sbzero u)) sbs)
+           (Subst (Subst A sbweak) (sbcomp (sbzero u) sbs))
+  ).
+  { eapply TermTyConv ; [
+      eapply TermSubst
+    | ..
+    ] ; eassumption.
+  }
+  assert (isterm G (subst (subst (var 0) (sbzero u)) sbs) (Subst A sbs)).
+  { eapply TermSubst ; eassumption. }
+  assert (eqsubst sbs sbs G D).
+  { eapply SubstRefl ; assumption. }
+
+
+
+  eapply EqTrans ; [
+    eapply EqSym ; [
+      eapply EqTyConv ; [ eapply EqSubstComp | .. ]
+    | ..
+    ] ; eassumption
+  | eapply CongTermSubst ; [
+      eassumption
+    | eapply EqSubstZeroZero ; assumption
+    | eassumption ..
+    ]
+  | assumption ..
+  ].
+Defined.
+
+
+
 (* Some tactic to push substitutions inside one step. *)
 (* Partial for now. *)
 Ltac pushsubst1 :=
@@ -187,6 +336,55 @@ Ltac pushsubst1 :=
     eapply EqTrans ; [ eapply EqSubstZeroZero | .. ]
   | |- eqterm ?G ?u (subst (var 0) (sbzero ?v)) ?A =>
     eapply EqSym ; [ eapply EqTrans ; [ eapply EqSubstZeroZero | .. ] | .. ]
+  | |- eqterm ?G (subst (var 0) (sbshift ?sbs)) ?v ?A =>
+    eapply EqTrans ; [
+      eapply EqTyConv ; [
+        eapply EqSubstShiftZero
+      | ..
+      ]
+    | ..
+    ]
+  | |- eqterm ?G ?u (subst (var 0) (sbshift ?sbs)) ?A =>
+    eapply EqSym ; [
+      eapply EqTrans ; [
+        eapply EqTyConv ; [
+          eapply EqSubstShiftZero
+        | ..
+        ]
+      | ..
+      ]
+    | ..
+    ]
+  | |- eqterm ?G (subst (var 0) (sbcomp (sbzero ?u) ?sbt)) ?v ?A =>
+    first [
+      eapply EqTrans ; [
+        eapply EqCompZero
+      | ..
+      ]
+    | eapply EqTrans ; [
+        eapply EqTyConv ; [ eapply EqCompZero | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (var 0) (sbcomp (sbshift ?sbs) ?sbt)) ?v ?A =>
+    eapply EqTrans ; [
+      eapply EqTrans ; [
+        eapply EqSym ; [
+          eapply EqTyConv ; [ eapply EqSubstComp | .. ]
+        | ..
+        ]
+      | eapply EqTyConv ; [
+          eapply CongTermSubst ; [
+            idtac
+          | eapply EqSubstShiftZero
+          | ..
+          ]
+        | ..
+        ]
+      | ..
+      ]
+    | ..
+    ]
   (* Similarly, peculiar cases. *)
   (* | |- eqterm ?G (subst ?w (sbzero ?u)) ?u ?A => *)
     (* Since it would imply a choice that I don't know how to enforce,
@@ -228,11 +426,63 @@ Ltac simplify :=
   lazymatch goal with
   | |- eqtype ?G (Subst ?A ?sbs) ?B =>
     tryif (is_var sbs)
-    then idtac
+    then fail
     else
       lazymatch sbs with
       (* This case is unsatisfying... We would like to linearize substitutions
          when they are composed. *)
+      | sbcomp (sbcomp sbweak (sbcomp (sbzero ?u) ?sbs)) ?sbt =>
+        eapply EqTyTrans ; [
+          eapply CongTySubst ; [
+            eapply CongSubstComp ; [
+              eapply SubstRefl
+            | eapply SubstTrans ; [
+                eapply CompAssoc
+              | eapply SubstTrans ; [
+                  eapply CongSubstComp ; [
+                    eapply SubstRefl
+                  | eapply WeakZero
+                  | ..
+                  ]
+                | eapply CompIdLeft
+                | ..
+                ]
+              | ..
+              ]
+            | ..
+            ]
+          | ..
+          ]
+        | ..
+        ]
+      | sbcomp ?sbt (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs))) =>
+        eapply EqTyTrans ; [
+          eapply CongTySubst ; [
+            eapply CongSubstComp ; [
+              eapply ShiftZero
+            | eapply SubstRefl
+            | ..
+            ]
+          | ..
+          ]
+        | ..
+        ]
+      | sbcomp (sbcomp ?sbt (sbshift ?sbs)) (sbzero (subst ?u ?sbs)) =>
+        eapply EqTyTrans ; [
+          eapply CongTySubst ; [
+            eapply SubstTrans ; [
+              eapply SubstSym ; [ eapply CompAssoc | .. ]
+            | eapply CongSubstComp ; [
+                eapply ShiftZero
+              | eapply SubstRefl
+              | ..
+              ]
+            | ..
+            ]
+          | ..
+          ]
+        | ..
+        ]
       | sbcomp sbweak (sbcomp (sbzero ?u) ?sbt) =>
         eapply EqTyTrans ; [
           eapply CongTySubst ; [
@@ -304,9 +554,93 @@ Ltac simplify :=
       end
   | |- eqterm ?G (subst ?u ?sbs) ?v ?A =>
     tryif (is_var sbs)
-    then idtac
+    then fail
     else
       lazymatch sbs with
+      | sbcomp ?sbt (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs))) =>
+        eapply EqTrans ; [
+          eapply CongTermSubst ; [
+            eapply CongSubstComp ; [
+              eapply ShiftZero
+            | eapply SubstRefl
+            | ..
+            ]
+          | ..
+          ]
+        | ..
+        ]
+      | sbcomp (sbcomp ?sbt (sbshift ?sbs)) (sbzero (subst ?u ?sbs)) =>
+        eapply EqTrans ; [
+          eapply CongTermSubst ; [
+            eapply SubstTrans ; [
+              eapply SubstSym ; [ eapply CompAssoc | .. ]
+            | eapply CongSubstComp ; [
+                eapply ShiftZero
+              | eapply SubstRefl
+              | ..
+              ]
+            | ..
+            ]
+          | ..
+          ]
+        | ..
+        ]
+      | sbcomp sbweak (sbcomp (sbzero ?u) ?sbt) =>
+        first [
+          eapply EqTrans ; [
+            eapply CongTermSubst ; [
+              eapply SubstTrans ; [
+                eapply CompAssoc
+              | eapply CongSubstComp ; [
+                  idtac
+                | eapply WeakZero
+                | ..
+                ]
+              | ..
+              ]
+            | ..
+            ]
+          | ..
+          ]
+        | eapply EqTrans ; [
+            eapply EqTyConv ; [
+              eapply CongTermSubst ; [
+                eapply SubstTrans ; [
+                  eapply CompAssoc
+                | eapply CongSubstComp ; [
+                    idtac
+                  | eapply WeakZero
+                  | ..
+                  ]
+                | ..
+                ]
+              | ..
+              ]
+            | ..
+            ]
+          | ..
+          ]
+        ]
+      | sbcomp sbid ?sbs =>
+        first [
+          eapply EqTrans ; [
+            eapply CongTermSubst ; [
+              eapply CompIdLeft
+            | ..
+            ]
+          | ..
+          ]
+        | eapply EqTrans ; [
+            eapply EqTyConv ; [
+              eapply CongTermSubst ; [
+                eapply CompIdLeft
+              | ..
+              ]
+            | ..
+            ]
+          | ..
+          ]
+        ]
       | sbcomp sbweak (sbzero ?u) =>
         eapply EqTrans ; [
           eapply CongTermSubst ; [
@@ -321,7 +655,7 @@ Ltac simplify :=
         | ..
         ]
       end
-  | _ => idtac
+  | _ => fail
   end.
 
 (* Checking if we're dealing with a suitable goal. *)
@@ -338,6 +672,44 @@ Ltac check_goal :=
   | |- eqterm ?G ?u ?v ?A => idtac
   | _ => fail
   end.
+
+(* Factorizing some cases *)
+Ltac eqtype_subst G A sbs B k n try shelf tysym :=
+  tryif (is_var A)
+  then (
+    tryif (is_var sbs)
+    then (
+      match B with
+      | Subst ?B ?sbt =>
+        tryif (is_var B)
+        then (
+          tryif (is_var sbt)
+          then first [
+            eapply CongTySubst ; k n try shelf true
+          | eassumption
+          ]
+          else first [
+            eapply EqTySym ; [ simplify | .. ] ; k n try shelf true
+          | eapply CongTySubst ; k n try shelf true
+          ]
+        )
+        else pushsubst1 ; k n try shelf true
+      | _ =>
+        first [
+          eapply CongTySubst ; k n try shelf true
+        | eassumption
+        ]
+      end
+    )
+    else first [
+      simplify ; k n try shelf true
+    | eapply CongTySubst ; k n try shelf true
+    ]
+  )
+  else first [
+    pushsubst1
+  | cando tysym ; eapply EqTySym ; [ simplify | .. ]
+  ] ; k n try shelf true.
 
 (* Magic Tactic *)
 (* It is basically a type checker that doesn't do the smart things,
@@ -600,6 +972,48 @@ Ltac magicn n try shelf tysym :=
         | magicn n try shelf true ..
         ]
       ]
+    (* Basically copying stuff over from simplify... There should be a way
+       to avoid that. *)
+    | |- eqsubst (sbcomp sbweak (sbcomp (sbzero ?u) ?sbs)) ?sbt ?G ?D =>
+      eapply SubstTrans ; [
+        eapply SubstTrans ; [
+          eapply CompAssoc
+        | eapply CongSubstComp ; [
+            idtac
+          | eapply WeakZero
+          | ..
+          ]
+        | ..
+        ]
+      | ..
+      ] ; magicn n try shelf true
+    | |- eqsubst (sbcomp (sbcomp sbweak (sbzero ?u)) ?sbs) ?sbt ?G ?D =>
+      eapply SubstTrans ; [
+        eapply CongSubstComp ; [
+          idtac
+        | eapply WeakZero
+        | ..
+        ]
+      | ..
+      ] ; magicn n try shelf true
+    | |- eqsubst (sbcomp ?sbs (sbcomp sbweak (sbzero ?u))) ?sbt ?G ?D =>
+      eapply SubstTrans ; [
+        eapply CongSubstComp ; [
+          eapply WeakZero
+        | ..
+        ]
+      | ..
+      ] ; magicn n try shelf true
+    | |- eqsubst (sbcomp sbid ?sbs) ?sbt ?G ?D =>
+      eapply SubstTrans ; [
+        eapply CompIdLeft
+      | ..
+      ] ; magicn n try shelf true
+    | |- eqsubst (sbcomp ?sbs sbid) ?sbt ?G ?D =>
+      eapply SubstTrans ; [
+        eapply CompIdRight
+      | ..
+      ] ; magicn n try shelf true
     (* This is a dangerous case. We need to take care of everything involving
        composition before this one. *)
     | |- eqsubst (sbcomp ?sb1 ?sb2) (sbcomp ?sb3 ?sb4) ?G ?D =>
@@ -634,31 +1048,35 @@ Ltac magicn n try shelf tysym :=
     (* A weird case perhaps. *)
     (* It feels like we should improve the case where is_var A and
        not is_var sbs below. *)
-    | |- eqtype ?G (Subst ?B (sbcomp ?sbs sbweak)) (Subst ?A (sbshift ?sbs)) =>
-      tryif (is_evar A ; is_var B)
+    | |- eqtype ?G (Subst ?B' (sbcomp ?sbs sbweak)) (Subst ?A (sbshift ?sbs)) =>
+      tryif (is_evar A ; is_var B')
       then (
-        eapply @EqTyTrans with (B := Subst (Subst B sbweak) (sbshift sbs)) ; [
+        eapply @EqTyTrans with (B := Subst (Subst B' sbweak) (sbshift sbs)) ; [
           idtac
         | eapply EqTyRefl
         | ..
         ] ; magicn n try shelf true
       )
-      else fail
+      else eqtype_subst G (Subst B' (sbcomp sbs sbweak))
+                        (Subst A (sbshift sbs))
+                        magicn n try shelf tysym
+    | |- eqtype ?G (Subst ?A (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs))))
+                  (Subst ?B' ?sbs) =>
+      tryif (is_evar A ; is_var B')
+      then (
+        eapply @EqTyTrans
+        with (B := Subst (Subst B' sbweak)
+                        (sbcomp (sbshift sbs) (sbzero (subst u sbs)))) ; [
+          eapply EqTyRefl
+        | ..
+        ] ; magicn n try shelf true
+      )
+      else eqtype_subst G A (sbcomp (sbshift sbs) (sbzero (subst u sbs)))
+                        (Subst B' sbs)
+                        magicn n try shelf tysym
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)
-      tryif (is_var A)
-      then (
-        tryif (is_var sbs)
-        then first [
-          eapply CongTySubst ; magicn n try shelf true
-        | eassumption
-        ]
-        else first [
-          simplify ; magicn n try shelf true
-        | eapply CongTySubst ; magicn n try shelf true
-        ]
-      )
-      else pushsubst1 ; magicn n try shelf true
+      eqtype_subst G A sbs B magicn n try shelf tysym
     | |- eqtype ?G ?A (Subst ?B ?sbs) =>
       (* We know how to deal with the symmetric case. *)
       cando tysym ; eapply EqTySym ; [
@@ -706,13 +1124,52 @@ Ltac magicn n try shelf tysym :=
       tryif (is_var u)
       then (
         tryif (is_var sbs)
-        then first [
-          eapply CongTermSubst ; magicn n try shelf true
-        | eassumption
-        ]
+        then (
+          match v with
+          | subst ?v ?sbt =>
+            tryif (is_var v)
+            then (
+              tryif (is_var sbt)
+              then first [
+                eapply CongTermSubst ; magicn n try shelf true
+              | eapply EqTyConv ; [
+                  eapply CongTermSubst
+                | ..
+                ] ; magicn n try shelf true
+              | eassumption
+              ]
+              else first [
+                eapply EqSym ; [ simplify | .. ] ; magicn n try shelf true
+              | eapply CongTermSubst ; magicn n try shelf true
+              | eapply EqTyConv ; [
+                  eapply CongTermSubst
+                | ..
+                ] ; magicn n try shelf true
+              ]
+            )
+            else first [
+              pushsubst1 ; magicn n try shelf true
+            | eapply EqSym ; [ pushsubst1 | .. ] ; magicn n try shelf true
+            | cando shelf ; shelve
+            ]
+          | _ =>
+            first [
+              eapply CongTermSubst ; magicn n try shelf true
+            | eapply EqTyConv ; [
+              eapply CongTermSubst
+              | ..
+              ] ; magicn n try shelf true
+            | eassumption
+            ]
+          end
+        )
         else first [
           simplify ; magicn n try shelf true
         | eapply CongTermSubst ; magicn n try shelf true
+        | eapply EqTyConv ; [
+            eapply CongTermSubst
+          | ..
+          ] ; magicn n try shelf true
         ]
       )
       else first [
