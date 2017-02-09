@@ -558,9 +558,267 @@ Proof.
           Unshelve. all:strictmagic.
           (* Again, I don't like it but well... *)
         }
-      - { (* TODO: Do something about JTyConv as it is not proven. *)
-          eapply JTyConv ; magic.
-          Unshelve. assumption.
+      - { eapply TermTyConv ; [
+            idtac
+          | eapply EqTySym ; [
+              eapply JTyConv
+            | ..
+            ]
+          | ..
+          ].
+          - eapply TermTyConv.
+            + eapply TermJ.
+              * magic.
+              * magic.
+              * magic.
+              * eapply TySubst.
+                -- eapply SubstCtxConv ; [
+                     eapply SubstShift
+                   | ..
+                   ].
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ eapply EqCtxExtend.
+                      ** magic.
+                      ** magic.
+                      ** magic.
+                      ** magic.
+                      ** magic.
+                      ** eapply @EqTyTrans
+                         with (B := Subst (Id (Subst A sbweak)
+                                             (subst u sbweak)
+                                             (var 0))
+                                         (sbshift sbs)) ; [
+                           eapply EqTyRefl
+                         | ..
+                         ] ; magic.
+                   ++ eapply CtxRefl ; magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                -- magic.
+                -- magic.
+                -- magic.
+              * eapply TermTyConv ; [
+                  eapply TermSubst ; [ eassumption | .. ]
+                | ..
+                ].
+                -- magic.
+                -- magic.
+                -- magic.
+                -- magic.
+                -- eapply EqTyTrans ; [
+                     eapply JTyConv
+                   | ..
+                   ].
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ eapply CongTySubst ; [
+                        idtac
+                      | eapply EqTyRefl ; magic
+                      | ..
+                      ] ; magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ eapply TySubst.
+                      ** magic.
+                      ** eapply TySubst ; [
+                           idtac
+                         | eapply TySubst ; magic
+                         | ..
+                         ].
+                         --- eapply SubstCtxConv ; [
+                               eapply SubstShift
+                             | ..
+                             ].
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ eapply EqCtxExtend.
+                                 *** magic.
+                                 *** magic.
+                                 *** magic.
+                                 *** magic.
+                                 *** magic.
+                                 *** eapply @EqTyTrans
+                                     with (B := Subst (Id (Subst (Subst A sbs)
+                                                                sbweak)
+                                                         (subst (subst u sbs)
+                                                                sbweak)
+                                                         (var 0))
+                                                     (sbzero (subst u sbs))) ; [
+                                       eapply EqTyRefl
+                                     | ..
+                                     ] ; magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                         --- magic.
+                         --- magic.
+                      ** magic.
+                      ** magic.
+                   ++ eapply TySubst ; [
+                        idtac
+                      | eapply TySubst ; [
+                          idtac
+                        | eapply TySubst ; magic
+                        | ..
+                        ]
+                      | ..
+                      ].
+                      ** magic.
+                      ** eapply SubstCtxConv ; [
+                           eapply SubstShift
+                         | ..
+                         ] ; try magic.
+                         eapply EqCtxExtend ; [ magic .. | idtac ].
+                         pushsubst1 ; magic.
+                      ** magic.
+                      ** magic.
+                      ** magic.
+                      ** magic.
+                -- magic.
+                -- magic.
+                -- eapply TySubst ; [
+                     idtac
+                   | eapply TySubst ; [
+                       idtac
+                     | eapply TySubst ; magic
+                     | ..
+                     ]
+                   | ..
+                   ] ; try magic.
+                   eapply SubstCtxConv ; [
+                     eapply SubstShift
+                   | ..
+                   ] ; try magic.
+                   eapply EqCtxExtend ; [ magic .. | idtac ].
+                   pushsubst1 ; magic.
+              * magic.
+              * magic.
+            + apply EqTyRefl ; [ magic | .. ].
+              eapply TySubst ; [
+                idtac
+              | eapply TySubst ; [
+                  idtac
+                | eapply TySubst ; magic
+                | ..
+                ]
+              | ..
+              ] ; try magic.
+              eapply SubstCtxConv ; [
+                eapply SubstShift
+              | ..
+              ] ; try magic.
+              eapply EqCtxExtend ; [ magic .. | idtac ].
+              pushsubst1 ; magic.
+            + magic.
+            + eapply TySubst ; [
+                idtac
+              | eapply TySubst ; [
+                  idtac
+                | eapply TySubst ; magic
+                | ..
+                ]
+              | ..
+              ] ; try magic.
+              eapply SubstCtxConv ; [
+                eapply SubstShift
+              | ..
+              ] ; try magic.
+              eapply EqCtxExtend ; [ magic .. | idtac ].
+              pushsubst1 ; magic.
+            + eapply TySubst ; [
+                idtac
+              | eapply TySubst ; [
+                  idtac
+                | eapply TySubst ; magic
+                | ..
+                ]
+              | ..
+              ] ; try magic.
+              eapply SubstCtxConv ; [
+                eapply SubstShift
+              | ..
+              ] ; try magic.
+              eapply EqCtxExtend ; [ magic .. | idtac ].
+              pushsubst1 ; magic.
+          - magic.
+          - magic.
+          - magic.
+          - magic.
+          - magic.
+          - magic.
+          - magic.
+          - magic.
+          - magic.
+          - magic.
+          - magic.
+          - eapply TySubst ; [
+              idtac
+            | eapply TySubst ; [
+                idtac
+              | eapply TySubst ; magic
+              | ..
+              ]
+            | ..
+            ] ; try magic.
+            eapply SubstCtxConv ; [
+              eapply SubstShift
+            | ..
+            ] ; try magic.
+            eapply EqCtxExtend ; [ magic .. | idtac ].
+            pushsubst1 ; magic.
+          - magic.
+          - magic.
+          - eapply TySubst ; [
+              idtac
+            | eapply TySubst ; [
+                idtac
+              | eapply TySubst ; magic
+              | ..
+              ]
+            | ..
+            ] ; try magic.
+            eapply SubstCtxConv ; [
+              eapply SubstShift
+            | ..
+            ] ; try magic.
+            eapply EqCtxExtend ; [ magic .. | idtac ].
+            pushsubst1 ; magic.
+          - magic.
+          Unshelve. all:try strictmagic. all:try magic. all:exact w.
+          Unshelve. all:try strictmagic. all:try magic.
+          Unshelve. all:try strictmagic.
+          all:eapply EqTyConv ; magic.
+          Unshelve. all:try strictmagic.
+          1:pushsubst1 ; try magic ; [
+                  gocompsubst
+                | eapply TermTyConv ; [
+                    eapply TermSubst ; [
+                      idtac
+                    | eapply TermSubst ; magic
+                    | ..
+                    ]
+                  | ..
+                  ] ; magic
+                ].
+          all:pushsubst1 ; try magic.
+          Unshelve. all:strictmagic.
         }
     }
 
