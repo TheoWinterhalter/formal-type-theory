@@ -243,9 +243,7 @@ Proof.
             - destruct (eqctx_ctxextend _ _ _ _  L) as [E M].
               eapply ett.CongTySubst.
               + eapply ett.CongSubstWeak.
-                * now apply ett.CtxSym.
-                * apply ett.EqTySym.
-                  eapply ett.EqTyCtxConv ; ehyp.
+                hyp.
               + apply ett.EqTySym.
                 eapply ett.EqTyCtxConv ; ehyp.
           }
@@ -262,9 +260,7 @@ Proof.
               - destruct (eqctx_ctxextend _ _ _ _  L) as [E M].
                 eapply ett.CongTySubst.
                 + eapply ett.CongSubstWeak.
-                  * now apply ett.CtxSym.
-                  * apply ett.EqTySym.
-                    eapply ett.EqTyCtxConv ; ehyp.
+                  hyp.
                 + eapply (unique_term_ctx' _ (var k)).
                   * hyp.
                   * ehyp.
@@ -288,9 +284,7 @@ Proof.
 
           - { eapply ett.CongTySubst.
               - eapply ett.CongSubstZero.
-                + eapply ett.CtxSym. hyp.
-                + eapply ett.EqTyRefl. hyp.
-                + eapply ett.EqRefl. hyp.
+                eapply ett.EqRefl. ehyp.
               - eapply ett.EqTyRefl. hyp.
             }
         }
@@ -312,37 +306,23 @@ Proof.
 
           - { eapply ett.CongTySubst.
               - eapply ett.CongSubstZero.
-                + eapply ett.CtxSym. hyp.
-                + eapply ett.EqTyRefl.
-                  apply ett.TyId ; hyp.
-                + eapply ett.EqRefl. hyp.
+                eapply ett.EqRefl. ehyp.
               - eapply ett.CongTySubst.
                 + { eapply ett.EqSubstCtxConv.
                     - eapply ett.CongSubstShift.
-                      + eapply ett.CtxSym. hyp.
-                      + eapply ett.CongSubstZero.
-                        * eapply ett.CtxSym. hyp.
-                        * eapply ett.EqTyRefl. hyp.
-                        * eapply ett.EqRefl. hyp.
-                      + eapply ett.CongId.
-                        * { eapply ett.CongTySubst.
-                            - eapply ett.CongSubstWeak.
-                              + eapply ett.CtxSym. hyp.
-                              + eapply ett.EqTyRefl. hyp.
-                            - eapply ett.EqTyRefl. hyp.
-                          }
-                        * { eapply ett.CongTermSubst.
-                            - eapply ett.CongSubstWeak.
-                              + eapply ett.CtxSym. hyp.
-                              + eapply ett.EqTyRefl. hyp.
-                            - eapply ett.EqRefl. hyp.
-                          }
-                        * eapply ett.EqRefl. eapply ett.TermVarZero. hyp.
+                      + eapply ett.SubstRefl.
+                        eapply ett.SubstZero.
+                        ehyp.
+                      + eapply ett.TyId.
+                        * eapply ett.TermSubst.
+                          -- eapply ett.SubstWeak. hyp.
+                          -- pex. exact H1.
+                        * eapply ett.TermVarZero. hyp.
                     - eapply ett.EqCtxExtend.
-                      + eapply ett.CtxRefl. hyp.
+                      + hyp.
                       + { eapply ett.EqTyTrans.
                           - eapply ett.EqTySubstId.
-                            + eapply ett.SubstZero. hyp.
+                            + eapply ett.SubstZero. ehyp.
                             + eapply ett.TermSubst.
                               * eapply ett.SubstWeak. hyp.
                               * hyp.
@@ -350,25 +330,27 @@ Proof.
                           - eapply ett.CongId.
                             + eapply ett.EqTySym.
                               eapply ptt2ett.sane_eqtype.
-                              eapply ptt_admissible.EqTyWeakZero ; hyp.
+                              eapply ptt_admissible.EqTyWeakZero ; ehyp.
                             + eapply ptt2ett.sane_eqterm.
                               { eapply ptt_admissible.EqSubstWeakZero ; try hyp.
+                                4:ehyp.
                                 - eapply ett2ptt.sane_istype.
                                   eapply ett.TySubst.
-                                  + eapply ett.SubstZero. hyp.
+                                  + eapply ett.SubstZero. ehyp.
                                   + eapply ett.TySubst.
                                     * eapply ett.SubstWeak. hyp.
                                     * hyp.
+                                - hyp.
                                 - eapply ett2ptt.sane_isterm.
                                   eapply ett.TermTyConv.
                                   + ehyp.
                                   + eapply ptt2ett.sane_eqtype.
-                                    eapply ptt_admissible.EqTyWeakZero ; hyp.
+                                    eapply ptt_admissible.EqTyWeakZero ; ehyp.
                               }
                             + { eapply ett.EqTyConv.
-                                - eapply ett.EqSubstZeroZero. hyp.
+                                - eapply ett.EqSubstZeroZero. ehyp.
                                 - eapply ptt2ett.sane_eqtype.
-                                  eapply ptt_admissible.EqTyWeakZero ; hyp.
+                                  eapply ptt_admissible.EqTyWeakZero ; ehyp.
                               }
                         }
                     - eapply ett.CtxRefl.
@@ -426,9 +408,7 @@ Proof.
 
           - { eapply ett.CongTySubst.
               - eapply ett.CongSubstZero.
-                + eapply ett.CtxSym. hyp.
-                + eapply ett.EqTyRefl. constructor. hyp.
-                + eapply ett.EqRefl. hyp.
+                eapply ett.EqRefl. ehyp.
               - eapply ett.EqTyRefl. hyp.
             }
         }
@@ -445,13 +425,18 @@ Proof.
 
    (* H1: SubstZero *)
    - { inversion_clear H2'.
-       - apply ett.CtxRefl, ett.CtxExtend ; hyp.
+       - apply ett.EqCtxExtend.
+         + hyp.
+         + apply (unique_term_ctx G u A i A0 G' H).
+           pex. apply ett.CtxSym. hyp.
        - doSubstConv unique_subst'.
      }
 
    (* H1: SubstWeak *)
-   - { inversion_clear H2'.
-       - apply ett.CtxRefl. hyp.
+   - { inversion H2'.
+       - rewrite <- H2 in H3'.
+         (* We need EqCtxExtendInversion *)
+         fail.
        - doSubstConv unique_subst'.
      }
 
