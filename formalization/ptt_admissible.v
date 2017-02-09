@@ -1645,14 +1645,13 @@ Proof.
   { magic. Unshelve. all:try strictmagic. all:magic.
     Unshelve. all:strictmagic.
   }
-  (*! CONTINUE HERE !*)
   assert (
     eqtype G
     (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0))
        (sbcomp (sbshift sbs) (sbzero (subst v sbs))))
     (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero v)) sbs)
   ).
-  { gocompsubst. Unshelve. assumption. }
+  { magic. Unshelve. all:strictmagic. }
   assert (
     eqctx
     (ctxextend G
@@ -1662,7 +1661,7 @@ Proof.
        (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero v))
           sbs))
   ).
-  { eapply EqCtxExtend ; magic. }
+  { magic. }
   assert (
     issubst (sbshift (sbcomp (sbshift sbs) (sbzero (subst v sbs))))
     (ctxextend G
@@ -1670,14 +1669,16 @@ Proof.
           sbs))
     (ctxextend (ctxextend D A) (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv ; try magic. assumption. Unshelve. all:magic. }
+  { magic. Unshelve. all:try strictmagic. all:magic.
+    Unshelve. all:strictmagic.
+  }
   assert (
     eqtype G
     (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbshift sbs))
        (sbzero (subst v sbs)))
     (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero v)) sbs)
   ).
-  { gocompsubst. }
+  { magic. }
   assert (
     eqctx
     (ctxextend G
@@ -1687,7 +1688,7 @@ Proof.
        (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero v))
           sbs))
   ).
-  { eapply EqCtxExtend ; magic. }
+  { magic. }
   assert (
     issubst (sbcomp (sbshift (sbshift sbs)) (sbshift (sbzero (subst v sbs))))
     (ctxextend G
@@ -1695,7 +1696,12 @@ Proof.
           sbs))
     (ctxextend (ctxextend D A) (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv ; try magic. assumption. Unshelve. all:magic. }
+  { magic. Unshelve. all:try strictmagic. all:try magic.
+    Unshelve. all:try strictmagic. all:try magic.
+    - fail. (* Found a new problem, yay! *)
+
+
+eapply SubstCtxConv ; try magic. assumption. Unshelve. all:magic. }
   assert (
     issubst (sbcomp (sbshift (sbshift sbs)) (sbshift (sbzero (subst v sbs))))
    (ctxextend G
