@@ -1729,12 +1729,12 @@ Proof.
     (* Now we can focus on susbtitutions. *)
     eapply CongTySubst ; try magic.
     (* We go from the rhs. *)
-    eapply mySubstSym ; try magic.
+    eapply SubstSym ; try magic.
     eapply SubstTrans ; [
       (* Then we only look on the lhs of the composition. *)
       eapply CongSubstComp ; [
         (* We exchange the substitutionss. *)
-        eapply mySubstSym ; [
+        eapply SubstSym ; [
           eapply ShiftZero ; magic
         | magic ..
         ]
@@ -1790,15 +1790,15 @@ Proof.
       ]
     | try magic ..
     ].
-    (* Now that we have a composition inside the shift, we want *)
-(*      to proceed with an exchange by using ShiftZero. *)
+    (* Now that we have a composition inside the shift, we want
+       to proceed with an exchange by using ShiftZero. *)
     eapply SubstTrans ; [
       eapply CongSubstComp ; [
         (* We leave the left unchanged. *)
         eapply SubstRefl ; magic
       | eapply EqSubstCtxConv ; [
           eapply CongSubstShift ; [
-            eapply mySubstSym ; [
+            eapply SubstSym ; [
               eapply ShiftZero ; magic
             | magic ..
             ]
@@ -1816,7 +1816,7 @@ Proof.
       eapply CongSubstComp ; [
         (* On the left we remain unchanged. *)
         eapply SubstRefl ; magic
-      | eapply mySubstSym ; [
+      | eapply SubstSym ; [
           eapply EqSubstCtxConv ; [
             eapply CompShift ; magic
           | try magic ; eassumption ..
@@ -1829,23 +1829,24 @@ Proof.
     ].
     (* Now, it's time to apply associativity guys. *)
     eapply SubstTrans ; [
-      eapply mySubstSym ; [
+      eapply SubstSym ; [
         eapply CompAssoc ; magic
       | magic ..
       ]
     | try magic ..
     ].
-    (* Now we should finally have the same structure for the substitutions *)
-(*      and thus be able to apply congruences. *)
-    (* eapply CongSubstComp ; try magic. *)
-    (* eapply CongSubstComp ; try magic ; try assumption. *)
-    (* - eapply EqSubstCtxConv ; [ *)
-    (*     eapply CongSubstShift ; magic *)
-    (*   | try magic ; assumption .. *)
-    (*   ]. *)
-    (* - eapply SubstCtxConv ; try magic. *)
-    (*   eapply EqCtxExtend ; try magic. *)
-    (*   gopushsubst. gopushsubst. eapply CongId ; try magic ; try assumption. *)
+    (* Now we should finally have the same structure for the substitutions
+       and thus be able to apply congruences. *)
+    eapply CongSubstComp ; try magic.
+    eapply CongSubstComp ; try magic ; try assumption.
+    eapply EqSubstCtxConv ; [
+      eapply CongSubstShift ; magic
+    | try magic ; assumption ..
+    ].
+    Unshelve. all:try strictmagic. all:try magic.
+    Unshelve. all:try strictmagic.
+    all:eapply TermTyConv ; [ exact H5 | .. ] ; magic.
+    (* This is all because of the asserts eveywhere. *)
   }
 
   split ; [ assumption | .. ].
