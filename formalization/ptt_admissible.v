@@ -1853,51 +1853,104 @@ Proof.
 
   (*! The typing rule. !*)
   { (* Some asserts *)
-    assert (
-      issubst
-        (sbshift (sbshift sbs))
-        (ctxextend
-           (ctxextend G (Subst A sbs))
-           (Id (Subst (Subst A sbs) sbweak) (subst (subst u sbs) sbweak) (var 0))
-        )
-        (ctxextend
-           (ctxextend D A)
-        (Id (Subst A sbweak) (subst u sbweak) (var 0)))
-    ).
-    { eapply SubstCtxConv ; try magic. magic. }
-    assert (eqtype D (Subst (Subst A sbweak) (sbzero u)) A).
-    { eapply EqTySym ; [
-        eapply EqTyWeakZero ; magic
-      | magic ..
-      ].
-    }
-    assert (
-      eqterm D (subst (subst u sbweak) (sbzero u)) u
-             (Subst (Subst A sbweak) (sbzero u))
-    ).
-    { eapply EqSubstWeakZero ; magic. }
-    assert (
-      eqtype
-        D
-        (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero u))
-        (Id A u u)
-    ).
-    { gopushsubst. }
-    assert (
-      issubst (sbshift (sbzero u))
-              (ctxextend D (Id A u u))
-              (ctxextend (ctxextend D A)
-                         (Id (Subst A sbweak) (subst u sbweak) (var 0)))
-    ).
-    { eapply SubstCtxConv ; try magic.
-      eapply EqCtxExtend ; magic.
-    }
+    (* assert ( *)
+    (*   issubst *)
+    (*     (sbshift (sbshift sbs)) *)
+    (*     (ctxextend *)
+    (*        (ctxextend G (Subst A sbs)) *)
+    (*        (Id (Subst (Subst A sbs) sbweak) (subst (subst u sbs) sbweak) (var 0)) *)
+    (*     ) *)
+    (*     (ctxextend *)
+    (*        (ctxextend D A) *)
+    (*     (Id (Subst A sbweak) (subst u sbweak) (var 0))) *)
+    (* ). *)
+    (* { eapply SubstCtxConv ; try magic. magic. } *)
+    (* assert (eqtype D (Subst (Subst A sbweak) (sbzero u)) A). *)
+    (* { eapply EqTySym ; [ *)
+    (*     eapply EqTyWeakZero ; magic *)
+    (*   | magic .. *)
+    (*   ]. *)
+    (* } *)
+    (* assert ( *)
+    (*   eqterm D (subst (subst u sbweak) (sbzero u)) u *)
+    (*          (Subst (Subst A sbweak) (sbzero u)) *)
+    (* ). *)
+    (* { eapply EqSubstWeakZero ; magic. } *)
+    (* assert ( *)
+    (*   eqtype *)
+    (*     D *)
+    (*     (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero u)) *)
+    (*     (Id A u u) *)
+    (* ). *)
+    (* { gopushsubst. } *)
+    (* assert ( *)
+    (*   issubst (sbshift (sbzero u)) *)
+    (*           (ctxextend D (Id A u u)) *)
+    (*           (ctxextend (ctxextend D A) *)
+    (*                      (Id (Subst A sbweak) (subst u sbweak) (var 0))) *)
+    (* ). *)
+    (* { eapply SubstCtxConv ; try magic. *)
+    (*   eapply EqCtxExtend ; magic. *)
+    (* } *)
     (* Now the proof *)
     eapply TermTyConv ; [
       eapply TermJ ; try magic
     | try magic ..
     ].
+    - eapply TySubst.
+      + eapply SubstCtxConv.
+        * magic.
+        * eapply EqCtxExtend.
+          -- magic.
+          -- magic.
+          -- magic.
+          -- magic.
+          -- magic.
+          -- pushsubst1.
+             ++ magic.
+             ++ magic.
+             ++ magic.
+             ++ magic.
+             ++ magic.
+             ++ magic.
+             ++ eapply @EqTyTrans
+                with (B := Id (Subst (Subst A sbweak) (sbshift sbs))
+                             (subst (subst u sbweak) (sbshift sbs))
+                             (subst (var 0) (sbshift sbs))
+                     ) ; [
+                  eapply EqTyRefl
+                | ..
+                ] ; magic.
+             ++ magic.
+             ++ magic.
+             ++ magic.
+             ++ magic.
+        * eapply CtxRefl ; magic.
+        * magic.
+        * magic.
+        * magic.
+        * magic.
+      + magic.
+      + magic.
+      + magic.
     - eapply TermTyConv ; [
+        eapply TermSubst
+      | ..
+      ].
+      + magic.
+      + exact H7.
+      + magic.
+      + magic.
+      + magic.
+      + (* We have the first assert but we can't use it... *)
+        (* We could leave it at that and try to apply from ptt_sanity *)
+        (* Or we could remove the generality since we now only use JTyConv
+           once! *)
+        fail.
+
+
+
+eapply TermTyConv ; [
         eapply TermSubst ; try magic
       | try magic ..
       ].
