@@ -1698,17 +1698,15 @@ Proof.
   ).
   { magic. Unshelve. all:try strictmagic. all:try magic.
     Unshelve. all:try strictmagic. all:try magic.
-    - fail. (* Found a new problem, yay! *)
-
-
-eapply SubstCtxConv ; try magic. assumption. Unshelve. all:magic. }
+    Unshelve. all:strictmagic.
+  }
   assert (
     issubst (sbcomp (sbshift (sbshift sbs)) (sbshift (sbzero (subst v sbs))))
    (ctxextend G
       (Subst (Subst (Id (Subst A sbweak) (subst u sbweak) (var 0)) (sbzero v)) sbs))
    (ctxextend (ctxextend D A) (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv ; try magic. assumption. Unshelve. all:magic. }
+  { magic. }
   (*! Now let's proceed with the proof. !*)
   (* We prove the left branch as an assumption to reuse it in the right *)
 (*      branch. *)

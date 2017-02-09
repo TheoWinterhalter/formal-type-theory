@@ -431,6 +431,30 @@ Ltac simplify :=
       lazymatch sbs with
       (* This case is unsatisfying... We would like to linearize substitutions
          when they are composed. *)
+      | sbcomp (sbcomp sbweak (sbcomp (sbzero ?u) ?sbs)) ?sbt =>
+        eapply EqTyTrans ; [
+          eapply CongTySubst ; [
+            eapply CongSubstComp ; [
+              eapply SubstRefl
+            | eapply SubstTrans ; [
+                eapply CompAssoc
+              | eapply SubstTrans ; [
+                  eapply CongSubstComp ; [
+                    eapply SubstRefl
+                  | eapply WeakZero
+                  | ..
+                  ]
+                | eapply CompIdLeft
+                | ..
+                ]
+              | ..
+              ]
+            | ..
+            ]
+          | ..
+          ]
+        | ..
+        ]
       | sbcomp ?sbt (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs))) =>
         eapply EqTyTrans ; [
           eapply CongTySubst ; [
@@ -1033,7 +1057,7 @@ Ltac magicn n try shelf tysym :=
         | ..
         ] ; magicn n try shelf true
       )
-      else  G (Subst B' (sbcomp sbs sbweak))
+      else eqtype_subst G (Subst B' (sbcomp sbs sbweak))
                         (Subst A (sbshift sbs))
                         magicn n try shelf tysym
     | |- eqtype ?G (Subst ?A (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs))))
