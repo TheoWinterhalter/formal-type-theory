@@ -1004,7 +1004,7 @@ Ltac magicn n try shelf tysym debug :=
       | myfail debug
       ] ; magicn n try shelf true debug
     | |- eqsubst (sbcomp ?sbs (sbweak _ _))
-                (sbcomp sbweak (sbshift _ _ ?sbs)) ?G ?D =>
+                (sbcomp (sbweak _ _) (sbshift _ _ ?sbs)) ?G ?D =>
       first [
         eapply SubstSym ; [
           eapply WeakNat

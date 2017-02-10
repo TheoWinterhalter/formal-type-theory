@@ -14,10 +14,7 @@ Lemma EqTyWeakNat :
            (Subst (Subst B (sbweak D A)) (sbshift G A sbs))
            (Subst (Subst B sbs) (sbweak G (Subst A sbs))).
 Proof.
-  intros. fail. (* I want to solve it using magic. *)
-
- gocompsubst. gocompsubst.
-  Unshelve. assumption.
+  intros. magic.
 Defined.
 
 
@@ -29,15 +26,7 @@ Lemma compWeakZero :
     isterm G u B ->
     eqtype G A (Subst A (sbcomp (sbweak G B) (sbzero G B u))).
 Proof.
-  intros.
-  eapply EqTySym ; try magic.
-  eapply EqTyTrans ; [
-    eapply CongTySubst ; [
-      eapply WeakZero ; magic
-    | magic ..
-    ]
-  | magic ..
-  ].
+  intros. magic.
 Defined.
 
 Lemma EqTyWeakZero :
@@ -48,8 +37,7 @@ Lemma EqTyWeakZero :
     isterm G u B ->
     eqtype G A (Subst (Subst A (sbweak G B)) (sbzero G B u)).
 Proof.
-  intros.
-  gocompsubst. eapply EqTySym ; try magic. apply compWeakZero ; magic.
+  intros. magic.
 Defined.
 
 Lemma EqTyShiftZero :
@@ -65,8 +53,7 @@ Lemma EqTyShiftZero :
       (Subst (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs)))
       (Subst (Subst B (sbzero D A v)) sbs).
 Proof.
-  intros. gocompsubst. gocompsubst.
-  Unshelve. magic.
+  intros. magic.
 Defined.
 
 Lemma EqTyCongZero :
@@ -85,7 +72,10 @@ Lemma EqTyCongZero :
            (Subst A2 (sbzero G A1 u1))
            (Subst B2 (sbzero G B1 u2)).
 Proof.
-  intros.
+  intros. (* magic. *)
+
+  fail.
+
   assert (isterm G u2 A1).
   { eapply TermTyConv ; [
       eassumption
