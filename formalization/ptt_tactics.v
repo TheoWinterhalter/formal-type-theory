@@ -775,10 +775,12 @@ Ltac magicn n try shelf tysym debug :=
       ] ; magicn n try shelf true debug
     | |- issubst (sbweak _ _) ?G1 ?G2 =>
       first [
-        eapply SubstWeak ; magicn n try shelf true debug
+        eapply SubstWeak
       | assumption
-      | cando shelf ; shelve
-      ]
+      (* | cando shelf ; shelve *) (* We probably don't need to do it anymore. *)
+      | eapply SubstCtxConv ; [ eapply SubstWeak | .. ]
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- issubst (sbshift _ _ ?sbs) ?G1 ?G2 =>
       first [
         eapply SubstShift
