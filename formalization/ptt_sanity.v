@@ -2,7 +2,7 @@
 
 Require Import syntax.
 Require Import ptt.
-Require Import myptt ptt_tactics ptt_admissible.
+Require Import ptt_tactics ptt_admissible.
 
 Definition sane_issubst sbs G D :
   issubst sbs G D -> isctx G * isctx D.

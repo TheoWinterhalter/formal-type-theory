@@ -1,6 +1,6 @@
 (* Admissibile ptt rules. *)
 
-Require Import syntax ptt myptt ptt_tactics.
+Require Import syntax ptt ptt_tactics.
 
 (* Some preliminary lemmata *)
 Lemma EqTyWeakNat :
@@ -14,7 +14,9 @@ Lemma EqTyWeakNat :
            (Subst (Subst B (sbweak D A)) (sbshift G A sbs))
            (Subst (Subst B sbs) (sbweak G (Subst A sbs))).
 Proof.
-  intros. gocompsubst. gocompsubst.
+  intros. fail. (* I want to solve it using magic. *)
+
+ gocompsubst. gocompsubst.
   Unshelve. assumption.
 Defined.
 
