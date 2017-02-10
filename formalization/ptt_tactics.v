@@ -881,7 +881,7 @@ Ltac magicn n try shelf tysym debug :=
       | eapply TermTyConv ; [ eapply TermVarZero | .. ]
       | myfail debug
       ] ; magicn n try shelf true debug
-    | |- isterm (ctxextend ?G ?B) (var (S ?k)) (Subst ?A sbweak) =>
+    | |- isterm (ctxextend ?G ?B) (var (S ?k)) ?A =>
       first [
         eapply TermVarSucc
       | myfail debug
