@@ -1046,17 +1046,16 @@ Ltac magicn n try shelf tysym debug :=
         eapply ShiftZero
       | myfail debug
       ] ; magicn n try shelf true debug
-    (* TODO: Make it work again if necessary! *)
-    (* | |- eqsubst (sbcomp (sbshift _ _ ?sbs) (sbzero _ _ ?v)) *)
-    (*             (sbcomp (sbzero _ _ ?u) ?sbs) ?G ?D => *)
-    (*   first [ *)
-    (*     eapply @SubstTrans *)
-    (*     with (sb2 := sbcomp (sbshift sbs) (sbzero (subst u sbs))) ; [ *)
-    (*       eapply CongSubstComp *)
-    (*     | .. *)
-    (*     ] *)
-    (*   | myfail debug *)
-    (*   ] ; magicn n try shelf true debug *)
+    | |- eqsubst (sbcomp (sbshift ?G1 ?A1 ?sbs) (sbzero ?G2 ?A2 ?v))
+                (sbcomp (sbzero _ _ ?u) ?sbs) ?G ?D =>
+      first [
+        eapply @SubstTrans
+        with (sb2 := sbcomp (sbshift G1 A1 sbs) (sbzero G2 A2 (subst u sbs))) ; [
+          eapply CongSubstComp
+        | ..
+        ]
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst (sbcomp (sbzero _ _ ?u) ?sbs)
                 (sbcomp (sbshift _ _ ?sbs) (sbzero _ _ (subst ?u ?sbs))) ?G ?D =>
       first [
@@ -1185,24 +1184,29 @@ Ltac magicn n try shelf tysym debug :=
     (* It feels like we should improve the case where is_var A and
        not is_var sbs below. *)
     (* TODO: Make it work again! *)
-    (* | |- eqtype ?G (Subst ?B' (sbcomp ?sbs (sbweak _ _))) *)
-    (*            (Subst ?A (sbshift _ _ ?sbs)) => *)
-    (*   tryif (is_evar A ; is_var B') *)
-    (*   then ( *)
-    (*     first [ *)
-    (*       eapply @EqTyTrans with (B := Subst (Subst B' sbweak) (sbshift sbs)) ; [ *)
-    (*         idtac *)
-    (*       | eapply EqTyRefl *)
-    (*       | .. *)
-    (*       ] *)
-    (*     | myfail debug *)
-    (*     ] ; magicn n try shelf true debug *)
-    (*   ) *)
-    (*   else eqtype_subst G (Subst B' (sbcomp sbs sbweak)) *)
-    (*                     (Subst A (sbshift sbs)) *)
-    (*                     magicn n try shelf tysym debug *)
-    (* | |- eqtype ?G (Subst ?A (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs)))) *)
-    (*               (Subst ?B' ?sbs) => *)
+    (* Do I have the right to use [?D1]? Did I choose correctly? *)
+    | |- eqtype ?G (Subst ?B' (sbcomp ?sbs (sbweak ?G1 (Subst ?A1 ?sbs))))
+               (Subst ?A (sbshift ?G2 ?A2 ?sbs)) =>
+      tryif (is_evar A ; is_var B')
+      then (
+        first [
+          eapply @EqTyTrans
+          with (B := Subst (Subst B' (sbweak ?D1 A2)) (sbshift G1 A2 sbs)) ; [
+            idtac
+          | eapply EqTyRefl
+          | ..
+          ]
+        | myfail debug
+        ] ; magicn n try shelf true debug
+      )
+      else eqtype_subst G (Subst B' (sbcomp sbs (sbweak A1 sbs)))
+                        (Subst A (sbshift G2 A2 sbs))
+                        magicn n try shelf tysym debug
+    (* | |- eqtype ?G *)
+    (*            (Subst ?A *)
+    (*                   (sbcomp (sbshift ?G1 ?A1 ?sbs) *)
+    (*                           (sbzero ?G2 ?A2 (subst ?u ?sbs)))) *)
+    (*            (Subst ?B' ?sbs) => *)
     (*   tryif (is_evar A ; is_var B') *)
     (*   then ( *)
     (*     first [ *)

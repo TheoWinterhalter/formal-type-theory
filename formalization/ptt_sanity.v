@@ -608,7 +608,11 @@ Proof.
 
   (* EqSubstShiftSucc *)
   - { split.
-      - { first [
+      - { magic.
+
+          fail.
+
+first [
               eapply TermSubst
             | eapply TermTyConv ; [
                 eapply TermSubst
