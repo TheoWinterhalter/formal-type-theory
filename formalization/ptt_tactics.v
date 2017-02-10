@@ -334,7 +334,13 @@ Ltac pushsubst1 :=
     | ..
     ]
   | |- eqterm ?G (subst (var 0) (sbzero ?D ?B ?u)) ?v ?A =>
-    eapply EqTrans ; [ eapply EqSubstZeroZero | .. ]
+    first [
+      eapply EqTrans ; [ eapply EqSubstZeroZero | .. ]
+    | eapply EqTrans ; [
+        eapply EqTyConv ; [ eapply EqSubstZeroZero | .. ]
+      | ..
+      ]
+    ]
   | |- eqterm ?G ?u (subst (var 0) (sbzero ?D ?B ?v)) ?A =>
     eapply EqSym ; [ eapply EqTrans ; [ eapply EqSubstZeroZero | .. ] | .. ]
   | |- eqterm ?G (subst (var 0) (sbshift ?D ?B ?sbs)) ?v ?A =>

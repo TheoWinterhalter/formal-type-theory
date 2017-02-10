@@ -102,10 +102,7 @@ Proof.
   { now apply TyId. }
 
   (* TermJ *)
-  { magic. Unshelve. all:try strictmagic.
-
-    fail.
-  }
+  { magic. Unshelve. all:strictmagic. }
 
   (* TermExfalso *)
   { assumption. }
