@@ -608,29 +608,10 @@ Proof.
 
   (* EqSubstShiftSucc *)
   - { split.
-      - { (* magic. *)
+      - { magic.
+          Unshelve.
+          fail.
 
-          (* fail. *)
-
-first [
-              eapply TermSubst
-            | eapply TermTyConv ; [
-                eapply TermSubst
-              | ..
-              ]
-            | myfail debug
-            ].
-          - magic.
-          - magic.
-          - magic.
-          - magic.
-          - magic.
-          - (* instantiate (1 := Subst _ _). *)
-            match goal with
-            | |- eqtype _ (Subst ?A _) _ =>
-              instantiate (1 := (Subst B (sbweak _ _)))
-            end ; magic.
-            (* Might have found a solution! *)
 
 
 fail. (* It might be time to put back those TODO to work *)

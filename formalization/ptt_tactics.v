@@ -1190,12 +1190,7 @@ Ltac magicn n try shelf tysym debug :=
       tryif (is_evar A ; is_var B')
       then (
         first [
-          eapply @EqTyTrans
-          with (B := Subst (Subst B' (sbweak ?D1 A2)) (sbshift G1 A2 sbs)) ; [
-            idtac
-          | eapply EqTyRefl
-          | ..
-          ]
+          instantiate (1 := Subst B' (sbweak _ _))
         | myfail debug
         ] ; magicn n try shelf true debug
       )
