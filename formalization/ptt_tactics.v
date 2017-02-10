@@ -674,14 +674,17 @@ Ltac check_goal :=
   end.
 
 (* My own tactic to fail with the goal information. *)
-Ltac myfail :=
+Ltac myfail debug :=
   lazymatch goal with
-  | |- ?G => fail 1000 "Cannot solve subgoal " G
+  | |- ?G =>
+    tryif (cando debug)
+    then fail 1000 "Cannot solve subgoal " G
+    else fail "Cannot solve subgoal " G
   | _ => fail "This shouldn't happen!"
   end.
 
 (* Factorizing some cases *)
-Ltac eqtype_subst G A sbs B k n try shelf tysym :=
+Ltac eqtype_subst G A sbs B k n try shelf tysym debug :=
   tryif (is_var A)
   then (
     tryif (is_var sbs)
@@ -694,40 +697,43 @@ Ltac eqtype_subst G A sbs B k n try shelf tysym :=
           then first [
             eapply CongTySubst
           | eassumption
-          | myfail
-          ] ; k n try shelf true
+          | myfail debug
+          ] ; k n try shelf true debug
           else first [
             eapply EqTySym ; [ simplify | .. ]
           | eapply CongTySubst
-          | myfail
-          ] ; k n try shelf true
+          | myfail debug
+          ] ; k n try shelf true debug
         )
-        else pushsubst1 ; k n try shelf true
+        else first [
+          pushsubst1
+        | myfail debug
+        ] ; k n try shelf true debug
       | _ =>
         first [
           eapply CongTySubst
         | eassumption
-        | myfail
-        ] ; k n try shelf true
+        | myfail debug
+        ] ; k n try shelf true debug
       end
     )
     else first [
       simplify
     | eapply CongTySubst
-    | myfail
-    ] ; k n try shelf true
+    | myfail debug
+    ] ; k n try shelf true debug
   )
   else first [
     pushsubst1
   | cando tysym ; eapply EqTySym ; [ simplify | .. ]
-  | myfail
-  ] ; k n try shelf true.
+  | myfail debug
+  ] ; k n try shelf true debug.
 
 (* Magic Tactic *)
 (* It is basically a type checker that doesn't do the smart things,
    namely type and context conversions (and it doesn't rely on reflection
    obviously). *)
-Ltac magicn n try shelf tysym :=
+Ltac magicn n try shelf tysym debug :=
   (* We only ever apply magic to suitable goals *)
   check_goal ;
   first [
@@ -749,7 +755,7 @@ Ltac magicn n try shelf tysym :=
     | |- isctx ctxempty =>
       apply CtxEmpty
     | |- isctx (ctxextend ?G ?A) =>
-      eapply CtxExtend ; magicn n try shelf true
+      eapply CtxExtend ; magicn n try shelf true debug
     | |- isctx ?G =>
       (* And not eassumption so we don't select some random context. *)
       first [
@@ -759,74 +765,74 @@ Ltac magicn n try shelf tysym :=
     (*! Substitutions !*)
     | |- issubst (sbzero ?u) ?G1 ?G2 =>
       first [
-          eapply SubstZero
-        | eassumption
-        | myfail
-        ] ; magicn n try shelf true
+        eapply SubstZero
+      | eassumption
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- issubst sbweak ?G1 ?G2 =>
       first [
-          eapply SubstWeak ; magicn n try shelf true
-        | assumption
-        | cando shelf ; shelve
-        ]
+        eapply SubstWeak ; magicn n try shelf true debug
+      | assumption
+      | cando shelf ; shelve
+      ]
     | |- issubst (sbshift ?sbs) ?G1 ?G2 =>
       first [
-          eapply SubstShift
-        | eassumption
-        | eapply SubstCtxConv ; [ eapply SubstShift | .. ]
-        | myfail
-        ] ; magicn n try shelf true
+        eapply SubstShift
+      | eassumption
+      | eapply SubstCtxConv ; [ eapply SubstShift | .. ]
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- issubst (sbid) ?G1 ?G2 =>
       first [
-          eapply SubstId
-        | eassumption
-        | myfail
-        ] ; magicn n try shelf true
+        eapply SubstId
+      | eassumption
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- issubst (sbcomp ?sbt ?sbs) ?G1 ?G2 =>
       first [
           eapply SubstComp
         | eassumption
-        | myfail
-        ] ; magicn n try shelf true
+        | myfail debug
+        ] ; magicn n try shelf true debug
     | |- issubst ?sbs ?G1 ?G2 =>
       tryif (is_var sbs) then (
         first [
           eassumption
         | eapply SubstCtxConv
-        | myfail
-        ] ; magicn n try shelf tysym
+        | myfail debug
+        ] ; magicn n try shelf tysym debug
       ) else (cando shelf ; shelve)
     (*! Types !*)
     | |- istype ?G (Subst ?A ?sbs) =>
       first [
         eapply TySubst
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- istype ?G (Prod ?A ?B) =>
       first [
         eapply TyProd
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- istype ?G (Id ?A ?u ?v) =>
       first [
         eapply TyId
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- istype ?G Empty =>
       first [
         eapply TyEmpty
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- istype ?G Unit =>
       first [
         eapply TyUnit
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- istype ?G Bool =>
       first [
         eapply TyBool
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- istype ?G ?A =>
       tryif (is_var A)
       then first [
@@ -835,8 +841,8 @@ Ltac magicn n try shelf tysym :=
           eassumption
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
       else first [
         assumption
       | cando shelf ; shelve
@@ -849,19 +855,19 @@ Ltac magicn n try shelf tysym :=
           eapply TermSubst
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- isterm (ctxextend ?G ?A) (var 0) ?T =>
       first [
         eapply TermVarZero
       | eapply TermTyConv ; [ eapply TermVarZero | .. ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- isterm (ctxextend ?G ?B) (var (S ?k)) (Subst ?A sbweak) =>
       first [
         eapply TermVarSucc
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- isterm ?G (lam ?A ?B ?u) ?C =>
       first [
         eapply TermAbs
@@ -869,31 +875,31 @@ Ltac magicn n try shelf tysym :=
           eapply TermAbs
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- isterm ?G (app ?u ?A ?B ?v) ?C =>
       first [
         eapply TermApp
       | eapply TermTyConv ; [ eapply TermApp | .. ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- isterm ?G (refl ?A ?u) ?B =>
       first [
         eapply TermRefl
       | eapply TermTyConv ; [ eapply TermRefl | .. ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- isterm ?G (j ?A ?u ?C ?w ?v ?p) ?T =>
       first [
         eapply TermJ
       | eapply TermTyConv ; [ eapply TermJ | .. ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- isterm ?G (exfalso ?A ?u) _ =>
       first [
         eapply TermExfalso
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- isterm ?G unit ?A =>
       first [
         eapply TermUnit
@@ -901,8 +907,8 @@ Ltac magicn n try shelf tysym :=
           eapply TermUnit
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- isterm ?G true ?A =>
       first [
         eapply TermTrue
@@ -910,8 +916,8 @@ Ltac magicn n try shelf tysym :=
           eapply TermTrue
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- isterm ?G false ?A =>
       first [
         eapply TermFalse
@@ -919,14 +925,14 @@ Ltac magicn n try shelf tysym :=
           eapply TermFalse
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- isterm ?G (cond ?C ?u ?v ?w) ?T =>
       first [
         eapply TermCond
       | eapply TermTyConv ; [ eapply TermCond | .. ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     (* This might go away some day. *)
     | [ H : isterm ?G ?v ?A, H' : isterm ?G ?v ?B |- isterm ?G ?v ?C ] =>
       (* We have several options so we don't take any risk. *)
@@ -960,8 +966,8 @@ Ltac magicn n try shelf tysym :=
             ]
           | ..
           ]
-        | myfail
-        ] ; magicn n try shelf true
+        | myfail debug
+        ] ; magicn n try shelf true debug
         else cando shelf ; shelve
       )
     (*! Equality of contexts !*)
@@ -974,52 +980,52 @@ Ltac magicn n try shelf tysym :=
           eapply EqCtxExtend
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqctx ?G ?G =>
       first [
         apply CtxRefl
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqctx ?G ?D =>
       first [
         assumption
       | apply CtxSym ; [ assumption | .. ]
       | cando shelf ; shelve
-      ] ; magicn n try shelf true
+      ] ; magicn n try shelf true debug
     (*! Equality of substitutions !*)
     | |- eqsubst (sbcomp sbweak (sbshift ?sbs)) (sbcomp ?sbs sbweak) ?G ?D =>
       first [
         eapply WeakNat
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst (sbcomp ?sbs sbweak) (sbcomp sbweak (sbshift ?sbs)) ?G ?D =>
       first [
         eapply SubstSym ; [
           eapply WeakNat
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst (sbcomp sbweak (sbzero ?u)) sbid ?G ?D =>
       first [
         eapply WeakZero
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst sbid (sbcomp sbweak (sbzero ?u)) ?G ?D =>
       first [
         eapply SubstSym ; [
           eapply WeakZero
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs)))
                 (sbcomp (sbzero ?u) ?sbs) ?G ?D =>
       first [
         eapply ShiftZero
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst (sbcomp (sbshift ?sbs) (sbzero ?v))
                 (sbcomp (sbzero ?u) ?sbs) ?G ?D =>
       first [
@@ -1028,8 +1034,8 @@ Ltac magicn n try shelf tysym :=
           eapply CongSubstComp
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst (sbcomp (sbzero ?u) ?sbs)
                 (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs))) ?G ?D =>
       first [
@@ -1037,18 +1043,18 @@ Ltac magicn n try shelf tysym :=
           eapply ShiftZero
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst (sbzero ?u1) (sbzero ?u2) ?D ?E =>
       first [
         eapply CongSubstZero
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst sbweak sbweak ?D ?E =>
       first [
-        eapply CongSubstWeak ; magicn n try shelf true
-      | myfail
-      ] ; magicn n try shelf true
+        eapply CongSubstWeak ; magicn n try shelf true debug
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst (sbshift ?sbs1) (sbshift ?sbs2) ?D ?E =>
       first [
         eapply CongSubstShift
@@ -1056,8 +1062,8 @@ Ltac magicn n try shelf tysym :=
           eapply CongSubstShift
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     (* Basically copying stuff over from simplify... There should be a way
        to avoid that. *)
     | |- eqsubst (sbcomp sbweak (sbcomp (sbzero ?u) ?sbs)) ?sbt ?G ?D =>
@@ -1074,8 +1080,8 @@ Ltac magicn n try shelf tysym :=
           ]
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst (sbcomp (sbcomp sbweak (sbzero ?u)) ?sbs) ?sbt ?G ?D =>
       first [
         eapply SubstTrans ; [
@@ -1086,8 +1092,8 @@ Ltac magicn n try shelf tysym :=
           ]
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst (sbcomp ?sbs (sbcomp sbweak (sbzero ?u))) ?sbt ?G ?D =>
       first [
         eapply SubstTrans ; [
@@ -1097,36 +1103,36 @@ Ltac magicn n try shelf tysym :=
           ]
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst (sbcomp sbid ?sbs) ?sbt ?G ?D =>
       first [
         eapply SubstTrans ; [
           eapply CompIdLeft
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst (sbcomp ?sbs sbid) ?sbt ?G ?D =>
       first [
         eapply SubstTrans ; [
           eapply CompIdRight
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     (* This is a dangerous case. We need to take care of everything involving
        composition before this one. *)
     | |- eqsubst (sbcomp ?sb1 ?sb2) (sbcomp ?sb3 ?sb4) ?G ?D =>
       first [
         eapply CongSubstComp
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst ?sbs ?sbs ?G ?D =>
       first [
         eapply SubstRefl
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqsubst ?sbs ?sbt ?G ?D =>
       tryif (is_var sbs ; is_var sbt)
       then first [
@@ -1137,13 +1143,13 @@ Ltac magicn n try shelf tysym :=
           eapply EqSubstCtxConv ; [ eassumption | .. ]
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
       (* Again we cheat a bit a repeat the _ case here. *)
       else (
         match eval compute in n with
         | 0 => assumption
-        | S ?n => assumption || (constructor ; magicn n try shelf true)
+        | S ?n => assumption || (constructor ; magicn n try shelf true debug)
         end
       )
     (* We should probably avoid using congruence on composition. *)
@@ -1152,13 +1158,13 @@ Ltac magicn n try shelf tysym :=
     | |- eqtype ?G (Subst (Subst ?A ?sbs) ?sbt) ?B =>
       first [
         compsubst1
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqtype ?G ?A (Subst (Subst ?B ?sbs) ?sbt) =>
       first [
         compsubst1
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     (* A weird case perhaps. *)
     (* It feels like we should improve the case where is_var A and
        not is_var sbs below. *)
@@ -1171,12 +1177,12 @@ Ltac magicn n try shelf tysym :=
           | eapply EqTyRefl
           | ..
           ]
-        | myfail
-        ] ; magicn n try shelf true
+        | myfail debug
+        ] ; magicn n try shelf true debug
       )
       else eqtype_subst G (Subst B' (sbcomp sbs sbweak))
                         (Subst A (sbshift sbs))
-                        magicn n try shelf tysym
+                        magicn n try shelf tysym debug
     | |- eqtype ?G (Subst ?A (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs))))
                   (Subst ?B' ?sbs) =>
       tryif (is_evar A ; is_var B')
@@ -1188,36 +1194,36 @@ Ltac magicn n try shelf tysym :=
             eapply EqTyRefl
           | ..
           ]
-        | myfail
-        ] ; magicn n try shelf true
+        | myfail debug
+        ] ; magicn n try shelf true debug
       )
       else eqtype_subst G A (sbcomp (sbshift sbs) (sbzero (subst u sbs)))
                         (Subst B' sbs)
-                        magicn n try shelf tysym
+                        magicn n try shelf tysym debug
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)
-      eqtype_subst G A sbs B magicn n try shelf tysym
+      eqtype_subst G A sbs B magicn n try shelf tysym debug
     | |- eqtype ?G ?A (Subst ?B ?sbs) =>
       (* We know how to deal with the symmetric case. *)
       cando tysym ; eapply EqTySym ; [
-        magicn n try shelf false
-      | magicn n try shelf true ..
+        magicn n try shelf false debug
+      | magicn n try shelf true debug ..
       ]
     | |- eqtype ?G (Id ?A ?u ?v) (Id ?B ?w ?z) =>
       first [
         eapply CongId
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqtype ?G (Prod ?A ?B) (Prod ?C ?D) =>
       first [
         eapply CongProd
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqtype ?G Bool Bool =>
       first [
         eapply EqTyRefl
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqtype ?G ?A ?B =>
       (* We only want to catch the variable case, so we will copy the _ *)
       (* case here (it's a lazymatch). *)
@@ -1234,21 +1240,21 @@ Ltac magicn n try shelf tysym :=
             ]
           | ..
           ]
-        | myfail
-        ] ; magicn n try shelf true
+        | myfail debug
+        ] ; magicn n try shelf true debug
       )
       else (
         match eval compute in n with
         | 0 => assumption
-        | S ?n => assumption || (constructor ; magicn n try shelf true)
+        | S ?n => assumption || (constructor ; magicn n try shelf true debug)
         end
       )
     (* To be continued... *)
     (*! Equality of terms !*)
     | |- eqterm ?G (subst (subst ?u ?sbs) ?sbt) ?v ?A =>
-      compsubst1 ; magicn n try shelf true
+      compsubst1 ; magicn n try shelf true debug
     | |- eqterm ?G ?u (subst (subst ?v ?sbs) ?sbt) ?A =>
-      compsubst1 ; magicn n try shelf true
+      compsubst1 ; magicn n try shelf true debug
     | |- eqterm ?G (subst ?u ?sbs) ?v ?A =>
       (* Maybe some type conversion somewhere. *)
       tryif (is_var u)
@@ -1267,8 +1273,8 @@ Ltac magicn n try shelf tysym :=
                 | ..
                 ]
               | eassumption
-              | myfail
-              ] ; magicn n try shelf true
+              | myfail debug
+              ] ; magicn n try shelf true debug
               else first [
                 eapply EqSym ; [ simplify | .. ]
               | eapply CongTermSubst
@@ -1276,14 +1282,14 @@ Ltac magicn n try shelf tysym :=
                   eapply CongTermSubst
                 | ..
                 ]
-              | myfail
-              ] ; magicn n try shelf true
+              | myfail debug
+              ] ; magicn n try shelf true debug
             )
             else first [
               pushsubst1
             | eapply EqSym ; [ pushsubst1 | .. ]
             | cando shelf ; shelve
-            ] ; magicn n try shelf true
+            ] ; magicn n try shelf true debug
           | _ =>
             first [
               eapply CongTermSubst
@@ -1292,8 +1298,8 @@ Ltac magicn n try shelf tysym :=
               | ..
               ]
             | eassumption
-            | myfail
-            ] ; magicn n try shelf true
+            | myfail debug
+            ] ; magicn n try shelf true debug
           end
         )
         else first [
@@ -1303,19 +1309,19 @@ Ltac magicn n try shelf tysym :=
             eapply CongTermSubst
           | ..
           ]
-        | myfail
-        ] ; magicn n try shelf true
+        | myfail debug
+        ] ; magicn n try shelf true debug
       )
       else first [
-        pushsubst1 ; magicn n try shelf true
+        pushsubst1 ; magicn n try shelf true debug
       | cando shelf ; shelve
       ]
     | |- eqterm ?G ?u (subst ?v ?sbs) ?A =>
       (* We know how to deal with the symmetric case. *)
       (* We use the token tysym, maybe we should have some dedicated tmsym... *)
       cando tysym ; eapply EqSym ; [
-        magicn n try shelf false
-      | magicn n try shelf true ..
+        magicn n try shelf false debug
+      | magicn n try shelf true debug ..
       ]
     | |- eqterm ?G ?u ?v ?A =>
       tryif (is_var u ; is_var v)
@@ -1331,13 +1337,13 @@ Ltac magicn n try shelf tysym :=
           eapply EqSym ; [ eassumption | .. ]
         | ..
         ]
-      | myfail
-      ] ; magicn n try shelf true
+      | myfail debug
+      ] ; magicn n try shelf true debug
       else (
           (* As always, this a temporary measure *)
         match eval compute in n with
         | 0 => assumption
-        | S ?n => assumption || (constructor ; magicn n try shelf true)
+        | S ?n => assumption || (constructor ; magicn n try shelf true debug)
         end
       )
     (* To be continued... *)
@@ -1347,19 +1353,19 @@ Ltac magicn n try shelf tysym :=
     | _ =>
       match eval compute in n with
       | 0 => assumption
-      | S ?n => assumption || (constructor ; magicn n try shelf true)
+      | S ?n => assumption || (constructor ; magicn n try shelf true debug)
       end
     end
   | cando try
   ].
 
-Ltac magic2 := magicn (S (S 0)) false true true.
-Ltac magic3 := magicn (S (S (S 0))) false true true.
-Ltac magic4 := magicn (S (S (S (S 0)))) false true true.
-Ltac magic5 := magicn (S (S (S (S (S 0))))) false true true.
+Ltac magic2 := magicn (S (S 0)) false true true true.
+Ltac magic3 := magicn (S (S (S 0))) false true true true.
+Ltac magic4 := magicn (S (S (S (S 0)))) false true true true.
+Ltac magic5 := magicn (S (S (S (S (S 0))))) false true true true.
 Ltac magic := magic2.
-Ltac trymagic := magicn (S (S 0)) true true true.
-Ltac strictmagic := magicn (S (S 0)) false false true.
+Ltac trymagic := magicn (S (S 0)) true true true false.
+Ltac strictmagic := magicn (S (S 0)) false false true true.
 
 (* With it we improve compsubst1 *)
 Ltac gocompsubst := compsubst1 ; try magic.
