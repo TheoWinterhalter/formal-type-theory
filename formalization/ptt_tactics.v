@@ -730,6 +730,12 @@ Ltac eqtype_subst G A sbs B k n try shelf tysym debug :=
   | myfail debug
   ] ; k n try shelf true debug.
 
+Ltac falling_case magicn n try shelf true debug :=
+  match eval compute in n with
+  | 0 => assumption
+  | S ?n => assumption || (constructor ; magicn n try shelf true debug)
+  end.
+
 (* Magic Tactic *)
 (* It is basically a type checker that doesn't do the smart things,
    namely type and context conversions (and it doesn't rely on reflection
@@ -1155,12 +1161,7 @@ Ltac magicn n try shelf tysym debug :=
       | myfail debug
       ] ; magicn n try shelf true debug
       (* Again we cheat a bit a repeat the _ case here. *)
-      else (
-        match eval compute in n with
-        | 0 => assumption
-        | S ?n => assumption || (constructor ; magicn n try shelf true debug)
-        end
-      )
+      else falling_case magicn n try shelf tysym debug
     (* We should probably avoid using congruence on composition. *)
     (* To be continued... *)
     (*! Equality of types !*)
@@ -1274,12 +1275,7 @@ Ltac magicn n try shelf tysym debug :=
         | myfail debug
         ] ; magicn n try shelf true debug
       )
-      else (
-        match eval compute in n with
-        | 0 => assumption
-        | S ?n => assumption || (constructor ; magicn n try shelf true debug)
-        end
-      )
+      else falling_case magicn n try shelf tysym debug
     (* To be continued... *)
     (*! Equality of terms !*)
     | |- eqterm ?G (subst (subst ?u ?sbs) ?sbt) ?v ?A =>
@@ -1370,22 +1366,12 @@ Ltac magicn n try shelf tysym debug :=
         ]
       | myfail debug
       ] ; magicn n try shelf true debug
-      else (
-          (* As always, this a temporary measure *)
-        match eval compute in n with
-        | 0 => assumption
-        | S ?n => assumption || (constructor ; magicn n try shelf true debug)
-        end
-      )
+      else falling_case magicn n try shelf tysym debug
     (* To be continued... *)
     (* When all else fails. *)
     (* This part will hopefully be gone at some point. *)
     (* And replaced by fail probably. *)
-    | _ =>
-      match eval compute in n with
-      | 0 => assumption
-      | S ?n => assumption || (constructor ; magicn n try shelf true debug)
-      end
+    | _ => myfail debug
     end
   | cando try
   ].
