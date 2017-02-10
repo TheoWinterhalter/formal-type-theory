@@ -272,9 +272,7 @@ Proof.
   assert (eqctx D D).
   { now apply CtxRefl. }
   assert (eqtype D (Subst (Subst A (sbweak D A)) (sbzero D A v)) A).
-  { apply myEqTySym ; try magic.
-    now apply EqTyWeakZero.
-  }
+  { magic. }
   assert (isterm D u (Subst (Subst A (sbweak D A)) (sbzero D A v))).
   { eapply TermTyConv ; [ eassumption | magic .. ]. }
   assert (
@@ -369,8 +367,8 @@ Proof.
   assert (eqtype G
     (Subst (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
        (sbzero G (Subst A sbs) (subst v sbs))) (Subst A sbs)).
-  { gocompsubst. gocompsubst.
-    Unshelve. assumption.
+  { magic.
+    Unshelve. all:strictmagic.
   }
   assert (eqterm D u u A).
   { apply EqRefl ; assumption. }
@@ -391,26 +389,8 @@ Proof.
       | eapply SubstRefl ; magic
       | magic ..
       ]
-    | try magic ..
-    ].
-    eapply mySubstSym ; try magic.
-    eapply SubstTrans ; [
-      eapply CompAssoc ; magic
-    | try magic ..
-    ].
-    eapply SubstTrans ; [
-      eapply CongSubstComp ; [
-        eapply SubstRefl ; magic
-      | eapply WeakZero ; magic
-      | magic ..
-      ]
-    | try magic ..
-    ].
-    eapply SubstTrans ; [
-      eapply CompIdLeft ; magic
     | magic ..
     ].
-    Unshelve. assumption.
   }
   assert (
     eqtype G
@@ -437,10 +417,8 @@ Proof.
   ).
   { eapply TermTyConv ; [
       eapply TermSubst ; [ magic | eassumption | magic .. ]
-    | try magic ..
+    | magic ..
     ].
-    gocompsubst. gocompsubst. gocompsubst.
-    Unshelve. assumption.
   }
   assert (
     isterm G
@@ -460,9 +438,8 @@ Proof.
         ]
       | magic ..
       ]
-    | try magic ..
+    | magic ..
     ].
-    gocompsubst.
     Unshelve. all:assumption.
   }
   assert (
@@ -525,10 +502,8 @@ Proof.
   ).
   { eapply TermTyConv ; [
       eapply TermSubst ; [ magic | eassumption | magic .. ]
-    | try magic ..
+    | magic ..
     ].
-    gocompsubst. gocompsubst.
-    Unshelve. assumption.
   }
   assert (
     isterm G
@@ -550,9 +525,7 @@ Proof.
     (Subst (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
        (sbzero G (Subst A sbs) (subst v sbs)))
   ).
-  { gocompsubst. gocompsubst.
-    Unshelve. all:assumption.
-  }
+  { magic. Unshelve. all:strictmagic. }
   assert (
     isterm G
            (subst (var 0) (sbzero G (Subst A sbs) (subst v sbs)))
@@ -560,9 +533,8 @@ Proof.
   ).
   { eapply TermTyConv ; [
       eapply TermSubst ; [ magic | eassumption | magic .. ]
-    | try magic ..
+    | magic ..
     ].
-    eassumption.
   }
   assert (
     eqterm G (subst (var 0) (sbzero G (Subst A sbs) (subst v sbs)))
@@ -572,7 +544,7 @@ Proof.
   ).
   { eapply EqTyConv ; [
       eapply EqSubstZeroZero ; magic
-    | eapply myEqTySym ; try magic ; eassumption
+    | eapply EqTySym ; try magic ; eassumption
     | magic ..
     ].
   }
@@ -581,9 +553,7 @@ Proof.
     (Subst (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
        (sbzero G (Subst A sbs) (subst v sbs)))
   ).
-  { gocompsubst. gocompsubst. gocompsubst. gocompsubst.
-    Unshelve. assumption.
-  }
+  { magic. }
   assert (
     isterm G (subst u sbs)
     (Subst (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
@@ -591,9 +561,8 @@ Proof.
   ).
   { eapply TermTyConv ; [
       eapply TermSubst ; [ magic | eassumption | magic .. ]
-    | try magic ..
+    | magic ..
     ].
-    assumption.
   }
   assert (
     isterm G
@@ -603,9 +572,8 @@ Proof.
   ).
   { eapply TermTyConv ; [
       eapply TermSubst ; [ magic | eassumption | magic .. ]
-    | try magic ..
+    | magic ..
     ].
-    assumption.
   }
   assert (
     eqtype G
@@ -615,7 +583,7 @@ Proof.
                   (var 0)) (sbzero G (Subst A sbs) (subst v sbs)))
            (Id (Subst A sbs) (subst u sbs) (subst v sbs))
   ).
-  { gopushsubst. apply CongId ; try magic ; try assumption. }
+  { magic. }
   assert (
     eqctx
     (ctxextend G
@@ -640,10 +608,7 @@ Proof.
                   (sbweak G (Subst A sbs)))
            (Subst (Subst A (sbweak D A)) (sbshift G A sbs))
   ).
-  { eapply EqTySym ; try magic.
-    gocompsubst. gocompsubst.
-    Unshelve. assumption.
-  }
+  { eapply EqTySym ; magic. }
   assert (
     eqsubst
     (sbcomp (sbweak D A)
@@ -654,7 +619,7 @@ Proof.
   ).
   { eapply CongSubstComp ; [
       eapply CongSubstComp ; [
-        eapply mySubstSym ; magic
+        eapply SubstSym ; magic
       | eapply SubstRefl ; magic
       | magic ..
       ]
@@ -670,7 +635,11 @@ Proof.
     (Subst (Subst (Subst (Subst A (sbweak D A)) (sbzero D A v)) sbs)
        (sbweak G (Subst A sbs)))
   ).
-  { gocompsubst. gocompsubst. gocompsubst. gocompsubst. gocompsubst.
+  { fail.
+
+magic.
+
+ gocompsubst. gocompsubst. gocompsubst. gocompsubst. gocompsubst.
     gocompsubst.
     Unshelve. assumption.
   }
