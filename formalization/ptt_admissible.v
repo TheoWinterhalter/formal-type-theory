@@ -100,11 +100,8 @@ Lemma EqTyCongShift :
            (Subst B1 (sbshift sbs1))
            (Subst B2 (sbshift sbs2)).
 Proof.
-  intros. magic.
-  Unshelve. all:try strictmagic.
-  (* I'm not very happy with the fact that I need to do it twice. *)
-  (* But we have to blame the 'context' goal. *)
-  all:strictmagic.
+  intros. trymagic.
+  Unshelve. all:strictmagic.
 Defined.
 
 Lemma EqTyCongWeak :
