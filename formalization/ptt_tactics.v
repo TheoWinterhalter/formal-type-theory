@@ -770,6 +770,7 @@ Ltac magicn n try shelf tysym debug :=
       first [
         eapply SubstZero
       | eassumption
+      | eapply SubstCtxConv ; [ eapply SubstZero | .. ]
       | myfail debug
       ] ; magicn n try shelf true debug
     | |- issubst (sbweak _ _) ?G1 ?G2 =>

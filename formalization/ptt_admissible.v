@@ -72,20 +72,7 @@ Lemma EqTyCongZero :
            (Subst A2 (sbzero G A1 u1))
            (Subst B2 (sbzero G B1 u2)).
 Proof.
-  intros. (* magic. *)
-
-  fail.
-
-  assert (isterm G u2 A1).
-  { eapply TermTyConv ; [
-      eassumption
-    | magic ..
-    ].
-  }
-  eapply CongTySubst ; [
-    magic ..
-  | eapply SubstCtxConv ; magic
-  ].
+  intros. magic.
 Defined.
 
 Lemma EqTyCongShift :
@@ -107,26 +94,8 @@ Lemma EqTyCongShift :
            (Subst B1 (sbshift G1 A1 sbs1))
            (Subst B2 (sbshift G2 A2 sbs2)).
 Proof.
-  intros.
-  assert (issubst sbs2 G1 D).
-  { eapply SubstCtxConv ; magic. }
-  assert (issubst sbs1 G2 D).
-  { eapply SubstCtxConv ; magic. }
-  assert (istype (ctxextend D A1) B2).
-  { eapply TyCtxConv ; [
-      eassumption
-    | magic ..
-    ].
-  }
-  assert (eqsubst sbs2 sbs1 G2 D).
-  { apply SubstSym ; try assumption.
-    eapply EqSubstCtxConv ; magic.
-  }
-  eapply CongTySubst ; [
-    magic ..
-  | eapply SubstCtxConv ; magic
-  ].
-  Unshelve. all:assumption.
+  intros. magic.
+  Unshelve. all:strictmagic.
 Defined.
 
 Lemma EqTyCongWeak :
@@ -144,15 +113,8 @@ Lemma EqTyCongWeak :
            (Subst B1 (sbweak G1 A1))
            (Subst B2 (sbweak G2 A2)).
 Proof.
-  intros.
-  assert (istype G1 A2).
-  { eapply TyCtxConv ; [ eassumption | magic .. ]. }
-  assert (istype G1 B2).
-  { eapply TyCtxConv ; [ eassumption | magic .. ]. }
-  eapply CongTySubst ; [
-    magic ..
-  | eapply SubstCtxConv ; magic
-  ].
+  intros. magic.
+  Unshelve. magic.
 Defined.
 
 Lemma EqSubstWeakNat :
