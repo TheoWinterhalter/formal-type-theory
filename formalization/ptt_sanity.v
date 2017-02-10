@@ -562,8 +562,7 @@ Proof.
             + now apply SubstZero.
             + now apply TermVarSucc.
             + apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
-          - apply EqTySym ; try magic.
-            apply EqTyWeakZero ; magic.
+          - apply EqTySym ; magic.
           - assumption.
           - apply (@TySubst _ (ctxextend G B)) ; auto using CtxExtend, SubstZero.
             apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
@@ -609,13 +608,34 @@ Proof.
 
   (* EqSubstShiftSucc *)
   - { split.
-      - { eapply TermTyConv ; [
+      - { first [
+              eapply TermSubst
+            | eapply TermTyConv ; [
+                eapply TermSubst
+              | ..
+              ]
+            | myfail debug
+            ].
+          - magic.
+          - magic.
+          - magic.
+          - magic.
+          - magic.
+          - fail. (* It might be time to put back those TODO to work *)
+
+
+magic. (* I want it to work... *)
+          fail.
+
+          eapply TermTyConv ; [
             (eapply TermSubst ; try magic) ;
             (eapply TermVarSucc ; try magic) ;
             eassumption
           | try magic ..
           ].
-          apply EqTyWeakNat ; magic.
+          eapply EqTyWeakNat ; magic.
+          Unshelve. all:magic.
+          Unshelve. strictmagic.
         }
       - { magic. }
     }
