@@ -100,7 +100,7 @@ Lemma EqTyCongShift :
            (Subst B1 (sbshift sbs1))
            (Subst B2 (sbshift sbs2)).
 Proof.
-  intros. trymagic.
+  intros. magic.
   Unshelve. all:strictmagic.
 Defined.
 
@@ -1148,6 +1148,7 @@ Proof.
     | magic ..
     ].
     Unshelve. all:try strictmagic.
+    strictmagic.
   }
   assert (
     isterm G (subst u sbs)
