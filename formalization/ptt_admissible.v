@@ -100,7 +100,7 @@ Lemma EqTyCongShift :
            (Subst B1 (sbshift sbs1))
            (Subst B2 (sbshift sbs2)).
 Proof.
-  intros. magic.
+  intros. trymagic.
   Unshelve. all:strictmagic.
 Defined.
 
@@ -1147,8 +1147,7 @@ Proof.
       ]
     | magic ..
     ].
-    Unshelve. all:try strictmagic.
-    strictmagic.
+    Unshelve. all:strictmagic.
   }
   assert (
     isterm G (subst u sbs)
@@ -1367,11 +1366,11 @@ Proof.
          (sbshift (sbzero (subst v sbs))))
       (sbzero (subst p sbs)))
   ).
-  { eapply TySubst ; try magic.
-    eapply TySubst ; try magic.
+  { eapply TySubst ; try okmagic.
+    eapply TySubst ; try okmagic.
     eapply SubstCtxConv ; [
       eapply SubstShift ; magic
-    | try magic ..
+    | try okmagic ..
     ].
     eassumption.
     Unshelve. all:strictmagic.
@@ -1402,12 +1401,12 @@ Proof.
       by magic.
     eapply SubstCtxConv ; [
       eapply SubstShift ; magic
-    | try magic ..
+    | try okmagic ..
     ].
 
     Unshelve.
     all:try strictmagic.
-    all:try magic.
+    all:try okmagic.
     Unshelve. all:try strictmagic.
   }
   assert (
@@ -1452,8 +1451,12 @@ Proof.
    (ctxextend (ctxextend D A)
       (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv ; magic. Unshelve. all:try strictmagic. all:magic.
+  { trymagic. Unshelve. all:try strictmagic. all:try magic.
+    Unshelve. all:try strictmagic. all:magic.
+    Unshelve. all:try strictmagic.
+    all:(eapply TermTyConv ; [ exact H3 | .. ] ; magic).
     Unshelve. all:strictmagic.
+    (* We have to do this because of eassumption that works in reverse. *)
   }
   assert (
     issubst
@@ -1462,7 +1465,8 @@ Proof.
     (ctxextend (ctxextend D A)
        (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv ; magic. Unshelve. all:try strictmagic.
+  { fail. (* I give up for now. *)
+magic. Unshelve. all:try strictmagic.
     all:magic. Unshelve. all:strictmagic.
   }
   assert (
@@ -1519,7 +1523,7 @@ Proof.
    (ctxextend (ctxextend D A)
       (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { eapply SubstCtxConv ; try magic. Unshelve. all:try strictmagic.
+  { eapply SubstCtxConv ; try okmagic. Unshelve. all:try strictmagic.
     all:magic. Unshelve. all:strictmagic.
   }
   assert (
@@ -1532,7 +1536,7 @@ Proof.
     (ctxextend (ctxextend D A)
        (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { magic. Unshelve. all:try strictmagic. all:try magic.
+  { magic. Unshelve. all:try strictmagic. all:try okmagic.
     Unshelve. all:try strictmagic. all:magic.
     Unshelve. all:strictmagic.
   }
@@ -1689,8 +1693,8 @@ Proof.
           sbs))
     (ctxextend (ctxextend D A) (Id (Subst A sbweak) (subst u sbweak) (var 0)))
   ).
-  { magic. Unshelve. all:try strictmagic. all:try magic.
-    Unshelve. all:try strictmagic. all:try magic.
+  { magic. Unshelve. all:try strictmagic. all:try okmagic.
+    Unshelve. all:try strictmagic. all:try okmagic.
     Unshelve. all:strictmagic.
   }
   assert (
@@ -1708,9 +1712,9 @@ Proof.
   gocompsubst ; try assumption.
   gocompsubst ; try assumption.
   (* Now we can focus on susbtitutions. *)
-  eapply CongTySubst ; try magic.
+  eapply CongTySubst ; try okmagic.
   (* We go from the rhs. *)
-  eapply SubstSym ; try magic.
+  eapply SubstSym ; try okmagic.
   eapply SubstTrans ; [
     (* Then we only look on the lhs of the composition. *)
     eapply CongSubstComp ; [
@@ -1723,12 +1727,12 @@ Proof.
     eapply SubstRefl ; magic
     | magic ..
     ]
-  | try magic ..
+  | try okmagic ..
   ].
   (* We're using associativity to look at the rhs. *)
   eapply SubstTrans ; [
     eapply CompAssoc ; magic
-  | try magic ..
+  | try okmagic ..
   ].
   (* We can now have a look at the rhs of the composition. *)
   eapply SubstTrans ; [
@@ -1747,7 +1751,7 @@ Proof.
       (*                  (var 0)) *)
       (*              (sbzero v) *)
       (*      ) *)
-      eapply CongSubstShift ; try magic ;
+      eapply CongSubstShift ; try okmagic ;
       (apply CtxRefl ; magic)
     | (* We don't change the other substitution. *)
     apply SubstRefl ; magic
@@ -1755,7 +1759,7 @@ Proof.
     ]
     | magic ..
     ]
-  | try magic ..
+  | try okmagic ..
   ].
   (* Now that we rewrote the type, we can use fonctoriality. *)
   (* Note this could be meged with the next couple steps. *)
@@ -1765,11 +1769,11 @@ Proof.
       eapply SubstRefl ; magic
     | eapply EqSubstCtxConv ; [
         eapply CompShift ; magic
-      | try magic ; eassumption ..
+      | try okmagic ; eassumption ..
       ]
     | magic ..
     ]
-  | try magic ..
+  | try okmagic ..
   ].
   (* Now that we have a composition inside the shift, we want
      to proceed with an exchange by using ShiftZero. *)
@@ -1785,11 +1789,11 @@ Proof.
           ]
         | magic ..
         ]
-      | try magic ; eassumption ..
+      | try okmagic ; eassumption ..
       ]
     | magic ..
     ]
-  | try magic ..
+  | try okmagic ..
   ].
   (* Now we need to apply CompShift again to put the composition outside
      and apply associativity. *)
@@ -1800,13 +1804,13 @@ Proof.
     | eapply SubstSym ; [
         eapply EqSubstCtxConv ; [
           eapply CompShift ; magic
-        | try magic ; eassumption ..
+        | try okmagic ; eassumption ..
         ]
       | magic ..
       ]
     | magic ..
     ]
-  | try magic ..
+  | try okmagic ..
   ].
   (* Now, it's time to apply associativity guys. *)
   eapply SubstTrans ; [
@@ -1814,17 +1818,17 @@ Proof.
       eapply CompAssoc ; magic
     | magic ..
     ]
-  | try magic ..
+  | try okmagic ..
   ].
   (* Now we should finally have the same structure for the substitutions
      and thus be able to apply congruences. *)
-  eapply CongSubstComp ; try magic.
-  eapply CongSubstComp ; try magic ; try assumption.
+  eapply CongSubstComp ; try okmagic.
+  eapply CongSubstComp ; try okmagic ; try assumption.
   eapply EqSubstCtxConv ; [
     eapply CongSubstShift ; magic
-  | try magic ; assumption ..
+  | try okmagic ; assumption ..
   ].
-  Unshelve. all:try strictmagic. all:try magic.
+  Unshelve. all:try strictmagic. all:try okmagic.
   Unshelve. all:try strictmagic.
   all:eapply TermTyConv ; [ exact H5 | .. ] ; magic.
   (* This is all because of the asserts eveywhere. *)

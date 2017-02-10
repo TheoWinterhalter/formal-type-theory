@@ -1200,6 +1200,26 @@ Ltac magicn n try shelf tysym debug :=
       else eqtype_subst G A (sbcomp (sbshift sbs) (sbzero (subst u sbs)))
                         (Subst B' sbs)
                         magicn n try shelf tysym debug
+    | |- eqtype ?G (Subst ?B' ?sbs)
+               (Subst ?A (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs)))) =>
+      tryif (is_evar A ; is_var B')
+      then (
+        first [
+          eapply EqTySym ; [
+            eapply @EqTyTrans
+            with (B := Subst (Subst B' sbweak)
+                            (sbcomp (sbshift sbs) (sbzero (subst u sbs)))) ; [
+              eapply EqTyRefl
+            | ..
+            ]
+          | ..
+          ]
+        | myfail debug
+        ] ; magicn n try shelf true debug
+      )
+      else eqtype_subst G B' sbs
+                        (Subst A (sbcomp (sbshift sbs) (sbzero (subst u sbs))))
+                        magicn n try shelf tysym debug
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)
       eqtype_subst G A sbs B magicn n try shelf tysym debug
@@ -1364,6 +1384,7 @@ Ltac magic3 := magicn (S (S (S 0))) false true true true.
 Ltac magic4 := magicn (S (S (S (S 0)))) false true true true.
 Ltac magic5 := magicn (S (S (S (S (S 0))))) false true true true.
 Ltac magic := magic2.
+Ltac okmagic := magicn (S (S 0)) false true true false.
 Ltac trymagic := magicn (S (S 0)) true true true false.
 Ltac strictmagic := magicn (S (S 0)) false false true true.
 
