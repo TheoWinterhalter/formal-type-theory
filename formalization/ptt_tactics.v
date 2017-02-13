@@ -426,109 +426,86 @@ Ltac cando token :=
   | false => fail
   end.
 
-(* Simplify tactic *)
-(* Its purpose is simplifying substitutions in equalities,
-   assuming the substitution is on the left. *)
-Ltac tysb lm :=
-  eapply EqTyTrans ; [
-    eapply CongTySubst ; [
-      eapply lm
+(* A simplify tactic to simplify substitutions *)
+Ltac ecomp lm :=
+  eapply SubstTrans ; [
+    eapply CompAssoc
+  | eapply CongSubstComp ; [
+      eapply SubstRefl
+    | eapply lm
     | ..
     ]
   | ..
   ].
 
-Ltac tysbcp lm :=
-  eapply EqTyTrans ; [
-    eapply CongTySubst ; [
-      eapply SubstTrans ; [
-        eapply CompAssoc
-      | eapply CongSubstComp ; [
-          eapply SubstRefl
-        | eapply lm
+Ltac simplify_subst :=
+  lazymatch goal with
+  | |- eqsubst ?sbs ?sbt ?G ?D =>
+
+    eapply SubstTrans ; [
+
+      lazymatch sbs with
+
+      | sbcomp (sbcomp ?sbs ?sbt) ?sbr =>
+        eapply SubstSym ; [
+          eapply CompAssoc
         | ..
         ]
+
+      | sbcomp (sbid _) ?sbs =>
+        eapply CompIdLeft
+
+      | sbcomp ?sbs (sbid _) =>
+        eapply CompIdRight
+
+      | sbcomp (sbweak _ _) (sbzero _ _ _) =>
+        eapply WeakZero
+      | sbcomp (sbweak _ _) (sbcomp (sbzero _ _ _) _) =>
+        ecomp WeakZero
+
+      | sbcomp (sbshift _ _ ?sbs) (sbzero _ _ (subst ?u ?sbs)) =>
+        eapply ShiftZero
+      | sbcomp (sbshift _ _ ?sbs) (sbcomp (sbzero _ _ (subst ?u ?sbs)) _) =>
+        ecomp ShiftZero
+
+      | sbcomp ?sbs ?sbt =>
+        tryif (is_var sbs)
+        then
+          eapply CongSubstComp ; [
+            simplify_subst
+          | eapply SubstRefl
+          | ..
+          ]
+        else fail
+
+      end
+
+    | ..
+    ]
+
+  | _ => fail
+  end.
+
+(* Simplify tactic *)
+(* Its purpose is simplifying substitutions in equalities,
+   assuming the substitution is on the left. *)
+Ltac simplify :=
+  lazymatch goal with
+  | |- eqtype ?G (Subst ?A (sbid ?D)) ?B =>
+    eapply EqTyTrans ; [
+      eapply EqTyIdSubst
+    | ..
+    ]
+
+  | |- eqtype ?G (Subst ?A ?sbs) ?B =>
+    eapply EqTyTrans ; [
+      eapply CongTySubst ; [
+        simplify_subst
       | ..
       ]
     | ..
     ]
-  | ..
-  ].
 
-Ltac simplify :=
-  lazymatch goal with
-  | |- eqtype ?G (Subst ?A ?sbs) ?B =>
-    tryif (is_var sbs)
-    then fail
-    else
-      lazymatch sbs with
-      (* First we use associativity if needed to have some sort of normal
-         form. *)
-      | sbcomp (sbcomp ?sbs ?sbt) ?sbr =>
-        eapply EqTyTrans ; [
-          eapply CongTySubst ; [
-            eapply SubstSym ; [
-              eapply CompAssoc
-            | ..
-            ]
-          | ..
-          ]
-        | ..
-        ]
-
-      (* It might sound counterproductive but we may add id at the end
-         to play the part of the empty list. *)
-      (* | sbzero ?G ?A ?u => *)
-      (*   eapply EqTyTrans ; [ *)
-      (*     eapply CongTySubst ; [ *)
-
-      (*     ] *)
-      (*   ] *)
-      (* We need to think beforehand... *)
-
-      | sbcomp (sbid _) ?sbs =>
-        tysb CompIdLeft
-
-      | sbcomp ?sbs (sbid _) =>
-        tysb CompIdRight
-
-      | sbid _ =>
-        eapply EqTyTrans ; [
-          eapply EqTyIdSubst
-        | ..
-        ]
-
-      | sbcomp (sbweak _ _) (sbzero _ _ _) =>
-        tysb WeakZero
-      | sbcomp (sbweak _ _) (sbcomp (sbzero _ _ _) _) =>
-        tysbcp WeakZero
-
-      | sbcomp (sbshift _ _ ?sbs) (sbzero _ _ (subst ?u ?sbs)) =>
-        tysb ShiftZero
-      | sbcomp (sbshift _ _ ?sbs) (sbcomp (sbzero _ _ (subst ?u ?sbs)) _) =>
-        tysbcp ShiftZero
-
-      (* Instead we should have something to simplify a substitution! *)
-      | sbcomp ?sbs ?sbt =>
-        tryif (is_var sbs)
-        then eapply EqTyTrans ; [
-          eapply EqTySym ; [
-            eapply EqTySubstComp
-          | ..
-          ]
-        | eapply EqTyTrans ; [
-            simplify
-          | eapply EqTyTrans ; [
-              eapply EqTySubstComp
-            | ..
-            ]
-          | ..
-          ]
-        | ..
-        ]
-        else fail
-
-      end
   | |- eqterm ?G (subst ?u ?sbs) ?v ?A =>
     tryif (is_var sbs)
     then fail
