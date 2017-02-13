@@ -687,8 +687,41 @@ Proof.
                            ]
                          | eapply ShiftZero
                          | ..
-                         ].
-                         --- magic.
+                         ] ; magic.
+                      ** magic.
+                      ** magic.
+                      ** magic.
+                      ** magic.
+                      ** magic.
+                      ** magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                -- magic.
+                -- magic.
+                -- magic.
+                -- magic.
+                -- magic.
+                -- magic.
+              * magic.
+              * magic.
+              * magic.
+              * magic.
+              * magic.
+              * magic.
+            + magic.
+            + magic.
+            + magic.
+          - magic.
+          - magic.
+          -
+
 
 
 

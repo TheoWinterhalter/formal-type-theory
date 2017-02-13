@@ -1095,6 +1095,19 @@ Ltac magicn n try shelf tysym debug :=
                         (Subst A (sbcomp (sbshift G1 A1 sbs)
                                          (sbzero G2 A2 (subst u sbs))))
                         magicn n try shelf tysym debug
+    (* Another case I'm not sure of. *)
+    | |- eqtype ?G
+               (Subst ?A ?sbs)
+               (Subst ?B (sbzero ?D (Subst ?A ?sbs) (subst ?u ?sbs))) =>
+      tryif (is_var A ; is_evar B)
+      then
+        first [
+          instantiate (1 := Subst (Subst A sbs) (sbweak _ _))
+        | myfail debug
+        ] ; magicn n try shelf true debug
+      else
+        eqtype_subst G A sbs (Subst B (sbzero D (Subst A sbs) (subst u sbs)))
+                     magicn n try shelf tysym debug
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)
       eqtype_subst G A sbs B magicn n try shelf tysym debug
