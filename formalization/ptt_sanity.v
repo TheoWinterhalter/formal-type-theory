@@ -633,7 +633,47 @@ Proof.
   (* EqSubstJ *)
   - { split.
       - { magic. Unshelve. all:strictmagic. }
-      - { (* magic. *) fail.
+      - { (* magic. fail. *)
+
+          (* INVESTIGATION *)
+          eapply TermTyConv ; [ eapply TermJ | .. ].
+          - magic.
+          - magic.
+          - magic.
+          - magic.
+          - eapply TermTyConv ; [
+              eapply TermSubst
+            | ..
+            ].
+            + magic.
+            + magic.
+            + magic.
+            + magic.
+            + magic.
+            + compsubst1.
+              * magic.
+              * magic.
+              * magic.
+              * compsubst1.
+                -- magic.
+                -- magic.
+                -- magic.
+                -- compsubst1.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                   ++ compsubst1.
+                      ** magic.
+                      ** magic.
+                      ** magic.
+                      ** (* simplify. *)
+(* We can't go on with this simplify process that deals only with particluar
+   cases. We need to have some way of reducing substitutions that always works.
+   If ever possible. Maybe starting by "linearising" the substitution so that
+   it is equivalent to a list. *)
+
+          fail.
+
           eapply TermTyConv.
           - eapply TermJ ; try magic.
             + eapply TySubst ; try magic.
