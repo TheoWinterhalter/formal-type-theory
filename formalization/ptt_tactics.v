@@ -429,6 +429,32 @@ Ltac cando token :=
 (* Simplify tactic *)
 (* Its purpose is simplifying substitutions in equalities,
    assuming the substitution is on the left. *)
+Ltac tysb lm :=
+  eapply EqTyTrans ; [
+    eapply CongTySubst ; [
+      eapply lm
+    | ..
+    ]
+  | ..
+  ].
+
+Ltac tysbcp lm :=
+  eapply EqTyTrans ; [
+    eapply CongTySubst ; [
+      eapply SubstTrans ; [
+        eapply CompAssoc
+      | eapply CongSubstComp ; [
+          eapply SubstRefl
+        | eapply lm
+        | ..
+        ]
+      | ..
+      ]
+    | ..
+    ]
+  | ..
+  ].
+
 Ltac simplify :=
   lazymatch goal with
   | |- eqtype ?G (Subst ?A ?sbs) ?B =>
@@ -449,6 +475,7 @@ Ltac simplify :=
           ]
         | ..
         ]
+
       (* It might sound counterproductive but we may add id at the end
          to play the part of the empty list. *)
       (* | sbzero ?G ?A ?u => *)
@@ -457,130 +484,50 @@ Ltac simplify :=
 
       (*     ] *)
       (*   ] *)
+      (* We need to think beforehand... *)
 
-
-      (* This case is unsatisfying... We would like to linearize substitutions
-         when they are composed. *)
-      | sbcomp (sbcomp (sbweak _ _) (sbcomp (sbzero _ _ ?u) ?sbs)) ?sbt =>
-        eapply EqTyTrans ; [
-          eapply CongTySubst ; [
-            eapply CongSubstComp ; [
-              eapply SubstRefl
-            | eapply SubstTrans ; [
-                eapply CompAssoc
-              | eapply SubstTrans ; [
-                  eapply CongSubstComp ; [
-                    eapply SubstRefl
-                  | eapply WeakZero
-                  | ..
-                  ]
-                | eapply CompIdLeft
-                | ..
-                ]
-              | ..
-              ]
-            | ..
-            ]
-          | ..
-          ]
-        | ..
-        ]
-      | sbcomp ?sbt (sbcomp (sbshift _ _ ?sbs) (sbzero _ _ (subst ?u ?sbs))) =>
-        eapply EqTyTrans ; [
-          eapply CongTySubst ; [
-            eapply CongSubstComp ; [
-              eapply ShiftZero
-            | eapply SubstRefl
-            | ..
-            ]
-          | ..
-          ]
-        | ..
-        ]
-      | sbcomp (sbcomp ?sbt (sbshift _ _ ?sbs)) (sbzero _ _ (subst ?u ?sbs)) =>
-        eapply EqTyTrans ; [
-          eapply CongTySubst ; [
-            eapply SubstTrans ; [
-              eapply SubstSym ; [ eapply CompAssoc | .. ]
-            | eapply CongSubstComp ; [
-                eapply ShiftZero
-              | eapply SubstRefl
-              | ..
-              ]
-            | ..
-            ]
-          | ..
-          ]
-        | ..
-        ]
-      | sbcomp (sbweak _ _) (sbcomp (sbzero _ _ ?u) ?sbt) =>
-        eapply EqTyTrans ; [
-          eapply CongTySubst ; [
-            eapply SubstTrans ; [
-              eapply CompAssoc
-            | eapply CongSubstComp ; [
-                idtac
-              | eapply WeakZero
-              | ..
-              ]
-            | ..
-            ]
-          | ..
-          ]
-        | ..
-        ]
-      | sbcomp (sbcomp (sbweak _ _) (sbzero _ _ ?u)) ?sbt =>
-        eapply EqTyTrans ; [
-          eapply CongTySubst ; [
-            eapply CongSubstComp ; [
-              idtac
-            | eapply WeakZero
-            | ..
-            ]
-          | ..
-          ]
-        | ..
-        ]
-      | sbcomp ?sbs (sbcomp (sbweak _ _) (sbzero _ _ ?u)) =>
-        eapply EqTyTrans ; [
-          eapply CongTySubst ; [
-            eapply CongSubstComp ; [
-              eapply WeakZero
-            | ..
-            ]
-          | ..
-          ]
-        | ..
-        ]
       | sbcomp (sbid _) ?sbs =>
-        eapply EqTyTrans ; [
-          eapply CongTySubst ; [
-            eapply CompIdLeft
-          | ..
-          ]
-        | ..
-        ]
+        tysb CompIdLeft
+
       | sbcomp ?sbs (sbid _) =>
-        eapply EqTyTrans ; [
-          eapply CongTySubst ; [
-            eapply CompIdRight
-          | ..
-          ]
-        | ..
-        ]
-      | sbcomp (sbweak _ _) (sbzero _ _ ?u) =>
-        eapply EqTyTrans ; [
-          eapply CongTySubst ; [
-            eapply WeakZero
-          | ..
-          ]
-        | ..
-        ]
+        tysb CompIdRight
+
       | sbid _ =>
         eapply EqTyTrans ; [
           eapply EqTyIdSubst
         | ..
         ]
+
+      | sbcomp (sbweak _ _) (sbzero _ _ _) =>
+        tysb WeakZero
+      | sbcomp (sbweak _ _) (sbcomp (sbzero _ _ _) _) =>
+        tysbcp WeakZero
+
+      | sbcomp (sbshift _ _ ?sbs) (sbzero _ _ (subst ?u ?sbs)) =>
+        tysb ShiftZero
+      | sbcomp (sbshift _ _ ?sbs) (sbcomp (sbzero _ _ (subst ?u ?sbs)) _) =>
+        tysbcp ShiftZero
+
+      (* Instead we should have something to simplify a substitution! *)
+      | sbcomp ?sbs ?sbt =>
+        tryif (is_var sbs)
+        then eapply EqTyTrans ; [
+          eapply EqTySym ; [
+            eapply EqTySubstComp
+          | ..
+          ]
+        | eapply EqTyTrans ; [
+            simplify
+          | eapply EqTyTrans ; [
+              eapply EqTySubstComp
+            | ..
+            ]
+          | ..
+          ]
+        | ..
+        ]
+        else fail
+
       end
   | |- eqterm ?G (subst ?u ?sbs) ?v ?A =>
     tryif (is_var sbs)

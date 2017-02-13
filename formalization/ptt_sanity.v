@@ -660,13 +660,85 @@ Proof.
                 -- magic.
                 -- compsubst1.
                    ++ magic.
-                   ++ magic.
+                   ++ (* magic. *)
+                     eapply SubstCtxConv ; [ eapply SubstShift | .. ].
+                     ** magic.
+                     ** magic.
+                     ** magic.
+                     ** magic.
+                     ** eapply EqCtxExtend.
+                        --- magic.
+                        --- magic.
+                        --- magic.
+                        --- magic.
+                        --- magic.
+                        --- pushsubst1.
+                            +++ magic.
+                            +++ magic.
+                            +++ magic.
+                            +++ magic.
+                            +++ magic.
+                            +++ magic.
+                            +++ eapply CongId.
+                                *** magic.
+                                *** magic.
+                                *** magic.
+                                *** magic.
+                                *** magic.
+                                *** eapply TermTyConv ; [ eapply TermSubst | .. ].
+                                    ---- magic.
+                                    ---- magic.
+                                    ---- magic.
+                                    ---- magic.
+                                    ---- magic.
+                                    ---- compsubst1.
+                                         ++++ magic.
+                                         ++++ magic.
+                                         ++++ magic.
+                                         ++++ compsubst1.
+                                              **** magic.
+                                              **** magic.
+                                              **** magic.
+                                              ****
+                                                eapply EqTyTrans ; [
+                                                  eapply EqTySym ; [
+                                                    eapply EqTySubstComp ; admit
+                                                  | admit ..
+                                                  ]
+                                                | eapply EqTyTrans ; [
+                                                    simplify
+                                                  | admit ..
+                                                  ]
+                                                | admit ..
+                                                ].
+
+(* simplify. *)
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
+                                                ----- magic.
                    ++ magic.
                    ++ compsubst1.
                       ** magic.
                       ** magic.
                       ** magic.
-                      ** (* simplify. *)
+                      ** simplify.
 (* We can't go on with this simplify process that deals only with particluar
    cases. We need to have some way of reducing substitutions that always works.
    If ever possible. Maybe starting by "linearising" the substitution so that
