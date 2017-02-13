@@ -666,7 +666,22 @@ Proof.
                       ** magic.
                       ** magic.
                       ** magic.
-                      ** (* simplify. *)
+                      ** eapply EqTyTrans ; [
+                           eapply CongTySubst ; [
+                             idtac
+                           | shelve ..
+                           ]
+                         | shelve ..
+                         ].
+                         eapply CongSubstComp ; [
+                           idtac
+                         | eapply SubstRefl ; shelve
+                         | shelve ..
+                         ].
+                         (* How should we simplify this? *)
+
+
+
 (* We can't go on with this simplify process that deals only with particluar
    cases. We need to have some way of reducing substitutions that always works.
    If ever possible. Maybe starting by "linearising" the substitution so that

@@ -469,14 +469,11 @@ Ltac simplify_subst :=
         ecomp ShiftZero
 
       | sbcomp ?sbs ?sbt =>
-        tryif (is_var sbs)
-        then
-          eapply CongSubstComp ; [
-            simplify_subst
-          | eapply SubstRefl
-          | ..
-          ]
-        else fail
+        eapply CongSubstComp ; [
+          simplify_subst
+        | eapply SubstRefl
+        | ..
+        ]
 
       end
 
