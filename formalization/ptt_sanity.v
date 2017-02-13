@@ -666,28 +666,53 @@ Proof.
                       ** magic.
                       ** magic.
                       ** magic.
-                      ** eapply EqTyTrans ; [
+                      ** (* magic. fail. *)
+                        eapply EqTyTrans ; [
                            eapply CongTySubst ; [
                              idtac
-                           | shelve ..
-                           ]
-                         | shelve ..
-                         ].
-                         eapply CongSubstComp ; [
-                           idtac
-                         | eapply SubstRefl ; shelve
-                         | shelve ..
-                         ].
-                         (* How should we simplify this? *)
-                         eapply SubstTrans ; [
-                           eapply CongSubstComp ; [
-                             idtac
-                           | eapply SubstRefl
                            | ..
                            ]
-                         | eapply ShiftZero
                          | ..
-                         ] ; magic.
+                         ].
+                        ---
+                          eapply CongSubstComp ; [
+                            idtac
+                          | eapply SubstRefl
+                          | ..
+                          ].
+                          +++
+                            eapply SubstTrans ; [
+                              eapply CongSubstComp ; [
+                                idtac
+                              | eapply SubstRefl
+                              | ..
+                              ]
+                            | eapply ShiftZero
+                            | ..
+                            ] ; magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                        --- (* Maybe this shouldn't be the generated goal? *)
+                          magic.
+                        --- magic.
+                        --- magic.
+                        --- magic.
+                        --- magic.
+                        --- magic.
+                        --- magic.
+                        --- (* Here is the new faulty goal! *)
+                          (* Maybe we use one SubstTrans too many! *)
+                          (* This might very well be a case where Refl should
+                             apply. *)
+                          fail.
                       ** magic.
                       ** magic.
                       ** magic.
