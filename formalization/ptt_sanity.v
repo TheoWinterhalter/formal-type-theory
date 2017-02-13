@@ -679,6 +679,16 @@ Proof.
                          | shelve ..
                          ].
                          (* How should we simplify this? *)
+                         eapply SubstTrans ; [
+                           eapply CongSubstComp ; [
+                             idtac
+                           | eapply SubstRefl
+                           | ..
+                           ]
+                         | eapply ShiftZero
+                         | ..
+                         ].
+                         --- magic.
 
 
 
