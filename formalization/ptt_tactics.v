@@ -436,6 +436,29 @@ Ltac simplify :=
     then fail
     else
       lazymatch sbs with
+      (* First we use associativity if needed to have some sort of normal
+         form. *)
+      | sbcomp (sbcomp ?sbs ?sbt) ?sbr =>
+        eapply EqTyTrans ; [
+          eapply CongTySubst ; [
+            eapply SubstSym ; [
+              eapply CompAssoc
+            | ..
+            ]
+          | ..
+          ]
+        | ..
+        ]
+      (* It might sound counterproductive but we may add id at the end
+         to play the part of the empty list. *)
+      (* | sbzero ?G ?A ?u => *)
+      (*   eapply EqTyTrans ; [ *)
+      (*     eapply CongTySubst ; [ *)
+
+      (*     ] *)
+      (*   ] *)
+
+
       (* This case is unsatisfying... We would like to linearize substitutions
          when they are composed. *)
       | sbcomp (sbcomp (sbweak _ _) (sbcomp (sbzero _ _ ?u) ?sbs)) ?sbt =>
