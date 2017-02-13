@@ -1183,8 +1183,6 @@ Ltac magicn n try shelf tysym debug :=
     (* A weird case perhaps. *)
     (* It feels like we should improve the case where is_var A and
        not is_var sbs below. *)
-    (* TODO: Make it work again! *)
-    (* Do I have the right to use [?D1]? Did I choose correctly? *)
     | |- eqtype ?G (Subst ?B' (sbcomp ?sbs (sbweak ?G1 (Subst ?A1 ?sbs))))
                (Subst ?A (sbshift ?G2 ?A2 ?sbs)) =>
       tryif (is_evar A ; is_var B')
@@ -1197,46 +1195,38 @@ Ltac magicn n try shelf tysym debug :=
       else eqtype_subst G (Subst B' (sbcomp sbs (sbweak A1 sbs)))
                         (Subst A (sbshift G2 A2 sbs))
                         magicn n try shelf tysym debug
-    (* | |- eqtype ?G *)
-    (*            (Subst ?A *)
-    (*                   (sbcomp (sbshift ?G1 ?A1 ?sbs) *)
-    (*                           (sbzero ?G2 ?A2 (subst ?u ?sbs)))) *)
-    (*            (Subst ?B' ?sbs) => *)
-    (*   tryif (is_evar A ; is_var B') *)
-    (*   then ( *)
-    (*     first [ *)
-    (*       eapply @EqTyTrans *)
-    (*       with (B := Subst (Subst B' sbweak) *)
-    (*                       (sbcomp (sbshift sbs) (sbzero (subst u sbs)))) ; [ *)
-    (*         eapply EqTyRefl *)
-    (*       | .. *)
-    (*       ] *)
-    (*     | myfail debug *)
-    (*     ] ; magicn n try shelf true debug *)
-    (*   ) *)
-    (*   else eqtype_subst G A (sbcomp (sbshift sbs) (sbzero (subst u sbs))) *)
-    (*                     (Subst B' sbs) *)
-    (*                     magicn n try shelf tysym debug *)
-    (* | |- eqtype ?G (Subst ?B' ?sbs) *)
-    (*            (Subst ?A (sbcomp (sbshift ?sbs) (sbzero (subst ?u ?sbs)))) => *)
-    (*   tryif (is_evar A ; is_var B') *)
-    (*   then ( *)
-    (*     first [ *)
-    (*       eapply EqTySym ; [ *)
-    (*         eapply @EqTyTrans *)
-    (*         with (B := Subst (Subst B' sbweak) *)
-    (*                         (sbcomp (sbshift sbs) (sbzero (subst u sbs)))) ; [ *)
-    (*           eapply EqTyRefl *)
-    (*         | .. *)
-    (*         ] *)
-    (*       | .. *)
-    (*       ] *)
-    (*     | myfail debug *)
-    (*     ] ; magicn n try shelf true debug *)
-    (*   ) *)
-    (*   else eqtype_subst G B' sbs *)
-    (*                     (Subst A (sbcomp (sbshift sbs) (sbzero (subst u sbs)))) *)
-    (*                     magicn n try shelf tysym debug *)
+    | |- eqtype ?G
+               (Subst ?A
+                      (sbcomp (sbshift ?G1 ?A1 ?sbs)
+                              (sbzero ?G2 ?A2 (subst ?u ?sbs))))
+               (Subst ?B' ?sbs) =>
+      tryif (is_evar A ; is_var B')
+      then (
+        first [
+          instantiate (1 := Subst B' (sbweak _ _))
+        | myfail debug
+        ] ; magicn n try shelf true debug
+      )
+      else eqtype_subst G
+                        A
+                        (sbcomp (sbshift G1 A1 sbs)
+                                (sbzero G2 A2 (subst u sbs)))
+                        (Subst B' sbs)
+                        magicn n try shelf tysym debug
+    | |- eqtype ?G (Subst ?B' ?sbs)
+               (Subst ?A (sbcomp (sbshift ?G1 ?A1 ?sbs)
+                                 (sbzero ?G2 ?A2 (subst ?u ?sbs)))) =>
+      tryif (is_evar A ; is_var B')
+      then (
+        first [
+          instantiate (1 := Subst B' (sbweak _ _))
+        | myfail debug
+        ] ; magicn n try shelf true debug
+      )
+      else eqtype_subst G B' sbs
+                        (Subst A (sbcomp (sbshift G1 A1 sbs)
+                                         (sbzero G2 A2 (subst u sbs))))
+                        magicn n try shelf tysym debug
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)
       eqtype_subst G A sbs B magicn n try shelf tysym debug
