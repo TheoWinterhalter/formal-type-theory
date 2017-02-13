@@ -506,109 +506,33 @@ Ltac simplify :=
     | ..
     ]
 
+  | |- eqterm ?G (subst ?u (sbid _)) ?v ?A =>
+    eapply EqTrans ; [
+      eapply EqIdSubst
+    | ..
+    ]
+
   | |- eqterm ?G (subst ?u ?sbs) ?v ?A =>
-    tryif (is_var sbs)
-    then fail
-    else
-      lazymatch sbs with
-      | sbcomp ?sbt (sbcomp (sbshift _ _ ?sbs) (sbzero _ _ (subst ?u ?sbs))) =>
-        eapply EqTrans ; [
+    first [
+      eapply EqTrans ; [
+        eapply CongTermSubst ; [
+          simplify_subst
+        | ..
+        ]
+      | ..
+      ]
+    | eapply EqTrans ; [
+        eapply EqTyConv ; [
           eapply CongTermSubst ; [
-            eapply CongSubstComp ; [
-              eapply ShiftZero
-            | eapply SubstRefl
-            | ..
-            ]
+            simplify_subst
           | ..
           ]
         | ..
         ]
-      | sbcomp (sbcomp ?sbt (sbshift _ _ ?sbs)) (sbzero _ _ (subst ?u ?sbs)) =>
-        eapply EqTrans ; [
-          eapply CongTermSubst ; [
-            eapply SubstTrans ; [
-              eapply SubstSym ; [ eapply CompAssoc | .. ]
-            | eapply CongSubstComp ; [
-                eapply ShiftZero
-              | eapply SubstRefl
-              | ..
-              ]
-            | ..
-            ]
-          | ..
-          ]
-        | ..
-        ]
-      | sbcomp (sbweak _ _) (sbcomp (sbzero _ _ ?u) ?sbt) =>
-        first [
-          eapply EqTrans ; [
-            eapply CongTermSubst ; [
-              eapply SubstTrans ; [
-                eapply CompAssoc
-              | eapply CongSubstComp ; [
-                  idtac
-                | eapply WeakZero
-                | ..
-                ]
-              | ..
-              ]
-            | ..
-            ]
-          | ..
-          ]
-        | eapply EqTrans ; [
-            eapply EqTyConv ; [
-              eapply CongTermSubst ; [
-                eapply SubstTrans ; [
-                  eapply CompAssoc
-                | eapply CongSubstComp ; [
-                    idtac
-                  | eapply WeakZero
-                  | ..
-                  ]
-                | ..
-                ]
-              | ..
-              ]
-            | ..
-            ]
-          | ..
-          ]
-        ]
-      | sbcomp (sbid _) ?sbs =>
-        first [
-          eapply EqTrans ; [
-            eapply CongTermSubst ; [
-              eapply CompIdLeft
-            | ..
-            ]
-          | ..
-          ]
-        | eapply EqTrans ; [
-            eapply EqTyConv ; [
-              eapply CongTermSubst ; [
-                eapply CompIdLeft
-              | ..
-              ]
-            | ..
-            ]
-          | ..
-          ]
-        ]
-      | sbcomp (sbweak _ _) (sbzero _ _ ?u) =>
-        eapply EqTrans ; [
-          eapply CongTermSubst ; [
-            eapply WeakZero
-          | ..
-          ]
-        | ..
-        ]
-      | sbid _ =>
-        eapply EqTrans ; [
-          eapply EqIdSubst
-        | ..
-        ]
-      end
+      | ..
+      ]
+    ]
+
   | _ => fail
   end.
 
