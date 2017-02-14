@@ -635,7 +635,9 @@ Proof.
       - { magic. Unshelve. all:strictmagic. }
       - { magic.
           Unshelve. all:try (check_goal ; assumption).
-          all:admit.
+          all:try okmagic.
+          Unshelve. all:try okmagic.
+          Unshelve. (* all:try strictmagic. *) all:admit.
         }
     }
 
