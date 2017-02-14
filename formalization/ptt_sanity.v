@@ -775,70 +775,7 @@ Proof.
                           +++ magic.
                           +++ magic.
                           +++ magic.
-                          +++ simplify.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** simplify.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- (* This is where we should apply
-                                          symmetry and simplify the other
-                                          side I think. *)
-                                    eapply CongTySubst.
-                                    ++++ magic.
-                                    ++++ magic.
-                                    ++++ magic.
-                                    ++++ magic.
-                                    ++++ magic.
-                                    ++++ magic.
-                                    ++++ magic.
-                                    ++++ magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                                  ---- magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
-                              *** magic.
+                          +++ magic.
                           +++ magic.
                           +++ magic.
                           +++ magic.
