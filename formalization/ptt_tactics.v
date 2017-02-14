@@ -311,6 +311,7 @@ Ltac pushsubst1 :=
   (*     ] *)
   (*   ) *)
   (*   else fail *)
+
   (*! Pushing in terms !*)
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
     eapply EqTrans ; [ eapply EqSubstRefl | .. ]
@@ -677,6 +678,7 @@ Ltac magicn n try shelf tysym debug :=
         assumption
       | cando shelf ; shelve
       ]
+
     (*! Substitutions !*)
     | |- issubst (sbzero _ _ ?u) ?G1 ?G2 =>
       first [
@@ -720,6 +722,7 @@ Ltac magicn n try shelf tysym debug :=
         | myfail debug
         ] ; magicn n try shelf tysym debug
       ) else (cando shelf ; shelve)
+
     (*! Types !*)
     | |- istype ?G (Subst ?A ?sbs) =>
       first [
@@ -765,6 +768,7 @@ Ltac magicn n try shelf tysym debug :=
         assumption
       | cando shelf ; shelve
       ]
+
     (*! Terms !*)
     | |- isterm ?G (subst ?u ?sbs) ?A =>
       first [
@@ -888,6 +892,7 @@ Ltac magicn n try shelf tysym debug :=
         ] ; magicn n try shelf true debug
         else cando shelf ; shelve
       )
+
     (*! Equality of contexts !*)
     | |- eqctx ctxempty ctxempty =>
       apply EqCtxEmpty
@@ -911,6 +916,7 @@ Ltac magicn n try shelf tysym debug :=
       | apply CtxSym ; [ assumption | .. ]
       | cando shelf ; shelve
       ] ; magicn n try shelf true debug
+
     (*! Equality of substitutions !*)
     | |- eqsubst (sbcomp (sbweak _ _) (sbshift _ _ ?sbs))
                 (sbcomp ?sbs (sbweak _ _)) ?G ?D =>
@@ -984,75 +990,13 @@ Ltac magicn n try shelf tysym debug :=
         ]
       | myfail debug
       ] ; magicn n try shelf true debug
-    (* Basically copying stuff over from simplify... There should be a way
-       to avoid that. *)
-    | |- eqsubst (sbcomp (sbweak _ _) (sbcomp (sbzero _ _ ?u) ?sbs)) ?sbt ?G ?D =>
-      first [
-        eapply SubstTrans ; [
-          eapply SubstTrans ; [
-            eapply CompAssoc
-          | eapply CongSubstComp ; [
-              idtac
-            | eapply WeakZero
-            | ..
-            ]
-          | ..
-          ]
-        | ..
-        ]
-      | myfail debug
-      ] ; magicn n try shelf true debug
-    | |- eqsubst (sbcomp (sbcomp (sbweak _ _) (sbzero _ _ ?u)) ?sbs) ?sbt ?G ?D =>
-      first [
-        eapply SubstTrans ; [
-          eapply CongSubstComp ; [
-            idtac
-          | eapply WeakZero
-          | ..
-          ]
-        | ..
-        ]
-      | myfail debug
-      ] ; magicn n try shelf true debug
-    | |- eqsubst (sbcomp ?sbs (sbcomp (sbweak _ _) (sbzero _ _ ?u))) ?sbt ?G ?D =>
-      first [
-        eapply SubstTrans ; [
-          eapply CongSubstComp ; [
-            eapply WeakZero
-          | ..
-          ]
-        | ..
-        ]
-      | myfail debug
-      ] ; magicn n try shelf true debug
-    | |- eqsubst (sbcomp (sbid _) ?sbs) ?sbt ?G ?D =>
-      first [
-        eapply SubstTrans ; [
-          eapply CompIdLeft
-        | ..
-        ]
-      | myfail debug
-      ] ; magicn n try shelf true debug
-    | |- eqsubst (sbcomp ?sbs (sbid _)) ?sbt ?G ?D =>
-      first [
-        eapply SubstTrans ; [
-          eapply CompIdRight
-        | ..
-        ]
-      | myfail debug
-      ] ; magicn n try shelf true debug
-    (* This is a dangerous case. We need to take care of everything involving
-       composition before this one. *)
-    | |- eqsubst (sbcomp ?sb1 ?sb2) (sbcomp ?sb3 ?sb4) ?G ?D =>
-      first [
-        eapply CongSubstComp
-      | myfail debug
-      ] ; magicn n try shelf true debug
     | |- eqsubst ?sbs ?sbs ?G ?D =>
       first [
-        eapply SubstRefl
-      | myfail debug
-      ] ; magicn n try shelf true debug
+          eapply SubstRefl
+        | myfail debug
+        ] ; magicn n try shelf true debug
+    (* We need to simplify if we are ever going to apply congruence for
+       composition. *)
     | |- eqsubst ?sbs ?sbt ?G ?D =>
       tryif (is_var sbs ; is_var sbt)
       then first [
@@ -1065,10 +1009,13 @@ Ltac magicn n try shelf tysym debug :=
         ]
       | myfail debug
       ] ; magicn n try shelf true debug
-      (* Again we cheat a bit a repeat the _ case here. *)
-      else falling_case magicn n try shelf tysym debug
-    (* We should probably avoid using congruence on composition. *)
-    (* To be continued... *)
+      else first [
+        eapply SubstTrans ; [ simplify_subst | .. ]
+      | eapply SubstSym ; [ eapply SubstTrans ; [ simplify_subst | .. ] | .. ]
+      | eapply CongSubstComp
+      | myfail debug
+      ] ; magicn n try shelf true debug
+
     (*! Equality of types !*)
     | |- eqtype ?G (Subst (Subst ?A ?sbs) ?sbt) ?B =>
       first [
@@ -1165,8 +1112,6 @@ Ltac magicn n try shelf tysym debug :=
       | myfail debug
       ] ; magicn n try shelf true debug
     | |- eqtype ?G ?A ?B =>
-      (* We only want to catch the variable case, so we will copy the _ *)
-      (* case here (it's a lazymatch). *)
       tryif (is_var A ; is_var B)
       then (
         first [
@@ -1184,7 +1129,7 @@ Ltac magicn n try shelf tysym debug :=
         ] ; magicn n try shelf true debug
       )
       else falling_case magicn n try shelf tysym debug
-    (* To be continued... *)
+
     (*! Equality of terms !*)
     | |- eqterm ?G (subst (subst ?u ?sbs) ?sbt) ?v ?A =>
       compsubst1 ; magicn n try shelf true debug

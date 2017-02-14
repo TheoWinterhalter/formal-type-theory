@@ -822,7 +822,8 @@ Proof.
                                   ---- (* This is where we should apply
                                           symmetry and simplify the other
                                           side I think. *)
-                                    fail.
+                                    eapply CongTySubst.
+                                    ++++ fail.
                       ** magic.
                       ** magic.
                       ** magic.
