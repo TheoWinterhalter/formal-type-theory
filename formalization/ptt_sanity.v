@@ -711,7 +711,19 @@ Proof.
                         --- magic.
                         --- (* Here is where we should work towards a new
                                simplification. *)
-                          fail.
+                          simplify.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ (* Too many SubstTrans it seems! *)
+                            fail.
                       ** magic.
                       ** magic.
                       ** magic.
