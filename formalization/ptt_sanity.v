@@ -723,7 +723,106 @@ Proof.
                           +++ magic.
                           +++ magic.
                           +++ (* This time, the holes seem to be at fault! *)
-                            fail.
+                            eapply CongSubstZero.
+                            *** magic.
+                            *** magic.
+                            *** (* Maybe this should be shelved! *)
+                              shelve.
+                            *** magic.
+                            *** magic.
+                            *** magic.
+                            *** magic.
+                            *** magic.
+                            *** (* This one also? *)
+                              shelve.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ simplify.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** simplify.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- (* This is where we should apply
+                                          symmetry and simplify the other
+                                          side I think. *)
+                                    fail.
                       ** magic.
                       ** magic.
                       ** magic.
