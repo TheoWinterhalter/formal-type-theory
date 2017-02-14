@@ -823,7 +823,30 @@ Proof.
                                           symmetry and simplify the other
                                           side I think. *)
                                     eapply CongTySubst.
-                                    ++++ fail.
+                                    ++++ magic.
+                                    ++++ magic.
+                                    ++++ magic.
+                                    ++++ magic.
+                                    ++++ magic.
+                                    ++++ magic.
+                                    ++++ magic.
+                                    ++++ magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                                  ---- magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                              *** magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                          +++ magic.
+                        --- magic.
+                        --- magic.
+                        --- magic.
+                        --- magic.
                       ** magic.
                       ** magic.
                       ** magic.
@@ -856,7 +879,7 @@ Proof.
             + magic.
           - magic.
           - magic.
-          -
+          - (* magic. -- leads to unprovable goal *)
 
 
 
