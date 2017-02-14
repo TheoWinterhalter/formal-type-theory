@@ -442,7 +442,7 @@ Ltac simplify_subst :=
   lazymatch goal with
   | |- eqsubst ?sbs ?sbt ?G ?D =>
 
-    eapply SubstTrans ; [
+    (* eapply SubstTrans ; [ *)
 
       lazymatch sbs with
 
@@ -506,8 +506,8 @@ Ltac simplify_subst :=
 
       end
 
-    | ..
-    ]
+    (* | .. *)
+    (* ] *)
 
   | _ => fail
   end.

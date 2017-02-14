@@ -722,7 +722,7 @@ Proof.
                           +++ magic.
                           +++ magic.
                           +++ magic.
-                          +++ (* Too many SubstTrans it seems! *)
+                          +++ (* This time, the holes seem to be at fault! *)
                             fail.
                       ** magic.
                       ** magic.
