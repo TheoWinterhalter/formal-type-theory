@@ -670,6 +670,7 @@ Proof.
                         eapply EqTyTrans ; [
                            eapply CongTySubst ; [
                              idtac
+                           | eapply EqTyRefl
                            | ..
                            ]
                          | ..
@@ -700,18 +701,16 @@ Proof.
                           +++ magic.
                           +++ magic.
                           +++ magic.
-                        --- (* Maybe this shouldn't be the generated goal? *)
-                          magic.
                         --- magic.
                         --- magic.
                         --- magic.
                         --- magic.
                         --- magic.
                         --- magic.
-                        --- (* Here is the new faulty goal! *)
-                          (* Maybe we use one SubstTrans too many! *)
-                          (* This might very well be a case where Refl should
-                             apply. *)
+                        --- magic.
+                        --- magic.
+                        --- (* Here is where we should work towards a new
+                               simplification. *)
                           fail.
                       ** magic.
                       ** magic.

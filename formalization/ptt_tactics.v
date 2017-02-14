@@ -508,6 +508,7 @@ Ltac simplify :=
     eapply EqTyTrans ; [
       eapply CongTySubst ; [
         simplify_subst
+      | eapply EqTyRefl
       | ..
       ]
     | ..
@@ -524,6 +525,7 @@ Ltac simplify :=
       eapply EqTrans ; [
         eapply CongTermSubst ; [
           simplify_subst
+        | eapply EqRefl
         | ..
         ]
       | ..
@@ -532,6 +534,7 @@ Ltac simplify :=
         eapply EqTyConv ; [
           eapply CongTermSubst ; [
             simplify_subst
+          | eapply EqRefl
           | ..
           ]
         | ..
