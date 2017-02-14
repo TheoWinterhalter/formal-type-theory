@@ -633,23 +633,9 @@ Proof.
   (* EqSubstJ *)
   - { split.
       - { magic. Unshelve. all:strictmagic. }
-      - { (* magic. fail. *)
-
-          (* INVESTIGATION *)
-          eapply TermTyConv ; [ eapply TermJ | .. ].
-          - magic.
-          - magic.
-          - magic.
-          - magic.
-          - magic.
-          - magic.
-          - magic.
-          - magic.
-          - magic.
-          - magic.
-          - magic.
-            Unshelve. all:try assumption.
-            all:admit.
+      - { magic.
+          Unshelve. all:try (check_goal ; assumption).
+          all:admit.
         }
     }
 
