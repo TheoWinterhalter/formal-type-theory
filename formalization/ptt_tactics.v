@@ -1191,15 +1191,28 @@ Ltac magicn n try shelf tysym debug :=
             ] ; magicn n try shelf true debug
           end
         )
-        else first [
-          simplify
-        | eapply CongTermSubst
-        | eapply EqTyConv ; [
-            eapply CongTermSubst
-          | ..
-          ]
-        | myfail debug
-        ] ; magicn n try shelf true debug
+        else (
+          lazymatch v with
+          | subst ?v ?sbt =>
+            tryif (is_var v)
+            then first [
+                simplify
+              | eapply CongTermSubst
+              | eapply EqTyConv ; [ eapply CongTermSubst | .. ]
+              | myfail debug
+              ] ; magicn n try shelf true debug
+            else first [
+                pushsubst1 ; magicn n try shelf true debug
+              | cando shelf ; shelve
+            ]
+
+          | _ =>
+            first [
+              simplify
+            | cando shelf ; shelve
+            ] ; magicn n try shelf true debug
+          end
+        )
       )
       else first [
         pushsubst1 ; magicn n try shelf true debug

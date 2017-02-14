@@ -727,7 +727,49 @@ Proof.
                             *** magic.
                             *** magic.
                             *** (* Maybe this should be shelved! *)
-                              shelve.
+                              eapply EqSym.
+                              ---- shelve.
+                              ---- magic.
+                              ---- eapply TermTyConv ; [
+                                     eapply TermSubst
+                                   | ..
+                                   ].
+                                   ++++ magic.
+                                   ++++ magic.
+                                   ++++ magic.
+                                   ++++ magic.
+                                   ++++ magic.
+                                   ++++ pushsubst1.
+                                        **** magic.
+                                        **** magic.
+                                        **** magic.
+                                        **** magic.
+                                        **** magic.
+                                        **** magic.
+                                        **** eapply CongId.
+                                             ----- magic.
+                                             ----- magic.
+                                             ----- magic.
+                                             ----- magic.
+                                             ----- magic.
+                                             ----- magic.
+                                             ----- magic.
+                                             ----- magic.
+                                             ----- compsubst1.
+                                             +++++ magic.
+                                             +++++ magic.
+                                             +++++ magic.
+                                             +++++ magic.
+                                             +++++ magic.
+                                             +++++ magic.
+                                             +++++ magic.
+                                             +++++ magic.
+                                             +++++ magic.
+                                             +++++ magic.
+                                             +++++ magic.
+                                             +++++ magic.
+                                             +++++ fail.
+                              (* shelve. *)
                             *** magic.
                             *** magic.
                             *** magic.
