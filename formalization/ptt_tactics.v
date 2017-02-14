@@ -1028,8 +1028,18 @@ Ltac magicn n try shelf tysym debug :=
       | myfail debug
       ] ; magicn n try shelf true debug
     (* A weird case perhaps. *)
-    (* It feels like we should improve the case where is_var A and
-       not is_var sbs below. *)
+    | |- eqtype ?G (Subst ?A (sbshift ?G2 ?A2 ?sbs))
+               (Subst ?B' (sbcomp ?sbs (sbweak ?G1 (Subst ?A1 ?sbs)))) =>
+      tryif (is_evar A ; is_var B')
+      then (
+        first [
+          instantiate (1 := (Subst B' (sbweak _ _)))
+        | myfail debug
+        ] ; magicn n try shelf true debug
+      )
+      else eqtype_subst G A (sbshift G2 A2 sbs)
+                        (Subst B' (sbcomp sbs (sbweak G1 (Subst A1 sbs))))
+                        magicn n try shelf tysym debug
     | |- eqtype ?G (Subst ?B' (sbcomp ?sbs (sbweak ?G1 (Subst ?A1 ?sbs))))
                (Subst ?A (sbshift ?G2 ?A2 ?sbs)) =>
       tryif (is_evar A ; is_var B')
