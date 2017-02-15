@@ -637,7 +637,14 @@ Proof.
           Unshelve. all:try (check_goal ; assumption).
           all:try okmagic.
           Unshelve. all:try okmagic.
-          Unshelve. all:try strictmagic. all:admit.
+          Unshelve.
+          1:exact (subst (refl (Subst A sbs) (subst u sbs)) (sbweak G (Subst A sbs))).
+          all:try okmagic.
+          Unshelve.
+
+
+
+ (* all:try strictmagic. *) all:admit.
         }
     }
 
