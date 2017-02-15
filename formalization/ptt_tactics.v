@@ -604,7 +604,6 @@ Ltac eqtype_subst G A sbs B k n try shelf tysym debug :=
           tryif (is_var sbt)
           then first [
             eapply CongTySubst
-          | eassumption
           | myfail debug
           ] ; k n try shelf true debug
           else first [
@@ -620,7 +619,6 @@ Ltac eqtype_subst G A sbs B k n try shelf tysym debug :=
       | _ =>
         first [
           eapply CongTySubst
-        | eassumption
         | myfail debug
         ] ; k n try shelf true debug
       end
@@ -653,19 +651,12 @@ Ltac magicn n try shelf tysym debug :=
   first [
     assumption
   | (* We have several things we need to do to the tactic:
-       * Only use assumption on the base cases (not on SubstZero and the like).
        * Remove the _ case.
-       * Add special rules when dealing with substitution typing this can go
-         though special admissibility rules that factorize the number of
-         premises that would be needed to prove.
-       * Should it be able to use EqTyWeakNat?
        * Add a token to solve equalities with only one side as reflexivity.
          (Maybe shelve them in the meantime?)
-       * Put tysym token back to true whenever progress is made
-         (ie not when using structural rules).
-       * [NEW] We can take advantage of the information we have at hand on
+       * We can take advantage of the information we have at hand on
          substitutions to make magic finer!
-       * ... *)
+     *)
     lazymatch goal with
     (*! Contexts !*)
     | |- isctx ctxempty =>
@@ -683,35 +674,29 @@ Ltac magicn n try shelf tysym debug :=
     | |- issubst (sbzero _ _ ?u) ?G1 ?G2 =>
       first [
         eapply SubstZero
-      | eassumption
       | eapply SubstCtxConv ; [ eapply SubstZero | .. ]
       | myfail debug
       ] ; magicn n try shelf true debug
     | |- issubst (sbweak _ _) ?G1 ?G2 =>
       first [
         eapply SubstWeak
-      | assumption
-      (* | cando shelf ; shelve *) (* We probably don't need to do it anymore. *)
       | eapply SubstCtxConv ; [ eapply SubstWeak | .. ]
       | myfail debug
       ] ; magicn n try shelf true debug
     | |- issubst (sbshift _ _ ?sbs) ?G1 ?G2 =>
       first [
         eapply SubstShift
-      | eassumption
       | eapply SubstCtxConv ; [ eapply SubstShift | .. ]
       | myfail debug
       ] ; magicn n try shelf true debug
     | |- issubst (sbid _) ?G1 ?G2 =>
       first [
         eapply SubstId
-      | eassumption
       | myfail debug
       ] ; magicn n try shelf true debug
     | |- issubst (sbcomp ?sbt ?sbs) ?G1 ?G2 =>
       first [
           eapply SubstComp
-        | eassumption
         | myfail debug
         ] ; magicn n try shelf true debug
     | |- issubst ?sbs ?G1 ?G2 =>
@@ -758,10 +743,7 @@ Ltac magicn n try shelf tysym debug :=
       tryif (is_var A)
       then first [
         eassumption
-      | eapply TyCtxConv ; [
-          eassumption
-        | ..
-        ]
+      | eapply TyCtxConv ; [ eassumption | .. ]
       | myfail debug
       ] ; magicn n try shelf true debug
       else first [
