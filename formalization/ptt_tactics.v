@@ -991,7 +991,8 @@ Ltac magicn n try shelf tysym debug :=
       ] ; magicn n try shelf true debug
     | |- eqsubst (sbweak _ _) (sbweak _ _) ?D ?E =>
       first [
-        eapply CongSubstWeak ; magicn n try shelf true debug
+        eapply CongSubstWeak
+      | eapply EqSubstCtxConv ; [ eapply CongSubstWeak | .. ]
       | myfail debug
       ] ; magicn n try shelf true debug
     | |- eqsubst (sbshift _ _ ?sbs1) (sbshift _ _ ?sbs2) ?D ?E =>
@@ -1111,7 +1112,7 @@ Ltac magicn n try shelf tysym debug :=
         eqtype_subst G A sbs (Subst B (sbzero D (Subst A sbs) (subst u sbs)))
                      magicn n try shelf tysym debug
     (* One more *)
-    | |- eqtype ?G (Subst ?A (sbzero ?D ?B ?u)) ?B =>
+    | |- eqtype ?G (Subst ?A (sbzero ?D ?B' ?u)) ?B =>
       tryif (is_evar A ; is_var B)
       then first [
         instantiate (1 := Subst B (sbweak _ _))
