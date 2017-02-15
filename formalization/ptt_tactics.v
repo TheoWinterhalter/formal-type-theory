@@ -464,9 +464,10 @@ Ltac simplify_subst :=
       | sbcomp (sbweak _ _) (sbcomp (sbzero _ _ _) _) =>
         ecomp WeakZero
 
-      | sbcomp (sbshift _ _ ?sbs) (sbzero _ _ (subst ?u ?sbs)) =>
+      | sbcomp (sbshift _ ?A ?sbs) (sbzero _ (Subst ?A ?sbs) (subst ?u ?sbs)) =>
         eapply ShiftZero
-      | sbcomp (sbshift _ _ ?sbs) (sbcomp (sbzero _ _ (subst ?u ?sbs)) _) =>
+      | sbcomp (sbshift _ ?A ?sbs)
+               (sbcomp (sbzero _ (Subst ?A ?sbs) (subst ?u ?sbs)) _) =>
         ecomp ShiftZero
       | sbcomp (sbshift _ _ ?sbs) (sbzero _ _ _) =>
         eapply SubstTrans ; [
@@ -479,7 +480,6 @@ Ltac simplify_subst :=
         | ..
         ]
       | sbcomp (sbshift _ _ ?sbs) (sbcomp (sbzero _ _ _) _) =>
-        (* Too many trans? *)
         eapply SubstTrans ; [
           eapply CompAssoc
         | eapply CongSubstComp ; [
@@ -962,11 +962,24 @@ Ltac magicn n try shelf tysym debug :=
         ]
       | myfail debug
       ] ; magicn n try shelf true debug
-    | |- eqsubst (sbcomp (sbzero _ _ ?u) ?sbs)
-                (sbcomp (sbshift _ _ ?sbs) (sbzero _ _ (subst ?u ?sbs))) ?G ?D =>
+    | |- eqsubst (sbcomp (sbzero _ ?A ?u) ?sbs)
+                (sbcomp (sbshift _ _ ?sbs)
+                        (sbzero _ (Subst ?A ?sbs) (subst ?u ?sbs))) ?G ?D =>
       first [
         eapply SubstSym ; [
           eapply ShiftZero
+        | ..
+        ]
+      | myfail debug
+      ] ; magicn n try shelf true debug
+    | |- eqsubst (sbcomp (sbzero _ _ ?u) ?sbs)
+                (sbcomp (sbshift _ _ ?sbs) (sbzero _ _ _)) ?G ?D =>
+      first [
+        eapply SubstSym ; [
+          eapply SubstTrans ; [
+            simplify_subst
+          | ..
+          ]
         | ..
         ]
       | myfail debug
