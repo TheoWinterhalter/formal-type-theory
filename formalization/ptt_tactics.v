@@ -314,17 +314,19 @@ Ltac pushsubst1 :=
 
   (*! Pushing in terms !*)
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
-    eapply EqTrans ; [ eapply EqSubstRefl | .. ]
-  | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
-    eapply EqTyConv ; [
+    first [
       eapply EqTrans ; [ eapply EqSubstRefl | .. ]
-    | ..
+    | eapply EqTyConv ; [
+        eapply EqTrans ; [ eapply EqSubstRefl | .. ]
+      | ..
+      ]
     ]
-  | |- eqterm ?G (subst ?v (sbzero ?G (Subst ?A ?sbs) (subst ?u ?sbs)))
-             (refl (Subst ?A ?sbs) (subst ?u ?sbs))
-             (Id (Subst ?A ?sbs) (subst ?u ?sbs) (subst ?u ?sbs)) =>
-    instantiate
-      (1 := subst (refl (Subst A sbs) (subst u sbs)) (sbweak G (Subst A sbs)))
+  (* Seems faulty *)
+  (* | |- eqterm ?G (subst ?v (sbzero ?G (Subst ?A ?sbs) (subst ?u ?sbs))) *)
+  (*            (refl (Subst ?A ?sbs) (subst ?u ?sbs)) *)
+  (*            (Id (Subst ?A ?sbs) (subst ?u ?sbs) (subst ?u ?sbs)) => *)
+  (*   instantiate *)
+  (*     (1 := subst (refl (Subst A sbs) (subst u sbs)) (sbweak G (Subst A sbs))) *)
   | |- eqterm ?G (subst true ?sbs) ?u ?A =>
     eapply EqTrans ; [ eapply EqSubstTrue | .. ]
   | |- eqterm ?G (subst true ?sbs) ?u ?A =>

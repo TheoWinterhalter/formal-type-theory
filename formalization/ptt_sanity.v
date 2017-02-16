@@ -638,7 +638,8 @@ Proof.
           all:try okmagic.
           Unshelve. all:try okmagic.
           Unshelve.
-          Focus 20.
+          Focus 26.
+
           (* magic shouldn't shelve this! *)
           fail.
         }
