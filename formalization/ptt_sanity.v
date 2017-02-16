@@ -638,13 +638,9 @@ Proof.
           all:try okmagic.
           Unshelve. all:try okmagic.
           Unshelve.
-          1:exact (subst (refl (Subst A sbs) (subst u sbs)) (sbweak G (Subst A sbs))).
-          all:try okmagic.
-          Unshelve.
-
-
-
- (* all:try strictmagic. *) all:admit.
+          Focus 20.
+          (* magic shouldn't shelve this! *)
+          fail.
         }
     }
 
