@@ -638,7 +638,117 @@ Proof.
           all:try okmagic.
           Unshelve. all:try okmagic.
           Unshelve.
-          Focus 26.
+          (* 27:instantiate (1 := subst (refl (Subst A sbs) (subst u sbs)) *)
+          (*                           (sbweak G (Subst A sbs))). *)
+          all:try (eapply EqRefl).
+          all:try okmagic.
+          Unshelve. all:try (check_goal ; assumption).
+          all:try okmagic. Unshelve.
+          all:try (eapply EqRefl).
+          all:try okmagic. Unshelve.
+          all:match goal with
+              | |- eqterm _ _ _ _ => idtac
+              | |- eqtype _ _ _ => idtac
+              | _ => shelve
+              end.
+          11:instantiate(1 := subst u (sbweak _ _)).
+          12:instantiate(1 := var 0).
+          13:instantiate(1 := subst u (sbweak _ _)).
+          14:instantiate(1 := var 0).
+          15:instantiate(1 := subst u (sbweak _ _)).
+          16:instantiate(1 := var 0).
+          17:instantiate(1 := subst u (sbweak _ _)).
+          18:instantiate(1 := var 0).
+          19:instantiate(1 := subst u (sbweak _ _)).
+          20:instantiate(1 := var 0).
+          21:instantiate(1 := subst u (sbweak _ _)).
+          22:instantiate(1 := var 0).
+          23:instantiate(1 := subst u (sbweak _ _)).
+          24:instantiate(1 := var 0).
+          25:instantiate(1 := subst u (sbweak _ _)).
+          26:instantiate(1 := var 0).
+          27:instantiate(1 := subst u (sbweak _ _)).
+          28:instantiate(1 := var 0).
+          29:instantiate(1 := subst u (sbweak _ _)).
+          30:instantiate(1 := var 0).
+          31:instantiate(1 := subst u (sbweak _ _)).
+          32:instantiate(1 := var 0).
+          33:instantiate(1 := subst u (sbweak _ _)).
+          34:instantiate(1 := var 0).
+          35:instantiate(1 := subst u (sbweak _ _)).
+          36:instantiate(1 := var 0).
+          37:instantiate(1 := subst u (sbweak _ _)).
+          38:instantiate(1 := var 0).
+          39:instantiate(1 := subst u (sbweak _ _)).
+          40:instantiate(1 := var 0).
+          41:instantiate(1 := subst u (sbweak _ _)).
+          42:instantiate(1 := var 0).
+          43:instantiate(1 := subst u (sbweak _ _)).
+          44:instantiate(1 := var 0).
+          50:instantiate(1 := subst u (sbweak _ _)).
+          51:instantiate(1 := var 0).
+          52:instantiate(1 := subst u (sbweak _ _)).
+          53:instantiate(1 := var 0).
+          59:instantiate(1 := subst u (sbweak _ _)).
+          60:instantiate(1 := var 0).
+          61:instantiate(1 := subst u (sbweak _ _)).
+          62:instantiate(1 := var 0).
+          63:instantiate(1 := subst u (sbweak _ _)).
+          64:instantiate(1 := var 0).
+          65:instantiate(1 := subst u (sbweak _ _)).
+          66:instantiate(1 := var 0).
+          67:instantiate(1 := subst u (sbweak _ _)).
+          68:instantiate(1 := var 0).
+          69:instantiate(1 := subst u (sbweak _ _)).
+          70:instantiate(1 := var 0).
+          71:instantiate(1 := subst u (sbweak _ _)).
+          72:instantiate(1 := var 0).
+          73:instantiate(1 := subst u (sbweak _ _)).
+          74:instantiate(1 := var 0).
+          75:instantiate(1 := subst u (sbweak _ _)).
+          76:instantiate(1 := var 0).
+          77:instantiate(1 := subst u (sbweak _ _)).
+          78:instantiate(1 := var 0).
+          79:instantiate(1 := subst u (sbweak _ _)).
+          80:instantiate(1 := var 0).
+          81:instantiate(1 := subst u (sbweak _ _)).
+          82:instantiate(1 := var 0).
+          83:instantiate(1 := subst u (sbweak _ _)).
+          84:instantiate(1 := var 0).
+          85:instantiate(1 := subst u (sbweak _ _)).
+          86:instantiate(1 := var 0).
+          87:instantiate(1 := subst u (sbweak _ _)).
+          88:instantiate(1 := var 0).
+          89:instantiate(1 := subst u (sbweak _ _)).
+          90:instantiate(1 := var 0).
+          91:instantiate(1 := subst u (sbweak _ _)).
+          92:instantiate(1 := var 0).
+          93:instantiate(1 := subst u (sbweak _ _)).
+          94:instantiate(1 := var 0).
+          all:try okmagic.
+          1:instantiate(1 := refl _ _).
+          1:magic.
+          fail.
+          (* We should find something better that this below *)
+          1:instantiate (1 := subst (subst p sbs) (sbcomp (sbweak _ _) (sbweak _ _))).
+          1:magic.
+          all:instantiate (1 := var 0).
+
+
+
+          all:try okmagic.
+          all:instantiate ()
+
+
+          all:try okmagic.
+          Unshelve. all:try (check_goal ; assumption).
+          28:eapply EqRefl.
+          31:eapply EqRefl.
+          54:eapply EqRefl.
+          all:try okmagic.
+          Unshelve. all:try (check_goal ; assumption).
+          24:eapply EqRefl.
+
 
           (* magic shouldn't shelve this! *)
           fail.
