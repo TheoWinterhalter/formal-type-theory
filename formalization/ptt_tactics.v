@@ -325,18 +325,6 @@ Ltac pushsubst1 :=
       eapply EqTyTrans ; [ eapply EqTySubstBool | .. ]
     | ..
     ]
-  (* Now, we deal with a very particuliar case. *)
-  (* TODO: See if we can do without. *)
-  (* | |- eqtype ?G (Subst ?A (sbzero ?u)) ?B' => *)
-  (*   (* tryif (is_evar A ; is_var B') *) *)
-  (*   tryif (is_evar A) *)
-  (*   then ( *)
-  (*     eapply @EqTyTrans with (B := Subst (Subst B' sbweak) (sbzero u)) ; [ *)
-  (*       eapply EqTyRefl *)
-  (*     | .. *)
-  (*     ] *)
-  (*   ) *)
-  (*   else fail *)
 
   (*! Pushing in terms !*)
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
@@ -347,12 +335,6 @@ Ltac pushsubst1 :=
       | ..
       ]
     ]
-  (* Seems faulty *)
-  (* | |- eqterm ?G (subst ?v (sbzero ?G (Subst ?A ?sbs) (subst ?u ?sbs))) *)
-  (*            (refl (Subst ?A ?sbs) (subst ?u ?sbs)) *)
-  (*            (Id (Subst ?A ?sbs) (subst ?u ?sbs) (subst ?u ?sbs)) => *)
-  (*   instantiate *)
-  (*     (1 := subst (refl (Subst A sbs) (subst u sbs)) (sbweak G (Subst A sbs))) *)
   | |- eqterm ?G (subst true ?sbs) ?u ?A =>
     first [
       eapply EqTrans ; [ eapply EqSubstTrue | .. ]
@@ -428,31 +410,6 @@ Ltac pushsubst1 :=
       ]
     | ..
     ]
-  (* Similarly, peculiar cases. *)
-  (* | |- eqterm ?G (subst ?w (sbzero ?u)) ?u ?A => *)
-    (* Since it would imply a choice that I don't know how to enforce,
-       I have to remove this case. *)
-    (* tryif (is_evar w ; is_var u) *)
-    (* then first [ *)
-    (*   eapply @EqTrans with (v := subst (var 0) (sbzero u)) ; [ *)
-    (*     eapply EqRefl *)
-    (*   | .. *)
-    (*   ] *)
-    (* | eapply @EqTrans with (v := subst (subst u sbweak) (sbzero u))  ; [ *)
-    (*     eapply EqRefl *)
-    (*   | .. *)
-    (*   ] *)
-    (* ] *)
-    (* else *) (* fail *)
-  (* | |- eqterm ?G (subst ?w (sbzero ?v')) ?u ?A => *)
-  (*   tryif (is_evar w ; is_var u) *)
-  (*   then ( *)
-  (*     eapply @EqTrans with (v := subst (subst u sbweak) (sbzero v'))  ; [ *)
-  (*       eapply EqRefl *)
-  (*     | .. *)
-  (*     ] *)
-  (*   ) *)
-  (*   else fail *)
   | |- ?G => fail "Not a goal handled by pushsubst" G
   end.
 
@@ -610,7 +567,7 @@ Ltac check_goal :=
   | |- eqsubst ?sbs ?sbt ?G ?D => idtac
   | |- eqtype ?G ?A ?B => idtac
   | |- eqterm ?G ?u ?v ?A => idtac
-  | _ => fail "This is not a goal meant to be handled by magic."
+  | |- ?G => fail "Goal" G " is not a goal meant to be handled by magic."
   end.
 
 (* My own tactic to fail with the goal information. *)
@@ -618,8 +575,8 @@ Ltac myfail debug :=
   lazymatch goal with
   | |- ?G =>
     tryif (cando debug)
-    then fail 1000 "Cannot solve subgoal " G
-    else fail "Cannot solve subgoal " G
+    then fail 1000 "Cannot solve subgoal" G
+    else fail "Cannot solve subgoal" G
   | _ => fail "This shouldn't happen!"
   end.
 
@@ -937,57 +894,6 @@ Ltac magicn n try shelf tysym debug :=
                 (sbcomp (sbweak _ _) (sbshift _ _ ?sbs)) ?G ?D =>
       first [
         eapply SubstSym ; [ eapply WeakNat | .. ]
-      | myfail debug
-      ] ; magicn n try shelf true debug
-    (* TODO: Remove this case as it should be handled by simplify_subst *)
-    | |- eqsubst (sbcomp (sbweak _ _) (sbzero _ _ ?u)) (sbid _) ?G ?D =>
-      first [
-        eapply WeakZero
-      | myfail debug
-      ] ; magicn n try shelf true debug
-    (* TODO: Same *)
-    | |- eqsubst (sbid _) (sbcomp (sbweak _ _) (sbzero _ ?u)) ?G ?D =>
-      first [
-        eapply SubstSym ; [ eapply WeakZero | .. ]
-      | myfail debug
-      ] ; magicn n try shelf true debug
-    (* TODO: Same *)
-    | |- eqsubst (sbcomp (sbshift _ _ ?sbs) (sbzero _ _ (subst ?u ?sbs)))
-                (sbcomp (sbzero _ _ ?u) ?sbs) ?G ?D =>
-      first [
-        eapply ShiftZero
-      | myfail debug
-      ] ; magicn n try shelf true debug
-    (* TODO: Same? *)
-    | |- eqsubst (sbcomp (sbshift ?G1 ?A1 ?sbs) (sbzero ?G2 ?A2 ?v))
-                (sbcomp (sbzero _ _ ?u) ?sbs) ?G ?D =>
-      first [
-        eapply @SubstTrans
-        with (sb2 := sbcomp (sbshift G1 A1 sbs) (sbzero G2 A2 (subst u sbs))) ; [
-          eapply CongSubstComp
-        | ..
-        ]
-      | myfail debug
-      ] ; magicn n try shelf true debug
-    (* TODO: Same *)
-    | |- eqsubst (sbcomp (sbzero _ ?A ?u) ?sbs)
-                (sbcomp (sbshift _ _ ?sbs)
-                        (sbzero _ (Subst ?A ?sbs) (subst ?u ?sbs))) ?G ?D =>
-      first [
-        eapply SubstSym ; [ eapply ShiftZero | .. ]
-      | myfail debug
-      ] ; magicn n try shelf true debug
-    (* TODO: Same *)
-    | |- eqsubst (sbcomp (sbzero _ _ ?u) ?sbs)
-                (sbcomp (sbshift _ _ ?sbs) (sbzero _ _ _)) ?G ?D =>
-      first [
-        eapply SubstSym ; [
-          eapply SubstTrans ; [
-            simplify_subst
-          | ..
-          ]
-        | ..
-        ]
       | myfail debug
       ] ; magicn n try shelf true debug
     | |- eqsubst (sbzero _ _ ?u1) (sbzero _ _ ?u2) ?D ?E =>

@@ -53,7 +53,7 @@ Lemma EqTyShiftZero :
       (Subst (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs)))
       (Subst (Subst B (sbzero D A v)) sbs).
 Proof.
-  intros. magic.
+  intros. magic. Unshelve. all:strictmagic.
 Defined.
 
 Lemma EqTyCongZero :
