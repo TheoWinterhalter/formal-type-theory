@@ -100,16 +100,16 @@ Ltac compsubst1 :=
   | |- eqtype ?G (Subst (Subst ?A ?sbt) ?sbs) ?B =>
     eapply eqtype_subst_left
   | |- eqtype ?G ?A (Subst (Subst ?B ?sbt) ?sbs) =>
-    eapply EqTySym ; try eapply eqtype_subst_left
+    eapply EqTySym ; [ eapply eqtype_subst_left | .. ]
   | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v (Subst (Subst ?A ?sbt) ?sbs) =>
     eapply eqterm_subst_left
   | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) (Subst (Subst ?A ?sbt) ?sbs) =>
-    eapply EqSym ; try eapply eqterm_subst_left
+    eapply EqSym ; [ eapply eqterm_subst_left | .. ]
   | |- eqterm ?G (subst (subst ?u ?sbt) ?sbs) ?v ?A =>
-    eapply EqTyConv ; [ try eapply eqterm_subst_left | .. ]
+    eapply EqTyConv ; [ eapply eqterm_subst_left | .. ]
   | |- eqterm ?G ?u (subst (subst ?v ?sbt) ?sbs) ?A =>
     eapply EqSym ; [
-      eapply EqTyConv ; [ try eapply eqterm_subst_left | .. ]
+      eapply EqTyConv ; [ eapply eqterm_subst_left | .. ]
     | ..
     ]
   | _ => fail
