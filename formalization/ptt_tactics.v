@@ -624,12 +624,6 @@ Ltac eqtype_subst G A sbs B k n try shelf tysym debug :=
   | myfail debug
   ] ; k n try shelf true debug.
 
-Ltac falling_case magicn n try shelf tysym debug :=
-  lazymatch eval compute in n with
-  | 0 => assumption
-  | S ?n => assumption || (constructor ; magicn n try shelf tysym debug)
-  end.
-
 (* Magic Tactic *)
 (* It is basically a type checker that doesn't do the smart things,
    namely type and context conversions (and it doesn't rely on reflection
@@ -1195,7 +1189,6 @@ Ltac magicn n try shelf tysym debug :=
           then shelve
           else myfail debug
         else myfail debug
-    (* To be continued... *)
 
     | _ => myfail debug
     end
