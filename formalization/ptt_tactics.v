@@ -1172,6 +1172,11 @@ Ltac magicn n try shelf tysym debug :=
       | magicn n try shelf true debug ..
       ]
       else myfail debug
+    | |- eqterm ?G ?u ?u ?A =>
+      first [
+        eapply EqRefl
+      | myfail debug
+      ] ; magicn n try shelf true debug
     | |- eqterm ?G ?u ?v ?A =>
       tryif (is_var u ; is_var v)
       then first [
@@ -1185,7 +1190,11 @@ Ltac magicn n try shelf tysym debug :=
         ]
       | myfail debug
       ] ; magicn n try shelf true debug
-      else falling_case magicn n try shelf tysym debug
+      else tryif (is_evar u || is_evar v)
+        then tryif (cando shelf)
+          then shelve
+          else myfail debug
+        else myfail debug
     (* To be continued... *)
 
     | _ => myfail debug
