@@ -354,18 +354,20 @@ Ltac pushsubst1 :=
   (*   instantiate *)
   (*     (1 := subst (refl (Subst A sbs) (subst u sbs)) (sbweak G (Subst A sbs))) *)
   | |- eqterm ?G (subst true ?sbs) ?u ?A =>
-    eapply EqTrans ; [ eapply EqSubstTrue | .. ]
-  | |- eqterm ?G (subst true ?sbs) ?u ?A =>
-    eapply EqTyConv ; [
+    first [
       eapply EqTrans ; [ eapply EqSubstTrue | .. ]
-    | ..
+    | eapply EqTyConv ; [
+        eapply EqTrans ; [ eapply EqSubstTrue | .. ]
+      | ..
+      ]
     ]
   | |- eqterm ?G (subst false ?sbs) ?u ?A =>
-    eapply EqTrans ; [ eapply EqSubstFalse | .. ]
-  | |- eqterm ?G (subst false ?sbs) ?u ?A =>
-    eapply EqTyConv ; [
+    first [
       eapply EqTrans ; [ eapply EqSubstFalse | .. ]
-    | ..
+    | eapply EqTyConv ; [
+        eapply EqTrans ; [ eapply EqSubstFalse | .. ]
+      | ..
+      ]
     ]
   | |- eqterm ?G (subst (var 0) (sbzero ?D ?B ?u)) ?v ?A =>
     first [
