@@ -112,7 +112,7 @@ Ltac compsubst1 :=
       eapply EqTyConv ; [ eapply eqterm_subst_left | .. ]
     | ..
     ]
-  | _ => fail
+  | |- ?G => fail "Not a goal handled by compsubst" G
   end.
 
 
@@ -453,13 +453,13 @@ Ltac pushsubst1 :=
   (*     ] *)
   (*   ) *)
   (*   else fail *)
-  | _ => fail
+  | |- ?G => fail "Not a goal handled by pushsubst" G
   end.
 
 Ltac cando token :=
   match token with
   | true => idtac
-  | false => fail
+  | false => fail "Cannot do" token
   end.
 
 (* A simplify tactic to simplify substitutions *)
@@ -477,8 +477,6 @@ Ltac ecomp lm :=
 Ltac simplify_subst :=
   lazymatch goal with
   | |- eqsubst ?sbs ?sbt ?G ?D =>
-
-    (* eapply SubstTrans ; [ *)
 
       lazymatch sbs with
 
@@ -540,12 +538,11 @@ Ltac simplify_subst :=
         | ..
         ]
 
+      | ?sbs => fail "Cannot simplify substitution" sbs
+
       end
 
-    (* | .. *)
-    (* ] *)
-
-  | _ => fail
+  | |- ?G => fail "Cannot simplify substitution in goal" G
   end.
 
 (* Simplify tactic *)
@@ -598,7 +595,7 @@ Ltac simplify :=
       ]
     ]
 
-  | _ => fail
+  | |- ?G => fail "Cannot simplify goal" G
   end.
 
 (* Checking if we're dealing with a suitable goal. *)
