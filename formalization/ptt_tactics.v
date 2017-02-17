@@ -12,15 +12,19 @@ Lemma eqtype_subst_left :
     isctx G ->
     isctx D ->
     isctx E ->
-    istype G (Subst (Subst A sbt) sbs) ->
-    istype G (Subst A (sbcomp sbt sbs)) ->
+    (* istype G (Subst (Subst A sbt) sbs) -> *)
+    (* istype G (Subst A (sbcomp sbt sbs)) -> *)
     eqtype G (Subst (Subst A sbt) sbs) B.
 Proof.
   intros.
   eapply EqTyTrans ; [
     eapply EqTySubstComp ; eassumption
-  | assumption ..
+  | try assumption ..
   ].
+  - eapply TySubst ; try eassumption.
+    eapply TySubst ; eassumption.
+  - eapply TySubst ; try eassumption.
+    eapply SubstComp ; eassumption.
 Defined.
 
 Lemma eqterm_subst_left :
@@ -33,14 +37,36 @@ Lemma eqterm_subst_left :
     isctx G ->
     isctx D ->
     isctx E ->
-    istype G (Subst (Subst A sbt) sbs) ->
-    istype G (Subst A (sbcomp sbt sbs)) ->
-    isterm G (subst (subst u sbt) sbs) (Subst A (sbcomp sbt sbs)) ->
-    isterm G (subst u (sbcomp sbt sbs)) (Subst A (sbcomp sbt sbs)) ->
+    (* istype G (Subst (Subst A sbt) sbs) -> *)
+    (* istype G (Subst A (sbcomp sbt sbs)) -> *)
+    (* isterm G (subst (subst u sbt) sbs) (Subst A (sbcomp sbt sbs)) -> *)
+    (* isterm G (subst u (sbcomp sbt sbs)) (Subst A (sbcomp sbt sbs)) -> *)
     isterm G v (Subst A (sbcomp sbt sbs)) ->
     eqterm G (subst (subst u sbt) sbs) v (Subst (Subst A sbt) sbs).
 Proof.
   intros.
+  assert (istype G (Subst (Subst A sbt) sbs)).
+  { eapply TySubst ; try eassumption.
+    eapply TySubst ; eassumption. }
+  assert (istype G (Subst A (sbcomp sbt sbs))).
+  { eapply TySubst ; try eassumption.
+    eapply SubstComp ; eassumption. }
+  assert (isterm G (subst (subst u sbt) sbs) (Subst A (sbcomp sbt sbs))).
+  { eapply TermTyConv.
+    - eapply TermSubst ; try eassumption.
+      + eapply TermSubst ; eassumption.
+      + eapply TySubst ; eassumption.
+    - eapply eqtype_subst_left ; try eassumption.
+      eapply EqTyRefl ; eassumption.
+    - assumption.
+    - assumption.
+    - assumption.
+  }
+  assert (isterm G (subst u (sbcomp sbt sbs)) (Subst A (sbcomp sbt sbs))).
+  { eapply TermSubst ; try eassumption.
+    eapply SubstComp ; eassumption.
+  }
+
   assert (hh : eqtype G (Subst A (sbcomp sbt sbs)) (Subst (Subst A sbt) sbs)).
   { apply EqTySym ; [
       eapply EqTySubstComp ; eassumption

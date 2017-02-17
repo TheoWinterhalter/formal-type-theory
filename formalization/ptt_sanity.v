@@ -728,29 +728,13 @@ Proof.
           all:try okmagic.
           1:instantiate(1 := refl _ _).
           1:magic.
-          fail.
-          (* We should find something better that this below *)
-          1:instantiate (1 := subst (subst p sbs) (sbcomp (sbweak _ _) (sbweak _ _))).
+          1:instantiate (1 := subst p (sbweak _ _)).
           1:magic.
           all:instantiate (1 := var 0).
 
 
 
           all:try okmagic.
-          all:instantiate ()
-
-
-          all:try okmagic.
-          Unshelve. all:try (check_goal ; assumption).
-          28:eapply EqRefl.
-          31:eapply EqRefl.
-          54:eapply EqRefl.
-          all:try okmagic.
-          Unshelve. all:try (check_goal ; assumption).
-          24:eapply EqRefl.
-
-
-          (* magic shouldn't shelve this! *)
           fail.
         }
     }
