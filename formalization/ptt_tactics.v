@@ -804,12 +804,17 @@ Ltac magicn n try shelf tysym debug :=
       | eapply TermTyConv ; [ eapply TermVarZero | .. ]
       | myfail debug
       ] ; magicn n try shelf true debug
-    | |- isterm ?G (var (S ?k)) ?A =>
+    | |- isterm (ctxextend ?G ?B) (var (S ?k)) ?A =>
       first [
         eapply TermVarSucc
       | eapply TermTyConv ; [ eapply TermVarSucc | .. ]
       | myfail debug
       ] ; magicn n try shelf true debug
+    | |- isterm ?G (var ?k) ?A =>
+      first [
+        eassumption
+      | myfail debug
+      ]
     | |- isterm ?G (lam ?A ?B ?u) ?C =>
       first [
         eapply TermAbs
@@ -1162,8 +1167,11 @@ Ltac magicn n try shelf tysym debug :=
         | myfail debug
         ] ; magicn n try shelf true debug
       )
-             (* Can I remove it? *)
-      else falling_case magicn n try shelf tysym debug
+      else tryif (is_evar A || is_evar B)
+        then tryif (cando shelf)
+          then shelve
+          else myfail debug
+        else myfail debug
 
     (*! Equality of terms !*)
     | |- eqterm ?G (subst (subst ?u ?sbs) ?sbt) ?v ?A =>
