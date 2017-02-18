@@ -1146,10 +1146,12 @@ Ltac magicn try shelf tysym debug :=
             | cando shelf ; shelve
             ] ; magicn try shelf true debug
 
-          | _ =>
-            first [
+          | ?v =>
+            tryif (is_evar v ; cando shelf)
+            then shelve
+            else first [
               simplify
-            | cando shelf ; shelve
+            | myfail debug
             ] ; magicn try shelf true debug
           end
         )
