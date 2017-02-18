@@ -1171,6 +1171,49 @@ Ltac magicn try shelf tysym debug :=
         eapply EqRefl
       | myfail debug
       ] ; magicn try shelf true debug
+    | |- eqterm ?G ?u ?v Empty =>
+      first [
+        eapply @EqTermExfalso with (w := u)
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- eqterm ?G ?u ?v Unit =>
+      first [
+        eapply UnitEta
+      | myfail debug
+      ] ; magicn try shelf true debug
+    (* Where should ProdBeta be handled? *)
+    (* Same for CondTrue, CondFalse, JRefl *)
+    (* ProdEta should come in after CongApp and CongProd probably *)
+    | |- eqterm ?G (lam ?A1 ?A2 ?u1) (lam ?B1 ?B2 ?u2) _ =>
+      first [
+        eapply CongAbs
+      | eapply EqTyConv ; [ eapply CongAbs | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- eqterm ?G (app ?u1 ?A1 ?A2 ?u2) (app ?v1 ?B1 ?B2 ?v2) _ =>
+      first [
+        eapply CongApp
+      | eapply EqTyConv ; [ eapply CongApp | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- eqterm ?G (refl ?A1 ?u1) (refl ?A2 ?u2) _ =>
+      first [
+        eapply CongRefl
+      | eapply EqTyConv ; [ eapply CongRefl | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- eqterm ?G (j ?A1 ?u1 ?C1 ?w1 ?v1 ?p1) (j ?A2 ?u2 ?C2 ?w2 ?v2 ?p2) _ =>
+      first [
+        eapply CongJ
+      | eapply EqTyConv ; [ eapply CongJ | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- eqterm ?G (cond ?C1 ?u1 ?v1 ?w1) (cond ?C2 ?u2 ?v2 ?w2) _ =>
+      first [
+        eapply CongCond
+      | eapply EqTyConv ; [ eapply CongCond | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
     | |- eqterm ?G ?u ?v ?A =>
       tryif (is_var u ; is_var v)
       then first [
