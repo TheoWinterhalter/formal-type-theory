@@ -665,6 +665,11 @@ Proof.
   - { split.
       - { magic. }
       - { magic.
+          Unshelve.
+          all:keep_eq.
+          3: instantiate (1 := true).
+          13: instantiate (1 := false).
+          27: instantiate (1 := u).
           Unshelve. all:magic.
           Unshelve. all:strictmagic.
         }

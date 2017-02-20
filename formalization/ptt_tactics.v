@@ -1234,7 +1234,7 @@ Ltac magicn try shelf tysym debug :=
         ]
       | myfail debug
       ] ; magicn try shelf true debug
-      else tryif (is_evar u || is_evar v)
+      else tryif (is_evar u + is_evar v)
         then tryif (cando shelf)
           then shelve
           else myfail debug
@@ -1255,3 +1255,13 @@ Ltac gocompsubst := compsubst1 ; try okmagic.
 
 (* With it we improve pushsubst1 *)
 Ltac gopushsubst := pushsubst1 ; try okmagic.
+
+(* Tactic to keep equalities *)
+Ltac keep_eq :=
+  match goal with
+  | |- eqterm _ _ _ _ => idtac
+  | |- eqtype _ _ _ => idtac
+  | |- eqsubst _ _ _ _ => idtac
+  | |- eqctx _ _ => idtac
+  | _ => shelve
+  end.
