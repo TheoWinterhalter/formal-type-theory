@@ -459,34 +459,34 @@ Ltac simplify_subst :=
       | sbcomp (sbshift _ ?A ?sbs)
                (sbcomp (sbzero _ (Subst ?A ?sbs) (subst ?u ?sbs)) _) =>
         ecomp ShiftZero
-      | sbcomp (sbshift _ _ ?sbs) (sbzero _ _ _) =>
-        eapply SubstTrans ; [
-          eapply CongSubstComp ; [
-            idtac
-          | eapply SubstRefl
-          | ..
-          ]
-        | eapply ShiftZero
-        | ..
-        ]
-      | sbcomp (sbshift _ _ ?sbs) (sbcomp (sbzero _ _ _) _) =>
-        eapply SubstTrans ; [
-          eapply CompAssoc
-        | eapply CongSubstComp ; [
-            eapply SubstRefl
-          | eapply SubstTrans ; [
-              eapply CongSubstComp ; [
-                idtac
-              | eapply SubstRefl
-              | ..
-              ]
-            | eapply ShiftZero
-            | ..
-            ]
-          | ..
-          ]
-        | ..
-        ]
+      (* | sbcomp (sbshift _ _ ?sbs) (sbzero _ _ _) => *)
+      (*   eapply SubstTrans ; [ *)
+      (*     eapply CongSubstComp ; [ *)
+      (*       idtac *)
+      (*     | eapply SubstRefl *)
+      (*     | .. *)
+      (*     ] *)
+      (*   | eapply ShiftZero *)
+      (*   | .. *)
+      (*   ] *)
+      (* | sbcomp (sbshift _ _ ?sbs) (sbcomp (sbzero _ _ _) _) => *)
+      (*   eapply SubstTrans ; [ *)
+      (*     eapply CompAssoc *)
+      (*   | eapply CongSubstComp ; [ *)
+      (*       eapply SubstRefl *)
+      (*     | eapply SubstTrans ; [ *)
+      (*         eapply CongSubstComp ; [ *)
+      (*           idtac *)
+      (*         | eapply SubstRefl *)
+      (*         | .. *)
+      (*         ] *)
+      (*       | eapply ShiftZero *)
+      (*       | .. *)
+      (*       ] *)
+      (*     | .. *)
+      (*     ] *)
+      (*   | .. *)
+      (*   ] *)
 
       | sbcomp ?sbs ?sbt =>
         eapply CongSubstComp ; [
