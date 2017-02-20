@@ -363,6 +363,16 @@ Definition hml_type_change
     | hml_Bool        => hml_Bool
     end.
 
+Definition hml_type_coerce
+    c A A'
+    (h : hml_type A A')
+  : hml_type A (coerce_type A' c).
+Proof.
+  destruct A' as [A' c'].
+  eapply hml_type_change.
+  eassumption.
+Defined.
+
 
 Structure istrans_ctx (G : S.context) (G' : C.context) :=
   {
@@ -774,7 +784,67 @@ Proof.
     }
 
   (****** trans_term ******)
-  - todo.
+  - { destruct H.
+
+      (* TermTyConv *)
+      - { rename A' into B'.
+          (* We need to be able to translate type equalities. *)
+          (* destruct (trans_term _ _ _ _ _ H HG) *)
+          todo.
+        }
+
+      (* TermCtxConv *)
+      - { rename G' into D'. rename HG into HD.
+          destruct (trans_eqctx_right _ _ _ e HD) as [G' [HG [c Hc]]].
+          assert (HA' : istrans_type A G' (coerce_type A' (C.contextInv c))).
+          { destruct HA as [HtA HhA].
+            split.
+            - eapply coerce_type_typing.
+              + eassumption.
+              + eapply C.isCoercionContextInv. assumption.
+            - apply hml_type_coerce. assumption.
+          }
+          destruct (trans_term _ _ _ _ _ H HG HA') as [u' [Hu fu]].
+          (* We need to coerce the term as well *)
+          todo.
+        }
+
+      (* TermSubst *)
+      - todo.
+
+      (* TermVarZero *)
+      - todo.
+
+      (* TermVarSucc *)
+      - todo.
+
+      (* TermAbs *)
+      - todo.
+
+      (* TermApp *)
+      - todo.
+
+      (* TermRefl *)
+      - todo.
+
+      (* TermJ *)
+      - todo.
+
+      (* TermExfalso *)
+      - todo.
+
+      (* TermUnit *)
+      - todo.
+
+      (* TermTrue *)
+      - todo.
+
+      (* TermFalse *)
+      - todo.
+
+      (* TermCond *)
+      - todo.
+    }
 
   (****** trans_eqctx_left ******)
   - { destruct H.
