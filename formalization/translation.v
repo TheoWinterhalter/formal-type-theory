@@ -338,15 +338,6 @@ with hml_term :
 
 .
 
-(* Lemma hml_substitution_change : *)
-(*   forall sc1 sc2 sbs sbs', *)
-(*     hml_substitution sbs (C.sbcoerce sc1 sbs') -> *)
-(*     hml_substitution sbs (C.sbcoerce sc2 sbs'). *)
-(* Proof. *)
-(*   intros sc1 sc2 sbs. *)
-(*   induction 2. *)
-(*   case_eq h ; intros. *)
-(*   - apply hml_sbzero. *)
 Definition hml_substitution_change
     sc1 sc2 sbs sbs'
     (h : hml_substitution sbs (C.sbcoerce sc1 sbs'))
@@ -477,7 +468,6 @@ Proof.
         + constructor.
 
       (* CtxExtend *)
-      (* this is the reason we changed CtxExtend to include "isctx G". *)
       - destruct (trans_ctx _ H) as [G' HGisG'].
         destruct (trans_type G G' A i HGisG') as (A' & HAisA' & _).
         exists (C.ctxextend G' A').
