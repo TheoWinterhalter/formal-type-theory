@@ -1045,6 +1045,11 @@ Ltac magicn try shelf tysym debug :=
         eapply CongProd
       | myfail debug
       ] ; magicn try shelf true debug
+    | |- eqtype ?G Unit Unit =>
+      first [
+        eapply EqTyRefl
+      | myfail debug
+      ] ; magicn try shelf true debug
     | |- eqtype ?G Bool Bool =>
       first [
         eapply EqTyRefl
