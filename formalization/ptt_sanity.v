@@ -635,14 +635,29 @@ Proof.
       - { magic. Unshelve. all:strictmagic. }
       - { magic.
           Unshelve. all:try (check_goal ; assumption).
-          all:try okmagic.
-          Unshelve. all:try okmagic.
-          Unshelve.
+          (* all:try okmagic. *)
+          (* Unshelve. all:try okmagic. *)
+          (* Unshelve. *)
           all:match goal with
               | |- eqterm _ _ _ _ => idtac
               | |- eqtype _ _ _ => idtac
               | _ => shelve
               end.
+
+          (* Trying to fill holes from here *)
+          (* ?Goal176 needs to be of type
+             Id (Subst A (sbweak D A)) (subst u (sbweak D A)) (var 0)
+             which is not possible...
+           *)
+
+
+
+
+
+
+
+          fail.
+
           all:match goal with
               | |- eqterm ?G (subst _ (sbzero ?G (Subst ?A ?sbs) (subst ?u ?sbs)))
                          (subst ?u ?sbs) _ =>
