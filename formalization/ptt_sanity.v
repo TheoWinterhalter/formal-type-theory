@@ -674,20 +674,21 @@ Proof.
               | |- eqtype _ _ _ => idtac
               | _ => shelve
               end.
-          1: instantiate (1 := refl (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
-                                   (var 0)).
+          (* 1: instantiate (1 := refl (Subst (Subst A sbs) (sbweak G (Subst A sbs))) *)
+          (*                          (subst (subst u sbs) (sbweak G (Subst A sbs)))). *)
+          (* 1: magic. *)
+          2: instantiate (2 := refl (Subst A (sbweak D A)) (var 0)).
+          2: eapply EqRefl ; magic.
           1: magic.
-          1: instantiate (1 := refl (Subst A (sbweak D A)) (var 0)).
-          (* 1: magic. *) (* Ok *)
           3: instantiate (1 := refl (Subst A (sbweak D A)) (var 0)).
-          (* 3: magic. *) (* Ok *)
           4: instantiate (1 := subst p (sbweak D A)).
           5,6: instantiate (1 := subst u (sbweak D A)).
-          (* 4: magic. *) (* Ok *)
           7: instantiate (1 := subst (subst p (sbweak D A)) (sbshift G A sbs)).
           7: magic.
           8: instantiate (1 := subst p (sbweak D A)).
-          all:magic.
+          - magic.
+
+
           Unshelve. all:try okmagic.
           Unshelve. all:try (check_goal ; assumption).
           Focus 1. (* magic. *) (* It shouldn't shelve it!
