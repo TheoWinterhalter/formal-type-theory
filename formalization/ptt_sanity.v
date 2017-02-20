@@ -744,7 +744,58 @@ Proof.
   (* CongJ *)
   - { split.
       - { magic. }
-      - { magic.
+      - { eapply TermTyConv ; [ eapply TermJ | .. ].
+          - magic.
+          - magic.
+          - magic.
+          - magic.
+            Unshelve. all:strictmagic.
+          - eapply TermTyConv ; [ eassumption | .. ].
+            + compsubst1.
+              * magic.
+              * magic.
+              * magic.
+                Unshelve. all:strictmagic.
+              * compsubst1.
+                -- magic.
+                -- magic.
+                -- magic.
+                   Unshelve. all:magic.
+                   Unshelve. all:strictmagic.
+                -- simplify.
+                   ++ (* This, here, generates faulty goals? *)
+                     eapply CongSubstZero.
+                     ** magic.
+                     ** magic.
+                     ** magic.
+                        Unshelve.
+                        3,4: exact (subst u2 (sbweak G A2)).
+                        2: exact (refl (Subst A1 (sbweak G A2)) (subst u2 (sbweak
+G A2))).
+                        1:shelve.
+                        all:strictmagic.
+                     ** magic.
+                     ** magic.
+                     ** magic.
+                     ** magic.
+                     ** magic.
+                     ** magic.
+                   ++ magic.
+                   ++ magic.
+                      Unshelve. all:strictmagic.
+                   ++ magic.
+                   ++ magic.
+                   ++ (* This was indeed wrong... *)
+                     magic.
+
+
+          fail.
+
+          magic.
+          Unshelve.
+          all:keep_eq.
+
+
           Unshelve. all:try magic.
           Unshelve. all:try magic.
           Unshelve. all:admit.
