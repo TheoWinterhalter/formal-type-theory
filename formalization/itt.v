@@ -32,154 +32,207 @@ with substitution : Type :=
      | sbid : context -> substitution
      | sbcomp : substitution -> substitution -> substitution.
 
+(* Notations for writing down inference rules. *)
+
+Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
+Notation "'parameters:'  x .. y , p" := ((forall x , .. (forall y , p) ..)) (at level 200, x binder, y binder,
+                                                            right associativity, only parsing).
+Notation "'premise:' p q" := (p -> q) (only parsing, at level 95).
+Notation "'conclusion:' q" := q (no associativity, only parsing, at level 94).
+
+
 Inductive isctx : context -> Type :=
 
      | CtxEmpty :
-         isctx ctxempty
+       rule
+         conclusion: isctx ctxempty
+       endrule
 
      | CtxExtend :
-         forall {G A},
-           isctx G ->
-           istype G A ->
-           isctx (ctxextend G A)
-
-
+       rule
+         parameters: {G A},
+         premise: istype G A
+         conclusion: isctx (ctxextend G A)
+       endrule
 
 with issubst : substitution -> context -> context -> Type :=
 
      | SubstZero :
-         forall {G u A},
-           isterm G u A ->
-           issubst (sbzero G A u) G (ctxextend G A)
+       rule
+         parameters: {G u A},
+         premise: isterm G u A
+         conclusion: issubst (sbzero G A u) G (ctxextend G A)
+       endrule
 
      | SubstWeak :
-         forall {G A},
-           istype G A ->
-           issubst (sbweak G A) (ctxextend G A) G
+       rule
+         parameters: {G A},
+         premise: istype G A
+         conclusion: issubst (sbweak G A) (ctxextend G A) G
+       endrule
 
      | SubstShift :
-         forall {G D A sbs},
-           issubst sbs G D ->
-           istype D A ->
+       rule
+         parameters: {G D A sbs},
+         premise: issubst sbs G D
+         premise: istype D A
+         conclusion:
            issubst (sbshift G A sbs) (ctxextend G (Subst A sbs)) (ctxextend D A)
+       endrule
 
      | SubstId :
-         forall {G},
-           isctx G ->
-           issubst (sbid G) G G
+       rule
+         parameters: {G},
+         premise: isctx G
+         conclusion: issubst (sbid G) G G
+       endrule
 
      | SubstComp :
-         forall {G D E sbs sbt},
-           issubst sbs G D ->
-           issubst sbt D E ->
-           issubst (sbcomp sbt sbs) G E
+       rule
+         parameters: {G D E sbs sbt},
+         premise: issubst sbs G D
+         premise: issubst sbt D E
+         conclusion: issubst (sbcomp sbt sbs) G E
+       endrule
 
      | SubstCtxConv :
-         forall {G1 G2 D1 D2 sbs},
-           issubst sbs G1 D1 ->
-           eqctx G1 G2 ->
-           eqctx D1 D2 ->
-           issubst sbs G2 D2
+       rule
+         parameters: {G1 G2 D1 D2 sbs},
+         premise: issubst sbs G1 D1
+         premise: eqctx G1 G2
+         premise: eqctx D1 D2
+         conclusion: issubst sbs G2 D2
+       endrule
 
 
 
 with istype : context -> type -> Type :=
 
      | TyCtxConv :
-         forall {G D A},
-           istype G A ->
-           eqctx G D ->
-           istype D A
+       rule
+         parameters: {G D A},
+         premise: istype G A
+         premise: eqctx G D
+         conclusion: istype D A
+       endrule
 
      | TySubst :
-         forall {G D A sbs},
-           issubst sbs G D ->
-           istype D A ->
-           istype G (Subst A sbs)
+       rule
+         parameters: {G D A sbs},
+         premise: issubst sbs G D
+         premise: istype D A
+         conclusion: istype G (Subst A sbs)
+       endrule
 
      | TyProd :
-         forall {G A B},
-           istype G A ->
-           istype (ctxextend G A) B ->
-           istype G (Prod A B)
+       rule
+         parameters: {G A B},
+         premise: istype (ctxextend G A) B
+         conclusion: istype G (Prod A B)
+       endrule
 
      | TyId :
-         forall {G A u v},
-           istype G A ->
-           isterm G u A ->
-           isterm G v A ->
-           istype G (Id A u v)
+       rule
+         parameters: {G A u v},
+         premise: isterm G u A
+         premise: isterm G v A
+         conclusion: istype G (Id A u v)
+       endrule
 
      | TyEmpty :
-         forall {G},
-           isctx G ->
-           istype G Empty
+       rule
+         parameters: {G},
+         premise: isctx G
+         conclusion: istype G Empty
+       endrule
 
      | TyUnit :
-         forall {G},
-           isctx G ->
-           istype G Unit
+       rule
+         parameters: {G},
+         premise: isctx G
+         conclusion: istype G Unit
+       endrule
 
      | TyBool :
-         forall {G},
-           isctx G ->
-           istype G Bool
+       rule
+         parameters: {G},
+         premise: isctx G
+         conclusion: istype G Bool
+       endrule
 
 
 
 with isterm : context -> term -> type -> Type :=
 
      | TermTyConv :
-         forall {G A B u},
-           isterm G u A ->
-           eqtype G A B ->
-           isterm G u B
+       rule
+         parameters: {G A B u},
+         premise: isterm G u A
+         premise: eqtype G A B
+         conclusion: isterm G u B
+       endrule
 
      | TermCtxConv :
-         forall {G D A u},
-           isterm G u A ->
-           eqctx G D ->
-           isterm D u A
+       rule
+         parameters: {G D A u},
+         premise: isterm G u A
+         premise: eqctx G D
+         conclusion: isterm D u A
+       endrule
 
      | TermSubst :
-         forall {G D A u sbs},
-           issubst sbs G D ->
-           isterm D u A ->
-           isterm G (subst u sbs) (Subst A sbs)
+       rule
+         parameters: {G D A u sbs},
+         premise: issubst sbs G D
+         premise: isterm D u A
+         conclusion: isterm G (subst u sbs) (Subst A sbs)
+       endrule
 
      | TermVarZero :
-         forall {G A},
-           istype G A ->
+       rule
+         parameters: {G A},
+         premise: istype G A
+         conclusion:
            isterm (ctxextend G A) (var 0) (Subst A (sbweak G A))
+       endrule
 
      | TermVarSucc :
-         forall {G A B k},
-           isterm G (var k) A ->
-           istype G B ->
+       rule
+         parameters: {G A B k},
+         premise: isterm G (var k) A
+         premise: istype G B
+         conclusion:
            isterm (ctxextend G B) (var (S k)) (Subst A (sbweak G B))
+       endrule
 
      | TermAbs :
-         forall {G A u B},
-           istype G A ->
-           isterm (ctxextend G A) u B ->
-           isterm G (lam A B u) (Prod A B)
+       rule
+         parameters: {G A u B},
+         premise: isterm (ctxextend G A) u B
+         conclusion: isterm G (lam A B u) (Prod A B)
+       endrule
 
      | TermApp :
-         forall {G A B u v},
-           istype (ctxextend G A) B ->
-           isterm G u (Prod A B) ->
-           isterm G v A ->
+       rule
+         parameters: {G A B u v},
+         premise: isterm G u (Prod A B)
+         premise: isterm G v A
+         conclusion:
            isterm G (app u v) (Subst B (sbzero G A v))
+       endrule
 
      | TermRefl :
-         forall {G A u},
-           isterm G u A ->
-           isterm G (refl A u) (Id A u u)
+       rule
+         parameters: {G A u},
+         premise: isterm G u A
+         conclusion: isterm G (refl A u) (Id A u u)
+       endrule
 
      | TermJ :
-         forall {G A C u v w p},
-           istype G A ->
-           isterm G u A ->
+       rule
+         parameters: {G A C u v w p},
+         premise: isterm G u A
+         premise:
            istype
              (ctxextend
                 (ctxextend G A)
@@ -189,26 +242,29 @@ with isterm : context -> term -> type -> Type :=
                    (var 0)
                 )
              )
-             C ->
-           isterm G
-                  w
-                  (Subst
-                     (Subst
-                        C
-                        (sbshift
-                           G
-                           (Id
-                              (Subst A (sbweak G A))
-                              (subst u (sbweak G A))
-                              (var 0)
-                           )
-                           (sbzero G A u)
-                        )
-                     )
-                     (sbzero G (Id A u u) (refl A u))
-                  ) ->
-           isterm G v A ->
-           isterm G p (Id A u v) ->
+             C
+         premise:
+           isterm
+             G
+             w
+             (Subst
+                (Subst
+                   C
+                   (sbshift
+                      G
+                      (Id
+                         (Subst A (sbweak G A))
+                         (subst u (sbweak G A))
+                         (var 0)
+                      )
+                      (sbzero G A u)
+                   )
+                )
+                (sbzero G (Id A u u) (refl A u))
+             )
+         premise: isterm G v A
+         premise: isterm G p (Id A u v)
+         conclusion:
            isterm G
                   (j A u C w v p)
                   (Subst
@@ -226,401 +282,546 @@ with isterm : context -> term -> type -> Type :=
                      )
                      (sbzero G (Id A u v) p)
                   )
+       endrule
 
      | TermExfalso :
-         forall {G A u},
-           istype G A ->
-           isterm G u Empty ->
-           isterm G (exfalso A u) A
+       rule
+         parameters: {G A u},
+         premise: istype G A
+         premise: isterm G u Empty
+         conclusion: isterm G (exfalso A u) A
+       endrule
 
      | TermUnit :
-         forall {G},
-           isctx G ->
-           isterm G unit Unit
+       rule
+         parameters: {G},
+         premise: isctx G
+         conclusion: isterm G unit Unit
+       endrule
 
      | TermTrue :
-         forall {G},
-           isctx G ->
-           isterm G true Bool
+       rule
+         parameters: {G},
+         premise: isctx G
+         conclusion: isterm G true Bool
+       endrule
 
      | TermFalse :
-         forall {G},
-           isctx G ->
-           isterm G false Bool
+       rule
+         parameters: {G},
+         premise: isctx G
+         conclusion: isterm G false Bool
+       endrule
 
      | TermCond :
-         forall {G C u v w},
-           isterm G u Bool ->
-           istype (ctxextend G Bool) C ->
-           isterm G v (Subst C (sbzero G Bool true)) ->
-           isterm G w (Subst C (sbzero G Bool false)) ->
-           isterm G
-                  (cond C u v w)
-                  (Subst C (sbzero G Bool u))
+       rule
+         parameters: {G C u v w},
+         premise: isterm G u Bool
+         premise: istype (ctxextend G Bool) C
+         premise: isterm G v (Subst C (sbzero G Bool true))
+         premise: isterm G w (Subst C (sbzero G Bool false))
+         conclusion:
+           isterm
+             G
+             (cond C u v w)
+             (Subst C (sbzero G Bool u))
+       endrule
 
 
 
 with eqctx : context -> context -> Type :=
 
      | CtxRefl :
-         forall {G},
-           isctx G ->
-           eqctx G G
+       rule
+         parameters: {G},
+         premise: isctx G
+         conclusion: eqctx G G
+       endrule
 
      | CtxSym :
-         forall {G D},
-           eqctx G D ->
-           eqctx D G
+       rule
+         parameters: {G D},
+         premise: eqctx G D
+         conclusion: eqctx D G
+       endrule
 
      | CtxTrans :
-         forall {G D E},
-           eqctx G D ->
-           eqctx D E ->
-           eqctx G E
+       rule
+         parameters: {G D E},
+         premise: eqctx G D
+         premise: eqctx D E
+         conclusion: eqctx G E
+       endrule
 
      | EqCtxEmpty :
-         eqctx ctxempty ctxempty
+       rule
+         conclusion: eqctx ctxempty ctxempty
+       endrule
 
      | EqCtxExtend :
-         forall {G D A B},
-           eqctx G D ->
-           eqtype G A B ->
-           eqctx (ctxextend G A) (ctxextend D B)
+       rule
+         parameters: {G D A B},
+         premise: eqctx G D
+         premise: eqtype G A B
+         conclusion: eqctx (ctxextend G A) (ctxextend D B)
+       endrule
 
 
 
 with eqsubst : substitution -> substitution -> context -> context -> Type :=
 
      | SubstRefl :
-         forall {G D sbs},
-           issubst sbs G D ->
-           eqsubst sbs sbs G D
+       rule
+         parameters: {G D sbs},
+         premise: issubst sbs G D
+         conclusion: eqsubst sbs sbs G D
+       endrule
 
      | SubstSym :
-         forall {G D sbs sbt},
-           eqsubst sbs sbt G D ->
-           eqsubst sbt sbs G D
+       rule
+         parameters: {G D sbs sbt},
+         premise: eqsubst sbs sbt G D
+         conclusion: eqsubst sbt sbs G D
+       endrule
 
      | SubstTrans :
-         forall {G D sb1 sb2 sb3},
-           eqsubst sb1 sb2 G D ->
-           eqsubst sb2 sb3 G D ->
-           eqsubst sb1 sb3 G D
+       rule
+         parameters: {G D sb1 sb2 sb3},
+         premise: eqsubst sb1 sb2 G D
+         premise: eqsubst sb2 sb3 G D
+         conclusion: eqsubst sb1 sb3 G D
+       endrule
 
      | CongSubstZero :
-         forall {G1 G2 A1 A2 u1 u2},
-           eqctx G1 G2 ->
-           eqtype G1 A1 A2 ->
-           eqterm G1 u1 u2 A1 ->
-           eqsubst (sbzero G1 A1 u1)
-                   (sbzero G1 A2 u2)
-                   G1
-                   (ctxextend G1 A1)
+       rule
+         parameters: {G1 G2 A1 A2 u1 u2},
+         premise: eqctx G1 G2
+         premise: eqtype G1 A1 A2
+         premise: eqterm G1 u1 u2 A1
+         conclusion:
+           eqsubst
+             (sbzero G1 A1 u1)
+             (sbzero G2 A2 u2)
+             G1
+             (ctxextend G1 A1)
+       endrule
 
      | CongSubstWeak :
-         forall {G1 G2 A1 A2},
-           eqctx G1 G2 ->
-           eqtype G1 A1 A2 ->
-           eqsubst (sbweak G1 A1)
-                   (sbweak G2 A2)
-                   (ctxextend G1 A1)
-                   G1
+       rule
+         parameters: {G1 G2 A1 A2},
+         premise: eqctx G1 G2
+         premise: eqtype G1 A1 A2
+         conclusion:
+           eqsubst
+             (sbweak G1 A1)
+             (sbweak G2 A2)
+             (ctxextend G1 A1)
+             G1
+       endrule
 
      | CongSubstShift :
-         forall {G1 G2 D A1 A2 sbs1 sbs2},
-           eqctx G1 G2 ->
-           eqsubst sbs1 sbs2 G1 D ->
-           eqtype D A1 A2 ->
-           eqsubst (sbshift G1 A1 sbs1)
-                   (sbshift G2 A2 sbs2)
-                   (ctxextend G1 (Subst A1 sbs1))
-                   (ctxextend D A1)
+       rule
+         parameters: {G1 G2 D A1 A2 sbs1 sbs2},
+         premise: eqctx G1 G2
+         premise: eqsubst sbs1 sbs2 G1 D
+         premise: eqtype D A1 A2
+         conclusion:
+           eqsubst
+             (sbshift G1 A1 sbs1)
+             (sbshift G2 A2 sbs2)
+             (ctxextend G1 (Subst A1 sbs1))
+             (ctxextend D A1)
+       endrule
 
      | CongSubstComp :
-         forall {G D E sbs1 sbs2 sbt1 sbt2},
-           eqsubst sbs1 sbs2 G D ->
-           eqsubst sbt1 sbt2 D E ->
+       rule
+         parameters: {G D E sbs1 sbs2 sbt1 sbt2},
+         premise: eqsubst sbs1 sbs2 G D
+         premise: eqsubst sbt1 sbt2 D E
+         conclusion:
            eqsubst (sbcomp sbt1 sbs1)
                    (sbcomp sbt2 sbs2)
                    G
                    E
+       endrule
 
      | EqSubstCtxConv :
-         forall {G1 G2 D1 D2 sbs sbt},
-           eqsubst sbs sbt G1 D1 ->
-           eqctx G1 G2 ->
-           eqctx D1 D2 ->
-           eqsubst sbs sbt G2 D2
+       rule
+         parameters: {G1 G2 D1 D2 sbs sbt},
+         premise: eqsubst sbs sbt G1 D1
+         premise: eqctx G1 G2
+         premise: eqctx D1 D2
+         conclusion: eqsubst sbs sbt G2 D2
+       endrule
 
      | CompAssoc :
-         forall {G D E F sbs sbt sbr},
-           issubst sbs G D ->
-           issubst sbt D E ->
-           issubst sbr E F ->
-           eqsubst (sbcomp sbr (sbcomp sbt sbs))
-                   (sbcomp (sbcomp sbr sbt) sbs)
-                   G
-                   F
+       rule
+         parameters: {G D E F sbs sbt sbr},
+         premise: issubst sbs G D
+         premise: issubst sbt D E
+         premise: issubst sbr E F
+         conclusion:
+           eqsubst
+             (sbcomp sbr (sbcomp sbt sbs))
+             (sbcomp (sbcomp sbr sbt) sbs)
+             G
+             F
+       endrule
 
      | WeakNat :
-         forall {G D A sbs},
-               issubst sbs G D ->
-               istype D A ->
-               eqsubst (sbcomp (sbweak D A) (sbshift G A sbs))
-                       (sbcomp sbs (sbweak G (Subst A sbs)))
-                       (ctxextend G (Subst A sbs))
-                       D
+       rule
+         parameters: {G D A sbs},
+         premise: issubst sbs G D
+         premise: istype D A
+         conclusion:
+           eqsubst
+             (sbcomp (sbweak D A) (sbshift G A sbs))
+             (sbcomp sbs (sbweak G (Subst A sbs)))
+             (ctxextend G (Subst A sbs))
+             D
+       endrule
 
      | WeakZero :
-         forall {G A u},
-           isterm G u A ->
-           eqsubst (sbcomp (sbweak G A) (sbzero G A u))
-                   (sbid G)
-                   G
-                   G
+       rule
+         parameters: {G A u},
+         premise: isterm G u A
+         conclusion:
+           eqsubst
+             (sbcomp (sbweak G A) (sbzero G A u))
+             (sbid G)
+             G
+             G
+       endrule
 
      | ShiftZero :
-         forall {G D A u sbs},
-           issubst sbs G D ->
-           isterm D u A ->
-           eqsubst (sbcomp (sbshift G A sbs)
-                           (sbzero G (Subst A sbs) (subst u sbs)))
-                   (sbcomp (sbzero D A u)
-                           sbs)
-                   G
-                   (ctxextend D A)
+       rule
+         parameters: {G D A u sbs},
+         premise: issubst sbs G D
+         premise: isterm D u A
+         conclusion:
+           eqsubst
+             (sbcomp (sbshift G A sbs)
+                     (sbzero G (Subst A sbs) (subst u sbs)))
+             (sbcomp (sbzero D A u)
+                     sbs)
+             G
+             (ctxextend D A)
+       endrule
 
      | CompShift :
-         forall {G D E A sbs sbt},
-           issubst sbs G D ->
-           issubst sbt D E ->
-           istype E A ->
-           eqsubst (sbcomp (sbshift D A sbt)
-                           (sbshift G (Subst A sbt) sbs))
-                   (sbshift G A (sbcomp sbt sbs))
-                   (ctxextend G (Subst A (sbcomp sbt sbs)))
-                   (ctxextend E A)
+       rule
+         parameters: {G D E A sbs sbt},
+         premise: issubst sbs G D
+         premise: issubst sbt D E
+         premise: istype E A
+         conclusion:
+           eqsubst
+             (sbcomp (sbshift D A sbt)
+                     (sbshift G (Subst A sbt) sbs))
+             (sbshift G A (sbcomp sbt sbs))
+             (ctxextend G (Subst A (sbcomp sbt sbs)))
+             (ctxextend E A)
+       endrule
 
      | CompIdRight :
-         forall {G D sbs},
-           issubst sbs G D ->
-           eqsubst (sbcomp sbs (sbid G)) sbs G D
+       rule
+         parameters: {G D sbs},
+         premise: issubst sbs G D
+         conclusion: eqsubst (sbcomp sbs (sbid G)) sbs G D
+       endrule
 
      | CompIdLeft :
-         forall {G D sbs},
-           issubst sbs G D ->
-           eqsubst (sbcomp (sbid D) sbs) sbs G D
-
-
+       rule
+         parameters: {G D sbs},
+         premise: issubst sbs G D
+         conclusion: eqsubst (sbcomp (sbid D) sbs) sbs G D
+       endrule
 
 
 with eqtype : context -> type -> type -> Type :=
 
      | EqTyCtxConv :
-         forall {G D A B},
-           eqtype G A B ->
-           eqctx G D ->
-           eqtype D A B
+       rule
+         parameters: {G D A B},
+         premise: eqtype G A B
+         premise: eqctx G D
+         conclusion: eqtype D A B
+       endrule
 
      | EqTyRefl:
-         forall {G A},
-           istype G A ->
-           eqtype G A A
+       rule
+         parameters: {G A},
+         premise: istype G A
+         conclusion: eqtype G A A
+       endrule
 
      | EqTySym :
-         forall {G A B},
-           eqtype G A B ->
-           eqtype G B A
+       rule
+         parameters: {G A B},
+         premise: eqtype G A B
+         conclusion: eqtype G B A
+       endrule
 
      | EqTyTrans :
-         forall {G A B C},
-           eqtype G A B ->
-           eqtype G B C ->
-           eqtype G A C
+       rule
+         parameters: {G A B C},
+         premise: eqtype G A B
+         premise: eqtype G B C
+         conclusion: eqtype G A C
+       endrule
 
      | EqTyIdSubst :
-         forall {G A},
-           istype G A ->
-           eqtype G
-                  (Subst A (sbid G))
-                  A
+       rule
+         parameters: {G A},
+         premise: istype G A
+         conclusion:
+           eqtype
+             G
+             (Subst A (sbid G))
+             A
+       endrule
 
      | EqTySubstComp :
-         forall {G D E A sbs sbt},
-           istype E A ->
-           issubst sbs G D ->
-           issubst sbt D E ->
-           eqtype G
-                  (Subst (Subst A sbt) sbs)
-                  (Subst A (sbcomp sbt sbs))
+       rule
+         parameters: {G D E A sbs sbt},
+         premise: istype E A
+         premise: issubst sbs G D
+         premise: issubst sbt D E
+         conclusion:
+           eqtype
+             G
+             (Subst (Subst A sbt) sbs)
+             (Subst A (sbcomp sbt sbs))
+       endrule
 
      | EqTySubstProd :
-         forall {G D A B sbs},
-           issubst sbs G D ->
-           istype D A ->
-           istype (ctxextend D A) B ->
-           eqtype G
-                  (Subst (Prod A B) sbs)
-                  (Prod (Subst A sbs) (Subst B (sbshift G A sbs)))
+       rule
+         parameters: {G D A B sbs},
+         premise: issubst sbs G D
+         premise: istype D A
+         premise: istype (ctxextend D A) B
+         conclusion:
+           eqtype
+             G
+             (Subst (Prod A B) sbs)
+             (Prod (Subst A sbs) (Subst B (sbshift G A sbs)))
+       endrule
 
      | EqTySubstId :
-         forall {G D A u v sbs},
-           issubst sbs G D ->
-           istype D A ->
-           isterm D u A ->
-           isterm D v A ->
-           eqtype G
-                  (Subst (Id A u v) sbs)
-                  (Id (Subst A sbs) (subst u sbs) (subst v sbs))
+       rule
+         parameters: {G D A u v sbs},
+         premise: issubst sbs G D
+         premise: isterm D u A
+         premise: isterm D v A
+         conclusion:
+            eqtype
+              G
+              (Subst (Id A u v) sbs)
+              (Id (Subst A sbs) (subst u sbs) (subst v sbs))
+       endrule
 
      | EqTySubstEmpty :
-         forall {G D sbs},
-           issubst sbs G D ->
-           eqtype G
-                  (Subst Empty sbs)
-                  Empty
+       rule
+         parameters: {G D sbs},
+         premise: issubst sbs G D
+         conclusion:
+           eqtype
+             G
+             (Subst Empty sbs)
+             Empty
+       endrule
 
      | EqTySubstUnit :
-         forall {G D sbs},
-           issubst sbs G D ->
-           eqtype G
-                  (Subst Unit sbs)
-                  Unit
+       rule
+         parameters: {G D sbs},
+         premise: issubst sbs G D
+         conclusion:
+           eqtype
+             G
+             (Subst Unit sbs)
+             Unit
+       endrule
 
      | EqTySubstBool :
-         forall {G D sbs},
-           issubst sbs G D ->
-           eqtype G
-                  (Subst Bool sbs)
-                  Bool
+       rule
+         parameters: {G D sbs},
+         premise: issubst sbs G D
+         conclusion:
+           eqtype
+             G
+             (Subst Bool sbs)
+             Bool
+       endrule
 
      | EqTyExfalso :
-         forall {G A B u},
-           istype G A ->
-           istype G B ->
-           isterm G u Empty ->
-           eqtype G A B
+       rule
+         parameters: {G A B u},
+         premise: istype G A
+         premise: istype G B
+         premise: isterm G u Empty
+         conclusion: eqtype G A B
+       endrule
 
      | CongProd :
-         forall {G A1 A2 B1 B2},
-           eqtype G A1 B1 ->
-           eqtype (ctxextend G A1) A2 B2 ->
-           eqtype G (Prod A1 A2) (Prod B1 B2)
+       rule
+         parameters: {G A1 A2 B1 B2},
+         premise: eqtype G A1 B1
+         premise: eqtype (ctxextend G A1) A2 B2
+         conclusion: eqtype G (Prod A1 A2) (Prod B1 B2)
+       endrule
 
      | CongId :
-         forall {G A B u1 u2 v1 v2},
-           eqtype G A B ->
-           eqterm G u1 v1 A ->
-           eqterm G u2 v2 A ->
-           eqtype G (Id A u1 u2) (Id B v1 v2)
+       rule
+         parameters: {G A B u1 u2 v1 v2},
+         premise: eqtype G A B
+         premise: eqterm G u1 v1 A
+         premise: eqterm G u2 v2 A
+         conclusion: eqtype G (Id A u1 u2) (Id B v1 v2)
+       endrule
 
      | CongTySubst :
-         forall {G D A B sbs sbt},
-           eqsubst sbs sbt G D ->
-           eqtype D A B ->
-           eqtype G (Subst A sbs) (Subst B sbt)
+       rule
+         parameters: {G D A B sbs sbt},
+         premise: eqsubst sbs sbt G D
+         premise: eqtype D A B
+         conclusion: eqtype G (Subst A sbs) (Subst B sbt)
+       endrule
 
 
 
 with eqterm : context -> term -> term -> type -> Type :=
 
      | EqTyConv :
-         forall {G A B u v},
-           eqterm G u v A ->
-           eqtype G A B ->
-           eqterm G u v B
+       rule
+         parameters: {G A B u v},
+         premise: eqterm G u v A
+         premise: eqtype G A B
+         conclusion: eqterm G u v B
+       endrule
 
      | EqCtxConv :
-         forall {G D u v A},
-           eqterm G u v A ->
-           eqctx G D ->
-           eqterm D u v A
+       rule
+         parameters: {G D u v A},
+         premise: eqterm G u v A
+         premise: eqctx G D
+         conclusion: eqterm D u v A
+       endrule
 
      | EqRefl :
-         forall {G A u},
-           isterm G u A ->
-           eqterm G u u A
+       rule
+         parameters: {G A u},
+         premise: isterm G u A
+         conclusion: eqterm G u u A
+       endrule
 
      | EqSym :
-         forall {G A u v},
-           eqterm G v u A ->
-           eqterm G u v A
+       rule
+         parameters: {G A u v},
+         premise: eqterm G v u A
+         conclusion: eqterm G u v A
+       endrule
 
      | EqTrans :
-         forall {G A u v w},
-           eqterm G u v A ->
-           eqterm G v w A ->
-           eqterm G u w A
+       rule
+         parameters: {G A u v w},
+         premise: eqterm G u v A
+         premise: eqterm G v w A
+         conclusion: eqterm G u w A
+       endrule
 
      | EqIdSubst :
-         forall {G A u},
-           isterm G u A ->
-           eqterm G
-                  (subst u (sbid G))
-                  u
-                  A
+       rule
+         parameters: {G A u},
+         premise: isterm G u A
+         conclusion:
+           eqterm
+             G
+             (subst u (sbid G))
+             u
+             A
+       endrule
 
      | EqSubstComp :
-         forall {G D E A u sbs sbt},
-           isterm E u A ->
-           issubst sbs G D ->
-           issubst sbt D E ->
-           eqterm G
-                  (subst (subst u sbt) sbs)
-                  (subst u (sbcomp sbt sbs))
-                  (Subst A (sbcomp sbt sbs))
+       rule
+         parameters: {G D E A u sbs sbt},
+         premise: isterm E u A
+         premise: issubst sbs G D
+         premise: issubst sbt D E
+         conclusion:
+           eqterm
+             G
+             (subst (subst u sbt) sbs)
+             (subst u (sbcomp sbt sbs))
+             (Subst A (sbcomp sbt sbs))
+       endrule
 
      | EqSubstWeak :
-         forall {G A B k},
-           isterm G (var k) A ->
-           istype G B ->
+       rule
+         parameters: {G A B k},
+         premise: isterm G (var k) A
+         premise: istype G B
+         conclusion:
            eqterm (ctxextend G B)
                   (subst (var k) (sbweak G B))
                   (var (S k))
                   (Subst A (sbweak G B))
+       endrule
 
 
      | EqSubstZeroZero :
-         forall {G u A},
-           isterm G u A ->
+       rule
+         parameters: {G u A},
+         premise: isterm G u A
+         conclusion:
            eqterm G
                   (subst (var 0) (sbzero G A u))
                   u
                   A
+       endrule
 
      | EqSubstZeroSucc :
-         forall {G A B u k},
-           isterm G (var k) A ->
-           isterm G u B ->
+       rule
+         parameters: {G A B u k},
+         premise: isterm G (var k) A
+         premise: isterm G u B
+         conclusion:
            eqterm G
                   (subst (var (S k)) (sbzero G B u))
                   (var k)
                   A
+       endrule
 
      | EqSubstShiftZero :
-         forall {G D A sbs},
-           issubst sbs G D ->
-           istype D A ->
+       rule
+         parameters: {G D A sbs},
+         premise: issubst sbs G D
+         premise: istype D A
+         conclusion:
            eqterm (ctxextend G (Subst A sbs))
                   (subst (var 0) (sbshift G A sbs))
                   (var 0)
                   (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+       endrule
 
      | EqSubstShiftSucc :
-         forall {G D A B sbs k},
-           issubst sbs G D ->
-           isterm D (var k) B ->
-           istype D A ->
+       rule
+         parameters: {G D A B sbs k},
+         premise: issubst sbs G D
+         premise: isterm D (var k) B
+         premise: istype D A
+         conclusion:
            eqterm (ctxextend G (Subst A sbs))
                   (subst (var (S k)) (sbshift G A sbs))
                   (subst (subst (var k) sbs) (sbweak G (Subst A sbs)))
                   (Subst (Subst B sbs) (sbweak G (Subst A sbs)))
+       endrule
 
      | EqSubstAbs :
-         forall {G D A B u sbs},
-           issubst sbs G D ->
-           istype D A ->
-           isterm (ctxextend D A) u B ->
+       rule
+         parameters: {G D A B u sbs},
+         premise: issubst sbs G D
+         premise: isterm (ctxextend D A) u B
+         conclusion:
            eqterm G
                   (subst (lam A B u) sbs)
                   (lam
@@ -630,34 +831,41 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Prod
                      (Subst A sbs)
                      (Subst B (sbshift G A sbs)))
+       endrule
 
      | EqSubstApp :
-         forall {G D A B u v sbs},
-           issubst sbs G D ->
-           istype (ctxextend D A) B ->
-           isterm D u (Prod A B) ->
-           isterm D v A ->
+       rule
+         parameters: {G D A B u v sbs},
+         premise: issubst sbs G D
+         premise: isterm D u (Prod A B)
+         premise: isterm D v A
+         conclusion:
            eqterm G
                   (subst (app u v) sbs)
                   (app
                      (subst u sbs)
                      (subst v sbs))
                   (Subst (Subst B (sbzero D A v)) sbs)
+       endrule
 
      | EqSubstRefl :
-         forall {G D A u sbs},
-           issubst sbs G D ->
-           isterm D u A ->
+       rule
+         parameters: {G D A u sbs},
+         premise: issubst sbs G D
+         premise: isterm D u A
+         conclusion:
            eqterm G
                   (subst (refl A u) sbs)
                   (refl (Subst A sbs) (subst u sbs))
                   (Id (Subst A sbs) (subst u sbs) (subst u sbs))
+       endrule
 
      | EqSubstJ :
-         forall {G D A C u v w p sbs},
-           issubst sbs G D ->
-           istype D A ->
-           isterm D u A ->
+       rule
+         parameters: {G D A C u v w p sbs},
+         premise: issubst sbs G D
+         premise: isterm D u A
+         premise:
            istype
              (ctxextend
                 (ctxextend D A)
@@ -667,7 +875,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                    (var 0)
                 )
              )
-             C ->
+             C
+         premise:
            isterm D
                   w
                   (Subst
@@ -684,9 +893,10 @@ with eqterm : context -> term -> term -> type -> Type :=
                         )
                      )
                      (sbzero D (Id A u u) (refl A u))
-                  ) ->
-           isterm D v A ->
-           isterm D p (Id A u v) ->
+                  )
+         premise: isterm D v A
+         premise: isterm D p (Id A u v)
+         conclusion:
            eqterm G
                   (subst
                      (j A u C w v p)
@@ -728,49 +938,64 @@ with eqterm : context -> term -> term -> type -> Type :=
                      )
                      sbs
                   )
+         endrule
 
      (* This rule is subsumed by EqTermExfalso *)
      | EqSubstExfalso :
-         forall {G D A u sbs},
-           issubst sbs G D ->
-           istype D A ->
-           isterm D u Empty ->
+       rule
+         parameters: {G D A u sbs},
+         premise: issubst sbs G D
+         premise: istype D A
+         premise: isterm D u Empty
+         conclusion:
            eqterm G
                   (subst (exfalso A u) sbs)
                   (exfalso (Subst A sbs) (subst u sbs))
                   (Subst A sbs)
+       endrule
 
      | EqSubstUnit :
-         forall {G D sbs},
-           issubst sbs G D ->
+       rule
+         parameters: {G D sbs},
+         premise: issubst sbs G D
+         conclusion:
            eqterm G
                   (subst unit sbs)
                   unit
                   Unit
+       endrule
 
      | EqSubstTrue :
-         forall {G D sbs},
-           issubst sbs G D ->
+       rule
+         parameters: {G D sbs},
+         premise: issubst sbs G D
+         conclusion:
            eqterm G
                   (subst true sbs)
                   true
                   Bool
+       endrule
 
      | EqSubstFalse :
-         forall {G D sbs},
-           issubst sbs G D ->
+       rule
+         parameters: {G D sbs},
+         premise: issubst sbs G D
+         conclusion:
            eqterm G
                   (subst false sbs)
                   false
                   Bool
+       endrule
 
      | EqSubstCond :
-         forall {G D C u v w sbs},
-           issubst sbs G D ->
-           isterm D u Bool ->
-           istype (ctxextend D Bool) C ->
-           isterm D v (Subst C (sbzero D Bool true)) ->
-           isterm D w (Subst C (sbzero D Bool false)) ->
+       rule
+         parameters: {G D C u v w sbs},
+         premise: issubst sbs G D
+         premise: isterm D u Bool
+         premise: istype (ctxextend D Bool) C
+         premise: isterm D v (Subst C (sbzero D Bool true))
+         premise: isterm D w (Subst C (sbzero D Bool false))
+         conclusion:
            eqterm G
                   (subst (cond C u v w) sbs)
                   (cond (Subst C (sbshift G Bool sbs))
@@ -778,66 +1003,83 @@ with eqterm : context -> term -> term -> type -> Type :=
                         (subst v sbs)
                         (subst w sbs))
                   (Subst (Subst C (sbzero D Bool u)) sbs)
+       endrule
 
      | EqTermExfalso :
-         forall {G A u v w},
-           istype G A ->
-           isterm G u A ->
-           isterm G v A ->
-           isterm G w Empty ->
-           eqterm G u v A
+       rule
+         parameters: {G A u v w},
+         premise: isterm G u A
+         premise: isterm G v A
+         premise: isterm G w Empty
+         conclusion: eqterm G u v A
+       endrule
 
      | UnitEta :
-         forall {G u v},
-           isterm G u Unit ->
-           isterm G v Unit ->
-           eqterm G u v Unit
+       rule
+         parameters: {G u v},
+         premise: isterm G u Unit
+         premise: isterm G v Unit
+         conclusion: eqterm G u v Unit
+       endrule
 
      | ProdBeta :
-         forall {G A B u v},
-           isterm (ctxextend G A) u B ->
-           isterm G v A ->
+       rule
+         parameters: {G A B u v},
+         premise: isterm (ctxextend G A) u B
+         premise: isterm G v A
+         conclusion:
            eqterm G
                   (app (lam A B u) v)
                   (subst u (sbzero G A v))
                   (Subst B (sbzero G A v))
+       endrule
 
      | CondTrue :
-         forall {G C v w},
-           istype (ctxextend G Bool) C ->
-           isterm G v (Subst C (sbzero G Bool true)) ->
-           isterm G w (Subst C (sbzero G Bool false)) ->
+       rule
+         parameters: {G C v w},
+         premise: istype (ctxextend G Bool) C
+         premise: isterm G v (Subst C (sbzero G Bool true))
+         premise: isterm G w (Subst C (sbzero G Bool false))
+         conclusion:
            eqterm G
                   (cond C true v w)
                   v
                   (Subst C (sbzero G Bool true))
+       endrule
 
      | CondFalse :
-         forall {G C v w},
-           istype (ctxextend G Bool) C ->
-           isterm G v (Subst C (sbzero G Bool true)) ->
-           isterm G w (Subst C (sbzero G Bool false)) ->
+       rule
+         parameters: {G C v w},
+         premise: istype (ctxextend G Bool) C
+         premise: isterm G v (Subst C (sbzero G Bool true))
+         premise: isterm G w (Subst C (sbzero G Bool false))
+         conclusion:
            eqterm G
                   (cond C false v w)
                   w
                   (Subst C (sbzero G Bool false))
+       endrule
 
      | ProdEta :
-         forall {G A B u v},
-           isterm G u (Prod A B) ->
-           isterm G v (Prod A B) ->
+       rule
+         parameters: {G A B u v},
+         premise: isterm G u (Prod A B)
+         premise: isterm G v (Prod A B)
+         premise:
            eqterm (ctxextend G A)
                   (app (subst u (sbweak G A))
                        (var 0))
                   (app (subst v (sbweak G A))
                        (var 0))
-                  B ->
-           eqterm G u v (Prod A B)
+                  B
+         conclusion: eqterm G u v (Prod A B)
+       endrule
 
      | JRefl :
-         forall {G A C u w},
-           istype G A ->
-           isterm G u A ->
+       rule
+         parameters: {G A C u w},
+         premise: isterm G u A
+         premise:
            istype
              (ctxextend
                 (ctxextend G A)
@@ -847,7 +1089,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                    (var 0)
                 )
              )
-             C ->
+           C
+         premise:
            isterm G
                   w
                   (Subst
@@ -864,7 +1107,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                         )
                      )
                      (sbzero G (Id A u u) (refl A u))
-                  ) ->
+                  )
+         conclusion:
            eqterm G
                   (j A u C w u (refl A u))
                   w
@@ -883,41 +1127,51 @@ with eqterm : context -> term -> term -> type -> Type :=
                      )
                      (sbzero G (Id A u u) (refl A u))
                   )
+       endrule
 
      | CongAbs :
-         forall {G A1 A2 B1 B2 u1 u2},
-           eqtype G A1 B1 ->
-           eqtype (ctxextend G A1) A2 B2 ->
-           eqterm (ctxextend G A1) u1 u2 A2 ->
+       rule
+         parameters: {G A1 A2 B1 B2 u1 u2},
+         premise: eqtype G A1 B1
+         premise: eqtype (ctxextend G A1) A2 B2
+         premise: eqterm (ctxextend G A1) u1 u2 A2
+         conclusion:
            eqterm G
                   (lam A1 A2 u1)
                   (lam B1 B2 u2)
                   (Prod A1 A2)
+       endrule
 
      | CongApp :
-         forall {G A1 A2 B1 B2 u1 u2 v1 v2},
-           eqtype G A1 B1 ->
-           eqtype (ctxextend G A1) A2 B2 ->
-           eqterm G u1 v1 (Prod A1 A2) ->
-           eqterm G u2 v2 A1 ->
+       rule
+         parameters: {G A B u1 u2 v1 v2},
+         premise: eqterm G u1 v1 (Prod A B)
+         premise: eqterm G u2 v2 A
+         conclusion:
            eqterm G
                   (app u1 u2)
                   (app v1 v2)
-                  (Subst A2 (sbzero G A1 u2))
+                  (Subst B (sbzero G A u2))
+       endrule
 
      | CongRefl :
-         forall {G u1 u2 A1 A2},
-           eqterm G u1 u2 A1 ->
-           eqtype G A1 A2 ->
+       rule
+         parameters: {G u1 u2 A1 A2},
+         premise: eqterm G u1 u2 A1
+         premise: eqtype G A1 A2
+         conclusion:
            eqterm G
                   (refl A1 u1)
                   (refl A2 u2)
                   (Id A1 u1 u1)
+       endrule
 
      | CongJ :
-         forall {G A1 A2 C1 C2 u1 u2 v1 v2 w1 w2 p1 p2},
-           eqtype G A1 A2 ->
-           eqterm G u1 u2 A1 ->
+       rule
+         parameters: {G A1 A2 C1 C2 u1 u2 v1 v2 w1 w2 p1 p2},
+         premise: eqtype G A1 A2
+         premise: eqterm G u1 u2 A1
+         premise:
            eqtype
              (ctxextend
                 (ctxextend G A1)
@@ -928,7 +1182,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                 )
              )
              C1
-             C2 ->
+             C2
+         premise:
            eqterm G
                   w1
                   w2
@@ -946,9 +1201,10 @@ with eqterm : context -> term -> term -> type -> Type :=
                         )
                      )
                      (sbzero G (Id A1 u1 u1) (refl A1 u1))
-                  ) ->
-           eqterm G v1 v2 A1 ->
-           eqterm G p1 p2 (Id A1 u1 v1) ->
+                  )
+         premise: eqterm G v1 v2 A1
+         premise: eqterm G p1 p2 (Id A1 u1 v1)
+         conclusion:
            eqterm G
                   (j A1 u1 C1 w1 v1 p1)
                   (j A2 u2 C2 w2 v2 p2)
@@ -967,33 +1223,30 @@ with eqterm : context -> term -> term -> type -> Type :=
                      )
                      (sbzero G (Id A1 u1 v1) p1)
                   )
-
-     (* This rule doesn't seem necessary as subsumed by EqTermexfalso! *)
-     (* | CongExfalso : *)
-     (*     forall {G A B u v}, *)
-     (*       eqtype G A B -> *)
-     (*       eqterm G u v Empty -> *)
-     (*       eqterm G *)
-     (*              (exfalso A u) *)
-     (*              (exfalso B v) *)
-     (*              A *)
+       endrule
 
      | CongCond :
-         forall {G C1 C2 u1 u2 v1 v2 w1 w2},
-           eqterm G u1 u2 Bool ->
-           eqtype (ctxextend G Bool) C1 C2 ->
-           eqterm G v1 v2 (Subst C1 (sbzero G Bool true)) ->
-           eqterm G w1 w2 (Subst C1 (sbzero G Bool false)) ->
+       rule
+         parameters: {G C1 C2 u1 u2 v1 v2 w1 w2},
+         premise: eqterm G u1 u2 Bool
+         premise: eqtype (ctxextend G Bool) C1 C2
+         premise: eqterm G v1 v2 (Subst C1 (sbzero G Bool true))
+         premise: eqterm G w1 w2 (Subst C1 (sbzero G Bool false))
+         conclusion:
            eqterm G
                   (cond C1 u1 v1 w1)
                   (cond C2 u2 v2 w2)
                   (Subst C1 (sbzero G Bool u1))
+       endrule
 
      | CongTermSubst :
-         forall {G D A u1 u2 sbs sbt},
-           eqsubst sbs sbt G D ->
-           eqterm D u1 u2 A ->
+       rule
+         parameters: {G D A u1 u2 sbs sbt},
+         premise: eqsubst sbs sbt G D
+         premise: eqterm D u1 u2 A
+         conclusion:
            eqterm G
                   (subst u1 sbs)
                   (subst u2 sbt)
-                  (Subst A sbs).
+                  (Subst A sbs)
+       endrule.

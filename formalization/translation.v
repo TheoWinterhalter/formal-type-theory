@@ -483,8 +483,7 @@ Proof.
         exists (C.ctxextend G' A').
         split.
         + constructor.
-          * now destruct HGisG'.
-          * now destruct HAisA'.
+          now destruct HAisA'.
         + constructor.
           * now destruct HGisG'.
           * now destruct HAisA'.
@@ -501,8 +500,7 @@ Proof.
           - constructor.
             + unfold Cisctx. simpl.
               apply I.CtxExtend.
-              * now inversion Ht.
-              * now inversion HAisA'.
+              now inversion HAisA'.
             + constructor.
               * now inversion Ht.
               * now inversion HAisA'.
@@ -518,8 +516,7 @@ Proof.
                   + eapply I.SubstId. now inversion Ht.
                   + eapply I.SubstZero. now inversion Huisu'.
                 - apply I.SubstId. eapply I.CtxExtend.
-                  + now inversion Ht.
-                  + now inversion HAisA'.
+                  now inversion HAisA'.
               }
             + constructor.
               * now destruct Ht.
@@ -533,7 +530,7 @@ Proof.
         exists G'0.
         { split.
           - constructor.
-            + now inversion HG'.
+            + todo. (* We need sanity *)
             + assumption.
           - exists (C.sbcoerce
                  (C.idSb
@@ -549,7 +546,7 @@ Proof.
                 - eapply I.SubstComp.
                   + eapply I.SubstId. assumption.
                   + eapply I.SubstWeak. assumption.
-                - eapply I.SubstId. assumption.
+                - eapply I.SubstId. todo. (* We need sanity *)
               }
             + constructor ; assumption.
         }
@@ -704,8 +701,7 @@ Proof.
         { split.
           - unfold Cisctx. simpl.
             apply I.CtxExtend.
-            + destruct Ht. assumption.
-            + destruct HAisA'. assumption.
+            destruct HAisA'. assumption.
           - apply hml_ctxextend.
             + destruct Ht. assumption.
             + destruct HAisA'. assumption.
@@ -718,8 +714,7 @@ Proof.
               eapply I.TySubst.
               + eapply I.SubstId. now destruct Ht.
               + eapply I.TyProd.
-                * now destruct HAisA'.
-                * now destruct HBisB'.
+                now destruct HBisB'.
             - apply hml_Prod.
               + now destruct HAisA'.
               + now destruct HBisB'.
@@ -737,7 +732,6 @@ Proof.
               eapply I.TySubst.
               - eapply I.SubstId. now destruct Ht.
               - eapply I.TyId.
-                + now destruct HA.
                 + now destruct Hu.
                 + now destruct Hv.
             }
@@ -829,7 +823,6 @@ Proof.
               * eapply I.TermApp.
                 -- todo.
                 -- todo.
-                -- todo.
               * todo.
             + constructor.
           - todo.
@@ -904,7 +897,10 @@ Proof.
         rename X into homG. rename X0 into homA. rename G'0 into G'.
         inversion HGA. subst.
         assert (HGisG' : istrans_ctx G G').
-        { split ; assumption. }
+        { split.
+          - todo. (* We need sanity *)
+          - assumption.
+        }
         destruct (trans_eqctx_left G G' D H HGisG') as [D' [HD [cc Hcc]]].
         (* We now need to be able to translate type equalities. *)
         todo.
@@ -953,7 +949,10 @@ Proof.
         rename G' into D'. rename A' into B'.
         inversion HDB. subst.
         assert (HDisD' : istrans_ctx D D').
-        { split ; assumption. }
+        { split.
+          - todo. (* Sanity *)
+          - assumption.
+        }
         destruct (trans_eqctx_right G D D' H HDisD') as [G' [HG [cc Hcc]]].
         (* We now need to be able to translate type equalities. *)
         todo.
