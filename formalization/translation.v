@@ -810,10 +810,30 @@ Proof.
         }
 
       (* TermSubst *)
-      - todo.
+      - { rename A' into As'.
+          destruct HA as [HtAs HhAs].
+          inversion HhAs. subst.
+          (* We need to know sbs' is a translation of sbs and get the
+             corresponding D' as well. *)
+          (* exists (C.coerce (C.idTm (eval_ctx G') (eval_type A')) (C.subst u' sbs')). *)
+          todo.
+        }
 
       (* TermVarZero *)
-      - todo.
+      - { rename G' into GA'. rename A' into Aw'.
+          exists (C.coerce (C.idTm (eval_ctx GA') (eval_type Aw')) (C.var 0)).
+          split.
+          - split.
+            + unfold Cisterm. simpl.
+              eapply I.TermTyConv.
+              * eapply I.TermApp.
+                -- todo.
+                -- todo.
+                -- todo.
+              * todo.
+            + constructor.
+          - todo.
+        }
 
       (* TermVarSucc *)
       - todo.
