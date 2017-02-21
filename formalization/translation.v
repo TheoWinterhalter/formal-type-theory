@@ -816,13 +816,31 @@ Proof.
       (* TermVarZero *)
       - { rename G' into GA'. rename A' into Aw'.
           exists (C.coerce (C.idTm (eval_ctx GA') (eval_type Aw')) (C.var 0)).
+          destruct HG as [HG1 HG2].
+          inversion HG2. subst.
           split.
           - split.
             + unfold Cisterm. simpl.
               eapply I.TermTyConv.
               * eapply I.TermApp.
-                -- todo.
-                -- todo.
+                -- eapply I.TermAbs.
+                   eapply I.TermVarZero.
+                   now inversion HA.
+                -- eapply I.TermTyConv.
+                   ++ eapply I.TermSubst.
+                      ** eapply I.SubstId. assumption.
+                      ** eapply I.TermVarZero.
+                         now inversion HG1.
+                   ++ eapply I.EqTyTrans.
+                      ** eapply I.EqTyIdSubst.
+                         eapply I.TySubst.
+                         --- eapply I.SubstWeak.
+                             now inversion HG1.
+                         --- now inversion HG1.
+                      ** inversion HA.
+                         inversion istype_hom0. subst. simpl.
+                         (* Did I get something wrong? *)
+                         todo.
               * todo.
             + constructor.
           - todo.
