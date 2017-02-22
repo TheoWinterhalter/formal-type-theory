@@ -837,9 +837,17 @@ Proof.
                          --- eapply I.SubstWeak.
                              now inversion HG1.
                          --- now inversion HG1.
-                      ** inversion HA.
-                         inversion istype_hom0. subst. simpl.
-                         (* Did I get something wrong? *)
+                      ** (* inversion HA. *)
+                         (* inversion istype_hom0. subst. simpl. *)
+                         (* Here we should need the coherence of translation. *)
+                         (* assert (istrans_ctx G G'). *)
+                         (* { split. *)
+                         (*   - todo. (* Inversion lemma *) *)
+                         (*   - assumption. *)
+                         (* } *)
+                         (* destruct (trans_type _ _ _ i0 X1) as [A'' [HA' fA']]. *)
+                         (* How can we proceed however, we cannot translate
+                            Aw since it was not a premise... *)
                          todo.
               * todo.
             + constructor.
