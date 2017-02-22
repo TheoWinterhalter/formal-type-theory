@@ -837,15 +837,39 @@ Proof.
                          --- eapply I.SubstWeak.
                              now inversion HG1.
                          --- now inversion HG1.
-                      ** (* inversion HA. *)
-                         (* inversion istype_hom0. subst. simpl. *)
+                      ** inversion HA.
+                         inversion istype_hom0. subst. simpl.
+                         inversion X2. subst. simpl.
                          (* Here we should need the coherence of translation. *)
-                         (* assert (istrans_ctx G G'). *)
-                         (* { split. *)
-                         (*   - todo. (* Inversion lemma *) *)
-                         (*   - assumption. *)
-                         (* } *)
-                         (* destruct (trans_type _ _ _ i0 X1) as [A'' [HA' fA']]. *)
+                         assert (
+                             I.eqtype (I.ctxextend (eval_ctx G') (eval_type A'))
+                                      (eval_type A')
+                                      (eval_type A'0)
+                         ).
+                         { assert (HG : istrans_ctx G G').
+                           { split.
+                             - todo. (* Inversion lemma *)
+                             - assumption.
+                           }
+                           destruct (trans_type _ _ _ i0 HG) as [A'' [HA' fA']].
+                           assert (HtA' : istrans_type A G' A').
+                           { split.
+                             - now inversion HG1.
+                             - assumption.
+                           }
+                           pose proof (fA' A' HtA').
+                           assert (HtA'0 : istrans_type A G' A'0).
+                           { split.
+                             - todo.
+                             - assumption.
+                           }
+                           pose proof (fA' A'0 HtA'0).
+                           todo.
+                         }
+                           (* We only get an equivalence and not an equality...
+                              This probably means we should proceed a bit
+                              differently.*)
+
                          (* How can we proceed however, we cannot translate
                             Aw since it was not a premise... *)
                          todo.
