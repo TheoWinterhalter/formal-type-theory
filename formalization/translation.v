@@ -815,67 +815,102 @@ Proof.
 
       (* TermVarZero *)
       - { rename G' into GA'. rename A' into Aw'.
-          exists (C.coerce (C.idTm (eval_ctx GA') (eval_type Aw')) (C.var 0)).
-          destruct HG as [HG1 HG2].
-          inversion HG2. subst.
-          split.
-          - split.
-            + unfold Cisterm. simpl.
-              eapply I.TermTyConv.
-              * eapply I.TermApp.
-                -- eapply I.TermAbs.
-                   eapply I.TermVarZero.
-                   now inversion HA.
-                -- eapply I.TermTyConv.
-                   ++ eapply I.TermSubst.
-                      ** eapply I.SubstId. assumption.
-                      ** eapply I.TermVarZero.
-                         now inversion HG1.
-                   ++ eapply I.EqTyTrans.
-                      ** eapply I.EqTyIdSubst.
-                         eapply I.TySubst.
-                         --- eapply I.SubstWeak.
-                             now inversion HG1.
-                         --- now inversion HG1.
-                      ** inversion HA.
-                         inversion istype_hom0. subst. simpl.
-                         inversion X2. subst. simpl.
-                         (* Here we should need the coherence of translation. *)
-                         assert (
-                             I.eqtype (I.ctxextend (eval_ctx G') (eval_type A'))
-                                      (eval_type A')
-                                      (eval_type A'0)
-                         ).
-                         { assert (HG : istrans_ctx G G').
-                           { split.
-                             - todo. (* Inversion lemma *)
-                             - assumption.
-                           }
-                           destruct (trans_type _ _ _ i0 HG) as [A'' [HA' fA']].
-                           assert (HtA' : istrans_type A G' A').
-                           { split.
-                             - now inversion HG1.
-                             - assumption.
-                           }
-                           pose proof (fA' A' HtA').
-                           assert (HtA'0 : istrans_type A G' A'0).
-                           { split.
-                             - todo.
-                             - assumption.
-                           }
-                           pose proof (fA' A'0 HtA'0).
-                           todo.
-                         }
-                           (* We only get an equivalence and not an equality...
-                              This probably means we should proceed a bit
-                              differently.*)
+          inversion HG as [HG1 HG2].
+          inversion HG2. subst. rename X into hmlG. rename X0 into hmlA.
+          (* inversion HA as [HA1 HA2]. *)
+          (* inversion HA2. subst. rename X into hmlA0. rename X0 into hmls. *)
+          (* assert (HG' : istrans_ctx G G'). *)
+          (* { split. *)
+          (*   - todo. (* Sanity or inversion *) *)
+          (*   - assumption. *)
+          (* } *)
+          (* assert (equiv_type G' A' A'0). *)
+          (* { destruct (trans_type _ _ _ i0 HG') as [ A'' [HA'' fA]]. *)
+          (*   todo. *)
+          (* } *)
+          assert (
+              equiv_type
+                (C.ctxextend G' A')
+                (C.Coerce
+                   (C.idTy (eval_ctx (C.ctxextend G' A')))
+                   (C.Subst
+                      A'
+                      (C.sbcoerce
+                         (C.idSb (eval_ctx (C.ctxextend G' A'))
+                                 (eval_ctx G'))
+                         (C.sbweak G' A'))))
+                Aw'
+          ).
+          { todo. }
+          (* Then again, even if we could prove it, we would need to be able to
+             turn it into a coercion. *)
+          todo.
 
-                         (* How can we proceed however, we cannot translate
-                            Aw since it was not a premise... *)
-                         todo.
-              * todo.
-            + constructor.
-          - todo.
+
+
+
+
+          (* exists (C.coerce (C.idTm (eval_ctx GA') (eval_type Aw')) (C.var 0)). *)
+          (* destruct HG as [HG1 HG2]. *)
+          (* inversion HG2. subst. *)
+          (* split. *)
+          (* - split. *)
+          (*   + unfold Cisterm. simpl. *)
+          (*     eapply I.TermTyConv. *)
+          (*     * eapply I.TermApp. *)
+          (*       -- eapply I.TermAbs. *)
+          (*          eapply I.TermVarZero. *)
+          (*          now inversion HA. *)
+          (*       -- eapply I.TermTyConv. *)
+          (*          ++ eapply I.TermSubst. *)
+          (*             ** eapply I.SubstId. assumption. *)
+          (*             ** eapply I.TermVarZero. *)
+          (*                now inversion HG1. *)
+          (*          ++ eapply I.EqTyTrans. *)
+          (*             ** eapply I.EqTyIdSubst. *)
+          (*                eapply I.TySubst. *)
+          (*                --- eapply I.SubstWeak. *)
+          (*                    now inversion HG1. *)
+          (*                --- now inversion HG1. *)
+          (*             ** inversion HA. *)
+          (*                inversion istype_hom0. subst. simpl. *)
+          (*                inversion X2. subst. simpl. *)
+          (*                (* Here we should need the coherence of translation. *) *)
+          (*                assert ( *)
+          (*                    I.eqtype (I.ctxextend (eval_ctx G') (eval_type A')) *)
+          (*                             (eval_type A') *)
+          (*                             (eval_type A'0) *)
+          (*                ). *)
+          (*                { assert (HG : istrans_ctx G G'). *)
+          (*                  { split. *)
+          (*                    - todo. (* Inversion lemma *) *)
+          (*                    - assumption. *)
+          (*                  } *)
+          (*                  destruct (trans_type _ _ _ i0 HG) as [A'' [HA' fA']]. *)
+          (*                  assert (HtA' : istrans_type A G' A'). *)
+          (*                  { split. *)
+          (*                    - now inversion HG1. *)
+          (*                    - assumption. *)
+          (*                  } *)
+          (*                  pose proof (fA' A' HtA'). *)
+          (*                  assert (HtA'0 : istrans_type A G' A'0). *)
+          (*                  { split. *)
+          (*                    - todo. *)
+          (*                    - assumption. *)
+          (*                  } *)
+          (*                  pose proof (fA' A'0 HtA'0). *)
+          (*                  todo. *)
+          (*                } *)
+          (*                  (* We only get an equivalence and not an equality... *)
+          (*                     This probably means we should proceed a bit *)
+          (*                     differently.*) *)
+
+          (*                (* How can we proceed however, we cannot translate *)
+          (*                   Aw since it was not a premise... *) *)
+          (*                todo. *)
+          (*     * todo. *)
+          (*   + constructor. *)
+          (* - todo. *)
         }
 
       (* TermVarSucc *)
