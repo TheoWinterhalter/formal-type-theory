@@ -11,8 +11,8 @@ Lemma EqTyWeakNat :
     isctx G ->
     isctx D ->
     eqtype (ctxextend G (Subst A sbs))
-           (Subst (Subst B (sbweak D A)) (sbshift G A sbs))
-           (Subst (Subst B sbs) (sbweak G (Subst A sbs))).
+           (Subst (Subst B (sbweak A)) (sbshift A sbs))
+           (Subst (Subst B sbs) (sbweak (Subst A sbs))).
 Proof.
   intros. gocompsubst. gocompsubst.
   Unshelve. assumption.
@@ -25,7 +25,7 @@ Lemma compWeakZero :
     istype G A ->
     istype G B ->
     isterm G u B ->
-    eqtype G A (Subst A (sbcomp (sbweak G B) (sbzero G B u))).
+    eqtype G A (Subst A (sbcomp (sbweak B) (sbzero B u))).
 Proof.
   intros.
   eapply EqTySym ; try magic.
@@ -44,7 +44,7 @@ Lemma EqTyWeakZero :
     istype G A ->
     istype G B ->
     isterm G u B ->
-    eqtype G A (Subst (Subst A (sbweak G B)) (sbzero G B u)).
+    eqtype G A (Subst (Subst A (sbweak B)) (sbzero B u)).
 Proof.
   intros.
   gocompsubst. eapply EqTySym ; try magic. apply compWeakZero ; magic.
@@ -60,8 +60,8 @@ Lemma EqTyShiftZero :
     isctx D ->
     eqtype
       G
-      (Subst (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst v sbs)))
-      (Subst (Subst B (sbzero D A v)) sbs).
+      (Subst (Subst B (sbshift A sbs)) (sbzero (Subst A sbs) (subst v sbs)))
+      (Subst (Subst B (sbzero A v)) sbs).
 Proof.
   intros. gocompsubst. gocompsubst.
   Unshelve. magic.
@@ -80,8 +80,8 @@ Lemma EqTyCongZero :
     isterm G u1 A1 ->
     isterm G u2 B1 ->
     eqtype G
-           (Subst A2 (sbzero G A1 u1))
-           (Subst B2 (sbzero G B1 u2)).
+           (Subst A2 (sbzero A1 u1))
+           (Subst B2 (sbzero B1 u2)).
 Proof.
   intros.
   assert (isterm G u2 A1).
@@ -90,10 +90,14 @@ Proof.
     | magic ..
     ].
   }
-  eapply CongTySubst ; [
+  eapply CongTySubst ;
+  [
     magic ..
-  | eapply SubstCtxConv ; magic
+  | idtac (* eapply SubstCtxConv ; try magic *)
   ].
+  eapply SubstCtxConv ; try magic.
+  apply (@SubstZero G) ; try magic.
+  magic.
 Defined.
 
 Lemma EqTyCongShift :

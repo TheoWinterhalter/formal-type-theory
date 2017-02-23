@@ -22,14 +22,14 @@ with issubst : substitution -> context -> context -> Type :=
        rule
          parameters: {G u A},
          premise: isterm G u A
-         conclusion: issubst (sbzero G A u) G (ctxextend G A)
+         conclusion: issubst (sbzero A u) G (ctxextend G A)
        endrule
 
      | SubstWeak :
        rule
          parameters: {G A},
          premise: istype G A
-         conclusion: issubst (sbweak G A) (ctxextend G A) G
+         conclusion: issubst (sbweak A) (ctxextend G A) G
        endrule
 
      | SubstShift :
@@ -38,14 +38,14 @@ with issubst : substitution -> context -> context -> Type :=
          premise: issubst sbs G D
          premise: istype D A
          conclusion:
-           issubst (sbshift G A sbs) (ctxextend G (Subst A sbs)) (ctxextend D A)
+           issubst (sbshift A sbs) (ctxextend G (Subst A sbs)) (ctxextend D A)
        endrule
 
      | SubstId :
        rule
          parameters: {G},
          premise: isctx G
-         conclusion: issubst (sbid G) G G
+         conclusion: issubst sbid G G
        endrule
 
      | SubstComp :
@@ -154,7 +154,7 @@ with isterm : context -> term -> type -> Type :=
          parameters: {G A},
          premise: istype G A
          conclusion: 
-           isterm (ctxextend G A) (var 0) (Subst A (sbweak G A))
+           isterm (ctxextend G A) (var 0) (Subst A (sbweak A))
        endrule
 
      | TermVarSucc :
@@ -163,7 +163,7 @@ with isterm : context -> term -> type -> Type :=
          premise: isterm G (var k) A
          premise: istype G B
          conclusion:
-           isterm (ctxextend G B) (var (S k)) (Subst A (sbweak G B))
+           isterm (ctxextend G B) (var (S k)) (Subst A (sbweak B))
        endrule
 
      | TermAbs :
@@ -179,7 +179,7 @@ with isterm : context -> term -> type -> Type :=
          premise: isterm G u (Prod A B)
          premise: isterm G v A
          conclusion:
-           isterm G (app u A B v) (Subst B (sbzero G A v))
+           isterm G (app u A B v) (Subst B (sbzero A v))
        endrule
 
      | TermRefl :
@@ -198,8 +198,8 @@ with isterm : context -> term -> type -> Type :=
              (ctxextend
                 (ctxextend G A)
                 (Id
-                   (Subst A (sbweak G A))
-                   (subst u (sbweak G A))
+                   (Subst A (sbweak A))
+                   (subst u (sbweak A))
                    (var 0)
                 )
              )
@@ -212,16 +212,15 @@ with isterm : context -> term -> type -> Type :=
                 (Subst
                    C
                    (sbshift
-                      G
                       (Id
-                         (Subst A (sbweak G A))
-                         (subst u (sbweak G A))
+                         (Subst A (sbweak A))
+                         (subst u (sbweak A))
                          (var 0)
                       )
-                      (sbzero G A u)
+                      (sbzero A u)
                    )
                 )
-                (sbzero G (Id A u u) (refl A u))
+                (sbzero (Id A u u) (refl A u))
              )
          premise: isterm G v A
          premise: isterm G p (Id A u v)
@@ -232,16 +231,15 @@ with isterm : context -> term -> type -> Type :=
                      (Subst
                         C
                         (sbshift
-                           G
                            (Id
-                              (Subst A (sbweak G A))
-                              (subst u (sbweak G A))
+                              (Subst A (sbweak A))
+                              (subst u (sbweak A))
                               (var 0)
                            )
-                           (sbzero G A v)
+                           (sbzero A v)
                         )
                      )
-                     (sbzero G (Id A u v) p)
+                     (sbzero (Id A u v) p)
                   )
        endrule
 
@@ -279,13 +277,13 @@ with isterm : context -> term -> type -> Type :=
          parameters: {G C u v w},
          premise: isterm G u Bool
          premise: istype (ctxextend G Bool) C
-         premise: isterm G v (Subst C (sbzero G Bool true))
-         premise: isterm G w (Subst C (sbzero G Bool false))
+         premise: isterm G v (Subst C (sbzero Bool true))
+         premise: isterm G w (Subst C (sbzero Bool false))
          conclusion:
            isterm
              G
              (cond C u v w)
-             (Subst C (sbzero G Bool u))
+             (Subst C (sbzero Bool u))
        endrule
 
 
@@ -355,42 +353,39 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
 
      | CongSubstZero :
        rule
-         parameters: {G1 G2 A1 A2 u1 u2},
-         premise: eqctx G1 G2
-         premise: eqtype G1 A1 A2
-         premise: eqterm G1 u1 u2 A1
+         parameters: {G A1 A2 u1 u2},
+         premise: eqtype G A1 A2
+         premise: eqterm G u1 u2 A1
          conclusion:
            eqsubst
-             (sbzero G1 A1 u1)
-             (sbzero G2 A2 u2)
-             G1
-             (ctxextend G1 A1)
+             (sbzero A1 u1)
+             (sbzero A2 u2)
+             G
+             (ctxextend G A1)
        endrule
 
      | CongSubstWeak :
        rule
-         parameters: {G1 G2 A1 A2},
-         premise: eqctx G1 G2
-         premise: eqtype G1 A1 A2
+         parameters: {G A1 A2},
+         premise: eqtype G A1 A2
          conclusion:
            eqsubst
-             (sbweak G1 A1)
-             (sbweak G2 A2)
-             (ctxextend G1 A1)
-             G1
+             (sbweak A1)
+             (sbweak A2)
+             (ctxextend G A1)
+             G
        endrule
 
      | CongSubstShift :
        rule
-         parameters: {G1 G2 D A1 A2 sbs1 sbs2},
-         premise: eqctx G1 G2
-         premise: eqsubst sbs1 sbs2 G1 D
+         parameters: {G D A1 A2 sbs1 sbs2},
+         premise: eqsubst sbs1 sbs2 G D
          premise: eqtype D A1 A2
-         conclusion:                         
+         conclusion:
            eqsubst
-             (sbshift G1 A1 sbs1)
-             (sbshift G2 A2 sbs2)
-             (ctxextend G1 (Subst A1 sbs1))
+             (sbshift A1 sbs1)
+             (sbshift A2 sbs2)
+             (ctxextend G (Subst A1 sbs1))
              (ctxextend D A1)
        endrule
 
@@ -436,8 +431,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
          premise: istype D A
          conclusion:
            eqsubst
-             (sbcomp (sbweak D A) (sbshift G A sbs))
-             (sbcomp sbs (sbweak G (Subst A sbs)))
+             (sbcomp (sbweak A) (sbshift A sbs))
+             (sbcomp sbs (sbweak (Subst A sbs)))
              (ctxextend G (Subst A sbs))
              D
        endrule
@@ -448,8 +443,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
          premise: isterm G u A
          conclusion:
            eqsubst
-             (sbcomp (sbweak G A) (sbzero G A u))
-             (sbid G)
+             (sbcomp (sbweak A) (sbzero A u))
+             sbid
              G
              G
        endrule
@@ -461,9 +456,9 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
          premise: isterm D u A
          conclusion:
            eqsubst
-             (sbcomp (sbshift G A sbs)
-                     (sbzero G (Subst A sbs) (subst u sbs)))
-             (sbcomp (sbzero D A u)
+             (sbcomp (sbshift A sbs)
+                     (sbzero (Subst A sbs) (subst u sbs)))
+             (sbcomp (sbzero A u)
                      sbs)
              G
              (ctxextend D A)
@@ -477,9 +472,9 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
          premise: istype E A
          conclusion:
            eqsubst
-             (sbcomp (sbshift D A sbt)
-                     (sbshift G (Subst A sbt) sbs))
-             (sbshift G A (sbcomp sbt sbs))
+             (sbcomp (sbshift A sbt)
+                     (sbshift (Subst A sbt) sbs))
+             (sbshift A (sbcomp sbt sbs))
              (ctxextend G (Subst A (sbcomp sbt sbs)))
              (ctxextend E A)
        endrule
@@ -488,14 +483,14 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
        rule
          parameters: {G D sbs},
          premise: issubst sbs G D
-         conclusion: eqsubst (sbcomp sbs (sbid G)) sbs G D
+         conclusion: eqsubst (sbcomp sbs sbid) sbs G D
        endrule
 
      | CompIdLeft :
        rule
          parameters: {G D sbs},
          premise: issubst sbs G D
-         conclusion: eqsubst (sbcomp (sbid D) sbs) sbs G D
+         conclusion: eqsubst (sbcomp sbid sbs) sbs G D
        endrule
 
 
@@ -538,7 +533,7 @@ with eqtype : context -> type -> type -> Type :=
          conclusion:
            eqtype
              G
-             (Subst A (sbid G))
+             (Subst A sbid)
              A
        endrule
 
@@ -565,7 +560,7 @@ with eqtype : context -> type -> type -> Type :=
            eqtype
              G
              (Subst (Prod A B) sbs)
-             (Prod (Subst A sbs) (Subst B (sbshift G A sbs)))
+             (Prod (Subst A sbs) (Subst B (sbshift A sbs)))
        endrule
 
      | EqTySubstId :
@@ -697,7 +692,7 @@ with eqterm : context -> term -> term -> type -> Type :=
          conclusion:
            eqterm
              G
-             (subst u (sbid G))
+             (subst u sbid)
              u
              A
        endrule
@@ -723,9 +718,9 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: istype G B
          conclusion:
            eqterm (ctxextend G B)
-                  (subst (var k) (sbweak G B))
+                  (subst (var k) (sbweak B))
                   (var (S k))
-                  (Subst A (sbweak G B))
+                  (Subst A (sbweak B))
        endrule
 
 
@@ -735,7 +730,7 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: isterm G u A
          conclusion:
            eqterm G
-                  (subst (var 0) (sbzero G A u))
+                  (subst (var 0) (sbzero A u))
                   u
                   A
        endrule
@@ -747,7 +742,7 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: isterm G u B
          conclusion:
            eqterm G
-                  (subst (var (S k)) (sbzero G B u))
+                  (subst (var (S k)) (sbzero B u))
                   (var k)
                   A
        endrule
@@ -759,9 +754,9 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: istype D A
          conclusion:
            eqterm (ctxextend G (Subst A sbs))
-                  (subst (var 0) (sbshift G A sbs))
+                  (subst (var 0) (sbshift A sbs))
                   (var 0)
-                  (Subst (Subst A sbs) (sbweak G (Subst A sbs)))
+                  (Subst (Subst A sbs) (sbweak (Subst A sbs)))
        endrule
 
      | EqSubstShiftSucc :
@@ -772,9 +767,9 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: istype D A
          conclusion:
            eqterm (ctxextend G (Subst A sbs))
-                  (subst (var (S k)) (sbshift G A sbs))
-                  (subst (subst (var k) sbs) (sbweak G (Subst A sbs)))
-                  (Subst (Subst B sbs) (sbweak G (Subst A sbs)))
+                  (subst (var (S k)) (sbshift A sbs))
+                  (subst (subst (var k) sbs) (sbweak (Subst A sbs)))
+                  (Subst (Subst B sbs) (sbweak (Subst A sbs)))
        endrule
 
      | EqSubstAbs :
@@ -787,11 +782,11 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (subst (lam A B u) sbs)
                   (lam
                      (Subst A sbs)
-                     (Subst B (sbshift G A sbs))
-                     (subst u (sbshift G A sbs)))
+                     (Subst B (sbshift A sbs))
+                     (subst u (sbshift A sbs)))
                   (Prod
                      (Subst A sbs)
-                     (Subst B (sbshift G A sbs)))
+                     (Subst B (sbshift A sbs)))
        endrule
 
      | EqSubstApp :
@@ -806,9 +801,9 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (app
                      (subst u sbs)
                      (Subst A sbs)
-                     (Subst B (sbshift G A sbs))
+                     (Subst B (sbshift A sbs))
                      (subst v sbs))
-                  (Subst (Subst B (sbzero D A v)) sbs)
+                  (Subst (Subst B (sbzero A v)) sbs)
        endrule
 
      | EqSubstRefl :
@@ -833,8 +828,8 @@ with eqterm : context -> term -> term -> type -> Type :=
              (ctxextend
                 (ctxextend D A)
                 (Id
-                   (Subst A (sbweak D A))
-                   (subst u (sbweak D A))
+                   (Subst A (sbweak A))
+                   (subst u (sbweak A))
                    (var 0)
                 )
              )
@@ -846,16 +841,15 @@ with eqterm : context -> term -> term -> type -> Type :=
                      (Subst
                         C
                         (sbshift
-                           D
                            (Id
-                              (Subst A (sbweak D A))
-                              (subst u (sbweak D A))
+                              (Subst A (sbweak A))
+                              (subst u (sbweak A))
                               (var 0)
                            )
-                           (sbzero D A u)
+                           (sbzero A u)
                         )
                      )
-                     (sbzero D (Id A u u) (refl A u))
+                     (sbzero (Id A u u) (refl A u))
                   )
          premise: isterm D v A
          premise: isterm D p (Id A u v)
@@ -869,14 +863,12 @@ with eqterm : context -> term -> term -> type -> Type :=
                      (subst u sbs)
                      (Subst C
                             (sbshift
-                               (ctxextend G
-                                          (Subst A sbs))
                                (Id
-                                  (Subst A (sbweak D A))
-                                  (subst u (sbweak D A))
+                                  (Subst A (sbweak A))
+                                  (subst u (sbweak A))
                                   (var 0)
                                )
-                               (sbshift G A sbs)
+                               (sbshift A sbs)
                             )
                      )
                      (subst w sbs)
@@ -888,16 +880,15 @@ with eqterm : context -> term -> term -> type -> Type :=
                         (Subst
                            C
                            (sbshift
-                              D
                               (Id
-                                 (Subst A (sbweak D A))
-                                 (subst u (sbweak D A))
+                                 (Subst A (sbweak A))
+                                 (subst u (sbweak A))
                                  (var 0)
                               )
-                              (sbzero D A v)
+                              (sbzero A v)
                            )
                         )
-                        (sbzero D (Id A u v) p)
+                        (sbzero (Id A u v) p)
                      )
                      sbs
                   )
@@ -956,16 +947,16 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: issubst sbs G D
          premise: isterm D u Bool
          premise: istype (ctxextend D Bool) C
-         premise: isterm D v (Subst C (sbzero D Bool true))
-         premise: isterm D w (Subst C (sbzero D Bool false))
+         premise: isterm D v (Subst C (sbzero Bool true))
+         premise: isterm D w (Subst C (sbzero Bool false))
          conclusion:
            eqterm G
                   (subst (cond C u v w) sbs)
-                  (cond (Subst C (sbshift G Bool sbs))
+                  (cond (Subst C (sbshift Bool sbs))
                         (subst u sbs)
                         (subst v sbs)
                         (subst w sbs))
-                  (Subst (Subst C (sbzero D Bool u)) sbs)
+                  (Subst (Subst C (sbzero Bool u)) sbs)
        endrule
 
      | EqTermExfalso :
@@ -1001,34 +992,34 @@ with eqterm : context -> term -> term -> type -> Type :=
          conclusion:
            eqterm G
                   (app (lam A B u) A B v)
-                  (subst u (sbzero G A v))
-                  (Subst B (sbzero G A v))
+                  (subst u (sbzero A v))
+                  (Subst B (sbzero A v))
        endrule
 
      | CondTrue :
        rule
          parameters: {G C v w},
          premise: istype (ctxextend G Bool) C
-         premise: isterm G v (Subst C (sbzero G Bool true))
-         premise: isterm G w (Subst C (sbzero G Bool false))
+         premise: isterm G v (Subst C (sbzero Bool true))
+         premise: isterm G w (Subst C (sbzero Bool false))
          conclusion:
            eqterm G
                   (cond C true v w)
                   v
-                  (Subst C (sbzero G Bool true))
+                  (Subst C (sbzero Bool true))
        endrule
 
      | CondFalse :
        rule
          parameters: {G C v w},
          premise: istype (ctxextend G Bool) C
-         premise: isterm G v (Subst C (sbzero G Bool true))
-         premise: isterm G w (Subst C (sbzero G Bool false))
+         premise: isterm G v (Subst C (sbzero Bool true))
+         premise: isterm G w (Subst C (sbzero Bool false))
          conclusion:
            eqterm G
                   (cond C false v w)
                   w
-                  (Subst C (sbzero G Bool false))
+                  (Subst C (sbzero Bool false))
        endrule
 
      | ProdEta :
@@ -1038,13 +1029,13 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: isterm G v (Prod A B)
          premise:
            eqterm (ctxextend G A)
-                  (app (subst u (sbweak G A))
-                       (Subst A (sbweak G A))
-                       (Subst B (sbshift (ctxextend G A) A (sbweak G A)))
+                  (app (subst u (sbweak A))
+                       (Subst A (sbweak A))
+                       (Subst B (sbshift A (sbweak A)))
                        (var 0))
-                  (app (subst v (sbweak G A))
-                       (Subst A (sbweak G A))
-                       (Subst B (sbshift (ctxextend G A) A (sbweak G A)))
+                  (app (subst v (sbweak A))
+                       (Subst A (sbweak A))
+                       (Subst B (sbshift A (sbweak A)))
                        (var 0))
                   B
          conclusion: eqterm G u v (Prod A B)
@@ -1059,8 +1050,8 @@ with eqterm : context -> term -> term -> type -> Type :=
              (ctxextend
                 (ctxextend G A)
                 (Id
-                   (Subst A (sbweak G A))
-                   (subst u (sbweak G A))
+                   (Subst A (sbweak A))
+                   (subst u (sbweak A))
                    (var 0)
                 )
              )
@@ -1072,16 +1063,15 @@ with eqterm : context -> term -> term -> type -> Type :=
                      (Subst
                         C
                         (sbshift
-                           G
                            (Id
-                              (Subst A (sbweak G A))
-                              (subst u (sbweak G A))
+                              (Subst A (sbweak A))
+                              (subst u (sbweak A))
                               (var 0)
                            )
-                           (sbzero G A u)
+                           (sbzero A u)
                         )
                      )
-                     (sbzero G (Id A u u) (refl A u))
+                     (sbzero (Id A u u) (refl A u))
                   )
          conclusion:
            eqterm G
@@ -1091,16 +1081,15 @@ with eqterm : context -> term -> term -> type -> Type :=
                      (Subst
                         C
                         (sbshift
-                           G
                            (Id
-                              (Subst A (sbweak G A))
-                              (subst u (sbweak G A))
+                              (Subst A (sbweak A))
+                              (subst u (sbweak A))
                               (var 0)
                            )
-                           (sbzero G A u)
+                           (sbzero A u)
                         )
                      )
-                     (sbzero G (Id A u u) (refl A u))
+                     (sbzero (Id A u u) (refl A u))
                   )
        endrule
 
@@ -1128,7 +1117,7 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G
                   (app u1 A1 A2 u2)
                   (app v1 B1 B2 v2)
-                  (Subst A2 (sbzero G A1 u2))
+                  (Subst A2 (sbzero A1 u2))
        endrule
 
      | CongRefl :
@@ -1153,8 +1142,8 @@ with eqterm : context -> term -> term -> type -> Type :=
              (ctxextend
                 (ctxextend G A1)
                 (Id
-                   (Subst A1 (sbweak G A1))
-                   (subst u1 (sbweak G A1))
+                   (Subst A1 (sbweak A1))
+                   (subst u1 (sbweak A1))
                    (var 0)
                 )
              )
@@ -1168,16 +1157,15 @@ with eqterm : context -> term -> term -> type -> Type :=
                      (Subst
                         C1
                         (sbshift
-                           G
                            (Id
-                              (Subst A1 (sbweak G A1))
-                              (subst u1 (sbweak G A1))
+                              (Subst A1 (sbweak A1))
+                              (subst u1 (sbweak A1))
                               (var 0)
                            )
-                           (sbzero G A1 u1)
+                           (sbzero A1 u1)
                         )
                      )
-                     (sbzero G (Id A1 u1 u1) (refl A1 u1))
+                     (sbzero (Id A1 u1 u1) (refl A1 u1))
                   )
          premise: eqterm G v1 v2 A1
          premise: eqterm G p1 p2 (Id A1 u1 v1)
@@ -1189,16 +1177,15 @@ with eqterm : context -> term -> term -> type -> Type :=
                      (Subst
                         C1
                         (sbshift
-                           G
                            (Id
-                              (Subst A1 (sbweak G A1))
-                              (subst u1 (sbweak G A1))
+                              (Subst A1 (sbweak A1))
+                              (subst u1 (sbweak A1))
                               (var 0)
                            )
-                           (sbzero G A1 v1)
+                           (sbzero A1 v1)
                         )
                      )
-                     (sbzero G (Id A1 u1 v1) p1)
+                     (sbzero (Id A1 u1 v1) p1)
                   )
        endrule
 
@@ -1217,13 +1204,13 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G C1 C2 u1 u2 v1 v2 w1 w2},
          premise: eqterm G u1 u2 Bool
          premise: eqtype (ctxextend G Bool) C1 C2
-         premise: eqterm G v1 v2 (Subst C1 (sbzero G Bool true))
-         premise: eqterm G w1 w2 (Subst C1 (sbzero G Bool false))
+         premise: eqterm G v1 v2 (Subst C1 (sbzero Bool true))
+         premise: eqterm G w1 w2 (Subst C1 (sbzero Bool false))
          conclusion:
            eqterm G
                   (cond C1 u1 v1 w1)
                   (cond C2 u2 v2 w2)
-                  (Subst C1 (sbzero G Bool u1))
+                  (Subst C1 (sbzero Bool u1))
        endrule
 
      | CongTermSubst :

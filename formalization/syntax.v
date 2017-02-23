@@ -24,10 +24,10 @@ with term : Type :=
      | cond : type -> term -> term -> term -> term
 
 with substitution : Type :=
-     | sbzero : context -> type -> term -> substitution
-     | sbweak : context -> type -> substitution
-     | sbshift : context -> type -> substitution -> substitution
-     | sbid : context -> substitution
+     | sbzero : type -> term -> substitution
+     | sbweak : type -> substitution
+     | sbshift : type -> substitution -> substitution
+     | sbid : substitution
      | sbcomp : substitution -> substitution -> substitution.
 
 Parameter reflective : type -> type.
