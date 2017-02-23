@@ -469,8 +469,8 @@ Proof.
      }
 
    (* H1: SubstId *)
-   - { inversion_clear H2'.
-       - apply ett.CtxRefl. hyp.
+   - { inversion H2'.
+       - rewrite <- H2. hyp.
        - doSubstConv unique_subst'.
      }
 
