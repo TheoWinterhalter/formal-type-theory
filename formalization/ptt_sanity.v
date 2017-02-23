@@ -319,51 +319,19 @@ Proof.
   (* CongSubstZero *)
   - { split.
       - now apply SubstZero.
-      - apply (@SubstCtxConv G2 G1 (ctxextend G2 A2) (ctxextend G1 A1)) ;
+      - apply (@SubstCtxConv G G (ctxextend G A2) (ctxextend G A1)) ;
           auto using CtxExtend, CtxRefl, CtxSym.
         + apply SubstZero ;
-            auto using (@TyCtxConv G1 G2), (@TermCtxConv G1 G2), (@TermTyConv G1 A1 A2).
+            auto using (@TyCtxConv G G), (@TermCtxConv G G), (@TermTyConv G A1 A2).
         + apply EqCtxExtend ;
-            auto using (@TyCtxConv G1 G2), CtxSym, (@EqTyCtxConv G1 G2), EqTySym.
-        + apply CtxExtend ; auto using (@TyCtxConv G1 G2).
+            auto using (@TyCtxConv G G), CtxRefl, (@EqTyCtxConv G G), EqTySym.
     }
 
   (* CongSubstWeak *)
-  - { split.
-      - now apply SubstWeak.
-      - apply (@SubstCtxConv (ctxextend G2 A2) (ctxextend G1 A1) G2 G1) ;
-          auto using CtxExtend, CtxRefl.
-        + apply SubstWeak ; auto.
-          now apply (@TyCtxConv G1, G2).
-        + apply EqCtxExtend ; auto using (@TyCtxConv G1 G2), CtxSym.
-          apply (@EqTyCtxConv G1 G2) ; auto using EqTySym.
-        + now apply CtxSym.
-        + apply CtxExtend ; auto.
-          now apply (@TyCtxConv G1 G2).
-    }
+  - { split ; magic. }
 
   (* CongSubstShift *)
-  - { split.
-      - now apply SubstShift.
-      - apply (@SubstCtxConv (ctxextend G2 (Subst A2 sbs2)) _ (ctxextend D A2) _) ;
-          auto using CtxExtend.
-        + apply SubstShift ; auto.
-          apply (@SubstCtxConv G1 _ D D) ; auto using CtxRefl.
-        + apply EqCtxExtend ; auto.
-          * apply (@TySubst G2 D) ; auto.
-            apply (@SubstCtxConv G1 _ D D); auto using CtxRefl.
-          * apply (@TyCtxConv G1 G2); auto.
-            now apply (@TySubst G1 D).
-          * now apply CtxSym.
-          * apply (@EqTyCtxConv G1 G2); auto using (@TySubst G1 D).
-            apply (@CongTySubst G1 D) ; auto using EqTySym, SubstSym.
-        + apply EqCtxExtend ; auto using EqTySym, CtxRefl.
-        + apply CtxExtend ; auto.
-          apply (@TyCtxConv G1 G2) ; auto.
-          now apply (@TySubst G1 D).
-        + apply CtxExtend ; auto.
-          now apply (@TySubst G1 D).
-    }
+  - { split ; magic. }
 
   (* CongSubstComp *)
   - { split.
@@ -484,7 +452,7 @@ Proof.
 
   (* EqIdSubst *)
   - { split.
-      - { apply (@TermTyConv G (Subst A (sbid G)) A).
+      - { apply (@TermTyConv G (Subst A sbid) A).
           - apply (@TermSubst G G) ; auto using SubstId.
           - now apply EqTyIdSubst.
           - assumption.
@@ -523,13 +491,13 @@ Proof.
 
   (* EqSubstZeroZero *)
   - { split.
-      - { apply (@TermTyConv G (Subst (Subst A (sbweak G A)) (sbzero G A u))).
+      - { apply (@TermTyConv G (Subst (Subst A (sbweak A)) (sbzero A u))).
           - apply (@TermSubst _ (ctxextend G A)) ; auto using CtxExtend.
             + now apply SubstZero.
             + now apply TermVarZero.
             + apply (@TySubst _ G) ; auto using CtxExtend, SubstWeak.
-          - apply (@EqTyTrans G _ (Subst A (sbid G))) ; auto.
-            + { apply (@EqTyTrans _ _ (Subst A (sbcomp (sbweak G A) (sbzero G A u)))) ; auto.
+          - apply (@EqTyTrans G _ (Subst A sbid)) ; auto.
+            + { apply (@EqTyTrans _ _ (Subst A (sbcomp (sbweak A) (sbzero A u)))) ; auto.
                 - apply (@EqTySubstComp G (ctxextend G A) G) ;
                     auto using CtxExtend, (@SubstComp G (ctxextend G A)) , SubstWeak, SubstZero.
                 - apply (@CongTySubst G G) ;
@@ -557,7 +525,7 @@ Proof.
 
   (* EqSubstZeroSucc *)
   - { split.
-      - { apply (@TermTyConv G (Subst (Subst A (sbweak G B)) (sbzero G B u))).
+      - { apply (@TermTyConv G (Subst (Subst A (sbweak B)) (sbzero B u))).
           - apply (@TermSubst G (ctxextend G B)) ; auto using CtxExtend.
             + now apply SubstZero.
             + now apply TermVarSucc.
@@ -582,7 +550,7 @@ Proof.
               * eapply TySubst ; eassumption.
             + eapply TySubst ; try eassumption ; magic.
             + magic.
-          - apply EqTyWeakNat ; magic.
+          - magic.
           - constructor.
             + assumption.
             + eapply TySubst ; eassumption.
@@ -664,15 +632,7 @@ Proof.
   (* EqSubstCond *)
   - { split.
       - { magic. }
-      - { magic.
-          Unshelve.
-          all:keep_eq.
-          3: instantiate (1 := true).
-          13: instantiate (1 := false).
-          27: instantiate (1 := u).
-          Unshelve. all:magic.
-          Unshelve. all:strictmagic.
-        }
+      - { admit. }
     }
 
   (* EqTermExfalso *)
@@ -744,99 +704,7 @@ Proof.
   (* CongJ *)
   - { split.
       - { magic. }
-      - { magic.
-          fail.
-
-
-eapply TermTyConv ; [ eapply TermJ | .. ].
-          - magic.
-          - magic.
-          - magic.
-          - magic.
-            Unshelve. all:strictmagic.
-          - eapply TermTyConv ; [ eassumption | .. ].
-            + compsubst1.
-              * magic.
-              * magic.
-              * magic.
-                Unshelve. all:strictmagic.
-              * compsubst1.
-                -- magic.
-                -- magic.
-                -- magic.
-                   Unshelve. all:magic.
-                   Unshelve. all:strictmagic.
-                -- eapply EqTyTrans ; [
-                     eapply CongTySubst ; [
-                       idtac
-                     | eapply EqTyRefl
-                     | ..
-                     ]
-                   | ..
-                   ].
-                   ++ eapply SubstTrans ; [
-                        eapply CongSubstComp ; [
-                          idtac
-                        | eapply SubstRefl
-                        | ..
-                        ]
-                      | idtac
-                      | ..
-                      ].
-
-
-                     eapply SubstTrans ; [
-                        eapply CongSubstComp ; [
-                          idtac
-                        | eapply SubstRefl
-                        | ..
-                        ]
-                      | eapply ShiftZero
-                      | ..
-                      ].
-
-
-
-
-
-simplify.
-                   ++ (* This, here, generates faulty goals? *)
-                     eapply CongSubstZero.
-                     ** magic.
-                     ** magic.
-                     ** magic.
-                        Unshelve.
-                        3: exact (subst u2 (sbweak G A2)).
-                        3: exact (var 0).
-                        2: exact (refl (Subst A1 (sbweak G A2)) (var 0)).
-                        1:shelve.
-                        all:strictmagic.
-                     ** magic.
-                     ** magic.
-                     ** magic.
-                     ** magic.
-                     ** magic.
-                     ** magic.
-                   ++ magic.
-                   ++ magic.
-                      Unshelve. all:strictmagic.
-                   ++ magic.
-                   ++ magic.
-                   ++ (* This was indeed wrong... *)
-                     magic.
-
-
-          fail.
-
-          magic.
-          Unshelve.
-          all:keep_eq.
-
-
-          Unshelve. all:try magic.
-          Unshelve. all:try magic.
-          Unshelve. all:admit.
-        }
+      - { admit. }
     }
 
   (* CongCond *)
@@ -851,7 +719,7 @@ simplify.
       - { magic. }
     }
 
-Defined.
+Admitted.
 
 Theorem sane_eqterm G u v A :
   eqterm G u v A -> isctx G * istype G A * isterm G u A * isterm G v A.

@@ -149,7 +149,7 @@ Proof.
       - apply (@ett.SubstTrans G D sb1 sb2 sb3) ; auto.
 
       (* CongSubstZero *)
-      - apply (@ett.CongSubstZero G1 G2) ; auto.
+      - apply (@ett.CongSubstZero G) ; auto.
 
       (* CongSubstWeak *)
       - apply ett.CongSubstWeak ; auto.
@@ -176,7 +176,7 @@ Proof.
       - apply ett.ShiftZero ; auto.
 
       (* CompShift *)
-      - apply ett.CompShift ; auto.
+      - apply (@ett.CompShift G D) ; auto.
 
       (* CompIdRight *)
       - apply ett.CompIdRight ; auto.
@@ -284,7 +284,7 @@ Proof.
       - apply (@ett.EqSubstRefl G D) ; auto.
 
       (* EqSubstJ *)
-      - apply ett.EqSubstJ ; auto.
+      - apply (@ett.EqSubstJ G D) ; auto.
 
      (* This rule is subsumed by EqTermExfalso *)
       (* EqSubstExfalso *)
@@ -300,7 +300,7 @@ Proof.
       - apply (@ett.EqSubstFalse G D) ; auto.
 
       (* EqSubstCond *)
-      - apply ett.EqSubstCond ; auto.
+      - apply (@ett.EqSubstCond G D); auto.
 
       (* EqTermExfalso *)
       - apply (@ett.EqTermExfalso G A u v w); auto.

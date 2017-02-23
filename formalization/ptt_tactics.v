@@ -124,7 +124,7 @@ Lemma EqCompZero :
     isctx G ->
     isctx D ->
     eqterm G
-           (subst (var 0) (sbcomp (sbzero D A u) sbs))
+           (subst (var 0) (sbcomp (sbzero A u) sbs))
            (subst u sbs)
            (Subst A sbs).
 Proof.
@@ -133,39 +133,39 @@ Proof.
   { eapply TySubst ; eassumption. }
   assert (isterm G (subst u sbs) (Subst A sbs)).
   { eapply TermSubst ; eassumption. }
-  assert (issubst (sbzero D A u) D (ctxextend D A)).
+  assert (issubst (sbzero A u) D (ctxextend D A)).
   { eapply SubstZero ; eassumption. }
   assert (isctx (ctxextend D A)).
   { eapply CtxExtend ; assumption. }
-  assert (issubst (sbcomp (sbzero D A u) sbs) G (ctxextend D A)).
+  assert (issubst (sbcomp (sbzero A u) sbs) G (ctxextend D A)).
   { eapply SubstComp ; eassumption. }
-  assert (isterm (ctxextend D A) (var 0) (Subst A (sbweak D A))).
+  assert (isterm (ctxextend D A) (var 0) (Subst A (sbweak A))).
   { apply TermVarZero ; assumption. }
-  assert (issubst (sbweak D A) (ctxextend D A) D).
+  assert (issubst (sbweak A) (ctxextend D A) D).
   { eapply SubstWeak ; assumption. }
-  assert (istype (ctxextend D A) (Subst A (sbweak D A))).
+  assert (istype (ctxextend D A) (Subst A (sbweak A))).
   { eapply TySubst ; eassumption. }
   assert (
     isterm G
-           (subst (var 0) (sbcomp (sbzero D A u) sbs))
-           (Subst (Subst A (sbweak D A)) (sbcomp (sbzero D A u) sbs))
+           (subst (var 0) (sbcomp (sbzero A u) sbs))
+           (Subst (Subst A (sbweak A)) (sbcomp (sbzero A u) sbs))
   ).
   { eapply TermSubst ; eassumption. }
-  assert (istype G (Subst (Subst A (sbweak D A)) (sbcomp (sbzero D A u) sbs))).
+  assert (istype G (Subst (Subst A (sbweak A)) (sbcomp (sbzero A u) sbs))).
   { eapply TySubst ; eassumption. }
-  assert (issubst (sbcomp (sbweak D A) (sbcomp (sbzero D A u) sbs)) G D).
+  assert (issubst (sbcomp (sbweak A) (sbcomp (sbzero A u) sbs)) G D).
   { eapply SubstComp ; eassumption. }
-  assert (istype G (Subst A (sbcomp (sbweak D A) (sbcomp (sbzero D A u) sbs)))).
+  assert (istype G (Subst A (sbcomp (sbweak A) (sbcomp (sbzero A u) sbs)))).
   { eapply TySubst ; eassumption. }
-  assert (issubst (sbcomp (sbweak D A) (sbzero D A u)) D D).
+  assert (issubst (sbcomp (sbweak A) (sbzero A u)) D D).
   { eapply SubstComp ; eassumption. }
-  assert (issubst (sbid D) D D).
+  assert (issubst sbid D D).
   { apply SubstId. assumption. }
-  assert (issubst (sbcomp (sbcomp (sbweak D A) (sbzero D A u)) sbs) G D).
+  assert (issubst (sbcomp (sbcomp (sbweak A) (sbzero A u)) sbs) G D).
   { eapply SubstComp ; eassumption. }
-  assert (issubst (sbcomp (sbid D) sbs) G D).
+  assert (issubst (sbcomp sbid sbs) G D).
   { eapply SubstComp ; eassumption. }
-  assert (eqsubst (sbcomp (sbweak D A) (sbcomp (sbzero D A u) sbs)) sbs G D).
+  assert (eqsubst (sbcomp (sbweak A) (sbcomp (sbzero A u) sbs)) sbs G D).
   { eapply SubstTrans ; [
       eapply CompAssoc
     | eapply SubstTrans ; [
@@ -183,26 +183,26 @@ Proof.
   assert (eqtype D A A).
   { eapply EqTyRefl ; assumption. }
   assert (
-    eqtype G (Subst (Subst A (sbweak D A)) (sbcomp (sbzero D A u) sbs)) (Subst A sbs)
+    eqtype G (Subst (Subst A (sbweak A)) (sbcomp (sbzero A u) sbs)) (Subst A sbs)
   ).
   { compsubst1 ; try eassumption.
     eapply CongTySubst ; eassumption.
   }
-  assert (isterm G (subst (var 0) (sbcomp (sbzero D A u) sbs)) (Subst A sbs)).
+  assert (isterm G (subst (var 0) (sbcomp (sbzero A u) sbs)) (Subst A sbs)).
   { eapply TermTyConv ; eassumption. }
-  assert (istype D (Subst (Subst A (sbweak D A)) (sbzero D A u))).
+  assert (istype D (Subst (Subst A (sbweak A)) (sbzero A u))).
   { eapply TySubst ; eassumption. }
-  assert (istype D (Subst A (sbid D))).
+  assert (istype D (Subst A sbid)).
   { eapply TySubst ; eassumption. }
-  assert (eqtype D (Subst A (sbid D)) A).
+  assert (eqtype D (Subst A sbid) A).
   { eapply EqTyIdSubst ; eassumption. }
-  assert (eqtype D A (Subst A (sbid D))).
+  assert (eqtype D A (Subst A sbid)).
   { eapply EqTySym ; eassumption. }
-  assert (isterm D u (Subst A (sbid D))).
+  assert (isterm D u (Subst A sbid)).
   { eapply TermTyConv ; eassumption. }
-  assert (istype D (Subst A (sbcomp (sbweak D A) (sbzero D A u)))).
+  assert (istype D (Subst A (sbcomp (sbweak A) (sbzero A u)))).
   { eapply TySubst ; eassumption. }
-  assert (eqtype D (Subst (Subst A (sbweak D A)) (sbzero D A u)) A).
+  assert (eqtype D (Subst (Subst A (sbweak A)) (sbzero A u)) A).
   { eapply EqTyTrans ; [
       compsubst1 ; [
         eassumption
@@ -222,27 +222,27 @@ Proof.
     | ..
     ] ; eassumption.
   }
-  assert (isterm D (subst (var 0) (sbzero D A u)) A).
+  assert (isterm D (subst (var 0) (sbzero A u)) A).
   { eapply TermTyConv ; [
       eapply TermSubst
     | ..
     ] ; eassumption.
   }
   assert (
-    eqtype G (Subst A sbs) (Subst (Subst A (sbweak D A)) (sbcomp (sbzero D A u) sbs))
+    eqtype G (Subst A sbs) (Subst (Subst A (sbweak A)) (sbcomp (sbzero A u) sbs))
   ).
   { eapply EqTySym ; eassumption. }
   assert (
     isterm G
-           (subst (subst (var 0) (sbzero D A u)) sbs)
-           (Subst (Subst A (sbweak D A)) (sbcomp (sbzero D A u) sbs))
+           (subst (subst (var 0) (sbzero A u)) sbs)
+           (Subst (Subst A (sbweak A)) (sbcomp (sbzero A u) sbs))
   ).
   { eapply TermTyConv ; [
       eapply TermSubst
     | ..
     ] ; eassumption.
   }
-  assert (isterm G (subst (subst (var 0) (sbzero D A u)) sbs) (Subst A sbs)).
+  assert (isterm G (subst (subst (var 0) (sbzero A u)) sbs) (Subst A sbs)).
   { eapply TermSubst ; eassumption. }
   assert (eqsubst sbs sbs G D).
   { eapply SubstRefl ; assumption. }
@@ -351,7 +351,7 @@ Ltac pushsubst1 :=
       | ..
       ]
     ]
-  | |- eqterm ?G (subst (var 0) (sbzero ?D ?B ?u)) ?v ?A =>
+  | |- eqterm ?G (subst (var 0) (sbzero ?B ?u)) ?v ?A =>
     first [
       eapply EqTrans ; [ eapply EqSubstZeroZero | .. ]
     | eapply EqTrans ; [
@@ -359,9 +359,9 @@ Ltac pushsubst1 :=
       | ..
       ]
     ]
-  | |- eqterm ?G ?u (subst (var 0) (sbzero ?D ?B ?v)) ?A =>
+  | |- eqterm ?G ?u (subst (var 0) (sbzero ?B ?v)) ?A =>
     eapply EqSym ; [ eapply EqTrans ; [ eapply EqSubstZeroZero | .. ] | .. ]
-  | |- eqterm ?G (subst (var 0) (sbshift ?D ?B ?sbs)) ?v ?A =>
+  | |- eqterm ?G (subst (var 0) (sbshift ?B ?sbs)) ?v ?A =>
     eapply EqTrans ; [
       eapply EqTyConv ; [
         eapply EqSubstShiftZero
@@ -369,7 +369,7 @@ Ltac pushsubst1 :=
       ]
     | ..
     ]
-  | |- eqterm ?G ?u (subst (var 0) (sbshift ?D ?B ?sbs)) ?A =>
+  | |- eqterm ?G ?u (subst (var 0) (sbshift ?B ?sbs)) ?A =>
     eapply EqSym ; [
       eapply EqTrans ; [
         eapply EqTyConv ; [
@@ -380,7 +380,7 @@ Ltac pushsubst1 :=
       ]
     | ..
     ]
-  | |- eqterm ?G (subst (var 0) (sbcomp (sbzero _ _ ?u) ?sbt)) ?v ?A =>
+  | |- eqterm ?G (subst (var 0) (sbcomp (sbzero _ ?u) ?sbt)) ?v ?A =>
     first [
       eapply EqTrans ; [
         eapply EqCompZero
@@ -391,7 +391,7 @@ Ltac pushsubst1 :=
       | ..
       ]
     ]
-  | |- eqterm ?G (subst (var 0) (sbcomp (sbshift _ _ ?sbs) ?sbt)) ?v ?A =>
+  | |- eqterm ?G (subst (var 0) (sbcomp (sbshift _ ?sbs) ?sbt)) ?v ?A =>
     eapply EqTrans ; [
       eapply EqTrans ; [
         eapply EqSym ; [
@@ -443,23 +443,23 @@ Ltac simplify_subst :=
         | ..
         ]
 
-      | sbcomp (sbid _) ?sbs =>
+      | sbcomp sbid ?sbs =>
         eapply CompIdLeft
 
-      | sbcomp ?sbs (sbid _) =>
+      | sbcomp ?sbs sbid =>
         eapply CompIdRight
 
-      | sbcomp (sbweak _ _) (sbzero _ _ _) =>
+      | sbcomp (sbweak _) (sbzero _ _) =>
         eapply WeakZero
-      | sbcomp (sbweak _ _) (sbcomp (sbzero _ _ _) _) =>
+      | sbcomp (sbweak _) (sbcomp (sbzero _ _) _) =>
         ecomp WeakZero
 
-      | sbcomp (sbshift _ ?A ?sbs) (sbzero _ (Subst ?A ?sbs) (subst ?u ?sbs)) =>
+      | sbcomp (sbshift ?A ?sbs) (sbzero (Subst ?A ?sbs) (subst ?u ?sbs)) =>
         eapply ShiftZero
-      | sbcomp (sbshift _ ?A ?sbs)
-               (sbcomp (sbzero _ (Subst ?A ?sbs) (subst ?u ?sbs)) _) =>
+      | sbcomp (sbshift ?A ?sbs)
+               (sbcomp (sbzero (Subst ?A ?sbs) (subst ?u ?sbs)) _) =>
         ecomp ShiftZero
-      (* | sbcomp (sbshift _ _ ?sbs) (sbzero _ _ _) => *)
+      (* | sbcomp (sbshift _ ?sbs) (sbzero _ _) => *)
       (*   eapply SubstTrans ; [ *)
       (*     eapply CongSubstComp ; [ *)
       (*       idtac *)
@@ -469,7 +469,7 @@ Ltac simplify_subst :=
       (*   | eapply ShiftZero *)
       (*   | .. *)
       (*   ] *)
-      (* | sbcomp (sbshift _ _ ?sbs) (sbcomp (sbzero _ _ _) _) => *)
+      (* | sbcomp (sbshift _ ?sbs) (sbcomp (sbzero _ _) _) => *)
       (*   eapply SubstTrans ; [ *)
       (*     eapply CompAssoc *)
       (*   | eapply CongSubstComp ; [ *)
@@ -507,7 +507,7 @@ Ltac simplify_subst :=
    assuming the substitution is on the left. *)
 Ltac simplify :=
   lazymatch goal with
-  | |- eqtype ?G (Subst ?A (sbid ?D)) ?B =>
+  | |- eqtype ?G (Subst ?A sbid) ?B =>
     eapply EqTyTrans ; [
       eapply EqTyIdSubst
     | ..
@@ -523,7 +523,7 @@ Ltac simplify :=
     | ..
     ]
 
-  | |- eqterm ?G (subst ?u (sbid _)) ?v ?A =>
+  | |- eqterm ?G (subst ?u sbid) ?v ?A =>
     eapply EqTrans ; [
       eapply EqIdSubst
     | ..
@@ -657,25 +657,25 @@ Ltac magicn try shelf tysym debug :=
         else myfail debug
 
     (*! Substitutions !*)
-    | |- issubst (sbzero _ _ ?u) ?G1 ?G2 =>
+    | |- issubst (sbzero _ ?u) ?G1 ?G2 =>
       first [
         eapply SubstZero
       | eapply SubstCtxConv ; [ eapply SubstZero | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- issubst (sbweak _ _) ?G1 ?G2 =>
+    | |- issubst (sbweak _) ?G1 ?G2 =>
       first [
         eapply SubstWeak
       | eapply SubstCtxConv ; [ eapply SubstWeak | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- issubst (sbshift _ _ ?sbs) ?G1 ?G2 =>
+    | |- issubst (sbshift _ ?sbs) ?G1 ?G2 =>
       first [
         eapply SubstShift
       | eapply SubstCtxConv ; [ eapply SubstShift | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- issubst (sbid _) ?G1 ?G2 =>
+    | |- issubst sbid ?G1 ?G2 =>
       first [
         eapply SubstId
       | myfail debug
@@ -878,31 +878,31 @@ Ltac magicn try shelf tysym debug :=
         else myfail debug
 
     (*! Equality of substitutions !*)
-    | |- eqsubst (sbcomp (sbweak _ _) (sbshift _ _ ?sbs))
-                (sbcomp ?sbs (sbweak _ _)) ?G ?D =>
+    | |- eqsubst (sbcomp (sbweak _) (sbshift _ ?sbs))
+                (sbcomp ?sbs (sbweak _)) ?G ?D =>
       first [
         eapply WeakNat
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- eqsubst (sbcomp ?sbs (sbweak _ _))
-                (sbcomp (sbweak _ _) (sbshift _ _ ?sbs)) ?G ?D =>
+    | |- eqsubst (sbcomp ?sbs (sbweak _))
+                (sbcomp (sbweak _) (sbshift _ ?sbs)) ?G ?D =>
       first [
         eapply SubstSym ; [ eapply WeakNat | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- eqsubst (sbzero _ _ ?u1) (sbzero _ _ ?u2) ?D ?E =>
+    | |- eqsubst (sbzero _ ?u1) (sbzero _ ?u2) ?D ?E =>
       first [
         eapply CongSubstZero
       | eapply EqSubstCtxConv ; [ eapply CongSubstZero | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- eqsubst (sbweak _ _) (sbweak _ _) ?D ?E =>
+    | |- eqsubst (sbweak _) (sbweak _) ?D ?E =>
       first [
         eapply CongSubstWeak
       | eapply EqSubstCtxConv ; [ eapply CongSubstWeak | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- eqsubst (sbshift _ _ ?sbs1) (sbshift _ _ ?sbs2) ?D ?E =>
+    | |- eqsubst (sbshift _ ?sbs1) (sbshift _ ?sbs2) ?D ?E =>
       first [
         eapply CongSubstShift
       | eapply EqSubstCtxConv ; [ eapply CongSubstShift | .. ]
@@ -946,83 +946,83 @@ Ltac magicn try shelf tysym debug :=
       | myfail debug
       ] ; magicn try shelf true debug
     (* A weird case perhaps. *)
-    | |- eqtype ?G (Subst ?A (sbshift ?G2 ?A2 ?sbs))
-               (Subst ?B' (sbcomp ?sbs (sbweak ?G1 (Subst ?A1 ?sbs)))) =>
+    | |- eqtype ?G (Subst ?A (sbshift ?A2 ?sbs))
+               (Subst ?B' (sbcomp ?sbs (sbweak (Subst ?A1 ?sbs)))) =>
       tryif (is_evar A ; is_var B')
       then (
         first [
-          instantiate (1 := (Subst B' (sbweak _ _)))
+          instantiate (1 := (Subst B' (sbweak _)))
         | myfail debug
         ] ; magicn try shelf true debug
       )
-      else eqtype_subst G A (sbshift G2 A2 sbs)
-                        (Subst B' (sbcomp sbs (sbweak G1 (Subst A1 sbs))))
+      else eqtype_subst G A (sbshift A2 sbs)
+                        (Subst B' (sbcomp sbs (sbweak (Subst A1 sbs))))
                         magicn try shelf tysym debug
-    | |- eqtype ?G (Subst ?B' (sbcomp ?sbs (sbweak ?G1 (Subst ?A1 ?sbs))))
-               (Subst ?A (sbshift ?G2 ?A2 ?sbs)) =>
+    | |- eqtype ?G (Subst ?B' (sbcomp ?sbs (sbweak (Subst ?A1 ?sbs))))
+               (Subst ?A (sbshift ?A2 ?sbs)) =>
       tryif (is_evar A ; is_var B')
       then (
         first [
-          instantiate (1 := Subst B' (sbweak _ _))
+          instantiate (1 := Subst B' (sbweak _))
         | myfail debug
         ] ; magicn try shelf true debug
       )
       else eqtype_subst G (Subst B' (sbcomp sbs (sbweak A1 sbs)))
-                        (Subst A (sbshift G2 A2 sbs))
+                        (Subst A (sbshift A2 sbs))
                         magicn try shelf tysym debug
     | |- eqtype ?G
                (Subst ?A
-                      (sbcomp (sbshift ?G1 ?A1 ?sbs)
-                              (sbzero ?G2 ?A2 (subst ?u ?sbs))))
+                      (sbcomp (sbshift ?A1 ?sbs)
+                              (sbzero ?A2 (subst ?u ?sbs))))
                (Subst ?B' ?sbs) =>
       tryif (is_evar A ; is_var B')
       then (
         first [
-          instantiate (1 := Subst B' (sbweak _ _))
+          instantiate (1 := Subst B' (sbweak _))
         | myfail debug
         ] ; magicn try shelf true debug
       )
       else eqtype_subst G
                         A
-                        (sbcomp (sbshift G1 A1 sbs)
-                                (sbzero G2 A2 (subst u sbs)))
+                        (sbcomp (sbshift A1 sbs)
+                                (sbzero A2 (subst u sbs)))
                         (Subst B' sbs)
                         magicn try shelf tysym debug
     | |- eqtype ?G (Subst ?B' ?sbs)
-               (Subst ?A (sbcomp (sbshift ?G1 ?A1 ?sbs)
-                                 (sbzero ?G2 ?A2 (subst ?u ?sbs)))) =>
+               (Subst ?A (sbcomp (sbshift ?A1 ?sbs)
+                                 (sbzero ?A2 (subst ?u ?sbs)))) =>
       tryif (is_evar A ; is_var B')
       then (
         first [
-          instantiate (1 := Subst B' (sbweak _ _))
+          instantiate (1 := Subst B' (sbweak _))
         | myfail debug
         ] ; magicn try shelf true debug
       )
       else eqtype_subst G B' sbs
-                        (Subst A (sbcomp (sbshift G1 A1 sbs)
-                                         (sbzero G2 A2 (subst u sbs))))
+                        (Subst A (sbcomp (sbshift A1 sbs)
+                                         (sbzero A2 (subst u sbs))))
                         magicn try shelf tysym debug
     (* Another case I'm not sure of. *)
     | |- eqtype ?G
                (Subst ?A ?sbs)
-               (Subst ?B (sbzero ?D (Subst ?A ?sbs) (subst ?u ?sbs))) =>
+               (Subst ?B (sbzero (Subst ?A ?sbs) (subst ?u ?sbs))) =>
       tryif (is_var A ; is_evar B)
       then
         first [
-          instantiate (1 := Subst (Subst A sbs) (sbweak _ _))
+          instantiate (1 := Subst (Subst A sbs) (sbweak _))
         | myfail debug
         ] ; magicn try shelf true debug
       else
-        eqtype_subst G A sbs (Subst B (sbzero D (Subst A sbs) (subst u sbs)))
+        eqtype_subst G A sbs (Subst B (sbzero (Subst A sbs) (subst u sbs)))
                      magicn try shelf tysym debug
     (* One more *)
-    | |- eqtype ?G (Subst ?A (sbzero ?D ?B' ?u)) ?B =>
+    | |- eqtype ?G (Subst ?A (sbzero ?B' ?u)) ?B =>
       tryif (is_evar A ; is_var B)
       then first [
-        instantiate (1 := Subst B (sbweak _ _))
+        instantiate (1 := Subst B (sbweak _))
       | myfail debug
       ] ; magicn try shelf true debug
-      else eqtype_subst G A (sbzero D B u) B
+      else eqtype_subst G A (sbzero B u) B
                         magicn try shelf tysym debug
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)

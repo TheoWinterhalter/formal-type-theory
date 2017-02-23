@@ -54,7 +54,7 @@ Fixpoint TermAppInversion {G A B u v T}
   istype (ctxextend G A) B *
   isterm G u (Prod A B) *
   isterm G v A *
-  eqtype G (Subst B (sbzero G A v)) T.
+  eqtype G (Subst B (sbzero A v)) T.
 Proof.
   inversion H.
 
@@ -78,20 +78,6 @@ Proof.
       - eapply TermCtxConv ; ehyp.
       - eapply TermCtxConv ; ehyp.
       - eapply EqTyCtxConv ; try ehyp.
-        eapply EqTyTrans ; try ehyp.
-        eapply CongTySubst ; try ehyp.
-        + eapply EqSubstCtxConv ; [
-            eapply CongSubstZero ; try ehyp
-          | try ehyp ..
-          ].
-          * eapply CtxSym. hyp.
-          * eapply EqTyRefl. eapply TyCtxConv ; ehyp.
-          * eapply EqRefl. eapply TermCtxConv ; ehyp.
-          * eapply CtxSym. hyp.
-          * eapply CtxRefl.
-            eapply CtxExtend ; try hyp.
-            eapply TyCtxConv ; ehyp.
-        + eapply EqTyRefl. eapply TyCtxConv ; ehyp.
     }
 
   - { repeat split ; try hyp.
@@ -144,8 +130,8 @@ Fixpoint TermJInversion {G A u C w v p T}
     (ctxextend
        (ctxextend G A)
        (Id
-          (Subst A (sbweak G A))
-          (subst u (sbweak G A))
+          (Subst A (sbweak A))
+          (subst u (sbweak A))
           (var 0)
        )
     )
@@ -156,16 +142,15 @@ Fixpoint TermJInversion {G A u C w v p T}
                 (Subst
                    C
                    (sbshift
-                      G
                       (Id
-                         (Subst A (sbweak G A))
-                         (subst u (sbweak G A))
+                         (Subst A (sbweak A))
+                         (subst u (sbweak A))
                          (var 0)
                       )
-                      (sbzero G A u)
+                      (sbzero A u)
                    )
                 )
-                (sbzero G (Id A u u) (refl A u))
+                (sbzero (Id A u u) (refl A u))
              ) *
   isterm G v A *
   isterm G p (Id A u v) *
@@ -174,16 +159,15 @@ Fixpoint TermJInversion {G A u C w v p T}
                 (Subst
                    C
                    (sbshift
-                      G
                       (Id
-                         (Subst A (sbweak G A))
-                         (subst u (sbweak G A))
+                         (Subst A (sbweak A))
+                         (subst u (sbweak A))
                          (var 0)
                       )
-                      (sbzero G A v)
+                      (sbzero A v)
                    )
                 )
-                (sbzero G (Id A u v) p)
+                (sbzero (Id A u v) p)
              )
              T.
 Proof.
@@ -203,12 +187,12 @@ Proof.
       assert (
           eqctx
             (ctxextend (ctxextend G0 A)
-                       (Id (Subst A (sbweak G0 A))
-                           (subst u (sbweak G0 A))
+                       (Id (Subst A (sbweak A))
+                           (subst u (sbweak A))
                            (var 0)))
             (ctxextend (ctxextend G A)
-                       (Id (Subst A (sbweak G A))
-                           (subst u (sbweak G A))
+                       (Id (Subst A (sbweak A))
+                           (subst u (sbweak A))
                            (var 0)))
       ).
       { eapply EqCtxExtend.
@@ -232,136 +216,9 @@ Proof.
       - eapply TermCtxConv ; ehyp.
       - eapply TyCtxConv ; ehyp.
       - eapply TermCtxConv ; try ehyp.
-        eapply TermTyConv ; [ ehyp | .. ].
-        eapply CongTySubst.
-        + eapply CongSubstZero.
-          * hyp.
-          * eapply EqTyRefl. eapply TyId ; hyp.
-          * eapply EqRefl. eapply TermRefl ; hyp.
-        + eapply CongTySubst.
-          * { eapply EqSubstCtxConv.
-              - eapply CongSubstShift.
-                + hyp.
-                + eapply CongSubstZero.
-                  * hyp.
-                  * eapply EqTyRefl. hyp.
-                  * eapply EqRefl. hyp.
-                + { eapply CongId.
-                    - eapply CongTySubst.
-                      + eapply CongSubstWeak.
-                        * hyp.
-                        * eapply EqTyRefl. hyp.
-                      + eapply EqTyRefl. hyp.
-                    - eapply CongTermSubst.
-                      + eapply CongSubstWeak ; try hyp.
-                        eapply EqTyRefl ; hyp.
-                      + eapply EqRefl ; hyp.
-                    - eapply EqRefl.
-                      eapply TermVarZero. hyp.
-                  }
-              - { apply EqCtxExtend.
-                  - apply CtxRefl. hyp.
-                  - eapply EqTyTrans ; [
-                      eapply EqTySubstId ; try ehyp
-                    | ..
-                    ].
-                    + eapply SubstZero. hyp.
-                    + eapply TermSubst.
-                      * eapply SubstWeak. hyp.
-                      * hyp.
-                    + eapply TermVarZero. hyp.
-                    + { eapply CongId.
-                        - apply EqTySym.
-                          eapply ptt2ett.sane_eqtype.
-                          eapply ptt_admissible.EqTyWeakZero ; hyp.
-                        - eapply ptt2ett.sane_eqterm.
-                          eapply ptt_admissible.EqSubstWeakZero ;
-                            try hyp.
-                          + eapply ett2ptt.sane_istype.
-                            eapply TySubst.
-                            * eapply SubstZero. hyp.
-                            * eapply TySubst ; try ehyp.
-                              eapply SubstWeak. hyp.
-                          + eapply ett2ptt.sane_isterm.
-                            eapply TermTyConv ; try ehyp.
-                            eapply ptt2ett.sane_eqtype.
-                            eapply ptt_admissible.EqTyWeakZero ; hyp.
-                        - eapply EqTyConv.
-                          + eapply EqSubstZeroZero. hyp.
-                          + eapply ptt2ett.sane_eqtype.
-                            eapply ptt_admissible.EqTyWeakZero ; hyp.
-                      }
-                }
-              - apply CtxRefl. ett_sane.
-            }
-          * eapply EqTyRefl ; ehyp.
       - eapply TermCtxConv ; ehyp.
       - eapply TermCtxConv ; ehyp.
       - eapply EqTyCtxConv ; try ehyp.
-        eapply EqTyTrans ; try ehyp.
-        eapply EqTySym.
-        eapply CongTySubst.
-        + eapply CongSubstZero.
-          * hyp.
-          * eapply EqTyRefl. eapply TyId ; hyp.
-          * eapply EqRefl. hyp.
-        + eapply CongTySubst.
-          * { eapply EqSubstCtxConv.
-              - eapply CongSubstShift.
-                + hyp.
-                + eapply CongSubstZero.
-                  * hyp.
-                  * eapply EqTyRefl. hyp.
-                  * eapply EqRefl. hyp.
-                + { eapply CongId.
-                    - eapply CongTySubst.
-                      + eapply CongSubstWeak.
-                        * hyp.
-                        * eapply EqTyRefl. hyp.
-                      + eapply EqTyRefl. hyp.
-                    - eapply CongTermSubst.
-                      + eapply CongSubstWeak ; try hyp.
-                        eapply EqTyRefl ; hyp.
-                      + eapply EqRefl ; hyp.
-                    - eapply EqRefl.
-                      eapply TermVarZero. hyp.
-                  }
-              - { apply EqCtxExtend.
-                  - apply CtxRefl. hyp.
-                  - eapply EqTyTrans ; [
-                      eapply EqTySubstId ; try ehyp
-                    | ..
-                    ].
-                    + eapply SubstZero. hyp.
-                    + eapply TermSubst.
-                      * eapply SubstWeak. hyp.
-                      * hyp.
-                    + eapply TermVarZero. hyp.
-                    + { eapply CongId.
-                        - apply EqTySym.
-                          eapply ptt2ett.sane_eqtype.
-                          eapply ptt_admissible.EqTyWeakZero ; hyp.
-                        - eapply ptt2ett.sane_eqterm.
-                          eapply ptt_admissible.EqSubstWeakZero ;
-                            try hyp.
-                          + eapply ett2ptt.sane_istype.
-                            eapply TySubst.
-                            * eapply SubstZero. hyp.
-                            * eapply TySubst ; try ehyp.
-                              eapply SubstWeak. hyp.
-                          + eapply ett2ptt.sane_isterm.
-                            eapply TermTyConv ; try ehyp.
-                            eapply ptt2ett.sane_eqtype.
-                            eapply ptt_admissible.EqTyWeakZero ; hyp.
-                        - eapply EqTyConv.
-                          + eapply EqSubstZeroZero. hyp.
-                          + eapply ptt2ett.sane_eqtype.
-                            eapply ptt_admissible.EqTyWeakZero ; hyp.
-                      }
-                }
-              - apply CtxRefl. ett_sane.
-            }
-          * eapply EqTyRefl ; ehyp.
     }
 
   - { repeat split ; try hyp.
@@ -371,7 +228,7 @@ Proof.
       - eapply TySubst.
         + eapply SubstCtxConv.
           * { eapply SubstShift.
-              - eapply SubstZero. hyp.
+              - eapply SubstZero. ehyp.
               - eapply TyId.
                 + eapply TermSubst.
                   * eapply SubstWeak. hyp.
@@ -455,9 +312,9 @@ Fixpoint TermCondInversion {G C u v w T}
   isctx G *
   isterm G u Bool *
   istype (ctxextend G Bool) C *
-  isterm G v (Subst C (sbzero G Bool true)) *
-  isterm G w (Subst C (sbzero G Bool false)) *
-  eqtype G (Subst C (sbzero G Bool u)) T.
+  isterm G v (Subst C (sbzero Bool true)) *
+  isterm G w (Subst C (sbzero Bool false)) *
+  eqtype G (Subst C (sbzero Bool u)) T.
 Proof.
   inversion H.
 
@@ -481,30 +338,8 @@ Proof.
       - eapply TermCtxConv ; ehyp.
       - eapply TyCtxConv ; ehyp.
       - eapply TermCtxConv ; try ehyp.
-        eapply TermTyConv ; try ehyp.
-        eapply CongTySubst.
-        + eapply CongSubstZero.
-          * hyp.
-          * apply EqTyRefl. ett_sane.
-          * apply EqRefl. apply TermTrue. hyp.
-        + apply EqTyRefl. hyp.
       - eapply TermCtxConv ; try ehyp.
-        eapply TermTyConv ; try ehyp.
-        eapply CongTySubst.
-        + eapply CongSubstZero.
-          * hyp.
-          * apply EqTyRefl. ett_sane.
-          * apply EqRefl. apply TermFalse. hyp.
-        + apply EqTyRefl. hyp.
       - eapply EqTyCtxConv ; try ehyp.
-        eapply EqTyTrans ; try ehyp.
-        eapply EqTySym.
-        eapply CongTySubst.
-        + eapply CongSubstZero.
-          * hyp.
-          * apply EqTyRefl. ett_sane.
-          * apply EqRefl. hyp.
-        + apply EqTyRefl. hyp.
     }
 
   - { repeat split ; try hyp.
