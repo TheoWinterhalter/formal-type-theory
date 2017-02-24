@@ -102,6 +102,8 @@ endif
 ######################
 
 VFILES:=syntax.v\
+  tt.v\
+  config_tactics.v\
   ett.v\
   ptt.v\
   ptt_tactics.v\

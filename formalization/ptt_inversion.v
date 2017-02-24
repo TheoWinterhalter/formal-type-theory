@@ -1,17 +1,18 @@
 (* Inversion theorems for ptt. *)
 
 Require Import syntax ptt.
+Require Import config_tactics.
 
 Definition CtxExtendInversion G A (H : isctx (ctxextend G A)) :
   isctx G * istype G A.
 Proof.
-  inversion H. easy.
+  config inversion H. easy.
 Defined.
 
 Fixpoint TyIdInversion G A u v (H : istype G (Id A u v)) {struct H} :
   isctx G * istype G A * isterm G u A * isterm G v A.
 Proof.
-  inversion H.
+  inversion H ; doConfig.
 
   - { split ; [(split ; [split | idtac]) | idtac].
 
@@ -20,10 +21,10 @@ Proof.
         now apply TyIdInversion with (u := u) (v := v).
       - apply (@TermCtxConv G0 G) ; auto.
         + now apply TyIdInversion with (u := u) (v:= v).
-        + now apply TyIdInversion with (u := u) (v:= v).
+        + now config apply TyIdInversion with (u := u) (v:= v).
       - apply (@TermCtxConv G0 G) ; auto.
         + now apply TyIdInversion with (u := u) (v:= v).
-        + now apply TyIdInversion with (u := u) (v:= v).
+        + now config apply TyIdInversion with (u := u) (v:= v).
     }
 
   - { split ; [(split ; [split | idtac]) | idtac].
@@ -38,7 +39,7 @@ Defined.
 Fixpoint TyProdInversion G A B (H : istype G (Prod A B)) {struct H} :
   isctx G * istype G A * istype (ctxextend G A) B.
 Proof.
-  inversion H.
+  inversion H ; doConfig.
 
   - { split ; [ split | idtac ].
       - assumption.
@@ -47,13 +48,13 @@ Proof.
       - apply (@TyCtxConv (ctxextend G0 A) (ctxextend G A)).
         + now apply (TyProdInversion G0 A B).
         + apply EqCtxExtend ; auto.
-          * now apply (TyProdInversion G0 A B).
-          * now apply (TyProdInversion G0 A B).
-          * apply EqTyRefl ; auto.
+          * now capply (TyProdInversion G0 A B).
+          * now capply (TyProdInversion G0 A B).
+          * capply EqTyRefl ; auto.
             now apply (TyProdInversion G0 A B).
-        + apply CtxExtend ; auto.
+        + capply CtxExtend ; auto.
           now apply (TyProdInversion G0 A B).
-        + apply CtxExtend.
+        + capply CtxExtend.
           * assumption.
           * apply (@TyCtxConv G0 G) ; auto.
             now apply (TyProdInversion G0 A B).

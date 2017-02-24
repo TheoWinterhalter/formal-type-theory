@@ -1,7 +1,7 @@
 (* Some useful tactics. *)
 
 Require Import syntax.
-Require ett ptt.
+Require tt ett ptt.
 Require ptt2ett ett2ptt.
 Require ett_sanity.
 

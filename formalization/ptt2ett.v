@@ -1,4 +1,4 @@
-Require Import syntax.
+Require Import syntax config_tactics.
 Require ptt ett.
 
 Fixpoint sane_isctx G (P : ptt.isctx G) : ett.isctx G
@@ -19,16 +19,16 @@ with sane_eqterm G u v A (P : ptt.eqterm G u v A) {struct P} : ett.eqterm G u v 
 
 Proof.
   (* sane_isctx *)
-  - { destruct P.
+  - { destruct P; doConfig.
     - now apply ett.CtxEmpty.
-    - apply ett.CtxExtend ; auto using sane_isctx, sane_istype.
+    - capply ett.CtxExtend ; auto using sane_isctx, sane_istype.
     }
 
   (* sane_issubst *)
-  - { destruct P.
+  - { destruct P; doConfig.
 
       (* SubstZero *)
-      - apply ett.SubstZero ; auto.
+      - (config apply ett.SubstZero) ; auto.
 
       (* SubstWeak *)
       - apply ett.SubstWeak ; auto.
@@ -47,7 +47,7 @@ Proof.
   }
 
   (* sane_istype *)
-  - { destruct P.
+  - { destruct P; doConfig.
 
       (* TyCtxConv *)
       - apply (@ett.TyCtxConv G D) ; auto.
@@ -72,7 +72,7 @@ Proof.
   }
 
   (* sane_isterm *)
-  - { destruct P.
+  - { destruct P; doConfig.
 
       (* TermTyConv *)
        - apply (@ett.TermTyConv G A B) ; auto.
@@ -118,7 +118,7 @@ Proof.
   }
 
   (* sane_eqctx *)
-  - { destruct P.
+  - { destruct P; doConfig.
 
       (* CtxRefl *)
       - apply ett.CtxRefl ; auto.
@@ -137,7 +137,7 @@ Proof.
   }
 
   (* sane_eqsubst *)
-  - { destruct P.
+  - { destruct P; doConfig.
 
       (* SubstRefl *)
       - apply ett.SubstRefl ; auto.
@@ -186,7 +186,7 @@ Proof.
   }
 
   (* sane_eqtype *)
-  - { destruct P.
+  - { destruct P; doConfig.
 
       (* EqTyCtxConv *)
       - apply (@ett.EqTyCtxConv G D); auto.
@@ -235,7 +235,7 @@ Proof.
   }
 
   (* sane_eqterm *)
-  - { destruct P.
+  - { destruct P; doConfig.
 
       (* EqTyConv *)
       - apply (@ett.EqTyConv G A B) ; auto.

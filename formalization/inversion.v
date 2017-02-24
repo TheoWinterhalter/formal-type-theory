@@ -7,7 +7,7 @@ Require ptt_admissible.
 Require Import ett.
 Require ptt2ett ett2ptt.
 Require ett_sanity.
-Require Import tactics.
+Require Import config_tactics tactics.
 
 Fixpoint TermAbsInversion {G A B u T}
          (H : ptt.isterm G (lam A B u) T) {struct H} :
@@ -17,32 +17,34 @@ Fixpoint TermAbsInversion {G A B u T}
   isterm (ctxextend G A) u B *
   eqtype G (Prod A B) T.
 Proof.
-  inversion H.
+  inversion H ; doConfig.
 
-  - { destruct (@TermAbsInversion _ _ _ _ _ H0) as [[[[? ?] ?] ?] ?].
+    (* Type conversion *)
+  - { destruct (@TermAbsInversion _ _ _ _ _ X) as [[[[? ?] ?] ?] ?].
       repeat split ; try assumption.
-      eapply EqTyTrans ; [
+      ceapply EqTyTrans ; [
         eassumption
       | hyp ..
       ].
     }
 
-  - { destruct (@TermAbsInversion _ _ _ _ _ H0) as [[[[? ?] ?] ?] ?].
+    (* Context conversion *)
+  - { destruct (@TermAbsInversion _ _ _ _ _ X) as [[[[? ?] ?] ?] ?].
       assert (eqctx (ctxextend G0 A) (ctxextend G A)).
-      { eapply EqCtxExtend ; try hyp.
-        eapply EqTyRefl ; assumption.
+      { ceapply EqCtxExtend ; try hyp.
+        ceapply EqTyRefl ; assumption.
       }
       repeat split.
       - hyp.
-      - eapply TyCtxConv ; ehyp.
-      - eapply TyCtxConv ; ehyp.
-      - eapply TermCtxConv ; ehyp.
-      - eapply EqTyCtxConv ; ehyp.
+      - ceapply TyCtxConv ; ehyp.
+      - ceapply TyCtxConv ; ehyp.
+      - ceapply TermCtxConv ; ehyp.
+      - ceapply EqTyCtxConv ; ehyp.
     }
 
   - { repeat split ; try hyp.
-      apply EqTyRefl ; try hyp.
-      apply TyProd ; hyp.
+      capply EqTyRefl ; try hyp.
+      capply TyProd ; hyp.
     }
 
 Defined.
@@ -56,34 +58,34 @@ Fixpoint TermAppInversion {G A B u v T}
   isterm G v A *
   eqtype G (Subst B (sbzero A v)) T.
 Proof.
-  inversion H.
+  inversion H ; doConfig.
 
-  - { destruct (@TermAppInversion _ _ _ _ _ _ H0) as [[[[[? ?] ?] ?] ?] ?].
+  - { destruct (@TermAppInversion _ _ _ _ _ _ X) as [[[[[? ?] ?] ?] ?] ?].
       repeat split ; try hyp.
-      eapply EqTyTrans ; [
+      ceapply EqTyTrans ; [
         ehyp
       | hyp ..
       ].
     }
 
-  - { destruct (@TermAppInversion _ _ _ _ _ _ H0) as [[[[[? ?] ?] ?] ?] ?].
+  - { destruct (@TermAppInversion _ _ _ _ _ _ X) as [[[[[? ?] ?] ?] ?] ?].
       assert (eqctx (ctxextend G0 A) (ctxextend G A)).
-      { eapply EqCtxExtend ; try hyp.
-        eapply EqTyRefl ; hyp.
+      { ceapply EqCtxExtend ; try hyp.
+        ceapply EqTyRefl ; hyp.
       }
       repeat split.
       - hyp.
-      - eapply TyCtxConv ; ehyp.
-      - eapply TyCtxConv ; ehyp.
-      - eapply TermCtxConv ; ehyp.
-      - eapply TermCtxConv ; ehyp.
-      - eapply EqTyCtxConv ; try ehyp.
+      - ceapply TyCtxConv ; ehyp.
+      - ceapply TyCtxConv ; ehyp.
+      - ceapply TermCtxConv ; ehyp.
+      - ceapply TermCtxConv ; ehyp.
+      - ceapply EqTyCtxConv ; try ehyp.
     }
 
   - { repeat split ; try hyp.
-      apply EqTyRefl ; try hyp.
-      eapply TySubst ; try hyp.
-      - eapply SubstZero ; ehyp.
+      capply EqTyRefl ; try hyp.
+      ceapply TySubst ; try hyp.
+      - ceapply SubstZero ; ehyp.
       - hyp.
     }
 
@@ -96,27 +98,27 @@ Fixpoint TermReflInversion {G A u T}
   isterm G u A *
   eqtype G (Id A u u) T.
 Proof.
-  inversion H.
+  inversion H ; doConfig.
 
-  - { destruct (@TermReflInversion _ _ _ _ H0) as [[[? ?] ?] ?].
+  - { destruct (@TermReflInversion _ _ _ _ X) as [[[? ?] ?] ?].
       repeat split ; try hyp.
-      eapply EqTyTrans ; [
+      ceapply EqTyTrans ; [
         ehyp
       | hyp ..
       ].
     }
 
-  - { destruct (@TermReflInversion _ _ _ _ H0) as [[[? ?] ?] ?].
+  - { destruct (@TermReflInversion _ _ _ _ X) as [[[? ?] ?] ?].
       repeat split.
       - hyp.
-      - eapply TyCtxConv ; ehyp.
-      - eapply TermCtxConv ; ehyp.
-      - eapply EqTyCtxConv ; ehyp.
+      - ceapply TyCtxConv ; ehyp.
+      - ceapply TermCtxConv ; ehyp.
+      - ceapply EqTyCtxConv ; ehyp.
     }
 
   - { repeat split ; try hyp.
-      apply EqTyRefl ; try hyp.
-      eapply TyId ; hyp.
+      capply EqTyRefl ; try hyp.
+      ceapply TyId ; hyp.
     }
 
 Defined.
@@ -171,18 +173,18 @@ Fixpoint TermJInversion {G A u C w v p T}
              )
              T.
 Proof.
-  inversion H.
+  inversion H ; doConfig.
 
-  - { destruct (@TermJInversion _ _ _ _ _ _ _ _ H0)
+  - { destruct (@TermJInversion _ _ _ _ _ _ _ _ X)
         as [[[[[[[? ?] ?] ?] ?] ?] ?] ?].
       repeat split ; try hyp.
-      eapply EqTyTrans ; [
+      ceapply EqTyTrans ; [
         ehyp
       | try hyp ..
       ].
     }
 
-  - { destruct (@TermJInversion _ _ _ _ _ _ _ _ H0)
+  - { destruct (@TermJInversion _ _ _ _ _ _ _ _ X)
         as [[[[[[[? ?] ?] ?] ?] ?] ?] ?].
       assert (
           eqctx
@@ -195,80 +197,80 @@ Proof.
                            (subst u (sbweak A))
                            (var 0)))
       ).
-      { eapply EqCtxExtend.
-        - eapply EqCtxExtend ; try hyp.
-          eapply EqTyRefl ; hyp.
-        - eapply CongId.
-          + eapply CongTySubst.
-            * eapply CongSubstWeak ; try hyp.
-              eapply EqTyRefl ; hyp.
-            * eapply EqTyRefl ; hyp.
-          + eapply CongTermSubst.
-            * eapply CongSubstWeak ; try hyp.
-              eapply EqTyRefl ; hyp.
-            * eapply EqRefl ; hyp.
-          + eapply EqRefl.
-            eapply TermVarZero. hyp.
+      { ceapply EqCtxExtend.
+        - ceapply EqCtxExtend ; try hyp.
+          ceapply EqTyRefl ; hyp.
+        - ceapply CongId.
+          + ceapply CongTySubst.
+            * ceapply CongSubstWeak ; try hyp.
+              ceapply EqTyRefl ; hyp.
+            * ceapply EqTyRefl ; hyp.
+          + ceapply CongTermSubst.
+            * ceapply CongSubstWeak ; try hyp.
+              ceapply EqTyRefl ; hyp.
+            * ceapply EqRefl ; hyp.
+          + ceapply EqRefl.
+            ceapply TermVarZero. hyp.
       }
       repeat split.
       - hyp.
-      - eapply TyCtxConv ; ehyp.
-      - eapply TermCtxConv ; ehyp.
-      - eapply TyCtxConv ; ehyp.
-      - eapply TermCtxConv ; try ehyp.
-      - eapply TermCtxConv ; ehyp.
-      - eapply TermCtxConv ; ehyp.
-      - eapply EqTyCtxConv ; try ehyp.
+      - ceapply TyCtxConv ; ehyp.
+      - ceapply TermCtxConv ; ehyp.
+      - ceapply TyCtxConv ; ehyp.
+      - ceapply TermCtxConv ; try ehyp.
+      - ceapply TermCtxConv ; ehyp.
+      - ceapply TermCtxConv ; ehyp.
+      - ceapply EqTyCtxConv ; try ehyp.
     }
 
   - { repeat split ; try hyp.
-      apply EqTyRefl ; try hyp.
-      eapply TySubst.
-      - eapply SubstZero. hyp.
-      - eapply TySubst.
-        + eapply SubstCtxConv.
-          * { eapply SubstShift.
-              - eapply SubstZero. ehyp.
-              - eapply TyId.
-                + eapply TermSubst.
-                  * eapply SubstWeak. hyp.
+      capply EqTyRefl ; try hyp.
+      ceapply TySubst.
+      - ceapply SubstZero. hyp.
+      - ceapply TySubst.
+        + ceapply SubstCtxConv.
+          * { ceapply SubstShift.
+              - ceapply SubstZero. ehyp.
+              - ceapply TyId.
+                + ceapply TermSubst.
+                  * ceapply SubstWeak. hyp.
                   * hyp.
-                + eapply TermVarZero. hyp.
+                + ceapply TermVarZero. hyp.
             }
-          * { apply EqCtxExtend.
-              - apply CtxRefl. hyp.
-              - eapply EqTyTrans ; [
-                  eapply EqTySubstId ; try ehyp
+          * { capply EqCtxExtend.
+              - capply CtxRefl. hyp.
+              - ceapply EqTyTrans ; [
+                  ceapply EqTySubstId ; try ehyp
                 | ..
                 ].
-                + eapply SubstZero. hyp.
-                + eapply TermSubst.
-                  * eapply SubstWeak. hyp.
+                + ceapply SubstZero. hyp.
+                + ceapply TermSubst.
+                  * ceapply SubstWeak. hyp.
                   * hyp.
-                + eapply TermVarZero. hyp.
-                + { eapply CongId.
-                    - apply EqTySym.
+                + ceapply TermVarZero. hyp.
+                + { ceapply CongId.
+                    - capply EqTySym.
                       eapply ptt2ett.sane_eqtype.
                       eapply ptt_admissible.EqTyWeakZero ; hyp.
                     - eapply ptt2ett.sane_eqterm.
                       eapply ptt_admissible.EqSubstWeakZero ;
                         try hyp.
                       + eapply ett2ptt.sane_istype.
-                        eapply TySubst.
-                        * eapply SubstZero. hyp.
-                        * eapply TySubst ; try ehyp.
-                          eapply SubstWeak. hyp.
+                        ceapply TySubst.
+                        * ceapply SubstZero. hyp.
+                        * ceapply TySubst ; try ehyp.
+                          ceapply SubstWeak. hyp.
                       + eapply ett2ptt.sane_isterm.
-                        eapply TermTyConv ; try ehyp.
+                        ceapply TermTyConv ; try ehyp.
                         eapply ptt2ett.sane_eqtype.
                         eapply ptt_admissible.EqTyWeakZero ; hyp.
-                    - eapply EqTyConv.
-                      + eapply EqSubstZeroZero. hyp.
+                    - ceapply EqTyConv.
+                      + ceapply EqSubstZeroZero. hyp.
                       + eapply ptt2ett.sane_eqtype.
                         eapply ptt_admissible.EqTyWeakZero ; hyp.
                   }
             }
-          * apply CtxRefl.
+          * capply CtxRefl.
             apply ptt2ett.sane_isctx.
             apply (ptt_sanity.sane_istype _ C). hyp.
         + hyp.
@@ -283,26 +285,26 @@ Fixpoint TermExfalsoInversion {G A u T}
   isterm G u Empty *
   eqtype G A T.
 Proof.
-  inversion H.
+  inversion H ; doConfig.
 
-  - { destruct (@TermExfalsoInversion _ _ _ _ H0) as [[[? ?] ?] ?].
+  - { destruct (@TermExfalsoInversion _ _ _ _ X) as [[[? ?] ?] ?].
       repeat split ; try hyp.
-      eapply EqTyTrans ; [
+      ceapply EqTyTrans ; [
         ehyp
       | try hyp ..
       ].
     }
 
-  - { destruct (@TermExfalsoInversion _ _ _ _ H0) as [[[? ?] ?] ?].
+  - { destruct (@TermExfalsoInversion _ _ _ _ X) as [[[? ?] ?] ?].
       repeat split.
       - hyp.
-      - eapply TyCtxConv ; ehyp.
-      - eapply TermCtxConv ; ehyp.
-      - eapply EqTyCtxConv ; ehyp.
+      - ceapply TyCtxConv ; ehyp.
+      - ceapply TermCtxConv ; ehyp.
+      - ceapply EqTyCtxConv ; ehyp.
     }
 
   - { repeat split ; try hyp.
-      apply EqTyRefl ; hyp.
+      capply EqTyRefl ; hyp.
     }
 
 Defined.
@@ -316,36 +318,36 @@ Fixpoint TermCondInversion {G C u v w T}
   isterm G w (Subst C (sbzero Bool false)) *
   eqtype G (Subst C (sbzero Bool u)) T.
 Proof.
-  inversion H.
+  inversion H ; doConfig.
 
-  - { destruct (@TermCondInversion _ _ _ _ _ _ H0)
+  - { destruct (@TermCondInversion _ _ _ _ _ _ X)
         as [[[[[? ?] ?] ?] ?] ?].
       repeat split ; try hyp.
-      eapply EqTyTrans ; [
+      ceapply EqTyTrans ; [
         ehyp
       | try hyp ..
       ].
     }
 
-  - { destruct (@TermCondInversion _ _ _ _ _ _ H0)
+  - { destruct (@TermCondInversion _ _ _ _ _ _ X)
         as [[[[[? ?] ?] ?] ?] ?].
       assert (eqctx (ctxextend G0 Bool) (ctxextend G Bool)).
-      { apply EqCtxExtend ; try ehyp.
-        apply EqTyRefl. ett_sane.
+      { capply EqCtxExtend ; try ehyp.
+        capply EqTyRefl. ett_sane.
       }
       repeat split.
       - hyp.
-      - eapply TermCtxConv ; ehyp.
-      - eapply TyCtxConv ; ehyp.
-      - eapply TermCtxConv ; try ehyp.
-      - eapply TermCtxConv ; try ehyp.
-      - eapply EqTyCtxConv ; try ehyp.
+      - ceapply TermCtxConv ; ehyp.
+      - ceapply TyCtxConv ; ehyp.
+      - ceapply TermCtxConv ; try ehyp.
+      - ceapply TermCtxConv ; try ehyp.
+      - ceapply EqTyCtxConv ; try ehyp.
     }
 
   - { repeat split ; try hyp.
-      apply EqTyRefl ; try hyp.
-      eapply TySubst.
-      - eapply SubstZero. hyp.
+      capply EqTyRefl ; try hyp.
+      ceapply TySubst.
+      - ceapply SubstZero. hyp.
       - hyp.
     }
 
