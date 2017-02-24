@@ -454,11 +454,14 @@ Ltac simplify_subst :=
       | sbcomp (sbweak _ _) (sbcomp (sbzero _ _ _) _) =>
         ecomp WeakZero
 
-      | sbcomp (sbshift _ ?A ?sbs) (sbzero _ (Subst ?A ?sbs) (subst ?u ?sbs)) =>
-        eapply ShiftZero
-      | sbcomp (sbshift _ ?A ?sbs)
-               (sbcomp (sbzero _ (Subst ?A ?sbs) (subst ?u ?sbs)) _) =>
-        ecomp ShiftZero
+      | sbcomp (sbzero _ _ _) ?sbs =>
+        eapply SubstSym ; [ eapply ShiftZero | .. ]
+
+      (* | sbcomp (sbshift _ ?A ?sbs) (sbzero _ (Subst ?A ?sbs) (subst ?u ?sbs)) => *)
+      (*   eapply ShiftZero *)
+      (* | sbcomp (sbshift _ ?A ?sbs) *)
+      (*          (sbcomp (sbzero _ (Subst ?A ?sbs) (subst ?u ?sbs)) _) => *)
+      (*   ecomp ShiftZero *)
       (* | sbcomp (sbshift _ _ ?sbs) (sbzero _ _ _) => *)
       (*   eapply SubstTrans ; [ *)
       (*     eapply CongSubstComp ; [ *)
