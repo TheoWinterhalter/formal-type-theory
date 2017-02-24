@@ -602,7 +602,7 @@ Proof.
   (* EqSubstJ *)
   - { split.
       - { magic. Unshelve. all:strictmagic. }
-      - { (* magic. *) admit.
+      - { admit.
         }
     }
 
@@ -633,7 +633,9 @@ Proof.
   (* EqSubstCond *)
   - { split.
       - { magic. }
-      - { admit. }
+      - { magic.
+          Unshelve. all:strictmagic.
+        }
     }
 
   (* EqTermExfalso *)
@@ -705,7 +707,10 @@ Proof.
   (* CongJ *)
   - { split.
       - { magic. }
-      - { admit. }
+      - { magic.
+          Unshelve. all:magic.
+          Unshelve. all:strictmagic.
+        }
     }
 
   (* CongCond *)

@@ -459,39 +459,21 @@ Ltac simplify_subst :=
       | sbcomp (sbweak _) (sbcomp (sbzero _ _) _) =>
         ecomp WeakZero
 
-      | sbcomp (sbshift ?A ?sbs) (sbzero (Subst ?A ?sbs) (subst ?u ?sbs)) =>
-        ceapply ShiftZero
-      | sbcomp (sbshift ?A ?sbs)
-               (sbcomp (sbzero (Subst ?A ?sbs) (subst ?u ?sbs)) _) =>
-        ecomp ShiftZero
-      (* | sbcomp (sbshift _ ?sbs) (sbzero _ _) => *)
-      (*   ceapply SubstTrans ; [ *)
-      (*     ceapply CongSubstComp ; [ *)
-      (*       idtac *)
-      (*     | ceapply SubstRefl *)
-      (*     | .. *)
-      (*     ] *)
-      (*   | ceapply ShiftZero *)
-      (*   | .. *)
-      (*   ] *)
-      (* | sbcomp (sbshift _ ?sbs) (sbcomp (sbzero _ _) _) => *)
-      (*   ceapply SubstTrans ; [ *)
-      (*     ceapply CompAssoc *)
-      (*   | ceapply CongSubstComp ; [ *)
-      (*       ceapply SubstRefl *)
-      (*     | ceapply SubstTrans ; [ *)
-      (*         ceapply CongSubstComp ; [ *)
-      (*           idtac *)
-      (*         | ceapply SubstRefl *)
-      (*         | .. *)
-      (*         ] *)
-      (*       | ceapply ShiftZero *)
-      (*       | .. *)
-      (*       ] *)
-      (*     | .. *)
-      (*     ] *)
-      (*   | .. *)
-      (*   ] *)
+      | sbcomp (sbzero _ _) ?sbs =>
+        ceapply SubstSym ; [ ceapply ShiftZero | .. ]
+
+      | sbshift _ (sbcomp ?sbs ?sbt) =>
+        ceapply SubstSym ; [ ceapply CompShift | .. ]
+      | sbcomp (sbshift _ (sbcomp _ _)) _ =>
+        ceapply SubstTrans ; [
+          ceapply CompAssoc
+        | ceapply CongSubstComp ; [
+            ceapply SubstRefl
+          | ceapply SubstSym ; [ ceapply CompShift | .. ]
+          | ..
+          ]
+        | ..
+        ]
 
       | sbcomp ?sbs ?sbt =>
         ceapply CongSubstComp ; [
