@@ -1,2 +1,4 @@
-Require tt.
-Include tt.paranoia.
+Require Import tt.
+
+Module Make (ConfigReflection : CONFIG_REFLECTION) :=
+  MakeParanoid(ConfigReflection).

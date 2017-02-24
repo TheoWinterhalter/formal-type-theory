@@ -2,20 +2,30 @@
 
 Require Import syntax.
 
-Module Type Configuration.
-  Parameter Paranoia : Type.
-End Configuration.
+Module Type CONFIG_PRECOND.
+  Parameter precondFlag : Type.
+End CONFIG_PRECOND.
 
-Module Make(C : Configuration).
+Module Type CONFIG_REFLECTION.
+  Parameter reflectionFlag : Type.
+End CONFIG_REFLECTION.
+
+Module Make
+       (ConfigPrecond : CONFIG_PRECOND)
+       (ConfigReflection : CONFIG_REFLECTION).
 
 (* Notations for writing down inference rules. *)
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
+
+Notation "'extensional' r" :=
+  (ConfigReflection.reflectionFlag -> r) (only parsing, at level 97).
+
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
     (at level 200, x binder, y binder, right associativity, only parsing).
 Notation "'premise:' p q" := (p -> q) (only parsing, at level 95).
-Notation "'precond:' p q" := ((C.Paranoia -> p) -> q) (only parsing, at level 95).
+Notation "'precond:' p q" := ((ConfigPrecond.precondFlag -> p) -> q) (only parsing, at level 95).
 Notation "'conclusion:' q" := q (no associativity, only parsing, at level 94).
 
 Inductive isctx : context -> Type :=
@@ -1245,7 +1255,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqReflection :
-       rule
+       extensional rule
          parameters: {G A u v w1 w2},
          precond: isctx G
          precond: istype G A
@@ -1610,16 +1620,26 @@ with eqterm : context -> term -> term -> type -> Type :=
 
 End Make.
 
-Module ParanoidConfiguration <: Configuration.
-  Inductive ParanoidUnit : Type := paranoia.
-  Definition Paranoia := ParanoidUnit.
-End ParanoidConfiguration.
+Module HasPrecond <: CONFIG_PRECOND.
+  Inductive precondUnit : Type := precond.
+  Definition precondFlag := precondUnit.
+End HasPrecond.
 
-Module paranoia := Make(ParanoidConfiguration).
+Module HasntPrecond <: CONFIG_PRECOND.
+  Inductive precondEmpty : Type :=.
+  Definition precondFlag := precondEmpty.
+End HasntPrecond.
 
-Module EconomicConfiguration <: Configuration.
-  Inductive EconomicEmpty : Type :=.
-  Definition Paranoia := EconomicEmpty.
-End EconomicConfiguration.
+Module HasReflection <: CONFIG_REFLECTION.
+  Inductive reflectionUnit : Type := reflection.
+  Definition reflectionFlag := reflectionUnit.
+End HasReflection.
 
-Module economy := Make(EconomicConfiguration).
+Module HasntReflection <: CONFIG_REFLECTION.
+  Inductive reflectionEmpty : Type :=.
+  Definition reflectionFlag := reflectionEmpty.
+End HasntReflection.
+
+Module MakeParanoid := Make (HasPrecond).
+
+Module MakeEconomic := Make(HasntPrecond).

@@ -1,6 +1,21 @@
 (* Admissibile ptt rules. *)
 
-Require Import syntax ptt ptt_tactics.
+Require tt.
+Require ptt.
+Require config_tactics.
+Require ptt_tactics.
+
+Require Import syntax.
+
+Module Make (ConfigReflection : tt.CONFIG_REFLECTION).
+
+Module my_config_tactics := config_tactics.Make (tt.HasPrecond) (ConfigReflection).
+Import my_config_tactics.
+
+Module my_ptt_tactics := ptt_tactics.Make (ConfigReflection).
+Import my_ptt_tactics.
+Import my_ptt_tactics.my_ptt.
+
 
 (* Some preliminary lemmata *)
 Lemma EqTyWeakNat :
@@ -185,3 +200,5 @@ Lemma EqTermCongWeak :
 Proof.
   intros. magic.
 Defined.
+
+End Make.

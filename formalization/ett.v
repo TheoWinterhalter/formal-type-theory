@@ -1,7 +1,7 @@
-(* The source type theory. *)
+Require Import tt.
 
-Require tt.
-Include tt.economy.
+Module Make (ConfigReflection : CONFIG_REFLECTION) :=
+  MakeEconomic(ConfigReflection).
 
 (* OLD STUFF BELOW
 

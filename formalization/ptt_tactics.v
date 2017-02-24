@@ -1,7 +1,17 @@
 (* Tactics and auxiliary lemmas for ptt. *)
+
 Require tt.
-Require Import config_tactics.
-Require Import syntax ptt.
+Require ptt.
+Require config_tactics.
+Require Import syntax.
+
+Module Make (ConfigReflection : tt.CONFIG_REFLECTION).
+
+Module my_config_tactics := config_tactics.Make (tt.HasPrecond) (ConfigReflection).
+Import my_config_tactics.
+
+Module my_ptt := ptt.Make (ConfigReflection).
+Import my_ptt.
 
 (* Some tactic to compose substitutions. *)
 Lemma eqtype_subst_left :
@@ -1257,3 +1267,5 @@ Ltac keep_eq :=
   | |- eqctx _ _ => idtac
   | _ => shelve
   end.
+
+End Make.
