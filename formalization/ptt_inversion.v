@@ -1,7 +1,16 @@
 (* Inversion theorems for ptt. *)
 
-Require Import syntax ptt.
-Require Import config_tactics.
+Require Import syntax.
+Require tt ptt.
+Require config_tactics.
+
+Module Make (ConfigReflection : tt.CONFIG_REFLECTION).
+
+Module my_ptt := ptt.Make ConfigReflection.
+Import my_ptt.
+
+Module my_config_tactics := config_tactics.Make tt.HasPrecond ConfigReflection.
+Import my_config_tactics.
 
 Definition CtxExtendInversion G A (H : isctx (ctxextend G A)) :
   isctx G * istype G A.
@@ -66,3 +75,5 @@ Proof.
       - assumption.
     }
 Defined.
+
+End Make.

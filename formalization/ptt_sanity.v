@@ -1,9 +1,19 @@
 (* Sanity theorems for ptt. *)
 
 Require Import syntax.
-Require Import ptt.
-Require Import config_tactics ptt_tactics ptt_admissible.
 Require tt.
+Require ptt.
+Require config_tactics ptt_tactics ptt_admissible.
+
+Module Make (ConfigReflection : tt.CONFIG_REFLECTION).
+
+Module my_ptt_admissible := ptt_admissible.Make ConfigReflection.
+Import my_ptt_admissible.my_ptt_tactics.my_ptt.
+Import my_ptt_admissible.my_ptt_tactics.
+Import my_ptt_admissible.
+
+Module my_config_tactics := config_tactics.Make tt.HasPrecond ConfigReflection.
+Import my_config_tactics.
 
 Definition sane_issubst sbs G D :
   issubst sbs G D -> isctx G * isctx D.
@@ -734,3 +744,5 @@ Proof.
   destruct (sane_eqterm' G u v A H).
   auto using (@sane_isterm G u A).
 Defined.
+
+End Make.

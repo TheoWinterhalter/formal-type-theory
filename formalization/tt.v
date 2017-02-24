@@ -19,7 +19,7 @@ Module Make
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
 Notation "'extensional' r" :=
-  (ConfigReflection.reflectionFlag -> r) (only parsing, at level 97).
+  (forall { _ : ConfigReflection.reflectionFlag }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))

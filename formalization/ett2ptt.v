@@ -1,37 +1,51 @@
-Require Import syntax config_tactics.
+Require Import syntax.
+Require config_tactics.
 
 Require ett ptt ptt_sanity ptt_inversion.
 
+Module Make (ConfigReflection : tt.CONFIG_REFLECTION).
+
+Module my_ptt_sanity := ptt_sanity.Make ConfigReflection.
+Module Ptt := my_ptt_sanity.my_ptt_admissible.my_ptt_tactics.my_ptt.
+(* Problem: How about the my_ptt in ptt_inversion??? *)
+
+Module my_ptt_inversion := ptt_inversion.Make ConfigReflection.
+
+Module Ett := ett.Make ConfigReflection.
+
+Module my_config_tactics := config_tactics.Make (tt.HasPrecond) (ConfigReflection).
+Import my_config_tactics.
+
 (* Renaming ptt_sanity lemmata for readability. *)
-Definition ptt_sane_issubst := ptt_sanity.sane_issubst.
-Definition ptt_sane_istype  := ptt_sanity.sane_istype.
-Definition ptt_sane_isterm  := ptt_sanity.sane_isterm.
-Definition ptt_sane_eqctx   := ptt_sanity.sane_eqctx.
-Definition ptt_sane_eqtype  := ptt_sanity.sane_eqtype.
-Definition ptt_sane_eqsubst := ptt_sanity.sane_eqsubst.
-Definition ptt_sane_eqterm  := ptt_sanity.sane_eqterm.
+Definition ptt_sane_issubst := my_ptt_sanity.sane_issubst.
+Definition ptt_sane_istype  := my_ptt_sanity.sane_istype.
+Definition ptt_sane_isterm  := my_ptt_sanity.sane_isterm.
+Definition ptt_sane_eqctx   := my_ptt_sanity.sane_eqctx.
+Definition ptt_sane_eqtype  := my_ptt_sanity.sane_eqtype.
+Definition ptt_sane_eqsubst := my_ptt_sanity.sane_eqsubst.
+Definition ptt_sane_eqterm  := my_ptt_sanity.sane_eqterm.
 
 (* Same for inversion *)
-Definition ptt_CtxExtendInversion := ptt_inversion.CtxExtendInversion.
-Definition ptt_TyProdInversion    := ptt_inversion.TyProdInversion.
-Definition ptt_TyIdInversion      := ptt_inversion.TyIdInversion.
+Definition ptt_CtxExtendInversion := my_ptt_inversion.CtxExtendInversion.
+Definition ptt_TyProdInversion    := my_ptt_inversion.TyProdInversion.
+Definition ptt_TyIdInversion      := my_ptt_inversion.TyIdInversion.
 
 
-Fixpoint sane_isctx G (P : ett.isctx G) {struct P} : ptt.isctx G
+Fixpoint sane_isctx G (P : Ett.isctx G) {struct P} : Ptt.isctx G
 
-with sane_issubst sbs G D (P : ett.issubst sbs G D) {struct P} : ptt.issubst sbs G D
+with sane_issubst sbs G D (P : Ett.issubst sbs G D) {struct P} : Ptt.issubst sbs G D
 
-with sane_istype G A (P : ett.istype G A) {struct P} : ptt.istype G A
+with sane_istype G A (P : Ett.istype G A) {struct P} : Ptt.istype G A
 
-with sane_isterm G u A (P : ett.isterm G u A) {struct P} : ptt.isterm G u A
+with sane_isterm G u A (P : Ett.isterm G u A) {struct P} : Ptt.isterm G u A
 
-with sane_eqctx G D (P : ett.eqctx G D) {struct P} : ptt.eqctx G D
+with sane_eqctx G D (P : Ett.eqctx G D) {struct P} : Ptt.eqctx G D
 
-with sane_eqsubst sbs sbt G D (P : ett.eqsubst sbs sbt G D) {struct P} : ptt.eqsubst sbs sbt G D
+with sane_eqsubst sbs sbt G D (P : Ett.eqsubst sbs sbt G D) {struct P} : Ptt.eqsubst sbs sbt G D
 
-with sane_eqtype G A B (P : ett.eqtype G A B) {struct P} : ptt.eqtype G A B
+with sane_eqtype G A B (P : Ett.eqtype G A B) {struct P} : Ptt.eqtype G A B
 
-with sane_eqterm G u v A (P : ett.eqterm G u v A) {struct P} : ptt.eqterm G u v A.
+with sane_eqterm G u v A (P : Ett.eqterm G u v A) {struct P} : Ptt.eqterm G u v A.
 
 Proof.
 
@@ -39,11 +53,11 @@ Proof.
   { destruct P ; doConfig.
 
     (* CtxEmpty *)
-    - { capply ptt.CtxEmpty. }
+    - { capply Ptt.CtxEmpty. }
 
     (* CtxExtend *)
     - {
-        intros ; capply ptt.CtxExtend.
+        intros ; capply Ptt.CtxExtend.
         + now apply (ptt_sane_istype G A), sane_istype.
         + now apply sane_istype.
       }
@@ -53,7 +67,7 @@ Proof.
   { destruct P ; doConfig.
 
     (* SubstZero *)
-    - { capply ptt.SubstZero.
+    - { capply Ptt.SubstZero.
         + now apply sane_isterm.
         + eapply ptt_sane_isterm.
           eapply sane_isterm ; eassumption.
@@ -63,7 +77,7 @@ Proof.
 
     (* SubstWeak *)
     - {
-        capply ptt.SubstWeak.
+        capply Ptt.SubstWeak.
         + now apply sane_istype.
         + eapply ptt_sane_istype.
           eapply sane_istype ; eassumption.
@@ -71,7 +85,7 @@ Proof.
 
     (* SubstShift. *)
     - {
-        capply ptt.SubstShift.
+        capply Ptt.SubstShift.
         + now apply sane_issubst.
         + now apply sane_istype.
         + eapply (ptt_sane_issubst sbs G D).
@@ -82,13 +96,13 @@ Proof.
 
      (* SubstId *)
      - {
-         capply ptt.SubstId.
+         capply Ptt.SubstId.
          - now apply sane_isctx.
        }
 
      (* SubstComp *)
      - {
-         capply (@ptt.SubstComp G D E).
+         capply (@Ptt.SubstComp G D E).
          - now apply sane_issubst.
          - now apply sane_issubst.
          - apply (ptt_sane_issubst sbs G D).
@@ -101,7 +115,7 @@ Proof.
 
      (* SubstCtxConv *)
      - {
-         capply (@ptt.SubstCtxConv G1 G2 D1 D2).
+         capply (@Ptt.SubstCtxConv G1 G2 D1 D2).
          - now apply sane_issubst.
          - now apply sane_eqctx.
          - now apply sane_eqctx.
@@ -120,7 +134,7 @@ Proof.
   { destruct P.
 
     (* TyCtxConv *)
-    { capply (@ptt.TyCtxConv G D).
+    { capply (@Ptt.TyCtxConv G D).
       - now apply sane_istype.
       - now apply sane_eqctx.
       - now apply (ptt_sane_eqctx G D), sane_eqctx.
@@ -128,7 +142,7 @@ Proof.
     }
 
     (* TySubst *)
-    { capply (@ptt.TySubst G D).
+    { capply (@Ptt.TySubst G D).
       - now apply sane_issubst.
       - now apply sane_istype.
       - now apply (ptt_sane_issubst sbs G D), sane_issubst.
@@ -136,7 +150,7 @@ Proof.
     }
 
     (* TyProd *)
-    { capply ptt.TyProd.
+    { capply Ptt.TyProd.
       - now apply sane_istype.
       - now apply (ptt_CtxExtendInversion G A),
                   (ptt_sane_istype _ B), sane_istype.
@@ -145,7 +159,7 @@ Proof.
     }
 
     (* TyId *)
-    { capply ptt.TyId.
+    { capply Ptt.TyId.
       - now apply (ptt_sane_isterm G u A), sane_isterm.
       - now apply (ptt_sane_isterm G u A), sane_isterm.
       - now apply sane_isterm.
@@ -153,17 +167,17 @@ Proof.
     }
 
     (* TyEmpty *)
-    { capply ptt.TyEmpty.
+    { capply Ptt.TyEmpty.
       - now apply sane_isctx.
     }
 
     (* TyUnit *)
-    { capply ptt.TyUnit.
+    { capply Ptt.TyUnit.
       - now apply sane_isctx.
     }
 
     (* TyBool *)
-    { capply ptt.TyBool.
+    { capply Ptt.TyBool.
       - now apply sane_isctx.
     }
   }
@@ -172,7 +186,7 @@ Proof.
   { destruct P.
 
     (* TermTyConv *)
-    - { capply (@ptt.TermTyConv G A B).
+    - { capply (@Ptt.TermTyConv G A B).
         - now apply sane_isterm.
         - now apply sane_eqtype.
         - now apply (@ptt_sane_isterm G u A), sane_isterm.
@@ -181,7 +195,7 @@ Proof.
       }
 
     (* TermCtxConv *)
-    - { capply (@ptt.TermCtxConv G D).
+    - { capply (@Ptt.TermCtxConv G D).
         - now apply sane_isterm.
         - now apply sane_eqctx.
         - now apply (@ptt_sane_isterm G u A), sane_isterm.
@@ -190,7 +204,7 @@ Proof.
       }
 
     (* TermSubst *)
-    - { capply (@ptt.TermSubst G D A).
+    - { capply (@Ptt.TermSubst G D A).
         - now apply sane_issubst.
         - now apply sane_isterm.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
@@ -199,13 +213,13 @@ Proof.
       }
 
     (* TermVarZero *)
-    - { capply ptt.TermVarZero.
+    - { capply Ptt.TermVarZero.
         - now apply (@ptt_sane_istype G A), sane_istype.
         - now apply sane_istype.
       }
 
     (* TermVarSucc *)
-    - { capply ptt.TermVarSucc.
+    - { capply Ptt.TermVarSucc.
         - now apply (@ptt_sane_istype G B), sane_istype.
         - now apply (@ptt_sane_isterm G (var k)A), sane_isterm.
         - now apply sane_isterm.
@@ -213,7 +227,7 @@ Proof.
       }
 
     (* TermAbs *)
-    - { capply ptt.TermAbs.
+    - { capply Ptt.TermAbs.
         - now apply (ptt_CtxExtendInversion G A),
                     (ptt_sane_isterm _ u B), sane_isterm.
         - now apply (ptt_CtxExtendInversion G A),
@@ -223,7 +237,7 @@ Proof.
       }
 
     (* TermApp *)
-    - { capply ptt.TermApp.
+    - { capply Ptt.TermApp.
         - now apply (@ptt_sane_isterm G v A), sane_isterm.
         - now apply (@ptt_sane_isterm G v A), sane_isterm.
         - now apply (ptt_TyProdInversion G A B),
@@ -234,14 +248,14 @@ Proof.
       }
 
     (* TermRefl *)
-    - { capply ptt.TermRefl.
+    - { capply Ptt.TermRefl.
         - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply sane_isterm.
       }
 
     (* TermJ *)
-    - { capply ptt.TermJ.
+    - { capply Ptt.TermJ.
         - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply sane_isterm.
@@ -252,29 +266,29 @@ Proof.
       }
 
     (* TermExfalso *)
-    - { capply ptt.TermExfalso.
+    - { capply Ptt.TermExfalso.
         - now apply (@ptt_sane_istype G A), sane_istype.
         - now apply sane_istype.
         - now apply sane_isterm.
       }
 
     (* TermUnit *)
-    - { capply ptt.TermUnit.
+    - { capply Ptt.TermUnit.
         - now apply sane_isctx.
       }
 
     (* TermTrue *)
-    - { capply ptt.TermTrue.
+    - { capply Ptt.TermTrue.
         - now apply sane_isctx.
       }
 
     (* TermFalse *)
-    - { capply ptt.TermFalse.
+    - { capply Ptt.TermFalse.
         - now apply sane_isctx.
       }
 
     (* TermCond *)
-    - { capply ptt.TermCond.
+    - { capply Ptt.TermCond.
         - now apply (@ptt_sane_isterm G u Bool), sane_isterm.
         - now apply sane_isterm.
         - now apply sane_istype.
@@ -287,19 +301,19 @@ Proof.
   { destruct P.
 
     (* CtxRefl *)
-    - { capply ptt.CtxRefl.
+    - { capply Ptt.CtxRefl.
         - now apply sane_isctx.
       }
 
     (* CtxSym *)
-    - { capply ptt.CtxSym.
+    - { capply Ptt.CtxSym.
         - now apply sane_eqctx.
         - now apply (@ptt_sane_eqctx G D), sane_eqctx.
         - now apply (@ptt_sane_eqctx G D), sane_eqctx.
       }
 
     (* CtxTrans *)
-    - { capply (@ptt.CtxTrans G D E).
+    - { capply (@Ptt.CtxTrans G D E).
         - now apply (@ptt_sane_eqctx G D), sane_eqctx.
         - now apply (@ptt_sane_eqctx G D), sane_eqctx.
         - now apply (@ptt_sane_eqctx D E), sane_eqctx.
@@ -308,11 +322,11 @@ Proof.
       }
 
     (* EqCtxEmpty *)
-    - { capply ptt.EqCtxEmpty.
+    - { capply Ptt.EqCtxEmpty.
       }
 
     (* EqCtxExtend *)
-    - { capply ptt.EqCtxExtend.
+    - { capply Ptt.EqCtxExtend.
         - now apply (@ptt_sane_eqctx G D), sane_eqctx.
         - now apply (@ptt_sane_eqctx G D), sane_eqctx.
         - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
@@ -326,14 +340,14 @@ Proof.
   { destruct P.
 
     (* SubstRefl *)
-    - { capply ptt.SubstRefl.
+    - { capply Ptt.SubstRefl.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply sane_issubst.
       }
 
     (* SubstSym *)
-    - { capply ptt.SubstSym.
+    - { capply Ptt.SubstSym.
         - now apply sane_eqsubst.
         - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
         - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
@@ -342,7 +356,7 @@ Proof.
       }
 
     (* SubstTrans *)
-    - { capply (@ptt.SubstTrans G D sb1 sb2 sb3).
+    - { capply (@Ptt.SubstTrans G D sb1 sb2 sb3).
         - now apply sane_eqsubst.
         - now apply sane_eqsubst.
         - now apply (@ptt_sane_eqsubst sb1 sb2 G D), sane_eqsubst.
@@ -353,7 +367,7 @@ Proof.
       }
 
     (* CongSubstZero *)
-    - { capply (@ptt.CongSubstZero G).
+    - { capply (@Ptt.CongSubstZero G).
         - now apply sane_eqtype.
         - now apply sane_eqterm.
         - now apply (@ptt_sane_eqtype G A1 A2), sane_eqtype.
@@ -364,7 +378,7 @@ Proof.
       }
 
     (* CongSubstWeak *)
-    - { capply ptt.CongSubstWeak.
+    - { capply Ptt.CongSubstWeak.
         - now apply sane_eqtype.
         - now apply (@ptt_sane_eqtype G A1 A2), sane_eqtype.
         - now apply (@ptt_sane_eqtype G A1 A2), sane_eqtype.
@@ -372,7 +386,7 @@ Proof.
       }
 
     (* CongSubstShift *)
-    - { capply ptt.CongSubstShift.
+    - { capply Ptt.CongSubstShift.
         - now apply sane_eqsubst.
         - now apply sane_eqtype.
         - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
@@ -384,7 +398,7 @@ Proof.
       }
 
     (* CongSubstComp *)
-    - { capply (@ptt.CongSubstComp G D E).
+    - { capply (@Ptt.CongSubstComp G D E).
         - now apply sane_eqsubst.
         - now apply sane_eqsubst.
         - now apply (@ptt_sane_eqsubst sbs1 sbs2 G D), sane_eqsubst.
@@ -397,7 +411,7 @@ Proof.
       }
 
     (* EqSubstCtxConv *)
-    - { capply (@ptt.EqSubstCtxConv G1 G2 D1 D2).
+    - { capply (@Ptt.EqSubstCtxConv G1 G2 D1 D2).
         - now apply sane_eqsubst.
         - now apply sane_eqctx.
         - now apply sane_eqctx.
@@ -410,7 +424,7 @@ Proof.
       }
 
     (* CompAssoc *)
-    - { capply (@ptt.CompAssoc G D E F).
+    - { capply (@Ptt.CompAssoc G D E F).
         - now apply sane_issubst.
         - now apply sane_issubst.
         - now apply sane_issubst.
@@ -421,7 +435,7 @@ Proof.
       }
 
     (* WeakNat *)
-    - { capply ptt.WeakNat.
+    - { capply Ptt.WeakNat.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply sane_issubst.
@@ -429,14 +443,14 @@ Proof.
       }
 
     (* WeakZero *)
-    - { capply ptt.WeakZero.
+    - { capply Ptt.WeakZero.
         - now apply (@ptt_sane_isterm G u A), sane_isterm.
         - now apply (@ptt_sane_isterm G u A), sane_isterm.
         - now apply sane_isterm.
       }
 
     (* ShiftZero *)
-    - { capply ptt.ShiftZero.
+    - { capply Ptt.ShiftZero.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_isterm D u A), sane_isterm.
@@ -445,7 +459,7 @@ Proof.
       }
 
     (* CompShift *)
-    - { capply (@ptt.CompShift G D).
+    - { capply (@Ptt.CompShift G D).
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_istype E A), sane_istype.
@@ -455,14 +469,14 @@ Proof.
       }
 
     (* CompIdRight *)
-    - { capply ptt.CompIdRight.
+    - { capply Ptt.CompIdRight.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
         - now apply sane_issubst.
       }
 
     (* CompIdLeft *)
-    - { capply ptt.CompIdLeft.
+    - { capply Ptt.CompIdLeft.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
         - now apply sane_issubst.
@@ -474,7 +488,7 @@ Proof.
   { destruct P.
 
     (* EqTyCtxConv *)
-    { capply (@ptt.EqTyCtxConv G D).
+    { capply (@Ptt.EqTyCtxConv G D).
       - now apply sane_eqtype.
       - now apply sane_eqctx.
       - now apply (ptt_sane_eqtype G A B), sane_eqtype.
@@ -484,13 +498,13 @@ Proof.
     }
 
     (* EqTyRefl *)
-    { capply ptt.EqTyRefl.
+    { capply Ptt.EqTyRefl.
       - now apply (ptt_sane_istype G A), sane_istype.
       - now apply sane_istype.
     }
 
     (* EqTySym *)
-    { capply ptt.EqTySym.
+    { capply Ptt.EqTySym.
       - now apply sane_eqtype.
       - now apply (ptt_sane_eqtype G A B), sane_eqtype.
       - now apply (ptt_sane_eqtype G A B), sane_eqtype.
@@ -498,7 +512,7 @@ Proof.
     }
 
     (* EqTyTrans *)
-    { capply (@ptt.EqTyTrans G A B C).
+    { capply (@Ptt.EqTyTrans G A B C).
       - now apply sane_eqtype.
       - now apply sane_eqtype.
       - now apply (ptt_sane_eqtype G A B), sane_eqtype.
@@ -508,13 +522,13 @@ Proof.
     }
 
     (* EqTyIdSubst *)
-    { capply ptt.EqTyIdSubst.
+    { capply Ptt.EqTyIdSubst.
       - now apply (ptt_sane_istype G A), sane_istype.
       - now apply sane_istype.
     }
 
     (* EqTySubstComp *)
-    { capply (@ptt.EqTySubstComp G D E).
+    { capply (@Ptt.EqTySubstComp G D E).
       - now apply sane_istype.
       - now apply sane_issubst.
       - now apply sane_issubst.
@@ -524,7 +538,7 @@ Proof.
     }
 
     (* EqTySubstProd *)
-    { capply (@ptt.EqTySubstProd G D).
+    { capply (@Ptt.EqTySubstProd G D).
       - now apply sane_issubst.
       - now apply (ptt_CtxExtendInversion D A),
             (ptt_sane_istype _ B), sane_istype.
@@ -534,7 +548,7 @@ Proof.
     }
 
     (* EqTySubstId *)
-    { capply (@ptt.EqTySubstId G D).
+    { capply (@Ptt.EqTySubstId G D).
       - now apply sane_issubst.
       - now apply (@ptt_sane_isterm D u A), sane_isterm.
       - now apply sane_isterm.
@@ -544,28 +558,28 @@ Proof.
     }
 
     (* EqTySubstEmpty *)
-    { capply (@ptt.EqTySubstEmpty G D).
+    { capply (@Ptt.EqTySubstEmpty G D).
       - now apply sane_issubst.
       - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
       - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
     }
 
     (* EqTySubstUnit *)
-    { capply (@ptt.EqTySubstUnit G D).
+    { capply (@Ptt.EqTySubstUnit G D).
       - now apply sane_issubst.
       - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
       - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
     }
 
     (* EqTySubstBool *)
-    { capply (@ptt.EqTySubstBool G D).
+    { capply (@Ptt.EqTySubstBool G D).
       - now apply sane_issubst.
       - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
       - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
     }
 
     (* EqTyExfalso *)
-    { capply (@ptt.EqTyExfalso G A B u).
+    { capply (@Ptt.EqTyExfalso G A B u).
       - now apply (@ptt_sane_istype G A), sane_istype.
       - now apply sane_istype.
       - now apply sane_istype.
@@ -573,7 +587,7 @@ Proof.
     }
 
     (* CongProd *)
-    { capply ptt.CongProd.
+    { capply Ptt.CongProd.
       - now apply (@ptt_sane_eqtype G A1 B1), sane_eqtype.
       - now apply (@ptt_sane_eqtype G A1 B1), sane_eqtype.
       - now apply (@ptt_sane_eqtype (ctxextend G A1) A2 B2), sane_eqtype.
@@ -584,7 +598,7 @@ Proof.
     }
 
     (* CongId *)
-    { capply ptt.CongId.
+    { capply Ptt.CongId.
       - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
       - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
       - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
@@ -598,7 +612,7 @@ Proof.
     }
 
     (* CongTySubst *)
-    { capply (@ptt.CongTySubst G D).
+    { capply (@Ptt.CongTySubst G D).
       - now apply sane_eqsubst.
       - now apply sane_eqtype.
       - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
@@ -614,7 +628,7 @@ Proof.
   { destruct P.
 
     (* EqTyConv *)
-    - { capply (@ptt.EqTyConv G A B).
+    - { capply (@Ptt.EqTyConv G A B).
         - now apply sane_eqterm.
         - now apply sane_eqtype.
         - now apply (@ptt_sane_eqtype G A B), sane_eqtype.
@@ -625,7 +639,7 @@ Proof.
     }
 
     (* EqCtxConv *)
-    - { capply (@ptt.EqCtxConv G D).
+    - { capply (@Ptt.EqCtxConv G D).
         - now apply (@ptt_sane_eqctx G D), sane_eqctx.
         - now apply (@ptt_sane_eqctx G D), sane_eqctx.
         - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
@@ -636,14 +650,14 @@ Proof.
       }
 
     (* EqRefl *)
-    - { capply ptt.EqRefl.
+    - { capply Ptt.EqRefl.
         - now apply (@ptt_sane_isterm G u A), sane_isterm.
         - now apply (@ptt_sane_isterm G u A), sane_isterm.
         - now apply sane_isterm.
       }
 
     (* EqSym *)
-    - { capply ptt.EqSym.
+    - { capply Ptt.EqSym.
         - now apply sane_eqterm.
         - now apply (@ptt_sane_eqterm G v u A), sane_eqterm.
         - now apply (@ptt_sane_eqterm G v u A), sane_eqterm.
@@ -652,7 +666,7 @@ Proof.
       }
 
     (* EqTrans *)
-    - { capply (@ptt.EqTrans G A u v w).
+    - { capply (@Ptt.EqTrans G A u v w).
         - now apply sane_eqterm.
         - now apply sane_eqterm.
         - now apply (@ptt_sane_eqterm G u v A), sane_eqterm.
@@ -663,14 +677,14 @@ Proof.
       }
 
     (* EqIdSubst *)
-    - { capply ptt.EqIdSubst.
+    - { capply Ptt.EqIdSubst.
         - now apply (@ptt_sane_isterm G u A), sane_isterm.
         - now apply (@ptt_sane_isterm G u A), sane_isterm.
         - now apply sane_isterm.
       }
 
     (* EqSubstComp *)
-    - { capply (@ptt.EqSubstComp G D E A u sbs sbt).
+    - { capply (@Ptt.EqSubstComp G D E A u sbs sbt).
         - now apply sane_isterm.
         - now apply sane_issubst.
         - now apply sane_issubst.
@@ -681,7 +695,7 @@ Proof.
       }
 
     (* EqSubstWeak *)
-    - { capply ptt.EqSubstWeak.
+    - { capply Ptt.EqSubstWeak.
         - now apply (@ptt_sane_istype G B), sane_istype.
         - now apply (@ptt_sane_isterm G (var k) A), sane_isterm.
         - now apply sane_isterm.
@@ -689,14 +703,14 @@ Proof.
       }
 
     (* EqSubstZeroZero *)
-    - { capply ptt.EqSubstZeroZero.
+    - { capply Ptt.EqSubstZeroZero.
         - now apply (@ptt_sane_isterm G u A), sane_isterm.
         - now apply (@ptt_sane_isterm G u A), sane_isterm.
         - now apply sane_isterm.
       }
 
     (* EqSubstZeroSucc *)
-    - { capply ptt.EqSubstZeroSucc.
+    - { capply Ptt.EqSubstZeroSucc.
         - now apply (@ptt_sane_isterm G u B), sane_isterm.
         - now apply (@ptt_sane_isterm G (var k) A), sane_isterm.
         - now apply (@ptt_sane_isterm G u B), sane_isterm.
@@ -705,7 +719,7 @@ Proof.
       }
 
     (* EqSubstShiftZero *)
-    - { capply (@ptt.EqSubstShiftZero G D).
+    - { capply (@Ptt.EqSubstShiftZero G D).
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply sane_issubst.
@@ -713,7 +727,7 @@ Proof.
       }
 
     (* EqSubstShiftSucc *)
-    - { capply (@ptt.EqSubstShiftSucc G D).
+    - { capply (@Ptt.EqSubstShiftSucc G D).
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_isterm D (var k) B), sane_isterm.
@@ -723,7 +737,7 @@ Proof.
       }
 
     (* EqSubstAbs *)
-    - { capply (@ptt.EqSubstAbs G D).
+    - { capply (@Ptt.EqSubstAbs G D).
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (ptt_CtxExtendInversion D A),
@@ -735,7 +749,7 @@ Proof.
       }
 
     (* EqSubstApp *)
-    - { capply (@ptt.EqSubstApp G D).
+    - { capply (@Ptt.EqSubstApp G D).
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_isterm D v A), sane_isterm.
@@ -748,7 +762,7 @@ Proof.
       }
 
     (* EqSubstRefl *)
-    - { capply (@ptt.EqSubstRefl G D).
+    - { capply (@Ptt.EqSubstRefl G D).
         - now apply sane_issubst.
         - now apply sane_isterm.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
@@ -757,7 +771,7 @@ Proof.
       }
 
     (* EqSubstJ *)
-    - { capply (@ptt.EqSubstJ G D).
+    - { capply (@Ptt.EqSubstJ G D).
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_isterm D v A), sane_isterm.
@@ -770,7 +784,7 @@ Proof.
       }
 
     (* EqSubstExfalso *)
-    - { capply (@ptt.EqSubstExfalso G D).
+    - { capply (@Ptt.EqSubstExfalso G D).
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply sane_istype.
@@ -779,28 +793,28 @@ Proof.
       }
 
     (* EqSubstUnit *)
-    - { capply (@ptt.EqSubstUnit G D).
+    - { capply (@Ptt.EqSubstUnit G D).
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply sane_issubst.
       }
 
     (* EqSubstTrue *)
-    - { capply (@ptt.EqSubstTrue G D).
+    - { capply (@Ptt.EqSubstTrue G D).
         - now apply sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
       }
 
     (* EqSubstFalse *)
-    - { capply (@ptt.EqSubstFalse G D).
+    - { capply (@Ptt.EqSubstFalse G D).
         - now apply sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
       }
 
     (* EqSubstCond *)
-    - { capply (@ptt.EqSubstCond G D).
+    - { capply (@Ptt.EqSubstCond G D).
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
         - now apply sane_issubst.
@@ -811,7 +825,7 @@ Proof.
       }
 
     (* EqTermExfalso *)
-    - { capply (@ptt.EqTermExfalso G A u v w).
+    - { capply (@Ptt.EqTermExfalso G A u v w).
         - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply sane_isterm.
@@ -820,14 +834,14 @@ Proof.
       }
 
     (* UnitEta *)
-    - { capply ptt.UnitEta.
+    - { capply Ptt.UnitEta.
         - now apply (@ptt_sane_isterm G u Unit), sane_isterm.
         - now apply sane_isterm.
         - now apply sane_isterm.
       }
 
     (* EqReflection *)
-    - { capply (@ptt.EqReflection G A u v w1 w2).
+    - { capply (@Ptt.EqReflection G A u v w1 w2).
         - now apply (@ptt_sane_isterm G w1 (Id A u v)), sane_isterm.
         - now apply (ptt_TyIdInversion G A u v),
                     (ptt_sane_isterm G w1 (Id A u v)),
@@ -843,7 +857,7 @@ Proof.
       }
 
     (* ProdBeta *)
-    - { capply ptt.ProdBeta.
+    - { capply Ptt.ProdBeta.
         - now apply (@ptt_sane_isterm G v A), sane_isterm.
         - now apply (@ptt_sane_isterm G v A), sane_isterm.
         - now apply (@ptt_sane_isterm (ctxextend G A) u B), sane_isterm.
@@ -852,7 +866,7 @@ Proof.
       }
 
     (* CondTrue *)
-    - { capply ptt.CondTrue.
+    - { capply Ptt.CondTrue.
         - now apply (@ptt_sane_isterm G v (Subst C (sbzero Bool true))), sane_isterm.
         - now apply sane_istype.
         - now apply sane_isterm.
@@ -860,7 +874,7 @@ Proof.
       }
 
     (* CondFalse *)
-    - { capply ptt.CondFalse.
+    - { capply Ptt.CondFalse.
         - now apply (@ptt_sane_isterm G v (Subst C (sbzero Bool true))), sane_isterm.
         - now apply sane_istype.
         - now apply sane_isterm.
@@ -868,7 +882,7 @@ Proof.
       }
 
     (* ProdEta *)
-    - { capply ptt.ProdEta.
+    - { capply Ptt.ProdEta.
         - now apply (@ptt_sane_isterm G u (Prod A B)), sane_isterm.
         - now apply (ptt_TyProdInversion G A B),
                     (ptt_sane_isterm G u (Prod A B)),
@@ -882,7 +896,7 @@ Proof.
       }
 
     (* JRefl *)
-    - { capply ptt.JRefl.
+    - { capply Ptt.JRefl.
         - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply sane_isterm.
@@ -891,7 +905,7 @@ Proof.
       }
 
     (* CongAbs *)
-    - { capply ptt.CongAbs.
+    - { capply Ptt.CongAbs.
         - now apply (ptt_sane_eqtype G A1 B1), sane_eqtype.
         - now apply (ptt_sane_eqtype G A1 B1), sane_eqtype.
         - now apply (ptt_sane_eqtype G A1 B1), sane_eqtype.
@@ -905,7 +919,7 @@ Proof.
       }
 
     (* CongApp *)
-    - { capply ptt.CongApp.
+    - { capply Ptt.CongApp.
         - now apply (ptt_sane_eqtype G A1 B1), sane_eqtype.
         - now apply (ptt_sane_eqtype G A1 B1), sane_eqtype.
         - now apply (ptt_sane_eqtype (ctxextend G A1) A2 B2), sane_eqtype.
@@ -922,7 +936,7 @@ Proof.
       }
 
     (* CongRefl *)
-    - { capply ptt.CongRefl.
+    - { capply Ptt.CongRefl.
         - now apply (ptt_sane_eqtype G A1 A2), sane_eqtype.
         - now apply (ptt_sane_eqtype G A1 A2), sane_eqtype.
         - now apply (ptt_sane_eqtype G A1 A2), sane_eqtype.
@@ -933,7 +947,7 @@ Proof.
       }
 
     (* CongJ *)
-    - { capply ptt.CongJ.
+    - { capply Ptt.CongJ.
         - now apply (ptt_sane_eqtype G A1 A2), sane_eqtype.
         - now apply (ptt_sane_eqtype G A1 A2), sane_eqtype.
         - now apply (ptt_sane_eqtype G A1 A2), sane_eqtype.
@@ -956,7 +970,7 @@ Proof.
       }
 
     (* CongCond *)
-    - { capply ptt.CongCond.
+    - { capply Ptt.CongCond.
         - now apply (ptt_sane_eqterm G v1 v2 (Subst C1 (sbzero Bool true))), sane_eqterm.
         - now apply (ptt_sane_eqtype (ctxextend G Bool) C1 C2), sane_eqtype.
         - now apply (ptt_sane_eqtype (ctxextend G Bool) C1 C2), sane_eqtype.
@@ -973,7 +987,7 @@ Proof.
       }
 
     (* CongTermSubst *)
-    - { capply (@ptt.CongTermSubst G D).
+    - { capply (@Ptt.CongTermSubst G D).
         - now apply sane_eqsubst.
         - now apply sane_eqterm.
         - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.

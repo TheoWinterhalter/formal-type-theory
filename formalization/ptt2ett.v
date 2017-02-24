@@ -1,347 +1,360 @@
-Require Import syntax config_tactics.
+Require Import syntax.
+Require config_tactics.
 Require ptt ett.
 
-Fixpoint sane_isctx G (P : ptt.isctx G) : ett.isctx G
+Module Make (ConfigReflection : tt.CONFIG_REFLECTION).
 
-with sane_issubst sbs G D (P : ptt.issubst sbs G D) {struct P} : ett.issubst sbs G D
+Module Ptt := ptt.Make ConfigReflection.
+Module Ett := ett.Make ConfigReflection.
 
-with sane_istype G A (P : ptt.istype G A) {struct P} : ett.istype G A
+Module my_config_tactics := config_tactics.Make (tt.HasPrecond) (ConfigReflection).
+Import my_config_tactics.
 
-with sane_isterm G u A (P : ptt.isterm G u A) {struct P} : ett.isterm G u A
+Fixpoint sane_isctx G (P : Ptt.isctx G) : Ett.isctx G
 
-with sane_eqctx G D (P : ptt.eqctx G D) {struct P} : ett.eqctx G D
+with sane_issubst sbs G D (P : Ptt.issubst sbs G D) {struct P} : Ett.issubst sbs G D
 
-with sane_eqsubst sbs sbt G D (P : ptt.eqsubst sbs sbt G D) {struct P} : ett.eqsubst sbs sbt G D
+with sane_istype G A (P : Ptt.istype G A) {struct P} : Ett.istype G A
 
-with sane_eqtype G A B (P : ptt.eqtype G A B) {struct P} : ett.eqtype G A B
+with sane_isterm G u A (P : Ptt.isterm G u A) {struct P} : Ett.isterm G u A
 
-with sane_eqterm G u v A (P : ptt.eqterm G u v A) {struct P} : ett.eqterm G u v A.
+with sane_eqctx G D (P : Ptt.eqctx G D) {struct P} : Ett.eqctx G D
+
+with sane_eqsubst sbs sbt G D (P : Ptt.eqsubst sbs sbt G D) {struct P} : Ett.eqsubst sbs sbt G D
+
+with sane_eqtype G A B (P : Ptt.eqtype G A B) {struct P} : Ett.eqtype G A B
+
+with sane_eqterm G u v A (P : Ptt.eqterm G u v A) {struct P} : Ett.eqterm G u v A.
 
 Proof.
   (* sane_isctx *)
   - { destruct P; doConfig.
-    - now apply ett.CtxEmpty.
-    - capply ett.CtxExtend ; auto using sane_isctx, sane_istype.
+    - now apply Ett.CtxEmpty.
+    - capply Ett.CtxExtend ; auto using sane_isctx, sane_istype.
     }
 
   (* sane_issubst *)
   - { destruct P; doConfig.
 
       (* SubstZero *)
-      - (config apply ett.SubstZero) ; auto.
+      - (config apply Ett.SubstZero) ; auto.
 
       (* SubstWeak *)
-      - apply ett.SubstWeak ; auto.
+      - apply Ett.SubstWeak ; auto.
 
       (* SubstShift *)
-      - apply ett.SubstShift ; auto.
+      - apply Ett.SubstShift ; auto.
 
       (* SubstId *)
-      - apply ett.SubstId ; auto.
+      - apply Ett.SubstId ; auto.
 
       (* SubstComp *)
-       - apply (@ett.SubstComp G D E) ; auto.
+       - apply (@Ett.SubstComp G D E) ; auto.
 
       (* SubstCtxConv *)
-      - apply (@ett.SubstCtxConv G1 G2 D1 D2) ; auto.
+      - apply (@Ett.SubstCtxConv G1 G2 D1 D2) ; auto.
   }
 
   (* sane_istype *)
   - { destruct P; doConfig.
 
       (* TyCtxConv *)
-      - apply (@ett.TyCtxConv G D) ; auto.
+      - apply (@Ett.TyCtxConv G D) ; auto.
 
       (* TySubst *)
-      - apply (@ett.TySubst G D) ; auto.
+      - apply (@Ett.TySubst G D) ; auto.
 
       (* TyProd *)
-      - apply ett.TyProd ; auto.
+      - apply Ett.TyProd ; auto.
 
       (* TyId *)
-      - apply ett.TyId ; auto.
+      - apply Ett.TyId ; auto.
 
       (* TyEmpty *)
-      - apply ett.TyEmpty ; auto.
+      - apply Ett.TyEmpty ; auto.
 
       (* TyUnit *)
-      - apply ett.TyUnit ; auto.
+      - apply Ett.TyUnit ; auto.
 
       (* TyBool *)
-      - apply ett.TyBool ; auto.
+      - apply Ett.TyBool ; auto.
   }
 
   (* sane_isterm *)
   - { destruct P; doConfig.
 
       (* TermTyConv *)
-       - apply (@ett.TermTyConv G A B) ; auto.
+       - apply (@Ett.TermTyConv G A B) ; auto.
 
       (* TermCtxConv *)
-      - apply (@ett.TermCtxConv G D) ; auto.
+      - apply (@Ett.TermCtxConv G D) ; auto.
 
       (* TermSubst *)
-      - apply (@ett.TermSubst G D) ; auto.
+      - apply (@Ett.TermSubst G D) ; auto.
 
       (* TermVarZero *)
-      - apply ett.TermVarZero ; auto.
+      - apply Ett.TermVarZero ; auto.
 
       (* TermVarSucc *)
-      - apply ett.TermVarSucc ; auto.
+      - apply Ett.TermVarSucc ; auto.
 
       (* TermAbs *)
-      - apply ett.TermAbs ; auto.
+      - apply Ett.TermAbs ; auto.
 
       (* TermApp *)
-      - apply ett.TermApp ; auto.
+      - apply Ett.TermApp ; auto.
 
       (* TermRefl *)
-      - apply ett.TermRefl ; auto.
+      - apply Ett.TermRefl ; auto.
 
       (* TermJ *)
-      - apply ett.TermJ ; auto.
+      - apply Ett.TermJ ; auto.
 
       (* TermExfalso *)
-      - apply ett.TermExfalso ; auto.
+      - apply Ett.TermExfalso ; auto.
 
       (* TermUnit *)
-      - apply ett.TermUnit ; auto.
+      - apply Ett.TermUnit ; auto.
 
       (* TermTrue *)
-      - apply ett.TermTrue ; auto.
+      - apply Ett.TermTrue ; auto.
 
       (* TermFalse *)
-      - apply ett.TermFalse ; auto.
+      - apply Ett.TermFalse ; auto.
 
       (* TermCond *)
-      - apply ett.TermCond ; auto.
+      - apply Ett.TermCond ; auto.
   }
 
   (* sane_eqctx *)
   - { destruct P; doConfig.
 
       (* CtxRefl *)
-      - apply ett.CtxRefl ; auto.
+      - apply Ett.CtxRefl ; auto.
 
       (* CtxSym *)
-      - apply ett.CtxSym ; auto.
+      - apply Ett.CtxSym ; auto.
 
       (* CtxTrans *)
-      - apply (@ett.CtxTrans G D E) ; auto.
+      - apply (@Ett.CtxTrans G D E) ; auto.
 
       (* EqCtxEmpty *)
-      - apply ett.CtxRefl, ett.CtxEmpty.
+      - apply Ett.CtxRefl, Ett.CtxEmpty.
 
       (* EqCtxExtend *)
-      - apply ett.EqCtxExtend ; auto.
+      - apply Ett.EqCtxExtend ; auto.
   }
 
   (* sane_eqsubst *)
   - { destruct P; doConfig.
 
       (* SubstRefl *)
-      - apply ett.SubstRefl ; auto.
+      - apply Ett.SubstRefl ; auto.
 
       (* SubstSym *)
-      - apply ett.SubstSym ; auto.
+      - apply Ett.SubstSym ; auto.
 
       (* SubstTrans *)
-      - apply (@ett.SubstTrans G D sb1 sb2 sb3) ; auto.
+      - apply (@Ett.SubstTrans G D sb1 sb2 sb3) ; auto.
 
       (* CongSubstZero *)
-      - apply (@ett.CongSubstZero G) ; auto.
+      - apply (@Ett.CongSubstZero G) ; auto.
 
       (* CongSubstWeak *)
-      - apply ett.CongSubstWeak ; auto.
+      - apply Ett.CongSubstWeak ; auto.
 
       (* CongSubstShift *)
-      - apply ett.CongSubstShift ; auto.
+      - apply Ett.CongSubstShift ; auto.
 
       (* CongSubstComp *)
-      - apply (@ett.CongSubstComp G D E) ; auto.
+      - apply (@Ett.CongSubstComp G D E) ; auto.
 
       (* EqSubstCtxConv *)
-      - apply (@ett.EqSubstCtxConv G1 G2 D1 D2) ; auto.
+      - apply (@Ett.EqSubstCtxConv G1 G2 D1 D2) ; auto.
 
       (* CompAssoc *)
-      - apply (@ett.CompAssoc G D E F) ; auto.
+      - apply (@Ett.CompAssoc G D E F) ; auto.
 
       (* WeakNat *)
-      - apply ett.WeakNat ; auto.
+      - apply Ett.WeakNat ; auto.
 
       (* WeakZero *)
-      - apply ett.WeakZero ; auto.
+      - apply Ett.WeakZero ; auto.
 
       (* ShiftZero *)
-      - apply ett.ShiftZero ; auto.
+      - apply Ett.ShiftZero ; auto.
 
       (* CompShift *)
-      - apply (@ett.CompShift G D) ; auto.
+      - apply (@Ett.CompShift G D) ; auto.
 
       (* CompIdRight *)
-      - apply ett.CompIdRight ; auto.
+      - apply Ett.CompIdRight ; auto.
 
       (* CompIdLeft *)
-      - apply ett.CompIdLeft ; auto.
+      - apply Ett.CompIdLeft ; auto.
   }
 
   (* sane_eqtype *)
   - { destruct P; doConfig.
 
       (* EqTyCtxConv *)
-      - apply (@ett.EqTyCtxConv G D); auto.
+      - apply (@Ett.EqTyCtxConv G D); auto.
 
       (* EqTyRefl*)
-      - apply ett.EqTyRefl ; auto.
+      - apply Ett.EqTyRefl ; auto.
 
       (* EqTySym *)
-      - apply ett.EqTySym ; auto.
+      - apply Ett.EqTySym ; auto.
 
       (* EqTyTrans *)
-      - apply (@ett.EqTyTrans G A B C) ; auto.
+      - apply (@Ett.EqTyTrans G A B C) ; auto.
 
       (* EqTyIdSubst *)
-      - apply ett.EqTyIdSubst ; auto.
+      - apply Ett.EqTyIdSubst ; auto.
 
       (* EqTySubstComp *)
-      - apply (@ett.EqTySubstComp G D E) ; auto.
+      - apply (@Ett.EqTySubstComp G D E) ; auto.
 
       (* EqTySubstProd *)
-      - apply (@ett.EqTySubstProd G D) ; auto.
+      - apply (@Ett.EqTySubstProd G D) ; auto.
 
       (* EqTySubstId *)
-      - apply (@ett.EqTySubstId G D) ; auto.
+      - apply (@Ett.EqTySubstId G D) ; auto.
 
       (* EqTySubstEmpty *)
-      - apply (@ett.EqTySubstEmpty G D) ; auto.
+      - apply (@Ett.EqTySubstEmpty G D) ; auto.
 
       (* EqTySubstUnit *)
-      - apply (@ett.EqTySubstUnit G D) ; auto.
+      - apply (@Ett.EqTySubstUnit G D) ; auto.
 
       (* EqTySubstBool *)
-      - apply (@ett.EqTySubstBool G D) ; auto.
+      - apply (@Ett.EqTySubstBool G D) ; auto.
 
       (* EqTyExfalso *)
-      - apply (@ett.EqTyExfalso G A B u) ; auto.
+      - apply (@Ett.EqTyExfalso G A B u) ; auto.
 
       (* CongProd *)
-      - apply ett.CongProd ; auto.
+      - apply Ett.CongProd ; auto.
 
       (* CongId *)
-      - apply ett.CongId ; auto.
+      - apply Ett.CongId ; auto.
 
       (* CongTySubst *)
-      - apply (@ett.CongTySubst G D A B sbs sbt) ; auto.
+      - apply (@Ett.CongTySubst G D A B sbs sbt) ; auto.
   }
 
   (* sane_eqterm *)
-  - { destruct P; doConfig.
+  - { destruct P ; doConfig.
 
       (* EqTyConv *)
-      - apply (@ett.EqTyConv G A B) ; auto.
+      - apply (@Ett.EqTyConv G A B) ; auto.
 
       (* EqCtxConv *)
-      - apply (@ett.EqCtxConv G D) ; auto.
+      - apply (@Ett.EqCtxConv G D) ; auto.
 
       (* EqRefl *)
-      - apply ett.EqRefl ; auto.
+      - apply Ett.EqRefl ; auto.
 
       (* EqSym *)
-      - apply ett.EqSym ; auto.
+      - apply Ett.EqSym ; auto.
 
       (* EqTrans *)
-      - apply (@ett.EqTrans G A u v w) ; auto.
+      - apply (@Ett.EqTrans G A u v w) ; auto.
 
       (* EqIdSubst *)
-      - apply ett.EqIdSubst ; auto.
+      - apply Ett.EqIdSubst ; auto.
 
       (* EqSubstComp *)
-      - apply (@ett.EqSubstComp G D E); auto.
+      - apply (@Ett.EqSubstComp G D E); auto.
 
       (* EqSubstWeak *)
-      - apply ett.EqSubstWeak ; auto.
+      - apply Ett.EqSubstWeak ; auto.
 
 
       (* EqSubstZeroZero *)
-      - apply ett.EqSubstZeroZero ; auto.
+      - apply Ett.EqSubstZeroZero ; auto.
 
       (* EqSubstZeroSucc *)
-      - apply ett.EqSubstZeroSucc ; auto.
+      - apply Ett.EqSubstZeroSucc ; auto.
 
       (* EqSubstShiftZero *)
-      - apply (@ett.EqSubstShiftZero G D) ; auto.
+      - apply (@Ett.EqSubstShiftZero G D) ; auto.
 
       (* EqSubstShiftSucc *)
-      - apply (@ett.EqSubstShiftSucc G D) ; auto.
+      - apply (@Ett.EqSubstShiftSucc G D) ; auto.
 
       (* EqSubstAbs *)
-      - apply (@ett.EqSubstAbs G D) ; auto.
+      - apply (@Ett.EqSubstAbs G D) ; auto.
 
       (* EqSubstApp *)
-      - apply (@ett.EqSubstApp G D) ; auto.
+      - apply (@Ett.EqSubstApp G D) ; auto.
 
       (* EqSubstRefl *)
-      - apply (@ett.EqSubstRefl G D) ; auto.
+      - apply (@Ett.EqSubstRefl G D) ; auto.
 
       (* EqSubstJ *)
-      - apply (@ett.EqSubstJ G D) ; auto.
+      - apply (@Ett.EqSubstJ G D) ; auto.
 
      (* This rule is subsumed by EqTermExfalso *)
       (* EqSubstExfalso *)
-      - apply (@ett.EqSubstExfalso G D) ; auto.
+      - apply (@Ett.EqSubstExfalso G D) ; auto.
 
       (* EqSubstUnit *)
-      - apply (@ett.EqSubstUnit G D) ; auto.
+      - apply (@Ett.EqSubstUnit G D) ; auto.
 
       (* EqSubstTrue *)
-      - apply (@ett.EqSubstTrue G D) ; auto.
+      - apply (@Ett.EqSubstTrue G D) ; auto.
 
       (* EqSubstFalse *)
-      - apply (@ett.EqSubstFalse G D) ; auto.
+      - apply (@Ett.EqSubstFalse G D) ; auto.
 
       (* EqSubstCond *)
-      - apply (@ett.EqSubstCond G D); auto.
+      - apply (@Ett.EqSubstCond G D); auto.
 
       (* EqTermExfalso *)
-      - apply (@ett.EqTermExfalso G A u v w); auto.
+      - apply (@Ett.EqTermExfalso G A u v w); auto.
 
       (* UnitEta *)
-      - apply ett.UnitEta ; auto.
+      - apply Ett.UnitEta ; auto.
 
       (* EqReflection *)
-      - apply (@ett.EqReflection G A u v w1 w2); auto.
+      - (* I told it the argument was implicit... *)
+        (* apply (@Ett.EqReflection G A u v w1 w2) ; auto. *)
+        apply (@Ett.EqReflection r G A u v w1 w2) ; auto.
 
       (* ProdBeta *)
-      - apply ett.ProdBeta ; auto.
+      - apply Ett.ProdBeta ; auto.
 
       (* CondTrue *)
-      - apply ett.CondTrue ; auto.
+      - apply Ett.CondTrue ; auto.
 
       (* CondFalse *)
-      - apply ett.CondFalse ; auto.
+      - apply Ett.CondFalse ; auto.
 
       (* ProdEta *)
-      - apply ett.ProdEta ; auto.
+      - apply Ett.ProdEta ; auto.
 
       (* JRefl *)
-      - apply ett.JRefl ; auto.
+      - apply Ett.JRefl ; auto.
 
       (* CongAbs *)
-      - apply ett.CongAbs ; auto.
+      - apply Ett.CongAbs ; auto.
 
       (* CongApp *)
-      - apply ett.CongApp ; auto.
+      - apply Ett.CongApp ; auto.
 
       (* CongRefl *)
-      - apply ett.CongRefl ; auto.
+      - apply Ett.CongRefl ; auto.
 
       (* CongJ *)
-      - apply ett.CongJ ; auto.
+      - apply Ett.CongJ ; auto.
 
       (* CongCond *)
-      - apply ett.CongCond ; auto.
+      - apply Ett.CongCond ; auto.
 
       (* CongTermSubst *)
-    - apply (@ett.CongTermSubst G D) ; auto.
+    - apply (@Ett.CongTermSubst G D) ; auto.
     }
 Defined.
+
+End Make.
