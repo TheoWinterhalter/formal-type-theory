@@ -633,7 +633,44 @@ Proof.
   (* EqSubstJ *)
   - { split.
       - { magic. Unshelve. all:strictmagic. }
-      - { (* magic. *) admit.
+      - { eapply TermTyConv ; [ eapply TermJ | .. ].
+          - magic.
+          - magic.
+          - magic.
+          - magic.
+            Unshelve. all:strictmagic.
+          - eapply TermTyConv ; [ eapply TermSubst | .. ].
+            + magic.
+            + magic.
+            + magic.
+            + magic.
+            + magic. Unshelve. all:strictmagic.
+            + (* Let's focus here! *)
+              compsubst1.
+              * magic.
+              * magic.
+              * magic.
+                Unshelve. all:strictmagic.
+              * compsubst1.
+                -- magic.
+                -- magic.
+                -- magic. Unshelve. all:strictmagic.
+                -- compsubst1.
+                   ++ magic.
+                   ++ magic.
+                   ++ magic.
+                      Unshelve. all:magic.
+                      Unshelve. all:strictmagic.
+                   ++ compsubst1.
+                      ** magic.
+                      ** magic.
+                         Unshelve. all:magic.
+                         Unshelve. all:strictmagic.
+                      ** magic.
+                      ** simplify. (* Here, it should be able to simplify. *)
+          -
+
+(* magic. *) fail.
         }
     }
 
