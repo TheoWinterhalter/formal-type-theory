@@ -667,7 +667,12 @@ Proof.
                          Unshelve. all:magic.
                          Unshelve. all:strictmagic.
                       ** magic.
-                      ** simplify. (* Here, it should be able to simplify. *)
+                      ** eapply EqTySym.
+                         --- simplify. (* It should simplify on both sides
+                                          before ever applying congruence! *)
+                             fail.
+
+simplify. (* Here, it should be able to simplify. *)
           -
 
 (* magic. *) fail.
