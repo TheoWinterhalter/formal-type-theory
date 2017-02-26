@@ -1,21 +1,20 @@
 (* Inversion theorems for ptt. *)
 
+Require config.
+Require Import config_tactics.
+
 Require Import syntax.
-Require tt ptt.
-Require config_tactics.
+Require Import tt.
 
-Module Make (ConfigReflection : tt.CONFIG_REFLECTION).
+Section PttInversion.
 
-Module my_ptt := ptt.Make ConfigReflection.
-Import my_ptt.
-
-Module my_config_tactics := config_tactics.Make tt.HasPrecond ConfigReflection.
-Import my_config_tactics.
+Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
+Context `{ConfigReflection : config.Reflection}.
 
 Definition CtxExtendInversion G A (H : isctx (ctxextend G A)) :
   isctx G * istype G A.
 Proof.
-  config inversion H. easy.
+  config inversion_clear H. easy.
 Defined.
 
 Fixpoint TyIdInversion G A u v (H : istype G (Id A u v)) {struct H} :
@@ -26,12 +25,12 @@ Proof.
   - { split ; [(split ; [split | idtac]) | idtac].
 
       - assumption.
-      - apply (@TyCtxConv G0 G) ; auto.
+      - apply (@TyCtxConv _ _ G0 G) ; auto.
         now apply TyIdInversion with (u := u) (v := v).
-      - apply (@TermCtxConv G0 G) ; auto.
+      - apply (@TermCtxConv _ _ G0 G) ; auto.
         + now apply TyIdInversion with (u := u) (v:= v).
         + now config apply TyIdInversion with (u := u) (v:= v).
-      - apply (@TermCtxConv G0 G) ; auto.
+      - apply (@TermCtxConv _ _ G0 G) ; auto.
         + now apply TyIdInversion with (u := u) (v:= v).
         + now config apply TyIdInversion with (u := u) (v:= v).
     }
@@ -52,9 +51,9 @@ Proof.
 
   - { split ; [ split | idtac ].
       - assumption.
-      - apply (@TyCtxConv G0 G) ; auto.
+      - apply (@TyCtxConv _ _ G0 G) ; auto.
         now apply (TyProdInversion G0 A B).
-      - apply (@TyCtxConv (ctxextend G0 A) (ctxextend G A)).
+      - apply (@TyCtxConv _ _ (ctxextend G0 A) (ctxextend G A)).
         + now apply (TyProdInversion G0 A B).
         + apply EqCtxExtend ; auto.
           * now capply (TyProdInversion G0 A B).
@@ -65,7 +64,7 @@ Proof.
           now apply (TyProdInversion G0 A B).
         + capply CtxExtend.
           * assumption.
-          * apply (@TyCtxConv G0 G) ; auto.
+          * apply (@TyCtxConv _ _ G0 G) ; auto.
             now apply (TyProdInversion G0 A B).
     }
 
@@ -76,4 +75,4 @@ Proof.
     }
 Defined.
 
-End Make.
+End PttInversion.

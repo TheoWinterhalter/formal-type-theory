@@ -1,7 +1,7 @@
 Inductive context : Type :=
      | ctxempty : context
      | ctxextend : context -> type -> context
-                                   
+
 with type : Type :=
      | Prod : type -> type -> type
      | Id : type -> term -> term -> type

@@ -1,31 +1,24 @@
 (* Confgurable type theory. *)
 
 Require Import syntax.
+Require Import config.
 
-Module Type CONFIG_PRECOND.
-  Parameter precondFlag : Type.
-End CONFIG_PRECOND.
-
-Module Type CONFIG_REFLECTION.
-  Parameter reflectionFlag : Type.
-End CONFIG_REFLECTION.
-
-Module Make
-       (ConfigPrecond : CONFIG_PRECOND)
-       (ConfigReflection : CONFIG_REFLECTION).
-
+Section TypeTheoryRules.
 (* Notations for writing down inference rules. *)
+
+Context `{ConfigPrecond : config.Precond}.
+Context `{ConfigReflection : config.Reflection}.
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
 Notation "'extensional' r" :=
-  (forall { _ : ConfigReflection.reflectionFlag }, r) (only parsing, at level 97).
+  (forall { _ : reflectionFlag }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
     (at level 200, x binder, y binder, right associativity, only parsing).
 Notation "'premise:' p q" := (p -> q) (only parsing, at level 95).
-Notation "'precond:' p q" := ((ConfigPrecond.precondFlag -> p) -> q) (only parsing, at level 95).
+Notation "'precond:' p q" := ((precondFlag -> p) -> q) (only parsing, at level 95).
 Notation "'conclusion:' q" := q (no associativity, only parsing, at level 94).
 
 Inductive isctx : context -> Type :=
@@ -1618,28 +1611,4 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst A sbs)
        endrule.
 
-End Make.
-
-Module HasPrecond <: CONFIG_PRECOND.
-  Inductive precondUnit : Type := precond.
-  Definition precondFlag := precondUnit.
-End HasPrecond.
-
-Module HasntPrecond <: CONFIG_PRECOND.
-  Inductive precondEmpty : Type :=.
-  Definition precondFlag := precondEmpty.
-End HasntPrecond.
-
-Module HasReflection <: CONFIG_REFLECTION.
-  Inductive reflectionUnit : Type := reflection.
-  Definition reflectionFlag := reflectionUnit.
-End HasReflection.
-
-Module HasntReflection <: CONFIG_REFLECTION.
-  Inductive reflectionEmpty : Type :=.
-  Definition reflectionFlag := reflectionEmpty.
-End HasntReflection.
-
-Module MakeParanoid := Make (HasPrecond).
-
-Module MakeEconomic := Make(HasntPrecond).
+End TypeTheoryRules.

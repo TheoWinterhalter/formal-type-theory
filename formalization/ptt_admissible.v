@@ -1,21 +1,15 @@
 (* Admissibile ptt rules. *)
 
-Require tt.
-Require ptt.
-Require config_tactics.
-Require ptt_tactics.
-
+Require config.
+Require Import config_tactics.
+Require Import tt.
 Require Import syntax.
+Require Import ptt_tactics.
 
-Module Make (ConfigReflection : tt.CONFIG_REFLECTION).
+Section PttAdmissible.
 
-Module my_config_tactics := config_tactics.Make (tt.HasPrecond) (ConfigReflection).
-Import my_config_tactics.
-
-Module my_ptt_tactics := ptt_tactics.Make (ConfigReflection).
-Import my_ptt_tactics.
-Import my_ptt_tactics.my_ptt.
-
+Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
+Context `{configReflection : config.Reflection}.
 
 (* Some preliminary lemmata *)
 Lemma EqTyWeakNat :
@@ -201,4 +195,4 @@ Proof.
   intros. magic.
 Defined.
 
-End Make.
+End PttAdmissible.

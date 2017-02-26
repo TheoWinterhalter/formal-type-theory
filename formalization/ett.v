@@ -1,7 +1,21 @@
+Require config.
 Require Import tt.
 
-Module Make (ConfigReflection : CONFIG_REFLECTION) :=
-  MakeEconomic(ConfigReflection).
+Section Ptt.
+
+Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.No |}.
+Context `{configReflection : config.Reflection}.
+
+Definition isctx := isctx.
+Definition issubst := issubst.
+Definition istype := istype.
+Definition isterm := isterm.
+Definition eqctx := eqctx.
+Definition eqsubst := eqsubst.
+Definition eqtype := eqtype.
+Definition eqterm := eqterm.
+
+End Ptt.
 
 (* OLD STUFF BELOW
 

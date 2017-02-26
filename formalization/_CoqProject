@@ -1,8 +1,9 @@
 -R . ""
 
+config.v
+config_tactics.v
 syntax.v
 tt.v
-config_tactics.v
 ett.v
 ptt.v
 

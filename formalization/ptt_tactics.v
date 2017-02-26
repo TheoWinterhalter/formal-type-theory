@@ -1,20 +1,15 @@
 (* Tactics and auxiliary lemmas for ptt. *)
 
-Require tt.
-Require ptt.
-Require config_tactics.
+Require config.
+Require Import config_tactics.
+Require Import tt.
 Require Import syntax.
 
-Module Make (ConfigReflection : tt.CONFIG_REFLECTION).
-
-Module my_config_tactics := config_tactics.Make (tt.HasPrecond) (ConfigReflection).
-Import my_config_tactics.
-
-Module my_ptt := ptt.Make (ConfigReflection).
-Import my_ptt.
+(* Work with precond. *)
+Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
 
 (* Some tactic to compose substitutions. *)
-Lemma eqtype_subst_left :
+Lemma eqtype_subst_left `{config.Reflection} :
   forall {G D E A B sbs sbt},
     issubst sbs G D ->
     issubst sbt D E ->
@@ -39,7 +34,7 @@ Proof.
     ceapply SubstComp ; eassumption.
 Defined.
 
-Lemma eqterm_subst_left :
+Lemma eqterm_subst_left `{config.Reflection} :
   forall {G D E A u v sbs sbt},
     issubst sbs G D ->
     issubst sbt D E ->
@@ -128,8 +123,7 @@ Ltac compsubst1 :=
   | |- ?G => fail "Not a goal handled by compsubst" G
   end.
 
-
-Lemma EqCompZero :
+Lemma EqCompZero `{config.Reflection} :
   forall {G D A u sbs},
     issubst sbs G D ->
     isterm D u A ->
@@ -258,8 +252,6 @@ Proof.
   { ceapply TermSubst ; eassumption. }
   assert (eqsubst sbs sbs G D).
   { ceapply SubstRefl ; assumption. }
-
-
 
   ceapply EqTrans ; [
     ceapply EqSym ; [
@@ -1268,4 +1260,3 @@ Ltac keep_eq :=
   | _ => shelve
   end.
 
-End Make.
