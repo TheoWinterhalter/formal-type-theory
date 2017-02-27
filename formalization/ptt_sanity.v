@@ -696,8 +696,46 @@ Proof.
                          --- magic.
                          --- magic.
                          --- magic.
-                         --- (* Finally, back to the problem. *)
-                           fail.
+                         ---
+                           eapply EqTyTrans.
+                           +++ eapply CongTySubst.
+                               *** eapply SubstTrans.
+                                   ---- eapply CompAssoc ; admit.
+                                   ---- eapply CongSubstComp.
+                                        ++++ eapply SubstRefl ; admit.
+                                        ++++ eapply SubstTrans.
+                                             **** eapply CompShift.
+
+                           eapply EqTyTrans ; [
+                               eapply CongTySubst ; [
+                                 eapply SubstTrans ; [
+                                   eapply CompAssoc
+                                 | eapply CongSubstComp ; [
+                                     eapply SubstRefl
+                                   | eapply SubstTrans ; [
+                                       eapply CompShift
+                                     | eapply SubstTrans ; [
+                                         eapply CongSubstShift ; [
+                                           idtac
+                                         | simplify_subst
+                                         | ..
+                                         ]
+                                       | ..
+                                       ]
+                                     | ..
+                                     ]
+                                   | ..
+                                   ]
+                                 | ..
+                                 ]
+                               | eapply EqTyRefl
+                               | ..
+                               ]
+                             | ..
+                             ].
+
+(* Finally, back to the problem. *)
+                           fail "I decided, don't worry".
           -
 
 (* magic. *) fail.

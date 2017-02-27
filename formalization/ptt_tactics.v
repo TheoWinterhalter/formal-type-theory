@@ -470,6 +470,57 @@ Ltac simplify_subst :=
         | ..
         ]
 
+      (* In case we have to shifts, we look if we ever can simplify inside. *)
+      | sbcomp (sbshift _ _ _) (sbshift _ _ _) =>
+        first [
+          eapply SubstTrans ; [
+            eapply CompShift
+          | eapply SubstTrans ; [
+              eapply CongSubstShift ; [
+                idtac
+              | simplify_subst
+              | ..
+              ]
+            | ..
+            ]
+          | ..
+          ]
+          (* If we fail, we go back to the "general" case. *)
+        | eapply CongSubstComp ; [
+            simplify_subst
+          | eapply SubstRefl
+          | ..
+          ]
+        ]
+      | sbcomp (sbshift _ _ _) (sbcomp (sbshift _ _ _) _) =>
+        first [
+          eapply SubstTrans ; [
+            eapply CompAssoc
+          | eapply CongSubstComp ; [
+              eapply SubstRefl
+            | eapply SubstTrans ; [
+                eapply CompShift
+              | eapply SubstTrans ; [
+                  eapply CongSubstShift ; [
+                    idtac
+                  | simplify_subst
+                  | ..
+                  ]
+                | ..
+                ]
+              | ..
+              ]
+            | ..
+            ]
+          | ..
+          ]
+        | eapply CongSubstComp ; [
+            simplify_subst
+          | eapply SubstRefl
+          | ..
+          ]
+        ]
+
       | sbcomp ?sbs ?sbt =>
         eapply CongSubstComp ; [
           simplify_subst
