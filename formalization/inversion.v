@@ -1,28 +1,42 @@
 (* Inversion lemmata that come after proving sanity. *)
 (* We prove them from PTT to ETT for simplicity. *)
 
+Require config.
+Require Import config_tactics.
+
 Require Import syntax.
+Require Import tt.
 Require ptt.
 Require ptt_admissible.
-Require Import ett.
+Require ett.
 Require ptt2ett ett2ptt.
 Require ett_sanity.
-Require Import config_tactics tactics.
+Require Import tactics.
+
+Section Inversion.
+
+Context `{configReflection : config.Reflection}.
 
 Fixpoint TermAbsInversion {G A B u T}
          (H : ptt.isterm G (lam A B u) T) {struct H} :
-  isctx G *
-  istype G A *
-  istype (ctxextend G A) B *
-  isterm (ctxextend G A) u B *
-  eqtype G (Prod A B) T.
+  ett.isctx G *
+  ett.istype G A *
+  ett.istype (ctxextend G A) B *
+  ett.isterm (ctxextend G A) u B *
+  ett.eqtype G (Prod A B) T.
 Proof.
   inversion H ; doConfig.
 
     (* Type conversion *)
   - { destruct (@TermAbsInversion _ _ _ _ _ X) as [[[[? ?] ?] ?] ?].
       repeat split ; try assumption.
-      ceapply EqTyTrans ; [
+      ceapply EqTyTrans.
+      - eassumption.
+      - Set Printing Implicit. idtac.
+        (* Somehow, the unification process can't deal with this properly. *)
+        fail.
+
+ ; [
         eassumption
       | hyp ..
       ].
@@ -352,3 +366,5 @@ Proof.
     }
 
 Defined.
+
+End Inversion.

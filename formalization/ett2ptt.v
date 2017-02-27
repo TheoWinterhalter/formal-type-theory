@@ -995,3 +995,5 @@ Proof.
   }
 
 Defined.
+
+End Ett2Ptt.

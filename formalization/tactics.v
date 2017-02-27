@@ -1,7 +1,11 @@
 (* Some useful tactics. *)
 
+Require config.
+Require Import config_tactics.
+
 Require Import syntax.
-Require tt ett ptt.
+Require Import tt.
+Require ett ptt.
 Require ptt2ett ett2ptt.
 Require ett_sanity.
 
