@@ -594,11 +594,36 @@ Ltac eqtype_subst G A sbs B k try shelf tysym debug :=
         ] ; k try shelf true debug
       end
     )
-    else first [
-      simplify
-    | eapply CongTySubst
-    | myfail debug
-    ] ; k try shelf true debug
+    else
+      match B with
+      | Subst ?B ?sbt =>
+        tryif (is_var B)
+        then (
+          tryif (is_var sbt)
+          then first [
+            simplify
+          | eapply CongTySubst
+          | myfail debug
+          ] ; k try shelf true debug
+          else first [
+            simplify
+          | eapply EqTySym ; [ simplify | .. ]
+          | eapply CongTySubst
+          | myfail debug
+          ] ; k try shelf true debug
+        )
+        else first [
+          (* Should we simplify on the left first? *)
+          pushsubst1
+        | myfail debug
+        ] ; k try shelf true debug
+      | _ =>
+        first [
+          simplify
+        | eapply CongTySubst
+        | myfail debug
+        ] ; k try shelf true debug
+      end
   )
   else first [
     pushsubst1

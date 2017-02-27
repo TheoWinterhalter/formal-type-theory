@@ -667,12 +667,37 @@ Proof.
                          Unshelve. all:magic.
                          Unshelve. all:strictmagic.
                       ** magic.
-                      ** eapply EqTySym.
-                         --- simplify. (* It should simplify on both sides
-                                          before ever applying congruence! *)
-                             fail.
-
-simplify. (* Here, it should be able to simplify. *)
+                      ** eapply EqTySym ; [ simplify | .. ].
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                             Unshelve. all:strictmagic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- magic.
+                         --- (* Finally, back to the problem. *)
+                           fail.
           -
 
 (* magic. *) fail.
