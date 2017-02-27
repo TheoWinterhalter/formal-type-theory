@@ -514,6 +514,43 @@ Ltac simplify_subst :=
             ]
           | ..
           ]
+        | eapply SubstTrans ; [
+            eapply CompAssoc
+          | eapply CongSubstComp ; [
+              eapply SubstRefl
+            | eapply SubstTrans ; [
+                eapply SubstTrans ; [
+                  eapply CongSubstComp ; [
+                    eapply CongSubstShift
+                  | eapply EqSubstCtxConv ; [
+                      eapply CongSubstShift
+                    | ..
+                    ]
+                  | ..
+                  ]
+                | eapply EqSubstCtxConv ; [
+                    eapply CompShift
+                  | ..
+                  ]
+                | ..
+                ]
+              | eapply SubstTrans ; [
+                  eapply EqSubstCtxConv ; [
+                    eapply CongSubstShift ; [
+                      idtac
+                    | simplify_subst
+                    | ..
+                    ]
+                  | ..
+                  ]
+                | ..
+                ]
+              | ..
+              ]
+            | ..
+            ]
+          | ..
+          ]
         | eapply CongSubstComp ; [
             simplify_subst
           | eapply SubstRefl

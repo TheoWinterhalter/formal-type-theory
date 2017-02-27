@@ -697,6 +697,82 @@ Proof.
                          --- magic.
                          --- magic.
                          ---
+
+            (* { eapply EqTyTrans. *)
+            (*   - eapply CongTySubst. *)
+            (*     + eapply SubstTrans. *)
+            (*       * eapply CompAssoc ; shelve. *)
+            (*       * eapply CongSubstComp. *)
+            (*         -- eapply SubstRefl ; shelve. *)
+            (*         -- eapply SubstTrans. *)
+            (*            ++ eapply SubstTrans ; [ *)
+            (*                 eapply CongSubstComp ; [ *)
+            (*                   eapply CongSubstShift *)
+            (*                 | eapply EqSubstCtxConv ; [ *)
+            (*                     eapply CongSubstShift *)
+            (*                   | .. *)
+            (*                   ] *)
+            (*                 | .. *)
+            (*                 ] *)
+            (*               | eapply EqSubstCtxConv ; [ *)
+            (*                   eapply CompShift *)
+            (*                 | .. *)
+            (*                 ] *)
+            (*               | .. *)
+            (*               ] ; shelve. *)
+            (*            ++ eapply SubstTrans. *)
+            (*               ** eapply EqSubstCtxConv. *)
+            (*                  --- eapply CongSubstShift. *)
+
+
+                           eapply EqTyTrans ; [
+                             eapply CongTySubst ; [
+                               eapply SubstTrans ; [
+                                 eapply CompAssoc
+                               | eapply CongSubstComp ; [
+                                   eapply SubstRefl
+                                 | eapply SubstTrans ; [
+                                     eapply SubstTrans ; [
+                                       eapply CongSubstComp ; [
+                                         eapply CongSubstShift
+                                       | eapply EqSubstCtxConv ; [
+                                           eapply CongSubstShift
+                                         | ..
+                                         ]
+                                       | ..
+                                       ]
+                                     | eapply EqSubstCtxConv ; [
+                                         eapply CompShift
+                                       | ..
+                                       ]
+                                     | ..
+                                     ]
+
+                                   | eapply SubstTrans ; [
+                                       eapply EqSubstCtxConv ; [
+                                         eapply CongSubstShift ; [
+                                           idtac
+                                         | myfail true
+                                         | ..
+                                         ]
+                                       | ..
+                                       ]
+                                     | ..
+                                     ]
+                                   | ..
+                                   ]
+                                 | ..
+                                 ]
+                               | ..
+                               ]
+                             | eapply EqTyRefl
+                             | ..
+                             ]
+                           | ..
+                           ].
+
+
+
                            eapply EqTyTrans.
                            +++ eapply CongTySubst.
                                *** eapply SubstTrans.
@@ -704,7 +780,21 @@ Proof.
                                    ---- eapply CongSubstComp.
                                         ++++ eapply SubstRefl ; admit.
                                         ++++ eapply SubstTrans.
-                                             **** eapply CompShift.
+                                             **** eapply CongSubstComp ;
+                                                    [ eapply CongSubstShift
+                                                    | eapply EqSubstCtxConv ; [
+                                                        eapply CongSubstShift
+                                                      | ..
+                                                      ]
+                                                    | ..
+                                                    ].
+                                                  all:admit.
+                                             **** eapply EqSubstCtxConv ; [
+                                                    eapply CompShift
+                                                  | ..
+                                                  ] ; admit.
+                                             ****
+
 
                            eapply EqTyTrans ; [
                                eapply CongTySubst ; [
