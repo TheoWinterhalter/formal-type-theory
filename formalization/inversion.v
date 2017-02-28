@@ -30,10 +30,9 @@ Proof.
     (* Type conversion *)
   - { destruct (@TermAbsInversion _ _ _ _ _ X) as [[[[? ?] ?] ?] ?].
       repeat split ; try assumption.
-      ceapply EqTyTrans ; [
-        eassumption
-      | hyp ..
-      ].
+      ceapply EqTyTrans.
+      - eassumption.
+      - hyp.
     }
 
     (* Context conversion *)
@@ -59,12 +58,12 @@ Defined.
 
 Fixpoint TermAppInversion {G A B u v T}
          (H : ptt.isterm G (app u A B v) T) {struct H} :
-  isctx G *
-  istype G A *
-  istype (ctxextend G A) B *
-  isterm G u (Prod A B) *
-  isterm G v A *
-  eqtype G (Subst B (sbzero A v)) T.
+  ett.isctx G *
+  ett.istype G A *
+  ett.istype (ctxextend G A) B *
+  ett.isterm G u (Prod A B) *
+  ett.isterm G v A *
+  ett.eqtype G (Subst B (sbzero A v)) T.
 Proof.
   inversion H ; doConfig.
 
@@ -77,7 +76,7 @@ Proof.
     }
 
   - { destruct (@TermAppInversion _ _ _ _ _ _ X) as [[[[[? ?] ?] ?] ?] ?].
-      assert (eqctx (ctxextend G0 A) (ctxextend G A)).
+      assert (ett.eqctx (ctxextend G0 A) (ctxextend G A)).
       { ceapply EqCtxExtend ; try hyp.
         ceapply EqTyRefl ; hyp.
       }
@@ -101,10 +100,10 @@ Defined.
 
 Fixpoint TermReflInversion {G A u T}
          (H : ptt.isterm G (refl A u) T) {struct H} :
-  isctx G *
-  istype G A *
-  isterm G u A *
-  eqtype G (Id A u u) T.
+  ett.isctx G *
+  ett.istype G A *
+  ett.isterm G u A *
+  ett.eqtype G (Id A u u) T.
 Proof.
   inversion H ; doConfig.
 
@@ -133,10 +132,10 @@ Defined.
 
 Fixpoint TermJInversion {G A u C w v p T}
          (H : ptt.isterm G (j A u C w v p) T) {struct H} :
-  isctx G *
-  istype G A *
-  isterm G u A *
-  istype
+  ett.isctx G *
+  ett.istype G A *
+  ett.isterm G u A *
+  ett.istype
     (ctxextend
        (ctxextend G A)
        (Id
@@ -146,7 +145,7 @@ Fixpoint TermJInversion {G A u C w v p T}
        )
     )
     C *
-  isterm G
+  ett.isterm G
              w
              (Subst
                 (Subst
@@ -162,9 +161,9 @@ Fixpoint TermJInversion {G A u C w v p T}
                 )
                 (sbzero (Id A u u) (refl A u))
              ) *
-  isterm G v A *
-  isterm G p (Id A u v) *
-  eqtype G
+  ett.isterm G v A *
+  ett.isterm G p (Id A u v) *
+  ett.eqtype G
              (Subst
                 (Subst
                    C
@@ -195,7 +194,7 @@ Proof.
   - { destruct (@TermJInversion _ _ _ _ _ _ _ _ X)
         as [[[[[[[? ?] ?] ?] ?] ?] ?] ?].
       assert (
-          eqctx
+          ett.eqctx
             (ctxextend (ctxextend G0 A)
                        (Id (Subst A (sbweak A))
                            (subst u (sbweak A))
@@ -288,10 +287,10 @@ Defined.
 
 Fixpoint TermExfalsoInversion {G A u T}
          (H : ptt.isterm G (exfalso A u) T) {struct H} :
-  isctx G *
-  istype G A *
-  isterm G u Empty *
-  eqtype G A T.
+  ett.isctx G *
+  ett.istype G A *
+  ett.isterm G u Empty *
+  ett.eqtype G A T.
 Proof.
   inversion H ; doConfig.
 
@@ -319,12 +318,12 @@ Defined.
 
 Fixpoint TermCondInversion {G C u v w T}
          (H : ptt.isterm G (cond C u v w) T) {struct H} :
-  isctx G *
-  isterm G u Bool *
-  istype (ctxextend G Bool) C *
-  isterm G v (Subst C (sbzero Bool true)) *
-  isterm G w (Subst C (sbzero Bool false)) *
-  eqtype G (Subst C (sbzero Bool u)) T.
+  ett.isctx G *
+  ett.isterm G u Bool *
+  ett.istype (ctxextend G Bool) C *
+  ett.isterm G v (Subst C (sbzero Bool true)) *
+  ett.isterm G w (Subst C (sbzero Bool false)) *
+  ett.eqtype G (Subst C (sbzero Bool u)) T.
 Proof.
   inversion H ; doConfig.
 
@@ -339,7 +338,7 @@ Proof.
 
   - { destruct (@TermCondInversion _ _ _ _ _ _ X)
         as [[[[[? ?] ?] ?] ?] ?].
-      assert (eqctx (ctxextend G0 Bool) (ctxextend G Bool)).
+      assert (ett.eqctx (ctxextend G0 Bool) (ctxextend G Bool)).
       { capply EqCtxExtend ; try ehyp.
         capply EqTyRefl. ett_sane.
       }

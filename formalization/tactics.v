@@ -9,9 +9,53 @@ Require ett ptt.
 Require ptt2ett ett2ptt.
 Require ett_sanity.
 
+(* Tactic to unfold ett and ptt judgments *)
+Ltac one_unfold_tt :=
+  match goal with
+  (* ETT *)
+  | |- ett.isctx _         => unfold ett.isctx
+  | |- ett.issubst _ _ _   => unfold ett.issubst
+  | |- ett.istype _ _      => unfold ett.istype
+  | |- ett.isterm _ _ _    => unfold ett.isterm
+  | |- ett.eqctx _ _       => unfold ett.eqctx
+  | |- ett.eqsubst _ _ _ _ => unfold ett.eqsubst
+  | |- ett.eqtype _ _ _    => unfold ett.eqtype
+  | |- ett.eqterm _ _ _ _  => unfold ett.eqterm
+  (* Also in hypotheses *)
+  | [ H : ett.isctx _         |- _ ] => unfold ett.isctx   in H
+  | [ H : ett.issubst _ _ _   |- _ ] => unfold ett.issubst in H
+  | [ H : ett.istype _ _      |- _ ] => unfold ett.istype  in H
+  | [ H : ett.isterm _ _ _    |- _ ] => unfold ett.isterm  in H
+  | [ H : ett.eqctx _ _       |- _ ] => unfold ett.eqctx   in H
+  | [ H : ett.eqsubst _ _ _ _ |- _ ] => unfold ett.eqsubst in H
+  | [ H : ett.eqtype _ _ _    |- _ ] => unfold ett.eqtype  in H
+  | [ H : ett.eqterm _ _ _ _  |- _ ] => unfold ett.eqterm  in H
+  (* PTT *)
+  | |- ptt.isctx _         => unfold ptt.isctx
+  | |- ptt.issubst _ _ _   => unfold ptt.issubst
+  | |- ptt.istype _ _      => unfold ptt.istype
+  | |- ptt.isterm _ _ _    => unfold ptt.isterm
+  | |- ptt.eqctx _ _       => unfold ptt.eqctx
+  | |- ptt.eqsubst _ _ _ _ => unfold ptt.eqsubst
+  | |- ptt.eqtype _ _ _    => unfold ptt.eqtype
+  | |- ptt.eqterm _ _ _ _  => unfold ptt.eqterm
+  (* Also in hypotheses *)
+  | [ H : ptt.isctx _         |- _ ] => unfold ptt.isctx   in H
+  | [ H : ptt.issubst _ _ _   |- _ ] => unfold ptt.issubst in H
+  | [ H : ptt.istype _ _      |- _ ] => unfold ptt.istype  in H
+  | [ H : ptt.isterm _ _ _    |- _ ] => unfold ptt.isterm  in H
+  | [ H : ptt.eqctx _ _       |- _ ] => unfold ptt.eqctx   in H
+  | [ H : ptt.eqsubst _ _ _ _ |- _ ] => unfold ptt.eqsubst in H
+  | [ H : ptt.eqtype _ _ _    |- _ ] => unfold ptt.eqtype  in H
+  | [ H : ptt.eqterm _ _ _ _  |- _ ] => unfold ptt.eqterm  in H
+  end.
+
+Ltac unfold_tt := repeat one_unfold_tt.
+
 (* Tactics to apply an hypothesis that could be in PTT instead of ETT
    or the converse *)
 Ltac hyp :=
+  unfold_tt ;
   match goal with
   | [ H : isctx ?G |- isctx ?G ] =>
     first [
@@ -58,6 +102,7 @@ Ltac hyp :=
   end.
 
 Ltac ehyp :=
+  unfold_tt ;
   match goal with
   | [ H : isctx ?G |- isctx _ ] =>
     first [
@@ -71,7 +116,7 @@ Ltac ehyp :=
     | exact (ett2ptt.sane_issubst sbs G D H)
     | exact H
     ]
-  | [ H : istype ?G ?A |- istype ?G ?A ] =>
+  | [ H : istype ?G ?A |- istype _ _ ] =>
     first [
       exact (ptt2ett.sane_istype G A H)
     | exact (ett2ptt.sane_istype G A H)
