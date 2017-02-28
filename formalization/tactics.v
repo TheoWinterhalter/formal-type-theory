@@ -9,83 +9,99 @@ Require ett ptt.
 Require ptt2ett ett2ptt.
 Require ett_sanity.
 
-(* Tactics to apply an hypothesis that could be in PTT instead of ETT. *)
-Ltac pttassumption :=
+(* Tactics to apply an hypothesis that could be in PTT instead of ETT
+   or the converse *)
+Ltac hyp :=
   match goal with
-  | [ H : ptt.isctx ?G |- ett.isctx ?G ] =>
-    exact (ptt2ett.sane_isctx G H)
-  | [ H : ptt.issubst ?sbs ?G ?D |- ett.issubst ?sbs ?G ?D ] =>
-    exact (ptt2ett.sane_issubst sbs G D H)
-  | [ H : ptt.istype ?G ?A |- ett.istype ?G ?A ] =>
-    exact (ptt2ett.sane_istype G A H)
-  | [ H : ptt.isterm ?G ?u ?A |- ett.isterm ?G ?u ?A ] =>
-    exact (ptt2ett.sane_isterm G u A H)
-  | [ H : ptt.eqctx ?G ?D |- ett.eqctx ?G ?D ] =>
-    exact (ptt2ett.sane_eqctx G D H)
-  | [ H : ptt.eqtype ?G ?A ?B |- ett.eqtype ?G ?A ?B ] =>
-    exact (ptt2ett.sane_eqtype G A B H)
-  | [ H : ptt.eqterm ?G ?u ?v ?A |- ett.eqterm ?G ?u ?v ?A ] =>
-    exact (ptt2ett.sane_eqterm G u v A H)
+  | [ H : isctx ?G |- isctx ?G ] =>
+    first [
+      exact (ptt2ett.sane_isctx G H)
+    | exact (ett2ptt.sane_isctx G H)
+    | exact H
+    ]
+  | [ H : issubst ?sbs ?G ?D |- issubst ?sbs ?G ?D ] =>
+    first [
+      exact (ptt2ett.sane_issubst sbs G D H)
+    | exact (ett2ptt.sane_issubst sbs G D H)
+    | exact H
+    ]
+  | [ H : istype ?G ?A |- istype ?G ?A ] =>
+    first [
+      exact (ptt2ett.sane_istype G A H)
+    | exact (ett2ptt.sane_istype G A H)
+    | exact H
+    ]
+  | [ H : isterm ?G ?u ?A |- isterm ?G ?u ?A ] =>
+    first [
+      exact (ptt2ett.sane_isterm G u A H)
+    | exact (ett2ptt.sane_isterm G u A H)
+    | exact H
+    ]
+  | [ H : eqctx ?G ?D |- eqctx ?G ?D ] =>
+    first [
+      exact (ptt2ett.sane_eqctx G D H)
+    | exact (ett2ptt.sane_eqctx G D H)
+    | exact H
+    ]
+  | [ H : eqtype ?G ?A ?B |- eqtype ?G ?A ?B ] =>
+    first [
+      exact (ptt2ett.sane_eqtype G A B H)
+    | exact (ett2ptt.sane_eqtype G A B H)
+    | exact H
+    ]
+  | [ H : eqterm ?G ?u ?v ?A |- eqterm ?G ?u ?v ?A ] =>
+    first [
+      exact (ptt2ett.sane_eqterm G u v A H)
+    | exact (ett2ptt.sane_eqterm G u v A H)
+    | exact H
+    ]
   end.
 
-(* The converse. *)
-Ltac ettassumption :=
+Ltac ehyp :=
   match goal with
-  | [ H : ett.isctx ?G |- ptt.isctx ?G ] =>
-    exact (ett2ptt.sane_isctx G H)
-  | [ H : ett.issubst ?sbs ?G ?D |- ptt.issubst ?sbs ?G ?D ] =>
-    exact (ett2ptt.sane_issubst sbs G D H)
-  | [ H : ett.istype ?G ?A |- ptt.istype ?G ?A ] =>
-    exact (ett2ptt.sane_istype G A H)
-  | [ H : ett.isterm ?G ?u ?A |- ptt.isterm ?G ?u ?A ] =>
-    exact (ett2ptt.sane_isterm G u A H)
-  | [ H : ett.eqctx ?G ?D |- ptt.eqctx ?G ?D ] =>
-    exact (ett2ptt.sane_eqctx G D H)
-  | [ H : ett.eqtype ?G ?A ?B |- ptt.eqtype ?G ?A ?B ] =>
-    exact (ett2ptt.sane_eqtype G A B H)
-  | [ H : ett.eqterm ?G ?u ?v ?A |- ptt.eqterm ?G ?u ?v ?A ] =>
-    exact (ett2ptt.sane_eqterm G u v A H)
+  | [ H : isctx ?G |- isctx _ ] =>
+    first [
+      exact (ptt2ett.sane_isctx G H)
+    | exact (ett2ptt.sane_isctx G H)
+    | exact H
+    ]
+  | [ H : issubst ?sbs ?G ?D |- issubst _ _ _ ] =>
+    first [
+      exact (ptt2ett.sane_issubst sbs G D H)
+    | exact (ett2ptt.sane_issubst sbs G D H)
+    | exact H
+    ]
+  | [ H : istype ?G ?A |- istype ?G ?A ] =>
+    first [
+      exact (ptt2ett.sane_istype G A H)
+    | exact (ett2ptt.sane_istype G A H)
+    | exact H
+    ]
+  | [ H : isterm ?G ?u ?A |- isterm _ _ _ ] =>
+    first [
+      exact (ptt2ett.sane_isterm G u A H)
+    | exact (ett2ptt.sane_isterm G u A H)
+    | exact H
+    ]
+  | [ H : eqctx ?G ?D |- eqctx _ _ ] =>
+    first [
+      exact (ptt2ett.sane_eqctx G D H)
+    | exact (ett2ptt.sane_eqctx G D H)
+    | exact H
+    ]
+  | [ H : eqtype ?G ?A ?B |- eqtype _ _ _ ] =>
+    first [
+      exact (ptt2ett.sane_eqtype G A B H)
+    | exact (ett2ptt.sane_eqtype G A B H)
+    | exact H
+    ]
+  | [ H : eqterm ?G ?u ?v ?A |- eqterm _ _ _ _ ] =>
+    first [
+      exact (ptt2ett.sane_eqterm G u v A H)
+    | exact (ett2ptt.sane_eqterm G u v A H)
+    | exact H
+    ]
   end.
-
-Ltac hyp := first [ assumption | pttassumption | ettassumption ].
-
-Ltac epttassumption :=
-  match goal with
-  | [ H : ptt.isctx ?G |- ett.isctx _ ] =>
-    exact (ptt2ett.sane_isctx G H)
-  | [ H : ptt.issubst ?sbs ?G ?D |- ett.issubst _ _ _ ] =>
-    exact (ptt2ett.sane_issubst sbs G D H)
-  | [ H : ptt.istype ?G ?A |- ett.istype _ _ ] =>
-    exact (ptt2ett.sane_istype G A H)
-  | [ H : ptt.isterm ?G ?u ?A |- ett.isterm _ _ _ ] =>
-    exact (ptt2ett.sane_isterm G u A H)
-  | [ H : ptt.eqctx ?G ?D |- ett.eqctx _ _ ] =>
-    exact (ptt2ett.sane_eqctx G D H)
-  | [ H : ptt.eqtype ?G ?A ?B |- ett.eqtype _ _ _ ] =>
-    exact (ptt2ett.sane_eqtype G A B H)
-  | [ H : ptt.eqterm ?G ?u ?v ?A |- ett.eqterm _ _ _ _ ] =>
-    exact (ptt2ett.sane_eqterm G u v A H)
-  end.
-
-Ltac eettassumption :=
-  match goal with
-  | [ H : ett.isctx ?G |- ptt.isctx _ ] =>
-    exact (ett2ptt.sane_isctx G H)
-  | [ H : ett.issubst ?sbs ?G ?D |- ptt.issubst _ _ _ ] =>
-    exact (ett2ptt.sane_issubst sbs G D H)
-  | [ H : ett.istype ?G ?A |- ptt.istype _ _ ] =>
-    exact (ett2ptt.sane_istype G A H)
-  | [ H : ett.isterm ?G ?u ?A |- ptt.isterm _ _ _ ] =>
-    exact (ett2ptt.sane_isterm G u A H)
-  | [ H : ett.eqctx ?G ?D |- ptt.eqctx _ _ ] =>
-    exact (ett2ptt.sane_eqctx G D H)
-  | [ H : ett.eqtype ?G ?A ?B |- ptt.eqtype _ _ _ ] =>
-    exact (ett2ptt.sane_eqtype G A B H)
-  | [ H : ett.eqterm ?G ?u ?v ?A |- ptt.eqterm _ _ _ _ ] =>
-    exact (ett2ptt.sane_eqterm G u v A H)
-  end.
-
-Ltac ehyp := first [ eassumption | epttassumption | eettassumption ].
 
 (* A tactic to apply sanity in ptt. *)
 Ltac ptt_sane :=

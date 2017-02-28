@@ -30,13 +30,7 @@ Proof.
     (* Type conversion *)
   - { destruct (@TermAbsInversion _ _ _ _ _ X) as [[[[? ?] ?] ?] ?].
       repeat split ; try assumption.
-      ceapply EqTyTrans.
-      - eassumption.
-      - Set Printing Implicit. idtac.
-        (* Somehow, the unification process can't deal with this properly. *)
-        fail.
-
- ; [
+      ceapply EqTyTrans ; [
         eassumption
       | hyp ..
       ].
@@ -44,7 +38,7 @@ Proof.
 
     (* Context conversion *)
   - { destruct (@TermAbsInversion _ _ _ _ _ X) as [[[[? ?] ?] ?] ?].
-      assert (eqctx (ctxextend G0 A) (ctxextend G A)).
+      assert (ett.eqctx (ctxextend G0 A) (ctxextend G A)).
       { ceapply EqCtxExtend ; try hyp.
         ceapply EqTyRefl ; assumption.
       }
