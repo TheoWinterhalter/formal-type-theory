@@ -340,7 +340,7 @@ Proof.
         as [[[[[? ?] ?] ?] ?] ?].
       assert (ett.eqctx (ctxextend G0 Bool) (ctxextend G Bool)).
       { capply EqCtxExtend ; try ehyp.
-        capply EqTyRefl. ett_sane.
+        capply EqTyRefl. tt_sane.
       }
       repeat split.
       - hyp.

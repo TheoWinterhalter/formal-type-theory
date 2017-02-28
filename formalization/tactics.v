@@ -148,89 +148,103 @@ Ltac ehyp :=
     ]
   end.
 
-(* A tactic to apply sanity in ptt. *)
-Ltac ptt_sane :=
+(* A tactic to apply sanity. *)
+Ltac tt_sane :=
+  unfold_tt ;
   match goal with
-  | H : ptt.issubst ?sbs ?G ?D |- ptt.isctx ?G =>
-    now apply (ptt_sanity.sane_issubst sbs G D)
-  | H : ptt.issubst ?sbs ?G ?D |- ptt.isctx ?D =>
-    now apply (ptt_sanity.sane_issubst sbs G D)
-  | H : ptt.istype ?G ?A |- ptt.isctx ?G =>
-    now apply (ptt_sanity.sane_istype G A)
-  | H : ptt.isterm ?G ?u ?A |- ptt.isctx ?G =>
-    now apply (ptt_sanity.sane_isterm G u A)
-  | H : ptt.isterm ?G ?u ?A |- ptt.istype ?G ?A =>
-    now apply (ptt_sanity.sane_isterm G u A)
-  | H : ptt.eqctx ?G ?D |- ptt.isctx ?G =>
-    now apply (ptt_sanity.sane_eqctx G D)
-  | H : ptt.eqctx ?G ?D |- ptt.isctx ?D =>
-    now apply (ptt_sanity.sane_eqctx G D)
-  | H : ptt.eqsubst ?sbs ?sbt ?G ?D |- ptt.isctx ?G =>
-    now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
-  | H : ptt.eqsubst ?sbs ?sbt ?G ?D |- ptt.isctx ?D =>
-    now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
-  | H : ptt.eqsubst ?sbs ?sbt ?G ?D |- ptt.issubst ?sbs ?G ?D =>
-    now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
-  | H : ptt.eqsubst ?sbs ?sbt ?G ?D |- ptt.issubst ?sbt ?G ?D =>
-    now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
-  | H : ptt.eqtype ?G ?A ?B |- ptt.isctx ?G =>
-    now apply (ptt_sanity.sane_eqtype G A B)
-  | H : ptt.eqtype ?G ?A ?B |- ptt.istype ?G ?A =>
-    now apply (ptt_sanity.sane_eqtype G A B)
-  | H : ptt.eqtype ?G ?A ?B |- ptt.istype ?G ?B =>
-    now apply (ptt_sanity.sane_eqtype G A B)
-  | H : ptt.eqterm ?G ?u ?v ?A |- ptt.isctx ?G =>
-    now apply (ptt_sanity.sane_eqterm G u v A)
-  | H : ptt.eqterm ?G ?u ?v ?A |- ptt.istype ?G ?A =>
-    now apply (ptt_sanity.sane_eqterm G u v A)
-  | H : ptt.eqterm ?G ?u ?v ?A |- ptt.isterm ?G ?u ?A =>
-    now apply (ptt_sanity.sane_eqterm G u v A)
-  | H : ptt.eqterm ?G ?u ?v ?A |- ptt.isterm ?G ?v ?A =>
-    now apply (ptt_sanity.sane_eqterm G u v A)
+  | H : issubst ?sbs ?G ?D |- isctx ?G =>
+    first [
+      now apply (ptt_sanity.sane_issubst sbs G D)
+    | now apply (ett_sanity.sane_issubst sbs G D)
+    ]
+  | H : issubst ?sbs ?G ?D |- isctx ?D =>
+    first [
+      now apply (ptt_sanity.sane_issubst sbs G D)
+    | now apply (ett_sanity.sane_issubst sbs G D)
+    ]
+  | H : istype ?G ?A |- isctx ?G =>
+    first [
+      now apply (ptt_sanity.sane_istype G A)
+    | now apply (ett_sanity.sane_istype G A)
+    ]
+  | H : isterm ?G ?u ?A |- isctx ?G =>
+    first [
+      now apply (ptt_sanity.sane_isterm G u A)
+    | now apply (ett_sanity.sane_isterm G u A)
+    ]
+  | H : isterm ?G ?u ?A |- istype ?G ?A =>
+    first [
+      now apply (ptt_sanity.sane_isterm G u A)
+    | now apply (ett_sanity.sane_isterm G u A)
+    ]
+  | H : eqctx ?G ?D |- isctx ?G =>
+    first [
+      now apply (ptt_sanity.sane_eqctx G D)
+    | now apply (ett_sanity.sane_eqctx G D)
+    ]
+  | H : eqctx ?G ?D |- isctx ?D =>
+    first [
+      now apply (ptt_sanity.sane_eqctx G D)
+    | now apply (ett_sanity.sane_eqctx G D)
+    ]
+  | H : eqsubst ?sbs ?sbt ?G ?D |- isctx ?G =>
+    first [
+      now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
+    | now apply (ett_sanity.sane_eqsubst sbs sbt G D)
+    ]
+  | H : eqsubst ?sbs ?sbt ?G ?D |- isctx ?D =>
+    first [
+      now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
+    | now apply (ett_sanity.sane_eqsubst sbs sbt G D)
+    ]
+  | H : eqsubst ?sbs ?sbt ?G ?D |- issubst ?sbs ?G ?D =>
+    first [
+      now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
+    | now apply (ett_sanity.sane_eqsubst sbs sbt G D)
+    ]
+  | H : eqsubst ?sbs ?sbt ?G ?D |- issubst ?sbt ?G ?D =>
+    first [
+      now apply (ptt_sanity.sane_eqsubst sbs sbt G D)
+    | now apply (ett_sanity.sane_eqsubst sbs sbt G D)
+    ]
+  | H : eqtype ?G ?A ?B |- isctx ?G =>
+    first [
+      now apply (ptt_sanity.sane_eqtype G A B)
+    | now apply (ett_sanity.sane_eqtype G A B)
+    ]
+  | H : eqtype ?G ?A ?B |- istype ?G ?A =>
+    first [
+      now apply (ptt_sanity.sane_eqtype G A B)
+    | now apply (ett_sanity.sane_eqtype G A B)
+    ]
+  | H : eqtype ?G ?A ?B |- istype ?G ?B =>
+    first [
+      now apply (ptt_sanity.sane_eqtype G A B)
+    | now apply (ett_sanity.sane_eqtype G A B)
+    ]
+  | H : eqterm ?G ?u ?v ?A |- isctx ?G =>
+    first [
+      now apply (ptt_sanity.sane_eqterm G u v A)
+    | now apply (ett_sanity.sane_eqterm G u v A)
+    ]
+  | H : eqterm ?G ?u ?v ?A |- istype ?G ?A =>
+    first [
+      now apply (ptt_sanity.sane_eqterm G u v A)
+    | now apply (ett_sanity.sane_eqterm G u v A)
+    ]
+  | H : eqterm ?G ?u ?v ?A |- isterm ?G ?u ?A =>
+    first [
+      now apply (ptt_sanity.sane_eqterm G u v A)
+    | now apply (ett_sanity.sane_eqterm G u v A)
+    ]
+  | H : eqterm ?G ?u ?v ?A |- isterm ?G ?v ?A =>
+    first [
+      now apply (ptt_sanity.sane_eqterm G u v A)
+    | now apply (ett_sanity.sane_eqterm G u v A)
+    ]
   end.
 
-Ltac hyps := first [ hyp | ptt_sane ].
-
-(* A tactic to apply sanity in ett. *)
-Ltac ett_sane :=
-  match goal with
-  | H : ett.issubst ?sbs ?G ?D |- ett.isctx ?G =>
-    now apply (ett_sanity.sane_issubst sbs G D)
-  | H : ett.issubst ?sbs ?G ?D |- ett.isctx ?D =>
-    now apply (ett_sanity.sane_issubst sbs G D)
-  | H : ett.istype ?G ?A |- ett.isctx ?G =>
-    now apply (ett_sanity.sane_istype G A)
-  | H : ett.isterm ?G ?u ?A |- ett.isctx ?G =>
-    now apply (ett_sanity.sane_isterm G u A)
-  | H : ett.isterm ?G ?u ?A |- ett.istype ?G ?A =>
-    now apply (ett_sanity.sane_isterm G u A)
-  | H : ett.eqctx ?G ?D |- ett.isctx ?G =>
-    now apply (ett_sanity.sane_eqctx G D)
-  | H : ett.eqctx ?G ?D |- ett.isctx ?D =>
-    now apply (ett_sanity.sane_eqctx G D)
-  | H : ett.eqsubst ?sbs ?sbt ?G ?D |- ett.isctx ?G =>
-    now apply (ett_sanity.sane_eqsubst sbs sbt G D)
-  | H : ett.eqsubst ?sbs ?sbt ?G ?D |- ett.isctx ?D =>
-    now apply (ett_sanity.sane_eqsubst sbs sbt G D)
-  | H : ett.eqsubst ?sbs ?sbt ?G ?D |- ett.issubst ?sbs ?G ?D =>
-    now apply (ett_sanity.sane_eqsubst sbs sbt G D)
-  | H : ett.eqsubst ?sbs ?sbt ?G ?D |- ett.issubst ?sbt ?G ?D =>
-    now apply (ett_sanity.sane_eqsubst sbs sbt G D)
-  | H : ett.eqtype ?G ?A ?B |- ett.isctx ?G =>
-    now apply (ett_sanity.sane_eqtype G A B)
-  | H : ett.eqtype ?G ?A ?B |- ett.istype ?G ?A =>
-    now apply (ett_sanity.sane_eqtype G A B)
-  | H : ett.eqtype ?G ?A ?B |- ett.istype ?G ?B =>
-    now apply (ett_sanity.sane_eqtype G A B)
-  | H : ett.eqterm ?G ?u ?v ?A |- ett.isctx ?G =>
-    now apply (ett_sanity.sane_eqterm G u v A)
-  | H : ett.eqterm ?G ?u ?v ?A |- ett.istype ?G ?A =>
-    now apply (ett_sanity.sane_eqterm G u v A)
-  | H : ett.eqterm ?G ?u ?v ?A |- ett.isterm ?G ?u ?A =>
-    now apply (ett_sanity.sane_eqterm G u v A)
-  | H : ett.eqterm ?G ?u ?v ?A |- ett.isterm ?G ?v ?A =>
-    now apply (ett_sanity.sane_eqterm G u v A)
-  end.
+Ltac hyps := first [ hyp | tt_sane ].
 
 (* A tactic to change between ett and ptt *)
 Ltac pex :=
