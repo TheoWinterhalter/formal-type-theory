@@ -640,136 +640,28 @@ Proof.
           - magic.
           - magic.
             Unshelve. all:strictmagic.
-          - (* magic. *)
-            eapply TermTyConv ; [ eapply TermSubst | .. ].
-            + magic.
-            + magic.
-            + magic.
-            + magic.
-            + magic. Unshelve. all:strictmagic.
-            + (* magic. *)
-              (* Let's focus here! *)
-              compsubst1.
-              * magic.
-              * magic.
-              * magic.
-                Unshelve. all:strictmagic.
-              * (* magic. *)
-                compsubst1.
-                -- magic.
-                -- magic.
-                -- magic. Unshelve. all:strictmagic.
-                -- compsubst1.
-                   ++ magic.
-                   ++ magic.
-                   ++ magic.
-                      Unshelve. all:magic.
-                      Unshelve. all:strictmagic.
-                   ++ compsubst1.
-                      ** magic.
-                      ** magic.
-                         Unshelve. all:magic.
-                         Unshelve. all:strictmagic.
-                      ** magic.
-                      ** (* magic.  *)
-                         eapply CongTySubst ; [
-                           idtac
-                         | eapply EqTyRefl
-                         | ..
-                         ].
-                         --- (* magic. *)
-                             eapply SubstSym ; [
-                               eapply SubstTrans ; [ simplify_subst | .. ]
-                             | ..
-                             ].
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ magic.
-                             +++ (* magic. *)
-                                 eapply SubstTrans ; [ simplify_subst | .. ].
-                                 *** magic.
-                                     Unshelve. all:try strictmagic. shelve.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                     Unshelve. all:strictmagic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                     Unshelve. all:strictmagic.
-                                 *** magic.
-                                     Unshelve. all:strictmagic.
-                                 *** magic.
-                                     Unshelve. all:strictmagic.
-                                 *** magic.
-                                     Unshelve. all:magic.
-                                     Unshelve. all:strictmagic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                 *** magic.
-                                     Unshelve. all:magic.
-                                     Unshelve. all:strictmagic.
-                                 *** magic.
-                                 *** magic.
-                                 *** (* magic. *)
-                                   eapply SubstTrans ; [ simplify_subst | .. ].
-                                   ---- magic.
-                                   ---- magic.
-                                        Unshelve.
-                                        2-26:strictmagic.
-                                        all:shelve.
-                                   ---- magic.
-                                        Unshelve. all:magic.
-                                        Unshelve. all:strictmagic.
-                                   ---- magic.
-                                   ---- magic.
-                                   ---- magic.
-                                   ---- magic.
-                                   ---- magic.
-                                        Unshelve. all:magic.
-                                        Unshelve. all:strictmagic.
-                                   ---- magic.
-                                        Unshelve. all:magic.
-                                        Unshelve. all:strictmagic.
-                                   ---- magic.
-                                   ---- magic.
-                                   ---- magic.
-                                        Unshelve. all:try okmagic.
-                                        Unshelve. all:strictmagic.
-
-
-
-(* magic. *) fail "Hopefully temporary."
+          - magic.
+            (* eapply TermTyConv ; [ eapply TermSubst | .. ]. *)
+            (* + magic. *)
+            (* + magic. *)
+            (* + magic. *)
+            (* + magic. *)
+            (* + magic. Unshelve. all:strictmagic. *)
+            (* + magic. *)
+              Unshelve. all:try okmagic.
+              Unshelve. all:strictmagic.
+          - magic.
+          - magic.
+            Unshelve. all:strictmagic.
+          - magic.
+            Unshelve. all:try okmagic.
+            Unshelve. all:strictmagic.
+          - magic.
+          - magic.
+            Unshelve. all:try okmagic.
+            Unshelve. all:strictmagic.
+          - magic.
+            Unshelve. all:strictmagic.
         }
     }
 
