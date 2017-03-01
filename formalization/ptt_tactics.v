@@ -964,6 +964,25 @@ Ltac magicn try shelf tysym debug :=
           eapply SubstRefl
         | myfail debug
         ] ; magicn try shelf true debug
+    (* In case we have syntactically equal substitutions involved,
+       we can make a little shortcut. *)
+    (* | |- eqsubst (sbcomp ?sbs _) (sbcomp ?sbs _) _ _ => *)
+    (*   first [ *)
+    (*     eapply CongSubstComp ; [ *)
+    (*       idtac *)
+    (*     | eapply SubstRefl *)
+    (*     | .. *)
+    (*     ] *)
+    (*   | myfail debug *)
+    (*   ] ; magicn try shelf true debug *)
+    (* | |- eqsubst (sbcomp _ ?sbs) (sbcomp _ ?sbs) _ _ => *)
+    (*   first [ *)
+    (*     eapply CongSubstComp ; [ *)
+    (*       eapply SubstRefl *)
+    (*     | .. *)
+    (*     ] *)
+    (*   | myfail debug *)
+    (*   ] ; magicn try shelf true debug *)
     (* We need to simplify if we are ever going to apply congruence for
        composition. *)
     | |- eqsubst ?sbs ?sbt ?G ?D =>

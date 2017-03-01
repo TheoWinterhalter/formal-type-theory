@@ -742,8 +742,136 @@ Proof.
                                  *** magic.
                                  *** magic.
                                  *** (* magic. *)
-                                   fail "I'd like not to simplify here.".
                                    eapply SubstTrans ; [ simplify_subst | .. ].
+                                   ---- magic.
+                                   ---- magic.
+                                        Unshelve.
+                                        2-26:strictmagic.
+                                        all:shelve.
+                                   ---- magic.
+                                        Unshelve. all:magic.
+                                        Unshelve. all:strictmagic.
+                                   ---- magic.
+                                   ---- magic.
+                                   ---- magic.
+                                   ---- magic.
+                                   ---- magic.
+                                        Unshelve. all:magic.
+                                        Unshelve. all:strictmagic.
+                                   ---- magic.
+                                        Unshelve. all:magic.
+                                        Unshelve. all:strictmagic.
+                                   ---- magic.
+                                   ---- magic.
+                                   ---- (* magic. *)
+                                     eapply CongSubstComp.
+                                     ++++ (* magic. *)
+                                       eapply CongSubstComp.
+                                       **** magic.
+                                            Unshelve. 1:shelve.
+                                            all:strictmagic.
+                                       **** (* magic. *)
+                                         eapply EqSubstCtxConv ; [ eapply CongSubstShift | .. ].
+                                         ----- magic.
+                                         ----- magic.
+                                         Unshelve. 1:shelve.
+                                         all:strictmagic.
+                                         ----- magic.
+                                         Unshelve. 1:shelve. strictmagic.
+                                         ----- magic.
+                                         ----- magic.
+                                         ----- magic.
+                                         ----- magic.
+                                         ----- magic.
+                                         ----- magic.
+                                         ----- magic.
+                                         ----- magic.
+                                         Unshelve. 1:shelve.
+                                         all:strictmagic.
+                                         ----- magic.
+                                         ----- magic.
+                                         ----- magic.
+                                         ----- magic.
+                                         ----- magic.
+                                         ----- magic.
+                                         ----- (* magic. *)
+                                         eapply SubstCtxConv ; [
+                                           eapply SubstShift
+                                         | ..
+                                         ].
+                                         +++++ magic.
+                                         +++++ magic.
+                                         +++++ magic.
+                                         +++++ magic.
+                                         +++++ (* magic. *)
+                                           eapply EqCtxExtend.
+                                         ***** magic.
+                                         ***** magic.
+                                         ***** magic.
+                                         ***** magic.
+                                         ***** magic.
+                                         ***** (* magic. *)
+                                           compsubst1.
+                                         ------ magic.
+                                         ------ magic.
+                                         ------ magic.
+                                         ------ (* magic. *)
+                                           pushsubst1.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         ++++++ (* magic. *)
+                                           pushsubst1.
+                                         ****** magic.
+                                         ****** magic.
+                                         ****** magic.
+                                         ****** magic.
+                                         ****** magic.
+                                         ****** magic.
+                                         ****** (* magic. *)
+                                           eapply CongId.
+                                         ------- magic.
+                                         ------- magic.
+                                         ------- magic.
+                                         ------- magic.
+                                         ------- magic.
+                                         ------- magic.
+                                         Unshelve. 4:strictmagic.
+                                         all:shelve.
+                                         ------- magic.
+                                         Unshelve. 4:strictmagic.
+                                         all:shelve.
+                                         ------- magic.
+                                         ------- magic.
+                                         Unshelve. all:try okmagic.
+                                         shelve.
+                                         ------- (* magic. *)
+(* This is where it gets annoying once more! *)
+                                           pushsubst1.
+                                         +++++++ magic.
+                                         +++++++ magic.
+                                         +++++++ magic.
+                                         +++++++ magic.
+                                         Unshelve. 4:strictmagic.
+                                         all:shelve.
+                                         +++++++ magic.
+                                         +++++++ magic.
+                                         +++++++ magic.
+                                         +++++++ magic.
+                                         Unshelve. 4:strictmagic.
+                                         all:shelve.
+                                         +++++++ magic.
+                                         +++++++ (* magic. *)
+                                           pushsubst1.
+(* Is it again a case where some idtac should be replaced by SubstRefl? *)
+fail "Let's see what's going on in pushsubst1 first".
+                                         ******* magic.
+
+
+
 
 
 (* magic. *) fail "Hopefully temporary."
