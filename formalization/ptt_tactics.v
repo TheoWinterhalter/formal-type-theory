@@ -656,6 +656,8 @@ Ltac eqtype_subst G A sbs B k try shelf tysym debug :=
         else first [
           (* Should we simplify on the left first? *)
           pushsubst1
+        | simplify
+        | cando tysym ; eapply EqTySym ; [ simplify | .. ]
         | myfail debug
         ] ; k try shelf true debug
       | _ =>
