@@ -803,7 +803,10 @@ Ltac magicn try shelf tysym debug :=
       | myfail debug
       ] ; magicn try shelf true debug
     | |- isterm ?G (var ?k) ?A =>
-      first [
+      (* In that case, we might shelve, if the don't know the context. *)
+      tryif (is_evar G)
+      then shelve
+      else first [
         eassumption
       | myfail debug
       ]

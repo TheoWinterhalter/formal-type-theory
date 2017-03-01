@@ -781,9 +781,31 @@ Proof.
                                          Unshelve. 1:shelve. all:strictmagic.
                                          ------ (* Now, we're getting closer. *)
                                            pushsubst1.
-                                         ++++++ (* There we are.
-                                                   So maybe, we should just
-                                                   shelve in that case? *)
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         Unshelve. 5:magic. all:shelve.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         Unshelve. 1-3:shelve. all:strictmagic.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         Unshelve. 1-3:shelve. all:strictmagic.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         Unshelve. 1-3:shelve. all:strictmagic.
+                                         ++++++ magic.
+                                         ++++++ magic.
+                                         ++++++
+(* I may have killed the problem by solving the shelve. But we are presented
+   with another one that needs shelving. *)
+(* We might opt for the shortcut? *)
 
                            fail "On purpose.".
 
