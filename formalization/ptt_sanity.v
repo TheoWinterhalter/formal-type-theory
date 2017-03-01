@@ -696,7 +696,65 @@ Proof.
                          --- magic.
                          --- magic.
                          --- magic.
-                         --- fail "On purpose.".
+                         --- (* This is a test of our new case which might
+                                be refined. *)
+                             simplify.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                                 Unshelve. all:strictmagic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                             +++ magic.
+                                 Unshelve. all:strictmagic.
+                             +++ magic.
+                                 Unshelve. all:strictmagic.
+                             +++ magic.
+                                 Unshelve. all:strictmagic.
+                             +++ (* A problem here. :( *)
+                               eapply SubstComp.
+                               *** eapply SubstCtxConv ; [
+                                     eapply SubstShift
+                                   | ..
+                                   ].
+                                   ---- magic.
+                                   ---- magic.
+                                   ---- magic.
+                                   ---- magic.
+                                   ---- (* Here again *)
+                                     eapply EqCtxExtend.
+                                     ++++ magic.
+                                     ++++ magic.
+                                     ++++ magic.
+                                     ++++ magic.
+                                     ++++ magic.
+                                     ++++ (* HERE *)
+                                       compsubst1.
+                                       **** magic.
+                                       **** magic.
+                                       **** magic.
+                                       ****
+                                         compsubst1.
+                                         ----- magic.
+                                         ----- magic.
+                                         ----- magic.
+                                         -----
+(* Wait I can already see what is going on, it seems like WeakNat should be
+   used inside simplify_subst doesn't it? *)
+
+                           fail "On purpose.".
 
             (* { eapply EqTyTrans. *)
             (*   - eapply CongTySubst. *)
