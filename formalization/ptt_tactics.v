@@ -264,10 +264,16 @@ Proof.
 Defined.
 
 
+Ltac cando token :=
+  match token with
+  | true => idtac
+  | false => fail "Cannot do" token
+  end.
+
 
 (* Some tactic to push substitutions inside one step. *)
 (* Partial for now. *)
-Ltac pushsubst1 :=
+Ltac prepushsubst1 sym :=
   lazymatch goal with
   (*! Pushing in types !*)
   (* Is this first goal ever necessary? *)
@@ -275,7 +281,7 @@ Ltac pushsubst1 :=
     eapply EqTyTrans ; [
       eapply CongTySubst ; [
         eapply SubstRefl
-      | pushsubst1
+      | prepushsubst1 true
       | ..
       ]
     | ..
@@ -410,14 +416,15 @@ Ltac pushsubst1 :=
       ]
     | ..
     ]
+  (* Instead of writing all symmetry cases *)
+  | |- eqterm ?G ?u ?v ?A =>
+    tryif (cando sym)
+    then eapply EqSym ; [ prepushsubst1 false | .. ]
+    else fail "Not a goal handled by pushsubst: eqterm" G u v A
   | |- ?G => fail "Not a goal handled by pushsubst" G
   end.
 
-Ltac cando token :=
-  match token with
-  | true => idtac
-  | false => fail "Cannot do" token
-  end.
+Ltac pushsubst1 := prepushsubst1 true.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
    some ZeroShift3 if ever we add a constructor that has three variables. *)

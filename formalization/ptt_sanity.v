@@ -781,8 +781,34 @@ Proof.
                                                     Unshelve. 1:shelve.
                                                     all:strictmagic.
                                                     ++++++ (* Drawing closer *)
-                                 fail "pushsubst1 should handle that case!"
+                                 (* fail "pushsubst1 should handle that case!" *)
                                                     pushsubst1.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    Unshelve. 5:strictmagic.
+                                                    all:shelve.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    Unshelve. 4:strictmagic.
+                                                    all:shelve.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** magic.
+                                                    ****** (* magic. *)
+(* Why do we need to prove that?! *)
+fail "I don't get where it's coming from...".
+
+
 
 
 
