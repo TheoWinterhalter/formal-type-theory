@@ -696,7 +696,7 @@ Proof.
                          --- magic.
                          --- magic.
                          --- magic.
-                         ---
+                         --- fail "On purpose.".
 
             (* { eapply EqTyTrans. *)
             (*   - eapply CongTySubst. *)

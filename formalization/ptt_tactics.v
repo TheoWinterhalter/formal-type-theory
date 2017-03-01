@@ -419,6 +419,29 @@ Ltac cando token :=
   | false => fail "Cannot do" token
   end.
 
+(* A lemma to do ZeroShift shifted, it not very robust as we would need
+   some ZeroShift3 if ever we add a constructor that has three variables. *)
+Lemma ZeroShift2 :
+  forall {G D A B C u sbs},
+    eqtype D C (Subst B (sbzero D A u)) ->
+    isterm D u A ->
+    issubst sbs G D ->
+    istype D A ->
+    istype (ctxextend D A) B ->
+    isctx G ->
+    isctx D ->
+    eqsubst (sbcomp (sbshift D B (sbzero D A u))
+                    (sbshift G C sbs))
+            (sbcomp (sbshift (ctxextend G (Subst A sbs)) B (sbshift G A sbs))
+                    (sbshift G
+                             (Subst B (sbshift G A sbs))
+                             (sbzero G (Subst A sbs) (subst u sbs))))
+            (ctxextend G (Subst (Subst B (sbzero D A u)) sbs))
+            (ctxextend (ctxextend D A) B).
+Proof.
+  intros.
+Admitted.
+
 (* A simplify tactic to simplify substitutions *)
 Ltac ecomp lm :=
   eapply SubstTrans ; [
@@ -470,93 +493,11 @@ Ltac simplify_subst :=
         | ..
         ]
 
-      (* In case we have to shifts, we look if we ever can simplify inside. *)
-      | sbcomp (sbshift _ _ _) (sbshift _ _ _) =>
-        first [
-          eapply SubstTrans ; [
-            eapply CompShift
-          | eapply SubstTrans ; [
-              eapply CongSubstShift ; [
-                idtac
-              | simplify_subst
-              | ..
-              ]
-            | ..
-            ]
-          | ..
-          ]
-          (* If we fail, we go back to the "general" case. *)
-        | eapply CongSubstComp ; [
-            simplify_subst
-          | eapply SubstRefl
-          | ..
-          ]
-        ]
-      | sbcomp (sbshift _ _ _) (sbcomp (sbshift _ _ _) _) =>
-        first [
-          eapply SubstTrans ; [
-            eapply CompAssoc
-          | eapply CongSubstComp ; [
-              eapply SubstRefl
-            | eapply SubstTrans ; [
-                eapply CompShift
-              | eapply SubstTrans ; [
-                  eapply CongSubstShift ; [
-                    idtac
-                  | simplify_subst
-                  | ..
-                  ]
-                | ..
-                ]
-              | ..
-              ]
-            | ..
-            ]
-          | ..
-          ]
-        | eapply SubstTrans ; [
-            eapply CompAssoc
-          | eapply CongSubstComp ; [
-              eapply SubstRefl
-            | eapply SubstTrans ; [
-                eapply SubstTrans ; [
-                  eapply CongSubstComp ; [
-                    eapply CongSubstShift
-                  | eapply EqSubstCtxConv ; [
-                      eapply CongSubstShift
-                    | ..
-                    ]
-                  | ..
-                  ]
-                | eapply EqSubstCtxConv ; [
-                    eapply CompShift
-                  | ..
-                  ]
-                | ..
-                ]
-              | eapply SubstTrans ; [
-                  eapply EqSubstCtxConv ; [
-                    eapply CongSubstShift ; [
-                      idtac
-                    | simplify_subst
-                    | ..
-                    ]
-                  | ..
-                  ]
-                | ..
-                ]
-              | ..
-              ]
-            | ..
-            ]
-          | ..
-          ]
-        | eapply CongSubstComp ; [
-            simplify_subst
-          | eapply SubstRefl
-          | ..
-          ]
-        ]
+      (* After ZeroShift, comes ZeroShift2 *)
+      | sbcomp (sbshift _ _ (sbzero _ _ _)) (sbshift _ _ _) =>
+        eapply ZeroShift2
+      | sbcomp (sbshift _ _ (sbzero _ _ _)) (sbcomp (sbshift _ _ _) _) =>
+        ecomp ZeroShift2
 
       | sbcomp ?sbs ?sbt =>
         eapply CongSubstComp ; [
