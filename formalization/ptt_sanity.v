@@ -866,9 +866,26 @@ Proof.
                                          +++++++ magic.
                                          +++++++ (* magic. *)
                                            pushsubst1.
-(* Is it again a case where some idtac should be replaced by SubstRefl? *)
-fail "Let's see what's going on in pushsubst1 first".
                                          ******* magic.
+                                         ******* magic.
+                                         ******* magic.
+                                         ******* magic.
+                                         ******* magic.
+                                         ******* magic.
+                                         ******* magic.
+                                         ******* (* magic. *)
+                                           compsubst1.
+                                         -------- magic.
+                                         -------- magic.
+                                         -------- magic.
+                                         -------- (* magic. *)
+                                           compsubst1.
+                                         ++++++++ magic.
+                                         ++++++++ magic.
+                                         ++++++++ magic.
+                                         ++++++++ (* magic. *)
+(* This raises the question, should we shelve it there? Or should magic try to
+   be smart by first simplifying stuff? *)
 
 
 
