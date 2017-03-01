@@ -406,7 +406,7 @@ Ltac prepushsubst1 sym :=
         ]
       | eapply EqTyConv ; [
           eapply CongTermSubst ; [
-            idtac
+            eapply SubstRefl
           | eapply EqSubstShiftZero
           | ..
           ]
