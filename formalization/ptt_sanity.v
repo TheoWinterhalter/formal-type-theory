@@ -696,7 +696,8 @@ Proof.
                          --- magic.
                          --- magic.
                          --- magic.
-                         --- (* This is a test of our new case which might
+                         --- (* magic. fail "nooooo!". *)
+(* This is a test of our new case which might
                                 be refined. *)
                              simplify.
                              +++ magic.
@@ -750,9 +751,39 @@ Proof.
                                          ----- magic.
                                          ----- magic.
                                          ----- magic.
-                                         -----
-(* Wait I can already see what is going on, it seems like WeakNat should be
-   used inside simplify_subst doesn't it? *)
+                                         ----- pushsubst1.
+                                         +++++ magic.
+                                         +++++ magic.
+                                         +++++ magic.
+                                         +++++ magic.
+                                         +++++ magic.
+                                         +++++ magic.
+                                         +++++ pushsubst1.
+                                         ***** magic.
+                                         ***** magic.
+                                         ***** magic.
+                                         ***** magic.
+                                         ***** magic.
+                                         ***** magic.
+                                         ***** eapply CongId.
+                                         ------ magic.
+                                         ------ magic.
+                                         ------ magic.
+                                         ------ magic.
+                                         ------ magic.
+                                         ------ magic.
+                                         Unshelve. 2-4:strictmagic. shelve.
+                                         ------ magic.
+                                         Unshelve. 1:shelve. all:strictmagic.
+                                         ------ magic.
+                                         Unshelve. 1:shelve. all:strictmagic.
+                                         ------ magic.
+                                         Unshelve. 1:shelve. all:strictmagic.
+                                         ------ (* Now, we're getting closer. *)
+                                           pushsubst1.
+                                         ++++++ (* There we are.
+                                                   So maybe, we should just
+                                                   shelve in that case? *)
 
                            fail "On purpose.".
 

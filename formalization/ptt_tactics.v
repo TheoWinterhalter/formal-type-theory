@@ -477,6 +477,11 @@ Ltac simplify_subst :=
       | sbcomp (sbweak _ _) (sbcomp (sbzero _ _ _) _) =>
         ecomp WeakZero
 
+      | sbcomp (sbweak _ _) (sbshift _ _ _) =>
+        eapply WeakNat
+      | sbcomp (sbweak _ _) (sbcomp (sbshift _ _ _) _) =>
+        ecomp WeakNat
+
       | sbcomp (sbzero _ _ _) ?sbs =>
         eapply SubstSym ; [ eapply ShiftZero | .. ]
 
