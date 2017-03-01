@@ -696,7 +696,7 @@ Proof.
                          --- magic.
                          --- magic.
                          --- magic.
-                         --- (* magic. fail "nooooo!". *)
+                         --- magic. fail "nooooo!".
 (* This is a test of our new case which might
                                 be refined. *)
                              simplify.

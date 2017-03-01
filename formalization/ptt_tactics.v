@@ -1068,6 +1068,13 @@ Ltac magicn try shelf tysym debug :=
       ] ; magicn try shelf true debug
       else eqtype_subst G A (sbzero D B u) B
                         magicn try shelf tysym debug
+    | |- eqtype ?G (Subst ?A ?sbs) (Subst ?A ?sbt) =>
+      (* A little shortcut in that case. *)
+      eapply CongTySubst ; [
+        idtac
+      | eapply EqTyRefl
+      | ..
+      ] ; magicn try shelf true debug
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)
       eqtype_subst G A sbs B magicn try shelf tysym debug
