@@ -781,7 +781,37 @@ Proof.
                                                     Unshelve. 1:shelve.
                                                     all:strictmagic.
                                                     ++++++ (* Drawing closer *)
-                                 (* fail "pushsubst1 should handle that case!" *)
+(* Instead of doing the pushsubst1, we're going to apply to see what is going
+   on! *)
+ eapply EqSym ; [
+   eapply EqTrans ; [
+     eapply EqTrans ; [
+       eapply EqSym ; [
+         eapply EqTyConv ; [ eapply EqSubstComp | .. ]
+       | ..
+       ]
+     | eapply EqTyConv ; [
+         eapply CongTermSubst ; [
+           eapply SubstRefl (* instead of idtac *)
+         | eapply EqSubstShiftZero
+         | ..
+         ]
+       | ..
+       ]
+     | ..
+     ]
+   | ..
+   ]
+ | ..
+ ].
+all:magic.
+Unshelve. 1:shelve. all:strictmagic.
+
+
+fail "Old case below".
+
+
+
                                                     pushsubst1.
                                                     ****** magic.
                                                     ****** magic.
