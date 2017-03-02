@@ -793,7 +793,18 @@ Proof.
     (Subst (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst u sbs)))
     (Subst (Subst B (sbzero D A u)) sbs)
   ).
-  {
+  { eapply EqTyTrans ; [
+      eapply EqTySubstComp ; eassumption
+    | eapply EqTySym ; [
+        eapply EqTyTrans ; [
+          eapply EqTySubstComp ; eassumption
+        | assumption ..
+        ]
+      | assumption ..
+      ]
+    | assumption ..
+    ].
+  }
   assert (
     eqctx
     (ctxextend G
@@ -821,13 +832,46 @@ Proof.
     (ctxextend (ctxextend D A) B)
   ).
   { eapply SubstComp ; eassumption. }
+  assert (
+    issubst
+    (sbshift G B (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst u sbs))))
+    (ctxextend G (Subst (Subst B (sbzero D A u)) sbs))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { eapply SubstCtxConv ; [
+      eapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (
+    issubst (sbshift G B (sbcomp (sbzero D A u) sbs))
+    (ctxextend G (Subst (Subst B (sbzero D A u)) sbs))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { eapply SubstCtxConv ; [
+      eapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (
+    issubst
+    (sbcomp (sbshift D B (sbzero D A u)) (sbshift G (Subst B (sbzero D A u)) sbs))
+    (ctxextend G (Subst (Subst B (sbzero D A u)) sbs))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { eapply SubstComp ; eassumption. }
+  assert (
+    issubst (sbcomp (sbshift D B (sbzero D A u)) (sbshift G C sbs))
+    (ctxextend G (Subst (Subst B (sbzero D A u)) sbs))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { eapply SubstComp ; eassumption. }
 
 
 
 
-
-  eapply SubstTrans.
-  - eapply CongSubstComp ; [
+  eapply SubstTrans ; [
+    eapply CongSubstComp ; [
       eapply EqSubstCtxConv ; [
         eapply CongSubstShift ; [
           eapply CtxRefl ; assumption
@@ -841,14 +885,14 @@ Proof.
       ]
     | eapply SubstRefl ; assumption
     | assumption ..
-    ].
-  - eapply SubstTrans.
-    + eapply EqSubstCtxConv ; [
+    ]
+  | eapply SubstTrans ; [
+      eapply EqSubstCtxConv ; [
         eapply @CompShift with (E := ctxextend D A) ; assumption
       | assumption ..
-      ].
-    + eapply SubstTrans.
-      * eapply EqSubstCtxConv ; [
+      ]
+    | eapply SubstTrans ; [
+        eapply EqSubstCtxConv ; [
           eapply CongSubstShift ; [
              eapply CtxRefl ; assumption
            | eapply SubstSym ; [
@@ -859,23 +903,27 @@ Proof.
            | assumption ..
            ]
         | assumption ..
-        ].
-      * eapply SubstTrans.
-        -- eapply SubstSym.
-           ++ eapply EqSubstCtxConv.
-              ** eapply @CompShift
+        ]
+      | eapply SubstTrans ; [
+          eapply SubstSym ; [
+             eapply EqSubstCtxConv ; [
+                eapply @CompShift
                  with (D := ctxextend G (Subst A sbs))
-                        (E := ctxextend D A) ; assumption.
-              ** assumption.
-              ** assumption.
-              ** assumption.
-              ** assumption.
-              ** assumption.
-              ** assumption.
-              ** assumption.
-              ** assumption.
-           ++ assumption.
-Admitted.
+                        (E := ctxextend D A) ; assumption
+              | assumption ..
+              ]
+           | assumption ..
+           ]
+        | eapply SubstRefl ; assumption
+        | assumption ..
+        ]
+      | assumption ..
+      ]
+    | assumption ..
+    ]
+  | assumption ..
+  ].
+Defined.
 
 (* A simplify tactic to simplify substitutions *)
 Ltac ecomp lm :=
