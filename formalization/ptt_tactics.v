@@ -268,10 +268,16 @@ Proof.
 Defined.
 
 
+Ltac cando token :=
+  match token with
+  | true => idtac
+  | false => fail "Cannot do" token
+  end.
+
 
 (* Some tactic to push substitutions inside one step. *)
 (* Partial for now. *)
-Ltac pushsubst1 :=
+Ltac prepushsubst1 sym :=
   doConfig ;
   lazymatch goal with
   (*! Pushing in types !*)
@@ -280,7 +286,7 @@ Ltac pushsubst1 :=
     ceapply EqTyTrans ; [
       ceapply CongTySubst ; [
         ceapply SubstRefl
-      | pushsubst1
+      | prepushsubst1 true
       | ..
       ]
     | ..
@@ -405,7 +411,7 @@ Ltac pushsubst1 :=
         ]
       | ceapply EqTyConv ; [
           ceapply CongTermSubst ; [
-            idtac
+            ceapply SubstRefl
           | ceapply EqSubstShiftZero
           | ..
           ]
@@ -415,14 +421,513 @@ Ltac pushsubst1 :=
       ]
     | ..
     ]
+  (* Instead of writing all symmetry cases *)
+  | |- eqterm ?G ?u ?v ?A =>
+    tryif (cando sym)
+    then ceapply EqSym ; [ prepushsubst1 false | .. ]
+    else fail "Not a goal handled by pushsubst: eqterm" G u v A
   | |- ?G => fail "Not a goal handled by pushsubst" G
   end.
 
-Ltac cando token :=
-  match token with
-  | true => idtac
-  | false => fail "Cannot do" token
-  end.
+Ltac pushsubst1 := prepushsubst1 true.
+
+(* A lemma to do ZeroShift shifted, it not very robust as we would need
+   some ZeroShift3 if ever we add a constructor that has three variables. *)
+Lemma ZeroShift2 `{config.Reflection} :
+  forall {G D A B C u sbs},
+    eqtype D C (Subst B (sbzero A u)) ->
+    isterm D u A ->
+    issubst sbs G D ->
+    istype D A ->
+    istype (ctxextend D A) B ->
+    istype D C ->
+    isctx G ->
+    isctx D ->
+    eqsubst (sbcomp (sbshift B (sbzero A u))
+                    (sbshift C sbs))
+            (sbcomp (sbshift B (sbshift A sbs))
+                    (sbshift (Subst B (sbshift A sbs))
+                             (sbzero (Subst A sbs) (subst u sbs))))
+            (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+            (ctxextend (ctxextend D A) B).
+Proof.
+  intros.
+  assert (isctx (ctxextend D A)).
+  { ceapply CtxExtend ; assumption. }
+  assert (istype D (Subst B (sbzero A u))).
+  assert (issubst (sbzero A u) D (ctxextend D A)).
+  { ceapply SubstZero ; assumption. }
+  { ceapply TySubst ; eassumption. }
+  assert (istype G (Subst C sbs)).
+  { ceapply TySubst ; eassumption. }
+  assert (istype G (Subst (Subst B (sbzero A u)) sbs)).
+  { ceapply TySubst ; eassumption. }
+  assert (isctx (ctxextend D C)).
+  { ceapply CtxExtend ; assumption. }
+  assert (isctx (ctxextend G (Subst C sbs))).
+  { ceapply CtxExtend ; assumption. }
+  assert (isctx (ctxextend G (Subst (Subst B (sbzero A u)) sbs))).
+  { ceapply CtxExtend ; assumption. }
+  assert (
+    issubst (sbshift C sbs) (ctxextend G (Subst C sbs)) (ctxextend D C)
+  ).
+  { ceapply SubstShift ; assumption. }
+  assert (eqctx G G).
+  { ceapply CtxRefl. assumption. }
+  assert (eqtype D (Subst B (sbzero A u)) C).
+  { ceapply EqTySym ; assumption. }
+  assert (eqtype G (Subst (Subst B (sbzero A u)) sbs) (Subst C sbs)).
+  { ceapply CongTySubst ; [
+      (config eapply @SubstRefl with (D := D)) ; assumption
+    | assumption ..
+    ].
+  }
+  assert (
+    eqctx (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+    (ctxextend G (Subst C sbs))
+  ).
+  { ceapply EqCtxExtend ; assumption. }
+  assert (eqctx D D).
+  { ceapply CtxRefl. assumption. }
+  assert (eqctx (ctxextend D (Subst B (sbzero A u))) (ctxextend D C)).
+  { ceapply EqCtxExtend ; assumption. }
+  assert (isctx (ctxextend D (Subst B (sbzero A u)))).
+  { ceapply CtxExtend ; assumption. }
+  assert (
+    issubst (sbshift (Subst B (sbzero A u)) sbs)
+            (ctxextend G (Subst C sbs))
+            (ctxextend D C)
+  ).
+  { ceapply SubstCtxConv ; [
+      ceapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (isctx (ctxextend (ctxextend D A) B)).
+  { ceapply CtxExtend ; assumption. }
+  assert (issubst (sbzero A u) D (ctxextend D A)).
+  { ceapply SubstZero ; assumption. }
+  assert (eqctx (ctxextend (ctxextend D A) B) (ctxextend (ctxextend D A) B)).
+  { capply CtxRefl. assumption. }
+  assert (
+    issubst (sbshift B (sbzero A u)) (ctxextend D C)
+            (ctxextend (ctxextend D A) B)
+  ).
+  { ceapply SubstCtxConv ; [
+      ceapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (eqtype G (Subst C sbs) (Subst (Subst B (sbzero A u)) sbs)).
+  { ceapply EqTySym ; assumption. }
+  assert (
+    eqctx (ctxextend G (Subst C sbs))
+          (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+  ).
+  { ceapply EqCtxExtend ; assumption. }
+  assert (eqctx (ctxextend D C) (ctxextend D C)).
+  { capply CtxRefl. assumption. }
+  assert (
+    issubst (sbshift C sbs)
+            (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+            (ctxextend D C)
+  ).
+  { ceapply SubstCtxConv ; [
+      ceapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (
+    eqctx (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+          (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+  ).
+  { ceapply CtxRefl. assumption. }
+  assert (
+    issubst (sbshift (Subst B (sbzero A u)) sbs)
+            (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+            (ctxextend D C)
+  ).
+  { ceapply SubstCtxConv ; [
+      ceapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (issubst (sbcomp (sbzero A u) sbs) G (ctxextend D A)).
+  { ceapply SubstComp ; eassumption. }
+  assert (istype G (Subst B (sbcomp (sbzero A u) sbs))).
+  { ceapply TySubst ; eassumption. }
+  assert (
+    eqtype G (Subst B (sbcomp (sbzero A u) sbs))
+           (Subst (Subst B (sbzero A u)) sbs)
+  ).
+  { ceapply EqTySym ; [
+      ceapply EqTySubstComp ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (
+    eqctx (ctxextend G (Subst B (sbcomp (sbzero A u) sbs)))
+          (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+  ).
+  { ceapply EqCtxExtend ; assumption. }
+  assert (isctx (ctxextend G (Subst B (sbcomp (sbzero A u) sbs)))).
+  { ceapply CtxExtend ; assumption. }
+  assert (
+    eqctx (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+          (ctxextend G (Subst B (sbcomp (sbzero A u) sbs)))
+  ).
+  { capply CtxSym ; assumption. }
+  assert (
+    eqctx (ctxextend D (Subst B (sbzero A u)))
+          (ctxextend D (Subst B (sbzero A u)))
+  ).
+  { capply CtxRefl. assumption. }
+  assert (
+    issubst (sbshift (Subst B (sbzero A u)) sbs)
+            (ctxextend G (Subst B (sbcomp (sbzero A u) sbs)))
+            (ctxextend D (Subst B (sbzero A u)))
+  ).
+  { ceapply SubstCtxConv ; [
+      ceapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (
+    issubst (sbshift B (sbzero A u)) (ctxextend D (Subst B (sbzero A u)))
+            (ctxextend (ctxextend D A) B)
+  ).
+  { ceapply SubstShift ; assumption. }
+  assert (
+    issubst
+      (sbcomp (sbshift B (sbzero A u))
+              (sbshift (Subst B (sbzero A u)) sbs))
+      (ctxextend G (Subst B (sbcomp (sbzero A u) sbs)))
+      (ctxextend (ctxextend D A) B)
+  ).
+  { ceapply SubstComp ; eassumption. }
+  assert (
+    eqctx (ctxextend G (Subst B (sbcomp (sbzero A u) sbs)))
+          (ctxextend G (Subst B (sbcomp (sbzero A u) sbs)))
+  ).
+  { ceapply CtxRefl. assumption. }
+  assert (
+    issubst (sbshift B (sbcomp (sbzero A u) sbs))
+            (ctxextend G (Subst B (sbcomp (sbzero A u) sbs)))
+            (ctxextend (ctxextend D A) B)
+  ).
+  { ceapply SubstCtxConv ; [
+      ceapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (isterm G (subst u sbs) (Subst A sbs)).
+  { ceapply TermSubst ; eassumption. }
+  assert (istype G (Subst A sbs)).
+  { ceapply TySubst ; eassumption. }
+  assert (
+    issubst (sbzero (Subst A sbs) (subst u sbs))
+            G
+            (ctxextend G (Subst A sbs))
+  ).
+  { ceapply SubstZero ; assumption. }
+  assert (
+    issubst (sbshift A sbs) (ctxextend G (Subst A sbs)) (ctxextend D A)
+  ).
+  { ceapply SubstShift ; assumption. }
+  assert (isctx (ctxextend G (Subst A sbs))).
+  { ceapply CtxExtend ; assumption. }
+  assert (
+    issubst (sbcomp (sbshift A sbs)
+                    (sbzero (Subst A sbs) (subst u sbs))) G
+            (ctxextend D A)
+  ).
+  { ceapply SubstComp ; eassumption. }
+  assert (
+    istype G
+           (Subst B (sbcomp (sbshift A sbs)
+                            (sbzero (Subst A sbs) (subst u sbs))))
+  ).
+  { ceapply TySubst ; eassumption. }
+  assert (
+    eqsubst (sbcomp (sbshift A sbs) (sbzero (Subst A sbs) (subst u sbs)))
+            (sbcomp (sbzero A u) sbs)
+            G
+            (ctxextend D A)
+  ).
+  { ceapply ShiftZero ; assumption. }
+  assert (eqtype (ctxextend D A) B B).
+  { ceapply EqTyRefl ; assumption. }
+  assert (
+    eqtype G
+           (Subst B (sbcomp (sbshift A sbs)
+                            (sbzero (Subst A sbs) (subst u sbs))))
+           (Subst B (sbcomp (sbzero A u) sbs))
+  ).
+  { ceapply CongTySubst ; eassumption. }
+  assert (
+    eqctx
+      (ctxextend G
+                 (Subst B
+                        (sbcomp (sbshift A sbs)
+                                (sbzero (Subst A sbs) (subst u sbs)))))
+      (ctxextend G (Subst B (sbcomp (sbzero A u) sbs)))
+  ).
+  { ceapply EqCtxExtend ; assumption. }
+  assert (
+    isctx
+      (ctxextend G
+                 (Subst B (sbcomp (sbshift A sbs)
+                                  (sbzero (Subst A sbs) (subst u sbs)))))
+  ).
+  { ceapply CtxExtend ; assumption. }
+  assert (
+    issubst
+      (sbshift B
+               (sbcomp (sbshift A sbs)
+                       (sbzero (Subst A sbs) (subst u sbs))))
+      (ctxextend G (Subst B (sbcomp (sbzero A u) sbs)))
+      (ctxextend (ctxextend D A) B)
+  ).
+  { ceapply SubstCtxConv ; [
+      ceapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (
+    eqtype G (Subst B (sbcomp (sbzero A u) sbs))
+    (Subst B (sbcomp (sbshift A sbs) (sbzero (Subst A sbs) (subst u sbs))))
+  ).
+  { ceapply EqTySym ; assumption. }
+  assert (
+    eqtype G
+    (Subst B (sbcomp (sbshift A sbs) (sbzero (Subst A sbs) (subst u sbs))))
+    (Subst (Subst B (sbzero A u)) sbs)
+  ).
+  { ceapply EqTySym ; [
+      ceapply EqTyTrans ; [
+        ceapply EqTySubstComp ; eassumption
+      | assumption ..
+      ]
+    | assumption ..
+    ].
+  }
+  assert (
+    eqctx
+      (ctxextend G
+                 (Subst B (sbcomp (sbshift A sbs)
+                                  (sbzero (Subst A sbs) (subst u sbs)))))
+      (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+  ).
+  { ceapply EqCtxExtend ; assumption. }
+  assert (istype (ctxextend G (Subst A sbs)) (Subst B (sbshift A sbs))).
+  { ceapply TySubst ; eassumption. }
+  assert (
+    istype G
+    (Subst (Subst B (sbshift A sbs)) (sbzero (Subst A sbs) (subst u sbs)))
+  ).
+  { ceapply TySubst ; eassumption. }
+  assert (
+    eqtype G
+    (Subst (Subst B (sbshift A sbs)) (sbzero (Subst A sbs) (subst u sbs)))
+    (Subst B (sbcomp (sbshift A sbs) (sbzero (Subst A sbs) (subst u sbs))))
+  ).
+  { ceapply EqTySubstComp ; eassumption. }
+  assert (
+    eqctx
+    (ctxextend G
+       (Subst (Subst B (sbshift A sbs)) (sbzero (Subst A sbs) (subst u sbs))))
+    (ctxextend G
+       (Subst B (sbcomp (sbshift A sbs) (sbzero (Subst A sbs) (subst u sbs)))))
+  ).
+  { ceapply EqCtxExtend ; assumption. }
+  assert (
+    isctx (ctxextend (ctxextend G (Subst A sbs)) (Subst B (sbshift A sbs)))
+  ).
+  { ceapply CtxExtend ; assumption. }
+  assert (
+    eqctx (ctxextend (ctxextend G (Subst A sbs)) (Subst B (sbshift A sbs)))
+    (ctxextend (ctxextend G (Subst A sbs)) (Subst B (sbshift A sbs)))
+  ).
+  { ceapply CtxRefl ; assumption. }
+  assert (
+    isctx
+    (ctxextend G
+       (Subst (Subst B (sbshift A sbs)) (sbzero (Subst A sbs) (subst u sbs))))
+  ).
+  { ceapply CtxExtend ; assumption. }
+  assert (
+    issubst
+    (sbshift (Subst B (sbshift A sbs)) (sbzero (Subst A sbs) (subst u sbs)))
+    (ctxextend G
+       (Subst B (sbcomp (sbshift A sbs) (sbzero (Subst A sbs) (subst u sbs)))))
+    (ctxextend (ctxextend G (Subst A sbs)) (Subst B (sbshift A sbs)))
+  ).
+  { ceapply SubstCtxConv ; [
+      ceapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (
+    issubst (sbshift B (sbshift A sbs))
+    (ctxextend (ctxextend G (Subst A sbs)) (Subst B (sbshift A sbs)))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { ceapply SubstShift ; assumption. }
+  assert (
+    issubst
+    (sbcomp (sbshift B (sbshift A sbs))
+       (sbshift (Subst B (sbshift A sbs))
+          (sbzero (Subst A sbs) (subst u sbs))))
+    (ctxextend G
+       (Subst B (sbcomp (sbshift A sbs) (sbzero (Subst A sbs) (subst u sbs)))))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { ceapply SubstComp ; eassumption. }
+  assert (
+    issubst
+    (sbshift B (sbcomp (sbshift A sbs) (sbzero (Subst A sbs) (subst u sbs))))
+    (ctxextend G
+       (Subst B (sbcomp (sbshift A sbs) (sbzero (Subst A sbs) (subst u sbs)))))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { ceapply SubstShift ; assumption. }
+  assert (
+    eqtype G
+    (Subst (Subst B (sbshift A sbs)) (sbzero (Subst A sbs) (subst u sbs)))
+    (Subst (Subst B (sbzero A u)) sbs)
+  ).
+  { ceapply EqTyTrans ; [
+      ceapply EqTySubstComp ; eassumption
+    | ceapply EqTySym ; [
+        ceapply EqTyTrans ; [
+          ceapply EqTySubstComp ; eassumption
+        | assumption ..
+        ]
+      | assumption ..
+      ]
+    | assumption ..
+    ].
+  }
+  assert (
+    eqctx
+    (ctxextend G
+       (Subst (Subst B (sbshift A sbs)) (sbzero (Subst A sbs) (subst u sbs))))
+    (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+  ).
+  { ceapply EqCtxExtend ; assumption. }
+  assert (
+    issubst
+    (sbshift (Subst B (sbshift A sbs)) (sbzero (Subst A sbs) (subst u sbs)))
+    (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+    (ctxextend (ctxextend G (Subst A sbs)) (Subst B (sbshift A sbs)))
+  ).
+  { ceapply SubstCtxConv ; [
+      ceapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (
+    issubst
+    (sbcomp (sbshift B (sbshift A sbs))
+       (sbshift (Subst B (sbshift A sbs))
+          (sbzero (Subst A sbs) (subst u sbs))))
+    (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { ceapply SubstComp ; eassumption. }
+  assert (
+    issubst
+    (sbshift B (sbcomp (sbshift A sbs) (sbzero (Subst A sbs) (subst u sbs))))
+    (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { ceapply SubstCtxConv ; [
+      ceapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (
+    issubst (sbshift B (sbcomp (sbzero A u) sbs))
+    (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { ceapply SubstCtxConv ; [
+      ceapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (
+    issubst
+    (sbcomp (sbshift B (sbzero A u)) (sbshift (Subst B (sbzero A u)) sbs))
+    (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { ceapply SubstComp ; eassumption. }
+  assert (
+    issubst (sbcomp (sbshift B (sbzero A u)) (sbshift C sbs))
+    (ctxextend G (Subst (Subst B (sbzero A u)) sbs))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { ceapply SubstComp ; eassumption. }
+
+
+
+
+  ceapply SubstTrans ; [
+    ceapply CongSubstComp ; [
+      ceapply EqSubstCtxConv ; [
+        ceapply CongSubstShift ; [
+          (config eapply @SubstRefl with (D := D)) ; try assumption
+        | eassumption
+        | try assumption ..
+        ]
+      | ceapply EqCtxExtend ; try assumption
+      | ceapply CtxRefl ; assumption
+      | eassumption ..
+      ]
+    | ceapply SubstRefl ; assumption
+    | assumption ..
+    ]
+  | ceapply SubstTrans ; [
+      ceapply EqSubstCtxConv ; [
+        config (eapply @CompShift with (E := ctxextend D A)) ; try assumption
+      | eassumption ..
+      ]
+    | ceapply SubstTrans ; [
+        ceapply EqSubstCtxConv ; [
+          ceapply CongSubstShift ; [
+             ceapply SubstSym ; [
+               ceapply ShiftZero ; try assumption
+             | eassumption ..
+             ]
+           | ceapply EqTyRefl ; eassumption
+           | eassumption ..
+           ]
+        | eassumption ..
+        ]
+      | ceapply SubstTrans ; [
+          ceapply SubstSym ; [
+             ceapply EqSubstCtxConv ; [
+                (config eapply @CompShift
+                 with (D := ctxextend G (Subst A sbs))
+                        (E := ctxextend D A)) ; try assumption
+              | eassumption ..
+              ]
+           | assumption ..
+           ]
+        | ceapply SubstRefl ; assumption
+        | assumption ..
+        ]
+      | assumption ..
+      ]
+    | assumption ..
+    ]
+  | assumption ..
+  ].
+  all:try assumption.
+  2:eassumption.
+  all:assumption.
+Defined.
 
 (* A simplify tactic to simplify substitutions *)
 Ltac ecomp lm :=
@@ -461,6 +966,11 @@ Ltac simplify_subst :=
       | sbcomp (sbweak _) (sbcomp (sbzero _ _) _) =>
         ecomp WeakZero
 
+      | sbcomp (sbweak _) (sbshift _ _) =>
+        ceapply WeakNat
+      | sbcomp (sbweak _) (sbcomp (sbshift _ _) _) =>
+        ecomp WeakNat
+
       | sbcomp (sbzero _ _) ?sbs =>
         ceapply SubstSym ; [ ceapply ShiftZero | .. ]
 
@@ -476,6 +986,12 @@ Ltac simplify_subst :=
           ]
         | ..
         ]
+
+      (* After ZeroShift, comes ZeroShift2 *)
+      | sbcomp (sbshift _ (sbzero _ _)) (sbshift _ _) =>
+        ceapply ZeroShift2
+      | sbcomp (sbshift _ (sbzero _ _)) (sbcomp (sbshift _ _) _) =>
+        ecomp ZeroShift2
 
       | sbcomp ?sbs ?sbt =>
         ceapply CongSubstComp ; [
@@ -604,11 +1120,38 @@ Ltac eqtype_subst G A sbs B k try shelf tysym debug :=
         ] ; k try shelf true debug
       end
     )
-    else first [
-      simplify
-    | ceapply CongTySubst
-    | myfail debug
-    ] ; k try shelf true debug
+    else
+      match B with
+      | Subst ?B ?sbt =>
+        tryif (is_var B)
+        then (
+          tryif (is_var sbt)
+          then first [
+            simplify
+          | ceapply CongTySubst
+          | myfail debug
+          ] ; k try shelf true debug
+          else first [
+            simplify
+          | ceapply EqTySym ; [ simplify | .. ]
+          | ceapply CongTySubst
+          | myfail debug
+          ] ; k try shelf true debug
+        )
+        else first [
+          (* Should we simplify on the left first? *)
+          pushsubst1
+        | simplify
+        | cando tysym ; ceapply EqTySym ; [ simplify | .. ]
+        | myfail debug
+        ] ; k try shelf true debug
+      | _ =>
+        first [
+          simplify
+        | ceapply CongTySubst
+        | myfail debug
+        ] ; k try shelf true debug
+      end
   )
   else first [
     pushsubst1
@@ -755,7 +1298,10 @@ Ltac magicn try shelf tysym debug :=
       | myfail debug
       ] ; magicn try shelf true debug
     | |- isterm ?G (var ?k) ?A =>
-      first [
+      (* In that case, we might shelve, if the don't know the context. *)
+      tryif (is_evar G)
+      then shelve
+      else first [
         eassumption
       | myfail debug
       ]
@@ -906,6 +1452,25 @@ Ltac magicn try shelf tysym debug :=
           ceapply SubstRefl
         | myfail debug
         ] ; magicn try shelf true debug
+    (* In case we have syntactically equal substitutions involved,
+       we can make a little shortcut. *)
+    (* | |- eqsubst (sbcomp ?sbs _) (sbcomp ?sbs _) _ _ => *)
+    (*   first [ *)
+    (*     eapply CongSubstComp ; [ *)
+    (*       idtac *)
+    (*     | eapply SubstRefl *)
+    (*     | .. *)
+    (*     ] *)
+    (*   | myfail debug *)
+    (*   ] ; magicn try shelf true debug *)
+    (* | |- eqsubst (sbcomp _ ?sbs) (sbcomp _ ?sbs) _ _ => *)
+    (*   first [ *)
+    (*     eapply CongSubstComp ; [ *)
+    (*       eapply SubstRefl *)
+    (*     | .. *)
+    (*     ] *)
+    (*   | myfail debug *)
+    (*   ] ; magicn try shelf true debug *)
     (* We need to simplify if we are ever going to apply congruence for
        composition. *)
     | |- eqsubst ?sbs ?sbt ?G ?D =>
@@ -1017,6 +1582,13 @@ Ltac magicn try shelf tysym debug :=
       ] ; magicn try shelf true debug
       else eqtype_subst G A (sbzero B u) B
                         magicn try shelf tysym debug
+    | |- eqtype ?G (Subst ?A ?sbs) (Subst ?A ?sbt) =>
+      (* A little shortcut in that case. *)
+      eapply CongTySubst ; [
+        idtac
+      | eapply EqTyRefl
+      | ..
+      ] ; magicn try shelf true debug
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)
       eqtype_subst G A sbs B magicn try shelf tysym debug
@@ -1259,4 +1831,3 @@ Ltac keep_eq :=
   | |- eqctx _ _ => idtac
   | _ => shelve
   end.
-

@@ -610,7 +610,9 @@ Proof.
   (* EqSubstJ *)
   - { split.
       - { magic. Unshelve. all:strictmagic. }
-      - { admit.
+      - { magic.
+          Unshelve. all:try okmagic.
+          Unshelve. all:strictmagic.
         }
     }
 
@@ -733,7 +735,7 @@ Proof.
       - { magic. }
     }
 
-Admitted.
+Defined.
 
 Theorem sane_eqterm G u v A :
   eqterm G u v A -> isctx G * istype G A * isterm G u A * isterm G v A.

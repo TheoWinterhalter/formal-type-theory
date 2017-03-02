@@ -24,8 +24,7 @@ Lemma EqTyWeakNat :
            (Subst (Subst B sbs) (sbweak (Subst A sbs))).
 Proof.
   intros. magic.
-  Unshelve.
-  all: strictmagic.
+  Unshelve. all:strictmagic.
 Defined.
 
 
