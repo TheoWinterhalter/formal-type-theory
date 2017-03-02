@@ -435,6 +435,7 @@ Lemma ZeroShift2 :
     issubst sbs G D ->
     istype D A ->
     istype (ctxextend D A) B ->
+    istype D C ->
     isctx G ->
     isctx D ->
     eqsubst (sbcomp (sbshift D B (sbzero D A u))
@@ -447,6 +448,109 @@ Lemma ZeroShift2 :
             (ctxextend (ctxextend D A) B).
 Proof.
   intros.
+  assert (isctx (ctxextend D A)).
+  { eapply CtxExtend ; assumption. }
+  assert (istype D (Subst B (sbzero D A u))).
+  assert (issubst (sbzero D A u) D (ctxextend D A)).
+  { eapply SubstZero ; assumption. }
+  { eapply TySubst ; eassumption. }
+  assert (istype G (Subst C sbs)).
+  { eapply TySubst ; eassumption. }
+  assert (istype G (Subst (Subst B (sbzero D A u)) sbs)).
+  { eapply TySubst ; eassumption. }
+  assert (isctx (ctxextend D C)).
+  { eapply CtxExtend ; assumption. }
+  assert (isctx (ctxextend G (Subst C sbs))).
+  { eapply CtxExtend ; assumption. }
+  assert (isctx (ctxextend G (Subst (Subst B (sbzero D A u)) sbs))).
+  { eapply CtxExtend ; assumption. }
+  assert (
+    issubst (sbshift G C sbs) (ctxextend G (Subst C sbs)) (ctxextend D C)
+  ).
+  { eapply SubstShift ; assumption. }
+  assert (eqctx G G).
+  { eapply CtxRefl. assumption. }
+  assert (eqtype D (Subst B (sbzero D A u)) C).
+  { eapply EqTySym ; assumption. }
+  assert (eqtype G (Subst (Subst B (sbzero D A u)) sbs) (Subst C sbs)).
+  { eapply CongTySubst ; [
+      eapply @SubstRefl with (D := D) ; assumption
+    | assumption ..
+    ].
+  }
+  assert (
+    eqctx (ctxextend G (Subst (Subst B (sbzero D A u)) sbs))
+    (ctxextend G (Subst C sbs))
+  ).
+  { eapply EqCtxExtend ; assumption. }
+  assert (eqctx D D).
+  { eapply CtxRefl. assumption. }
+  assert (eqctx (ctxextend D (Subst B (sbzero D A u))) (ctxextend D C)).
+  { eapply EqCtxExtend ; assumption. }
+  assert (isctx (ctxextend D (Subst B (sbzero D A u)))).
+  { eapply CtxExtend ; assumption. }
+  assert (
+    issubst (sbshift G (Subst B (sbzero D A u)) sbs)
+            (ctxextend G (Subst C sbs))
+            (ctxextend D C)
+  ).
+  { eapply SubstCtxConv ; [
+      eapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (isctx (ctxextend (ctxextend D A) B)).
+  { eapply CtxExtend ; assumption. }
+  assert (issubst (sbzero D A u) D (ctxextend D A)).
+  { eapply SubstZero ; assumption. }
+  assert (eqctx (ctxextend (ctxextend D A) B) (ctxextend (ctxextend D A) B)).
+  { apply CtxRefl. assumption. }
+  assert (
+    issubst (sbshift D B (sbzero D A u)) (ctxextend D C)
+            (ctxextend (ctxextend D A) B)
+  ).
+  { eapply SubstCtxConv ; [
+      eapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (eqtype G (Subst C sbs) (Subst (Subst B (sbzero D A u)) sbs)).
+  { eapply EqTySym ; assumption. }
+  assert (
+    eqctx (ctxextend G (Subst C sbs))
+          (ctxextend G (Subst (Subst B (sbzero D A u)) sbs))
+  ).
+  { eapply EqCtxExtend ; assumption. }
+  assert (eqctx (ctxextend D C) (ctxextend D C)).
+  { apply CtxRefl. assumption. }
+  assert (
+    issubst (sbshift G C sbs)
+            (ctxextend G (Subst (Subst B (sbzero D A u)) sbs))
+            (ctxextend D C)
+  ).
+  { eapply SubstCtxConv ; [
+      eapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+
+
+  eapply SubstTrans.
+  - eapply CongSubstComp.
+    + eapply EqSubstCtxConv ; [
+        eapply CongSubstShift ; [
+          eapply CtxRefl ; assumption
+        | eapply @SubstRefl with (D := D) ; assumption
+        | eassumption
+        | assumption ..
+        ]
+      | eapply EqCtxExtend ; assumption
+      | eapply CtxRefl ; assumption
+      | assumption ..
+      ].
+    + eapply SubstRefl ; assumption.
+    + assumption.
+    +
 Admitted.
 
 (* A simplify tactic to simplify substitutions *)
