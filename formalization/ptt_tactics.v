@@ -690,6 +690,138 @@ Proof.
     | assumption ..
     ].
   }
+  assert (
+    eqtype G (Subst B (sbcomp (sbzero D A u) sbs))
+    (Subst B (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst u sbs))))
+  ).
+  { eapply EqTySym ; assumption. }
+  assert (
+    eqtype G
+    (Subst B (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst u sbs))))
+    (Subst (Subst B (sbzero D A u)) sbs)
+  ).
+  { eapply EqTySym ; [
+      eapply EqTyTrans ; [
+        eapply EqTySubstComp ; eassumption
+      | assumption ..
+      ]
+    | assumption ..
+    ].
+  }
+  assert (
+    eqctx
+      (ctxextend G
+                 (Subst B (sbcomp (sbshift G A sbs)
+                                  (sbzero G (Subst A sbs) (subst u sbs)))))
+      (ctxextend G (Subst (Subst B (sbzero D A u)) sbs))
+  ).
+  { eapply EqCtxExtend ; assumption. }
+  assert (istype (ctxextend G (Subst A sbs)) (Subst B (sbshift G A sbs))).
+  { eapply TySubst ; eassumption. }
+  assert (
+    istype G
+    (Subst (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst u sbs)))
+  ).
+  { eapply TySubst ; eassumption. }
+  assert (
+    eqtype G
+    (Subst (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst u sbs)))
+    (Subst B (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst u sbs))))
+  ).
+  { eapply EqTySubstComp ; eassumption. }
+  assert (
+    eqctx
+    (ctxextend G
+       (Subst (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst u sbs))))
+    (ctxextend G
+       (Subst B (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst u sbs)))))
+  ).
+  { eapply EqCtxExtend ; assumption. }
+  assert (
+    isctx (ctxextend (ctxextend G (Subst A sbs)) (Subst B (sbshift G A sbs)))
+  ).
+  { eapply CtxExtend ; assumption. }
+  assert (
+    eqctx (ctxextend (ctxextend G (Subst A sbs)) (Subst B (sbshift G A sbs)))
+    (ctxextend (ctxextend G (Subst A sbs)) (Subst B (sbshift G A sbs)))
+  ).
+  { eapply CtxRefl ; assumption. }
+  assert (
+    isctx
+    (ctxextend G
+       (Subst (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst u sbs))))
+  ).
+  { eapply CtxExtend ; assumption. }
+  assert (
+    issubst
+    (sbshift G (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst u sbs)))
+    (ctxextend G
+       (Subst B (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst u sbs)))))
+    (ctxextend (ctxextend G (Subst A sbs)) (Subst B (sbshift G A sbs)))
+  ).
+  { eapply SubstCtxConv ; [
+      eapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (
+    issubst (sbshift (ctxextend G (Subst A sbs)) B (sbshift G A sbs))
+    (ctxextend (ctxextend G (Subst A sbs)) (Subst B (sbshift G A sbs)))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { eapply SubstShift ; assumption. }
+  assert (
+    issubst
+    (sbcomp (sbshift (ctxextend G (Subst A sbs)) B (sbshift G A sbs))
+       (sbshift G (Subst B (sbshift G A sbs))
+          (sbzero G (Subst A sbs) (subst u sbs))))
+    (ctxextend G
+       (Subst B (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst u sbs)))))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { eapply SubstComp ; eassumption. }
+  assert (
+    issubst
+    (sbshift G B (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst u sbs))))
+    (ctxextend G
+       (Subst B (sbcomp (sbshift G A sbs) (sbzero G (Subst A sbs) (subst u sbs)))))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { eapply SubstShift ; assumption. }
+  assert (
+    eqtype G
+    (Subst (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst u sbs)))
+    (Subst (Subst B (sbzero D A u)) sbs)
+  ).
+  {
+  assert (
+    eqctx
+    (ctxextend G
+       (Subst (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst u sbs))))
+    (ctxextend G (Subst (Subst B (sbzero D A u)) sbs))
+  ).
+  { eapply EqCtxExtend ; assumption. }
+  assert (
+    issubst
+    (sbshift G (Subst B (sbshift G A sbs)) (sbzero G (Subst A sbs) (subst u sbs)))
+    (ctxextend G (Subst (Subst B (sbzero D A u)) sbs))
+    (ctxextend (ctxextend G (Subst A sbs)) (Subst B (sbshift G A sbs)))
+  ).
+  { eapply SubstCtxConv ; [
+      eapply SubstShift ; eassumption
+    | assumption ..
+    ].
+  }
+  assert (
+    issubst
+    (sbcomp (sbshift (ctxextend G (Subst A sbs)) B (sbshift G A sbs))
+       (sbshift G (Subst B (sbshift G A sbs))
+          (sbzero G (Subst A sbs) (subst u sbs))))
+    (ctxextend G (Subst (Subst B (sbzero D A u)) sbs))
+    (ctxextend (ctxextend D A) B)
+  ).
+  { eapply SubstComp ; eassumption. }
+
 
 
 
@@ -728,7 +860,21 @@ Proof.
            ]
         | assumption ..
         ].
-      *
+      * eapply SubstTrans.
+        -- eapply SubstSym.
+           ++ eapply EqSubstCtxConv.
+              ** eapply @CompShift
+                 with (D := ctxextend G (Subst A sbs))
+                        (E := ctxextend D A) ; assumption.
+              ** assumption.
+              ** assumption.
+              ** assumption.
+              ** assumption.
+              ** assumption.
+              ** assumption.
+              ** assumption.
+              ** assumption.
+           ++ assumption.
 Admitted.
 
 (* A simplify tactic to simplify substitutions *)
