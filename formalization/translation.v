@@ -1,11 +1,39 @@
-Require syntax. (* The syntax of ett/ptt. *)
-Require ptt.
+Require config.
+Require Import config_tactics.
+
+Require Import syntax. (* The syntax of ett/ptt. *)
+Require Import tt.
+
+Require ptt ett ett_sanity.
 Require ctt.
 Require Import eval.
 
-Module S := syntax.
-Module P := ptt.
+Module Px.
+
+  (* The source, paranoid extensional type theory *)
+  Section Px.
+
+    Local Instance hasPrecond : config.Precond
+      := {| config.precondFlag := config.Yes |}.
+    Local Instance hasReflection : config.Reflection
+      := {| config.reflectionFlag := config.Yes |}.
+
+    Definition isctx := isctx.
+    Definition issubst := issubst.
+    Definition istype := istype.
+    Definition isterm := isterm.
+    Definition eqctx := eqctx.
+    Definition eqsubst := eqsubst.
+    Definition eqtype := eqtype.
+    Definition eqterm := eqterm.
+
+  End Px.
+
+End Px.
+
 Module C := ctt.
+
+Section Translation.
 
 (* For a term in CTT to be well-typed we need to evaluate it to ITT and
    check there. *)
@@ -182,99 +210,99 @@ Defined.
 (* "hml" stands for "homologous" which is too long to type. *)
 
 Inductive hml_context :
-  S.context -> C.context -> Type :=
+  context -> C.context -> Type :=
 
   | hml_ctxempty :
-      hml_context S.ctxempty C.ctxempty
+      hml_context ctxempty C.ctxempty
 
   | hml_ctxextend :
       forall {G G' A A'},
         hml_context G G' ->
         hml_type A A' ->
-        hml_context (S.ctxextend G A) (C.ctxextend G' A')
+        hml_context (ctxextend G A) (C.ctxextend G' A')
 
 with hml_substitution :
-  S.substitution -> C.substitution -> Type :=
+  substitution -> C.substitution -> Type :=
 
   | hml_sbzero :
       forall {G G' A A' u u' c},
         hml_context G G' ->
         hml_type A A' ->
         hml_term u u' ->
-        hml_substitution (S.sbzero G A u) (C.sbcoerce c (C.sbzero G' A' u'))
+        hml_substitution (sbzero A u) (C.sbcoerce c (C.sbzero G' A' u'))
 
   | hml_sbweak :
       forall {G G' A A' c},
         hml_context G G' ->
         hml_type A A' ->
-        hml_substitution (S.sbweak G A) (C.sbcoerce c (C.sbweak G' A'))
+        hml_substitution (sbweak A) (C.sbcoerce c (C.sbweak G' A'))
 
   | hml_sbshift :
       forall {G G' A A' sbs sbs' c},
         hml_context G G' ->
         hml_type A A' ->
         hml_substitution sbs sbs' ->
-        hml_substitution (S.sbshift G A sbs)
+        hml_substitution (sbshift A sbs)
                          (C.sbcoerce c (C.sbshift G' A' sbs'))
 
   | hml_sbid :
       forall {G G' c},
         hml_context G G' ->
-        hml_substitution (S.sbid G) (C.sbcoerce c (C.sbid G'))
+        hml_substitution sbid (C.sbcoerce c (C.sbid G'))
 
   | hml_sbcomp :
       forall {sbs sbs' sbt sbt' c},
         hml_substitution sbs sbs' ->
         hml_substitution sbt sbt' ->
-        hml_substitution (S.sbcomp sbs sbt)
+        hml_substitution (sbcomp sbs sbt)
                          (C.sbcoerce c (C.sbcomp sbs' sbt'))
 
 with hml_type :
-  S.type -> C.type -> Type :=
+  type -> C.type -> Type :=
 
   | hml_Prod :
       forall {A A' B B' c},
         hml_type A A' ->
         hml_type B B' ->
-        hml_type (S.Prod A B) (C.Coerce c (C.Prod A' B'))
+        hml_type (Prod A B) (C.Coerce c (C.Prod A' B'))
 
   | hml_Id :
       forall {A A' u u' v v' c},
         hml_type A A' ->
         hml_term u u' ->
         hml_term v v' ->
-        hml_type (S.Id A u v) (C.Coerce c (C.Id A' u' v'))
+        hml_type (Id A u v) (C.Coerce c (C.Id A' u' v'))
 
   | hml_Subst :
       forall {A A' sbs sbs' c},
         hml_type A A' ->
         hml_substitution sbs sbs' ->
-        hml_type (S.Subst A sbs) (C.Coerce c (C.Subst A' sbs'))
+        hml_type (Subst A sbs) (C.Coerce c (C.Subst A' sbs'))
 
   | hml_Empty :
       forall {c},
-        hml_type S.Empty (C.Coerce c C.Empty)
+        hml_type Empty (C.Coerce c C.Empty)
 
   | hml_Unit :
       forall {c},
-        hml_type S.Unit (C.Coerce c C.Unit)
+        hml_type Unit (C.Coerce c C.Unit)
 
   | hml_Bool :
       forall {c},
-        hml_type S.Bool (C.Coerce c C.Bool)
+        hml_type Bool (C.Coerce c C.Bool)
 
 with hml_term :
-  S.term -> C.term -> Type :=
+  term -> C.term -> Type :=
 
   | hml_var {k c} :
-      hml_term (S.var k) (C.coerce c (C.var k))
+      hml_term (var k) (C.coerce c (C.var k))
 
   | hml_lam :
       forall {A A' B B' u u' c},
         hml_type A A' ->
         hml_type B B' ->
         hml_term u u' ->
-        hml_term (S.lam A B u) (C.coerce c (C.lam A' B' u'))
+        hml_term (lam A B u) (C.coerce c (C.lam A' B' u'))
 
   | hml_app :
       forall {A A' B B' u u' v v' c},
@@ -282,14 +310,14 @@ with hml_term :
         hml_type B B' ->
         hml_term u u' ->
         hml_term v v' ->
-        hml_term (S.app u A B v)
+        hml_term (app u A B v)
                  (C.coerce c (C.app u' A' B' v'))
 
   | hml_refl :
       forall {A A' u u' c},
         hml_type A A' ->
         hml_term u u' ->
-        hml_term (S.refl A u) (C.coerce c (C.refl A' u'))
+        hml_term (refl A u) (C.coerce c (C.refl A' u'))
 
   | hml_j :
       forall {A A' C C' u u' v v' w w' p p' c},
@@ -299,33 +327,33 @@ with hml_term :
         hml_term v v' ->
         hml_term w w' ->
         hml_term p p' ->
-        hml_term (S.j A u C w v p)
+        hml_term (j A u C w v p)
                  (C.coerce c (C.j A' u' C' w' v' p'))
 
   | hml_subst :
       forall {u u' sbs sbs' c},
         hml_term u u' ->
         hml_substitution sbs sbs' ->
-        hml_term (S.subst u sbs)
+        hml_term (subst u sbs)
                  (C.coerce c (C.subst u' sbs'))
 
   | hml_exfalso :
       forall {A A' u u' c},
         hml_type A A' ->
         hml_term u u' ->
-        hml_term (S.exfalso A u) (C.coerce c (C.exfalso A' u'))
+        hml_term (exfalso A u) (C.coerce c (C.exfalso A' u'))
 
   | hml_unit :
       forall {c},
-        hml_term S.unit (C.coerce c C.unit)
+        hml_term unit (C.coerce c C.unit)
 
   | hml_true :
       forall {c},
-        hml_term S.true (C.coerce c C.true)
+        hml_term true (C.coerce c C.true)
 
   | hml_false :
       forall {c},
-        hml_term S.false (C.coerce c C.false)
+        hml_term false (C.coerce c C.false)
 
   | hml_cond :
       forall {C C' u u' v v' w w' c},
@@ -333,7 +361,7 @@ with hml_term :
         hml_term u u' ->
         hml_term v v' ->
         hml_term w w' ->
-        hml_term (S.cond C u v w)
+        hml_term (cond C u v w)
                  (C.coerce c (C.cond C' u' v' w'))
 
 .
@@ -373,14 +401,14 @@ Definition hml_type_change
     end.
 
 
-Structure istrans_ctx (G : S.context) (G' : C.context) :=
+Structure istrans_ctx (G : context) (G' : C.context) :=
   {
     isctx_derive : Cisctx G' ;
     isctx_hom : hml_context G G'
   }.
 
 Structure istrans_subst
-          (sbs : S.substitution)
+          (sbs : substitution)
           (G' D' : C.context) (sbs' : C.substitution)
   :=
   {
@@ -388,13 +416,13 @@ Structure istrans_subst
     issubst_hom : hml_substitution sbs sbs'
   }.
 
-Structure istrans_type (A : S.type) (G' : C.context) (A' : C.type) :=
+Structure istrans_type (A : type) (G' : C.context) (A' : C.type) :=
   {
     istype_derive : Cistype G' A' ;
     istype_hom : hml_type A A'
   }.
 
-Structure istrans_term (u : S.term) (G' : C.context) (u' : C.term) (A' : C.type) :=
+Structure istrans_term (u : term) (G' : C.context) (u' : C.term) (A' : C.type) :=
   {
     isterm_derive : Cisterm G' u' A' ;
     isterm_hom : hml_term u u'
@@ -412,10 +440,10 @@ Parameter equiv_term : C.context -> C.term -> C.term -> C.type -> Type.
 
 Ltac todo := exact todo.
 
-Fixpoint trans_ctx {G} (H : P.isctx G) {struct H} :
+Fixpoint trans_ctx {G} (H : Px.isctx G) {struct H} :
   { G' : C.context & istrans_ctx G G' }
 
-with trans_subst_left {G G' D sbs} (H : P.issubst sbs G D)
+with trans_subst_left {G G' D sbs} (H : Px.issubst sbs G D)
                   (Ht : istrans_ctx G G') {struct H} :
        { D' : C.context &
          istrans_ctx D D' *
@@ -426,7 +454,7 @@ with trans_subst_left {G G' D sbs} (H : P.issubst sbs G D)
 (*                   (Ht : istrans_ctx D D') {struct H} : *)
 (*        { G' : C.context & { sbt : C.substitution & C.issubst sbt G' D' } } *)
 
-with trans_type {G G' A} (H : P.istype G A) (Ht : istrans_ctx G G') {struct H} :
+with trans_type {G G' A} (H : Px.istype G A) (Ht : istrans_ctx G G') {struct H} :
        { A' : C.type &
               istrans_type A G' A' *
               (* this component might not be needed? *)
@@ -435,7 +463,7 @@ with trans_type {G G' A} (H : P.istype G A) (Ht : istrans_ctx G G') {struct H} :
 
 with trans_term
        {G u A G' A'}
-       (H : P.isterm G u A)
+       (H : Px.isterm G u A)
        (HG : istrans_ctx G G')
        (HA : istrans_type A G' A') {struct H}
      : { u' : C.term &
@@ -446,7 +474,7 @@ with trans_term
 
 with trans_eqctx_left
        {G G' D}
-       (H : P.eqctx G D)
+       (H : Px.eqctx G D)
        (HG : istrans_ctx G G') {struct H}
      : { D' : C.context &
          istrans_ctx D D' *
@@ -457,7 +485,7 @@ with trans_eqctx_left
 
 with trans_eqctx_right
        {G D D'}
-       (H : P.eqctx G D)
+       (H : Px.eqctx G D)
        (HD : istrans_ctx D D') {struct H}
      : { G' : C.context &
          istrans_ctx G G' *
@@ -468,7 +496,7 @@ with trans_eqctx_right
 
 Proof.
   (****** trans_ctx ******)
-  - { destruct H.
+  - { destruct H ; doConfig.
 
       (* CtxEmpty *)
       - exists C.ctxempty.
@@ -477,9 +505,8 @@ Proof.
         + constructor.
 
       (* CtxExtend *)
-      (* this is the reason we changed CtxExtend to include "isctx G". *)
-      - destruct (trans_ctx _ H) as [G' HGisG'].
-        destruct (trans_type G G' A i HGisG') as (A' & HAisA' & _).
+      - destruct (trans_ctx _ i) as [G' HGisG'].
+        destruct (trans_type G G' A i0 HGisG') as (A' & HAisA' & _).
         exists (C.ctxextend G' A').
         split.
         + constructor.
@@ -491,7 +518,7 @@ Proof.
     }
 
   (****** trans_subst_left ******)
-  - { destruct H.
+  - { destruct H ; doConfig.
 
       (* SubstZero *)
       - destruct (trans_type G G' A i0 Ht) as (A' & HAisA' & _).
@@ -521,7 +548,7 @@ Proof.
                   + now inversion Ht.
                   + now inversion HAisA'.
               }
-            + constructor.
+            + econstructor.
               * now destruct Ht.
               * now destruct HAisA'.
               * now destruct Huisu'.
@@ -660,7 +687,7 @@ Proof.
   (*   } *)
 
   (****** trans_type ******)
-  - { destruct H.
+  - { destruct H ; doConfig.
 
       (* TyCtxConv *)
       - rename G' into D'.
@@ -787,7 +814,7 @@ Proof.
   - todo.
 
   (****** trans_eqctx_left ******)
-  - { destruct H.
+  - { destruct H ; doConfig.
 
       (* CtxRefl *)
       - exists G'. split.
@@ -832,7 +859,7 @@ Proof.
     }
 
   (****** trans_eqctx_right ******)
-  - { destruct H.
+  - { destruct H ; doConfig.
 
       (* CtxRefl *)
       - rename D' into G'. rename HD into HG.
@@ -881,3 +908,5 @@ Proof.
     }
 
 Defined.
+
+End Translation.

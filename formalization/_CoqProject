@@ -21,7 +21,7 @@ inversion.v
 
 uniqueness.v
 
-substitution_elim.v
+# substitution_elim.v
 
 ctt.v
 itt.v
