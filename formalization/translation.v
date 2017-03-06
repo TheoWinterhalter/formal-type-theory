@@ -204,30 +204,26 @@ with hml_substitution :
   substitution -> C.substitution -> Type :=
 
   | hml_sbzero :
-      forall {G G' A A' u u' c},
-        hml_context G G' ->
+      forall {A A' u u' c},
         hml_type A A' ->
         hml_term u u' ->
-        hml_substitution (sbzero A u) (C.sbcoerce c (C.sbzero G' A' u'))
+        hml_substitution (sbzero A u) (C.sbcoerce c (C.sbzero A' u'))
 
   | hml_sbweak :
-      forall {G G' A A' c},
-        hml_context G G' ->
+      forall {A A' c},
         hml_type A A' ->
-        hml_substitution (sbweak A) (C.sbcoerce c (C.sbweak G' A'))
+        hml_substitution (sbweak A) (C.sbcoerce c (C.sbweak A'))
 
   | hml_sbshift :
-      forall {G G' A A' sbs sbs' c},
-        hml_context G G' ->
+      forall {A A' sbs sbs' c},
         hml_type A A' ->
         hml_substitution sbs sbs' ->
         hml_substitution (sbshift A sbs)
-                         (C.sbcoerce c (C.sbshift G' A' sbs'))
+                         (C.sbcoerce c (C.sbshift A' sbs'))
 
   | hml_sbid :
-      forall {G G' c},
-        hml_context G G' ->
-        hml_substitution sbid (C.sbcoerce c (C.sbid G'))
+      forall {c},
+        hml_substitution sbid (C.sbcoerce c C.sbid)
 
   | hml_sbcomp :
       forall {sbs sbs' sbt sbt' c},
@@ -359,11 +355,11 @@ Definition hml_substitution_change
     (h : hml_substitution sbs (C.sbcoerce sc1 sbs'))
   : hml_substitution sbs (C.sbcoerce sc2 sbs')
   := match h with
-    | hml_sbzero h1 h2 h3  => hml_sbzero h1 h2 h3
-    | hml_sbweak h1 h2     => hml_sbweak h1 h2
-    | hml_sbshift h1 h2 h3 => hml_sbshift h1 h2 h3
-    | hml_sbid h1          => hml_sbid h1
-    | hml_sbcomp h1 h2     => hml_sbcomp h1 h2
+    | hml_sbzero h1 h2  => hml_sbzero h1 h2
+    | hml_sbweak h1     => hml_sbweak h1
+    | hml_sbshift h1 h2 => hml_sbshift h1 h2
+    | hml_sbid          => hml_sbid
+    | hml_sbcomp h1 h2  => hml_sbcomp h1 h2
     end.
 
 Definition hml_type_change
@@ -513,7 +509,7 @@ Proof.
               * now inversion HAisA'.
           - exists (C.sbcoerce
                  C.idSb
-                 (C.sbzero G' A' u')).
+                 (C.sbzero A' u')).
             split.
             + unfold Cissubst. simpl.
               { ceapply SubstComp.
@@ -523,9 +519,7 @@ Proof.
                 - capply SubstId. ceapply CtxExtend.
                   now inversion HAisA'.
               }
-            + econstructor.
-              * destruct Ht. eassumption. (* Probably means we ought
-                                             to change something. *)
+            + constructor.
               * now destruct HAisA'.
               * now destruct Huisu'.
         }
@@ -540,7 +534,7 @@ Proof.
             + assumption.
           - exists (C.sbcoerce
                  C.idSb
-                 (C.sbweak G'0 A')).
+                 (C.sbweak A')).
             split.
             + (* To type it we need to recover that A' is a type. *)
               inversion HG'. subst.
@@ -582,7 +576,7 @@ Proof.
       (* SubstId *)
       - exists G'.
         split ; try assumption.
-        exists (C.sbcoerce C.idSb (C.sbid G')).
+        exists (C.sbcoerce C.idSb C.sbid).
         split.
         + unfold Cissubst. simpl.
           { ceapply SubstComp.
@@ -591,7 +585,7 @@ Proof.
               + ceapply SubstId. now inversion Ht.
             - ceapply SubstId. now inversion Ht.
           }
-        + econstructor. destruct Ht. eassumption.
+        + constructor.
 
       (* SubstComp *)
       - destruct (trans_subst_left G G' D sbs H Ht) as (D' & HD' & sbs' & Hsbs).

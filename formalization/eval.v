@@ -25,11 +25,11 @@ Fixpoint eval_ctx (G : C.context) : context :=
 
 with eval_substitution' (sbs : C.substitution') : substitution :=
   match sbs with
-  | C.sbzero G A u => sbzero (eval_type A) (eval_term u)
-  | C.sbweak G A => sbweak (eval_type A)
-  | C.sbshift G A sbs =>
+  | C.sbzero A u => sbzero (eval_type A) (eval_term u)
+  | C.sbweak A => sbweak (eval_type A)
+  | C.sbshift A sbs =>
     sbshift (eval_type A) (eval_substitution sbs)
-  | C.sbid G => sbid
+  | C.sbid => sbid
   | C.sbcomp sbs sbt =>
     sbcomp (eval_substitution sbs) (eval_substitution sbt)
   end
