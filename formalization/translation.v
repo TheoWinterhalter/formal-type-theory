@@ -49,29 +49,29 @@ Proof.
   { intros sbr eq. induction 1 ; try discriminate.
     - inversion eq. subst.
       exists D. split ; assumption.
-    - subst. destruct (IHissubst H eq_refl) as [E [h1 h2]].
+    - subst. destruct (IHX X eq_refl) as [E [h1 h2]].
       exists E. split.
-      + eapply I.SubstCtxConv.
+      + ceapply SubstCtxConv.
         * exact h1.
-        * apply I.CtxRefl.
+        * capply CtxRefl.
           (* We need sanity to conclude. *)
           admit.
         * assumption.
-      + eapply I.SubstCtxConv.
+      + ceapply SubstCtxConv.
         * exact h2.
         * assumption.
-        * apply I.CtxRefl.
+        * capply CtxRefl.
           (* We need sanity to conclude. *)
           admit.
   }
-  apply (H (I.sbcomp sbs sbt) eq_refl h).
+  capply (X (sbcomp sbs sbt) eq_refl h).
 Admitted.
 
 Lemma inversion_substitution :
   forall {c1' c2' sbs' G D},
     Cissubst (C.sbcoerce (c1', c2') sbs') G D ->
-    { Gi : I.context &
-      { Di : I.context &
+    { Gi : context &
+      { Di : context &
         I.issubst (C.ctxco_inv c1') (eval_ctx G) Gi *
         I.issubst (eval_substitution' sbs') Gi Di   *
         I.issubst (C.ctxco_map c2') Di (eval_ctx D)
@@ -103,13 +103,13 @@ Proof.
   unfold coerce_substitution. destruct sbs as [[c1' c2'] sbs'].
   unfold Cissubst. simpl.
   destruct (inversion_substitution hsbs) as (Gi & Di & [[h1 h2] h3]).
-  eapply I.SubstComp.
-  - eapply I.SubstComp.
-    + eapply I.SubstComp.
+  ceapply SubstComp.
+  - ceapply SubstComp.
+    + ceapply SubstComp.
       * destruct hc1 as [[_ h] _]. exact h.
       * eassumption.
     + eassumption.
-  - eapply I.SubstComp.
+  - ceapply SubstComp.
     + eassumption.
     + destruct hc2 as [[h _] _]. exact h.
 Defined.
@@ -117,8 +117,8 @@ Defined.
 (* Same thing but on a type. *)
 Lemma inversion_Subst :
   forall { G A sbs },
-    I.istype G (I.Subst A sbs) ->
-    { D : I.context &
+    I.istype G (Subst A sbs) ->
+    { D : context &
       I.issubst sbs G D *
       I.istype D A
     }%type.
@@ -126,33 +126,33 @@ Proof.
   intros G A sbs h.
   assert (
     forall B,
-      B = I.Subst A sbs ->
+      B = Subst A sbs ->
       I.istype G B ->
-      { D : I.context &
+      { D : context &
         I.issubst sbs G D *
         I.istype D A
       }%type
   ).
   { intros B eq. induction 1 ; try discriminate.
-    - subst. destruct (IHistype H eq_refl) as [E [h1 h2]].
+    - subst. destruct (IHX X eq_refl) as [E [h1 h2]].
       exists E. split.
-      + eapply I.SubstCtxConv.
+      + ceapply SubstCtxConv.
         * eassumption.
         * assumption.
         * (* Once again we need sanity for ITT *)
-          apply I.CtxRefl.
+          capply CtxRefl.
           admit.
       + assumption.
     - inversion eq. subst.
       exists D. split ; assumption.
   }
-  apply (H (I.Subst A sbs) eq_refl h).
+  apply (X (Subst A sbs) eq_refl h).
 Admitted.
 
 Lemma inversion_type :
   forall {G c' A'},
     Cistype G (C.Coerce c' A') ->
-    { D : I.context &
+    { D : context &
       I.issubst (C.ctxco_inv c') (eval_ctx G) D *
       I.istype D (eval_type' A')
     }%type.
@@ -178,8 +178,8 @@ Proof.
   unfold coerce_type. destruct A as [c' A'].
   unfold Cistype. simpl.
   destruct (inversion_type hA) as [E [h1 h2]].
-  eapply I.TySubst.
-  - eapply I.SubstComp.
+  ceapply TySubst.
+  - ceapply SubstComp.
     + destruct hc as [[_ h] _]. exact h.
     + eassumption.
   - assumption.
@@ -506,29 +506,26 @@ Proof.
         { split.
           - constructor.
             + unfold Cisctx. simpl.
-              apply I.CtxExtend.
-              * now inversion Ht.
-              * now inversion HAisA'.
+              capply CtxExtend.
+              now inversion HAisA'.
             + constructor.
               * now inversion Ht.
               * now inversion HAisA'.
           - exists (C.sbcoerce
-                 (C.idSb
-                    (eval_ctx G')
-                    (itt.ctxextend (eval_ctx G') (eval_type A')))
+                 C.idSb
                  (C.sbzero G' A' u')).
             split.
             + unfold Cissubst. simpl.
-              { eapply I.SubstComp.
-                - eapply I.SubstComp.
-                  + eapply I.SubstId. now inversion Ht.
-                  + eapply I.SubstZero. now inversion Huisu'.
-                - apply I.SubstId. eapply I.CtxExtend.
-                  + now inversion Ht.
-                  + now inversion HAisA'.
+              { ceapply SubstComp.
+                - ceapply SubstComp.
+                  + ceapply SubstId. now inversion Ht.
+                  + ceapply SubstZero. now inversion Huisu'.
+                - capply SubstId. ceapply CtxExtend.
+                  now inversion HAisA'.
               }
             + econstructor.
-              * now destruct Ht.
+              * destruct Ht. eassumption. (* Probably means we ought
+                                             to change something. *)
               * now destruct HAisA'.
               * now destruct Huisu'.
         }
@@ -539,25 +536,23 @@ Proof.
         exists G'0.
         { split.
           - constructor.
-            + now inversion HG'.
+            + todo. (* The proof needs to be changed *)
             + assumption.
           - exists (C.sbcoerce
-                 (C.idSb
-                    (itt.ctxextend (eval_ctx G'0) (eval_type A'))
-                    (eval_ctx G'0))
+                 C.idSb
                  (C.sbweak G'0 A')).
             split.
             + (* To type it we need to recover that A' is a type. *)
               inversion HG'. subst.
               (* We need to now how to evaluate coercions. *)
               unfold Cissubst. simpl.
-              { eapply I.SubstComp.
-                - eapply I.SubstComp.
-                  + eapply I.SubstId. assumption.
-                  + eapply I.SubstWeak. assumption.
-                - eapply I.SubstId. assumption.
+              { ceapply SubstComp.
+                - ceapply SubstComp.
+                  + ceapply SubstId. assumption.
+                  + ceapply SubstWeak. assumption.
+                - ceapply SubstId. todo.
               }
-            + constructor ; assumption.
+            + econstructor ; eassumption.
         }
 
       (* SubstShift *)
@@ -587,16 +582,16 @@ Proof.
       (* SubstId *)
       - exists G'.
         split ; try assumption.
-        exists (C.sbcoerce (C.idSb (eval_ctx G') (eval_ctx G')) (C.sbid G')).
+        exists (C.sbcoerce C.idSb (C.sbid G')).
         split.
         + unfold Cissubst. simpl.
-          { eapply I.SubstComp.
-            - eapply I.SubstComp.
-              + eapply I.SubstId. now inversion Ht.
-              + eapply I.SubstId. now inversion Ht.
-            - eapply I.SubstId. now inversion Ht.
+          { ceapply SubstComp.
+            - ceapply SubstComp.
+              + ceapply SubstId. now inversion Ht.
+              + ceapply SubstId. now inversion Ht.
+            - ceapply SubstId. now inversion Ht.
           }
-        + constructor. now destruct Ht.
+        + econstructor. destruct Ht. eassumption.
 
       (* SubstComp *)
       - destruct (trans_subst_left G G' D sbs H Ht) as (D' & HD' & sbs' & Hsbs).
@@ -605,18 +600,18 @@ Proof.
         split.
         + assumption.
         + exists (C.sbcoerce
-               (C.idSb (eval_ctx G') (eval_ctx E'))
+               C.idSb
                (C.sbcomp sbt' sbs')).
           { split.
             - unfold Cissubst. simpl.
-              eapply I.SubstComp.
-              + { eapply I.SubstComp.
-                  - eapply I.SubstId. now inversion Ht.
-                  - eapply I.SubstComp.
+              ceapply SubstComp.
+              + { ceapply SubstComp.
+                  - ceapply SubstId. now inversion Ht.
+                  - ceapply SubstComp.
                     + inversion Hsbs. eassumption.
                     + inversion i2. eassumption.
                 }
-              + eapply I.SubstId. now inversion HE'.
+              + ceapply SubstId. now inversion HE'.
             - constructor.
               + now inversion i2.
               + now inversion Hsbs.
@@ -686,13 +681,13 @@ Proof.
       (* TySubst *)
       - destruct (trans_subst_left G G' D sbs i Ht) as [D' [HD [sbt Hsbt]]].
         destruct (trans_type D D' A H HD) as [A' [HAisA' fA]].
-        exists (C.Coerce (C.idTy (eval_ctx G')) (C.Subst A' sbt)).
+        exists (C.Coerce C.idTy (C.Subst A' sbt)).
         split.
         + split.
           * { unfold Cistype. simpl.
-              eapply I.TySubst.
-              - eapply I.SubstId. now destruct Ht.
-              - eapply I.TySubst.
+              ceapply TySubst.
+              - ceapply SubstId. now destruct Ht.
+              - ceapply TySubst.
                 + destruct Hsbt. eassumption.
                 + destruct HAisA'. assumption.
             }
