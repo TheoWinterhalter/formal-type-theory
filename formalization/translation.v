@@ -5,32 +5,11 @@ Require Import syntax. (* The syntax of ett/ptt. *)
 Require Import tt.
 
 Require ptt ett ett_sanity.
+Require pxtt eitt.
 Require ctt.
 Require Import eval.
 
-Module Px.
-
-  (* The source, paranoid extensional type theory *)
-  Section Px.
-
-    Local Instance hasPrecond : config.Precond
-      := {| config.precondFlag := config.Yes |}.
-    Local Instance hasReflection : config.Reflection
-      := {| config.reflectionFlag := config.Yes |}.
-
-    Definition isctx := isctx.
-    Definition issubst := issubst.
-    Definition istype := istype.
-    Definition isterm := isterm.
-    Definition eqctx := eqctx.
-    Definition eqsubst := eqsubst.
-    Definition eqtype := eqtype.
-    Definition eqterm := eqterm.
-
-  End Px.
-
-End Px.
-
+Module Px := pxtt.
 Module C := ctt.
 
 Section Translation.
@@ -52,8 +31,8 @@ Definition CisContextCoercion c G D :=
 (* This lemma might need to be relocated in itt or so. *)
 Lemma inversion_sbcomp :
   forall {sbs sbt G D},
-    I.issubst (I.sbcomp sbs sbt) G D ->
-    { E : I.context &
+    I.issubst (sbcomp sbs sbt) G D ->
+    { E : context &
       I.issubst sbs E D *
       I.issubst sbt G E
     }%type.
@@ -61,8 +40,8 @@ Proof.
   intros sbs sbt G D h.
   assert (
       forall sbr,
-        sbr = I.sbcomp sbs sbt -> I.issubst sbr G D ->
-        { E : I.context &
+        sbr = sbcomp sbs sbt -> I.issubst sbr G D ->
+        { E : context &
           I.issubst sbs E D *
           I.issubst sbt G E
         }%type

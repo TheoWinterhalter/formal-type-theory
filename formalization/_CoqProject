@@ -24,6 +24,7 @@ uniqueness.v
 # substitution_elim.v
 
 ctt.v
-itt.v
+eitt.v
+pxtt.v
 eval.v
 translation.v

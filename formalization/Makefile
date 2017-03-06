@@ -118,7 +118,8 @@ VFILES:=config.v\
   inversion.v\
   uniqueness.v\
   ctt.v\
-  itt.v\
+  eitt.v\
+  pxtt.v\
   eval.v\
   translation.v
 

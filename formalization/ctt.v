@@ -1,24 +1,30 @@
 (* The intermediate type theory with coercions
    (CTT stands for Coercive Type Theory). *)
-Require itt.
+Require config.
+Require Import config_tactics.
+
+Require Import syntax.
+Require Import tt.
+
+Require eitt.
 
 
 (* Coercions between contexts. *)
 Structure contextCoercion :=
-  { ctxco_map : itt.substitution
-  ; ctxco_inv : itt.substitution
+  { ctxco_map : substitution
+  ; ctxco_inv : substitution
   }.
 
 Definition isContextCoercion c G D := (
-  itt.issubst (ctxco_map c) G D *
-  itt.issubst (ctxco_inv c) D G *
+  eitt.issubst (ctxco_map c) G D *
+  eitt.issubst (ctxco_inv c) D G *
   (forall A u,
-     itt.isterm D u A ->
-     { p : itt.term
-     & itt.isterm D
+     eitt.isterm D u A ->
+     { p : term
+     & eitt.isterm D
                   p
-                  (itt.Id A
-                          (itt.subst (itt.subst u (ctxco_map c)) (ctxco_inv c))
+                  (Id A
+                          (subst (subst u (ctxco_map c)) (ctxco_inv c))
                           u
                   )
      }
@@ -26,34 +32,39 @@ Definition isContextCoercion c G D := (
 
 (* Coercions between types, over a context coercion. *)
 Structure typeCoercion :=
-  { tyco_map : itt.term
-  ; tyco_inv : itt.term
+  { tyco_map : term
+  ; tyco_inv : term
   }.
 
 (* Type coercion tc is a valid coercion from A to B
    over context coercion cc from G to D. *)
 Definition istypeCoercion cc G D tc A B :=
 (
-  itt.isterm G
+  eitt.isterm G
              (tyco_map tc)
-             (itt.Prod
+             (Prod
                 A
-                (itt.Subst (itt.Subst B (ctxco_map cc)) (itt.sbweak G A))) *
-  itt.isterm D
+                (Subst (Subst B (ctxco_map cc)) (sbweak A))) *
+  eitt.isterm D
              (tyco_inv tc)
-             (itt.Prod
+             (Prod
                 B
-                (itt.Subst (itt.Subst A (ctxco_inv cc)) (itt.sbweak D B))) *
+                (Subst (Subst A (ctxco_inv cc)) (sbweak B))) *
   (forall x,
-        itt.isterm G x A ->
-        { p : itt.term
-        & itt.isterm G p
-                     (itt.Id
+        eitt.isterm G x A ->
+        { p : term
+        & eitt.isterm G p
+                     (Id
                         A
-                        (itt.app
-                           (itt.subst (tyco_inv tc) (ctxco_map cc))
-                           (itt.app
+                        (app
+                           (subst (tyco_inv tc) (ctxco_map cc))
+                           (Subst B (ctxco_map cc))
+                           (Subst (Subst (Subst A (ctxco_inv cc)) (sbweak B))
+                                  (ctxco_map cc))
+                           (app
                               (tyco_map tc)
+                              A
+                              (Subst (Subst B (ctxco_map cc)) (sbweak A))
                               x))
                         x)
         }
@@ -68,12 +79,12 @@ Definition termCoerce : Type :=
   contextCoercion * typeCoercion.
 
 (* Structure termCoerce : Type := *)
-(*   { (* ctx_fro : itt.context ; *) *)
-(*     (* ctx_to  : itt.context ; *) *)
+(*   { (* ctx_fro : eitt.context ; *) *)
+(*     (* ctx_to  : context ; *) *)
 (*     (* ctx_co  : @contextCoercion ctx_fro ctx_to ; *) *)
 (*     full_ctx_co : typeCoerce ; (* Maybe abstract it away? *) *)
-(*     ty_fro      : itt.type ; *)
-(*     ty_to       : itt.type ; *)
+(*     ty_fro      : type ; *)
+(*     ty_to       : type ; *)
 (*     ty_co       : @typeCoercion (ctx_fro full_ctx_co) *)
 (*                                 (ctx_to  full_ctx_co) *)
 (*                                 (ctx_co  full_ctx_co) *)
@@ -100,10 +111,10 @@ Proof.
   - assumption.
   - intros A u H.
     pose (sbs := ctxco_inv c).
-    pose (As := itt.Subst A sbs).
-    pose (us := itt.subst u sbs).
-    assert (H' : itt.isterm D us As).
-    { eapply itt.TermSubst.
+    pose (As := Subst A sbs).
+    pose (us := subst u sbs).
+    assert (H' : eitt.isterm D us As).
+    { ceapply TermSubst.
       - exact h2.
       - assumption.
     }
@@ -118,8 +129,8 @@ Admitted.
 
 (* Composition of coercions *)
 Definition contextComp c1 c2 : contextCoercion :=
-  {| ctxco_map := itt.sbcomp (ctxco_map c1) (ctxco_map c2)
-   ; ctxco_inv := itt.sbcomp (ctxco_inv c2) (ctxco_inv c1) |}.
+  {| ctxco_map := sbcomp (ctxco_map c1) (ctxco_map c2)
+   ; ctxco_inv := sbcomp (ctxco_inv c2) (ctxco_inv c1) |}.
 
 Lemma isCoercionContextComp :
   forall {G D E c1 c2},
@@ -132,11 +143,11 @@ Proof.
   destruct h2 as [[map2 inv2] coh2].
   repeat split.
   - unfold contextComp. simpl.
-    eapply itt.SubstComp.
+    ceapply SubstComp.
     + eassumption.
     + assumption.
   - unfold contextComp. simpl.
-    eapply itt.SubstComp.
+    ceapply SubstComp.
     + eassumption.
     + assumption.
   - admit.
@@ -144,30 +155,30 @@ Admitted.
 
 
 (* Some identities *)
-Definition contextId G : contextCoercion :=
-  {| ctxco_map := itt.sbid G
-   ; ctxco_inv := itt.sbid G |}.
+Definition contextId : contextCoercion :=
+  {| ctxco_map := sbid
+   ; ctxco_inv := sbid |}.
 
-Definition typeId G A : typeCoercion :=
-  {| tyco_map := itt.lam A (itt.Subst A (itt.sbweak G A)) (itt.var 0)
-   ; tyco_inv := itt.lam A (itt.Subst A (itt.sbweak G A)) (itt.var 0) |}.
+Definition typeId A : typeCoercion :=
+  {| tyco_map := lam A (Subst A (sbweak A)) (var 0)
+   ; tyco_inv := lam A (Subst A (sbweak A)) (var 0) |}.
 
-Definition idTy G : typeCoerce := contextId G.
-Definition idTm G A : termCoerce := (contextId G , typeId G A).
-Definition idSb G D : substCoerce := (contextId G , contextId D).
+Definition idTy : typeCoerce := contextId.
+Definition idTm A : termCoerce := (contextId , typeId A).
+Definition idSb : substCoerce := (contextId , contextId).
 
 Lemma isCoercionContextId :
   forall G,
-    itt.isctx G ->
-    isContextCoercion (contextId G) G G.
+    eitt.isctx G ->
+    isContextCoercion (contextId) G G.
 Proof.
   intros G h. repeat split.
   - unfold contextId. simpl.
-    apply itt.SubstId. assumption.
+    apply SubstId. assumption.
   - simpl.
-    apply itt.SubstId. assumption.
+    capply SubstId. assumption.
   - intros A u H. simpl.
-    exists (itt.refl A u).
+    exists (refl A u).
     admit.
 Admitted.
 

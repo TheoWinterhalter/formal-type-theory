@@ -1,9 +1,15 @@
-(* Translating CTT to ITT *)
+(* Translating CTT to (E)ITT *)
+Require config.
+Require Import config_tactics.
+
+Require Import syntax.
+Require Import tt.
+
 Require ctt.
-Require itt.
+Require eitt.
 
 Module C := ctt.
-Module I := itt.
+Module I := eitt.
 
 Definition todolater : False.
 Admitted.
@@ -11,71 +17,73 @@ Admitted.
 Definition todo {A} : A :=
   match todolater return A with end.
 
-Fixpoint eval_ctx (G : C.context) : I.context :=
+Fixpoint eval_ctx (G : C.context) : context :=
   match G with
-  | C.ctxempty => I.ctxempty
-  | C.ctxextend G A => I.ctxextend (eval_ctx G) (eval_type A)
+  | C.ctxempty => ctxempty
+  | C.ctxextend G A => ctxextend (eval_ctx G) (eval_type A)
   end
 
-with eval_substitution' (sbs : C.substitution') : I.substitution :=
+with eval_substitution' (sbs : C.substitution') : substitution :=
   match sbs with
-  | C.sbzero G A u => I.sbzero (eval_ctx G) (eval_type A) (eval_term u)
-  | C.sbweak G A => I.sbweak (eval_ctx G) (eval_type A)
+  | C.sbzero G A u => sbzero (eval_type A) (eval_term u)
+  | C.sbweak G A => sbweak (eval_type A)
   | C.sbshift G A sbs =>
-    I.sbshift (eval_ctx G) (eval_type A) (eval_substitution sbs)
-  | C.sbid G => I.sbid (eval_ctx G)
+    sbshift (eval_type A) (eval_substitution sbs)
+  | C.sbid G => sbid
   | C.sbcomp sbs sbt =>
-    I.sbcomp (eval_substitution sbs) (eval_substitution sbt)
+    sbcomp (eval_substitution sbs) (eval_substitution sbt)
   end
 
-with eval_substitution (sbs : C.substitution) : I.substitution :=
+with eval_substitution (sbs : C.substitution) : substitution :=
   match sbs with
-  | C.sbcoerce (c1, c2) sbs' => I.sbcomp (C.ctxco_map c2)
-                                        (I.sbcomp (eval_substitution' sbs')
+  | C.sbcoerce (c1, c2) sbs' => sbcomp (C.ctxco_map c2)
+                                        (sbcomp (eval_substitution' sbs')
                                                   (C.ctxco_inv c1))
   end
 
-with eval_type' (A : C.type') : I.type :=
+with eval_type' (A : C.type') : type :=
   match A with
-  | C.Prod A B => I.Prod (eval_type A) (eval_type B)
-  | C.Id A u v => I.Id (eval_type A) (eval_term u) (eval_term v)
-  | C.Subst A sbs => I.Subst (eval_type A) (eval_substitution sbs)
-  | C.Empty => I.Empty
-  | C.Unit => I.Unit
-  | C.Bool => I.Bool
+  | C.Prod A B => Prod (eval_type A) (eval_type B)
+  | C.Id A u v => Id (eval_type A) (eval_term u) (eval_term v)
+  | C.Subst A sbs => Subst (eval_type A) (eval_substitution sbs)
+  | C.Empty => Empty
+  | C.Unit => Unit
+  | C.Bool => Bool
   end
 
-with eval_type (A : C.type) : I.type :=
+with eval_type (A : C.type) : type :=
   match A with
-  | C.Coerce c A' => I.Subst (eval_type' A') (C.ctxco_inv c)
+  | C.Coerce c A' => Subst (eval_type' A') (C.ctxco_inv c)
   end
 
-with eval_term' (t : C.term') : I.term :=
+with eval_term' (t : C.term') : term :=
   match t with
-  | C.var k => I.var k
-  | C.lam A B u => I.lam (eval_type A) (eval_type B) (eval_term u)
+  | C.var k => var k
+  | C.lam A B u => lam (eval_type A) (eval_type B) (eval_term u)
   | C.app u A B v =>
-    I.app (eval_term u) (eval_term v)
-  | C.refl A u => I.refl (eval_type A) (eval_term u)
-  | C.j A u C w v p => I.j (eval_type A)
+    app (eval_term u) (eval_type A) (eval_type B) (eval_term v)
+  | C.refl A u => refl (eval_type A) (eval_term u)
+  | C.j A u C w v p => j (eval_type A)
                           (eval_term u)
                           (eval_type C)
                           (eval_term w)
                           (eval_term v)
                           (eval_term p)
-  | C.subst u sbs => I.subst (eval_term u) (eval_substitution sbs)
-  | C.exfalso A u => I.exfalso (eval_type A) (eval_term u)
-  | C.unit => I.unit
-  | C.true => I.true
-  | C.false => I.false
-  | C.cond A u v w => I.cond (eval_type A)
+  | C.subst u sbs => subst (eval_term u) (eval_substitution sbs)
+  | C.exfalso A u => exfalso (eval_type A) (eval_term u)
+  | C.unit => unit
+  | C.true => true
+  | C.false => false
+  | C.cond A u v w => cond (eval_type A)
                             (eval_term u)
                             (eval_term v)
                             (eval_term w)
   end
 
-with eval_term (t : C.term) : I.term :=
+with eval_term (t : C.term) : term :=
   match t with
-  | C.coerce (cc, tc) t' => I.app (C.tyco_map tc)
-                                 (I.subst (eval_term' t') (C.ctxco_map cc))
+  | C.coerce (cc, tc) t' => app (C.tyco_map tc)
+                               todo
+                               todo
+                               (subst (eval_term' t') (C.ctxco_map cc))
   end.
