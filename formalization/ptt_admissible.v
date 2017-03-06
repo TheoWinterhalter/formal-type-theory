@@ -25,7 +25,7 @@ Lemma EqTyWeakNat :
 Proof.
   intros. magic.
   Unshelve. all:strictmagic.
-Defined.
+Qed.
 
 
 Lemma compWeakZero :
@@ -37,7 +37,7 @@ Lemma compWeakZero :
     eqtype G A (Subst A (sbcomp (sbweak B) (sbzero B u))).
 Proof.
   intros. magic.
-Defined.
+Qed.
 
 Lemma EqTyWeakZero :
   forall {G A B u},
@@ -48,7 +48,7 @@ Lemma EqTyWeakZero :
     eqtype G A (Subst (Subst A (sbweak B)) (sbzero B u)).
 Proof.
   intros. magic.
-Defined.
+Qed.
 
 Lemma EqTyShiftZero :
   forall {G D A B v sbs},
@@ -64,7 +64,7 @@ Lemma EqTyShiftZero :
       (Subst (Subst B (sbzero A v)) sbs).
 Proof.
   intros. magic. Unshelve. all:strictmagic.
-Defined.
+Qed.
 
 Lemma EqTyCongZero :
   forall {G A1 A2 B1 B2 u1 u2},
@@ -83,7 +83,7 @@ Lemma EqTyCongZero :
            (Subst B2 (sbzero B1 u2)).
 Proof.
   intros. magic.
-Defined.
+Qed.
 
 Lemma EqTyCongShift :
   forall {G D A1 A2 B1 B2 sbs1 sbs2},
@@ -104,7 +104,7 @@ Lemma EqTyCongShift :
 Proof.
   intros. magic.
   Unshelve. all:strictmagic.
-Defined.
+Qed.
 
 Lemma EqTyCongWeak :
   forall {G A1 A2 B1 B2},
@@ -120,7 +120,7 @@ Lemma EqTyCongWeak :
            (Subst B2 (sbweak A2)).
 Proof.
   intros. magic.
-Defined.
+Qed.
 
 Lemma EqSubstWeakNat :
   forall {G D A B u sbs},
@@ -137,7 +137,7 @@ Lemma EqSubstWeakNat :
 Proof.
   intros. magic.
   Unshelve. all:strictmagic.
-Defined.
+Qed.
 
 
 Lemma EqSubstWeakZero :
@@ -153,7 +153,7 @@ Lemma EqSubstWeakZero :
            A.
 Proof.
   intros. magic.
-Defined.
+Qed.
 
 Lemma EqTermShiftZero :
   forall {G D A B u v sbs},
@@ -172,7 +172,7 @@ Lemma EqTermShiftZero :
 Proof.
   intros. magic.
   Unshelve. all:strictmagic.
-Defined.
+Qed.
 
 Lemma EqTermCongWeak :
   forall {G A1 A2 B1 B2 u1 u2},
@@ -192,6 +192,6 @@ Lemma EqTermCongWeak :
            (Subst B1 (sbweak A1)).
 Proof.
   intros. magic.
-Defined.
+Qed.
 
 End PttAdmissible.

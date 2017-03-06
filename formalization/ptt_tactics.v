@@ -32,7 +32,7 @@ Proof.
     ceapply TySubst ; eassumption.
   - ceapply TySubst ; try eassumption.
     ceapply SubstComp ; eassumption.
-Defined.
+Qed.
 
 Lemma eqterm_subst_left `{config.Reflection} :
   forall {G D E A u v sbs sbt},
@@ -100,7 +100,7 @@ Proof.
   - ceapply TermTyConv ; eassumption.
   - ceapply TermTyConv ; eassumption.
   - ceapply TermTyConv ; eassumption.
-Defined.
+Qed.
 
 Ltac compsubst1 :=
   doConfig ;
@@ -265,7 +265,7 @@ Proof.
     ]
   | assumption ..
   ].
-Defined.
+Qed.
 
 
 Ltac cando token :=
@@ -927,7 +927,7 @@ Proof.
   all:try assumption.
   2:eassumption.
   all:assumption.
-Defined.
+Qed.
 
 (* A simplify tactic to simplify substitutions *)
 Ltac ecomp lm :=
