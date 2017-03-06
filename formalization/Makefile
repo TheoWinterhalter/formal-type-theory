@@ -117,6 +117,7 @@ VFILES:=config.v\
   tactics.v\
   inversion.v\
   uniqueness.v\
+  hml.v\
   ctt.v\
   eitt.v\
   pxtt.v\
