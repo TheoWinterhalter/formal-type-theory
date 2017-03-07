@@ -156,31 +156,77 @@ Proof.
         }
 
       (* TermAbs *)
-      - todo.
+      - { (* Coherence problem *)
+          todo.
+        }
 
       (* TermApp *)
-      - todo.
+      - { (* Coherence problem *)
+          todo.
+        }
 
       (* TermRefl *)
-      - todo.
+      - { destruct (translate_isterm G A u D) as [G' [A' [u' [[[? ?] ?] ?]]]].
+          exists G'. exists (ctt.Id A' u' u'). exists (ctt.refl A' u').
+          repeat split.
+          - assumption.
+          - (* Problem of homology *)
+            todo.
+          - (* Problem of homology *)
+            todo.
+          - now capply TermRefl.
+        }
 
       (* TermJ *)
-      - todo.
+      - { (* Likely coherence and homology issues *)
+          todo.
+        }
 
       (* TermExfalso *)
-      - todo.
+      - { (* Coherence problem *)
+          todo.
+        }
 
       (* TermUnit *)
-      - todo.
+      - { destruct (translate_isctx G i) as [G' [? ?]].
+          exists G'. exists ctt.Unit. exists ctt.unit.
+          repeat split.
+          - assumption.
+          - (* Homology issue *)
+            todo.
+          - (* Homology issue *)
+            todo.
+          - now capply TermUnit.
+        }
 
       (* TermTrue *)
-      - todo.
+      - { destruct (translate_isctx G i) as [G' [? ?]].
+          exists G'. exists ctt.Bool. exists ctt.true.
+          repeat split.
+          - assumption.
+          - (* Homology issue *)
+            todo.
+          - (* Homology issue *)
+            todo.
+          - now capply TermTrue.
+        }
 
       (* TermFalse *)
-      - todo.
+      - { destruct (translate_isctx G i) as [G' [? ?]].
+          exists G'. exists ctt.Bool. exists ctt.false.
+          repeat split.
+          - assumption.
+          - (* Homology issue *)
+            todo.
+          - (* Homology issue *)
+            todo.
+          - now capply TermFalse.
+        }
 
       (* TermCond *)
-      - todo.
+      - { (* Coherence problem *)
+          todo.
+        }
     }
 
 Defined.
