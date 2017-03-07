@@ -39,30 +39,150 @@ with translate_isterm {G A u} (D : pxtt.isterm G u A) {struct D} :
 
 Proof.
   (* translate_isctx *)
-  - {
-      destruct D.
-      
+  - { destruct D ; doConfig.
+
       (* CtxEmpty *)
       - { exists ctt.ctxempty.
           split.
-          + constructor.
-          + apply CtxEmpty.
+          - constructor.
+          - capply CtxEmpty.
         }
 
       (* CtxExtend *)
-      - { todo. }
+      - { destruct (translate_istype G A i0) as [G' [A' [[? ?] ?]]].
+          exists (ctt.ctxextend G' A').
+          split.
+          - now constructor.
+          - now capply CtxExtend.
+        }
   }
 
   (* translate_istype *)
-  - {
-   todo.
-  }
+  - { destruct D ; doConfig.
+
+      (* TyCtxConv *)
+      - { (* Need: translate_eqctx *)
+          todo.
+        }
+
+      (* TySubst *)
+      - { (* Need: translate_issubst *)
+          todo.
+        }
+
+      (* TyProd *)
+      - { destruct (translate_istype _ _ D) as [GA' [B' [[? ?] ?]]].
+          (* No way to get A' from it, and if we translate istype G A,
+             we won't be able to relate ctxextend G' A' and GA'. *)
+          todo.
+        }
+
+      (* TyId *)
+      - { (* Same problem of coherence between the different translations of
+             A. *)
+          todo.
+        }
+
+      (* TyEmpty *)
+      - { destruct (translate_isctx G i) as [G' [? ?]].
+          exists G'. exists ctt.Empty.
+          repeat split.
+          - assumption.
+          - (* This is the reason we had a strict notion of coercion that
+               needed to always be here. In that case, I cannot relate
+               Empty and itself because there is no coercion involved.
+             *)
+            todo.
+          - now capply TyEmpty.
+        }
+
+      (* TyUnit *)
+      - { destruct (translate_isctx G i) as [G' [? ?]].
+          exists G'. exists ctt.Unit.
+          repeat split.
+          - assumption.
+          - (* Same here *)
+            todo.
+          - now capply TyUnit.
+        }
+
+      (* TyBool *)
+      - { destruct (translate_isctx G i) as [G' [? ?]].
+          exists G'. exists ctt.Bool.
+          repeat split.
+          - assumption.
+          - (* Same here *)
+            todo.
+          - now capply TyBool.
+        }
+    }
 
   (* translate_isterm *)
-  - {
-   todo.
-  }
+  - { destruct D ; doConfig.
 
-Defined.  
+      (* TermTyConv *)
+      - { (* Need: translate_eqtype *)
+          todo.
+        }
+
+      (* TermCtxConv *)
+      - { (* Need: translate_eqctx *)
+          todo.
+        }
+
+      (* TermSubst *)
+      - { (* Need: translate_issubst *)
+          todo.
+        }
+
+      (* TermVarZero *)
+      - { destruct (translate_istype G A i0) as [G' [A' [[? ?] ?]]].
+          exists (ctt.ctxextend G' A'). exists (ctt.Subst A' (ctt.sbweak A')).
+          exists (ctt.var 0).
+          repeat split.
+          - now constructor.
+          - (* Same problem here, homology is ill-defined with respect to
+               current definition of ctt. *)
+            todo.
+          - (* Again. *)
+            todo.
+          - now capply TermVarZero.
+        }
+
+      (* TermVarSucc *)
+      - { destruct (translate_isterm _ _ _ D) as [G' [A' [vk' [[[? ?] ?] ?]]]].
+          (* Coherence problem here, if we translate B, we get another G'. *)
+          todo.
+        }
+
+      (* TermAbs *)
+      - todo.
+
+      (* TermApp *)
+      - todo.
+
+      (* TermRefl *)
+      - todo.
+
+      (* TermJ *)
+      - todo.
+
+      (* TermExfalso *)
+      - todo.
+
+      (* TermUnit *)
+      - todo.
+
+      (* TermTrue *)
+      - todo.
+
+      (* TermFalse *)
+      - todo.
+
+      (* TermCond *)
+      - todo.
+    }
+
+Defined.
 
 End Translation.
