@@ -19,22 +19,19 @@ Fixpoint translate_isctx {G} (D : pxtt.isctx G) {struct D} :
   { G' : ctt.context & hml_context G G' * eitt.isctx (eval_ctx G') }%type
 
 with translate_istype {G A} (D : pxtt.istype G A) {struct D} :
-  { G' : ctt.context &
+  forall G', hml_context G G' -> eitt.isctx (eval_ctx G') ->
   { A' : ctt.type &
-    hml_context G G' *
     hml_type A A' *
     eitt.istype (eval_ctx G') (eval_type A')
-  } }%type
+  }%type
 
 with translate_isterm {G A u} (D : pxtt.isterm G u A) {struct D} :
-  { G' : ctt.context &
-  { A' : ctt.type &
+  forall G', hml_context G G' -> eitt.isctx (eval_ctx G') ->
+  forall A', hml_type A A' -> eitt.istype (eval_ctx G') (eval_type A') ->
   { u' : ctt.term &
-    hml_context G G' *
-    hml_type A A' *
     hml_term u u' *
     eitt.isterm (eval_ctx G') (eval_term u') (eval_type A')
-  } } }%type
+  }%type
 .
 
 Proof.
@@ -49,8 +46,9 @@ Proof.
         }
 
       (* CtxExtend *)
-      - { destruct (translate_istype G A i0) as [G' [A' [[? ?] ?]]].
-          exists (ctt.ctxextend G' A').
+      - { destruct (translate_isctx G i) as [G'' [? ?]].
+          destruct (translate_istype G A i0 G'' h i1) as [A'' [? ?]].
+          exists (ctt.ctxextend G'' A'').
           split.
           - now constructor.
           - now capply CtxExtend.
@@ -71,49 +69,47 @@ Proof.
         }
 
       (* TyProd *)
-      - { destruct (translate_istype _ _ D) as [GA' [B' [[? ?] ?]]].
-          (* No way to get A' from it, and if we translate istype G A,
-             we won't be able to relate ctxextend G' A' and GA'. *)
-          todo.
+      - { intros G' HGG' D'.
+          destruct (translate_istype G A i G' HGG' D') as [A' [? ?]].
+          assert (K : eitt.isctx (ctxextend (eval_ctx G') (eval_type A'))).
+          - now capply CtxExtend.
+          - assert (L : hml.hml_context (ctxextend G A) (ctt.ctxextend G' A')).
+            + now apply hml_ctxextend.
+            + destruct (translate_istype (ctxextend G A) B D (ctt.ctxextend G' A') L K) as [B' [? ?]].
+              exists (ctt.Prod A' B') ; split.
+              * now apply hml_Prod.
+              * now apply TyProd.
         }
 
       (* TyId *)
-      - { (* Same problem of coherence between the different translations of
-             A. *)
-          todo.
+      - { intros G' HGG' D'.
+          destruct (translate_istype G A i0 G' HGG' D') as [A' [? ?]].
+          destruct (translate_isterm G A u i1 G' HGG' D' A' h i3) as [u' [? ?]].
+          destruct (translate_isterm G A v i2 G' HGG' D' A' h i3) as [v' [? ?]].
+          exists (ctt.Id A' u' v') ; split.
+          + now apply hml_Id.
+          + now apply TyId.
         }
 
       (* TyEmpty *)
-      - { destruct (translate_isctx G i) as [G' [? ?]].
-          exists G'. exists ctt.Empty.
-          repeat split.
-          - assumption.
-          - (* This is the reason we had a strict notion of coercion that
-               needed to always be here. In that case, I cannot relate
-               Empty and itself because there is no coercion involved.
-             *)
-            todo.
-          - now capply TyEmpty.
+      - { intros G' ? ?.
+          exists ctt.Empty ; split.
+          - constructor.
+          - now apply TyEmpty.
         }
 
       (* TyUnit *)
-      - { destruct (translate_isctx G i) as [G' [? ?]].
-          exists G'. exists ctt.Unit.
-          repeat split.
-          - assumption.
-          - (* Same here *)
-            todo.
-          - now capply TyUnit.
+      - { intros G' ? ?.
+          exists ctt.Unit ; split.
+          - constructor.
+          - now apply TyUnit.
         }
 
       (* TyBool *)
-      - { destruct (translate_isctx G i) as [G' [? ?]].
-          exists G'. exists ctt.Bool.
-          repeat split.
-          - assumption.
-          - (* Same here *)
-            todo.
-          - now capply TyBool.
+      - { intros G' ? ?.
+          exists ctt.Bool ; split.
+          - constructor.
+          - now apply TyBool.
         }
     }
 
@@ -136,17 +132,13 @@ Proof.
         }
 
       (* TermVarZero *)
-      - { destruct (translate_istype G A i0) as [G' [A' [[? ?] ?]]].
-          exists (ctt.ctxextend G' A'). exists (ctt.Subst A' (ctt.sbweak A')).
-          exists (ctt.var 0).
-          repeat split.
-          - now constructor.
-          - (* Same problem here, homology is ill-defined with respect to
-               current definition of ctt. *)
-            todo.
-          - (* Again. *)
-            todo.
-          - now capply TermVarZero.
+      - { intros G' HGG' D' A' HAA' D''.
+          exists (ctt.var 0) ; split.
+          - constructor.
+          - inversion HGG'.
+            inversion HAA'.
+            + todo.
+            + todo.
         }
 
       (* TermVarSucc *)

@@ -51,7 +51,7 @@ with term : Type :=
      | true : term
      | false : term
      | cond : type -> term -> term -> term -> term
-     | coerce : term_coercion -> term -> term    
+     | coerce : term_coercion -> term -> term
 
 with substitution : Type :=
      | sbzero : type -> term -> substitution
