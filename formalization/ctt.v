@@ -3,19 +3,28 @@
 Require Import syntax.
 Require eitt.
 
-Parameter type_coercion : Type.
 
-Structure type_coercion : Type :=
-{ type_dom : context ;
-  type_cod : context ;
-  type_act : forall A : type, eitt.istype type_dom A -> eitt.istype type_cod A
-}.
+(* Definition subst_coercion : Type := substitution -> substitution. *)
+(* { subst_do : A ; *)
+(*   y : B ; *)
+(*   subst_act : forall sbs : substitution, eitt.issubst sbs G D -> *)
+(*                                     eitt.issubst sbs G' D' *)
+(* }. *)
+
+(* Structure type_coercion : Type := *)
+(* { type_dom : context ; *)
+(*   type_cod : context ; *)
+(*   type_act : forall A : type, eitt.istype type_dom A -> eitt.istype type_cod A *)
+(* }. *)
 
 
 Parameter subst_coercion : Type.
-Parameter term_coercion : Type.
+Parameter type_coercion  : Type.
+Parameter term_coercion  : Type.
 
-Parameter type_act : type_coercion 
+Parameter subst_act : subst_coercion -> substitution -> substitution.
+Parameter type_act  : type_coercion -> type -> type.
+Parameter term_act  : term_coercion -> term -> term.
 
 Inductive context : Type :=
 | ctxempty : context

@@ -32,9 +32,7 @@ with eval_substitution' (sbs : ctt.substitution') : substitution :=
 
 with eval_substitution (sbs : ctt.substitution) : substitution :=
   match sbs with
-  | ctt.sbcoerce (c1, c2) sbs' => sbcomp (ctt.ctx_act c2)
-                                        (sbcomp (eval_substitution' sbs')
-                                                  (ctt.ctx_inv c1))
+  | ctt.sbcoerce c sbs' => ctt.subst_act c (eval_substitution' sbs')
   end
 
 with eval_type' (A : ctt.type') : type :=
@@ -49,7 +47,7 @@ with eval_type' (A : ctt.type') : type :=
 
 with eval_type (A : ctt.type) : type :=
   match A with
-  | ctt.Coerce c A' => Subst (eval_type' A') (ctt.ctx_inv c)
+  | ctt.Coerce c A' => ctt.type_act c (eval_type' A')
   end
 
 with eval_term' (t : ctt.term') : term :=
@@ -78,8 +76,5 @@ with eval_term' (t : ctt.term') : term :=
 
 with eval_term (t : ctt.term) : term :=
   match t with
-  | ctt.coerce (cc, tc) t' => app (ctt.ty_act tc)
-                               todo
-                               todo
-                               (subst (eval_term' t') (ctt.ctx_act cc))
+  | ctt.coerce c t' => ctt.term_act c (eval_term' t')
   end.
