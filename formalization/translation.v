@@ -266,6 +266,53 @@ Fixpoint trans_term
   (HA : istrans_type A G' A')
   : { u' : ctt.term
     & istrans_term u G' u' A' }.
+Proof.
+  (**** trans_term ****)
+  - { destruct H.
+
+      (* TermTyConv *)
+      - todo.
+
+      (* TermCtxConv *)
+      - todo.
+
+      (* TermSubst *)
+      - todo.
+
+      (* TermVarZero *)
+      - todo.
+
+      (* TermVarSucc *)
+      - todo.
+
+      (* TermAbs *)
+      - todo.
+
+      (* TermApp *)
+      - todo.
+
+      (* TermRefl *)
+      - todo.
+
+      (* TermJ *)
+      - todo.
+
+      (* TermExfalso *)
+      - todo.
+
+      (* TermUnit *)
+      - todo.
+
+      (* TermTrue *)
+      - todo.
+
+      (* TermFalse *)
+      - todo.
+
+      (* TermCond *)
+      - todo.
+    }
+Defined.
 
 (* Fixpoint trans_ctx {G} (H : pxtt.isctx G) {struct H} : *)
 (*   { G' : ctt.context & istrans_ctx G G' } *)
