@@ -13,13 +13,7 @@ Admitted.
 Definition todo {A} : A :=
   match todolater return A with end.
 
-Fixpoint eval_ctx (G : ctt.context) : context :=
-  match G with
-  | ctt.ctxempty => ctxempty
-  | ctt.ctxextend G A => ctxextend (eval_ctx G) (eval_type A)
-  end
-
-with eval_substitution' (sbs : ctt.substitution') : substitution :=
+Fixpoint eval_substitution (sbs : ctt.substitution) : substitution :=
   match sbs with
   | ctt.sbzero A u => sbzero (eval_type A) (eval_term u)
   | ctt.sbweak A => sbweak (eval_type A)
@@ -28,14 +22,10 @@ with eval_substitution' (sbs : ctt.substitution') : substitution :=
   | ctt.sbid => sbid
   | ctt.sbcomp sbs sbt =>
     sbcomp (eval_substitution sbs) (eval_substitution sbt)
+  | ctt.sbcoerce c sbs => ctt.subst_act c (eval_substitution sbs)
   end
 
-with eval_substitution (sbs : ctt.substitution) : substitution :=
-  match sbs with
-  | ctt.sbcoerce c sbs' => ctt.subst_act c (eval_substitution' sbs')
-  end
-
-with eval_type' (A : ctt.type') : type :=
+with eval_type (A : ctt.type) : type :=
   match A with
   | ctt.Prod A B => Prod (eval_type A) (eval_type B)
   | ctt.Id A u v => Id (eval_type A) (eval_term u) (eval_term v)
@@ -43,14 +33,10 @@ with eval_type' (A : ctt.type') : type :=
   | ctt.Empty => Empty
   | ctt.Unit => Unit
   | ctt.Bool => Bool
+  | ctt.Coerce c A => ctt.type_act c (eval_type A)
   end
 
-with eval_type (A : ctt.type) : type :=
-  match A with
-  | ctt.Coerce c A' => ctt.type_act c (eval_type' A')
-  end
-
-with eval_term' (t : ctt.term') : term :=
+with eval_term (t : ctt.term) : term :=
   match t with
   | ctt.var k => var k
   | ctt.lam A B u => lam (eval_type A) (eval_type B) (eval_term u)
@@ -72,9 +58,11 @@ with eval_term' (t : ctt.term') : term :=
                             (eval_term u)
                             (eval_term v)
                             (eval_term w)
-  end
+  | ctt.coerce c t => ctt.term_act c (eval_term t)
+  end.
 
-with eval_term (t : ctt.term) : term :=
-  match t with
-  | ctt.coerce c t' => ctt.term_act c (eval_term' t')
+Fixpoint eval_ctx (G : ctt.context) : context :=
+  match G with
+  | ctt.ctxempty => ctxempty
+  | ctt.ctxextend G A => ctxextend (eval_ctx G) (eval_type A)
   end.
