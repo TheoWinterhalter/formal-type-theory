@@ -16,8 +16,8 @@ Structure type_coercion {G G'} (crc : context_coercion G G') (A A' : type) : Typ
   (* a coercion c : G -> G' *)
   (* a type G |- A *)
   (* a type G' |- A' *)
-  type_coe_act : term ; (* a term G' |- _ : c(A) -> A' *)
-  type_coe_inv : term   (* a term G |- _ : c^-1(A') -> A *)
+  type_coe_act : term ; (* a term G' |- _ : crc(A) -> A' *)
+  type_coe_inv : term   (* a term G |- _ : crc^-1(A') -> A *)
   (* in the future there will be more requirements here which will create
      dependence on the parameters. *)
 }.
@@ -28,10 +28,10 @@ Arguments type_coe_inv {_ _ _ _ _} _.
 Definition act_subst {G G' D D'}
            (crc1 : context_coercion G G')
            (crc2 : context_coercion D D') sbs
-  := 
+  :=
     sbcomp (ctx_coe_inv crc1) (sbcomp sbs (ctx_coe_act crc2)).
 
-Definition act_type {G G'} 
+Definition act_type {G G'}
            (crc : context_coercion G G')
            A
   :=

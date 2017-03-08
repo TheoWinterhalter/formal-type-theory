@@ -31,7 +31,7 @@ Structure is_term_translation G' A' u u' : Type := {
 }.
 
 Definition translation_coherence A G' A' :=
-  forall (G'' : ctt.context) 
+  forall (G'' : ctt.context)
          (crc : ctt.context_coercion (eval_ctx G') (eval_ctx G'')),
   forall A'', is_type_translation G'' A A'' -> ctt.type_coercion crc (eval_type A') (eval_type A'').
 
@@ -39,11 +39,11 @@ Fixpoint translate_isctx {G} (D : pxtt.isctx G) {struct D} :
   { G' : ctt.context & is_ctx_translation G G' }
 
 with translate_istype {G A} (D : pxtt.istype G A) {struct D} :
-  forall G', is_ctx_translation G G' -> 
+  forall G', is_ctx_translation G G' ->
   { A' : ctt.type & is_type_translation G' A A' * translation_coherence A G' A'}%type
 
 with translate_isterm {G A u} (D : pxtt.isterm G u A) {struct D} :
-  forall G', is_ctx_translation G G' -> 
+  forall G', is_ctx_translation G G' ->
   forall A', is_type_translation G' A A' ->
   { u' : ctt.term & is_term_translation G' A' u u' }
 .
@@ -61,7 +61,7 @@ Proof.
 
       (* CtxExtend *)
       - { destruct (translate_isctx G i) as [G'' TGG''].
-          destruct (translate_istype G A i0 G'' TGG'') as [A'' [? ?]].
+          destruct (translate_istype G A i0 G'' TGG'') as [A'' [[? ?] ?]].
           exists (ctt.ctxextend G'' A'').
           destruct TGG''.
           split.
@@ -86,16 +86,58 @@ Proof.
       (* TyProd *)
       - { intros G' TGG'.
           pose (TGG'_hml := is_ctx_hml _ _ TGG').
-          destruct (translate_istype G A i G' TGG') as [A' [? ?]].
+          destruct (translate_istype G A i G' TGG') as [A' [[? ?] ?]].
           assert (TGAG'A' : is_ctx_translation (ctxextend G A) (ctt.ctxextend G' A')).
           { split.
             - now apply hml_ctxextend.
             - now capply CtxExtend. }
           destruct (translate_istype (ctxextend G A) B D (ctt.ctxextend G' A') TGAG'A')
-            as [B' [? ?]].
-          exists (ctt.Prod A' B'). split.
+            as [B' [[? ?] ?]].
+          exists (ctt.Prod A' B'). split ; [ split | .. ].
           - now apply hml_Prod.
-          - now apply TyProd.
+          - now capply TyProd.
+          - intros G'' crc PiAB'' [hmlPiAB'' DPiAB''].
+            inversion hmlPiAB''.
+            + subst. rename A'0 into A''. rename B'0 into B''.
+              assert (is_type_translation G'' A A'').
+              { split.
+                - assumption.
+                - (* We need an inversion lemma to apply on DPiAB'' *)
+                  todo.
+              }
+              pose proof (t G'' crc A'' X).
+              assert (
+                ctt.context_coercion (eval_ctx (ctt.ctxextend G' A'))
+                                     (eval_ctx (ctt.ctxextend G'' A''))
+              ).
+              { (* We basically want to extend crc by H *)
+                todo.
+              }
+              assert (is_type_translation (ctt.ctxextend G'' A'') B B'').
+              { split.
+                - assumption.
+                - (* Inversion lemma *)
+                  todo.
+              }
+              pose proof (t0 (ctt.ctxextend G'' A'') H0 B'' X0).
+              split.
+              * (* It has to go from crc(Prod A' B') to PiAB'' in G'' *)
+                (* Somehow it feels like the goal should be more than term.
+                   If we had existential statements instead we would be
+                   able to have tactics. *)
+                simple refine (
+                  lam (ctt.act_type crc (eval_type (ctt.Prod A' B')))
+                      (Subst (eval_type (ctt.Prod A'' B''))
+                             (sbweak (ctt.act_type crc (eval_type (ctt.Prod A' B')))))
+                      _
+                ).
+                (* simple refine ( *)
+                (*   lam _ _ _ *)
+                (* ). *)
+                todo.
+              * (* It has to go from crc^-1(PiAB'') to Prod A' B' in G' *)
+                todo.
+            + todo.
         }
 
       (* TyId *)
