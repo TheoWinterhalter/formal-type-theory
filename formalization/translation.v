@@ -72,13 +72,14 @@ Proof.
       - { intros G' HGG' D'.
           destruct (translate_istype G A i G' HGG' D') as [A' [? ?]].
           assert (K : eitt.isctx (ctxextend (eval_ctx G') (eval_type A'))).
-          - now capply CtxExtend.
-          - assert (L : hml.hml_context (ctxextend G A) (ctt.ctxextend G' A')).
-            + now apply hml_ctxextend.
-            + destruct (translate_istype (ctxextend G A) B D (ctt.ctxextend G' A') L K) as [B' [? ?]].
-              exists (ctt.Prod A' B') ; split.
-              * now apply hml_Prod.
-              * now apply TyProd.
+          { now capply CtxExtend. }
+          assert (L : hml.hml_context (ctxextend G A) (ctt.ctxextend G' A')).
+          { now apply hml_ctxextend. }
+          destruct (translate_istype (ctxextend G A) B D (ctt.ctxextend G' A') L K)
+            as [B' [? ?]].
+          exists (ctt.Prod A' B'). split.
+          - now apply hml_Prod.
+          - now apply TyProd.
         }
 
       (* TyId *)
@@ -132,19 +133,30 @@ Proof.
         }
 
       (* TermVarZero *)
-      - { intros G' HGG' D' A' HAA' D''.
-          exists (ctt.var 0) ; split.
-          - constructor.
-          - inversion HGG'.
-            inversion HAA'.
-            + todo.
-            + todo.
+      - { intros GA' HGAGA' D' Aw' HAwAw' D''.
+          (* This is not var 0 in the genral case! *)
+          inversion HGAGA'. subst. rename X into HGG'. rename X0 into HAA'.
+          (* We need to have a coercion between A'[w] and Aw'. *)
+          todo.
         }
 
       (* TermVarSucc *)
-      - { destruct (translate_isterm _ _ _ D) as [G' [A' [vk' [[[? ?] ?] ?]]]].
-          (* Coherence problem here, if we translate B, we get another G'. *)
-          todo.
+      - { intros GB' HGB D' Aw' HAw D''.
+
+          inversion HGB. subst. rename X into HG. rename X0 into HB.
+          rename A' into B'.
+
+          inversion HAw.
+
+          - subst. rename X into HA. rename X0 into Hw.
+
+            inversion Hw. subst. rename A'0 into B''. rename X into HB'.
+            + (* We still have a coherence problem as we have two translations
+                 of B. *)
+              todo.
+            + todo.
+
+          - todo.
         }
 
       (* TermAbs *)
