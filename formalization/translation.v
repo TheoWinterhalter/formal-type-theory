@@ -160,8 +160,17 @@ Proof.
         }
 
       (* TermAbs *)
-      - { (* Coherence problem *)
-          todo.
+      - { intros G' HG D' PiAB HPiAB D''.
+
+          inversion HPiAB.
+          (* All those keep branching, that was, one of the reasons, we were
+             always having a coercion, may it be the identity. *)
+          (* I'm fine with keeping things as they are but we probably should
+             have a lemma not to deal with so many cases and only consider
+             the coerced case? *)
+          - subst. rename X into HA. rename X0 into HB.
+            todo.
+          - todo.
         }
 
       (* TermApp *)
