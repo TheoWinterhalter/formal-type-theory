@@ -141,34 +141,43 @@ Proof.
         }
 
       (* TyId *)
-      - { intros G' HGG' D'.
-          destruct (translate_istype G A i0 G' HGG' D') as [A' [? ?]].
-          destruct (translate_isterm G A u i1 G' HGG' D' A' h i3) as [u' [? ?]].
-          destruct (translate_isterm G A v i2 G' HGG' D' A' h i3) as [v' [? ?]].
+      - { intros G' TGG'.
+          destruct (translate_istype G A i0 G' TGG') as [A' [? ?]].
+          destruct (translate_isterm G A u i1 G' TGG' A' i3) as [u' [ ?]].
+          destruct (translate_isterm G A v i2 G' TGG' A' i3) as [v' [? ?]].
+          destruct i3. destruct TGG'.
           exists (ctt.Id A' u' v') ; split.
-          + now apply hml_Id.
-          + now apply TyId.
+          + split.
+            * now apply hml_Id.
+            * now apply TyId.
+          + todo.
         }
 
       (* TyEmpty *)
-      - { intros G' ? ?.
+      - { intros G' [? ?].
           exists ctt.Empty ; split.
-          - constructor.
-          - now apply TyEmpty.
+          - split.
+            + constructor.
+            + now capply TyEmpty.
+          - todo.
         }
 
       (* TyUnit *)
-      - { intros G' ? ?.
+      - { intros G' [? ?].
           exists ctt.Unit ; split.
-          - constructor.
-          - now apply TyUnit.
+          - split.
+            + constructor.
+            + now capply TyUnit.
+          - todo.
         }
 
       (* TyBool *)
-      - { intros G' ? ?.
+      - { intros G' [? ?].
           exists ctt.Bool ; split.
-          - constructor.
-          - now apply TyBool.
+          - split.
+            + constructor.
+            + now apply TyBool.
+          - todo.
         }
     }
 
@@ -191,24 +200,24 @@ Proof.
         }
 
       (* TermVarZero *)
-      - { intros GA' HGAGA' D' Aw' HAwAw' D''.
+      - { intros GA' [HGAGA' ?] Aw' TAwAw'.
           (* This is not var 0 in the genral case! *)
-          inversion HGAGA'. subst. rename X into HGG'. rename X0 into HAA'.
+          inversion HGAGA'. subst. rename H1 into HGG'. rename H3 into HAA'.
           (* We need to have a coercion between A'[w] and Aw'. *)
           todo.
         }
 
       (* TermVarSucc *)
-      - { intros GB' HGB D' Aw' HAw D''.
+      - { intros GB' [HGB D'] Aw' [HAw D''].
 
-          inversion HGB. subst. rename X into HG. rename X0 into HB.
+          inversion HGB. subst. rename H1 into HG. rename H3 into HB.
           rename A' into B'.
 
           inversion HAw.
 
-          - subst. rename X into HA. rename X0 into Hw.
+          - subst. rename H1 into HA. rename H3 into Hw.
 
-            inversion Hw. subst. rename A'0 into B''. rename X into HB'.
+            inversion Hw. subst. rename A'0 into B''. rename H0 into HB'.
             + (* We still have a coherence problem as we have two translations
                  of B. *)
               todo.
@@ -218,7 +227,7 @@ Proof.
         }
 
       (* TermAbs *)
-      - { intros G' HG D' PiAB HPiAB D''.
+      - { intros G' [HG D'] PiAB [HPiAB D''].
 
           inversion HPiAB.
           (* All those keep branching, that was, one of the reasons, we were
@@ -226,7 +235,7 @@ Proof.
           (* I'm fine with keeping things as they are but we probably should
              have a lemma not to deal with so many cases and only consider
              the coerced case? *)
-          - subst. rename X into HA. rename X0 into HB.
+          - subst. rename H1 into HA. rename H3 into HB.
             todo.
           - todo.
         }
@@ -237,15 +246,21 @@ Proof.
         }
 
       (* TermRefl *)
-      - { destruct (translate_isterm G A u D) as [G' [A' [u' [[[? ?] ?] ?]]]].
-          exists G'. exists (ctt.Id A' u' u'). exists (ctt.refl A' u').
-          repeat split.
-          - assumption.
-          - (* Problem of homology *)
-            todo.
-          - (* Problem of homology *)
-            todo.
-          - now capply TermRefl.
+      - { intros G' TGG' IdAuu' [HIdA' ?].
+          inversion HIdA'.
+          - subst. todo.
+          - todo.
+
+
+          (* destruct (translate_isterm G A u D G' TGG'). *)
+          (* exists G'. exists (ctt.Id A' u' u'). exists (ctt.refl A' u'). *)
+          (* repeat split. *)
+          (* - assumption. *)
+          (* - (* Problem of homology *) *)
+          (*   todo. *)
+          (* - (* Problem of homology *) *)
+          (*   todo. *)
+          (* - now capply TermRefl. *)
         }
 
       (* TermJ *)
