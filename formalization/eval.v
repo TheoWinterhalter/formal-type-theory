@@ -7,12 +7,6 @@ Require Import tt.
 
 Require ctt.
 
-Definition todolater : False.
-Admitted.
-
-Definition todo {A} : A :=
-  match todolater return A with end.
-
 Fixpoint eval_substitution (sbs : ctt.substitution) : substitution :=
   match sbs with
   | ctt.sbzero A u => sbzero (eval_type A) (eval_term u)
@@ -22,7 +16,7 @@ Fixpoint eval_substitution (sbs : ctt.substitution) : substitution :=
   | ctt.sbid => sbid
   | ctt.sbcomp sbs sbt =>
     sbcomp (eval_substitution sbs) (eval_substitution sbt)
-  | ctt.sbcoerce c sbs => ctt.subst_act c (eval_substitution sbs)
+  | ctt.sbcoerce crc1 crc2 sbs => ctt.act_subst crc1 crc2 (eval_substitution sbs)
   end
 
 with eval_type (A : ctt.type) : type :=
@@ -33,7 +27,7 @@ with eval_type (A : ctt.type) : type :=
   | ctt.Empty => Empty
   | ctt.Unit => Unit
   | ctt.Bool => Bool
-  | ctt.Coerce c A => ctt.type_act c (eval_type A)
+  | ctt.Coerce crc A => ctt.act_type crc (eval_type A)
   end
 
 with eval_term (t : ctt.term) : term :=
@@ -58,7 +52,7 @@ with eval_term (t : ctt.term) : term :=
                             (eval_term u)
                             (eval_term v)
                             (eval_term w)
-  | ctt.coerce c t => ctt.term_act c (eval_term t)
+  | ctt.coerce crc t => ctt.act_term crc (eval_term t)
   end.
 
 Fixpoint eval_ctx (G : ctt.context) : context :=

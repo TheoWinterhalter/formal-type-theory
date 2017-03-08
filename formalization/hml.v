@@ -47,9 +47,11 @@ with hml_substitution :
                          (ctt.sbcomp sbs' sbt')
 
   | hml_sbcoerce :
-      forall {sbs sbs' c},
+      forall {sbs sbs' G G' D D'}
+             {crc1 : ctt.context_coercion G G'}
+             {crc2 : ctt.context_coercion D D'},
         hml_substitution sbs sbs' ->
-        hml_substitution sbs (ctt.sbcoerce c sbs')
+        hml_substitution sbs (ctt.sbcoerce crc1 crc2 sbs')
 
 
 with hml_type :
@@ -84,9 +86,9 @@ with hml_type :
         hml_type Bool ctt.Bool
 
   | hml_Coerce :
-      forall {A A' c},
+      forall {A A' G G'} {crc : ctt.context_coercion G G'},
         hml_type A A' ->
-        hml_type A (ctt.Coerce c A')
+        hml_type A (ctt.Coerce crc A')
 
 with hml_term :
   term -> ctt.term -> Type :=
@@ -159,8 +161,9 @@ with hml_term :
                  (ctt.cond C' u' v' w')
 
   | hml_coerce :
-      forall {u u' c},
+      forall {u u' G G' A A'}
+             {crc : ctt.context_coercion G G'}
+             {crt : ctt.type_coercion crc A A'},
         hml_term u u' ->
-        hml_term u (ctt.coerce c u')
-
+        hml_term u (ctt.coerce crt u')
 .

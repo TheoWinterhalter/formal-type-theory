@@ -3,28 +3,48 @@
 Require Import syntax.
 Require eitt.
 
+Structure context_coercion (G G' : context) : Type := {
+  ctx_coe_act : substitution ; (* a substitution sbs : G -> G' *)
+  ctx_coe_inv : substitution (* a substitution sbs : G' -> G *)
+  (* in the future we expect requirements such as derivability of [issubst sbs G G'] *)
+}.
 
-(* Definition subst_coercion : Type := substitution -> substitution. *)
-(* { subst_do : A ; *)
-(*   y : B ; *)
-(*   subst_act : forall sbs : substitution, eitt.issubst sbs G D -> *)
-(*                                     eitt.issubst sbs G' D' *)
-(* }. *)
+Arguments ctx_coe_act {_ _} _.
+Arguments ctx_coe_inv {_ _} _.
 
-(* Structure type_coercion : Type := *)
-(* { type_dom : context ; *)
-(*   type_cod : context ; *)
-(*   type_act : forall A : type, eitt.istype type_dom A -> eitt.istype type_cod A *)
-(* }. *)
+Structure type_coercion {G G'} (crc : context_coercion G G') (A A' : type) : Type := {
+  (* a coercion c : G -> G' *)
+  (* a type G |- A *)
+  (* a type G' |- A' *)
+  type_coe_act : term ; (* a term G' |- _ : c(A) -> A' *)
+  type_coe_inv : term   (* a term G |- _ : c^-1(A') -> A *)
+  (* in the future there will be more requirements here which will create
+     dependence on the parameters. *)
+}.
 
+Arguments type_coe_act {_ _ _ _ _} _.
+Arguments type_coe_inv {_ _ _ _ _} _.
 
-Parameter subst_coercion : Type.
-Parameter type_coercion  : Type.
-Parameter term_coercion  : Type.
+Definition act_subst {G G' D D'}
+           (crc1 : context_coercion G G')
+           (crc2 : context_coercion D D') sbs
+  := 
+    sbcomp (ctx_coe_inv crc1) (sbcomp sbs (ctx_coe_act crc2)).
 
-Parameter subst_act : subst_coercion -> substitution -> substitution.
-Parameter type_act  : type_coercion -> type -> type.
-Parameter term_act  : term_coercion -> term -> term.
+Definition act_type {G G'} 
+           (crc : context_coercion G G')
+           A
+  :=
+    Subst A (ctx_coe_inv crc).
+
+Definition act_term {G G'} {crc : context_coercion G G'} {A A'}
+           (crt : type_coercion crc A A')
+           u
+  :=
+  app (type_coe_act crt)
+  (act_type crc A)
+  (Subst A' (sbweak (act_type crc A)))
+  (subst u (ctx_coe_inv crc)).
 
 Inductive context : Type :=
      | ctxempty : context
@@ -37,7 +57,7 @@ with type :=
      | Empty : type
      | Unit : type
      | Bool : type
-     | Coerce : type_coercion -> type -> type
+     | Coerce : forall {G G'}, context_coercion G G' -> type -> type
 
 with term : Type :=
      | var : nat -> term
@@ -51,7 +71,7 @@ with term : Type :=
      | true : term
      | false : term
      | cond : type -> term -> term -> term -> term
-     | coerce : term_coercion -> term -> term
+     | coerce : forall {G G'} {crc : context_coercion G G'} {A A'}, type_coercion crc A A' -> term -> term
 
 with substitution : Type :=
      | sbzero : type -> term -> substitution
@@ -59,4 +79,4 @@ with substitution : Type :=
      | sbshift : type -> substitution -> substitution
      | sbid : substitution
      | sbcomp : substitution -> substitution -> substitution
-     | sbcoerce : subst_coercion -> substitution -> substitution.
+     | sbcoerce : forall {G G' D D'}, context_coercion G G' -> context_coercion D D' -> substitution -> substitution.

@@ -15,23 +15,37 @@ Section Translation.
 Axiom cheating : forall A : Type, A.
 Ltac todo := apply cheating.
 
+Structure is_ctx_translation G G' : Type := {
+  is_ctx_hml : hml_context G G' ;
+  is_ctx_der : eitt.isctx (eval_ctx G')
+}.
+
+Structure is_type_translation G' A A' : Type := {
+  is_type_hml : hml_type A A';
+  is_type_der : eitt.istype (eval_ctx G') (eval_type A')
+}.
+
+Structure is_term_translation G' A' u u' : Type := {
+  is_term_hml : hml_term u u' ;
+  is_term_der : eitt.isterm (eval_ctx G') (eval_term u') (eval_type A')
+}.
+
+Definition translation_coherence A G' A' :=
+  forall (G'' : ctt.context) 
+         (crc : ctt.context_coercion (eval_ctx G') (eval_ctx G'')),
+  forall A'', is_type_translation G'' A A'' -> ctt.type_coercion crc (eval_type A') (eval_type A'').
+
 Fixpoint translate_isctx {G} (D : pxtt.isctx G) {struct D} :
-  { G' : ctt.context & hml_context G G' * eitt.isctx (eval_ctx G') }%type
+  { G' : ctt.context & is_ctx_translation G G' }
 
 with translate_istype {G A} (D : pxtt.istype G A) {struct D} :
-  forall G', hml_context G G' -> eitt.isctx (eval_ctx G') ->
-  { A' : ctt.type &
-    hml_type A A' *
-    eitt.istype (eval_ctx G') (eval_type A')
-  }%type
+  forall G', is_ctx_translation G G' -> 
+  { A' : ctt.type & is_type_translation G' A A' * translation_coherence A G' A'}%type
 
 with translate_isterm {G A u} (D : pxtt.isterm G u A) {struct D} :
-  forall G', hml_context G G' -> eitt.isctx (eval_ctx G') ->
-  forall A', hml_type A A' -> eitt.istype (eval_ctx G') (eval_type A') ->
-  { u' : ctt.term &
-    hml_term u u' *
-    eitt.isterm (eval_ctx G') (eval_term u') (eval_type A')
-  }%type
+  forall G', is_ctx_translation G G' -> 
+  forall A', is_type_translation G' A A' ->
+  { u' : ctt.term & is_term_translation G' A' u u' }
 .
 
 Proof.
@@ -46,9 +60,10 @@ Proof.
         }
 
       (* CtxExtend *)
-      - { destruct (translate_isctx G i) as [G'' [? ?]].
-          destruct (translate_istype G A i0 G'' h i1) as [A'' [? ?]].
+      - { destruct (translate_isctx G i) as [G'' TGG''].
+          destruct (translate_istype G A i0 G'' TGG'') as [A'' [? ?]].
           exists (ctt.ctxextend G'' A'').
+          destruct TGG''.
           split.
           - now constructor.
           - now capply CtxExtend.
@@ -69,13 +84,14 @@ Proof.
         }
 
       (* TyProd *)
-      - { intros G' HGG' D'.
-          destruct (translate_istype G A i G' HGG' D') as [A' [? ?]].
-          assert (K : eitt.isctx (ctxextend (eval_ctx G') (eval_type A'))).
-          { now capply CtxExtend. }
-          assert (L : hml.hml_context (ctxextend G A) (ctt.ctxextend G' A')).
-          { now apply hml_ctxextend. }
-          destruct (translate_istype (ctxextend G A) B D (ctt.ctxextend G' A') L K)
+      - { intros G' TGG'.
+          pose (TGG'_hml := is_ctx_hml _ _ TGG').
+          destruct (translate_istype G A i G' TGG') as [A' [? ?]].
+          assert (TGAG'A' : is_ctx_translation (ctxextend G A) (ctt.ctxextend G' A')).
+          { split.
+            - now apply hml_ctxextend.
+            - now capply CtxExtend. }
+          destruct (translate_istype (ctxextend G A) B D (ctt.ctxextend G' A') TGAG'A')
             as [B' [? ?]].
           exists (ctt.Prod A' B'). split.
           - now apply hml_Prod.
