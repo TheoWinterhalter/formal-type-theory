@@ -102,45 +102,62 @@ Proof.
           - todo.
           - intros G'' crc PiAB'' [hmlPiAB'' DPiAB''].
             inversion hmlPiAB''. inversion X.
-            subst. rename A'0 into A''. rename B'0 into B''.
-              assert (is_type_translation G'' A A'').
-              { split.
-                - assumption.
-                - (* We need an inversion lemma to apply on DPiAB'' *)
-                  todo.
-              }
-              pose proof (t G'' crc A'' X).
-              assert (
-                ctt.context_coercion (eval_ctx (ctt.ctxextend G' A'))
-                                     (eval_ctx (ctt.ctxextend G'' A''))
-              ).
-              { (* We basically want to extend crc by H *)
+            subst. rename A'1 into A''. rename B'0 into B''.
+            assert (is_type_translation G'' A A'').
+            { split.
+              - assumption.
+              - (* We need an inversion lemma to apply on DPiAB'' *)
                 todo.
-              }
-              assert (is_type_translation (ctt.ctxextend G'' A'') B B'').
-              { split.
-                - assumption.
-                - (* Inversion lemma *)
-                  todo.
-              }
-              pose proof (t0 (ctt.ctxextend G'' A'') H0 B'' X0).
-              split.
-              * (* It has to go from crc(Prod A' B') to PiAB'' in G'' *)
-                (* Somehow it feels like the goal should be more than term.
-                   If we had existential statements instead we would be
-                   able to have tactics. *)
-                simple refine (
-                  lam (ctt.act_type crc (eval_type (ctt.Prod A' B')))
-                      (Subst (eval_type (ctt.Prod A'' B''))
-                             (sbweak (ctt.act_type crc (eval_type (ctt.Prod A' B')))))
-                      _
-                ).
-                (* simple refine ( *)
-                (*   lam _ _ _ *)
-                (* ). *)
+            }
+            pose proof (t G'' crc A'' X2).
+            assert (
+              coerce.context_coercion (eval_ctx (ctt.ctxextend G' A'))
+                                      (eval_ctx (ctt.ctxextend G'' A''))
+            ).
+            { (* We basically want to extend crc by H *)
+              todo.
+            }
+            assert (is_type_translation (ctt.ctxextend G'' A'') B B'').
+            { split.
+              - assumption.
+              - (* Inversion lemma *)
                 todo.
-              * (* It has to go from crc^-1(PiAB'') to Prod A' B' in G' *)
-                todo.
+            }
+            pose proof (t0 (ctt.ctxextend G'' A'') X4 B'' X5).
+            refine {| coerce.type_coe_act := _ ;
+                      coerce.type_coe_inv := _ |}.
+            1:shelve.
+            + ceapply TermAbs.
+              ceapply TermSubst.
+              * ceapply SubstWeak.
+                ceapply TySubst.
+                -- apply (coerce.ctx_coe_issubst_inv crc).
+                -- simpl. unfold coerce.act_type.
+                   ceapply TySubst.
+                   ++ capply SubstId. now destruct TGG'.
+                   ++ ceapply TyProd.
+                      now destruct X5.
+              * ceapply TermSubst.
+                -- apply (coerce.ctx_coe_issubst_inv crc0).
+
+
+(* split. *)
+(*               * (* It has to go from crc(Prod A' B') to PiAB'' in G'' *) *)
+(*                 (* Somehow it feels like the goal should be more than term. *)
+(*                    If we had existential statements instead we would be *)
+(*                    able to have tactics. *) *)
+(*                 simple refine ( *)
+(*                   lam (ctt.act_type crc (eval_type (ctt.Prod A' B'))) *)
+(*                       (Subst (eval_type (ctt.Prod A'' B'')) *)
+(*                              (sbweak (ctt.act_type crc (eval_type (ctt.Prod A' B'))))) *)
+(*                       _ *)
+(*                 ). *)
+(*                 (* simple refine ( *) *)
+(*                 (*   lam _ _ _ *) *)
+(*                 (* ). *) *)
+(*                 todo. *)
+(*               * (* It has to go from crc^-1(PiAB'') to Prod A' B' in G' *) *)
+(*                 todo. *)
         }
 
       (* TyId *)

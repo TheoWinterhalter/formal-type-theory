@@ -12,6 +12,8 @@ Structure context_coercion (G G' : context) : Type := {
 
 Arguments ctx_coe_act {_ _} _.
 Arguments ctx_coe_inv {_ _} _.
+Arguments ctx_coe_issubst_act {_ _} _.
+Arguments ctx_coe_issubst_inv {_ _} _.
 
 Structure type_coercion {G G'} (crc : context_coercion G G') (A A' : type) : Type := {
   type_coe_act : term ; (* a term G' |- _ : crc(A) -> A' *)
