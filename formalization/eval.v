@@ -65,7 +65,7 @@ with eval_term' (t : ctt.term') : term :=
 
 with eval_term (t : ctt.term) : term :=
   match t with
-  | ctt.coerce crc t => coerce.act_term crc (eval_term' t)
+  | ctt.coerce crc crt t => coerce.act_term crc crt (eval_term' t)
   end.
 
 Fixpoint eval_ctx (G : ctt.context) : context :=

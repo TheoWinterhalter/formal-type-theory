@@ -17,7 +17,7 @@ with type' : Type :=
      | Bool : type'
 
 with type : Type :=
-     | Coerce : forall {G G'}, context_coercion G G' -> type' -> type
+     | Coerce : context_coercion -> type' -> type
 
 with term' : Type :=
      | var : nat -> term'
@@ -33,7 +33,7 @@ with term' : Type :=
      | cond : type -> term -> term -> term -> term'
 
 with term : Type :=
-     | coerce : forall {G G'} {crc : context_coercion G G'} {A A'}, type_coercion crc A A' -> term' -> term
+     | coerce : forall {A B}, context_coercion -> type_coercion A B -> term' -> term
 
 with substitution' : Type :=
      | sbzero : type -> term -> substitution'
@@ -43,5 +43,5 @@ with substitution' : Type :=
      | sbcomp : substitution -> substitution -> substitution'
 
 with substitution : Type :=
-     | sbcoerce : forall {G G' D D'}, context_coercion G G' -> context_coercion D D' -> substitution' -> substitution.
+     | sbcoerce : context_coercion -> context_coercion -> substitution' -> substitution.
 

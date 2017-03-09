@@ -3,49 +3,52 @@ Require Import tt.
 Require Import config_tactics.
 Require eitt.
 
-Structure context_coercion (G G' : context) : Type := {
-  ctx_coe_act : substitution ;
-  ctx_coe_inv : substitution ;
-  ctx_coe_issubst_act : eitt.issubst ctx_coe_act G G' ;
-  ctx_coe_issubst_inv : eitt.issubst ctx_coe_inv G' G
-}.
+Inductive context_coercion : Type :=
+  | ctx_id : context_coercion.
 
-Arguments ctx_coe_act {_ _} _.
-Arguments ctx_coe_inv {_ _} _.
-Arguments ctx_coe_issubst_act {_ _} _.
-Arguments ctx_coe_issubst_inv {_ _} _.
+Inductive type_coercion : type -> type -> Type :=
+  | type_id : forall (A : type), type_coercion A A.
+  
+Fixpoint act_subst_left (crc : context_coercion) (sbs : substitution) : substitution :=
+  match crc with
+    | ctx_id => sbs
+  end.
 
-Structure type_coercion {G G'} (crc : context_coercion G G') (A A' : type) : Type := {
-  type_coe_act : term ; (* a term G' |- _ : crc(A) -> A' *)
-  type_coe_inv : term ; (* a term G |- _ : crc^-1(A') -> A *)
-  type_coe_istype_act : eitt.isterm G' type_coe_act (Arrow (Subst A (ctx_coe_inv crc)) A') ;
-  type_coe_istype_inv : eitt.isterm G type_coe_act (Arrow (Subst A' (ctx_coe_act crc)) A)
-}.
+Fixpoint act_subst_right (crc : context_coercion) (sbs : substitution) : substitution :=
+  match crc with
+    | ctx_id => sbs
+  end.
 
-Arguments type_coe_act {_ _ _ _ _} _.
-Arguments type_coe_inv {_ _ _ _ _} _.
+Definition act_subst (crc1 crc2 : context_coercion) (sbs : substitution) :=
+  act_subst_left crc1 (act_subst_right crc2 sbs).
 
-Definition act_subst {G G' D D'}
-           (crc1 : context_coercion G G')
-           (crc2 : context_coercion D D') sbs
-  :=
-    sbcomp (ctx_coe_inv crc1) (sbcomp sbs (ctx_coe_act crc2)).
+Fixpoint act_type (crc : context_coercion) (A : type) :=
+  match crc with
+  | ctx_id => A
+  end.
+    
+Fixpoint act_term_ctx (crc : context_coercion) (u : term) : term :=
+  match crc with
+  | ctx_id => u
+  end.
 
-Definition act_type {G G'}
-           (crc : context_coercion G G')
-           A
-  :=
-    Subst A (ctx_coe_inv crc).
+Fixpoint act_term_type {A B} (crc : type_coercion A B) (u : term) : term :=
+  match crc with
+  | type_id _ => u
+  end.
 
-Definition act_term {G G'} {crc : context_coercion G G'} {A A'}
-           (crt : type_coercion crc A A')
-           u
-  :=
-  app (type_coe_act crt)
-  (act_type crc A)
-  (Subst A' (sbweak (act_type crc A)))
-  (subst u (ctx_coe_inv crc)).
+Definition act_term {A B} (crc : context_coercion) (crt : type_coercion A B) (u : term) : term :=
+  act_term_type crt (act_term_ctx crc u).
 
+Inductive isctxcoe : context_coercion -> context -> context -> Type :=
+  | isctx_id : forall G, eitt.isctx G -> isctxcoe ctx_id G G.
+
+Inductive istypecoe : forall {A B}, type_coercion A B -> type -> type -> Type :=
+  | istype_id : forall {G A}, eitt.istype G A -> istypecoe (type_id A) A A.
+  
+
+
+(*
 (* Identity context coercion. *)
 Definition ctx_coe_id (G : context) : eitt.isctx G -> context_coercion G G.
 Proof.
@@ -86,3 +89,4 @@ Proof.
            now ceapply EqTyIdSubst.
         -- now ceapply EqTyRefl.
 Defined.
+*)
