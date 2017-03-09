@@ -24,6 +24,7 @@ uniqueness.v
 # substitution_elim.v
 
 hml.v
+coerce.v
 ctt.v
 eitt.v
 pxtt.v

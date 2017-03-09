@@ -31,3 +31,6 @@ with substitution : Type :=
      | sbcomp : substitution -> substitution -> substitution.
 
 Parameter reflective : type -> type.
+
+Definition Arrow (A B : type) : type :=
+  Prod A (Subst B (sbweak A)).

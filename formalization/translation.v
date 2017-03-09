@@ -32,8 +32,8 @@ Structure is_term_translation G' A' u u' : Type := {
 
 Definition translation_coherence A G' A' :=
   forall (G'' : ctt.context)
-         (crc : ctt.context_coercion (eval_ctx G') (eval_ctx G'')),
-  forall A'', is_type_translation G'' A A'' -> ctt.type_coercion crc (eval_type A') (eval_type A'').
+         (crc : coerce.context_coercion (eval_ctx G') (eval_ctx G'')),
+  forall A'', is_type_translation G'' A A'' -> coerce.type_coercion crc (eval_type A') (eval_type A'').
 
 Fixpoint translate_isctx {G} (D : pxtt.isctx G) {struct D} :
   { G' : ctt.context & is_ctx_translation G G' }
@@ -93,12 +93,16 @@ Proof.
             - now capply CtxExtend. }
           destruct (translate_istype (ctxextend G A) B D (ctt.ctxextend G' A') TGAG'A')
             as [B' [[? ?] ?]].
-          exists (ctt.Prod A' B'). split ; [ split | .. ].
-          - now apply hml_Prod.
-          - now capply TyProd.
+          eexists (ctt.Coerce (coerce.ctx_coe_id (eval_ctx G') _) (ctt.Prod A' B')).
+          Unshelve. Focus 2.
+          { apply TGG'. }
+          Unfocus.
+          split ; [ split | .. ].
+          - now apply hml_Coerce, hml_Prod.
+          - todo.
           - intros G'' crc PiAB'' [hmlPiAB'' DPiAB''].
-            inversion hmlPiAB''.
-            + subst. rename A'0 into A''. rename B'0 into B''.
+            inversion hmlPiAB''. inversion X.
+            subst. rename A'0 into A''. rename B'0 into B''.
               assert (is_type_translation G'' A A'').
               { split.
                 - assumption.
@@ -137,7 +141,6 @@ Proof.
                 todo.
               * (* It has to go from crc^-1(PiAB'') to Prod A' B' in G' *)
                 todo.
-            + todo.
         }
 
       (* TyId *)
