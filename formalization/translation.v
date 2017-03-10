@@ -111,10 +111,13 @@ Proof.
 
       (* TyProd *)
       - { intros G' TGG'.
+
           pose (TGG'_hml := is_ctx_hml _ _ TGG').
           destruct (translate_istype G A i G' TGG') as [TA cohA].
           pose (A' := is_type_typ TA).
-          assert (TGAG'A' : is_ctx_translation (ctxextend G A) (ctt.ctxextend G' A')).
+          assert (
+            TGAG'A' : is_ctx_translation (ctxextend G A) (ctt.ctxextend G' A')
+          ).
           { split.
             - apply hml_ctxextend.
               + assumption.
@@ -122,13 +125,15 @@ Proof.
             - capply CtxExtend.
               apply (is_type_der TA).
           }
-          destruct (translate_istype (ctxextend G A) B D (ctt.ctxextend G' A') TGAG'A') as [TB cohB].
+          destruct (
+            translate_istype (ctxextend G A) B D (ctt.ctxextend G' A') TGAG'A'
+          ) as [TB cohB].
           pose (B' := is_type_typ TB).
 
           ssplit T.
-          - refine {| is_type_ctx := eval_ctx G';
-                      is_type_typ' := ctt.Prod A' B';
-                      is_type_coe := coerce.ctx_id
+          - refine {| is_type_ctx  := eval_ctx G' ;
+                      is_type_typ' := ctt.Prod A' B' ;
+                      is_type_coe  := coerce.ctx_id
                    |}.
             + constructor. apply TGG'.
             + constructor. constructor.
@@ -137,7 +142,59 @@ Proof.
             + simpl. capply TyProd.
               apply (is_type_der TB).
           - unfold translation_coherence.
-            intros G'' crc Isctxcoe_crc T''.
+            intros G'' crc Hcrc T''.
+
+            (* Maybe some lemma that does the following? *)
+            (* Let's find out that we have a product in T''. *)
+            pose (hml := is_type_hml T'').
+            inversion hml. inversion H1. subst. clear hml. clear H1.
+            rename A'1 into A'', B'0 into B''.
+            destruct A'' as [cA'' A''].
+
+            (* Let's build coercions between As and Bs *)
+            assert (TA' : is_type_translation G'' A).
+            { refine {| is_type_ctx  := is_type_ctx T'' ;
+                        is_type_typ' := A'' ;
+                        is_type_coe  := cA''
+                     |}.
+              - todo.
+              - assumption.
+              - todo.
+            }
+            destruct (cohA G'' crc Hcrc TA') as [crtA iscrtA].
+
+            assert (TGA'' :
+              is_ctx_translation (ctxextend G A)
+                                 (ctt.ctxextend G'' (ctt.Coerce cA'' A''))
+            ).
+            { split.
+              - constructor.
+                + (* Are we missing information? *)
+                  todo.
+                + assumption.
+              - (* Probably follows from some inversion, again... *)
+                todo.
+            }
+
+            destruct B'' as [cB'' B''].
+            assert (TB' :
+              is_type_translation (ctt.ctxextend G'' (ctt.Coerce cA'' A''))
+                                  B
+            ).
+            { refine {| is_type_ctx  := ctxextend (is_type_ctx T'') A ;
+                        is_type_typ' := B'' ;
+                        is_type_coe  := cB'' |}.
+              - todo.
+              - assumption.
+              - todo.
+            }
+            (* We need to extend crc by cA''? Or something else? *)
+            (* destruct (cohB (ctt.ctxextend G'' (ctt.Coerce cA'' A'')) *)
+            (*                ()) *)
+
+            (* Into what does it 'reduce'? *)
+            (* assert (eqT'' : eitt.eqtype (eval_ctx G'') (is_type_eval T'') (Prod )) *)
+
             ssplit crt.
             + todo.
             + todo.

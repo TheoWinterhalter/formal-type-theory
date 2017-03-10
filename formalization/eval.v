@@ -79,6 +79,12 @@ Fixpoint eval_ctx (G : ctt.context) : context :=
 
 (* Some lemmata to push coercions inside *)
 
+(* Lemma coerceProd : *)
+(*   forall G' G'' A B crc, *)
+(*     eitt.eqtype G'' (coerce.act_type crc (Prod A B)) *)
+(*                 (Prod (coerce.act_type crc A) *)
+(*                       (coerce.act_type )) *)
+
 Lemma coerceEmpty :
   forall G' G'' crc,
     coerce.isctxcoe crc G' G'' ->
