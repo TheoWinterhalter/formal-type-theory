@@ -54,6 +54,8 @@ Structure is_term_translation G' A' u u' : Type := {
   is_term_der : eitt.isterm (eval_ctx G') (eval_term u') (eval_type A')
 }.
 
+(* We probably have to add the fact that G'' is a translation to
+   complete the translation. *)
 Definition translation_coherence A G' (T' : is_type_translation G' A) :=
   forall (G'' : ctt.context) (crc : coerce.context_coercion),
     coerce.isctxcoe crc (eval_ctx G') (eval_ctx G'') ->
