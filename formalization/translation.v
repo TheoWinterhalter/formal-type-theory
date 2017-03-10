@@ -10,6 +10,15 @@ Require ctt.
 Require Import eval.
 Require Import hml.
 
+Ltac ssplit name :=
+  simple refine (existT _ _ _) ; [
+    ..
+  | match goal with
+    | |- _ ?T =>
+      pose (name := T) ; replace T with name by reflexivity
+    end
+  ].
+
 Section Translation.
 
 Axiom cheating : forall A : Type, A.
@@ -112,7 +121,7 @@ Proof.
           destruct (translate_istype (ctxextend G A) B D (ctt.ctxextend G' A') TGAG'A') as [TB cohB].
           pose (B' := is_type_typ TB).
 
-          simple refine (existT _ _ _).
+          ssplit T.
           - refine {| is_type_ctx := eval_ctx G';
                       is_type_typ' := ctt.Prod A' B';
                       is_type_coe := coerce.ctx_id
@@ -123,14 +132,11 @@ Proof.
               * apply (is_type_hml TB).
             + simpl. capply TyProd.
               apply (is_type_der TB).
-          - match goal with
-            | |- ?f ?T' =>
-              pose (T := T') ; replace T' with T by reflexivity
-            end.
-            unfold translation_coherence.
-            intros crc Isctxcoe_crc T''.
-            todo.
-            (* simple refine (existT _ _ (fun )) *)
+          - unfold translation_coherence.
+            intros G'' crc Isctxcoe_crc T''.
+            ssplit crt.
+            + todo.
+            + todo.
         }
 
       (* TyId *)
