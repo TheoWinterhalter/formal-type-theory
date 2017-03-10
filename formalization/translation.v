@@ -40,8 +40,12 @@ Structure is_type_translation G' A : Type := {
   is_type_der : eitt.istype (eval_ctx G') is_type_eval
 }.
 
-Arguments is_type_eval {_ _} _.
+Arguments is_type_ctx {_ _} _.
+Arguments is_type_typ' {_ _} _.
+Arguments is_type_coe {_ _} _.
+Arguments is_type_isctxcoe {_ _} _.
 Arguments is_type_typ {_ _} _.
+Arguments is_type_eval {_ _} _.
 Arguments is_type_hml {_ _} _.
 Arguments is_type_der {_ _} _.
 
@@ -141,24 +145,54 @@ Proof.
 
       (* TyId *)
       - { intros G' TGG'.
-          destruct (translate_istype G A i0 G' TGG') as [A' [? ?]].
-          destruct (translate_isterm G A u i1 G' TGG' A' i3) as [u' [ ?]].
-          destruct (translate_isterm G A v i2 G' TGG' A' i3) as [v' [? ?]].
-          destruct i3. destruct TGG'.
-          exists (ctt.Id A' u' v') ; split.
-          + split.
-            * now apply hml_Id.
-            * now apply TyId.
-          + todo.
+          destruct (translate_istype G A i0 G' TGG') as [TA cohA].
+          (* destruct (translate_isterm G A u i1 G' TGG' A' i3) as [u' [ ?]]. *)
+          (* destruct (translate_isterm G A v i2 G' TGG' A' i3) as [v' [? ?]]. *)
+          (* destruct i3. destruct TGG'. *)
+          (* exists (ctt.Id A' u' v') ; split. *)
+          (* + split. *)
+          (*   * now apply hml_Id. *)
+          (*   * now apply TyId. *)
+          (* + todo. *)
+          todo.
         }
 
       (* TyEmpty *)
-      - { intros G' [? ?].
-          exists ctt.Empty ; split.
-          - split.
-            + constructor.
-            + now capply TyEmpty.
-          - todo.
+      - { intros G' TGG'.
+
+          ssplit T.
+          - refine {| is_type_ctx  := eval_ctx G' ;
+                      is_type_typ' := ctt.Empty ;
+                      is_type_coe  := coerce.ctx_id
+                   |}.
+            + constructor. apply TGG'.
+            + constructor. constructor.
+            + simpl. capply TyEmpty.
+              apply TGG'.
+          - unfold translation_coherence.
+            intros G'' crc Hcrc T'.
+
+            (* We need to 'discover' that we want a coercion between Empty
+               and itself. *)
+            replace (is_type_eval T) with Empty by reflexivity.
+            pose (hml := is_type_hml T').
+            inversion hml. inversion H1. subst. clear hml. clear H1.
+            assert (is_type_eval T' = Empty).
+            { unfold is_type_eval. unfold is_type_typ.
+              rewrite <- H2. simpl.
+              (* Knowing whether any coercion doesn't affect Empty shouldn't
+                 come from destructing the coercion here and seeing it can
+                 only be the identity. *)
+              todo.
+            }
+            rewrite H.
+            (* Likewise, we'd like to say that crc(Empty) = Empty *)
+            replace (coerce.act_type crc Empty) with Empty by todo.
+
+            ssplit crt.
+            + apply coerce.type_id.
+            + apply @coerce.istype_id with (G := eval_ctx G'').
+              capply TyEmpty. destruct Hcrc. assumption.
         }
 
       (* TyUnit *)
