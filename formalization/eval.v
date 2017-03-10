@@ -78,6 +78,7 @@ Fixpoint eval_ctx (G : ctt.context) : context :=
 
 
 (* Some lemmata to push coercions inside *)
+
 Lemma coerceEmpty :
   forall G' G'' crc,
     coerce.isctxcoe crc G' G'' ->
@@ -86,4 +87,24 @@ Proof.
   intros G' G'' crc h.
   induction crc.
   simpl. capply EqTyRefl. capply TyEmpty. now destruct h.
+Defined.
+
+Lemma coerceUnit :
+  forall G' G'' crc,
+    coerce.isctxcoe crc G' G'' ->
+    eitt.eqtype G'' (coerce.act_type crc Unit) Unit.
+Proof.
+  intros G' G'' crc h.
+  induction crc.
+  simpl. capply EqTyRefl. capply TyUnit. now destruct h.
+Defined.
+
+Lemma coerceBool :
+  forall G' G'' crc,
+    coerce.isctxcoe crc G' G'' ->
+    eitt.eqtype G'' (coerce.act_type crc Bool) Bool.
+Proof.
+  intros G' G'' crc h.
+  induction crc.
+  simpl. capply EqTyRefl. capply TyBool. now destruct h.
 Defined.

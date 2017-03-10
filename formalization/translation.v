@@ -197,21 +197,77 @@ Proof.
         }
 
       (* TyUnit *)
-      - { intros G' [? ?].
-          exists ctt.Unit ; split.
-          - split.
-            + constructor.
-            + now capply TyUnit.
-          - todo.
+      - { intros G' TGG'.
+
+          ssplit T.
+          - refine {| is_type_ctx  := eval_ctx G' ;
+                      is_type_typ' := ctt.Unit ;
+                      is_type_coe  := coerce.ctx_id
+                   |}.
+            + constructor. apply TGG'.
+            + constructor. constructor.
+            + simpl. capply TyUnit.
+              apply TGG'.
+          - unfold translation_coherence.
+            intros G'' crc Hcrc T'.
+
+            replace (is_type_eval T) with Unit by reflexivity.
+            pose (hml := is_type_hml T').
+            inversion hml. inversion H1. subst. clear hml. clear H1.
+            assert (eqT' : eitt.eqtype (eval_ctx G'') (is_type_eval T') Unit).
+            { unfold is_type_eval. unfold is_type_typ.
+              rewrite <- H2. simpl.
+              eapply coerceUnit.
+              apply T'.
+            }
+            assert (
+              eqT : eitt.eqtype (eval_ctx G'') (coerce.act_type crc Unit) Unit
+            ).
+            { eapply coerceUnit. eassumption. }
+
+            ssplit crt.
+            + apply coerce.type_id.
+            + eapply coerce.istype_id.
+              ceapply EqTyTrans.
+              * eapply eqT.
+              * ceapply EqTySym. eapply eqT'.
         }
 
       (* TyBool *)
-      - { intros G' [? ?].
-          exists ctt.Bool ; split.
-          - split.
-            + constructor.
-            + now apply TyBool.
-          - todo.
+      - { intros G' TGG'.
+
+          ssplit T.
+          - refine {| is_type_ctx  := eval_ctx G' ;
+                      is_type_typ' := ctt.Bool ;
+                      is_type_coe  := coerce.ctx_id
+                   |}.
+            + constructor. apply TGG'.
+            + constructor. constructor.
+            + simpl. capply TyBool.
+              apply TGG'.
+          - unfold translation_coherence.
+            intros G'' crc Hcrc T'.
+
+            replace (is_type_eval T) with Bool by reflexivity.
+            pose (hml := is_type_hml T').
+            inversion hml. inversion H1. subst. clear hml. clear H1.
+            assert (eqT' : eitt.eqtype (eval_ctx G'') (is_type_eval T') Bool).
+            { unfold is_type_eval. unfold is_type_typ.
+              rewrite <- H2. simpl.
+              eapply coerceBool.
+              apply T'.
+            }
+            assert (
+              eqT : eitt.eqtype (eval_ctx G'') (coerce.act_type crc Bool) Bool
+            ).
+            { eapply coerceBool. eassumption. }
+
+            ssplit crt.
+            + apply coerce.type_id.
+            + eapply coerce.istype_id.
+              ceapply EqTyTrans.
+              * eapply eqT.
+              * ceapply EqTySym. eapply eqT'.
         }
     }
 
