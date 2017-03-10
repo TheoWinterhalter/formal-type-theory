@@ -7,8 +7,8 @@ Inductive context_coercion : Type :=
   | ctx_id : context_coercion.
 
 Inductive type_coercion : type -> type -> Type :=
-  | type_id : forall (A : type), type_coercion A A.
-  
+  | type_id : forall (A B : type), type_coercion A B.
+
 Fixpoint act_subst_left (crc : context_coercion) (sbs : substitution) : substitution :=
   match crc with
     | ctx_id => sbs
@@ -26,7 +26,7 @@ Fixpoint act_type (crc : context_coercion) (A : type) :=
   match crc with
   | ctx_id => A
   end.
-    
+
 Fixpoint act_term_ctx (crc : context_coercion) (u : term) : term :=
   match crc with
   | ctx_id => u
@@ -34,7 +34,7 @@ Fixpoint act_term_ctx (crc : context_coercion) (u : term) : term :=
 
 Fixpoint act_term_type {A B} (crc : type_coercion A B) (u : term) : term :=
   match crc with
-  | type_id _ => u
+  | type_id _ _ => u
   end.
 
 Definition act_term {A B} (crc : context_coercion) (crt : type_coercion A B) (u : term) : term :=
@@ -44,8 +44,8 @@ Inductive isctxcoe : context_coercion -> context -> context -> Type :=
   | isctx_id : forall G, eitt.isctx G -> isctxcoe ctx_id G G.
 
 Inductive istypecoe : forall {A B}, type_coercion A B -> type -> type -> Type :=
-  | istype_id : forall {G A}, eitt.istype G A -> istypecoe (type_id A) A A.
-  
+  | istype_id : forall {G A B}, eitt.eqtype G A B -> istypecoe (type_id A B) A B.
+
 
 
 (*

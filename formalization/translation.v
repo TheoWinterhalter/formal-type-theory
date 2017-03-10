@@ -188,12 +188,12 @@ Proof.
             ).
             { eapply coerceEmpty. eassumption. }
 
-            (* Now we need to change the definition to allow identity
-               between judgementally equal types. *)
             ssplit crt.
             + apply coerce.type_id.
-            + apply @coerce.istype_id with (G := eval_ctx G'').
-              capply TyEmpty. destruct Hcrc. assumption.
+            + eapply coerce.istype_id.
+              ceapply EqTyTrans.
+              * eapply eqT.
+              * ceapply EqTySym. eapply eqT'.
         }
 
       (* TyUnit *)
