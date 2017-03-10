@@ -177,18 +177,19 @@ Proof.
             replace (is_type_eval T) with Empty by reflexivity.
             pose (hml := is_type_hml T').
             inversion hml. inversion H1. subst. clear hml. clear H1.
-            assert (is_type_eval T' = Empty).
+            assert (eqT' : eitt.eqtype (eval_ctx G'') (is_type_eval T') Empty).
             { unfold is_type_eval. unfold is_type_typ.
               rewrite <- H2. simpl.
-              (* Knowing whether any coercion doesn't affect Empty shouldn't
-                 come from destructing the coercion here and seeing it can
-                 only be the identity. *)
-              todo.
+              eapply coerceEmpty.
+              apply T'.
             }
-            rewrite H.
-            (* Likewise, we'd like to say that crc(Empty) = Empty *)
-            replace (coerce.act_type crc Empty) with Empty by todo.
+            assert (
+              eqT : eitt.eqtype (eval_ctx G'') (coerce.act_type crc Empty) Empty
+            ).
+            { eapply coerceEmpty. eassumption. }
 
+            (* Now we need to change the definition to allow identity
+               between judgementally equal types. *)
             ssplit crt.
             + apply coerce.type_id.
             + apply @coerce.istype_id with (G := eval_ctx G'').

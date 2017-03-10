@@ -8,6 +8,8 @@ Require Import tt.
 Require ctt.
 Require Import coerce.
 
+Require eitt.
+
 Fixpoint eval_substitution' (sbs : ctt.substitution') : substitution :=
   match sbs with
   | ctt.sbzero A u => sbzero (eval_type A) (eval_term u)
@@ -73,3 +75,15 @@ Fixpoint eval_ctx (G : ctt.context) : context :=
   | ctt.ctxempty => ctxempty
   | ctt.ctxextend G A => ctxextend (eval_ctx G) (eval_type A)
   end.
+
+
+(* Some lemmata to push coercions inside *)
+Lemma coerceEmpty :
+  forall G' G'' crc,
+    coerce.isctxcoe crc G' G'' ->
+    eitt.eqtype G'' (coerce.act_type crc Empty) Empty.
+Proof.
+  intros G' G'' crc h.
+  induction crc.
+  simpl. capply EqTyRefl. capply TyEmpty. now destruct h.
+Defined.
