@@ -111,7 +111,8 @@ Proof.
           }
           destruct (translate_istype (ctxextend G A) B D (ctt.ctxextend G' A') TGAG'A') as [TB cohB].
           pose (B' := is_type_typ TB).
-          simple refine (existT _ _ (fun T => _)).
+
+          simple refine (existT _ _ _).
           - refine {| is_type_ctx := eval_ctx G';
                       is_type_typ' := ctt.Prod A' B';
                       is_type_coe := coerce.ctx_id
@@ -122,8 +123,14 @@ Proof.
               * apply (is_type_hml TB).
             + simpl. capply TyProd.
               apply (is_type_der TB).
-          - intros crc Isctxcoe_crc T''.
+          - match goal with
+            | |- ?f ?T' =>
+              pose (T := T') ; replace T' with T by reflexivity
+            end.
+            unfold translation_coherence.
+            intros crc Isctxcoe_crc T''.
             todo.
+            (* simple refine (existT _ _ (fun )) *)
         }
 
       (* TyId *)
