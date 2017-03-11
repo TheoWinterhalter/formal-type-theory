@@ -24,11 +24,17 @@ Section Translation.
 Axiom cheating : forall A : Type, A.
 Ltac todo := apply cheating.
 
-Structure is_ctx_translation G G' : Type := {
-  is_ctx_hml : hml_context G G' ;
-  is_ctx_der : eitt.isctx (eval_ctx G')
+Structure ctx_translation G : Type := {
+  is_ctx_ctx : ctt.context ;
+  is_ctx_hml : hml_context G is_ctx_ctx ;
+  is_ctx_der : eitt.isctx (eval_ctx is_ctx_ctx)
 }.
 
+Arguments is_ctx_ctx {_} _.
+Arguments is_ctx_hml {_} _.
+Arguments is_ctx_der {_} _.
+
+(* TODO: Take TG instead of G' (the other context will then become useless?) *)
 Structure type_translation G' A : Type := {
   is_type_ctx : context ;
   is_type_typ' : ctt.type' ;
@@ -107,16 +113,17 @@ Defined.
 (* Now, proceed with the translation *)
 
 Fixpoint translate_isctx {G} (D : pxtt.isctx G) {struct D} :
-  { G' : ctt.context & is_ctx_translation G G' }
+  ctx_translation G
 
 with translate_istype {G A} (D : pxtt.istype G A) {struct D} :
-  forall G', is_ctx_translation G G' ->
-  { T : type_translation G' A & translation_coherence A G' T}
+  forall (TG : ctx_translation G),
+  { T : type_translation (is_ctx_ctx TG) A
+  & translation_coherence A (is_ctx_ctx TG) T }
 
 with translate_isterm {G A u} (D : pxtt.isterm G u A) {struct D} :
-  forall G', is_ctx_translation G G' ->
-  forall (T' : type_translation G' A),
-  { u' : ctt.term & is_term_translation G' (is_type_typ T') u u' }
+  forall (TG : ctx_translation G),
+  forall (TA : type_translation (is_ctx_ctx TG) A),
+  { u' : ctt.term & is_term_translation (is_ctx_ctx TG) (is_type_typ TA) u u' }
 .
 
 Proof.
@@ -125,17 +132,17 @@ Proof.
 
       (* CtxEmpty *)
       - { exists ctt.ctxempty.
-          split.
           - constructor.
           - capply CtxEmpty.
         }
 
       (* CtxExtend *)
-      - { destruct (translate_isctx G i) as [G'' TGG''].
-          destruct (translate_istype G A i0 G'' TGG'') as [T coh].
-          exists (ctt.ctxextend G'' (is_type_typ T)).
-          destruct TGG'', T.
-          split.
+      - { pose (TG := translate_isctx G i).
+          destruct (translate_istype G A i0 TG) as [TA cohA].
+          (* We should have a constructor to extend a translation by another *)
+          destruct TG as [G' ?].
+          destruct TA as [? A' cA ?].
+          exists (ctt.ctxextend G' (ctt.Coerce cA A')).
           - now constructor.
           - now capply CtxExtend.
         }
@@ -155,24 +162,22 @@ Proof.
         }
 
       (* TyProd *)
-      - { intros G' TGG'.
+      - { intros TG.
 
-          pose (TGG'_hml := is_ctx_hml _ _ TGG').
-          destruct (translate_istype G A i G' TGG') as [TA cohA].
+          pose (hmlG := is_ctx_hml TG).
+          destruct (translate_istype G A i TG) as [TA cohA].
+          pose (G' := is_ctx_ctx TG).
           pose (A' := is_type_typ TA).
-          assert (
-            TGAG'A' : is_ctx_translation (ctxextend G A) (ctt.ctxextend G' A')
-          ).
-          { split.
-            - apply hml_ctxextend.
+          (* This should be transparent! *)
+          assert (TGA : ctx_translation (ctxextend G A)).
+          { exists (ctt.ctxextend G' A').
+            - constructor.
               + assumption.
               + apply (is_type_hml TA).
             - capply CtxExtend.
               apply (is_type_der TA).
           }
-          destruct (
-            translate_istype (ctxextend G A) B D (ctt.ctxextend G' A') TGAG'A'
-          ) as [TB cohB].
+          destruct (translate_istype (ctxextend G A) B D TGA) as [TB cohB].
           pose (B' := is_type_typ TB).
 
           ssplit T.
@@ -180,7 +185,7 @@ Proof.
                       is_type_typ' := ctt.Prod A' B' ;
                       is_type_coe  := coerce.ctx_id
                    |}.
-            + constructor. apply TGG'.
+            + constructor. apply TG.
             + constructor. constructor.
               * apply (is_type_hml TA).
               * apply (is_type_hml TB).
@@ -209,7 +214,7 @@ Proof.
             destruct (cohA G'' crc Hcrc TA') as [crtA iscrtA].
 
             assert (TGA'' :
-              is_ctx_translation (ctxextend G A)
+              ctx_translation (ctxextend G A)
                                  (ctt.ctxextend G'' (ctt.Coerce cA'' A''))
             ).
             { split.
