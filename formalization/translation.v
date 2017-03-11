@@ -29,7 +29,7 @@ Structure is_ctx_translation G G' : Type := {
   is_ctx_der : eitt.isctx (eval_ctx G')
 }.
 
-Structure is_type_translation G' A : Type := {
+Structure type_translation G' A : Type := {
   is_type_ctx : context ;
   is_type_typ' : ctt.type' ;
   is_type_coe : coerce.context_coercion ;
@@ -56,23 +56,66 @@ Structure is_term_translation G' A' u u' : Type := {
 
 (* We probably have to add the fact that G'' is a translation to
    complete the translation. *)
-Definition translation_coherence A G' (T' : is_type_translation G' A) :=
+Definition translation_coherence A G' (T' : type_translation G' A) :=
   forall (G'' : ctt.context) (crc : coerce.context_coercion),
     coerce.isctxcoe crc (eval_ctx G') (eval_ctx G'') ->
-    forall (T'' : is_type_translation G'' A),
+    forall (T'' : type_translation G'' A),
     { crt : coerce.type_coercion (coerce.act_type crc (is_type_eval T')) (is_type_eval T'') &
             coerce.istypecoe crt (coerce.act_type crc (is_type_eval T')) (is_type_eval T'') }.
+
+(* First, let's prove some inversions *)
+Lemma TransProdInv :
+  forall {G' A B} (TP : type_translation G' (Prod A B)),
+    { TA : type_translation G' A
+    & type_translation (ctt.ctxextend G' (is_type_typ TA)) B }.
+Proof.
+  intros G' A B TP.
+
+  destruct TP as [G P' crc hcrc P eP hml der].
+  inversion hml. inversion H1.
+  subst. rename A'0 into A', H4 into hmlA, H6 into hmlB.
+  destruct A' as [cA A'].
+  destruct B' as [cB B'].
+
+  ssplit TA.
+  - refine {| is_type_ctx  := G ;
+              is_type_typ' := A' ;
+              is_type_coe  := crc |}.
+    + assumption.
+    + constructor. now inversion hmlA.
+    + replace eP with (eval_type P) in der by reflexivity.
+      replace P
+      with (ctt.Coerce crc
+                       (ctt.Prod (ctt.Coerce cA A') (ctt.Coerce cB B')))
+      in der by reflexivity.
+      simpl in der.
+      (* We need to know the coercion goes through! *)
+      (* Then we need to apply inversion on der. *)
+      todo.
+  - (* refine {| is_type_ctx  := ctxextend G A ; *)
+    (*           is_type_typ' := B' ; *)
+    (*           is_type_coe  := ? |}. *)
+    (* We need to be able to extend a context coercion! *)
+    todo.
+Defined.
+
+
+
+
+
+
+(* Now, proceed with the translation *)
 
 Fixpoint translate_isctx {G} (D : pxtt.isctx G) {struct D} :
   { G' : ctt.context & is_ctx_translation G G' }
 
 with translate_istype {G A} (D : pxtt.istype G A) {struct D} :
   forall G', is_ctx_translation G G' ->
-  { T : is_type_translation G' A & translation_coherence A G' T}
+  { T : type_translation G' A & translation_coherence A G' T}
 
 with translate_isterm {G A u} (D : pxtt.isterm G u A) {struct D} :
   forall G', is_ctx_translation G G' ->
-  forall (T' : is_type_translation G' A),
+  forall (T' : type_translation G' A),
   { u' : ctt.term & is_term_translation G' (is_type_typ T') u u' }
 .
 
@@ -154,7 +197,7 @@ Proof.
             destruct A'' as [cA'' A''].
 
             (* Let's build coercions between As and Bs *)
-            assert (TA' : is_type_translation G'' A).
+            assert (TA' : type_translation G'' A).
             { refine {| is_type_ctx  := is_type_ctx T'' ;
                         is_type_typ' := A'' ;
                         is_type_coe  := cA''
@@ -180,7 +223,7 @@ Proof.
 
             destruct B'' as [cB'' B''].
             assert (TB' :
-              is_type_translation (ctt.ctxextend G'' (ctt.Coerce cA'' A''))
+              type_translation (ctt.ctxextend G'' (ctt.Coerce cA'' A''))
                                   B
             ).
             { refine {| is_type_ctx  := ctxextend (is_type_ctx T'') A ;
