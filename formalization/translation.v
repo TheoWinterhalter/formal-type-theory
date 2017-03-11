@@ -69,6 +69,21 @@ Definition translation_coherence A G' (T' : type_translation G' A) :=
     { crt : coerce.type_coercion (coerce.act_type crc (is_type_eval T')) (is_type_eval T'') &
             coerce.istypecoe crt (coerce.act_type crc (is_type_eval T')) (is_type_eval T'') }.
 
+(* Some meta constructors on translations *)
+Definition Tctxextend {G A}
+  (TG : ctx_translation G) (TA : type_translation (is_ctx_ctx TG) A)
+  : ctx_translation (ctxextend G A).
+Proof.
+   pose (G' := is_ctx_ctx TG).
+   pose (A' := is_type_typ TA).
+   pose (hmlG := is_ctx_hml TG).
+   pose (hmlA := is_type_hml TA).
+
+   exists (ctt.ctxextend G' A').
+   - now constructor.
+   - capply CtxExtend. apply (is_type_der TA).
+Defined.
+
 (* First, let's prove some inversions *)
 Lemma TransProdInv :
   forall {G' A B} (TP : type_translation G' (Prod A B)),
@@ -139,12 +154,7 @@ Proof.
       (* CtxExtend *)
       - { pose (TG := translate_isctx G i).
           destruct (translate_istype G A i0 TG) as [TA cohA].
-          (* We should have a constructor to extend a translation by another *)
-          destruct TG as [G' ?].
-          destruct TA as [? A' cA ?].
-          exists (ctt.ctxextend G' (ctt.Coerce cA A')).
-          - now constructor.
-          - now capply CtxExtend.
+          apply (Tctxextend TG TA).
         }
   }
 
@@ -168,15 +178,7 @@ Proof.
           destruct (translate_istype G A i TG) as [TA cohA].
           pose (G' := is_ctx_ctx TG).
           pose (A' := is_type_typ TA).
-          (* This should be transparent! *)
-          assert (TGA : ctx_translation (ctxextend G A)).
-          { exists (ctt.ctxextend G' A').
-            - constructor.
-              + assumption.
-              + apply (is_type_hml TA).
-            - capply CtxExtend.
-              apply (is_type_der TA).
-          }
+          pose (TGA := Tctxextend TG TA).
           destruct (translate_istype (ctxextend G A) B D TGA) as [TB cohB].
           pose (B' := is_type_typ TB).
 
@@ -213,31 +215,33 @@ Proof.
             }
             destruct (cohA G'' crc Hcrc TA') as [crtA iscrtA].
 
-            assert (TGA'' :
-              ctx_translation (ctxextend G A)
-                                 (ctt.ctxextend G'' (ctt.Coerce cA'' A''))
-            ).
-            { split.
-              - constructor.
-                + (* Are we missing information? *)
-                  todo.
-                + assumption.
-              - (* Probably follows from some inversion, again... *)
-                todo.
-            }
+            (* We probably want some TG' and not G''! *)
+            (* pose (TGA' := Tctxextend ? ?). *)
+            (* assert (TGA'' : *)
+            (*   ctx_translation (ctxextend G A) *)
+            (*                      (ctt.ctxextend G'' (ctt.Coerce cA'' A'')) *)
+            (* ). *)
+            (* { split. *)
+            (*   - constructor. *)
+            (*     + (* Are we missing information? *) *)
+            (*       todo. *)
+            (*     + assumption. *)
+            (*   - (* Probably follows from some inversion, again... *) *)
+            (*     todo. *)
+            (* } *)
 
-            destruct B'' as [cB'' B''].
-            assert (TB' :
-              type_translation (ctt.ctxextend G'' (ctt.Coerce cA'' A''))
-                                  B
-            ).
-            { refine {| is_type_ctx  := ctxextend (is_type_ctx T'') A ;
-                        is_type_typ' := B'' ;
-                        is_type_coe  := cB'' |}.
-              - todo.
-              - assumption.
-              - todo.
-            }
+            (* destruct B'' as [cB'' B'']. *)
+            (* assert (TB' : *)
+            (*   type_translation (ctt.ctxextend G'' (ctt.Coerce cA'' A'')) *)
+            (*                       B *)
+            (* ). *)
+            (* { refine {| is_type_ctx  := ctxextend (is_type_ctx T'') A ; *)
+            (*             is_type_typ' := B'' ; *)
+            (*             is_type_coe  := cB'' |}. *)
+            (*   - todo. *)
+            (*   - assumption. *)
+            (*   - todo. *)
+            (* } *)
             (* We need to extend crc by cA''? Or something else? *)
             (* destruct (cohB (ctt.ctxextend G'' (ctt.Coerce cA'' A'')) *)
             (*                ()) *)
@@ -251,8 +255,8 @@ Proof.
         }
 
       (* TyId *)
-      - { intros G' TGG'.
-          destruct (translate_istype G A i0 G' TGG') as [TA cohA].
+      - { intros TG.
+          destruct (translate_istype G A i0 TG) as [TA cohA].
           (* destruct (translate_isterm G A u i1 G' TGG' A' i3) as [u' [ ?]]. *)
           (* destruct (translate_isterm G A v i2 G' TGG' A' i3) as [v' [? ?]]. *)
           (* destruct i3. destruct TGG'. *)
@@ -265,17 +269,18 @@ Proof.
         }
 
       (* TyEmpty *)
-      - { intros G' TGG'.
+      - { intro TG.
+          pose (G' := is_ctx_ctx TG).
 
           ssplit T.
           - refine {| is_type_ctx  := eval_ctx G' ;
                       is_type_typ' := ctt.Empty ;
                       is_type_coe  := coerce.ctx_id
                    |}.
-            + constructor. apply TGG'.
+            + constructor. apply TG.
             + constructor. constructor.
             + simpl. capply TyEmpty.
-              apply TGG'.
+              apply TG.
           - unfold translation_coherence.
             intros G'' crc Hcrc T'.
 
@@ -304,17 +309,18 @@ Proof.
         }
 
       (* TyUnit *)
-      - { intros G' TGG'.
+      - { intros TG.
+          pose (G' := is_ctx_ctx TG).
 
           ssplit T.
           - refine {| is_type_ctx  := eval_ctx G' ;
                       is_type_typ' := ctt.Unit ;
                       is_type_coe  := coerce.ctx_id
                    |}.
-            + constructor. apply TGG'.
+            + constructor. apply TG.
             + constructor. constructor.
             + simpl. capply TyUnit.
-              apply TGG'.
+              apply TG.
           - unfold translation_coherence.
             intros G'' crc Hcrc T'.
 
@@ -341,17 +347,18 @@ Proof.
         }
 
       (* TyBool *)
-      - { intros G' TGG'.
+      - { intros TG.
+          pose (G' := is_ctx_ctx TG).
 
           ssplit T.
           - refine {| is_type_ctx  := eval_ctx G' ;
                       is_type_typ' := ctt.Bool ;
                       is_type_coe  := coerce.ctx_id
                    |}.
-            + constructor. apply TGG'.
+            + constructor. apply TG.
             + constructor. constructor.
             + simpl. capply TyBool.
-              apply TGG'.
+              apply TG.
           - unfold translation_coherence.
             intros G'' crc Hcrc T'.
 
