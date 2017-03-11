@@ -26,27 +26,26 @@ Ltac todo := apply cheating.
 
 Structure ctx_translation G : Type := {
   is_ctx_ctx : ctt.context ;
+  is_ctx_eval := eval_ctx is_ctx_ctx ;
   is_ctx_hml : hml_context G is_ctx_ctx ;
   is_ctx_der : eitt.isctx (eval_ctx is_ctx_ctx)
 }.
 
 Arguments is_ctx_ctx {_} _.
+Arguments is_ctx_eval {_} _.
 Arguments is_ctx_hml {_} _.
 Arguments is_ctx_der {_} _.
 
-(* TODO: Take TG instead of G' (the other context will then become useless?) *)
-Structure type_translation G' A : Type := {
-  is_type_ctx : context ;
+Structure type_translation {G} (TG : ctx_translation G) A : Type := {
   is_type_typ' : ctt.type' ;
   is_type_coe : coerce.context_coercion ;
-  is_type_isctxcoe : coerce.isctxcoe is_type_coe is_type_ctx (eval_ctx G') ;
+  is_type_isctxcoe : coerce.isctxcoe is_type_coe G (is_ctx_eval TG) ;
   is_type_typ := ctt.Coerce is_type_coe is_type_typ' ;
   is_type_eval := eval_type is_type_typ ;
   is_type_hml : hml_type A is_type_typ ;
-  is_type_der : eitt.istype (eval_ctx G') is_type_eval
+  is_type_der : eitt.istype (is_ctx_eval TG) is_type_eval
 }.
 
-Arguments is_type_ctx {_ _} _.
 Arguments is_type_typ' {_ _} _.
 Arguments is_type_coe {_ _} _.
 Arguments is_type_isctxcoe {_ _} _.
@@ -55,14 +54,18 @@ Arguments is_type_eval {_ _} _.
 Arguments is_type_hml {_ _} _.
 Arguments is_type_der {_ _} _.
 
+(* TODO: update this definition *)
 Structure is_term_translation G' A' u u' : Type := {
   is_term_hml : hml_term u u' ;
   is_term_der : eitt.isterm (eval_ctx G') (eval_term u') (eval_type A')
 }.
 
-(* We probably have to add the fact that G'' is a translation to
-   complete the translation. *)
-Definition translation_coherence A G' (T' : type_translation G' A) :=
+(* TODO Continue here! *)
+Definition translation_coherence
+  {G A} (TG : ctx_translation G) (TA : type_translation TG A) :=
+  forall (TG' : ctx_translation G) (TA' : type_translation TG' A),
+    { crt : coerce.type_coercion (coerce.act_type crc (is_type_eval T')) }
+
   forall (G'' : ctt.context) (crc : coerce.context_coercion),
     coerce.isctxcoe crc (eval_ctx G') (eval_ctx G'') ->
     forall (T'' : type_translation G'' A),
@@ -132,8 +135,8 @@ Fixpoint translate_isctx {G} (D : pxtt.isctx G) {struct D} :
 
 with translate_istype {G A} (D : pxtt.istype G A) {struct D} :
   forall (TG : ctx_translation G),
-  { T : type_translation (is_ctx_ctx TG) A
-  & translation_coherence A (is_ctx_ctx TG) T }
+  { TA : type_translation TG A
+  & translation_coherence A (is_ctx_ctx TG) TA }
 
 with translate_isterm {G A u} (D : pxtt.isterm G u A) {struct D} :
   forall (TG : ctx_translation G),
