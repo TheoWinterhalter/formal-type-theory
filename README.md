@@ -1,6 +1,7 @@
 # Sanity of type theory for elimination of equality reflection
 
 The ultimate goal is to be able to eliminate equality reflection, hopefully using weaker axioms than previous works (like UIP for instance), in the hope of being compatible with HoTT.
+This results in a formalisation setting for meta-theory of translations.
 
 ## Structure of the repository
 
@@ -17,7 +18,13 @@ make rules.pdf
 ```
 in the root directory, you run a python script that extracts ETT and PTT from their respective coq files and then compiles them into a PDF file.
 
-## Branches of interest
+## Branches
 
-* `master` contains the current status of the sanity formalization,
-* `translation` is the branch where the translation is being made, it also contains a definition of ITT.
+The user should focus on `master`, the rest is here for legacy.
+
+* `master` contains the current status of the translation (sanity is being handled, as well as uniqueness of typing),
+* `zero-shift` contains another formulation of type theory where substitutions have context annotations,
+* `simpler-substitutions` removes all annotations from substitutions but this results in the loss of uniqueness of typing,
+* `faster-magic` is its counter-part and maybe should be kept instead of `simpler-substitutions`,
+* `untyped-refl` corrresponds to an experiment regarding the removal of typing annotation to `refl`,
+* `inversion` corresponds to inversion lemmata (probably subsumed by more recent work).
