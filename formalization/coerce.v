@@ -9,6 +9,7 @@ Definition todo {A} := cheating A.
 Inductive context_coercion : Type :=
   | ctx_id : context_coercion.
 
+(* Can't we remove the type -> type and just keep it inside the constructor? *)
 Inductive type_coercion : type -> type -> Type :=
   | type_id : forall (A B : type), type_coercion A B
   | type_cong_prod {A1 A2 B1 B2} : type_coercion A1 A2 ->
@@ -21,7 +22,34 @@ Inductive type_coercion : type -> type -> Type :=
 
 with term_coercion : Type :=
   | term_id : term_coercion
-  | term_reflection : term -> term_coercion.
+  | term_reflection : forall (A : type) (u v p : term), term_coercion.
+
+
+(* Computation of inverses of coercions *)
+
+Definition inv_ctx_coe (crc : context_coercion) : context_coercion :=
+  match crc with
+  | ctx_id => ctx_id
+  end.
+
+Fixpoint inv_term_coe (crtt : term_coercion) : term_coercion :=
+  match crtt with
+  | term_id => term_id
+  | term_reflection A u v p =>
+    term_reflection A v u (j A u (Id A (var 1) u) (refl A u) v p)
+  end.
+
+Fixpoint inv_type_coe {A B} (crt : type_coercion A B) : type_coercion B A :=
+  match crt with
+  | type_id A B => type_id B A
+  | type_cong_prod cA cB => type_cong_prod (inv_type_coe cA) (inv_type_coe cB)
+  | type_cong_id cA cu cv => type_cong_id (inv_type_coe cA)
+                                         (inv_term_coe cu)
+                                         (inv_term_coe cv)
+  end.
+
+
+(* Action of coercions on expressions *)
 
 Fixpoint act_subst_left (crc : context_coercion) (sbs : substitution) : substitution :=
   match crc with
