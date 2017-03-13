@@ -52,8 +52,8 @@ with hml_substitution :
 
   | hml_sbcoerce :
       forall {sbs sbs'}
-             {crc1 : coerce.context_coercion}
-             {crc2 : coerce.context_coercion},
+             {crc1 : coerce.ctxcoe}
+             {crc2 : coerce.ctxcoe},
         hml_substitution' sbs sbs' ->
         hml_substitution sbs (ctt.sbcoerce crc1 crc2 sbs')
 
@@ -92,7 +92,7 @@ with hml_type :
   type -> ctt.type -> Type :=
 
   | hml_Coerce :
-      forall {A A'} {crc : coerce.context_coercion},
+      forall {A A'} {crc : coerce.ctxcoe},
         hml_type' A A' ->
         hml_type A (ctt.Coerce crc A')
 
@@ -172,8 +172,8 @@ with hml_term :
 
   | hml_coerce :
       forall {u u'}
-             {crc : coerce.context_coercion}
-             {crt : coerce.type_coercion},
+             {crc : coerce.ctxcoe}
+             {crt : coerce.tycoe},
         hml_term' u u' ->
         hml_term u (ctt.coerce crc crt u')
 .

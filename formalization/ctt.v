@@ -17,7 +17,7 @@ with type' : Type :=
      | Bool : type'
 
 with type : Type :=
-     | Coerce : context_coercion -> type' -> type
+     | Coerce : ctxcoe -> type' -> type
 
 with term' : Type :=
      | var : nat -> term'
@@ -33,7 +33,7 @@ with term' : Type :=
      | cond : type -> term -> term -> term -> term'
 
 with term : Type :=
-     | coerce : context_coercion -> type_coercion -> term' -> term
+     | coerce : ctxcoe -> tycoe -> term' -> term
 
 with substitution' : Type :=
      | sbzero : type -> term -> substitution'
@@ -43,4 +43,4 @@ with substitution' : Type :=
      | sbcomp : substitution -> substitution -> substitution'
 
 with substitution : Type :=
-     | sbcoerce : context_coercion -> context_coercion -> substitution' -> substitution.
+     | sbcoerce : ctxcoe -> ctxcoe -> substitution' -> substitution.

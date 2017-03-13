@@ -37,29 +37,40 @@ Arguments is_ctx_hml  {_} _.
 Arguments is_ctx_der  {_} _.
 
 Structure type_translation {G} (TG : ctx_translation G) A : Type := {
-  is_type_ctx      : context ; (* I felt it should be removed,
-                                  but apparently not? What it the purpose of
-                                  this?? *)
-  is_type_typ'     : ctt.type' ;
-  is_type_coe      : coerce.context_coercion ;
+  is_type_ctx      : context ; (* context G' *)
+  is_type_typ'     : ctt.type' ; (* type G' ⊢ A' *)
+  is_type_coe      : coerce.ctxcoe ; (* coercion crc : G' → is_ctx_eval TG *)
   is_type_isctxcoe : coerce.isctxcoe is_type_coe is_type_ctx (is_ctx_eval TG) ;
-  is_type_typ      := ctt.Coerce is_type_coe is_type_typ' ;
-  is_type_eval     := eval_type is_type_typ ;
-  is_type_hml      : hml_type A is_type_typ ; (* Since we have the information
-                                                 why not state it for typ'? *)
-  (* Couldn't is_type_der be derived (using :=) from some is_type_der'
-     mentionning the is_type_ctx and not the coercion? *)
-  is_type_der      : eitt.istype (is_ctx_eval TG) is_type_eval
+  is_type_eval'    := eval_type' is_type_typ' ;
+  is_type_hml'     : hml_type' A is_type_typ' ;
+  is_type_der'     : eitt.istype is_type_ctx is_type_eval' ;
 }.
 
 Arguments is_type_ctx      {_ _ _} _.
 Arguments is_type_typ'     {_ _ _} _.
 Arguments is_type_coe      {_ _ _} _.
 Arguments is_type_isctxcoe {_ _ _} _.
-Arguments is_type_typ      {_ _ _} _.
-Arguments is_type_eval     {_ _ _} _.
-Arguments is_type_hml      {_ _ _} _.
-Arguments is_type_der      {_ _ _} _.
+Arguments is_type_typ'     {_ _ _} _.
+Arguments is_type_eval'    {_ _ _} _.
+Arguments is_type_hml'     {_ _ _} _.
+Arguments is_type_der'     {_ _ _} _.
+
+Definition is_type_typ {G TG A} (TA : @type_translation G TG A) :=
+  ctt.Coerce (is_type_coe TA) (is_type_typ' TA).
+
+Definition is_type_eval {G TG A} (TA : @type_translation G TG A) :=
+  eval_type (is_type_typ TA).
+
+Definition is_type_hml {G TG A} (TA : @type_translation G TG A) :
+  hml_type A (ctt.Coerce (is_type_coe TA) (is_type_typ' TA))
+ :=
+  hml_Coerce (is_type_hml' TA).
+
+Lemma is_type_der {G TG A} (TA : @type_translation G TG A) :
+  eitt.istype (is_ctx_eval TG) (is_type_eval TA).
+Proof.
+  todo.
+Qed.
 
 (* TODO: update this definition *)
 Structure is_term_translation G' A' u u' : Type := {
@@ -70,10 +81,10 @@ Structure is_term_translation G' A' u u' : Type := {
 Definition translation_coherence
   {G A} (TG : ctx_translation G) (TA : type_translation TG A) :=
   forall (TG' : ctx_translation G)
-    (crc : coerce.context_coercion),
+    (crc : coerce.ctxcoe),
     coerce.isctxcoe crc (is_ctx_eval TG) (is_ctx_eval TG') ->
     forall (TA' : type_translation TG' A),
-    { crt : coerce.type_coercion
+    { crt : coerce.tycoe
     & coerce.istypecoe crt
                        (coerce.act_type crc (is_type_eval TA))
                        (is_type_eval TA')
@@ -88,7 +99,6 @@ Proof.
    pose (A' := is_type_typ TA).
    pose (hmlG := is_ctx_hml TG).
    pose (hmlA := is_type_hml TA).
-
    exists (ctt.ctxextend G' A').
    - now constructor.
    - capply CtxExtend. apply (is_type_der TA).
@@ -101,7 +111,7 @@ Lemma TransProdInv :
     & type_translation (Tctxextend TG TA) B }.
 Proof.
   intros G A B TG TP.
-
+(*
   destruct TP as [G0 P' crc hcrc P eP hml der].
   inversion hml. inversion H1.
   subst. rename A'0 into A', H4 into hmlA, H6 into hmlB.
@@ -127,11 +137,9 @@ Proof.
     (*           is_type_typ' := B' ; *)
     (*           is_type_coe  := ? |}. *)
     (* We need to be able to extend a context coercion! *)
+*)
     todo.
 Defined.
-
-
-
 
 
 
@@ -194,17 +202,17 @@ Proof.
           ssplit T.
           - refine {| is_type_ctx  := is_ctx_eval TG ;
                       is_type_typ' := ctt.Prod A' B' ;
-                      is_type_coe  := coerce.ctx_id
+                      is_type_coe  := coerce.ctxcoe_identity
                    |}.
             + constructor. apply (is_ctx_der TG).
-            + constructor. constructor.
+            + constructor.
               * apply (is_type_hml TA).
               * apply (is_type_hml TB).
             + simpl. capply TyProd.
               apply (is_type_der TB).
           - unfold translation_coherence.
             intros G'' crc Hcrc T''.
-
+            (* Comments in comments:
             (* Maybe some lemma that does the following? *)
             (* Let's find out that we have a product in T''. *)
             pose (hml := is_type_hml T'').
@@ -261,6 +269,8 @@ Proof.
             ssplit crt.
             + todo.
             + todo.
+            *)
+            todo.
         }
 
       (* TyId *)
@@ -284,10 +294,10 @@ Proof.
           ssplit T.
           - refine {| is_type_ctx  := eval_ctx G' ;
                       is_type_typ' := ctt.Empty ;
-                      is_type_coe  := coerce.ctx_id
+                      is_type_coe  := coerce.ctxcoe_identity
                    |}.
             + constructor. apply (is_ctx_der TG).
-            + constructor. constructor.
+            + constructor.
             + simpl. capply TyEmpty.
               apply (is_ctx_der TG).
           - unfold translation_coherence.
@@ -310,8 +320,8 @@ Proof.
             { eapply coerceEmpty. eassumption. }
 
             ssplit crt.
-            + apply coerce.type_id.
-            + eapply coerce.istype_id.
+            + apply coerce.tycoe_identity.
+            + eapply coerce.istycoe_identity.
               ceapply EqTyTrans.
               * eapply eqT.
               * ceapply EqTySym. eapply eqT'.
@@ -324,10 +334,10 @@ Proof.
           ssplit T.
           - refine {| is_type_ctx  := eval_ctx G' ;
                       is_type_typ' := ctt.Unit ;
-                      is_type_coe  := coerce.ctx_id
+                      is_type_coe  := coerce.ctxcoe_identity
                    |}.
             + constructor. apply (is_ctx_der TG).
-            + constructor. constructor.
+            + constructor.
             + simpl. capply TyUnit.
               apply (is_ctx_der TG).
           - unfold translation_coherence.
@@ -350,8 +360,8 @@ Proof.
             { eapply coerceUnit. eassumption. }
 
             ssplit crt.
-            + apply coerce.type_id.
-            + eapply coerce.istype_id.
+            + apply coerce.tycoe_identity.
+            + eapply coerce.istycoe_identity.
               ceapply EqTyTrans.
               * eapply eqT.
               * ceapply EqTySym. eapply eqT'.
@@ -364,10 +374,10 @@ Proof.
           ssplit T.
           - refine {| is_type_ctx  := eval_ctx G' ;
                       is_type_typ' := ctt.Bool ;
-                      is_type_coe  := coerce.ctx_id
+                      is_type_coe  := coerce.ctxcoe_identity
                    |}.
             + constructor. apply (is_ctx_der TG).
-            + constructor. constructor.
+            + constructor.
             + simpl. capply TyBool.
               apply (is_ctx_der TG).
           - unfold translation_coherence.
@@ -390,8 +400,8 @@ Proof.
             { eapply coerceBool. eassumption. }
 
             ssplit crt.
-            + apply coerce.type_id.
-            + eapply coerce.istype_id.
+            + apply coerce.tycoe_identity.
+            + eapply coerce.istycoe_identity.
               ceapply EqTyTrans.
               * eapply eqT.
               * ceapply EqTySym. eapply eqT'.
