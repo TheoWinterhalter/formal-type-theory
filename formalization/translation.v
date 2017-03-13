@@ -45,7 +45,10 @@ Structure type_translation {G} (TG : ctx_translation G) A : Type := {
   is_type_isctxcoe : coerce.isctxcoe is_type_coe is_type_ctx (is_ctx_eval TG) ;
   is_type_typ      := ctt.Coerce is_type_coe is_type_typ' ;
   is_type_eval     := eval_type is_type_typ ;
-  is_type_hml      : hml_type A is_type_typ ;
+  is_type_hml      : hml_type A is_type_typ ; (* Since we have the information
+                                                 why not state it for typ'? *)
+  (* Couldn't is_type_der be derived (using :=) from some is_type_der'
+     mentionning the is_type_ctx and not the coercion? *)
   is_type_der      : eitt.istype (is_ctx_eval TG) is_type_eval
 }.
 
