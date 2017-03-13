@@ -101,10 +101,12 @@ endif
 #                    #
 ######################
 
-VFILES:=syntax.v\
+VFILES:=config.v\
+  config_tactics.v\
+  syntax.v\
+  tt.v\
   ett.v\
   ptt.v\
-  myptt.v\
   ptt_tactics.v\
   ptt_admissible.v\
   ptt_inversion.v\
@@ -115,9 +117,11 @@ VFILES:=syntax.v\
   tactics.v\
   inversion.v\
   uniqueness.v\
-  substitution_elim.v\
+  hml.v\
+  coerce.v\
   ctt.v\
-  itt.v\
+  eitt.v\
+  pxtt.v\
   eval.v\
   translation.v
 
