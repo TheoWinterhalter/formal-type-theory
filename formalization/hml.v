@@ -49,7 +49,7 @@ with hml_substitution' :
 
 with hml_substitution :
   substitution -> ctt.substitution -> Type :=
-       
+
   | hml_sbcoerce :
       forall {sbs sbs'}
              {crc1 : coerce.context_coercion}
@@ -171,9 +171,9 @@ with hml_term :
   term -> ctt.term -> Type :=
 
   | hml_coerce :
-      forall {u u' A A'}
+      forall {u u'}
              {crc : coerce.context_coercion}
-             {crt : coerce.type_coercion A A'},
+             {crt : coerce.type_coercion},
         hml_term' u u' ->
         hml_term u (ctt.coerce crc crt u')
 .

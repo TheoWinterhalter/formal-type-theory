@@ -73,8 +73,7 @@ Definition translation_coherence
     (crc : coerce.context_coercion),
     coerce.isctxcoe crc (is_ctx_eval TG) (is_ctx_eval TG') ->
     forall (TA' : type_translation TG' A),
-    { crt : coerce.type_coercion (coerce.act_type crc (is_type_eval TA))
-                                 (is_type_eval TA')
+    { crt : coerce.type_coercion
     & coerce.istypecoe crt
                        (coerce.act_type crc (is_type_eval TA))
                        (is_type_eval TA')

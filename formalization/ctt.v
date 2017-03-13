@@ -33,7 +33,7 @@ with term' : Type :=
      | cond : type -> term -> term -> term -> term'
 
 with term : Type :=
-     | coerce : forall {A B}, context_coercion -> type_coercion A B -> term' -> term
+     | coerce : context_coercion -> type_coercion -> term' -> term
 
 with substitution' : Type :=
      | sbzero : type -> term -> substitution'
@@ -44,4 +44,3 @@ with substitution' : Type :=
 
 with substitution : Type :=
      | sbcoerce : context_coercion -> context_coercion -> substitution' -> substitution.
-
