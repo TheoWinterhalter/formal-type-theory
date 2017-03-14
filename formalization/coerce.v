@@ -247,12 +247,16 @@ Qed.
 
 Fixpoint act_subst_left (crc : ctxcoe) (sbs : substitution) : substitution :=
   match crc with
-    | ctx_id => sbs
+  | ctxcoe_identity => sbs
+  | ctxcoe_ctxextend c cA =>
+    sbcomp sbs todo
   end.
 
 Fixpoint act_subst_right (crc : ctxcoe) (sbs : substitution) : substitution :=
   match crc with
-    | ctx_id => sbs
+  | ctxcoe_identity => sbs
+  | ctxcoe_ctxextend c cA =>
+    sbcomp todo sbs
   end.
 
 Definition act_subst (crc1 crc2 : ctxcoe) (sbs : substitution) :=
@@ -260,18 +264,20 @@ Definition act_subst (crc1 crc2 : ctxcoe) (sbs : substitution) :=
 
 Fixpoint act_type (crc : ctxcoe) (A : type) :=
   match crc with
-  | ctx_id => A
+  | ctxcoe_identity => A
+  | ctxcoe_ctxextend c cT => todo
   end.
 
 Fixpoint act_term_ctx (crc : ctxcoe) (u : term) : term :=
   match crc with
-  | ctx_id => u
+  | ctxcoe_identity => u
+  | ctxcoe_ctxextend c cT => todo
   end.
 
 Fixpoint act_term_type (crc : tycoe) (u : term) : term :=
   match crc with
   | tycoe_identity => u
-  | tycoe_prod A1 B1 A2 B2 cA cB =>
+  | tycoe_prod A1 B1 A2 B2 c cA cB =>
     (* The situation:
        G ⊢ A1
        G, A1 ⊢ B1
@@ -280,12 +286,13 @@ Fixpoint act_term_type (crc : tycoe) (u : term) : term :=
        G ⊢ cA : A1 ⇒ A2
        G, A2 ⊢ cB : (act_(ctxextend G cA) B1) ⇒ B2
      *)
-    lam
-      A2
-      B2
-      (act_term_type cB (app u A1 B1 ()))
+    (* lam *)
+    (*   A2 *)
+    (*   B2 *)
+    (*   (act_term_type cB (app u A1 B1 ())) *)
+    todo
 
-  | tycoe_id cA cu cv => todo (* I'm a bit lost *)
+  | tycoe_id c cA cu cv => todo (* I'm a bit lost *)
   end.
 
 Definition act_term (crc : ctxcoe) (crt : tycoe) (u : term) : term :=
