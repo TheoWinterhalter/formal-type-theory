@@ -35,29 +35,93 @@ Definition todo {A} := cheating A.
 (*       termcoe ctxcoe_identity tycoe_identity (* For now at least *) *)
 (* . *)
 
+(* The coercions can't have coercions as index in the current coq.
+   The information of one coercion being over another will be found in
+   the derivation that a coercion is a well-behaved one. *)
 Inductive ctxcoe : Type :=
+
   | ctxcoe_identity : ctxcoe
 
   | ctxcoe_ctxextend :
-      forall c1 : ctxcoe, (* c1 : G ~~~> D *)
-      forall c2 : tycoe,  (* for some G ⊢ A and D ⊢ B:
-                             D ⊢ c2 : (act_type c1 A) ~~~> B *)
-        ctxcoe (* G, A ~~~> D, B *)
+      forall c1 : ctxcoe, (* c1 : Γ ~~~> Δ *)
+      forall c2 : tycoe,  (* c2 : Γ ⊢ A ~~~> Δ ⊢ B *)
+        ctxcoe (* Γ, A ~~~> Δ,B *)
 
 with tycoe : Type :=
+
   | tycoe_identity : tycoe
-  | tycoe_prod :
-      forall (A1 B1 : type) (* G, A1 ⊢ B1 *)
-             (A2 B2 : type) (* G, A2 ⊢ B2 *)
-             (cA : tycoe) (* G ⊢ cA : A1 ~~~> A2 *)
-             (cB : tycoe), (* G, A2 ⊢ (act_type (ctxcoe_ctxextend ctxcoe_identity c1) B1) ~~~> B2 *)
-        tycoe (* Prod A1 B1 ~~~> Prod A2 B2 *)
-  | tycoe_id : tycoe -> termcoe -> termcoe -> tycoe
+
+  | tycoe_prod (A1 B1 A2 B2 : type)
+               (c : ctxcoe)
+               (cA : tycoe)
+               (cB : tycoe) : tycoe
+
+  | tycoe_id (c : ctxcoe) (cA : tycoe) (cu cv : termcoe) : tycoe
 
 with termcoe : Type :=
-  | termcoe_identity : termcoe
-  | termcoe_reflection : forall (A : type) (u v p : term), termcoe.
 
+  | termcoe_identity : termcoe
+
+  | termcoe_reflection (A : type) (u v p : term) : termcoe
+.
+
+Inductive isctxcoe : ctxcoe -> context -> context -> Type :=
+
+  | isctxcoe_identity :
+      forall G,
+        eitt.isctx G ->
+        isctxcoe ctxcoe_identity G G
+
+  | isctxcoe_ctxextend :
+      forall G D A B c1 c2,
+        isctxcoe c1 G D ->
+        istycoe c1 G D c2 A B ->
+        isctxcoe (ctxcoe_ctxextend c1 c2) (ctxextend G A) (ctxextend D B)
+
+with istycoe : ctxcoe -> context -> context -> tycoe -> type -> type -> Type :=
+
+  | istycoe_identity :
+      forall G A,
+        eitt.istype G A ->
+        istycoe ctxcoe_identity G G tycoe_identity A A
+
+  | istycoe_prod :
+      forall G D A1 B1 A2 B2 c cA cB,
+        isctxcoe c G D ->
+        istycoe c G D cA A1 A2 ->
+        istycoe (ctxcoe_ctxextend c cA) (ctxextend G A1) (ctxextend D A2)
+                cB B1 B2 ->
+        istycoe c G D
+                (tycoe_prod A1 B1 A2 B2 c cA cB) (Prod A1 B1) (Prod A2 B2)
+
+  | istycoe_id :
+      forall G D A1 u1 v1 A2 u2 v2 c cA cu cv,
+        isctxcoe c G D ->
+        istycoe c G D cA A1 A2 ->
+        istermcoe c G D cA A1 A2 cu u1 u2 ->
+        istermcoe c G D cA A1 A2 cv v1 v2 ->
+        istycoe c G D (tycoe_id c cA cu cv) (Id A1 u1 v1) (Id A2 u2 v2)
+
+with istermcoe : ctxcoe -> context -> context ->
+                 tycoe -> type -> type ->
+                 termcoe -> term -> term -> Type :=
+
+  | istermcoe_identity :
+      forall G u A,
+        eitt.isterm G u A ->
+        istermcoe ctxcoe_identity G G
+                  tycoe_identity A A
+                  termcoe_identity u u
+
+  | istermcoe_reflection :
+      forall G A u v p w,
+        eitt.isterm G p (Id A u v) ->
+        eitt.isterm G w (reflective A) -> (* When did reflective A
+                                            become a type?! *)
+        istermcoe ctxcoe_identity G G
+                  tycoe_identity A A
+                  (termcoe_reflection A u v p) u v
+.
 
 (* Computation of inverses of coercions *)
 
@@ -131,9 +195,3 @@ Fixpoint act_term_type (crc : tycoe) (u : term) : term :=
 
 Definition act_term (crc : ctxcoe) (crt : tycoe) (u : term) : term :=
   act_term_type crt (act_term_ctx crc u).
-
-Inductive isctxcoe : ctxcoe -> context -> context -> Type :=
-  | isctxcoe_identity : forall G, eitt.isctx G -> isctxcoe ctxcoe_identity G G.
-
-Inductive istypecoe : tycoe -> type -> type -> Type :=
-  | istycoe_identity : forall {G A B}, eitt.eqtype G A B -> istypecoe tycoe_identity A B.
