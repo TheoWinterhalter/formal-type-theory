@@ -5,6 +5,7 @@ Require eitt.
 
 Axiom cheating : forall A : Type, A.
 Definition todo {A} := cheating A.
+Ltac todo := apply cheating.
 
 (* Inductive ctxcoe : Type := *)
 
@@ -128,15 +129,16 @@ with istermcoe : ctxcoe -> context -> context ->
 Fixpoint inv_ctxcoe (crc : ctxcoe) : ctxcoe :=
   match crc with
   | ctxcoe_identity => ctxcoe_identity
-  | ctxcoe_ctxextend c1 c2 => ctxcoe_ctxextend (inv_tycoe c1)
+  | ctxcoe_ctxextend c1 c2 => ctxcoe_ctxextend (inv_ctxcoe c1) (inv_tycoe c2)
   end
 
 with inv_tycoe (crt : tycoe) : tycoe :=
   match crt with
   | tycoe_identity => tycoe_identity
-  | tycoe_prod A1 B1 A2 B2 cA cB =>
-    tycoe_prod A2 B2 A1 B1 (inv_tycoe cA) (inv_tycoe cB)
-  | tycoe_id cA cu cv => tycoe_id (inv_tycoe cA) (inv_termcoe cu) (inv_termcoe cv)
+  | tycoe_prod A1 B1 A2 B2 c cA cB =>
+    tycoe_prod A2 B2 A1 B1 (inv_ctxcoe c) (inv_tycoe cA) (inv_tycoe cB)
+  | tycoe_id c cA cu cv =>
+    tycoe_id (inv_ctxcoe c) (inv_tycoe cA) (inv_termcoe cu) (inv_termcoe cv)
   end
 
 with inv_termcoe (crtt : termcoe) : termcoe :=
@@ -145,6 +147,80 @@ with inv_termcoe (crtt : termcoe) : termcoe :=
   | termcoe_reflection A u v p =>
     termcoe_reflection A v u (j A u (Id A (var 1) u) (refl A u) v p)
   end.
+
+(* Now we should prove that taking the inverse preserves well-behavior. *)
+Fixpoint isctxcoe_inv {c G D} (H : isctxcoe c G D) {struct H} :
+  isctxcoe (inv_ctxcoe c) D G
+
+with istycoe_inv {c G D cT A B} (H : istycoe c G D cT A B) {struct H} :
+  istycoe (inv_ctxcoe c) D G (inv_tycoe cT) B A
+
+with istermcoe_inv
+  {c G D cT A B ct u v} (H : istermcoe c G D cT A B ct u v) {struct H} :
+  istermcoe (inv_ctxcoe c) D G (inv_tycoe cT) B A (inv_termcoe ct) v u.
+Proof.
+  - { destruct H.
+
+      (* isctxcoe_identity *)
+      - now constructor.
+
+      (* isctxcoe_ctxextend *)
+      - simpl. constructor.
+        + apply (isctxcoe_inv _ _ _ H).
+        + apply (istycoe_inv _ _ _ _ _ _ i).
+    }
+
+  - { destruct H.
+
+      (* istycoe_identity *)
+      - now constructor.
+
+      (* istycoe_prod *)
+      - simpl. constructor.
+        + apply (isctxcoe_inv _ _ _ i).
+        + apply (istycoe_inv _ _ _ _ _ _ H).
+        + apply (istycoe_inv _ _ _ _ _ _ H0).
+
+      (* istycoe_id *)
+      - simpl. constructor.
+        + apply (isctxcoe_inv _ _ _ i).
+        + apply (istycoe_inv _ _ _ _ _ _ H).
+        + apply (istermcoe_inv _ _ _ _ _ _ _ _ _ i0).
+        + apply (istermcoe_inv _ _ _ _ _ _ _ _ _ i1).
+    }
+
+  - { destruct H.
+
+      (* istermcoe_identity *)
+      - now constructor.
+
+      (* istermcoe_reflection *)
+      - simpl. econstructor.
+        + ceapply TermTyConv.
+          * ceapply TermJ.
+            -- todo. (* Inversion *)
+            -- capply TyId.
+               ++ ceapply TermTyConv.
+                  ** ceapply TermVarSucc.
+                     --- capply TermVarZero.
+                         todo. (* Inversion *)
+                     --- capply TyId.
+                         +++ ceapply TermSubst.
+                             *** capply SubstWeak.
+                                 todo. (* Inversion *)
+                             *** todo. (* Inversion *)
+                         +++ capply TermVarZero.
+                             todo. (* Inversion *)
+                  ** (* Something is wrong in the typing... *)
+                     todo.
+               ++ todo.
+            -- todo.
+            -- todo. (* Inversion *)
+            -- assumption.
+          * todo.
+        + eassumption.
+    }
+Qed.
 
 
 
