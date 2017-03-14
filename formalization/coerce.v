@@ -274,23 +274,29 @@ Fixpoint act_term_ctx (crc : ctxcoe) (u : term) : term :=
   | ctxcoe_ctxextend c cT => todo
   end.
 
-Fixpoint act_term_type (crc : tycoe) (u : term) : term :=
+Fixpoint act_term_type (crc : tycoe) (u : term) {struct crc} : term :=
   match crc with
   | tycoe_identity => u
   | tycoe_prod A1 B1 A2 B2 c cA cB =>
     (* The situation:
-       G ⊢ A1
-       G, A1 ⊢ B1
-       G ⊢ A2
-       G, A2 ⊢ B2
-       G ⊢ cA : A1 ⇒ A2
-       G, A2 ⊢ cB : (act_(ctxextend G cA) B1) ⇒ B2
+       G1 ⊢ A1
+       G1, A1 ⊢ B1
+       G2 ⊢ A2
+       G2, A2 ⊢ B2
+       cA : G1 ⊢ A1 ⇒ G2 ⊢ A2 (over c)
+       cB : G1, A1 ⊢ B1 ⇒ G2, A2 ⊢ B2 (over c,cA)
      *)
-    (* lam *)
-    (*   A2 *)
-    (*   B2 *)
-    (*   (act_term_type cB (app u A1 B1 ())) *)
-    todo
+    lam
+      A2
+      B2
+      (act_term_type cB
+                     (app (subst u (sbweak A2))
+                          (Subst A1 (sbweak A2))
+                          (Subst B1 (sbweak A2))
+                          (* Note: This should be cA-1, or maybe the
+                             product coercion should be refering to cA-1
+                             directly! *)
+                          (act_term_type cA (var 0))))
 
   | tycoe_id c cA cu cv => todo (* I'm a bit lost *)
   end.
