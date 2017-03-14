@@ -145,7 +145,14 @@ with inv_termcoe (crtt : termcoe) : termcoe :=
   match crtt with
   | termcoe_identity => termcoe_identity
   | termcoe_reflection A u v p =>
-    termcoe_reflection A v u (j A u (Id A (var 1) u) (refl A u) v p)
+    let weak :=
+      sbweak (Id (Subst A (sbweak A))
+                 (subst u (sbweak A))
+                 (var 0))
+    in
+    let Aww := (Subst (Subst A (sbweak A)) weak) in
+    let uww := (subst (subst u (sbweak A)) weak) in
+    termcoe_reflection A v u (j A u (Id Aww (var 1) uww) (refl A u) v p)
   end.
 
 (* Now we should prove that taking the inverse preserves well-behavior. *)
@@ -200,21 +207,33 @@ Proof.
           * ceapply TermJ.
             -- todo. (* Inversion *)
             -- capply TyId.
-               ++ ceapply TermTyConv.
-                  ** ceapply TermVarSucc.
+               ++ ceapply TermVarSucc.
+                  ** capply TermVarZero.
+                     todo. (* Inversion *)
+                  ** capply TyId.
+                     --- ceapply TermSubst.
+                         +++ capply SubstWeak.
+                             todo. (* Inversion *)
+                         +++ todo. (* Inversion *)
                      --- capply TermVarZero.
                          todo. (* Inversion *)
-                     --- capply TyId.
-                         +++ ceapply TermSubst.
-                             *** capply SubstWeak.
-                                 todo. (* Inversion *)
-                             *** todo. (* Inversion *)
-                         +++ capply TermVarZero.
+               ++ ceapply TermSubst.
+                  ** capply SubstWeak.
+                     capply TyId.
+                     --- ceapply TermSubst.
+                         +++ capply SubstWeak.
                              todo. (* Inversion *)
-                  ** (* Something is wrong in the typing... *)
-                     todo.
+                         +++ todo. (* Inversion *)
+                     --- capply TermVarZero.
+                         todo. (* Inversion *)
+                  ** ceapply TermSubst.
+                     +++ capply SubstWeak.
+                         todo. (* Inversion *)
+                     +++ todo. (* Inversion *)
+            -- ceapply TermTyConv.
+               ++ capply TermRefl.
+                  todo. (* Inversion *)
                ++ todo.
-            -- todo.
             -- todo. (* Inversion *)
             -- assumption.
           * todo.
