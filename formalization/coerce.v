@@ -6,6 +6,35 @@ Require eitt.
 Axiom cheating : forall A : Type, A.
 Definition todo {A} := cheating A.
 
+(* Inductive ctxcoe : Type := *)
+
+(*   | ctxcoe_identity : ctxcoe *)
+
+(*   | ctxcoe_ctxextend : *)
+(*       forall c1 : ctxcoe,   (* c1 : Γ ~~~> Δ *) *)
+(*       forall c2 : tycoe c1, (* c2 : Γ ⊢ A ~~~> Δ ⊢ B *) *)
+(*         ctxcoe (* Γ, A ~~~> Δ,B *) *)
+
+(* with tycoe : ctxcoe -> Type := *)
+
+(*   | tycoe_identity : tycoe ctxcoe_identity (* I don't know how to make sense of *)
+(*                                               it otherwise *) *)
+
+(*   | tycoe_prod (A1 B1 A2 B2 : type) *)
+(*                (c : ctxcoe) *)
+(*                (cA : tycoe c) *)
+(*                (cB : tycoe (ctxcoe_ctxextend c cA)) : tycoe c *)
+
+(*   | tycoe_id (c : ctxcoe) (cA : tycoe c) (cu cv : termcoe c cA) : tycoe c *)
+
+(* with termcoe : forall (c : ctxcoe), tycoe c -> Type := *)
+
+(*   | termcoe_identity : termcoe ctxcoe_identity tycoe_identity *)
+
+(*   | termcoe_reflection (A : type) (u v p : term) : *)
+(*       termcoe ctxcoe_identity tycoe_identity (* For now at least *) *)
+(* . *)
+
 Inductive ctxcoe : Type :=
   | ctxcoe_identity : ctxcoe
 
