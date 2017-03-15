@@ -3,39 +3,6 @@ Require Import tt.
 Require Import config_tactics.
 Require eitt.
 
-Axiom cheating : forall A : Type, A.
-Definition todo {A} := cheating A.
-Ltac todo := apply cheating.
-
-(* Inductive ctxcoe : Type := *)
-
-(*   | ctxcoe_identity : ctxcoe *)
-
-(*   | ctxcoe_ctxextend : *)
-(*       forall c1 : ctxcoe,   (* c1 : Γ ~~~> Δ *) *)
-(*       forall c2 : tycoe c1, (* c2 : Γ ⊢ A ~~~> Δ ⊢ B *) *)
-(*         ctxcoe (* Γ, A ~~~> Δ,B *) *)
-
-(* with tycoe : ctxcoe -> Type := *)
-
-(*   | tycoe_identity : tycoe ctxcoe_identity (* I don't know how to make sense of *)
-(*                                               it otherwise *) *)
-
-(*   | tycoe_prod (A1 B1 A2 B2 : type) *)
-(*                (c : ctxcoe) *)
-(*                (cA : tycoe c) *)
-(*                (cB : tycoe (ctxcoe_ctxextend c cA)) : tycoe c *)
-
-(*   | tycoe_id (c : ctxcoe) (cA : tycoe c) (cu cv : termcoe c cA) : tycoe c *)
-
-(* with termcoe : forall (c : ctxcoe), tycoe c -> Type := *)
-
-(*   | termcoe_identity : termcoe ctxcoe_identity tycoe_identity *)
-
-(*   | termcoe_reflection (A : type) (u v p : term) : *)
-(*       termcoe ctxcoe_identity tycoe_identity (* For now at least *) *)
-(* . *)
-
 (* The coercions can't have coercions as index in the current coq.
    The information of one coercion being over another will be found in
    the derivation that a coercion is a well-behaved one. *)
@@ -44,6 +11,7 @@ Inductive ctxcoe : Type :=
   | ctxcoe_identity : ctxcoe
 
   | ctxcoe_ctxextend :
+      forall (A B : type),
       forall c1 : ctxcoe, (* c1 : Γ ~~~> Δ *)
       forall c2 : tycoe,  (* c2 : Γ ⊢ A ~~~> Δ ⊢ B *)
         ctxcoe (* Γ, A ~~~> Δ,B *)
@@ -77,7 +45,7 @@ Inductive isctxcoe : ctxcoe -> context -> context -> Type :=
       forall G D A B c1 c2,
         isctxcoe c1 G D ->
         istycoe c1 G D c2 A B ->
-        isctxcoe (ctxcoe_ctxextend c1 c2) (ctxextend G A) (ctxextend D B)
+        isctxcoe (ctxcoe_ctxextend A B c1 c2) (ctxextend G A) (ctxextend D B)
 
 with istycoe : ctxcoe -> context -> context -> tycoe -> type -> type -> Type :=
 
@@ -90,7 +58,7 @@ with istycoe : ctxcoe -> context -> context -> tycoe -> type -> type -> Type :=
       forall G D A1 B1 A2 B2 c cA cB,
         isctxcoe c G D ->
         istycoe c G D cA A1 A2 ->
-        istycoe (ctxcoe_ctxextend c cA) (ctxextend G A1) (ctxextend D A2)
+        istycoe (ctxcoe_ctxextend A1 A2 c cA) (ctxextend G A1) (ctxextend D A2)
                 cB B1 B2 ->
         istycoe c G D
                 (tycoe_prod A1 B1 A2 B2 c cA cB) (Prod A1 B1) (Prod A2 B2)
@@ -129,7 +97,7 @@ with istermcoe : ctxcoe -> context -> context ->
 Fixpoint inv_ctxcoe (crc : ctxcoe) : ctxcoe :=
   match crc with
   | ctxcoe_identity => ctxcoe_identity
-  | ctxcoe_ctxextend c1 c2 => ctxcoe_ctxextend (inv_ctxcoe c1) (inv_tycoe c2)
+  | ctxcoe_ctxextend A B c1 c2 => ctxcoe_ctxextend B A (inv_ctxcoe c1) (inv_tycoe c2)
   end
 
 with inv_tycoe (crt : tycoe) : tycoe :=
@@ -154,6 +122,10 @@ with inv_termcoe (crtt : termcoe) : termcoe :=
     let uww := (subst (subst u (sbweak A)) weak) in
     termcoe_reflection A v u (j A u (Id Aww (var 1) uww) (refl A u) v p)
   end.
+
+Axiom cheating : forall A : Type, A.
+Definition todo {A} := cheating A.
+Ltac todo := apply cheating.
 
 (* Now we should prove that taking the inverse preserves well-behavior. *)
 Fixpoint isctxcoe_inv {c G D} (H : isctxcoe c G D) {struct H} :
@@ -349,66 +321,3 @@ Proof.
         + eassumption.
     }
 Qed.
-
-
-
-(* Action of coercions on expressions *)
-
-Fixpoint act_subst_left (crc : ctxcoe) (sbs : substitution) : substitution :=
-  match crc with
-  | ctxcoe_identity => sbs
-  | ctxcoe_ctxextend c cA =>
-    sbcomp sbs todo
-  end.
-
-Fixpoint act_subst_right (crc : ctxcoe) (sbs : substitution) : substitution :=
-  match crc with
-  | ctxcoe_identity => sbs
-  | ctxcoe_ctxextend c cA =>
-    sbcomp todo sbs
-  end.
-
-Definition act_subst (crc1 crc2 : ctxcoe) (sbs : substitution) :=
-  act_subst_left crc1 (act_subst_right crc2 sbs).
-
-Fixpoint act_type (crc : ctxcoe) (A : type) :=
-  match crc with
-  | ctxcoe_identity => A
-  | ctxcoe_ctxextend c cT => todo
-  end.
-
-Fixpoint act_term_ctx (crc : ctxcoe) (u : term) : term :=
-  match crc with
-  | ctxcoe_identity => u
-  | ctxcoe_ctxextend c cT => todo
-  end.
-
-Fixpoint act_term_type (crc : tycoe) (u : term) {struct crc} : term :=
-  match crc with
-  | tycoe_identity => u
-  | tycoe_prod A1 B1 A2 B2 c cA cB =>
-    (* The situation:
-       G1 ⊢ A1
-       G1, A1 ⊢ B1
-       G2 ⊢ A2
-       G2, A2 ⊢ B2
-       cA : G1 ⊢ A1 ⇒ G2 ⊢ A2 (over c)
-       cB : G1, A1 ⊢ B1 ⇒ G2, A2 ⊢ B2 (over c,cA)
-     *)
-    lam
-      A2
-      B2
-      (act_term_type cB
-                     (app (subst u (sbweak A2))
-                          (Subst A1 (sbweak A2))
-                          (Subst B1 (sbweak A2))
-                          (* Note: This should be cA-1, or maybe the
-                             product coercion should be refering to cA-1
-                             directly! *)
-                          (act_term_type cA (var 0))))
-
-  | tycoe_id c cA cu cv => todo (* I'm a bit lost *)
-  end.
-
-Definition act_term (crc : ctxcoe) (crt : tycoe) (u : term) : term :=
-  act_term_type crt (act_term_ctx crc u).

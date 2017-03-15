@@ -119,6 +119,7 @@ VFILES:=config.v\
   uniqueness.v\
   hml.v\
   coerce.v\
+  coerce_action.v\
   ctt.v\
   eitt.v\
   pxtt.v\
