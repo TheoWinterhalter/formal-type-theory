@@ -312,10 +312,123 @@ Proof.
                                                 assumption.
                                            **** capply SubstWeak.
                                                 assumption.
-                                 ---- todo.
+                                 ---- ceapply EqTyConv ; [
+                                        ceapply EqSubstZeroZero
+                                      | ..
+                                      ].
+                                      ++++ assumption.
+                                      ++++ capply EqTySym.
+                                           ceapply EqTyTrans ; [
+                                             ceapply EqTySubstComp
+                                           | ..
+                                           ].
+                                           **** eassumption.
+                                           **** ceapply SubstZero.
+                                                assumption.
+                                           **** capply SubstWeak.
+                                                assumption.
+                                           **** ceapply EqTyTrans ; [
+                                                  ceapply CongTySubst
+                                                | ..
+                                                ].
+                                                ----- ceapply WeakZero.
+                                                assumption.
+                                                ----- capply EqTyRefl.
+                                                assumption.
+                                                ----- ceapply EqTyIdSubst.
+                                                assumption.
+                     --- capply CtxRefl.
+                         capply CtxExtend.
+                         capply TyId.
+                         +++ ceapply TermSubst.
+                             *** capply SubstWeak. assumption.
+                             *** assumption.
+                         +++ ceapply TermVarZero. assumption.
+                  ** ceapply EqTyTrans ; [
+                       ceapply EqTySubstId
+                     | ..
+                     ].
+                     --- ceapply SubstComp.
+                         +++ ceapply SubstZero.
+                             capply TermRefl.
+                             assumption.
+                         +++ ceapply SubstCtxConv ; [
+                               ceapply SubstShift
+                             | ..
+                             ].
+                             *** ceapply SubstZero. eassumption.
+                             *** capply TyId.
+                                 ---- ceapply TermSubst.
+                                      ++++ ceapply SubstWeak. assumption.
+                                      ++++ assumption.
+                                 ---- ceapply TermVarZero. assumption.
+                             *** ceapply EqCtxExtend.
+                                 ---- capply CtxRefl.
+                                      assumption.
+                                 ---- ceapply EqTyTrans ; [
+                                        ceapply EqTySubstId
+                                      | ..
+                                      ].
+                                      ++++ capply SubstZero. assumption.
+                                      ++++ ceapply TermSubst.
+                                           **** capply SubstWeak.
+                                                assumption.
+                                           **** assumption.
+                                      ++++ ceapply TermVarZero.
+                                           assumption.
+                                      ++++ ceapply CongId.
+                                           **** ceapply EqTyTrans ; [
+                                                  ceapply EqTySubstComp
+                                                | ..
+                                                ].
+                                                ----- eassumption.
+                                                ----- ceapply SubstZero.
+                                                assumption.
+                                                ----- ceapply SubstWeak.
+                                                assumption.
+                                                ----- ceapply EqTyTrans ; [
+                                                  ceapply CongTySubst
+                                                | ..
+                                                ].
+                                                +++++ ceapply WeakZero.
+                                                assumption.
+                                                +++++ ceapply EqTyRefl.
+                                                assumption.
+                                                +++++ ceapply EqTyIdSubst.
+                                                assumption.
+                                           **** todo.
+                                           **** todo.
+                             *** ceapply CtxRefl.
+                                 capply CtxExtend.
+                                 capply TyId.
+                                 ---- ceapply TermSubst.
+                                      ++++ ceapply SubstWeak.
+                                           assumption.
+                                      ++++ assumption.
+                                 ---- ceapply TermVarZero.
+                                      assumption.
+                     --- ceapply TermVarSucc.
+                         +++ ceapply TermVarZero. assumption.
+                         +++ ceapply TyId.
+                             *** ceapply TermSubst.
+                                 ---- ceapply SubstWeak. assumption.
+                                 ---- assumption.
+                             *** ceapply TermVarZero.
+                                 assumption.
+                     --- ceapply TermSubst.
+                         +++ ceapply SubstWeak.
+                             capply TyId.
+                             *** ceapply TermSubst.
+                                 ---- ceapply SubstWeak.
+                                      assumption.
+                                 ---- assumption.
+                             *** ceapply TermVarZero. assumption.
+                         +++ ceapply TermSubst.
+                             *** ceapply SubstWeak.
+                                 assumption.
+                             *** assumption.
                      --- todo.
-                  ** todo.
-            -- todo. (* Inversion *)
+            -- assumption.
             -- assumption.
           * todo.
         + eassumption.
