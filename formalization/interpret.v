@@ -226,7 +226,84 @@ Proof.
     }
 
     (* eval_term *)
-  - { todo. }
+  - { destruct Der ; doConfig.
+
+      (* TermTyConv *)
+      - { rename A' into B'.
+          intros istG' istB'.
+          destruct (eval_eqtype_rl G G' A B B' e istG' istB') as [A' [istA' eq]].
+          pose (u' := eval_term G G' A A' u Der istG' istA').
+          rewrite <- eq.
+          exact u'.
+        }
+
+      (* TermCtxConv *)
+      - { rename G' into D'.
+          intros istD' istA'.
+          destruct (eval_eqctx_rl G D D' e istD') as [G' [istG' eq]].
+          pose (eq' := eq_sym eq).
+          pose (A'' := transport Family eq' A').
+          assert (istA'' : istran_type G G' A A'').
+          { constructor. }
+          pose (u' := eval_term G G' A A'' u Der istG' istA'').
+          intro xs.
+          pose (ys := transport _ eq' xs). simpl in ys.
+          pose (uy := u' ys).
+          (* I need to say that A' is equal to A'' somehow don't I? *)
+          todo.
+        }
+
+      (* TermSubst *)
+      - { rename A' into As'.
+          intros istG' istAs'.
+          (* Not enough to go on... *)
+          (* inversion istAs'. subst. *)
+
+          (* destruct (eval_subst G D G' sbs i istG') as [D' [istD' sbs']]. *)
+          (* pose (u' := eval_term D D' A A' Der istD' istA'). *)
+          todo.
+        }
+
+      (* TermVarZero *)
+      - { rename G' into GA', A' into Aw'.
+          intros istGA' istAw'.
+          inversion istGA'. subst.
+          rename X into istG', X0 into istA'.
+          (* Now we need to invert istAw', but that isn't possible at the
+             moment *)
+          todo.
+        }
+
+      (* TermVarSucc *)
+      - todo.
+
+      (* TermAbs *)
+      - todo.
+
+      (* TermApp *)
+      - todo.
+
+      (* TermRefl *)
+      - todo.
+
+      (* TermJ *)
+      - todo.
+
+      (* TermExfalso *)
+      - todo.
+
+      (* TermUnit *)
+      - todo.
+
+      (* TermTrue *)
+      - todo.
+
+      (* TermFalse *)
+      - todo.
+
+      (* TermCond *)
+      - todo.
+    }
 
   (* eval_eqctx_lr *)
   - { destruct Der ; doConfig.
@@ -283,8 +360,12 @@ Proof.
               with eq_refl => _
               end _ _
             ).
-            + todo.
-            + todo.
+            + intros A'' eq.
+              simpl in eq.
+              now rewrite eq.
+            + (* eq' should be the symmetry of eqG and thus application of
+                 transport twice should be the identity. *)
+              todo.
         }
     }
 
