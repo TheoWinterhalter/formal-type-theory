@@ -211,13 +211,88 @@ Proof.
     }
 
     (* eval_term *)
-    - { todo. }
+  - { todo. }
 
-    (* eval_eqctx_lr *)
-    - { todo. }
+  (* eval_eqctx_lr *)
+  - { destruct Der ; doConfig.
 
-    (* eval_eqctx_rl *)
-    - { todo. }
+      (* CtxRefl *)
+      - { intro istG'.
+          exists G'. split.
+          - assumption.
+          - reflexivity.
+        }
+
+      (* CtxSym *)
+      - { rename G' into D'. intro istD'.
+          destruct (eval_eqctx_rl G D D' Der istD') as [G' [istG' eq]].
+          exists G'. split.
+          - assumption.
+          - assumption.
+        }
+
+      (* CtxTrans *)
+      - { intro istG'.
+          destruct (eval_eqctx_lr G G' D Der1 istG') as [D' [istD' eq1]].
+          destruct (eval_eqctx_lr D D' E Der2 istD') as [E' [istE' eq2]].
+          exists E'. split.
+          - assumption.
+          - now transitivity D'.
+        }
+
+      (* EqCtxEmpty *)
+      - { intro istG'.
+          inversion istG'. subst.
+          now exists (Datatypes.unit).
+        }
+
+      (* EqCtxExtend *)
+      - { rename G' into G'A'.
+          intro istG'A'.
+          inversion istG'A'. subst.
+          (* We need to know how to destruct a type equality first! *)
+          todo.
+        }
+    }
+
+  (* eval_eqctx_rl *)
+  - { destruct Der ; doConfig.
+
+      (* CtxRefl *)
+      - { rename D' into G'.
+          intro istG'.
+          exists G'. split.
+          - assumption.
+          - reflexivity.
+        }
+
+      (* CtxSym *)
+      - { rename D' into G'. intro istG'.
+          destruct (eval_eqctx_lr G G' D Der istG') as [D' [istD' eq]].
+          exists D'. split.
+          - assumption.
+          - assumption.
+        }
+
+      (* CtxTrans *)
+      - { rename D' into E'.
+          intro istE'.
+          destruct (eval_eqctx_rl D E E' Der2 istE') as [D' [istD' eq2]].
+          destruct (eval_eqctx_rl G D D' Der1 istD') as [G' [istG' eq1]].
+          exists G'. split.
+          - assumption.
+          - now transitivity D'.
+        }
+
+      (* EqCtxEmpty *)
+      - { intro istG'.
+          inversion istG'. subst.
+          now exists (Datatypes.unit).
+        }
+
+      (* EqCtxExtend *)
+      - todo.
+    }
 Defined.
 
 Lemma empty_to_empty :
