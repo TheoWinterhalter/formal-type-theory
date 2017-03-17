@@ -48,33 +48,42 @@ Fixpoint eval_ctx G (Der : pxtt.isctx G) {struct Der} :
   { G' : Set & istran_ctx G G' }
 
 with eval_subst {G D G' sbs} (Der : pxtt.issubst sbs G D) {struct Der} :
-     istran_ctx G G' ->
-     { D' : Set
-     & istran_ctx D D'
-     * (Family D' -> Family G') }
+   istran_ctx G G' ->
+   { D' : Set
+   & istran_ctx D D'
+   * (Family D' -> Family G') }
 
 with eval_ty {G G' A} (Der : pxtt.istype G A) {struct Der} :
-   istran_ctx G G' ->
-   { A' : Family G' & istran_type G G' A A' }
+  istran_ctx G G' ->
+  { A' : Family G' & istran_type G G' A A' }
 
 with eval_term {G G' A A' u} (Der : pxtt.isterm G u A) {struct Der} :
-    istran_ctx G G' ->
-    istran_type G G' A A' ->
-    section A'
+  istran_ctx G G' ->
+  istran_type G G' A A' ->
+  section A'
 
 with eval_eqctx_lr {G G' D} (Der : pxtt.eqctx G D) {struct Der} :
-    istran_ctx G G' ->
-    { D' : Set & istran_ctx D D' * (D' = G') }
+  istran_ctx G G' ->
+  { D' : Set & istran_ctx D D' * (D' = G') }
 
 with eval_eqctx_rl {G D D'} (Der : pxtt.eqctx G D) {struct Der} :
-    istran_ctx D D' ->
-    { G' : Set & istran_ctx G G' * (G' = D') }.
+  istran_ctx D D' ->
+  { G' : Set & istran_ctx G G' * (G' = D') }
+
+with eval_eqtype_lr {G G' A A' B} (Der : pxtt.eqtype G A B) {struct Der} :
+  istran_ctx G G' ->
+  istran_type G G' A A' ->
+  { B' : Family G' & istran_type G G' B B' * (A' = B') }
+
+with eval_eqtype_rl {G G' A B B'} (Der : pxtt.eqtype G A B) {struct Der} :
+  istran_ctx G G' ->
+  istran_type G G' B B' ->
+  { A' : Family G' & istran_type G G' A A' * (A' = B') }.
 
 
 Proof.
   (* eval_ctx *)
-  - {
-      destruct Der ; doConfig.
+  - { destruct Der ; doConfig.
 
       (* CtxEmpty *)
       - exists Datatypes.unit.
@@ -250,8 +259,20 @@ Proof.
       - { rename G' into G'A'.
           intro istG'A'.
           inversion istG'A'. subst.
-          (* We need to know how to destruct a type equality first! *)
-          todo.
+          rename X into istG', X0 into istA'.
+          destruct (eval_eqtype_lr G G' A A' B e istG' istA') as [B' [istB' eqA]].
+          destruct (eval_eqctx_lr G G' D Der istG') as [D' [istD' eqG]].
+          (* We would like a transparent assert most probably *)
+          assert ({ B'' : Family D' & istran_type D D' B B'' }).
+          { simple refine (existT _ _ _).
+            - rewrite eqG. exact B'.
+            - (* This holds because the relation is trivial only!!! *)
+              simpl. constructor.
+          }
+          destruct X as [B'' istB''].
+          exists (sigT B''). split.
+          - now constructor.
+          - todo.
         }
     }
 
@@ -291,8 +312,20 @@ Proof.
         }
 
       (* EqCtxExtend *)
-      - todo.
+      - { rename D' into D'B'.
+          intro istD'B'.
+          inversion istD'B'. subst.
+          rename G' into D', A' into B'.
+          (* We need to know how to destruct a type equality first! *)
+          todo.
+        }
     }
+
+  (* eval_eqtype_lr *)
+  - todo.
+
+  (* eval_eqtype_rl *)
+  - todo.
 Defined.
 
 Lemma empty_to_empty :
