@@ -48,7 +48,10 @@ Fixpoint eval_ctx G (Der : pxtt.isctx G) {struct Der} :
   { G' : Set & istran_ctx G G' }
 
 with eval_subst {G D G' sbs} (Der : pxtt.issubst sbs G D) {struct Der} :
-     istran_ctx G G' -> { D' : Set & Family D' -> Family G' }
+     istran_ctx G G' ->
+     { D' : Set
+     & istran_ctx D D'
+     * (Family D' -> Family G') }
 
 with eval_ty {G G' A} (Der : pxtt.istype G A) {struct Der} :
    istran_ctx G G' ->
@@ -111,49 +114,59 @@ Proof.
   - { destruct Der ; doConfig.
 
       (* TyCtxConv *)
-      - {  intros ist_DG'.
-           rename G' into D'.
-           destruct (eval_eqctx_rl G D D' e ist_DG') as [G' [ist_GG' eq_G'D']].
-           destruct eq_G'D'.
-           destruct (eval_ty G G' A Der ist_GG') as [A' ist_AA'].
-           now exists A'.
+      - { intros ist_DG'.
+          rename G' into D'.
+          destruct (eval_eqctx_rl G D D' e ist_DG') as [G' [ist_GG' eq_G'D']].
+          destruct eq_G'D'.
+          destruct (eval_ty G G' A Der ist_GG') as [A' ist_AA'].
+          exists A'.
+          constructor.
         }
 
       (* TySubst *)
       - { intros ist_GG'.
-          destruct (eval_subst G D G' sbs i ist_GG') as [D' sbs'].
-          todo.
+          destruct (eval_subst G D G' sbs i ist_GG') as [D' [ist_DD' sbs']].
+          destruct (eval_ty D D' A Der ist_DD') as [A' ist_AA'].
+          pose (A'' := sbs' A').
+          exists A''.
+          constructor.
         }
 
       (* TyProd *)
       - { intros ist_GG'.
-          pose (A' := eval_ty G G' A i I).
+          destruct (eval_ty G G' A i ist_GG') as [A' ist_AA'].
           pose (G'A' := sigT A').
-          pose (B' := eval_ty (ctxextend G A) G'A' B Der I).
-          exact (forall (y : A' xs), B' (existT _ xs y)).
+          destruct (eval_ty (ctxextend G A) G'A' B Der) as [B' ist_BB'].
+          { now constructor. }
+          exists (Pi A' B').
+          now constructor.
         }
 
       (* TyId *)
-      - { intros ist_GG' xs.
-          pose (A' := eval_ty G G' A i0 ist_GG').
-          pose (u' := eval_term G G' A A' u i1 ist_GG' I xs).
-          pose (v' := eval_term G G' A A' v i2 ist_GG' I xs).
-          exact (u' = v').
+      - { intros ist_GG'.
+          destruct (eval_ty G G' A i0 ist_GG') as [A' ist_AA'].
+          pose (u' := eval_term G G' A A' u i1 ist_GG' ist_AA').
+          pose (v' := eval_term G G' A A' v i2 ist_GG' ist_AA').
+          exists (fun xs => u' xs = v' xs).
+          now constructor.
         }
 
       (* TyEmpty *)
-      - { intros _ _.
-          exact Datatypes.Empty_set.
+      - { intros _.
+          exists (fun _ => Datatypes.Empty_set).
+          now constructor.
         }
 
       (* TyUnit *)
-      - { intros _ _.
-          exact Datatypes.unit.
+      - { intros _.
+          exists (fun _ => Datatypes.unit).
+          now constructor.
         }
 
       (* TyBool *)
-      - { intros _ _.
-          exact Datatypes.bool.
+      - { intros _.
+          exists (fun _ => Datatypes.bool).
+          now constructor.
         }
     }
 
@@ -169,9 +182,8 @@ Defined.
 
 Lemma empty_to_empty :
   let Der := (TyEmpty CtxEmpty : pxtt.istype ctxempty Empty) in
-  let ist_GG' := I : istran_ctx ctxempty Datatypes.unit in
-  forall xs, eval_ty Der ist_GG' xs = Empty_set.
+  let ist_GG' := istran_ctx_ctxempty : istran_ctx ctxempty Datatypes.unit in
+  forall xs, projT1 (eval_ty Der ist_GG') xs = Empty_set.
 Proof.
   reflexivity.
 Qed.
-
