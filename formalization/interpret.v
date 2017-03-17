@@ -277,7 +277,14 @@ Proof.
           }
           exists (sigT B''). split.
           - now constructor.
-          - todo.
+          - refine (
+              match eqG as p in (_ = E')
+              return forall (A'' : Family E') (q : transport Family p B'' = A''), { x : D' & B'' x } = { x : E' & A'' x }
+              with eq_refl => _
+              end _ _
+            ).
+            + todo.
+            + todo.
         }
     }
 
