@@ -92,22 +92,62 @@ Proof.
   - { destruct Der ; doConfig.
 
       (* SubstZero *)
-      - { todo. }
+      - { intro ist_GG'.
+          destruct (eval_ty G G' A i0 ist_GG') as [A' ist_AA'].
+          pose (u' := eval_term G G' A A' u i ist_GG' ist_AA').
+          exists (sigT A').
+          split.
+          - now constructor.
+          - intros B' xs.
+            exact (B' (existT _ xs (u' xs))).
+        }
 
       (* SubstWeak *)
-      - { todo. }
+      - { rename G' into G'A'.
+          intro ist_G'A'.
+          inversion ist_G'A'. subst.
+          exists G'. split.
+          - assumption.
+          - intros B' [xs x].
+            exact (B' xs).
+        }
 
       (* SubstShift *)
-      - { todo. }
+      - { rename G' into GAs'.
+          intro ist_GAs'.
+          inversion ist_GAs'. subst. rename A' into As'.
+          rename X into ist_G'. rename X0 into ist_As'.
+          (* inversion ist_As'. We have to wait until it makes sense. *)
+          todo.
+        }
 
       (* SubstId *)
-      - { todo. }
+      - { intro ist_GG'.
+          exists G'. split.
+          - assumption.
+          - exact (fun x => x).
+        }
 
       (* SubstComp *)
-      - { todo. }
+      - { intro ist_GG'.
+          destruct (eval_subst G D G' sbs Der1 ist_GG') as [D' [ist_DD' sbs']].
+          destruct (eval_subst D E D' sbt Der2 ist_DD') as [E' [ist_EE' sbt']].
+          exists E'. split.
+          - assumption.
+          - intro C. apply sbs'. apply sbt'. exact C.
+        }
 
       (* SubstCtxConv *)
-      - { todo. }
+      - { rename G' into G2'.
+          intro ist_G2'.
+          destruct (eval_eqctx_rl G1 G2 G2' e ist_G2') as [G1' [ist_G1' eqG]].
+          destruct (eval_subst G1 D1 G1' sbs Der ist_G1') as [D1' [ist_D1' sbs']].
+          destruct (eval_eqctx_lr D1 D1' D2 e0 ist_D1') as [D2' [ist_D2' eqD]].
+          exists D2'. split.
+          - assumption.
+          - rewrite eqD.
+            rewrite <- eqG. exact sbs'.
+        }
   }
 
   (* eval_ty *)
