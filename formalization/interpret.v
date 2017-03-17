@@ -26,29 +26,80 @@ Definition section {G : Set} (A : Family G) :=
 Definition Pi {G} (A : Family G) (B : Family (sigT A)) :=
   fun xs => forall (x : A xs), B (existT _ xs x).
 
+Definition Eq {G} (A : Family G) (u v : section A) :=
+  fun xs => u xs = v xs.
+
 Inductive istran_ctx : context -> Set -> Type :=
-  | istran_ctx_ctxempty : istran_ctx ctxempty Datatypes.unit
+
+  | istran_ctx_ctxempty :
+      istran_ctx ctxempty Datatypes.unit
+
   | istran_ctx_ctxextend :
       forall G G' A A',
         istran_ctx G G' ->
         istran_type G G' A A' ->
         istran_ctx (ctxextend G A) (sigT A')
 
+with istran_subst :
+  forall (G : context) (G' : Set)
+    (D : context) (D' : Set)
+    (sbs : substitution) (sbs' : Family D' -> Family G'),
+    Type
+  :=
+
+  | istran_subst_sbid :
+      forall G G',
+        istran_ctx G G' ->
+        istran_subst G G' G G' sbid (fun x => x)
+
+  (* | istran_subst_sbzero : *)
+  (*     forall G G' A A' u u', *)
+  (*       istran_term G G' A A' u u' -> *)
+  (*       istran_subst G G' (ctxextend G A) (sigT A') (sbzero A u) () *)
+
 with istran_type :
   (forall (G : context) (G' : Set) (A : type) (A' : Family G'), Type) :=
+
  | istran_type_Empty :
-     forall G G', istran_type G G' Empty (fun _ => Empty_set)
+     forall G G',
+       istran_ctx G G' ->
+       istran_type G G' Empty (fun _ => Empty_set)
+
  | istran_type_Unit :
      forall G G', istran_type G G' Unit (fun _ => Datatypes.unit)
+
  | istran_type_Prod :
      forall G G' A A' B B',
        istran_type G G' A A' ->
        istran_type (ctxextend G A) (sigT A') B B' ->
        istran_type G G' (Prod A B) (Pi A' B')
 
- | istran_type_todo :
-     forall (G : context) (G' : Set) (A : type) (A' : Family G'),
-       istran_type G G' A A'.
+ | istran_type_Id :
+     forall G G' A A' u u' v v',
+       istran_type G G' A A' ->
+       istran_term G G' A A' u u' ->
+       istran_term G G' A A' v v' ->
+       istran_type G G' (Id A u v) (Eq A' u' v')
+
+ | istran_type_Subst :
+     forall G G' D D' A A' sbs sbs',
+       istran_type D D' A A' ->
+       istran_subst G G' D D' sbs sbs' ->
+       istran_type G G' (Subst A sbs) (sbs' A')
+
+with istran_term :
+  forall (G : context) (G' : Set)
+    (A : type) (A' : Family G')
+    (u : term) (u' : section A'),
+    Type
+  :=
+
+  | istran_term_unit :
+      forall G G' (* U' *),
+        (* istran_type G G' Unit U' -> *)
+        (* istran_term G G' Unit U' unit (fun _ => tt). *)
+        istran_ctx G G' ->
+        istran_term G G' Unit (fun _ => Datatypes.unit) unit (fun _ => tt).
 
 Fixpoint eval_ctx G (Der : pxtt.isctx G) {struct Der} :
   { G' : Set & istran_ctx G G' }
@@ -202,7 +253,7 @@ Proof.
           destruct (eval_ty G G' A i0 ist_GG') as [A' ist_AA'].
           pose (u' := eval_term G G' A A' u i1 ist_GG' ist_AA').
           pose (v' := eval_term G G' A A' v i2 ist_GG' ist_AA').
-          exists (fun xs => u' xs = v' xs).
+          exists (Eq A' u' v').
           now constructor.
         }
 
