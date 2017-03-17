@@ -12,6 +12,12 @@ Require pxtt.
 Axiom cheating : forall (A : Type), A.
 Ltac todo := apply cheating.
 
+Definition transport {A} {u v} (P : A -> Type) (p : u = v) : P u -> P v :=
+  match p in (_ = u') return P u -> P u'
+  with
+  | eq_refl => fun x => x
+  end.
+
 Definition Family (G : Set) := G -> Set.
 
 Definition section {G : Set} (A : Family G) :=
@@ -262,14 +268,13 @@ Proof.
           rename X into istG', X0 into istA'.
           destruct (eval_eqtype_lr G G' A A' B e istG' istA') as [B' [istB' eqA]].
           destruct (eval_eqctx_lr G G' D Der istG') as [D' [istD' eqG]].
-          (* We would like a transparent assert most probably *)
-          assert ({ B'' : Family D' & istran_type D D' B B'' }).
-          { simple refine (existT _ _ _).
-            - rewrite eqG. exact B'.
-            - (* This holds because the relation is trivial only!!! *)
-              simpl. constructor.
+          assert (eq' : G' = D').
+          { now destruct eqG. }
+          pose (B'' := transport Family eq' B').
+          assert (istB'' : istran_type D D' B B'').
+          { (* This holds because the relation is trivial only!!! *)
+            constructor.
           }
-          destruct X as [B'' istB''].
           exists (sigT B''). split.
           - now constructor.
           - todo.
