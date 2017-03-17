@@ -29,6 +29,13 @@ Definition Pi {G} (A : Family G) (B : Family (sigT A)) :=
 Definition Eq {G} (A : Family G) (u v : section A) :=
   fun xs => u xs = v xs.
 
+
+(* Defining this relation(s), doesn't it mean that we are able
+   to produce a translation of expressions directly somehow,
+   outside of the derivation?
+   This is where the translation happens, and the rest is just the
+   theorem that says we are preserving derivations!
+*)
 Inductive istran_ctx : context -> Set -> Type :=
 
   | istran_ctx_ctxempty :
