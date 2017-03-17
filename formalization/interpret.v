@@ -73,7 +73,14 @@ with istran_type :
        istran_type G G' Empty (fun _ => Empty_set)
 
  | istran_type_Unit :
-     forall G G', istran_type G G' Unit (fun _ => Datatypes.unit)
+     forall G G',
+       istran_ctx G G' ->
+       istran_type G G' Unit (fun _ => Datatypes.unit)
+
+ | istran_type_Bool :
+     forall G G',
+       istran_ctx G G' ->
+       istran_type G G' Bool (fun _ => Datatypes.bool)
 
  | istran_type_Prod :
      forall G G' A A' B B',
@@ -227,13 +234,14 @@ Proof.
   - { destruct Der ; doConfig.
 
       (* TyCtxConv *)
-      - { intros ist_DG'.
-          rename G' into D'.
-          destruct (eval_eqctx_rl G D D' e ist_DG') as [G' [ist_GG' eq_G'D']].
-          destruct eq_G'D'.
+      - { rename G' into D'.
+          intros ist_DD'.
+          destruct (eval_eqctx_rl G D D' e ist_DD') as [G' [ist_GG' eq]].
           destruct (eval_ty G G' A Der ist_GG') as [A' ist_AA'].
-          exists A'.
-          constructor.
+          pose (A'' := transport Family eq A').
+          exists A''.
+          (* Coherence problem *)
+          todo.
         }
 
       (* TySubst *)
@@ -242,7 +250,9 @@ Proof.
           destruct (eval_ty D D' A Der ist_DD') as [A' ist_AA'].
           pose (A'' := sbs' A').
           exists A''.
-          constructor.
+          econstructor.
+          - eassumption.
+          - todo. (* Translation of substitution should produce certificate. *)
         }
 
       (* TyProd *)
@@ -261,23 +271,26 @@ Proof.
           pose (u' := eval_term G G' A A' u i1 ist_GG' ist_AA').
           pose (v' := eval_term G G' A A' v i2 ist_GG' ist_AA').
           exists (Eq A' u' v').
-          now constructor.
+          constructor.
+          - assumption.
+          - todo. (* Missing certificate *)
+          - todo.
         }
 
       (* TyEmpty *)
-      - { intros _.
+      - { intros istG'.
           exists (fun _ => Datatypes.Empty_set).
           now constructor.
         }
 
       (* TyUnit *)
-      - { intros _.
+      - { intros istG'.
           exists (fun _ => Datatypes.unit).
           now constructor.
         }
 
       (* TyBool *)
-      - { intros _.
+      - { intros istG'.
           exists (fun _ => Datatypes.bool).
           now constructor.
         }
@@ -302,7 +315,7 @@ Proof.
           pose (eq' := eq_sym eq).
           pose (A'' := transport Family eq' A').
           assert (istA'' : istran_type G G' A A'').
-          { constructor. }
+          { todo. (* Coherence! *) }
           pose (u' := eval_term G G' A A'' u Der istG' istA'').
           intro xs.
           pose (ys := transport _ eq' xs). simpl in ys.
@@ -407,8 +420,8 @@ Proof.
           { now destruct eqG. }
           pose (B'' := transport Family eq' B').
           assert (istB'' : istran_type D D' B B'').
-          { (* This holds because the relation is trivial only!!! *)
-            constructor.
+          { (* Coherence problem *)
+            todo.
           }
           exists (sigT B''). split.
           - now constructor.
@@ -473,10 +486,123 @@ Proof.
     }
 
   (* eval_eqtype_lr *)
-  - todo.
+  - { destruct Der ; doConfig.
+
+      (* EqTyCtxConv *)
+      - { rename G' into D'.
+          intros istD' istA'.
+          destruct (eval_eqctx_rl G D D' e istD') as [G' [istG' eq]].
+          pose (A'' := transport Family (eq_sym eq) A').
+          assert (istA'' : istran_type G G' A A'').
+          { todo. (* Coherence *) }
+          destruct (eval_eqtype_lr G G' A A'' B Der istG' istA'')
+            as [B' [istB' eq']].
+          pose (B'' := transport _ eq B').
+          exists B''. split.
+          - todo. (* Coherence again *)
+          - todo. (* Coherence of another kind? *)
+            (* When you think about it, all these coherence issues that arise
+               and that might be solved by UIP merely come from the
+               fact that we are using propositional equality. They are
+               independent from the use of reflection but rather coming from
+               the proof method used.
+             *)
+        }
+
+      (* EqTyRefl *)
+      - todo.
+
+      (* EqTySym *)
+      - todo.
+
+      (* EqTyTrans *)
+      - todo.
+
+      (* EqTyIdSubst *)
+      - todo.
+
+      (* EqTySubstComp *)
+      - todo.
+
+      (* EqTySubstProd *)
+      - todo.
+
+      (* EqTySubstId *)
+      - { rename A' into IdAuv'.
+          intros istG' istIdAuv'.
+          todo. (* We need to be able to invert. *)
+        }
+
+      (* EqTySubstEmpty *)
+      - todo.
+
+      (* EqTySubstUnit *)
+      - todo.
+
+      (* EqTySubstBool *)
+      - todo.
+
+      (* EqTyExfalso *)
+      - todo.
+
+      (* CongProd *)
+      - todo.
+
+      (* CongId *)
+      - todo.
+
+      (* CongTySubst *)
+      - todo.
+    }
 
   (* eval_eqtype_rl *)
-  - todo.
+  - { destruct Der ; doConfig.
+
+      (* EqTyCtxConv *)
+      - todo.
+
+      (* EqTyRefl *)
+      - todo.
+
+      (* EqTySym *)
+      - todo.
+
+      (* EqTyTrans *)
+      - todo.
+
+      (* EqTyIdSubst *)
+      - todo.
+
+      (* EqTySubstComp *)
+      - todo.
+
+      (* EqTySubstProd *)
+      - todo.
+
+      (* EqTySubstId *)
+      - todo.
+
+      (* EqTySubstEmpty *)
+      - todo.
+
+      (* EqTySubstUnit *)
+      - todo.
+
+      (* EqTySubstBool *)
+      - todo.
+
+      (* EqTyExfalso *)
+      - todo.
+
+      (* CongProd *)
+      - todo.
+
+      (* CongId *)
+      - todo.
+
+      (* CongTySubst *)
+      - todo.
+    }
 Defined.
 
 Lemma empty_to_empty :
