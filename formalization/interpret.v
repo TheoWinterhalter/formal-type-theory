@@ -187,3 +187,12 @@ Lemma empty_to_empty :
 Proof.
   reflexivity.
 Qed.
+
+Lemma consistency : forall u, pxtt.isterm ctxempty u Empty -> Empty_set.
+Proof.
+  intros u Der.
+  pose (ist_GG' := istran_ctx_ctxempty : istran_ctx ctxempty Datatypes.unit).
+  pose (tr := eval_ty (TyEmpty CtxEmpty) ist_GG').
+  pose (u' := eval_term Der ist_GG' (projT2 tr)).
+  pose (p := u' tt). apply p.
+Qed.
