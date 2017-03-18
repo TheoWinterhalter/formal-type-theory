@@ -1794,7 +1794,7 @@ with eqterm : context -> term -> term -> type -> Type :=
          precond: istype D B
          conclusion:
            eqterm G
-                  (subst (proj1 A B p) sbs)
+                  (subst (proj2 A B p) sbs)
                   (proj2 (Subst A sbs) (Subst B sbs) (subst p sbs))
                   (Subst B sbs)
        endrule

@@ -747,6 +747,30 @@ Proof.
 
   (* EqSubstPair *)
   - { split.
+      - magic. Unshelve. all:strictmagic.
+      - magic.
+    }
+
+  (* EqSubstProj1 *)
+  - { split.
+      - magic.
+      - magic. Unshelve. all:strictmagic.
+    }
+
+  (* EqSubstProj2 *)
+  - { split.
+      - magic.
+      - magic. Unshelve. all:strictmagic.
+    }
+
+  (* Proj1Pair *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* Proj2Pair *)
+  - { split.
       - magic.
       - magic.
     }

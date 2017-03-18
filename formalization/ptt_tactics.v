@@ -309,6 +309,10 @@ Ltac prepushsubst1 sym :=
     ceapply EqTyTrans ; [ ceapply EqTySubstProd | .. ]
   | |- eqtype ?G ?A (Subst (Prod ?B ?C) ?sbs) =>
     ceapply EqTySym ; [ ceapply EqTyTrans ; [ ceapply EqTySubstProd | .. ] | .. ]
+  | |- eqtype ?G (Subst (SimProd ?A ?B) ?sbs) ?C =>
+    ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ]
+  | |- eqtype ?G ?C (Subst (SimProd ?A ?B) ?sbs) =>
+    ceapply EqTySym ; [ ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ] | .. ]
   | |- eqtype ?G (Subst ?E ?sbs) Empty =>
     ceapply EqTySubstEmpty
   | |- eqtype ?G (Subst Empty ?sbs) ?A =>
@@ -359,6 +363,30 @@ Ltac prepushsubst1 sym :=
       ceapply EqTrans ; [ ceapply EqSubstFalse | .. ]
     | ceapply EqTyConv ; [
         ceapply EqTrans ; [ ceapply EqSubstFalse | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (pair ?A ?B ?u ?v) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstPair | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstPair | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (proj1 ?A ?B ?p) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstProj1 | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstProj1 | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (proj2 ?A ?B ?p) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstProj2 | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstProj2 | .. ]
       | ..
       ]
     ]
