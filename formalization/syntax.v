@@ -9,6 +9,7 @@ with type : Type :=
      | Empty : type
      | Unit : type
      | Bool : type
+     | SimProd : type -> type -> type
 
 with term : Type :=
      | var : nat -> term
@@ -22,6 +23,9 @@ with term : Type :=
      | true : term
      | false : term
      | cond : type -> term -> term -> term -> term
+     | pair : type -> type -> term -> term -> term
+     | proj1 : type -> type -> term -> term
+     | proj2 : type -> type -> term -> term
 
 with substitution : Type :=
      | sbzero : type -> term -> substitution

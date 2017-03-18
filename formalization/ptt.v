@@ -5,6 +5,7 @@ Section Ptt.
 
 Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
 Context `{configReflection : config.Reflection}.
+Context `{configSimpleProducts : config.SimpleProducts}.
 
 Definition isctx := isctx.
 Definition issubst := issubst.
@@ -16,4 +17,3 @@ Definition eqtype := eqtype.
 Definition eqterm := eqterm.
 
 End Ptt.
-

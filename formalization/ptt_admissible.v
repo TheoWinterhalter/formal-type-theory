@@ -10,6 +10,7 @@ Section PttAdmissible.
 
 Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
 Context `{configReflection : config.Reflection}.
+Context `{configSimpleProducts : config.SimpleProducts}.
 
 (* Some preliminary lemmata *)
 Lemma EqTyWeakNat :

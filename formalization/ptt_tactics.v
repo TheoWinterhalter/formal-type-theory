@@ -9,7 +9,7 @@ Require Import syntax.
 Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
 
 (* Some tactic to compose substitutions. *)
-Lemma eqtype_subst_left `{config.Reflection} :
+Lemma eqtype_subst_left `{config.Reflection} `{config.SimpleProducts} :
   forall {G D E A B sbs sbt},
     issubst sbs G D ->
     issubst sbt D E ->
@@ -34,7 +34,7 @@ Proof.
     ceapply SubstComp ; eassumption.
 Qed.
 
-Lemma eqterm_subst_left `{config.Reflection} :
+Lemma eqterm_subst_left `{config.Reflection} `{config.SimpleProducts} :
   forall {G D E A u v sbs sbt},
     issubst sbs G D ->
     issubst sbt D E ->
@@ -123,7 +123,7 @@ Ltac compsubst1 :=
   | |- ?G => fail "Not a goal handled by compsubst" G
   end.
 
-Lemma EqCompZero `{config.Reflection} :
+Lemma EqCompZero `{config.Reflection} `{config.SimpleProducts} :
   forall {G D A u sbs},
     issubst sbs G D ->
     isterm D u A ->
@@ -433,7 +433,7 @@ Ltac pushsubst1 := prepushsubst1 true.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
    some ZeroShift3 if ever we add a constructor that has three variables. *)
-Lemma ZeroShift2 `{config.Reflection} :
+Lemma ZeroShift2 `{config.Reflection} `{config.SimpleProducts} :
   forall {G D A B C u sbs},
     eqtype D C (Subst B (sbzero A u)) ->
     isterm D u A ->
@@ -1264,6 +1264,11 @@ Ltac magicn try shelf tysym debug :=
         ceapply TyBool
       | myfail debug
       ] ; magicn try shelf true debug
+    | |- istype ?G (SimProd ?A ?B) =>
+      first [
+        ceapply TySimProd
+      | myfail debug
+      ] ; magicn try shelf true debug
     | |- istype ?G ?A =>
       tryif (is_var A)
       then first [
@@ -1357,6 +1362,24 @@ Ltac magicn try shelf tysym debug :=
       first [
         ceapply TermCond
       | ceapply TermTyConv ; [ ceapply TermCond | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- isterm ?G (pair ?A ?B ?u ?v) ?T =>
+      first [
+        ceapply TermPair
+      | ceapply TermTyConv ; [ ceapply TermPair | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- isterm ?G (proj1 ?A ?B ?p) ?T =>
+      first [
+        ceapply TermProj1
+      | ceapply TermTyConv ; [ ceapply TermProj1 | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- isterm ?G (proj2 ?A ?B ?p) ?T =>
+      first [
+        ceapply TermProj2
+      | ceapply TermTyConv ; [ ceapply TermProj2 | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
     | [ H : isterm ?G ?v ?A, H' : isterm ?G ?v ?B |- isterm ?G ?v ?C ] =>
@@ -1620,6 +1643,11 @@ Ltac magicn try shelf tysym debug :=
         ceapply EqTyRefl
       | myfail debug
       ] ; magicn try shelf true debug
+    | |- eqtype ?G (SimProd _ _) (SimProd _ _) =>
+      first [
+        ceapply CongSimProd
+      | myfail debug
+      ] ; magicn try shelf true debug
     | |- eqtype ?G ?A ?B =>
       tryif (is_var A ; is_var B)
       then (
@@ -1784,6 +1812,24 @@ Ltac magicn try shelf tysym debug :=
       first [
         ceapply CongCond
       | ceapply EqTyConv ; [ ceapply CongCond | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- eqterm ?G (pair _ _ _ _) (pair _ _ _ _) _ =>
+      first [
+        ceapply CongPair
+      | ceapply EqTyConv ; [ ceapply CongPair | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- eqterm ?G (proj1 _ _ _ ) (proj1 _ _ _) _ =>
+      first [
+        ceapply CongProj1
+      | ceapply EqTyConv ; [ ceapply CongProj1 | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- eqterm ?G (proj2 _ _ _ ) (proj2 _ _ _) _ =>
+      first [
+        ceapply CongProj2
+      | ceapply EqTyConv ; [ ceapply CongProj2 | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
     | |- eqterm ?G ?u ?v ?A =>

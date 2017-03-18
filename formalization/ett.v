@@ -5,6 +5,7 @@ Section Ptt.
 
 Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.No |}.
 Context `{configReflection : config.Reflection}.
+Context `{configSimpleProducts : config.SimpleProducts}.
 
 Definition isctx := isctx.
 Definition issubst := issubst.
@@ -172,7 +173,7 @@ with isterm : context -> term -> type -> Type :=
        rule
          parameters: {G A},
          premise: istype G A
-         conclusion: 
+         conclusion:
            isterm (ctxextend G A) (var 0) (Subst A (sbweak A))
        endrule
 

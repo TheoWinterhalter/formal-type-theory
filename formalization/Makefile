@@ -124,7 +124,8 @@ VFILES:=config.v\
   eitt.v\
   pxtt.v\
   eval.v\
-  translation.v
+  translation.v\
+  negfunext.v
 
 ifneq ($(filter-out archclean clean cleanall printenv,$(MAKECMDGOALS)),)
 -include $(addsuffix .d,$(VFILES))
