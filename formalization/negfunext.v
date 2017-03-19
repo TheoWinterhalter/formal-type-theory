@@ -268,7 +268,113 @@ Proof.
     }
 
   (* trans_isterm *)
-  - todo.
+  - { destruct H ; doConfig.
+
+      (* TermTyConv *)
+      - { config apply @TermTyConv with (A := trans_type A).
+          - ih.
+          - ih.
+        }
+
+      (* TermCtxConv *)
+      - { config apply @TermCtxConv with (G := trans_ctx G).
+          - ih.
+          - ih.
+        }
+
+      (* TermSubst *)
+      - { simpl.
+          config apply @TermSubst with (D := trans_ctx D).
+          - ih.
+          - ih.
+        }
+
+      (* TermVarZero *)
+      - { simpl. capply TermVarZero. ih. }
+
+      (* TermVarSucc *)
+      - { simpl. capply TermVarSucc.
+          - now apply (trans_isterm G (var k) A).
+          - ih.
+        }
+
+      (* TermAbs *)
+      - { simpl.
+          capply TermPair.
+          - todo.(* type classes problem *)
+          - capply TermAbs.
+            now apply (trans_isterm (ctxextend G A) u B).
+          - capply TermTrue. ih.
+        }
+
+      (* TermApp *)
+      - { simpl.
+          capply TermApp.
+          - capply TermProj1.
+            + todo. (* type classes *)
+            + now apply (trans_isterm G u (Prod A B)).
+          - ih.
+        }
+
+      (* TermRefl *)
+      - { simpl. capply TermRefl. ih. }
+
+      (* TermJ *)
+      - { simpl. capply TermJ.
+          - ih.
+          - now apply (trans_istype (ctxextend (ctxextend G A)
+            (Id (Subst A (sbweak A)) (subst u (sbweak A)) (var 0))) C).
+          - now apply (trans_isterm G w
+         (Subst
+            (Subst C
+               (sbshift (Id (Subst A (sbweak A)) (subst u (sbweak A)) (var 0))
+                  (sbzero A u))) (sbzero (Id A u u) (refl A u)))).
+          - ih.
+          - now apply (trans_isterm G p (Id A u v)).
+        }
+
+      (* TermExfalso *)
+      - { simpl. capply TermExfalso.
+          - ih.
+          - now apply (trans_isterm G u Empty).
+        }
+
+      (* TermUnit *)
+      - { simpl. capply TermUnit. ih. }
+
+      (* TermTrue *)
+      - { simpl. capply TermTrue. ih. }
+
+      (* TermFalse *)
+      - { simpl. capply TermFalse. ih. }
+
+      (* TermCond *)
+      - { simpl. capply TermCond.
+          - now apply (trans_isterm G u Bool).
+          - now apply (trans_istype (ctxextend G Bool) C).
+          - now apply (trans_isterm G v (Subst C (sbzero Bool true))).
+          - now apply (trans_isterm G w (Subst C (sbzero Bool false))).
+        }
+
+      (* TermPair *)
+      - { simpl. capply TermPair.
+          - todo. (* type classes *)
+          - ih.
+          - ih.
+        }
+
+      (* TermProj1 *)
+      - { simpl. capply TermProj1.
+          - todo. (* type classes *)
+          - now apply (trans_isterm G p (SimProd A B)).
+        }
+
+      (* TermProj2 *)
+      - { simpl. capply TermProj2.
+          - todo. (* type classes *)
+          - now apply (trans_isterm G p (SimProd A B)).
+        }
+    }
 
   (* trans_issubst *)
   - todo.
