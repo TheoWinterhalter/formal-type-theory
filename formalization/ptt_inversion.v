@@ -76,4 +76,20 @@ Proof.
     }
 Defined.
 
+Fixpoint TySimProdInversion G A B (H : istype G (SimProd A B)) {struct H} :
+  isctx G * istype G A * istype G B.
+Proof.
+  inversion H ; doConfig.
+
+  - { split ; [ split | .. ].
+      - assumption.
+      - apply (@TyCtxConv _ _ _ G0 G) ; auto.
+        now apply (TySimProdInversion G0 A B).
+      - apply (@TyCtxConv _ _ _ G0 G) ; auto.
+        now apply (TySimProdInversion G0 A B).
+    }
+
+  - { split ; [ split | .. ] ; assumption. }
+Defined.
+
 End PttInversion.

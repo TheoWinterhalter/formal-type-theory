@@ -17,15 +17,17 @@ Module Stt.
   Local Instance hasPrecond : config.Precond
     := {| config.precondFlag := config.Yes |}.
   Context `{configReflection : config.Reflection}.
+  Local Instance hasSimpleProducts : config.SimpleProducts
+    := {| config.simpleproductsFlag := config.No |}.
 
-  Definition isctx := isctx.
+  Definition isctx   := isctx.
   Definition issubst := issubst.
-  Definition istype := istype.
-  Definition isterm := isterm.
-  Definition eqctx := eqctx.
+  Definition istype  := istype.
+  Definition isterm  := isterm.
+  Definition eqctx   := eqctx.
   Definition eqsubst := eqsubst.
-  Definition eqtype := eqtype.
-  Definition eqterm := eqterm.
+  Definition eqtype  := eqtype.
+  Definition eqterm  := eqterm.
 
   End Stt.
 
@@ -39,15 +41,17 @@ Module Ttt.
   Local Instance hasPrecond : config.Precond
     := {| config.precondFlag := config.No |}.
   Context `{configReflection : config.Reflection}.
+  Local Instance hasSimpleProducts : config.SimpleProducts
+    := {| config.simpleproductsFlag := config.Yes |}.
 
-  Definition isctx := isctx.
+  Definition isctx   := isctx.
   Definition issubst := issubst.
-  Definition istype := istype.
-  Definition isterm := isterm.
-  Definition eqctx := eqctx.
+  Definition istype  := istype.
+  Definition isterm  := isterm.
+  Definition eqctx   := eqctx.
   Definition eqsubst := eqsubst.
-  Definition eqtype := eqtype.
-  Definition eqterm := eqterm.
+  Definition eqtype  := eqtype.
+  Definition eqterm  := eqterm.
 
   End Ttt.
 

@@ -23,6 +23,7 @@ Definition ptt_sane_eqterm  := ptt_sanity.sane_eqterm.
 Definition ptt_CtxExtendInversion := ptt_inversion.CtxExtendInversion.
 Definition ptt_TyProdInversion    := ptt_inversion.TyProdInversion.
 Definition ptt_TyIdInversion      := ptt_inversion.TyIdInversion.
+Definition ptt_TySimProdInversion := ptt_inversion.TySimProdInversion.
 
 
 Fixpoint sane_isctx G (P : ett.isctx G) {struct P} : ptt.isctx G
@@ -309,18 +310,24 @@ Proof.
     (* TermProj1 *)
     - { capply TermProj1.
         - now apply (ptt_sane_isterm G p (SimProd A B)), sane_isterm.
-        - (* Need for inversion here... *)
-          admit.
-        - admit.
+        - now apply (ptt_TySimProdInversion G A B),
+                    (ptt_sane_isterm G p (SimProd A B)),
+                    sane_isterm.
+        - now apply (ptt_TySimProdInversion G A B),
+                    (ptt_sane_isterm G p (SimProd A B)),
+                    sane_isterm.
         - now apply sane_isterm.
       }
 
     (* TermProj2 *)
     - { capply TermProj2.
         - now apply (ptt_sane_isterm G p (SimProd A B)), sane_isterm.
-        - (* Need for inversion here... *)
-          admit.
-        - admit.
+        - now apply (ptt_TySimProdInversion G A B),
+                    (ptt_sane_isterm G p (SimProd A B)),
+                    sane_isterm.
+        - now apply (ptt_TySimProdInversion G A B),
+                    (ptt_sane_isterm G p (SimProd A B)),
+                    sane_isterm.
         - now apply sane_isterm.
       }
   }
@@ -1112,8 +1119,12 @@ Proof.
         - now apply sane_isterm.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
-        - admit. (* Inversion *)
-        - admit.
+        - now apply (ptt_TySimProdInversion D A B),
+                    (ptt_sane_isterm D p (SimProd A B)),
+                    sane_isterm.
+        - now apply (ptt_TySimProdInversion D A B),
+                    (ptt_sane_isterm D p (SimProd A B)),
+                    sane_isterm.
       }
 
     (* EqSubstProj2 *)
@@ -1122,8 +1133,12 @@ Proof.
         - now apply sane_isterm.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
-        - admit. (* Inversion *)
-        - admit.
+        - now apply (ptt_TySimProdInversion D A B),
+                    (ptt_sane_isterm D p (SimProd A B)),
+                    sane_isterm.
+        - now apply (ptt_TySimProdInversion D A B),
+                    (ptt_sane_isterm D p (SimProd A B)),
+                    sane_isterm.
       }
 
     (* Proj1Pair *)

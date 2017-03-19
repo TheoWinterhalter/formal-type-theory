@@ -9,6 +9,8 @@ Local Instance hasPrecond : config.Precond
   := {| config.precondFlag := config.No |}.
 Local Instance hasReflection : config.Reflection
   := {| config.reflectionFlag := config.No |}.
+Local Instance hasSimpleProducts : config.SimpleProducts
+  := {| config.simpleproductsFlag := config.No |}.
 
 Definition isctx := isctx.
 Definition issubst := issubst.

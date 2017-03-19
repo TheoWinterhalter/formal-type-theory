@@ -16,6 +16,7 @@ Require Import tactics.
 Section Inversion.
 
 Context `{configReflection : config.Reflection}.
+Context `{configSimpleProducts : config.SimpleProducts}.
 
 Fixpoint TermAbsInversion {G A B u T}
          (H : ptt.isterm G (lam A B u) T) {struct H} :
