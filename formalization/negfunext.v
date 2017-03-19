@@ -537,90 +537,256 @@ Proof.
   (* trans_eqterm *)
   - { destruct H ; doConfig.
 
+      (* EqTyConv *)
+      - { config apply @EqTyConv with (A := trans_type A).
+          - ih.
+          - ih.
+        }
+
+      (* EqCtxConv *)
+      - { config apply @EqCtxConv with (G := trans_ctx G).
+          - ih.
+          - ih.
+        }
+
+      (* EqRefl *)
+      - { capply EqRefl. ih. }
+
+      (* EqSym *)
+      - { capply EqSym. ih. }
+
+      (* EqTrans *)
+      - { config apply @EqTrans with (v := trans_term v).
+          - ih.
+          - ih.
+        }
+
+      (* EqIdSubst *)
+      - { simpl. capply EqIdSubst. ih. }
+
+      (* EqSubstComp *)
+      - { simpl. config apply @EqSubstComp with (D := trans_ctx D) (E := trans_ctx E).
+          - ih.
+          - ih.
+          - ih.
+        }
+
+      (* EqSubstWeak *)
+      - { simpl. capply EqSubstWeak.
+          - now apply (trans_isterm G (var k) A).
+          - ih.
+        }
+
+      (* EqSubstZeroZero *)
+      - { simpl. capply EqSubstZeroZero. ih. }
+
+      (* EqSubstZeroSucc *)
+      - { simpl. capply EqSubstZeroSucc.
+          - now apply (trans_isterm G (var k) A).
+          - ih.
+        }
+
+      (* EqSubstShiftZero *)
+      - { simpl. config apply @EqSubstShiftZero with (D := trans_ctx D).
+          - ih.
+          - ih.
+        }
+
+      (* EqSubstShiftSucc *)
+      - { simpl. config apply @EqSubstShiftSucc with (D := trans_ctx D).
+          - ih.
+          - now apply (trans_isterm D (var k) B).
+          - ih.
+        }
+
+      (* EqSubstAbs *)
+      - { simpl. ceapply EqTrans.
+          - ceapply EqTyConv.
+            + ceapply EqSubstPair.
+              * todo. (* type classes *)
+              * now apply (trans_issubst sbs G D).
+              * capply TermAbs.
+                now apply (trans_isterm (ctxextend D A) u B).
+              * capply TermTrue. ih.
+            + capply CongSimProd.
+              * todo. (* type classes *)
+              * config apply @EqTySubstProd with (D := trans_ctx D).
+                -- ih.
+                -- now apply (trans_istype (ctxextend D A) B).
+              * config apply @EqTySubstBool with (D := trans_ctx D). ih.
+          - ceapply EqTyConv.
+            + capply CongPair.
+              * todo. (* type classes *)
+              * ceapply EqTyConv.
+                -- config apply @EqSubstAbs with (D := trans_ctx D).
+                   ++ now apply (trans_isterm (ctxextend D A) u B).
+                   ++ ih.
+                -- capply EqTySym.
+                   config apply @EqTySubstProd with (D := trans_ctx D).
+                   ++ ih.
+                   ++ now apply (trans_istype (ctxextend D A) B).
+              * ceapply EqTyConv.
+                -- config apply @EqSubstTrue with (D := trans_ctx D).
+                   ih.
+                -- capply EqTySym.
+                   config apply @EqTySubstBool with (D := trans_ctx D).
+                   ih.
+              * config apply @EqTySubstProd with (D := trans_ctx D).
+                -- ih.
+                -- now apply (trans_istype (ctxextend D A) B).
+              * config apply @EqTySubstBool with (D := trans_ctx D). ih.
+            + capply CongSimProd.
+              * todo. (* type classes *)
+              * config apply @EqTySubstProd with (D := trans_ctx D).
+                -- ih.
+                -- now apply (trans_istype (ctxextend D A) B).
+              * config apply @EqTySubstBool with (D := trans_ctx D). ih.
+        }
+
+      (* EqSubstApp *)
+      - { simpl. ceapply EqTrans.
+          - config apply @EqSubstApp with (D := trans_ctx D).
+            + capply TermProj1.
+              * todo. (* type classes *)
+              * now apply (trans_isterm D u (Prod A B)).
+            + ih.
+            + ih.
+          - ceapply EqTyConv.
+            + capply CongApp.
+              * capply EqTyRefl.
+                config apply @TySubst with (D := trans_ctx D).
+                -- ih.
+                -- ih.
+              * capply EqTyRefl.
+                config apply @TySubst with (D := trans_ctx (ctxextend D A)).
+                -- simpl. capply SubstShift.
+                   ++ ih.
+                   ++ ih.
+                -- ih.
+              * ceapply EqTrans.
+                -- ceapply EqTyConv.
+                   ++ config apply @EqSubstProj1 with (D := trans_ctx D).
+                      ** todo. (* type classes *)
+                      ** ih.
+                      ** now apply (trans_isterm D u (Prod A B)).
+                   ++ config apply @EqTySubstProd with (D := trans_ctx D).
+                      ** ih.
+                      ** now apply (trans_istype (ctxextend D A) B).
+                -- ceapply EqTyConv.
+                   ++ capply CongProj1.
+                      ** todo. (* type classes *)
+                      ** capply EqRefl.
+                         ceapply TermTyConv.
+                         --- config apply @TermSubst with (D := trans_ctx D).
+                             +++ ih.
+                             +++ now apply (trans_isterm D u (Prod A B)).
+                         --- simpl.
+                             config apply @EqTySubstSimProd with (D := trans_ctx D).
+                             +++ todo. (* type classes *)
+                             +++ ih.
+                             +++ capply TyProd.
+                                 now apply (trans_istype (ctxextend D A) B).
+                             +++ capply TyBool. ih.
+                      ** config apply @EqTySubstProd with (D := trans_ctx D).
+                         --- ih.
+                         --- now apply (trans_istype (ctxextend D A) B).
+                      ** config apply @EqTySubstBool with (D := trans_ctx D).
+                         ih.
+                   ++ config apply @EqTySubstProd with (D := trans_ctx D).
+                      ** ih.
+                      ** now apply (trans_istype (ctxextend D A) B).
+              * capply EqRefl.
+                config apply @TermSubst with (D := trans_ctx D).
+                -- ih.
+                -- ih.
+            + todo. (* lazy *)
+        }
+
+      (* EqSubstRefl *)
       - todo.
 
+      (* EqSubstJ *)
       - todo.
 
+      (* EqSubstExfalso *)
       - todo.
 
+      (* EqSubstUnit *)
       - todo.
 
+      (* EqSubstTrue *)
       - todo.
 
+      (* EqSubstFalse *)
       - todo.
 
+      (* EqSubstCond *)
       - todo.
 
+      (* EqTermExfalso *)
       - todo.
 
+      (* UnitEta *)
       - todo.
 
+      (* EqReflection *)
       - todo.
 
+      (* ProdBeta *)
       - todo.
 
+      (* CondTrue *)
       - todo.
 
+      (* CondFalse *)
       - todo.
 
+      (* ProdEta *)
       - todo.
 
+      (* JRefl *)
       - todo.
 
+      (* CongAbs *)
       - todo.
 
+      (* CongApp *)
       - todo.
 
+      (* CongRefl *)
       - todo.
 
+      (* CongJ *)
       - todo.
 
+      (* CongCond *)
       - todo.
 
+      (* CongTermSubst *)
       - todo.
 
+      (* CongPair *)
       - todo.
 
+      (* CongProj1 *)
       - todo.
 
+      (* CongProj2 *)
       - todo.
 
+      (* EqSubstPair *)
       - todo.
 
+      (* EqSubstProj1 *)
       - todo.
 
+      (* EqSubstProj2 *)
       - todo.
 
+      (* Proj1Pair *)
       - todo.
 
-      - todo.
-
-      - todo.
-
-      - todo.
-
-      - todo.
-
-      - todo.
-
-      - todo.
-
-      - todo.
-
-      - todo.
-
-      - todo.
-
-      - todo.
-
-      - todo.
-
-      - todo.
-
-      - todo.
-
-      - todo.
-
+      (* Proj2Pair *)
       - todo.
     }
 
