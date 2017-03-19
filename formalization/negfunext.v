@@ -301,7 +301,7 @@ Proof.
       (* TermAbs *)
       - { simpl.
           capply TermPair.
-          - todo.(* type classes problem *)
+          - todo. (* type classes problem *)
           - capply TermAbs.
             now apply (trans_isterm (ctxextend G A) u B).
           - capply TermTrue. ih.
@@ -377,19 +377,322 @@ Proof.
     }
 
   (* trans_issubst *)
-  - todo.
+  - { destruct H ; doConfig.
+
+      (* SubstZerp *)
+      - { simpl. capply SubstZero. ih. }
+
+      (* SubstWeak *)
+      - { simpl. capply SubstWeak. ih. }
+
+      (* SubstShift *)
+      - { simpl. capply SubstShift ; ih. }
+
+      (* SubstId *)
+      - { simpl. capply SubstId. ih. }
+
+      (* SubstComp *)
+      - { simpl. config apply @SubstComp with (D := trans_ctx D).
+          - ih.
+          - ih.
+        }
+
+      (* SubstCtxConv *)
+      - { config apply @SubstCtxConv with (G1 := trans_ctx G1) (D1 := trans_ctx D1).
+          - ih.
+          - ih.
+          - ih.
+        }
+    }
 
   (* trans_eqctx *)
-  - todo.
+  - { destruct H ; doConfig.
+
+      (* CtxRefl *)
+      - { capply CtxRefl. ih. }
+
+      (* CtxSym *)
+      - { capply CtxSym. ih. }
+
+      (* CtxTrans *)
+      - { config apply @CtxTrans with (D := trans_ctx D).
+          - ih.
+          - ih.
+        }
+
+      (* EqCtxEmpty *)
+      - { capply EqCtxEmpty. }
+
+      (* EqCtxExtend *)
+      - { simpl. capply EqCtxExtend.
+          - ih.
+          - ih.
+        }
+    }
 
   (* trans_eqtype *)
-  - todo.
+  - { destruct H ; doConfig.
+
+      (* EqTyCtxConv *)
+      - { config apply @EqTyCtxConv with (G := trans_ctx G).
+          - ih.
+          - ih.
+        }
+
+      (* EqTyRefl *)
+      - { capply EqTyRefl. ih. }
+
+      (* EqTySym *)
+      - { capply EqTySym. ih. }
+
+      (* EqTyTrans *)
+      - { config apply @EqTyTrans with (B := trans_type B).
+          - ih.
+          - ih.
+        }
+
+      (* EqTyIdSubst *)
+      - { simpl. capply EqTyIdSubst. ih. }
+
+      (* EqTySubstComp *)
+      - { simpl. config apply @EqTySubstComp with (D := trans_ctx D) (E := trans_ctx E).
+          - ih.
+          - ih.
+          - ih.
+        }
+
+      (* EqTySubstProd *)
+      - { simpl. ceapply EqTyTrans.
+          - ceapply EqTySubstSimProd.
+            + todo. (* type classes *)
+            + now apply (trans_issubst sbs G D).
+            + capply TyProd.
+              now apply (trans_istype (ctxextend D A) B).
+            + capply TyBool. ih.
+          - capply CongSimProd.
+            + todo. (* type classes *)
+            + config apply @EqTySubstProd with (D := trans_ctx D).
+              * ih.
+              * now apply (trans_istype (ctxextend D A) B).
+            + config apply @EqTySubstBool with (D := trans_ctx D). ih.
+        }
+
+      (* EqTySubstId *)
+      - { simpl. config apply @EqTySubstId with (D := trans_ctx D).
+          - ih.
+          - ih.
+          - ih.
+        }
+
+      (* EqTySubstEmpty *)
+      - { simpl. config apply @EqTySubstEmpty with (D := trans_ctx D). ih. }
+
+      (* EqTySubstUnit *)
+      - { simpl. config apply @EqTySubstUnit with (D := trans_ctx D). ih. }
+
+      (* EqTySubstBool *)
+      - { simpl. config apply @EqTySubstBool with (D := trans_ctx D). ih. }
+
+      (* EqTyExfalso *)
+      - { config apply @EqTyExfalso with (u := trans_term u).
+          - ih.
+          - ih.
+          - now apply (trans_isterm G u Empty).
+        }
+
+      (* CongProd *)
+      - { simpl. capply CongSimProd.
+          - todo. (* type classes *)
+          - capply CongProd.
+            + ih.
+            + now apply (trans_eqtype (ctxextend G A1) A2 B2).
+          - capply EqTyRefl. capply TyBool. ih.
+        }
+
+      (* CongId *)
+      - { simpl. capply CongId ; ih. }
+
+      (* CongTySubst *)
+      - { simpl. config apply @CongTySubst with (D := trans_ctx D).
+          - ih.
+          - ih.
+        }
+
+      (* CongSimProd *)
+      - { simpl. capply CongSimProd.
+          - todo. (* type classes *)
+          - ih.
+          - ih.
+        }
+
+      (* EqTySubstSimProd *)
+      - { simpl. config apply @EqTySubstSimProd with (D := trans_ctx D).
+          - todo. (* types classes *)
+          - ih.
+          - ih.
+          - ih.
+        }
+    }
 
   (* trans_eqterm *)
-  - todo.
+  - { destruct H ; doConfig.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+    }
 
   (* trans_eqsubst *)
-  - todo.
+  - { destruct H ; doConfig.
+
+      (* SubstRefl *)
+      - { capply SubstRefl. ih. }
+
+      (* SubstSym *)
+      - { capply SubstSym. ih. }
+
+      (* SubstTrans *)
+      - { config apply @SubstTrans with (sb2 := trans_subst sb2).
+          - ih.
+          - ih.
+        }
+
+      (* CongSusbtZero *)
+      - { simpl. capply CongSubstZero.
+          - ih.
+          - ih.
+        }
+
+      (* CongSubstWeak *)
+      - { simpl. capply CongSubstWeak. ih. }
+
+      (* CongSubstShift *)
+      - { simpl. capply CongSubstShift ; ih. }
+
+      (* CongSubstComp *)
+      - { simpl. config apply @CongSubstComp with (D := trans_ctx D).
+          - ih.
+          - ih.
+        }
+
+      (* EqSubstCtxConv *)
+      - { config apply @EqSubstCtxConv with (G1 := trans_ctx G1) (D1 := trans_ctx D1).
+          - ih.
+          - ih.
+          - ih.
+        }
+
+      (* CompAssoc *)
+      - { simpl. config apply @CompAssoc with (D := trans_ctx D) (E := trans_ctx E).
+          - ih.
+          - ih.
+          - ih.
+        }
+
+      (* WeakNat *)
+      - { simpl. capply WeakNat ; ih. }
+
+      (* WeakZero *)
+      - { simpl. capply WeakZero ; ih. }
+
+      (* ShiftZero *)
+      - { simpl. capply ShiftZero ; ih. }
+
+      (* CompShift *)
+      - { simpl. config apply @CompShift with (D := trans_ctx D).
+          - ih.
+          - ih.
+          - ih.
+        }
+
+      (* CompIdRight *)
+      - { simpl. capply CompIdRight. ih. }
+
+      (* CompIdLeft *)
+      - { simpl. capply CompIdLeft. ih. }
+    }
 Qed.
 
 End Translation.
