@@ -774,6 +774,12 @@ Proof.
       - magic.
       - magic.
     }
+
+  (* PairEta *)
+  - { split.
+      - magic.
+      - magic.
+    }
 Qed.
 
 Theorem sane_eqterm G u v A :

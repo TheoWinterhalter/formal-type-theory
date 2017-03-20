@@ -1828,6 +1828,20 @@ with eqterm : context -> term -> term -> type -> Type :=
                   v
                   B
        endrule
+
+     | PairEta :
+       simpleproduct rule
+         parameters: {G A B p q},
+         premise: eqterm G (proj1 A B p) (proj1 A B q) A
+         premise: eqterm G (proj2 A B p) (proj2 A B q) B
+         premise: isterm G p (SimProd A B)
+         premise: isterm G q (SimProd A B)
+         precond: isctx G
+         precond: istype G A
+         precond: istype G B
+         conclusion:
+           eqterm G p q (SimProd A B)
+       endrule
 .
 
 End TypeTheoryRules.

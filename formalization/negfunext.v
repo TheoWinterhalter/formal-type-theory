@@ -31,7 +31,6 @@ Module Stt.
   End Stt.
 
 End Stt.
-Require ptt.
 
 (* Target type theory *)
 Module Ttt.
@@ -60,7 +59,7 @@ End Ttt.
 Section Translation.
 
 Context `{configReflection : config.Reflection}.
-Context `{foo_configSimpleProducts : config.SimpleProducts}.
+Context `{configSimpleProducts : config.SimpleProducts}.
 
 Axiom cheating : forall A : Type, A.
 Ltac todo := apply cheating.
@@ -260,11 +259,7 @@ Proof.
       - capply TyBool ; ih.
 
       (* TySimProd *)
-      - { simpl.
-Set Printing All. idtac. unfold Ttt.istype.
-apply TySimProd. 
- capply TySimProd.
-          - todo. (* I'm not good with type classes yet *)
+      - { simpl. capply TySimProd.
           - ih.
           - ih.
         }

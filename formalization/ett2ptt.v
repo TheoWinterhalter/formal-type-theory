@@ -1158,6 +1158,20 @@ Proof.
         - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply (ptt_sane_isterm G v B), sane_isterm.
       }
+
+    (* PairEta *)
+    - { capply PairEta.
+        - now apply sane_eqterm.
+        - now apply sane_eqterm.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply (ptt_sane_eqterm G (proj1 A B p) (proj1 A B q) A),
+                    sane_eqterm.
+        - now apply (ptt_sane_eqterm G (proj1 A B p) (proj1 A B q) A),
+                    sane_eqterm.
+        - now apply (ptt_sane_eqterm G (proj2 A B p) (proj2 A B q) B),
+                    sane_eqterm.
+      }
   }
 
 Defined.

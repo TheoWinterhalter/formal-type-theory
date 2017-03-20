@@ -403,6 +403,9 @@ Proof.
 
       (* Proj2Pair *)
       - apply Proj2Pair ; auto.
+
+      (* PairEta *)
+      - apply PairEta ; auto.
     }
 Defined.
 
