@@ -761,7 +761,9 @@ Proof.
       - { config apply @EqReflection with (w1 := trans_term w1) (w2 := trans_term w2).
           - now apply (trans_isterm G w1 (Id A u v)).
           - (* now apply (trans_isterm G w2 (reflective A)). *)
-            (* Problem: trans_type and reflective should commute *)
+            (* Problem: trans_type and reflective should commute
+               We have no other choice but to admit it for the time being.
+             *)
             todo.
         }
 
@@ -1127,17 +1129,136 @@ Proof.
 Qed.
 
 (* In Stt, we have the negation of funext *)
-(* Do we need universe to say so? I'm afraid so. *)
-(* Let's have a "meta-version". *)
-(* Definition funext A B := *)
-(*   let w1 := sbweak (Arrow A B) in *)
-(*   let w2' := sbweak (Subst (Arrow A B) w1) in *)
-(*   let w3' := sbweak (Subst A w2') in *)
+(* We don't have universes, so we will just negate funext for Unit → Unit *)
+Definition funextUnit :=
+  Prod (Arrow Unit Unit) (* f : 1 → 1 *)
+       (Prod (Prod Unit Unit) (* g : 1 → 1 *)
+             (Arrow (Prod Unit (* x : Unit *)
+                          (Id Unit
+                              (app (var 2) Unit Unit (var 0))
+                              (app (var 1) Unit Unit (var 0))))
+                    (Id (Prod Unit Unit) (var 1) (var 0)))).
 
-(*   let w2 := sbcomp w1 w2' in *)
-(*   let w3 := sbcomp w2 w3' in *)
-(*   Prod (Arrow A B) (* f : A → B *) *)
-(*        (Prod (Subst (Arrow A B) w1) (* g : A → B *) *)
-(*              (Arrow (Prod (Subst A w2) (Id B )))) *)
+Lemma funextContradiction :
+  { bot : term
+  & Ttt.isterm ctxempty
+               bot
+               (Arrow (trans_type funextUnit) (Id Bool true false)) }.
+  refine (existT _ _ _).
+  ceapply TermAbs.
+  ceapply TermTyConv ; [
+    ceapply TermApp
+  | ..
+  ].
+  - ceapply TermTyConv ; [
+      ceapply TermVarZero
+    | ..
+    ].
+    + simpl. capply TySimProd.
+      * capply TyProd.
+        capply TySimProd.
+        -- capply TyProd.
+           capply TySimProd.
+           ++ capply TyProd.
+              ceapply TySubst.
+              ** capply SubstWeak.
+                 capply TySimProd.
+                 --- capply TyProd.
+                     capply TyId.
+                     +++ ceapply TermTyConv ; [ ceapply TermApp | .. ].
+                         *** capply TermProj1.
+                             ceapply TermTyConv ; [
+                               ceapply TermVarSucc
+                             | ..
+                             ].
+                             ---- ceapply TermVarSucc.
+                                  ++++ capply TermVarZero.
+                                       capply TySimProd.
+                                       **** capply TyProd.
+                                            ceapply TySubst.
+                                            ----- capply SubstWeak.
+                                                  capply TyUnit.
+                                                  capply CtxEmpty.
+                                            ----- capply TyUnit.
+                                                  capply CtxEmpty.
+                                       **** capply TyBool.
+                                            capply CtxEmpty.
+                                  ++++ capply TySimProd.
+                                       **** capply TyProd.
+                                            ----- capply TyUnit.
+                                            capply CtxExtend.
+                                            capply TyUnit.
+                                            capply CtxExtend.
+                                            capply TySimProd.
+                                            +++++ capply TyProd.
+                                            ceapply TySubst.
+                                            ***** capply SubstWeak.
+                                            capply TyUnit.
+                                            capply CtxEmpty.
+                                            ***** capply TyUnit.
+                                            capply CtxEmpty.
+                                            +++++ capply TyBool.
+                                            capply CtxEmpty.
+                                       **** capply TyBool.
+                                            capply CtxExtend.
+                                            capply TySimProd.
+                                            ----- capply TyProd.
+                                            +++++ ceapply TySubst.
+                                            ***** capply SubstWeak.
+                                            capply TyUnit.
+                                            capply CtxEmpty.
+                                            ***** capply TyUnit.
+                                            capply CtxEmpty.
+                                            ----- capply TyBool.
+                                            capply CtxEmpty.
+                             ---- capply TyUnit.
+                                  capply CtxExtend.
+                                  capply TySimProd.
+                                  ++++ capply TyProd.
+                                       **** capply TyUnit.
+                                            capply CtxExtend.
+                                            capply TyUnit.
+                                            capply CtxExtend.
+                                            capply TySimProd.
+                                            ----- capply TyProd.
+                                            ceapply TySubst.
+                                            +++++ capply SubstWeak.
+                                            capply TyUnit.
+                                            capply CtxEmpty.
+                                            +++++ capply TyUnit.
+                                            capply CtxEmpty.
+                                            ----- capply TyBool.
+                                            capply CtxEmpty.
+                                  ++++ capply TyBool.
+                                       capply CtxExtend.
+                                       capply TySimProd.
+                                       **** capply TyProd.
+                                            ceapply TySubst.
+                                            ----- capply SubstWeak.
+                                            capply TyUnit.
+                                            capply CtxEmpty.
+                                            ----- capply TyUnit.
+                                            capply CtxEmpty.
+                                       **** capply TyBool.
+                                            capply CtxEmpty.
+                             ---- todo.
+                         *** ceapply TermTyConv ; [
+                               capply TermVarZero
+                             | ..
+                             ].
+                             ---- todo.
+                             ---- todo.
+                         *** todo.
+                     +++ todo.
+                 --- todo.
+              ** todo.
+           ++ todo.
+        -- todo.
+      * todo.
+    + todo.
+  - todo.
+  - todo.
+    Unshelve. all:todo.
+Qed.
 
 End Translation.
