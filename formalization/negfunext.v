@@ -1017,4 +1017,17 @@ Proof.
     }
 Qed.
 
+(* Stt is consistent if Ttt is. *)
+Theorem relative_consistency :
+  forall bot,
+    Stt.isterm ctxempty bot Empty ->
+    Ttt.isterm ctxempty (trans_term bot) Empty.
+Proof.
+  intros bot h.
+  now apply (trans_isterm h).
+Qed.
+
+(* In Stt, we have the negation of funext *)
+(* Do we need universe to say so? I'm afraid so. *)
+
 End Translation.
