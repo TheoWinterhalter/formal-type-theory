@@ -52,6 +52,10 @@ Ltac doConfig :=
        | R : @prodetaFlag F |- _ => specialize (H R)
        end
      end
+   | H : ?P |- _ =>
+     match (eval cbv in P) with
+     | No => destruct H
+     end
    | _ => idtac
   end).
 

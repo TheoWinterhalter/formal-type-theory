@@ -801,9 +801,6 @@ Proof.
           - now apply (trans_isterm G w (Subst C (sbzero Bool false))).
         }
 
-      (* ProdEta *)
-      - todo. (* We shouldn't have to deal with this case! *)
-
       (* JRefl *)
       - { simpl. capply JRefl.
           - ih.
