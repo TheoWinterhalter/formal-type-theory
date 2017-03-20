@@ -1029,5 +1029,16 @@ Qed.
 
 (* In Stt, we have the negation of funext *)
 (* Do we need universe to say so? I'm afraid so. *)
+(* Let's have a "meta-version". *)
+(* Definition funext A B := *)
+(*   let w1 := sbweak (Arrow A B) in *)
+(*   let w2' := sbweak (Subst (Arrow A B) w1) in *)
+(*   let w3' := sbweak (Subst A w2') in *)
+
+(*   let w2 := sbcomp w1 w2' in *)
+(*   let w3 := sbcomp w2 w3' in *)
+(*   Prod (Arrow A B) (* f : A → B *) *)
+(*        (Prod (Subst (Arrow A B) w1) (* g : A → B *) *)
+(*              (Arrow (Prod (Subst A w2) (Id B )))) *)
 
 End Translation.
