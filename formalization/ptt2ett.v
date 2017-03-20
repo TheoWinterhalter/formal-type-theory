@@ -9,6 +9,7 @@ Section Ptt2Ett.
 
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{ConfigProdEta : config.ProdEta}.
 
 Fixpoint sane_isctx G (P : ptt.isctx G) : ett.isctx G
 
@@ -58,20 +59,20 @@ Proof.
       - capply SubstId ; auto.
 
       (* SubstComp *)
-       - { capply (@SubstComp _ _ _ G D E) ; auto. }
+       - { config apply @SubstComp with (D := D) ; auto. }
 
       (* SubstCtxConv *)
-      - { capply (@SubstCtxConv _ _ _ G1 G2 D1 D2) ; auto. }
+      - { config apply @SubstCtxConv with (G1 := G1) (D1 := D1) ; auto. }
   }
 
   (* sane_istype *)
   - { destruct P; doConfig.
 
       (* TyCtxConv *)
-      - capply (@TyCtxConv _ _ _ G D) ; auto.
+      - config apply @TyCtxConv with (G := G) ; auto.
 
       (* TySubst *)
-      - capply (@TySubst _ _ _ G D) ; auto.
+      - config apply @TySubst with (D := D) ; auto.
 
       (* TyProd *)
       - capply TyProd ; auto.
@@ -96,13 +97,13 @@ Proof.
   - { destruct P; doConfig.
 
       (* TermTyConv *)
-       - apply (@TermTyConv _ _ _ G A B) ; auto.
+       - apply @TermTyConv with (A := A) ; auto.
 
       (* TermCtxConv *)
-      - apply (@TermCtxConv _ _ _ G D) ; auto.
+      - apply @TermCtxConv with (G := G) ; auto.
 
       (* TermSubst *)
-      - apply (@TermSubst _ _ _ G D) ; auto.
+      - apply @TermSubst with (D := D) ; auto.
 
       (* TermVarZero *)
       - apply TermVarZero ; auto.
@@ -157,7 +158,7 @@ Proof.
       - apply CtxSym ; auto.
 
       (* CtxTrans *)
-      - apply (@CtxTrans _ _ _ G D E) ; auto.
+      - apply @CtxTrans with (D := D) ; auto.
 
       (* EqCtxEmpty *)
       - apply CtxRefl, CtxEmpty.
@@ -176,10 +177,10 @@ Proof.
       - apply SubstSym ; auto.
 
       (* SubstTrans *)
-      - apply (@SubstTrans _ _ _ G D sb1 sb2 sb3) ; auto.
+      - apply @SubstTrans with (sb2 := sb2) ; auto.
 
       (* CongSubstZero *)
-      - apply (@CongSubstZero _ _ _ G) ; auto.
+      - apply @CongSubstZero with (G := G) ; auto.
 
       (* CongSubstWeak *)
       - apply CongSubstWeak ; auto.
@@ -188,13 +189,13 @@ Proof.
       - apply CongSubstShift ; auto.
 
       (* CongSubstComp *)
-      - apply (@CongSubstComp _ _ _ G D E) ; auto.
+      - apply @CongSubstComp with (D := D) ; auto.
 
       (* EqSubstCtxConv *)
-      - apply (@EqSubstCtxConv _ _ _ G1 G2 D1 D2) ; auto.
+      - apply @EqSubstCtxConv with (G1 := G1) (D1 := D1) ; auto.
 
       (* CompAssoc *)
-      - apply (@CompAssoc _ _ _ G D E F) ; auto.
+      - apply @CompAssoc with (D := D) (E := E) ; auto.
 
       (* WeakNat *)
       - apply WeakNat ; auto.
@@ -206,7 +207,7 @@ Proof.
       - apply ShiftZero ; auto.
 
       (* CompShift *)
-      - apply (@CompShift _ _ _ G D) ; auto.
+      - apply @CompShift with (D := D) ; auto.
 
       (* CompIdRight *)
       - apply CompIdRight ; auto.
@@ -219,7 +220,7 @@ Proof.
   - { destruct P; doConfig.
 
       (* EqTyCtxConv *)
-      - apply (@EqTyCtxConv _ _ _ G D); auto.
+      - apply @EqTyCtxConv with (G := G) ; auto.
 
       (* EqTyRefl*)
       - apply EqTyRefl ; auto.
@@ -228,31 +229,31 @@ Proof.
       - apply EqTySym ; auto.
 
       (* EqTyTrans *)
-      - apply (@EqTyTrans _ _ _ G A B C) ; auto.
+      - apply @EqTyTrans with (B := B) ; auto.
 
       (* EqTyIdSubst *)
       - apply EqTyIdSubst ; auto.
 
       (* EqTySubstComp *)
-      - apply (@EqTySubstComp _ _ _ G D E) ; auto.
+      - apply @EqTySubstComp with (D := D) (E := E) ; auto.
 
       (* EqTySubstProd *)
-      - apply (@EqTySubstProd _ _ _ G D) ; auto.
+      - apply @EqTySubstProd with (D := D) ; auto.
 
       (* EqTySubstId *)
-      - apply (@EqTySubstId _ _ _ G D) ; auto.
+      - apply @EqTySubstId with (D := D) ; auto.
 
       (* EqTySubstEmpty *)
-      - apply (@EqTySubstEmpty _ _ _ G D) ; auto.
+      - apply @EqTySubstEmpty with (D := D) ; auto.
 
       (* EqTySubstUnit *)
-      - apply (@EqTySubstUnit _ _ _ G D) ; auto.
+      - apply @EqTySubstUnit with (D := D) ; auto.
 
       (* EqTySubstBool *)
-      - apply (@EqTySubstBool _ _ _ G D) ; auto.
+      - apply @EqTySubstBool with (D := D) ; auto.
 
       (* EqTyExfalso *)
-      - apply (@EqTyExfalso _ _ _ G A B u) ; auto.
+      - apply @EqTyExfalso with (u := u) ; auto.
 
       (* CongProd *)
       - apply CongProd ; auto.
@@ -261,7 +262,7 @@ Proof.
       - apply CongId ; auto.
 
       (* CongTySubst *)
-      - apply (@CongTySubst _ _ _ G D A B sbs sbt) ; auto.
+      - apply @CongTySubst with (D := D) ; auto.
 
       (* CongSimProd *)
       - apply CongSimProd ; auto.
@@ -274,10 +275,10 @@ Proof.
   - { destruct P ; doConfig.
 
       (* EqTyConv *)
-      - apply (@EqTyConv _ _ _ G A B) ; auto.
+      - apply @EqTyConv with (A := A) ; auto.
 
       (* EqCtxConv *)
-      - apply (@EqCtxConv _ _ _ G D) ; auto.
+      - apply @EqCtxConv with (G := G) ; auto.
 
       (* EqRefl *)
       - apply EqRefl ; auto.
@@ -286,13 +287,13 @@ Proof.
       - apply EqSym ; auto.
 
       (* EqTrans *)
-      - apply (@EqTrans _ _ _ G A u v w) ; auto.
+      - apply @EqTrans with (v := v) ; auto.
 
       (* EqIdSubst *)
       - apply EqIdSubst ; auto.
 
       (* EqSubstComp *)
-      - apply (@EqSubstComp _ _ _ G D E); auto.
+      - apply @EqSubstComp with (D := D) (E := E) ; auto.
 
       (* EqSubstWeak *)
       - apply EqSubstWeak ; auto.
@@ -305,41 +306,41 @@ Proof.
       - apply EqSubstZeroSucc ; auto.
 
       (* EqSubstShiftZero *)
-      - apply (@EqSubstShiftZero _ _ _ G D) ; auto.
+      - apply @EqSubstShiftZero with (D := D) ; auto.
 
       (* EqSubstShiftSucc *)
-      - apply (@EqSubstShiftSucc _ _ _ G D) ; auto.
+      - apply @EqSubstShiftSucc with (D := D) ; auto.
 
       (* EqSubstAbs *)
-      - apply (@EqSubstAbs _ _ _ G D) ; auto.
+      - apply @EqSubstAbs with (D := D) ; auto.
 
       (* EqSubstApp *)
-      - apply (@EqSubstApp _ _ _ G D) ; auto.
+      - apply @EqSubstApp with (D := D) ; auto.
 
       (* EqSubstRefl *)
-      - apply (@EqSubstRefl _ _ _ G D) ; auto.
+      - apply @EqSubstRefl with (D := D) ; auto.
 
       (* EqSubstJ *)
-      - apply (@EqSubstJ _ _ _ G D) ; auto.
+      - apply @EqSubstJ with (D := D) ; auto.
 
      (* This rule is subsumed by EqTermExfalso *)
       (* EqSubstExfalso *)
-      - apply (@EqSubstExfalso _ _ _ G D) ; auto.
+      - apply @EqSubstExfalso with (D := D) ; auto.
 
       (* EqSubstUnit *)
-      - apply (@EqSubstUnit _ _ _ G D) ; auto.
+      - apply @EqSubstUnit with (D := D) ; auto.
 
       (* EqSubstTrue *)
-      - apply (@EqSubstTrue _ _ _ G D) ; auto.
+      - apply @EqSubstTrue with (D := D) ; auto.
 
       (* EqSubstFalse *)
-      - apply (@EqSubstFalse _ _ _ G D) ; auto.
+      - apply @EqSubstFalse with (D := D) ; auto.
 
       (* EqSubstCond *)
-      - apply (@EqSubstCond _ _ _ G D); auto.
+      - apply @EqSubstCond with (D := D) ; auto.
 
       (* EqTermExfalso *)
-      - apply (@EqTermExfalso _ _ _ G A u v w); auto.
+      - apply @EqTermExfalso with (w := w) ; auto.
 
       (* UnitEta *)
       - apply UnitEta ; auto.
@@ -378,7 +379,7 @@ Proof.
       - apply CongCond ; auto.
 
       (* CongTermSubst *)
-      - apply (@CongTermSubst _ _ _ G D) ; auto.
+      - apply @CongTermSubst with (D := D) ; auto.
 
       (* CongPair *)
       - apply CongPair ; auto.

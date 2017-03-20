@@ -17,6 +17,7 @@ Section Inversion.
 
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configProdEta : config.ProdEta}.
 
 Fixpoint TermAbsInversion {G A B u T}
          (H : ptt.isterm G (lam A B u) T) {struct H} :

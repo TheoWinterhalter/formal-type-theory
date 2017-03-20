@@ -14,6 +14,8 @@ Ltac doConfig :=
       let H := fresh "reflectionFlag" in intros H
     | simpleproductsFlag =>
       let H := fresh "simpleproductsFlag" in intros H
+    | prodetaFlag =>
+      let H := fresh "prodetaFlag" in intros H
     | _ => idtac
     end
   | |- ?P =>
@@ -23,6 +25,7 @@ Ltac doConfig :=
   | H : precondFlag |- precondFlag => exact H
   | H : reflectionFlag |- reflectionFlag => exact H
   | H : simpleproductsFlag |- simpleproductsFlag => exact H
+  | H : prodetaFlag |- prodetaFlag => exact H
   | _ => idtac
   end ;
   (* Configure the hypotheses *)
@@ -43,6 +46,10 @@ Ltac doConfig :=
      | @simpleproductsFlag ?F =>
        match goal with
        | R : @simpleproductsFlag F |- _ => specialize (H R)
+       end
+     | @prodetaFlag ?F =>
+       match goal with
+       | R : @prodetaFlag F |- _ => specialize (H R)
        end
      end
    | _ => idtac

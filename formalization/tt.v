@@ -9,6 +9,7 @@ Section TypeTheoryRules.
 Context `{ConfigPrecond : config.Precond}.
 Context `{ConfigReflection : config.Reflection}.
 Context `{ConfigSimpleProducts : config.SimpleProducts}.
+Context `{ConfigProdEta : config.ProdEta}.
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
@@ -17,6 +18,9 @@ Notation "'extensional' r" :=
 
 Notation "'simpleproduct' r" :=
   (forall { _ : simpleproductsFlag }, r) (only parsing, at level 97).
+
+Notation "'prodeta' r" :=
+  (forall { _ : prodetaFlag }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
@@ -1380,7 +1384,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | ProdEta :
-       rule
+       prodeta rule
          parameters: {G A B u v},
          precond: isctx G
          precond: istype G A

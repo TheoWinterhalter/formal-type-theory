@@ -11,6 +11,7 @@ Section PttInversion.
 Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
 Context `{ConfigReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configProdEta : config.ProdEta}.
 
 Definition CtxExtendInversion G A (H : isctx (ctxextend G A)) :
   isctx G * istype G A.
@@ -26,12 +27,12 @@ Proof.
   - { split ; [(split ; [split | idtac]) | idtac].
 
       - assumption.
-      - apply (@TyCtxConv _ _ _ G0 G) ; auto.
+      - apply @TyCtxConv with (G := G0) ; auto.
         now apply TyIdInversion with (u := u) (v := v).
-      - apply (@TermCtxConv _ _ _ G0 G) ; auto.
+      - apply @TermCtxConv with (G := G0) ; auto.
         + now apply TyIdInversion with (u := u) (v:= v).
         + now config apply TyIdInversion with (u := u) (v:= v).
-      - apply (@TermCtxConv _ _ _ G0 G) ; auto.
+      - apply @TermCtxConv with (G := G0) ; auto.
         + now apply TyIdInversion with (u := u) (v:= v).
         + now config apply TyIdInversion with (u := u) (v:= v).
     }
@@ -52,9 +53,9 @@ Proof.
 
   - { split ; [ split | idtac ].
       - assumption.
-      - apply (@TyCtxConv _ _ _ G0 G) ; auto.
+      - apply @TyCtxConv with (G := G0) ; auto.
         now apply (TyProdInversion G0 A B).
-      - apply (@TyCtxConv _ _ _ (ctxextend G0 A) (ctxextend G A)).
+      - apply @TyCtxConv with (G := ctxextend G0 A).
         + now apply (TyProdInversion G0 A B).
         + apply EqCtxExtend ; auto.
           * now capply (TyProdInversion G0 A B).
@@ -65,7 +66,7 @@ Proof.
           now apply (TyProdInversion G0 A B).
         + capply CtxExtend.
           * assumption.
-          * apply (@TyCtxConv _ _ _ G0 G) ; auto.
+          * apply @TyCtxConv with (G := G0) ; auto.
             now apply (TyProdInversion G0 A B).
     }
 
@@ -83,9 +84,9 @@ Proof.
 
   - { split ; [ split | .. ].
       - assumption.
-      - apply (@TyCtxConv _ _ _ G0 G) ; auto.
+      - apply @TyCtxConv with (G := G0) ; auto.
         now apply (TySimProdInversion G0 A B).
-      - apply (@TyCtxConv _ _ _ G0 G) ; auto.
+      - apply @TyCtxConv with (G := G0) ; auto.
         now apply (TySimProdInversion G0 A B).
     }
 

@@ -12,6 +12,7 @@ Section PttSanity.
 Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{ConfigProdEta : config.ProdEta}.
 
 Axiom cheating : forall A, A.
 
@@ -37,10 +38,8 @@ Proof.
   (* SubstShift *)
   { split.
 
-    - capply CtxExtend.
-      + assumption.
-      + now capply (@TySubst _ _ _ G D).
-    - now capply CtxExtend.
+    - magic.
+    - magic.
   }
 
   (* SubstId *)
@@ -77,37 +76,27 @@ Proof.
   { config assumption. }
 
   (* TermCtxConv *)
-  { now capply (@TyCtxConv _ _ _ G D). }
+  { magic. }
 
   (* TermSubst *)
-  { now capply (@TySubst _ _ _ G D A sbs). }
+  { magic. }
 
   (* TermVarZero *)
   { ceapply TySubst.
     - now ceapply SubstWeak.
     - assumption.
-    - now capply (@CtxExtend _ _ _ G A).
+    - magic.
     - eassumption.
   }
 
   (* TermVarSucc *)
-  { capply (@TySubst _ _ _ (ctxextend G B) G).
-    - now capply SubstWeak.
-    - assumption.
-    - now capply CtxExtend.
-    - assumption.
-  }
+  { magic. }
 
   (* TermAbs *)
   { now capply (@TyProd). }
 
   (* TermApp *)
-  { capply (@TySubst _ _ _ G (ctxextend G A)).
-    - now capply SubstZero.
-    - assumption.
-    - assumption.
-    - now capply CtxExtend.
-  }
+  { magic. }
 
   (* TermRefl *)
   { now capply TyId. }
@@ -128,17 +117,7 @@ Proof.
   { now capply TyBool. }
 
   (* TermCond *)
-  { ceapply (@TySubst _ _ _ G (ctxextend G Bool)).
-    + config capply SubstZero.
-      * assumption.
-      * now capply TyBool.
-      * assumption.
-    + assumption.
-    + assumption.
-    + capply CtxExtend.
-      * assumption.
-      * now capply TyBool.
-  }
+  { magic. }
 
   (* TermPair *)
   { magic. }
@@ -166,8 +145,8 @@ Proof.
 
   (* EqTyCtxConv *)
   { split.
-    - { now capply (@TyCtxConv _ _ _ G D). }
-    - { now capply (@TyCtxConv _ _ _ G D). }
+    - magic.
+    - magic.
   }
 
   (* EqTyRefl*)
@@ -191,47 +170,38 @@ Proof.
 
   (* EqTySubstComp *)
   { split.
-    - capply (@TySubst _ _ _ G D) ; auto.
-      capply (@TySubst _ _ _ D E) ; auto.
-    - capply (@TySubst _ _ _ G E) ; auto.
-      capply (@SubstComp _ _ _ G D E) ; auto.
+    - magic.
+    - magic.
   }
 
   (* EqTySubstProd *)
   { split.
-    - { capply (@TySubst _ _ _ G D) ; auto using TyProd. }
-    - { capply TyProd ; auto.
-        + capply (@TySubst _ _ _ _ (ctxextend D A)) ; auto.
-          * now capply SubstShift.
-          * capply CtxExtend ; auto.
-            now capply (@TySubst _ _ _ G D).
-          * now capply CtxExtend.
-        + now capply (@TySubst _ _ _ G D).
-      }
+    - magic.
+    - magic.
   }
 
   (* EqTySubstId *)
   { split.
-    - { capply (@TySubst _ _ _ G D) ; auto using TyId. }
-    - { capply TyId ; auto using (@TySubst _ _ _ G D), (@TermSubst _ _ _ G D). }
+    - magic.
+    - magic.
   }
 
   (* EqTySubstEmpty *)
   { split.
-    - { capply (@TySubst _ _ _ G D) ; auto using TyEmpty. }
-    - { now capply TyEmpty. }
+    - magic.
+    - magic.
   }
 
   (* EqTySubstUnit *)
   { split.
-    - { capply (@TySubst _ _ _ G D) ; auto using TyUnit. }
-    - { now capply TyUnit. }
+    - magic.
+    - magic.
   }
 
   (* EqTySubstBool *)
   { split.
-    - { capply (@TySubst _ _ _ G D) ; auto using TyBool. }
-    - { now capply TyBool. }
+    - magic.
+    - magic.
   }
 
   (* EqTyExfalso *)
@@ -240,27 +210,19 @@ Proof.
   (* CongProd *)
   { split.
     - { now capply TyProd. }
-    - { capply TyProd ; auto.
-        capply (@TyCtxConv _ _ _ (ctxextend G A1)) ; auto using CtxExtend.
-        capply EqCtxExtend ; auto using CtxRefl.
-      }
+    - magic.
   }
 
   (* CongId *)
   { split.
     - { now capply TyId. }
-    - { capply TyId.
-        - assumption.
-        - assumption.
-        - now capply (@TermTyConv _ _ _ G A B v1).
-        - now capply (@TermTyConv _ _ _ G A B v2).
-      }
+    - magic.
   }
 
   (* CongTySubst *)
   { split.
-    - { now capply (@TySubst _ _ _ G D). }
-    - { now capply (@TySubst _ _ _ G D). }
+    - magic.
+    - magic.
   }
 
   (* CongSimProd *)
@@ -309,9 +271,7 @@ Proof.
   (* EqCtxExtend *)
   { split.
     - now capply CtxExtend.
-    - capply CtxExtend.
-      + assumption.
-      + capply (@TyCtxConv _ _ _ G D) ; auto.
+    - magic.
   }
 
 Qed.
@@ -351,12 +311,7 @@ Proof.
   (* CongSubstZero *)
   - { split.
       - now capply SubstZero.
-      - capply (@SubstCtxConv _ _ _ G G (ctxextend G A2) (ctxextend G A1)) ;
-          auto using CtxExtend, CtxRefl, CtxSym.
-        + capply SubstZero ;
-            auto using (@TyCtxConv _ _ _ G G), (@TermCtxConv _ _ _ G G), (@TermTyConv _ _ _ G A1 A2).
-        + capply EqCtxExtend ;
-            auto using (@TyCtxConv _ _ _ G G), CtxRefl, (@EqTyCtxConv _ _ _ G G), EqTySym.
+      - magic.
     }
 
   (* CongSubstWeak *)
@@ -367,74 +322,55 @@ Proof.
 
   (* CongSubstComp *)
   - { split.
-      - now capply (@SubstComp _ _ _ G D E).
-      - now capply (@SubstComp _ _ _ G D E).
+      - magic.
+      - magic.
     }
 
   (* EqSubstCtxConv *)
   - { split.
-      - now capply (@SubstCtxConv _ _ _ G1 G2 D1 D2).
-      - now capply (@SubstCtxConv _ _ _ G1 G2 D1 D2).
+      - magic.
+      - magic.
     }
 
   (* CompAssoc *)
   - { split.
-      - capply (@SubstComp _ _ _ G E F) ; auto.
-        now capply (@SubstComp _ _ _ G D E).
-      - capply (@SubstComp _ _ _ G D F); auto.
-        now capply (@SubstComp _ _ _ D E F).
+      - magic.
+      - magic.
     }
 
   (* WeakNat *)
   - { split.
-      - capply (@SubstComp _ _ _ _ (ctxextend D A)) ;
-          auto using CtxExtend, (@TySubst _ _ _ G D), SubstShift, SubstWeak.
-      - capply (@SubstComp _ _ _ _ G) ;
-          auto using CtxExtend, (@TySubst _ _ _ G D), SubstWeak.
+      - magic.
+      - magic.
     }
 
   (* WeakZero *)
   - { split.
-      - capply (@SubstComp _ _ _ _ (ctxextend G A)) ;
-          auto using CtxExtend, SubstZero, SubstWeak.
-      - now capply SubstId.
+      - magic.
+      - magic.
     }
 
   (* ShiftZero *)
   - { split.
-      - capply (@SubstComp _ _ _ _ (ctxextend G (Subst A sbs))) ;
-          auto using CtxExtend, (@TySubst _ _ _ G D), SubstZero, (@TermSubst _ _ _ G D), SubstShift.
-      - capply (@SubstComp _ _ _ _ D) ;
-          auto using CtxExtend, SubstZero.
+      - magic.
+      - magic.
     }
 
   (* CompShift *)
   - { split.
-      - capply (@SubstComp _ _ _ _ (ctxextend D (Subst A sbt))) ;
-          auto using CtxExtend, (@TySubst _ _ _ D E), SubstShift.
-        + { capply (@SubstCtxConv _ _ _ (ctxextend G (Subst (Subst A sbt) sbs)) _
-                                 (ctxextend D (Subst A sbt))) ;
-            auto using CtxExtend, (@TySubst _ _ _ D E), (@TySubst _ _ _ G D), (@TySubst _ _ _ G E),
-                       (@SubstComp _ _ _ G D E), SubstShift, CtxRefl.
-            capply EqCtxExtend ;
-                auto using CtxRefl, (@TySubst _ _ _ G D), (@TySubst _ _ _ D E),
-                           (@TySubst _ _ _ G E), (@SubstComp _ _ _ G D E).
-              now capply (@EqTySubstComp _ _ _ G D E).
-          }
-        + capply CtxExtend ; auto.
-          capply (@TySubst _ _ _ G E) ; auto using (@SubstComp _ _ _ G D E).
-      - capply SubstShift ; auto using (@SubstComp _ _ _ G D E).
+      - magic. Unshelve. all:magic. Unshelve. all:strictmagic.
+      - magic.
     }
 
   (* CompIdRight *)
   - { split.
-      - capply (@SubstComp _ _ _ G G D) ; auto using SubstId.
+      - magic.
       - assumption.
     }
 
   (* CompIdLeft *)
   - { split.
-      - capply (@SubstComp _ _ _ G D D) ; auto using SubstId.
+      - magic.
       - assumption.
     }
 Qed.
@@ -454,14 +390,14 @@ Proof.
 
   (* EqTyConv *)
   - { split.
-      - { now capply (@TermTyConv _ _ _ G A B u). }
-      - { now capply (@TermTyConv _ _ _ G A B v). }
+      - magic.
+      - magic.
     }
 
   (* EqCtxConv *)
   - { split.
-      - { now capply (@TermCtxConv _ _ _ G D A). }
-      - { now capply (@TermCtxConv _ _ _ G D A). }
+      - magic.
+      - magic.
     }
 
   (* EqRefl *)
@@ -484,39 +420,19 @@ Proof.
 
   (* EqIdSubst *)
   - { split.
-      - { capply (@TermTyConv _ _ _ G (Subst A sbid) A).
-          - capply (@TermSubst _ _ _ G G) ; auto using SubstId.
-          - now capply EqTyIdSubst.
-          - assumption.
-          - capply (@TySubst _ _ _ G G) ; auto using SubstId.
-          - assumption.
-        }
+      - magic.
       - { assumption. }
     }
 
   (* EqSubstComp *)
   - { split.
-      - { capply (@TermTyConv _ _ _ G (Subst (Subst A sbt) sbs) (Subst A (sbcomp sbt sbs))).
-          - capply (@TermSubst _ _ _ G D) ; auto.
-            + now capply (@TermSubst _ _ _ D E).
-            + now capply (@TySubst _ _ _ D E).
-          - now capply (@EqTySubstComp _ _ _ G D E).
-          - assumption.
-          - capply (@TySubst _ _ _ G D) ; auto.
-            now capply (@TySubst _ _ _ D E).
-          - capply (@TySubst _ _ _ G E) ; auto.
-            now capply (@SubstComp _ _ _ G D E).
-        }
-      - { capply (@TermSubst _ _ _ G E) ; auto.
-          now capply (@SubstComp _ _ _ G D E).
-        }
+      - magic. Unshelve. all:strictmagic.
+      - magic.
     }
 
   (* EqSubstWeak *)
   - { split.
-      - { capply (@TermSubst _ _ _ _ G) ; auto using CtxExtend.
-          now capply SubstWeak.
-        }
+      - magic.
       - { now capply TermVarSucc. }
     }
 

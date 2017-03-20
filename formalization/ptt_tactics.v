@@ -9,7 +9,8 @@ Require Import syntax.
 Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
 
 (* Some tactic to compose substitutions. *)
-Lemma eqtype_subst_left `{config.Reflection} `{config.SimpleProducts} :
+Lemma eqtype_subst_left
+  `{config.Reflection} `{config.SimpleProducts} `{config.ProdEta} :
   forall {G D E A B sbs sbt},
     issubst sbs G D ->
     issubst sbt D E ->
@@ -34,7 +35,8 @@ Proof.
     ceapply SubstComp ; eassumption.
 Qed.
 
-Lemma eqterm_subst_left `{config.Reflection} `{config.SimpleProducts} :
+Lemma eqterm_subst_left
+  `{config.Reflection} `{config.SimpleProducts} `{config.ProdEta} :
   forall {G D E A u v sbs sbt},
     issubst sbs G D ->
     issubst sbt D E ->
@@ -123,7 +125,8 @@ Ltac compsubst1 :=
   | |- ?G => fail "Not a goal handled by compsubst" G
   end.
 
-Lemma EqCompZero `{config.Reflection} `{config.SimpleProducts} :
+Lemma EqCompZero
+  `{config.Reflection} `{config.SimpleProducts} `{config.ProdEta} :
   forall {G D A u sbs},
     issubst sbs G D ->
     isterm D u A ->
@@ -461,7 +464,8 @@ Ltac pushsubst1 := prepushsubst1 true.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
    some ZeroShift3 if ever we add a constructor that has three variables. *)
-Lemma ZeroShift2 `{config.Reflection} `{config.SimpleProducts} :
+Lemma ZeroShift2
+  `{config.Reflection} `{config.SimpleProducts} `{config.ProdEta} :
   forall {G D A B C u sbs},
     eqtype D C (Subst B (sbzero A u)) ->
     isterm D u A ->

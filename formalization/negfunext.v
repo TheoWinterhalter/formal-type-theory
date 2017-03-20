@@ -18,6 +18,8 @@ Module Stt.
     := {| config.precondFlag := config.Yes |}.
   Context `{configReflection : config.Reflection}.
   Context `{ConfigSimpleProducts : config.SimpleProducts}.
+  Local Instance hasProdEta : config.ProdEta
+    := {| config.prodetaFlag := config.No |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -42,6 +44,8 @@ Module Ttt.
   Context `{configReflection : config.Reflection}.
   Local Instance hasSimpleProducts : config.SimpleProducts
     := {| config.simpleproductsFlag := config.Yes |}.
+  Local Instance hasProdEta : config.ProdEta
+    := {| config.prodetaFlag := config.No |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -798,129 +802,7 @@ Proof.
         }
 
       (* ProdEta *)
-      - { simpl. capply PairEta.
-          - capply ProdEta.
-            + capply TermProj1.
-              now apply (trans_isterm G u (Prod A B)).
-            + capply TermProj1.
-              now apply (trans_isterm G v (Prod A B)).
-            + ceapply EqTrans ; [
-                idtac
-              | ceapply EqTrans ; [
-                  apply (trans_eqterm _ _ _ _ H)
-                | idtac
-                ]
-              ].
-              * simpl. ceapply EqTyConv.
-                -- capply CongApp.
-                   ++ capply EqTyRefl.
-                      config apply @TySubst with (D := trans_ctx G).
-                      ** capply SubstWeak. ih.
-                      ** ih.
-                   ++ capply EqTyRefl.
-                      ceapply TySubst.
-                      ** ceapply SubstShift.
-                         --- capply SubstWeak. ih.
-                         --- ih.
-                      ** now apply (trans_istype (ctxextend G A) B).
-                   ++ ceapply EqTyConv.
-                      ** ceapply EqTrans.
-                         --- ceapply EqSubstProj1.
-                             +++ capply SubstWeak. ih.
-                             +++ now apply (trans_isterm G u (Prod A B)).
-                         --- capply CongProj1.
-                             +++ capply EqRefl.
-                                 ceapply TermTyConv.
-                                 *** ceapply TermSubst.
-                                     ---- capply SubstWeak. ih.
-                                     ---- now apply (trans_isterm G u (Prod A B)).
-                                 *** simpl.
-                                     ceapply EqTySubstSimProd.
-                                     ---- capply SubstWeak. ih.
-                                     ---- capply TyProd.
-                                          now apply (trans_istype (ctxextend G A) B).
-                                     ---- capply TyBool. ih.
-                             +++ ceapply EqTySubstProd.
-                                 *** capply SubstWeak. ih.
-                                 *** now apply (trans_istype (ctxextend G A) B).
-                             +++ ceapply EqTySubstBool.
-                                 capply SubstWeak. ih.
-                      ** ceapply EqTySubstProd.
-                         --- capply SubstWeak. ih.
-                         --- now apply (trans_istype (ctxextend G A) B).
-                   ++ capply EqRefl. capply TermVarZero. ih.
-                -- ceapply EqTyTrans.
-                   ++ ceapply EqTySubstComp.
-                      ** now apply (trans_istype (ctxextend G A) B).
-                      ** capply SubstZero. capply TermVarZero. ih.
-                      ** simpl. capply SubstShift.
-                         --- capply SubstWeak. ih.
-                         --- ih.
-                   ++ ceapply EqTyTrans.
-                      ** ceapply CongTySubst.
-                         --- apply (cheating (eqsubst _ sbid _ (ctxextend (trans_ctx G) (trans_type A)))).
-                             (* How to prove it?? *)
-                         --- capply EqTyRefl.
-                             now apply (trans_istype (ctxextend G A) B).
-                      ** capply EqTyIdSubst.
-                         now apply (trans_istype (ctxextend G A) B).
-              * simpl. capply EqSym. ceapply EqTyConv.
-                -- capply CongApp.
-                   ++ capply EqTyRefl.
-                      config apply @TySubst with (D := trans_ctx G).
-                      ** capply SubstWeak. ih.
-                      ** ih.
-                   ++ capply EqTyRefl.
-                      ceapply TySubst.
-                      ** ceapply SubstShift.
-                         --- capply SubstWeak. ih.
-                         --- ih.
-                      ** now apply (trans_istype (ctxextend G A) B).
-                   ++ ceapply EqTyConv.
-                      ** ceapply EqTrans.
-                         --- ceapply EqSubstProj1.
-                             +++ capply SubstWeak. ih.
-                             +++ now apply (trans_isterm G v (Prod A B)).
-                         --- capply CongProj1.
-                             +++ capply EqRefl.
-                                 ceapply TermTyConv.
-                                 *** ceapply TermSubst.
-                                     ---- capply SubstWeak. ih.
-                                     ---- now apply (trans_isterm G v (Prod A B)).
-                                 *** simpl.
-                                     ceapply EqTySubstSimProd.
-                                     ---- capply SubstWeak. ih.
-                                     ---- capply TyProd.
-                                          now apply (trans_istype (ctxextend G A) B).
-                                     ---- capply TyBool. ih.
-                             +++ ceapply EqTySubstProd.
-                                 *** capply SubstWeak. ih.
-                                 *** now apply (trans_istype (ctxextend G A) B).
-                             +++ ceapply EqTySubstBool.
-                                 capply SubstWeak. ih.
-                      ** ceapply EqTySubstProd.
-                         --- capply SubstWeak. ih.
-                         --- now apply (trans_istype (ctxextend G A) B).
-                   ++ capply EqRefl. capply TermVarZero. ih.
-                -- ceapply EqTyTrans.
-                   ++ ceapply EqTySubstComp.
-                      ** now apply (trans_istype (ctxextend G A) B).
-                      ** capply SubstZero. capply TermVarZero. ih.
-                      ** simpl. capply SubstShift.
-                         --- capply SubstWeak. ih.
-                         --- ih.
-                   ++ ceapply EqTyTrans.
-                      ** ceapply CongTySubst.
-                         --- apply (cheating (eqsubst _ sbid _ (ctxextend (trans_ctx G) (trans_type A)))).
-                             (* How to prove it?? *)
-                         --- capply EqTyRefl.
-                             now apply (trans_istype (ctxextend G A) B).
-                      ** capply EqTyIdSubst.
-                         now apply (trans_istype (ctxextend G A) B).
-          - todo. (* It doesn't hold does it? *)
-          - now apply (trans_isterm G u (Prod A B)).
-          - now apply (trans_isterm G v (Prod A B)).
-        }
+      - todo. (* We shouldn't have to deal with this case! *)
 
       (* JRefl *)
       - { simpl. capply JRefl.
@@ -1139,6 +1021,7 @@ Definition funextUnit :=
                               (app (var 1) Unit Unit (var 0))))
                     (Id (Prod Unit Unit) (var 1) (var 0)))).
 
+(* We'd like to have magic available *)
 Lemma funextContradiction :
   { bot : term
   & Ttt.isterm ctxempty
