@@ -699,38 +699,91 @@ Proof.
                 config apply @TermSubst with (D := trans_ctx D).
                 -- ih.
                 -- ih.
-            + todo. (* lazy *)
+            + ceapply EqTyTrans.
+              * ceapply EqTySubstComp.
+                -- now apply (trans_istype (ctxextend D A) B).
+                -- capply SubstZero.
+                   config apply @TermSubst with (D := trans_ctx D).
+                   ++ ih.
+                   ++ ih.
+                -- simpl. capply SubstShift.
+                   ++ ih.
+                   ++ ih.
+              * capply EqTySym.
+                ceapply EqTyTrans.
+                -- ceapply EqTySubstComp.
+                   ++ now apply (trans_istype (ctxextend D A) B).
+                   ++ now apply (trans_issubst sbs G D).
+                   ++ capply SubstZero. ih.
+                -- config apply @CongTySubst with (D := trans_ctx (ctxextend D A)).
+                   ++ capply SubstSym.
+                      simpl. ceapply ShiftZero.
+                      ** ih.
+                      ** ih.
+                   ++ capply EqTyRefl. ih.
         }
 
       (* EqSubstRefl *)
-      - todo.
+      - { simpl. config apply @EqSubstRefl with (D := trans_ctx D).
+          - ih.
+          - ih.
+        }
 
       (* EqSubstJ *)
-      - todo.
+      - { simpl. config apply @EqSubstJ with (D := trans_ctx D).
+          - ih.
+          - ih.
+          - now apply (trans_istype _ C i4).
+          - now apply (trans_isterm _ _ _ i5).
+          - ih.
+          - now apply (trans_isterm _ _ _ i7).
+        }
 
       (* EqSubstExfalso *)
-      - todo.
+      - { simpl. config apply @EqSubstExfalso with (D := trans_ctx D).
+          - ih.
+          - now apply (trans_isterm D u Empty).
+          - ih.
+        }
 
       (* EqSubstUnit *)
-      - todo.
+      - { simpl. config apply @EqSubstUnit with (D := trans_ctx D). ih. }
 
       (* EqSubstTrue *)
-      - todo.
+      - { simpl. config apply @EqSubstTrue with (D := trans_ctx D). ih. }
 
       (* EqSubstFalse *)
-      - todo.
+      - { simpl. config apply @EqSubstFalse with (D := trans_ctx D). ih. }
 
       (* EqSubstCond *)
-      - todo.
+      - { simpl. config apply @EqSubstCond with (D := trans_ctx D).
+          - ih.
+          - now apply (trans_isterm D u Bool).
+          - now apply (trans_istype (ctxextend D Bool) C).
+          - now apply (trans_isterm D v _ i4).
+          - now apply (trans_isterm D w _ i5).
+        }
 
       (* EqTermExfalso *)
-      - todo.
+      - { config apply @EqTermExfalso with (w := trans_term w).
+          - ih.
+          - ih.
+          - now apply (trans_isterm G w Empty).
+        }
 
       (* UnitEta *)
-      - todo.
+      - { simpl. capply UnitEta.
+          - now apply (trans_isterm G u Unit).
+          - now apply (trans_isterm G v Unit).
+        }
 
       (* EqReflection *)
-      - todo.
+      - { config apply @EqReflection with (w1 := trans_term w1) (w2 := trans_term w2).
+          - now apply (trans_isterm G w1 (Id A u v)).
+          - (* now apply (trans_isterm G w2 (reflective A)). *)
+            (* Problem: trans_type and reflective should commute *)
+            todo.
+        }
 
       (* ProdBeta *)
       - todo.
