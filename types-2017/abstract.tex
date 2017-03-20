@@ -1,0 +1,199 @@
+\documentclass{easychair}
+
+\usepackage{doc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+
+\newcommand{\Id}[3]{\mathsf{Id}_{#1}(#2,#3)}
+\newcommand{\refl}[2]{\mathsf{refl}_{#1}\,#2}
+
+\newcommand{\ctx}{\Gamma}
+\newcommand{\isctx}{\ctx\;\mathsf{context}}
+\newcommand{\istype}[1]{\ctx \vdash #1 \;\mathsf{type}}
+\newcommand{\isterm}[2]{\ctx \vdash #1 : #2}
+
+%% Front Matter
+%%
+% Regular title as in the article class.
+%
+\title{A modular formalization of type theory in Coq}
+
+% Authors are joined by \and. Their affiliations are given by \inst, which indexes
+% into the list defined using \institute
+%
+\author{
+Andrej Bauer\inst{1}\thanks{
+The author acknowledges the financial support from the Slovenian Research Agency (research core funding No.~P1-0294) at Institute of Mathematics, Physics and Mechanics, Ljubljana, Slovenia.}
+\and
+Philipp G.~Haselwarter\inst{2}\thanks{This material is based upon work supported by the Air Force Office of Scientific Research, Air Force Materiel Command, USAF under Award No.~FA9550-14-1-0096.}
+\and
+Théo Winterhalter\inst{3}
+}
+
+% Institutes for affiliations are also joined by \and,
+\institute{
+  University of Ljubljana, Slovenia\\
+  \email{Andrej.Bauer@andrej.com}
+\and
+  University of Ljubljana, Slovenia\\
+  \email{philipp@haselwarter.org}
+\and
+   École Normale Supérieure Paris-Saclay, France\\
+   \email{theo.winterhalter@ens-cachan.fr}
+}
+
+%  \authorrunning{} has to be set for the shorter version of the authors' names;
+% otherwise a warning will be rendered in the running heads. When processed by
+% EasyChair, this command is mandatory: a document without \authorrunning
+% will be rejected by EasyChair
+
+\authorrunning{Bauer, Haselwarter and Winterhalter}
+
+% \titlerunning{} has to be set to either the main title or its shorter
+% version for the running heads. When processed by
+% EasyChair, this command is mandatory: a document without \titlerunning
+% will be rejected by EasyChair
+\titlerunning{A modular formalization of type theory in Coq}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  We present a complete formalization of type theory in the Coq proof assistant. We use
+  the type class mechanism to break down the formalization into fragments that can then be
+  combined to several variants of type theory. We prove basic meta-theorems guaranteeing
+  that our formulation is complete and sensible, as well as theorems that facilitate
+  applications. To test the library, we formalize a translation of type theory into type
+  theory by Boulier et al.\ which shows that function extensionality is not derivable.
+\end{abstract}
+
+\paragraph*{Introduction.}
+\label{sec:introduction}
+
+As anyone who has ever proved meta-theorems about dependent type theory will attest, the
+excitement of discovering a new fact is dulled by the drudgery of checking large boring
+proofs. In fact, just \emph{stating} precisely and completely all the rules of type theory
+is considered inhumane, and therefore omitted in practically all presentations of type
+theory. The received wisdom says that such informal rigor causes no harm and that
+everything is known to work out. This may well be the case---although how can we really
+know?---but we have learned the hard way that incomplete formulations of meta-theorems
+with sloppy proofs lure us into a morass of confusion and half-truths that hinders
+progress. In other words, we shall not trust ourselves again to have stated a meta-theorem
+about dependent type theory, and much less proved it, unless it is fully formalized. Our
+formalization of type theory is implemented in the Coq proof assistant~\cite{coq}, and is
+freely available at~\cite{reflections}.
+
+\paragraph*{The basic setup.}
+\label{sec:basic-setup}
+
+For our purposes (which have not come to fruition yet), we needed a formalization of
+several variants of type theory, which all shared common basic structure but differed in
+the inclusion or exclusion of certain principles and constructors. We intended to
+manipulate all parts of the syntax and the derivations, including substitutions and
+judgmental equalities. We thus opted for a ``deep'' formalization of the syntax and the
+rules as straightforward inductive types, thereby having complete control over the
+object-level theory, albeit at the price of having to perform manually various syntactic
+manipulations that a ``shallower'' embedding would simply pass on to the ambient type
+theory of the proof assistant. After several trials and make-overs we opted for a nameless
+representation of variables, explicit substitutions, and terms fully annotated with types.
+
+At present the formalization includes product and identity types, base types (the empty
+type, the unit type, and booleans), as well as simple products. The modular design ought
+to make it easy to add other constructions.
+
+% - syntax, judgments, inference rules
+% - explicit substitutions
+
+\paragraph*{Paranoid and economic inference rules.}
+
+% - paranoid vs. economic
+
+There is an amount of freedom in the formulation of inference rules. For example, the
+introduction rule for the identity type can be stated
+%
+\begin{equation*}
+  \text{as}\qquad
+  \frac{\isctx \qquad
+  \istype{A} \qquad
+  \isterm{u}{A}
+  }{\isterm{\refl{A}{u}}{\Id{A}{u}{u}}}
+  %
+  \qquad\text{or as}\qquad
+  %
+  \frac{\isterm{u}{A}
+  }{\isterm{\refl{A}{u}}{\Id{A}{u}{u}}}.
+\end{equation*}
+%
+We call the left one \emph{paranoid} and the right one \emph{economic}. It is generally
+preferable to have the paranoid version as an assumption and the economic one as the goal.
+We formulated type theory so that the paranoid or the economic variant of the rules can be
+chosen easily through a type class instance, and proved meta-theorems showing that they
+derive the same judgments. Thus, we can easily switch between them and use whichever is
+more convenient in a given situation.
+
+\paragraph*{Configurations and variants of type theory.}
+\label{sec:config-variant}
+
+% - configurability through type classes
+
+The inductive types for the syntax and the judgment forms are parameterized by type classes
+that either enable or disable various features of the formalization. By providing
+instances of the type classes, the user may combine the features to their liking. It is
+also possible to leave a feature unconfigured, and thus have a development which is
+agnostic with respect to it. At present we support the following features: paranoid
+vs.~economic rules, extensional vs.~intensional identity types, presence of simple product
+types, and presence of the $\eta$-rule for functions.
+
+\paragraph*{Sanity theorems and other meta-theorem.}
+\label{sec:sanity-theorems}
+
+In our experience it is easy to forget an inference rule, or just formulate it badly. We
+proved several meta-theorems which instill some trust in our formulation, and are
+generally useful to have:
+%
+\begin{itemize}
+\item \emph{sanity} theorems stating, e.g., that if $\isterm{u}{A}$ then $\istype{A}$ and $\isctx$,
+\item the paranoid and the economic variants derive the same judgments,
+\item uniqueness of typing: if $\isterm{u}{A}$ and $\isterm{u}{B}$ then $A$ and $B$ are
+  judgmentally equal.
+\end{itemize}
+%
+Another desirable theorem (which we intend to prove) is elimination of explicit
+substitutions: every term is judgmentally equal to one without substitutions. A proof of
+this fact amounts to computation of substitutions at the meta-level.
+
+% meta-theorems:
+% - equivalence of paranoid and economic
+% - sanity theorems
+% - uniqueness of typing
+
+% what it takes to add another feature (say, simple products)
+
+\paragraph*{Conclusion.}
+
+To test the viability of our development we used it to state a translation of type theory
+into type theory which invalidates function extensionality, following the work of
+S.~Boulier, P.-M.~Pédrot, and N.~Tabareau~\cite{boulier17:_next_syntac_model_type_theor}.
+Our original motivation was formalization of elimination of equality reflection, but we
+leave that for future work.
+
+There are several ways in which the library can be improved: we can provide better tactics
+for constructing terms and derivations, improve the syntax and notations, and include more
+features, such as inductive types and universes.
+
+% application: funext is not derivable
+
+% todo:
+% - better magic
+% - better syntactic support
+% - N, universe, inductive types
+%  elimination of substitutions
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+
+
+\end{document}
