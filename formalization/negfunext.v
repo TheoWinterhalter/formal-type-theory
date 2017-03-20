@@ -31,6 +31,7 @@ Module Stt.
   End Stt.
 
 End Stt.
+Require ptt.
 
 (* Target type theory *)
 Module Ttt.
@@ -59,7 +60,7 @@ End Ttt.
 Section Translation.
 
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{foo_configSimpleProducts : config.SimpleProducts}.
 
 Axiom cheating : forall A : Type, A.
 Ltac todo := apply cheating.
@@ -237,7 +238,6 @@ Proof.
       (* TyProd *)
       - { simpl.
           capply TySimProd.
-          - todo. (* Where is the hypothesis that Ttt has simple products? *)
           - capply TyProd.
             now apply (trans_istype (ctxextend G A) B).
           (* Too bad ih doesn't deal with this*)
@@ -260,7 +260,10 @@ Proof.
       - capply TyBool ; ih.
 
       (* TySimProd *)
-      - { simpl. capply TySimProd.
+      - { simpl.
+Set Printing All. idtac. unfold Ttt.istype.
+apply TySimProd. 
+ capply TySimProd.
           - todo. (* I'm not good with type classes yet *)
           - ih.
           - ih.
@@ -301,7 +304,6 @@ Proof.
       (* TermAbs *)
       - { simpl.
           capply TermPair.
-          - todo. (* type classes problem *)
           - capply TermAbs.
             now apply (trans_isterm (ctxextend G A) u B).
           - capply TermTrue. ih.
@@ -311,7 +313,6 @@ Proof.
       - { simpl.
           capply TermApp.
           - capply TermProj1.
-            + todo. (* type classes *)
             + now apply (trans_isterm G u (Prod A B)).
           - ih.
         }
@@ -358,20 +359,17 @@ Proof.
 
       (* TermPair *)
       - { simpl. capply TermPair.
-          - todo. (* type classes *)
           - ih.
           - ih.
         }
 
       (* TermProj1 *)
       - { simpl. capply TermProj1.
-          - todo. (* type classes *)
           - now apply (trans_isterm G p (SimProd A B)).
         }
 
       (* TermProj2 *)
       - { simpl. capply TermProj2.
-          - todo. (* type classes *)
           - now apply (trans_isterm G p (SimProd A B)).
         }
     }
@@ -464,13 +462,11 @@ Proof.
       (* EqTySubstProd *)
       - { simpl. ceapply EqTyTrans.
           - ceapply EqTySubstSimProd.
-            + todo. (* type classes *)
             + now apply (trans_issubst sbs G D).
             + capply TyProd.
               now apply (trans_istype (ctxextend D A) B).
             + capply TyBool. ih.
           - capply CongSimProd.
-            + todo. (* type classes *)
             + config apply @EqTySubstProd with (D := trans_ctx D).
               * ih.
               * now apply (trans_istype (ctxextend D A) B).
@@ -502,7 +498,6 @@ Proof.
 
       (* CongProd *)
       - { simpl. capply CongSimProd.
-          - todo. (* type classes *)
           - capply CongProd.
             + ih.
             + now apply (trans_eqtype (ctxextend G A1) A2 B2).
@@ -520,14 +515,12 @@ Proof.
 
       (* CongSimProd *)
       - { simpl. capply CongSimProd.
-          - todo. (* type classes *)
           - ih.
           - ih.
         }
 
       (* EqTySubstSimProd *)
       - { simpl. config apply @EqTySubstSimProd with (D := trans_ctx D).
-          - todo. (* types classes *)
           - ih.
           - ih.
           - ih.
@@ -603,20 +596,17 @@ Proof.
       - { simpl. ceapply EqTrans.
           - ceapply EqTyConv.
             + ceapply EqSubstPair.
-              * todo. (* type classes *)
               * now apply (trans_issubst sbs G D).
               * capply TermAbs.
                 now apply (trans_isterm (ctxextend D A) u B).
               * capply TermTrue. ih.
             + capply CongSimProd.
-              * todo. (* type classes *)
               * config apply @EqTySubstProd with (D := trans_ctx D).
                 -- ih.
                 -- now apply (trans_istype (ctxextend D A) B).
               * config apply @EqTySubstBool with (D := trans_ctx D). ih.
           - ceapply EqTyConv.
             + capply CongPair.
-              * todo. (* type classes *)
               * ceapply EqTyConv.
                 -- config apply @EqSubstAbs with (D := trans_ctx D).
                    ++ now apply (trans_isterm (ctxextend D A) u B).
@@ -636,7 +626,6 @@ Proof.
                 -- now apply (trans_istype (ctxextend D A) B).
               * config apply @EqTySubstBool with (D := trans_ctx D). ih.
             + capply CongSimProd.
-              * todo. (* type classes *)
               * config apply @EqTySubstProd with (D := trans_ctx D).
                 -- ih.
                 -- now apply (trans_istype (ctxextend D A) B).
@@ -647,7 +636,6 @@ Proof.
       - { simpl. ceapply EqTrans.
           - config apply @EqSubstApp with (D := trans_ctx D).
             + capply TermProj1.
-              * todo. (* type classes *)
               * now apply (trans_isterm D u (Prod A B)).
             + ih.
             + ih.
@@ -666,7 +654,6 @@ Proof.
               * ceapply EqTrans.
                 -- ceapply EqTyConv.
                    ++ config apply @EqSubstProj1 with (D := trans_ctx D).
-                      ** todo. (* type classes *)
                       ** ih.
                       ** now apply (trans_isterm D u (Prod A B)).
                    ++ config apply @EqTySubstProd with (D := trans_ctx D).
@@ -674,7 +661,6 @@ Proof.
                       ** now apply (trans_istype (ctxextend D A) B).
                 -- ceapply EqTyConv.
                    ++ capply CongProj1.
-                      ** todo. (* type classes *)
                       ** capply EqRefl.
                          ceapply TermTyConv.
                          --- config apply @TermSubst with (D := trans_ctx D).
@@ -682,7 +668,6 @@ Proof.
                              +++ now apply (trans_isterm D u (Prod A B)).
                          --- simpl.
                              config apply @EqTySubstSimProd with (D := trans_ctx D).
-                             +++ todo. (* type classes *)
                              +++ ih.
                              +++ capply TyProd.
                                  now apply (trans_istype (ctxextend D A) B).
@@ -792,7 +777,6 @@ Proof.
             + capply EqTyRefl.
               now apply (trans_istype (ctxextend G A) B).
             + capply Proj1Pair.
-              * todo. (* type classes *)
               * capply TermAbs.
                 now apply (trans_isterm (ctxextend G A) u B).
               * capply TermTrue. ih.
@@ -828,7 +812,6 @@ Proof.
 
       (* CongAbs *)
       - { simpl. capply CongPair.
-          - todo. (* type classes *)
           - capply CongAbs.
             + ih.
             + now apply (trans_eqtype _ _ _ e0).
@@ -845,7 +828,6 @@ Proof.
           - ih.
           - now apply (trans_eqtype _ _ _ e0).
           - capply CongProj1.
-            + todo. (* type classes *)
             + now apply (trans_eqterm _ _ _ _ H).
             + capply CongProd.
               * ih.
@@ -886,7 +868,6 @@ Proof.
 
       (* CongPair *)
       - { simpl. capply CongPair.
-          - todo. (* type classes *)
           - ih.
           - ih.
           - ih.
@@ -895,7 +876,6 @@ Proof.
 
       (* CongProj1 *)
       - { simpl. capply CongProj1.
-          - todo. (* type classes *)
           - now apply (trans_eqterm G p1 p2 (SimProd A1 B1)).
           - ih.
           - ih.
@@ -903,7 +883,6 @@ Proof.
 
       (* CongProj2 *)
       - { simpl. capply CongProj2.
-          - todo. (* type classes *)
           - now apply (trans_eqterm G p1 p2 (SimProd A1 B1)).
           - ih.
           - ih.
@@ -911,7 +890,6 @@ Proof.
 
       (* EqSubstPair *)
       - { simpl. config apply @EqSubstPair with (D := trans_ctx D).
-          - todo. (* type classes *)
           - ih.
           - ih.
           - ih.
@@ -919,28 +897,24 @@ Proof.
 
       (* EqSubstProj1 *)
       - { simpl. config apply @EqSubstProj1 with (D := trans_ctx D).
-          - todo. (* type classes *)
           - ih.
           - now apply (trans_isterm D p (SimProd A B)).
         }
 
       (* EqSubstProj2 *)
       - { simpl. config apply @EqSubstProj2 with (D := trans_ctx D).
-          - todo. (* type classes *)
           - ih.
           - now apply (trans_isterm D p (SimProd A B)).
         }
 
       (* Proj1Pair *)
       - { simpl. capply Proj1Pair.
-          - todo. (* type classes *)
           - ih.
           - ih.
         }
 
       (* Proj2Pair *)
       - { simpl. capply Proj2Pair.
-          - todo. (* type classes *)
           - ih.
           - ih.
         }

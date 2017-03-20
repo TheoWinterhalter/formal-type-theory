@@ -16,7 +16,10 @@ Ltac doConfig :=
       let H := fresh "simpleproductsFlag" in intros H
     | _ => idtac
     end
-  | |- Yes => exact tt
+  | |- ?P =>
+    match (eval cbv in P) with
+    | Yes => exact yes
+    end
   | H : precondFlag |- precondFlag => exact H
   | H : reflectionFlag |- reflectionFlag => exact H
   | H : simpleproductsFlag |- simpleproductsFlag => exact H
