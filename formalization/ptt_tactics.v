@@ -5,12 +5,16 @@ Require Import config_tactics.
 Require Import tt.
 Require Import syntax.
 
-(* Work with precond. *)
-Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
+Section Checking1.
+
+(* We are as modular as can be *)
+Context `{configPrecond : config.Precond}.
+Context `{configReflection : config.Reflection}.
+Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configProdEta : config.ProdEta}.
 
 (* Some tactic to compose substitutions. *)
-Lemma eqtype_subst_left
-  `{config.Reflection} `{config.SimpleProducts} `{config.ProdEta} :
+Lemma eqtype_subst_left :
   forall {G D E A B sbs sbt},
     issubst sbs G D ->
     issubst sbt D E ->
@@ -25,6 +29,25 @@ Lemma eqtype_subst_left
     eqtype G (Subst (Subst A sbt) sbs) B.
 Proof.
   intros.
+  (* ceapply EqTyTrans. *)
+  (* - ceapply EqTySubstComp. *)
+  (*   + eassumption. *)
+  (*   + eassumption. *)
+  (*   + eassumption. *)
+  (*   + match goal with *)
+  (*     | |- ?P -> ?Q => *)
+  (*       (* match (eval cbv in P) with *) *)
+  (*       (* | config.Yes => intros _ *) *)
+  (*       (* | config.No => let H := fresh "H" in (intros H ; now elim H) *) *)
+  (*       (* | config.precondFlag => *) *)
+  (*       (*   let H := fresh "precondFlag" in intros H *) *)
+  (*       (* end *) *)
+  (*       idtac "P =" P ; *)
+  (*       match eval cbv in P with *)
+  (*       | ?H => idtac "eval cbv in H =" H *)
+  (*       end *)
+  (*     end. *)
+
   ceapply EqTyTrans ; [
     ceapply EqTySubstComp ; eassumption
   | try assumption ..
@@ -35,8 +58,7 @@ Proof.
     ceapply SubstComp ; eassumption.
 Qed.
 
-Lemma eqterm_subst_left
-  `{config.Reflection} `{config.SimpleProducts} `{config.ProdEta} :
+Lemma eqterm_subst_left :
   forall {G D E A u v sbs sbt},
     issubst sbs G D ->
     issubst sbt D E ->
@@ -104,6 +126,8 @@ Proof.
   - ceapply TermTyConv ; eassumption.
 Qed.
 
+End Checking1.
+
 Ltac compsubst1 :=
   doConfig ;
   lazymatch goal with
@@ -125,8 +149,14 @@ Ltac compsubst1 :=
   | |- ?G => fail "Not a goal handled by compsubst" G
   end.
 
-Lemma EqCompZero
-  `{config.Reflection} `{config.SimpleProducts} `{config.ProdEta} :
+Section Checking2.
+
+Context `{configPrecond : config.Precond}.
+Context `{configReflection : config.Reflection}.
+Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configProdEta : config.ProdEta}.
+
+Lemma EqCompZero :
   forall {G D A u sbs},
     issubst sbs G D ->
     isterm D u A ->
@@ -269,6 +299,8 @@ Proof.
   | assumption ..
   ].
 Qed.
+
+End Checking2.
 
 
 Ltac cando token :=
@@ -462,10 +494,16 @@ Ltac prepushsubst1 sym :=
 
 Ltac pushsubst1 := prepushsubst1 true.
 
+Section Checking3.
+
+Context `{configPrecond : config.Precond}.
+Context `{configReflection : config.Reflection}.
+Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configProdEta : config.ProdEta}.
+
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
    some ZeroShift3 if ever we add a constructor that has three variables. *)
-Lemma ZeroShift2
-  `{config.Reflection} `{config.SimpleProducts} `{config.ProdEta} :
+Lemma ZeroShift2 :
   forall {G D A B C u sbs},
     eqtype D C (Subst B (sbzero A u)) ->
     isterm D u A ->
@@ -960,6 +998,8 @@ Proof.
   2:eassumption.
   all:assumption.
 Qed.
+
+End Checking3.
 
 (* A simplify tactic to simplify substitutions *)
 Ltac ecomp lm :=

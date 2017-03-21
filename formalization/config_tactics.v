@@ -5,7 +5,7 @@ Ltac doConfig :=
   (* configure the goal *)
   match goal with
   | |- ?P -> ?Q =>
-    match (eval cbv in P) with
+    match (eval cbn in P) with
     | Yes => intros _
     | No => let H := fresh "H" in (intros H ; now elim H)
     | precondFlag =>
@@ -19,7 +19,7 @@ Ltac doConfig :=
     | _ => idtac
     end
   | |- ?P =>
-    match (eval cbv in P) with
+    match (eval cbn in P) with
     | Yes => exact yes
     end
   | H : precondFlag |- precondFlag => exact H
@@ -32,7 +32,7 @@ Ltac doConfig :=
   repeat
   (match goal with
    | H : ?P -> ?Q |- _ =>
-     match (eval cbv in P) with
+     match (eval cbn in P) with
      | Yes => specialize (H yes)
      | No => clear H
      | @precondFlag ?F =>
@@ -53,7 +53,7 @@ Ltac doConfig :=
        end
      end
    | H : ?P |- _ =>
-     match (eval cbv in P) with
+     match (eval cbn in P) with
      | No => destruct H
      end
    | _ => idtac
