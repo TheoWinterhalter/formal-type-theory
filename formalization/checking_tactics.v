@@ -999,6 +999,92 @@ Proof.
   all:assumption.
 Qed.
 
+Lemma FlexWeakZero :
+  forall {G A B u},
+    isctx G ->
+    (config.precondFlag -> istype G A) ->
+    (config.precondFlag -> istype G B) ->
+    isterm G u A ->
+    eqtype G B A ->
+    eqsubst (sbcomp (sbweak B) (sbzero A u))
+            sbid
+            G
+            G.
+Proof.
+  intros.
+  ceapply SubstTrans.
+  - ceapply CongSubstComp.
+    + ceapply SubstRefl.
+      Focus 3. ceapply SubstZero ; assumption.
+      * assumption.
+      * ceapply CtxExtend ; assumption.
+    + ceapply EqSubstCtxConv ; [ ceapply CongSubstWeak | .. ].
+      * eassumption.
+      * assumption.
+      * assumption.
+      * assumption.
+      * ceapply EqCtxExtend ; try assumption.
+        capply CtxRefl. assumption.
+      * capply CtxRefl. assumption.
+      * capply CtxExtend ; assumption.
+      * capply CtxExtend ; assumption.
+      * assumption.
+      * assumption.
+      * capply SubstWeak ; assumption.
+      * ceapply SubstCtxConv ; [ ceapply SubstWeak | .. ].
+        -- eassumption.
+        -- assumption.
+        -- ceapply EqCtxExtend ; try assumption.
+           ++ capply CtxRefl. assumption.
+           ++ capply EqTySym ; assumption.
+        -- capply CtxRefl. assumption.
+        -- capply CtxExtend ; assumption.
+        -- capply CtxExtend ; assumption.
+        -- assumption.
+        -- assumption.
+    + capply SubstZero ; assumption.
+    + capply SubstZero ; assumption.
+    + ceapply SubstCtxConv ; [ ceapply SubstWeak | .. ].
+      -- eassumption.
+      -- assumption.
+      -- ceapply EqCtxExtend ; try assumption.
+         capply CtxRefl. assumption.
+      -- capply CtxRefl. assumption.
+      -- capply CtxExtend ; assumption.
+      -- capply CtxExtend ; assumption.
+      -- assumption.
+      -- assumption.
+    + capply SubstWeak ; assumption.
+    + assumption.
+    + capply CtxExtend ; assumption.
+    + assumption.
+  - ceapply WeakZero ; assumption.
+  - ceapply SubstComp.
+    + capply SubstZero ; assumption.
+    + ceapply SubstCtxConv ; [ ceapply SubstWeak | .. ].
+      * eassumption.
+      * assumption.
+      * ceapply EqCtxExtend ; try assumption.
+        capply CtxRefl. assumption.
+      * capply CtxRefl. assumption.
+      * capply CtxExtend ; assumption.
+      * capply CtxExtend ; assumption.
+      * assumption.
+      * assumption.
+    + assumption.
+    + capply CtxExtend ; assumption.
+    + assumption.
+  - ceapply SubstComp.
+    + capply SubstZero ; assumption.
+    + capply SubstWeak ; assumption.
+    + assumption.
+    + capply CtxExtend ; assumption.
+    + assumption.
+  - capply SubstId. assumption.
+  - assumption.
+  - assumption.
+Qed.
+
 End Checking3.
 
 (* A simplify tactic to simplify substitutions *)
@@ -1034,9 +1120,9 @@ Ltac simplify_subst :=
         ceapply CompIdRight
 
       | sbcomp (sbweak _) (sbzero _ _) =>
-        ceapply WeakZero
+        ceapply FlexWeakZero
       | sbcomp (sbweak _) (sbcomp (sbzero _ _) _) =>
-        ecomp WeakZero
+        ecomp FlexWeakZero
 
       | sbcomp (sbweak _) (sbshift _ _) =>
         ceapply WeakNat

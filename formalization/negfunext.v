@@ -1048,7 +1048,8 @@ Lemma ap_typing :
     Ttt.isterm G p (Id A x y) ->
     Ttt.isterm G (ap A B f x y p) (Id B (app f A Bw x) (app f A Bw y)).
 Proof.
-  intros G A B f x y p Bw ? ? ? ? ? ? ?.
+  simpl.
+  intros.
   ceapply TermTyConv ; [ ceapply TermJ | .. ].
   - assumption.
   - capply TyId.
@@ -1067,83 +1068,13 @@ Proof.
       * magic.
       * magic.
     + magic.
-  - (* magic. *)
-    (* In nested Ltac calls to "magic" and "magicn", last call failed.
-       Error: Tactic failure: Cannot solve subgoal
-       (eqtype G
-         (Subst B
-             (sbcomp
-                (sbweak
-                   (Subst (Id (Subst A (sbweak A)) (subst x (sbweak A)) (var 0))
-                      (sbzero A x))) (sbzero (Id A x x) (refl A x)))) B) (level 982).
-     *)
-    (* We need to investigate. *)
-    (* ceapply TermTyConv ; [ ceapply TermRefl | .. ]. *)
-    (* + magic. *)
-    (* + compsubst. *)
-    (*   * magic. *)
-    (*   * magic. *)
-    (*   * magic. *)
-    (*   * pushsubst. *)
-    (*     -- magic. *)
-    (*     -- magic. *)
-    (*     -- magic. *)
-    (*     -- ceapply CongId. *)
-    (*        ++ compsubst. *)
-    (*           ** magic. *)
-    (*           ** magic. *)
-    (*           ** magic. *)
-    (*           ** simplify. *)
-    (*              --- magic. *)
-    (*              --- magic. *)
-    (*              --- magic. *)
-    (*              --- magic. *)
-    (*              --- simplify. *)
-    (*                  +++ magic. *)
-    (*                  +++ magic. *)
-    (*                  +++ magic. *)
-    (*                  +++ magic. *)
-    (*                  +++ magic. *)
-    (*                  +++ magic. *)
-    (*                  +++ magic. *)
-    (*                  +++ magic. *)
-    (*                  +++ simplify. *)
-    (*                      *** magic. *)
-    (*                      *** magic. *)
-    (*                      *** magic. *)
-    (*                      *** magic. *)
-    (*                      *** magic. *)
-    (*                      *** simplify. *)
-    (*                          ---- magic. *)
-    (*                          ---- magic. *)
-    (*                          ---- magic. *)
-    (*                          ---- magic. *)
-    (*                          ---- magic. *)
-    (*                          ---- magic. *)
-    (*                          ---- simplify. *)
-    (*                               ++++ magic. *)
-    (*                               ++++ magic. *)
-    (*                               ++++ (* simplify. *) *)
-    (*                                 ceapply EqTyTrans ; [ *)
-    (*                                   doConfig ; eapply CongTySubst ; [ *)
-    (*                                     doConfig ; (* simplify_subst *) idtac *)
-    (*                                   | doConfig ; ceapply EqTyRefl *)
-    (*                                   | doConfig .. *)
-    (*                                   ] *)
-    (*                                 | .. *)
-    (*                                 ]. *)
-    (*                                 **** ceapply WeakZero. *)
-    (* Result of the investigation:
-         WeakZero isn't flexible enough and we should prove instead some
-         lemma that allows [sbweak A] and [sbzero B u] where [A = B].
-     *)
-
-
-    todo.
+  - magic.
+    Unshelve. all:magic.
+    Unshelve. (* all:strictmagic. *) all:todo.
+    (* There is probably still something missing in magic *)
   - assumption.
   - assumption.
-  - (* magic. *) (* Same problem *)
-    todo.
+  - magic.
 Qed.
 
 
