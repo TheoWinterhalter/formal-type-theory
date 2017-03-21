@@ -377,6 +377,22 @@ Ltac prepushsubst1 sym :=
     ]
 
   (*! Pushing in terms !*)
+  | |- eqterm ?G (subst (lam ?A ?B ?u) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstAbs | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstAbs | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (app ?u ?A ?B ?v) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstApp | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstApp | .. ]
+      | ..
+      ]
+    ]
   | |- eqterm ?G (subst (refl ?A ?u) ?sbs) ?v ?B =>
     first [
       ceapply EqTrans ; [ ceapply EqSubstRefl | .. ]

@@ -1070,7 +1070,11 @@ Proof.
     + magic.
   - magic.
     Unshelve. all:magic.
-    Unshelve. (* all:strictmagic. *) all:todo.
+    Unshelve.
+    + fail.
+
+
+(* all:strictmagic. *) all:todo.
     (* There is probably still something missing in magic *)
   - assumption.
   - assumption.
