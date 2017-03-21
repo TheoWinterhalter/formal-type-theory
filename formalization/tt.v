@@ -1,7 +1,7 @@
 (* Confgurable type theory. *)
 
 Require Import syntax.
-Require Import config.
+Require config.
 
 Section TypeTheoryRules.
 (* Notations for writing down inference rules. *)
@@ -14,19 +14,20 @@ Context `{ConfigProdEta : config.ProdEta}.
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
 Notation "'extensional' r" :=
-  (forall { _ : reflectionFlag }, r) (only parsing, at level 97).
+  (forall { _ : config.reflectionFlag }, r) (only parsing, at level 97).
 
 Notation "'simpleproduct' r" :=
-  (forall { _ : simpleproductsFlag }, r) (only parsing, at level 97).
+  (forall { _ : config.simpleproductsFlag }, r) (only parsing, at level 97).
 
 Notation "'prodeta' r" :=
-  (forall { _ : prodetaFlag }, r) (only parsing, at level 97).
+  (forall { _ : config.prodetaFlag }, r) (only parsing, at level 97).
+
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
     (at level 200, x binder, y binder, right associativity, only parsing).
 Notation "'premise:' p q" := (p -> q) (only parsing, at level 95).
-Notation "'precond:' p q" := ((precondFlag -> p) -> q) (only parsing, at level 95).
+Notation "'precond:' p q" := ((config.precondFlag -> p) -> q) (only parsing, at level 95).
 Notation "'conclusion:' q" := q (no associativity, only parsing, at level 94).
 
 Inductive isctx : context -> Type :=
