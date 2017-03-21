@@ -1928,16 +1928,15 @@ Ltac magicn try shelf tysym debug :=
   | cando try
   ].
 
-Ltac magic := magicn false true true true.
-Ltac okmagic := magicn false true true false.
-Ltac trymagic := magicn true true true false.
-Ltac strictmagic := magicn false false true true.
+Ltac preop := unfold Arrow in *.
 
-(* With it we improve compsubst1 *)
-Ltac gocompsubst := compsubst1 ; try okmagic.
+Ltac magic := preop ; magicn false true true true.
+Ltac okmagic := preop ; magicn false true true false.
+Ltac trymagic := preop ; magicn true true true false.
+Ltac strictmagic := preop ; magicn false false true true.
 
-(* With it we improve pushsubst1 *)
-Ltac gopushsubst := pushsubst1 ; try okmagic.
+Ltac compsusbt := preop ; compsubst1.
+Ltac pushsubst := preop ; pushsubst1.
 
 (* Tactic to keep equalities *)
 Ltac keep_eq :=

@@ -1063,11 +1063,11 @@ Proof.
               ** ceapply TermVarZero. assumption.
            ++ capply SubstWeak. assumption.
         -- eassumption.
-        -- unfold Arrow. magic.
+        -- magic.
       * magic.
       * magic.
-    + unfold Arrow in *. magic.
-  - unfold Arrow in *. (* magic. *)
+    + magic.
+  - (* magic. *)
     (* In nested Ltac calls to "magic" and "magicn", last call failed.
        Error: Tactic failure: Cannot solve subgoal
        (eqtype G
@@ -1081,7 +1081,7 @@ Proof.
     todo.
   - assumption.
   - assumption.
-  - unfold Arrow in *. (* magic. *) (* Same problem *)
+  - (* magic. *) (* Same problem *)
     todo.
 Qed.
 
