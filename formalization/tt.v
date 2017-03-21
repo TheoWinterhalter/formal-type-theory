@@ -882,9 +882,8 @@ with eqtype : context -> type -> type -> Type :=
 
      | CondTyTrue :
        condTy rule
-         parameters: {G u A B},
+         parameters: {G A B},
          precond: isctx G
-         premise: isterm G u Bool
          premise: istype G A
          premise: istype G B
          conclusion:
@@ -893,9 +892,8 @@ with eqtype : context -> type -> type -> Type :=
 
      | CondTyFalse :
        condTy rule
-         parameters: {G u A B},
+         parameters: {G A B},
          precond: isctx G
-         premise: isterm G u Bool
          premise: istype G A
          premise: istype G B
          conclusion:
