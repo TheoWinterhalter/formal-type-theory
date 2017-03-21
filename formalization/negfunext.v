@@ -8,6 +8,7 @@ Require Import config_tactics.
 
 Require Import syntax.
 Require Import tt.
+Require Import ptt_tactics.
 
 (* Source type theory *)
 Module Stt.
@@ -1039,13 +1040,14 @@ Lemma ap_typing :
   forall {G A B f x y p},
     let Bw := Subst B (sbweak A) in
     Ttt.istype G A ->
+    Ttt.istype G B ->
     Ttt.isterm G f (Arrow A B) ->
     Ttt.isterm G x A ->
     Ttt.isterm G y A ->
     Ttt.isterm G p (Id A x y) ->
     Ttt.isterm G (ap A B f x y p) (Id B (app f A Bw x) (app f A Bw y)).
 Proof.
-  intros G A B f x y p Bw ? ? ? ? ?.
+  intros G A B f x y p Bw ? ? ? ? ? ?.
   ceapply TermTyConv ; [ ceapply TermJ | .. ].
   - assumption.
   - capply TyId.
@@ -1060,7 +1062,13 @@ Proof.
               ** ceapply TermVarZero. assumption.
            ++ capply SubstWeak. assumption.
         -- eassumption.
-        -- todo.
+        -- unfold Arrow. pushsubst1.
+           ++ magic.
+           ++ magic.
+           ++ capply CongProd.
+              ** magic.
+              ** (* compsubst1. *) (* Maybe mismatch on the wrong level? *)
+                 todo.
       * todo.
       * todo.
     + todo.
