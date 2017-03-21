@@ -1204,14 +1204,30 @@ Ltac simplify_subst :=
         ceapply CompIdRight
 
       | sbcomp (sbweak _) (sbzero _ _) =>
-        ceapply FlexWeakZero
+        first [
+          ceapply WeakZero
+        | ceapply FlexWeakZero
+        ]
       | sbcomp (sbweak _) (sbcomp (sbzero _ _) _) =>
-        ecomp FlexWeakZero
+        first [
+          ecomp WeakZero
+        | ecomp FlexWeakZero
+        ]
 
       | sbcomp (sbweak _) (sbshift _ _) =>
-        ceapply FlexWeakNat
+        first [
+          ceapply WeakNat
+        | ceapply FlexWeakNat
+        | ceapply EqSubstCtxConv ; [ ceapply WeakNat | .. ]
+        | ceapply EqSubstCtxConv ; [ ceapply FlexWeakNat | .. ]
+        ]
       | sbcomp (sbweak _) (sbcomp (sbshift _ _) _) =>
-        ecomp FlexWeakNat
+        first [
+          ecomp WeakNat
+        | ecomp FlexWeakNat
+        | ceapply EqSubstCtxConv ; [ ecomp WeakNat | .. ]
+        | ceapply EqSubstCtxConv ; [ ecomp FlexWeakNat | .. ]
+        ]
 
       | sbcomp (sbzero _ _) ?sbs =>
         ceapply SubstSym ; [ ceapply ShiftZero | .. ]
