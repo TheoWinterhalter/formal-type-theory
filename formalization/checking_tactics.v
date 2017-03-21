@@ -1101,6 +1101,74 @@ Proof.
   - assumption.
 Qed.
 
+Lemma FlexWeakNat :
+  forall {G D A B sbs},
+    isctx G ->
+    isctx D ->
+    issubst sbs G D ->
+    istype D A ->
+    istype D B ->
+    eqtype D B A ->
+    eqsubst (sbcomp (sbweak B)
+                    (sbshift A sbs))
+            (sbcomp sbs
+                    (sbweak (Subst A sbs)))
+            (ctxextend G (Subst A sbs))
+            D.
+Proof.
+  intros.
+
+  assert (istype G (Subst A sbs)).
+  { ceapply TySubst ; eassumption. }
+  assert (isctx (ctxextend G (Subst A sbs))).
+  { capply CtxExtend ; assumption. }
+  assert (isctx (ctxextend D A)).
+  { capply CtxExtend ; assumption. }
+  assert (eqctx D D).
+  { capply CtxRefl. assumption. }
+  assert (eqctx (ctxextend D B) (ctxextend D A)).
+  { capply EqCtxExtend ; assumption. }
+  assert (isctx (ctxextend D B)).
+  { capply CtxExtend ; assumption. }
+  assert (issubst (sbweak B) (ctxextend D B) D).
+  { capply SubstWeak ; assumption. }
+  assert (eqtype D A B).
+  { capply EqTySym ; assumption. }
+  assert (eqctx (ctxextend D A) (ctxextend D B)).
+  { capply EqCtxExtend ; assumption. }
+  assert (issubst (sbweak A) (ctxextend D B) D).
+  { ceapply SubstCtxConv ; [ ceapply SubstWeak | .. ] ; eassumption. }
+  assert (issubst (sbshift A sbs) (ctxextend G (Subst A sbs)) (ctxextend D A)).
+  { capply SubstShift ; assumption. }
+  assert (issubst (sbweak B) (ctxextend D A) D).
+  { ceapply SubstCtxConv ; [ ceapply SubstWeak | .. ] ; eassumption. }
+  assert (issubst (sbweak A) (ctxextend D A) D).
+  { capply SubstWeak ; assumption. }
+
+
+  ceapply SubstTrans.
+  - ceapply CongSubstComp ; [
+      ceapply SubstRefl ; [
+        ..
+      | ceapply SubstShift ; eassumption
+      ] ; assumption
+    | ceapply EqSubstCtxConv ; [
+        ceapply CongSubstWeak
+      | ..
+      ] ; eassumption
+    | assumption ..
+    ].
+  - ceapply WeakNat ; assumption.
+  - ceapply SubstComp ; eassumption.
+  - ceapply SubstComp ; eassumption.
+  - ceapply SubstComp ; [
+      ceapply SubstWeak ; assumption
+    | assumption ..
+    ].
+  - assumption.
+  - assumption.
+Qed.
+
 End Checking3.
 
 (* A simplify tactic to simplify substitutions *)
@@ -1141,9 +1209,9 @@ Ltac simplify_subst :=
         ecomp FlexWeakZero
 
       | sbcomp (sbweak _) (sbshift _ _) =>
-        ceapply WeakNat
+        ceapply FlexWeakNat
       | sbcomp (sbweak _) (sbcomp (sbshift _ _) _) =>
-        ecomp WeakNat
+        ecomp FlexWeakNat
 
       | sbcomp (sbzero _ _) ?sbs =>
         ceapply SubstSym ; [ ceapply ShiftZero | .. ]
