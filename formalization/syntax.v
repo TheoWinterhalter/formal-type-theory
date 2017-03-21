@@ -9,6 +9,7 @@ with type : Type :=
      | Empty : type
      | Unit : type
      | Bool : type
+     | CondTy : term -> type -> type -> type
      | SimProd : type -> type -> type
 
 with term : Type :=

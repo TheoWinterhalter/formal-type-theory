@@ -10,6 +10,7 @@ Context `{ConfigPrecond : config.Precond}.
 Context `{ConfigReflection : config.Reflection}.
 Context `{ConfigSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
+Context `{ConfigCondTy : config.CondTy}.
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
@@ -22,6 +23,8 @@ Notation "'simpleproduct' r" :=
 Notation "'prodeta' r" :=
   (forall { _ : config.prodetaFlag }, r) (only parsing, at level 97).
 
+Notation "'condTy' r" :=
+  (forall { _ : config.condTyFlag }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
@@ -193,6 +196,16 @@ with istype : context -> type -> Type :=
            istype G (SimProd A B)
        endrule
 
+     | TyCondTy :
+       condTy rule
+         parameters: {G u A B},
+         precond: isctx G
+         premise: isterm G u Bool
+         premise: istype G A
+         premise: istype G B
+         conclusion:
+           istype G (CondTy u A B)
+       endrule
 
 
 with isterm : context -> term -> type -> Type :=
@@ -850,6 +863,45 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G A B
        endrule
 
+     | EqTySubstCondTy :
+       condTy rule
+         parameters: {G D A B u sbs},
+         precond: isctx G
+         precond: isctx D
+         premise: issubst sbs G D
+         premise: isterm D u Bool
+         premise: istype D A
+         premise: istype D B
+         conclusion:
+           eqtype G
+                  (Subst (CondTy u A B) sbs)
+                  (CondTy (subst u sbs)
+                        (Subst A sbs)
+                        (Subst B sbs))
+       endrule
+
+     | CondTyTrue :
+       condTy rule
+         parameters: {G u A B},
+         precond: isctx G
+         premise: isterm G u Bool
+         premise: istype G A
+         premise: istype G B
+         conclusion:
+           eqtype G (CondTy true A B) A
+       endrule
+
+     | CondTyFalse :
+       condTy rule
+         parameters: {G u A B},
+         precond: isctx G
+         premise: isterm G u Bool
+         premise: istype G A
+         premise: istype G B
+         conclusion:
+           eqtype G (CondTy false A B) B
+       endrule
+
      | CongProd :
        rule
          parameters: {G A1 A2 B1 B2},
@@ -908,6 +960,25 @@ with eqtype : context -> type -> type -> Type :=
          premise: eqtype G B1 B2
          conclusion:
            eqtype G (SimProd A1 B1) (SimProd A2 B2)
+       endrule
+
+     | CongCondTy :
+       condTy rule
+         parameters: {G u1 u2 A1 B1 A2 B2},
+         precond: isctx G
+         precond: isterm G u1 Bool
+         precond: isterm G u2 Bool
+         precond: istype G A1
+         precond: istype G B1
+         precond: istype G A2
+         precond: istype G B2
+         premise: eqterm G u1 u2 Bool
+         premise: eqtype G A1 A2
+         premise: eqtype G B1 B2
+         conclusion:
+           eqtype G
+                  (CondTy u1 A1 B1)
+                  (CondTy u2 A2 B2)
        endrule
 
      | EqTySubstSimProd :
