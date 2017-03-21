@@ -1935,7 +1935,7 @@ Ltac okmagic := preop ; magicn false true true false.
 Ltac trymagic := preop ; magicn true true true false.
 Ltac strictmagic := preop ; magicn false false true true.
 
-Ltac compsusbt := preop ; compsubst1.
+Ltac compsubst := preop ; compsubst1.
 Ltac pushsubst := preop ; pushsubst1.
 
 (* Tactic to keep equalities *)
