@@ -1039,6 +1039,7 @@ Definition ap A B f x y p :=
 Lemma ap_typing :
   forall {G A B f x y p},
     let Bw := Subst B (sbweak A) in
+    Ttt.isctx G ->
     Ttt.istype G A ->
     Ttt.istype G B ->
     Ttt.isterm G f (Arrow A B) ->
@@ -1047,7 +1048,7 @@ Lemma ap_typing :
     Ttt.isterm G p (Id A x y) ->
     Ttt.isterm G (ap A B f x y p) (Id B (app f A Bw x) (app f A Bw y)).
 Proof.
-  intros G A B f x y p Bw ? ? ? ? ? ?.
+  intros G A B f x y p Bw ? ? ? ? ? ? ?.
   ceapply TermTyConv ; [ ceapply TermJ | .. ].
   - assumption.
   - capply TyId.
@@ -1062,20 +1063,26 @@ Proof.
               ** ceapply TermVarZero. assumption.
            ++ capply SubstWeak. assumption.
         -- eassumption.
-        -- unfold Arrow. pushsubst1.
-           ++ magic.
-           ++ magic.
-           ++ capply CongProd.
-              ** magic.
-              ** (* compsubst1. *) (* Maybe mismatch on the wrong level? *)
-                 todo.
-      * todo.
-      * todo.
-    + todo.
-  - todo.
+        -- unfold Arrow. magic.
+      * magic.
+      * magic.
+    + unfold Arrow in *. magic.
+  - unfold Arrow in *. (* magic. *)
+    (* In nested Ltac calls to "magic" and "magicn", last call failed.
+       Error: Tactic failure: Cannot solve subgoal
+       (eqtype G
+         (Subst B
+             (sbcomp
+                (sbweak
+                   (Subst (Id (Subst A (sbweak A)) (subst x (sbweak A)) (var 0))
+                      (sbzero A x))) (sbzero (Id A x x) (refl A x)))) B) (level 982).
+     *)
+    (* We need to investigate. *)
+    todo.
   - assumption.
   - assumption.
-  - todo.
+  - unfold Arrow in *. (* magic. *) (* Same problem *)
+    todo.
 Qed.
 
 
