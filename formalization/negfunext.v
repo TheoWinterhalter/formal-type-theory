@@ -1018,6 +1018,59 @@ Definition funextUnit :=
                               (app (var 1) Unit Unit (var 0))))
                     (Id (Prod Unit Unit) (var 1) (var 0)))).
 
+Definition ap A B f x y p :=
+  let w1  := sbweak A in
+  let w2' := sbweak (Id (Subst A w1) (subst x w1) (var 0)) in
+  let w2  := sbcomp w1 w2' in
+  let w3' := sbweak (Subst A w2) in
+  let w3  := sbcomp w2 w3' in
+  let Bw1 := Subst B w1 in
+  let Aw2 := Subst A w2 in
+  let Bw2 := Subst B w2 in
+  let fw2 := subst f w2 in
+  let xw2 := subst x w2 in
+  let Bw3 := Subst B w3 in
+  j A x
+    (Id Bw2 (app fw2 Aw2 Bw3 xw2) (app fw2 Aw2 Bw3 (var 1)))
+    (refl B (app f A Bw1 x))
+    y p.
+
+Lemma ap_typing :
+  forall {G A B f x y p},
+    let Bw := Subst B (sbweak A) in
+    Ttt.istype G A ->
+    Ttt.isterm G f (Arrow A B) ->
+    Ttt.isterm G x A ->
+    Ttt.isterm G y A ->
+    Ttt.isterm G p (Id A x y) ->
+    Ttt.isterm G (ap A B f x y p) (Id B (app f A Bw x) (app f A Bw y)).
+Proof.
+  intros G A B f x y p Bw ? ? ? ? ?.
+  ceapply TermTyConv ; [ ceapply TermJ | .. ].
+  - assumption.
+  - capply TyId.
+    + ceapply TermTyConv ; [ capply TermApp | .. ].
+      * ceapply TermTyConv ; [ ceapply TermSubst | .. ].
+        -- ceapply SubstComp.
+           ++ ceapply SubstWeak.
+              capply TyId.
+              ** ceapply TermSubst.
+                 --- capply SubstWeak. assumption.
+                 --- assumption.
+              ** ceapply TermVarZero. assumption.
+           ++ capply SubstWeak. assumption.
+        -- eassumption.
+        -- todo.
+      * todo.
+      * todo.
+    + todo.
+  - todo.
+  - assumption.
+  - assumption.
+  - todo.
+Qed.
+
+
 (* We'd like to have magic available *)
 Lemma funextContradiction :
   { bot : term
