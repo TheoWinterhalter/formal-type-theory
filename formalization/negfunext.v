@@ -8,7 +8,7 @@ Require Import config_tactics.
 
 Require Import syntax.
 Require Import tt.
-Require Import ptt_tactics.
+Require Import checking_tactics.
 
 (* Source type theory *)
 Module Stt.

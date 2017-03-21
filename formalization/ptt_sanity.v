@@ -5,7 +5,7 @@ Require Import config_tactics.
 
 Require Import syntax.
 Require Import tt.
-Require Import ptt_tactics ptt_admissible.
+Require Import checking_tactics ptt_admissible.
 
 Section PttSanity.
 
