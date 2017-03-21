@@ -1069,6 +1069,11 @@ Proof.
       * magic.
     + magic.
   - magic.
+    Unshelve. all:try magic.
+    Unshelve. all:keep_eq. all:try apply CtxRefl.
+    Unshelve. all:try magic.
+    Unshelve. todo. (* Hopefully this is true and just shows one case is
+                       missing from magic. *)
   - assumption.
   - assumption.
   - magic.
