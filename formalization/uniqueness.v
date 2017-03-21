@@ -17,6 +17,7 @@ Section Uniqueness.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
+Context `{ConfigCondTy : config.CondTy}.
 
 (* Auxiliary inversion lemmas. *)
 

@@ -12,6 +12,7 @@ Context `{configPrecond : config.Precond}.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
+Context `{ConfigCondTy : config.CondTy}.
 
 (* Some tactic to compose substitutions. *)
 Lemma eqtype_subst_left :
@@ -155,6 +156,7 @@ Context `{configPrecond : config.Precond}.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
+Context `{ConfigCondTy : config.CondTy}.
 
 Lemma EqCompZero :
   forall {G D A u sbs},
@@ -348,6 +350,10 @@ Ltac prepushsubst1 sym :=
     ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ]
   | |- eqtype ?G ?C (Subst (SimProd ?A ?B) ?sbs) =>
     ceapply EqTySym ; [ ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ] | .. ]
+  | |- eqtype ?G (Subst (CondTy ?u ?A ?B) ?sbs) ?C =>
+    ceapply EqTyTrans ; [ ceapply EqTySubstCondTy | .. ]
+  | |- eqtype ?G ?C (Subst (CondTy ?u ?A ?B) ?sbs) =>
+    ceapply EqTySym ; [ ceapply EqTyTrans ; [ ceapply EqTySubstCondTy | .. ] | .. ]
   | |- eqtype ?G (Subst ?E ?sbs) Empty =>
     ceapply EqTySubstEmpty
   | |- eqtype ?G (Subst Empty ?sbs) ?A =>
@@ -500,6 +506,7 @@ Context `{configPrecond : config.Precond}.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
+Context `{ConfigCondTy : config.CondTy}.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
    some ZeroShift3 if ever we add a constructor that has three variables. *)
@@ -1341,6 +1348,11 @@ Ltac magicn try shelf tysym debug :=
         ceapply TySimProd
       | myfail debug
       ] ; magicn try shelf true debug
+    | |- istype ?G (CondTy ?u ?A ?B) =>
+      first [
+        ceapply TyCondTy
+      | myfail debug
+      ] ; magicn try shelf true debug
     | |- istype ?G ?A =>
       tryif (is_var A)
       then first [
@@ -1718,6 +1730,11 @@ Ltac magicn try shelf tysym debug :=
     | |- eqtype ?G (SimProd _ _) (SimProd _ _) =>
       first [
         ceapply CongSimProd
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- eqtype ?G (CondTy _ _) (CondTy _ _) =>
+      first [
+        ceapply CongCondTy
       | myfail debug
       ] ; magicn try shelf true debug
     | |- eqtype ?G ?A ?B =>

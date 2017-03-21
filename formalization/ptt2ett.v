@@ -10,6 +10,7 @@ Section Ptt2Ett.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
+Context `{ConfigCondTy : config.CondTy}.
 
 Fixpoint sane_isctx G (P : ptt.isctx G) : ett.isctx G
 
@@ -91,6 +92,9 @@ Proof.
 
       (* TySimProd *)
       - capply TySimProd ; auto.
+
+      (* TyCondTy *)
+      - capply TyCondTy ; auto.
   }
 
   (* sane_isterm *)
@@ -255,6 +259,11 @@ Proof.
       (* EqTyExfalso *)
       - apply @EqTyExfalso with (u := u) ; auto.
 
+      - apply @EqTySubstCondTy with (D := D); auto.
+
+      - apply CondTyTrue; auto.
+      - apply CondTyFalse; auto.
+
       (* CongProd *)
       - apply CongProd ; auto.
 
@@ -266,6 +275,8 @@ Proof.
 
       (* CongSimProd *)
       - apply CongSimProd ; auto.
+
+      - apply CongCondTy ; auto.
 
       (* EqTySubstSimProd *)
       - apply @EqTySubstSimProd with (D := D) ; auto.

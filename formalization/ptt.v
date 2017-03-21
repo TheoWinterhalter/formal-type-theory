@@ -7,6 +7,7 @@ Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Ye
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
+Context `{ConfigCondTy : config.CondTy}.
 
 Definition isctx := isctx.
 Definition issubst := issubst.

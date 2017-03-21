@@ -13,6 +13,7 @@ Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Ye
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
+Context `{ConfigCondTy : config.CondTy}.
 
 Axiom cheating : forall A, A.
 
@@ -207,6 +208,26 @@ Proof.
   (* EqTyExfalso *)
   { split ; assumption. }
 
+  (* EqTySubstCondTy *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* CondTyTrue *)
+  {
+    split.
+    - magic.
+    - assumption.
+  }
+
+  (* CondTyFalse *)
+  {
+    split.
+    - magic.
+    - assumption.
+  }
+
   (* CongProd *)
   { split.
     - { now capply TyProd. }
@@ -226,6 +247,12 @@ Proof.
   }
 
   (* CongSimProd *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* CongCondTy *)
   { split.
     - magic.
     - magic.

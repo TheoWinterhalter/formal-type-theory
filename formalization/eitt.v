@@ -11,6 +11,8 @@ Local Instance hasReflection : config.Reflection
   := {| config.reflectionFlag := config.No |}.
 Local Instance hasSimpleProducts : config.SimpleProducts
   := {| config.simpleproductsFlag := config.No |}.
+Local Instance hasCondTy : config.CondTy
+  := {| config.condTyFlag := config.No |}.
 
 Definition isctx := isctx.
 Definition issubst := issubst.

@@ -12,6 +12,7 @@ Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Ye
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
+Context `{ConfigCondTy : config.CondTy}.
 
 (* Some preliminary lemmata *)
 Lemma EqTyWeakNat :

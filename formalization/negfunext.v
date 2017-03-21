@@ -21,6 +21,7 @@ Module Stt.
   Context `{ConfigSimpleProducts : config.SimpleProducts}.
   Local Instance hasProdEta : config.ProdEta
     := {| config.prodetaFlag := config.No |}.
+  Context `{ConfigCondTy : config.CondTy}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -47,6 +48,8 @@ Module Ttt.
     := {| config.simpleproductsFlag := config.Yes |}.
   Local Instance hasProdEta : config.ProdEta
     := {| config.prodetaFlag := config.No |}.
+  Local Instance hasCondTy : config.CondTy
+    := {| config.condTyFlag := config.Yes |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -65,6 +68,7 @@ Section Translation.
 
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{ConfigCondTy : config.CondTy}.
 
 Axiom cheating : forall A : Type, A.
 Ltac todo := apply cheating.
@@ -83,6 +87,7 @@ with trans_type (A : type) : type :=
   | Empty => Empty
   | Unit => Unit
   | Bool => Bool
+  | CondTy u A B => CondTy (trans_term u) (trans_type A) (trans_type B)
   | SimProd A B => SimProd (trans_type A) (trans_type B)
   end
 
@@ -151,6 +156,12 @@ Ltac ih :=
         Ttt.isterm (trans_ctx G) (trans_term u) (trans_type A)
     |- isterm (trans_ctx ?G) (trans_term ?u) (trans_type ?A) =>
     now apply (trans_isterm G u A)
+  | trans_isterm :
+      forall G u A,
+        Stt.isterm G u A ->
+        Ttt.isterm (trans_ctx G) (trans_term u) (trans_type A)
+    |- isterm (trans_ctx ?G) (trans_term ?u) Bool =>
+    now apply (trans_isterm G u Bool)
   | trans_issubst :
       forall sbs G D,
         Stt.issubst sbs G D ->
@@ -175,6 +186,12 @@ Ltac ih :=
         Ttt.eqterm (trans_ctx G) (trans_term u) (trans_term v) (trans_type A)
     |- eqterm (trans_ctx ?G) (trans_term ?u) (trans_term ?v) (trans_type ?A) =>
     now apply (trans_eqterm G u v A)
+  | trans_eqterm :
+      forall G u v A,
+        Stt.eqterm G u v A ->
+        Ttt.eqterm (trans_ctx G) (trans_term u) (trans_term v) (trans_type A)
+    |- eqterm (trans_ctx ?G) (trans_term ?u) (trans_term ?v) Bool =>
+    now apply (trans_eqterm G u v Bool)
   | trans_eqsubst :
       forall sbs sbt G D,
         Stt.eqsubst sbs sbt G D ->
@@ -267,6 +284,12 @@ Proof.
       - { simpl. capply TySimProd.
           - ih.
           - ih.
+        }
+
+      - { simpl. capply TyCondTy.
+          - now apply (trans_isterm G u Bool).
+          - now apply (trans_istype G A).
+          - now apply (trans_istype G B).
         }
     }
 
@@ -496,6 +519,29 @@ Proof.
           - now apply (trans_isterm G u Empty).
         }
 
+      (* EqTySubstCondTy *)
+      - { simpl.
+          config apply @EqTySubstCondTy with (D := trans_ctx D).
+          - ih.
+          - ih.
+          - ih.
+          - ih.
+        }
+
+      (* CondTyTrue *)
+      - { simpl.
+          config apply CondTyTrue.
+          - ih.
+          - ih.
+        }
+
+      (* CondTyFalse *)
+      - { simpl.
+          config apply CondTyFalse.
+          - ih.
+          - ih.
+        }
+
       (* CongProd *)
       - { simpl. capply CongSimProd.
           - capply CongProd.
@@ -515,6 +561,13 @@ Proof.
 
       (* CongSimProd *)
       - { simpl. capply CongSimProd.
+          - ih.
+          - ih.
+        }
+
+      (* CongCondTy *)
+      - { simpl. capply CongCondTy.
+          - ih.
           - ih.
           - ih.
         }

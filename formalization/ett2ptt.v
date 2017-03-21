@@ -10,6 +10,7 @@ Section Ett2Ptt.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
+Context `{ConfigCondTy : config.CondTy}.
 
 (* Renaming ptt_sanity lemmata for readability. *)
 Definition ptt_sane_issubst := ptt_sanity.sane_issubst.
@@ -180,6 +181,13 @@ Proof.
     (* TySimProd *)
     { capply TySimProd.
       - now apply (ptt_sane_istype G A), sane_istype.
+      - now apply sane_istype.
+      - now apply sane_istype.
+    }
+
+    { capply TyCondTy.
+      - now apply (ptt_sane_istype G A), sane_istype.
+      - now apply sane_isterm.
       - now apply sane_istype.
       - now apply sane_istype.
     }
@@ -622,6 +630,27 @@ Proof.
       - now apply sane_isterm.
     }
 
+    { config apply @EqTySubstCondTy with (D := D).
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
+      - now apply (@ptt_sane_issubst sbs G D), sane_issubst.
+      - now apply sane_issubst.
+      - now apply sane_isterm.
+      - now apply sane_istype.
+      - now apply sane_istype.
+    }
+
+    { config apply CondTyTrue.
+      - now apply ptt_sane_istype with (A := A), sane_istype.
+      - now apply sane_istype.
+      - now apply sane_istype.
+    }
+
+    { config apply CondTyFalse.
+      - now apply ptt_sane_istype with (A := A), sane_istype.
+      - now apply sane_istype.
+      - now apply sane_istype.
+    }
+
     (* CongProd *)
     { capply CongProd.
       - now apply (@ptt_sane_eqtype G A1 B1), sane_eqtype.
@@ -666,6 +695,19 @@ Proof.
       - now apply (ptt_sane_eqtype G A1 A2), sane_eqtype.
       - now apply (ptt_sane_eqtype G B1 B2), sane_eqtype.
       - now apply (ptt_sane_eqtype G B1 B2), sane_eqtype.
+      - now apply sane_eqtype.
+      - now apply sane_eqtype.
+    }
+
+    { capply CongCondTy.
+      - now apply ptt_sane_eqtype with (G := G) (A := A1) (B := A2), sane_eqtype.
+      - now apply ptt_sane_eqterm with (u := u1) (v := u2), sane_eqterm.
+      - now apply ptt_sane_eqterm with (u := u1) (v := u2), sane_eqterm.
+      - now apply (ptt_sane_eqtype G A1 A2), sane_eqtype.
+      - now apply (ptt_sane_eqtype G B1 B2), sane_eqtype.
+      - now apply (ptt_sane_eqtype G A1 A2), sane_eqtype.
+      - now apply (ptt_sane_eqtype G B1 B2), sane_eqtype.
+      - now apply sane_eqterm.
       - now apply sane_eqtype.
       - now apply sane_eqtype.
     }
