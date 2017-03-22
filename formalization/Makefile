@@ -117,12 +117,12 @@ VFILES:=config.v\
   tactics.v\
   inversion.v\
   uniqueness.v\
+  eitt.v\
+  pxtt.v\
   hml.v\
   coerce.v\
   coerce_action.v\
   ctt.v\
-  eitt.v\
-  pxtt.v\
   eval.v\
   translation.v
 

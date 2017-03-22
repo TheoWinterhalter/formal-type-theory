@@ -23,11 +23,11 @@ uniqueness.v
 
 # substitution_elim.v
 
+eitt.v
+pxtt.v
 hml.v
 coerce.v
 coerce_action.v
 ctt.v
-eitt.v
-pxtt.v
 eval.v
 translation.v

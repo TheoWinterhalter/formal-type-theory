@@ -1,3 +1,5 @@
+Require Import Coq.Program.Equality.
+
 Require config.
 Require Import config_tactics.
 
@@ -18,7 +20,7 @@ Definition transport {A} {u v} (P : A -> Type) (p : u = v) : P u -> P v :=
   | eq_refl => fun x => x
   end.
 
-Definition Family (G : Set) := G -> Set.
+Definition Family (G : Set) : Type := G -> Set.
 
 Definition section {G : Set} (A : Family G) :=
   forall x, A x.
@@ -29,6 +31,9 @@ Definition Pi {G} (A : Family G) (B : Family (sigT A)) :=
 Definition Eq {G} (A : Family G) (u v : section A) :=
   fun xs => u xs = v xs.
 
+Axiom funext :
+  forall (A : Set) (B : A -> Type) (f g : forall x, B x),
+    (forall x, f x = g x) -> f = g.
 
 (* Defining this relation(s), doesn't it mean that we are able
    to produce a translation of expressions directly somehow,
@@ -38,10 +43,10 @@ Definition Eq {G} (A : Family G) (u v : section A) :=
 *)
 Inductive istran_ctx : context -> Set -> Type :=
 
-  | istran_ctx_ctxempty :
+  | istran_ctxempty :
       istran_ctx ctxempty Datatypes.unit
 
-  | istran_ctx_ctxextend :
+  | istran_ctxextend :
       forall G G' A A',
         istran_ctx G G' ->
         istran_type G G' A A' ->
@@ -50,56 +55,87 @@ Inductive istran_ctx : context -> Set -> Type :=
 with istran_subst :
   forall (G : context) (G' : Set)
     (D : context) (D' : Set)
-    (sbs : substitution) (sbs' : Family D' -> Family G'),
+    (sbs : substitution) (sbs' : G' -> D'),
     Type
   :=
+
+  | istran_subst_sbzero :
+      forall G G' A A' u u',
+        istran_ctx G G' ->
+        istran_type G G' A A' ->
+        istran_term G G' A A' u u' ->
+        istran_subst G G' (ctxextend G A) (sigT A') (sbzero A u)
+                     (fun xs => existT _ xs (u' xs))
+
+  | istran_subst_sbweak :
+      forall G G' A A',
+        istran_ctx G G' ->
+        istran_type G G' A A' ->
+        istran_subst (ctxextend G A) (sigT A') G G' (sbweak A)
+                     (@projT1 _ _)
+
+  | istran_subst_sbshift :
+      forall G G' D D' A A' sbs sbs',
+        istran_ctx G G' ->
+        istran_ctx D D' ->
+        istran_type D D' A A' ->
+        istran_subst G G' D D' sbs sbs' ->
+        istran_subst
+          (ctxextend G (Subst A sbs)) (sigT (fun xs => A' (sbs' xs)))
+          (ctxextend D A) (sigT A')
+          (sbshift A sbs) (fun xs => existT _ (sbs' (projT1 xs)) (projT2 xs))
 
   | istran_subst_sbid :
       forall G G',
         istran_ctx G G' ->
         istran_subst G G' G G' sbid (fun x => x)
 
-  (* | istran_subst_sbzero : *)
-  (*     forall G G' A A' u u', *)
-  (*       istran_term G G' A A' u u' -> *)
-  (*       istran_subst G G' (ctxextend G A) (sigT A') (sbzero A u) () *)
+  | istran_subst_sbcomp :
+      forall G G' D D' E E' sbs sbs' sbt sbt',
+        istran_ctx G G' ->
+        istran_ctx D D' ->
+        istran_ctx E E' ->
+        istran_subst G G' D D' sbs sbs' ->
+        istran_subst D D' E E' sbt sbt' ->
+        istran_subst G G' E E'
+                     (sbcomp sbt sbs) (fun xs => sbt' (sbs' xs))
 
 with istran_type :
   (forall (G : context) (G' : Set) (A : type) (A' : Family G'), Type) :=
 
- | istran_type_Empty :
+ | istran_Empty :
      forall G G',
        istran_ctx G G' ->
        istran_type G G' Empty (fun _ => Empty_set)
 
- | istran_type_Unit :
+ | istran_Unit :
      forall G G',
        istran_ctx G G' ->
        istran_type G G' Unit (fun _ => Datatypes.unit)
 
- | istran_type_Bool :
+ | istran_Bool :
      forall G G',
        istran_ctx G G' ->
        istran_type G G' Bool (fun _ => Datatypes.bool)
 
- | istran_type_Prod :
+ | istran_Prod :
      forall G G' A A' B B',
        istran_type G G' A A' ->
        istran_type (ctxextend G A) (sigT A') B B' ->
        istran_type G G' (Prod A B) (Pi A' B')
 
- | istran_type_Id :
+ | istran_Id :
      forall G G' A A' u u' v v',
        istran_type G G' A A' ->
        istran_term G G' A A' u u' ->
        istran_term G G' A A' v v' ->
        istran_type G G' (Id A u v) (Eq A' u' v')
 
- | istran_type_Subst :
+ | istran_Subst :
      forall G G' D D' A A' sbs sbs',
        istran_type D D' A A' ->
        istran_subst G G' D D' sbs sbs' ->
-       istran_type G G' (Subst A sbs) (sbs' A')
+       istran_type G G' (Subst A sbs) (fun xs => A' (sbs' xs))
 
 with istran_term :
   forall (G : context) (G' : Set)
@@ -108,12 +144,117 @@ with istran_term :
     Type
   :=
 
-  | istran_term_unit :
+  | istran_unit :
       forall G G' (* U' *),
         (* istran_type G G' Unit U' -> *)
         (* istran_term G G' Unit U' unit (fun _ => tt). *)
         istran_ctx G G' ->
         istran_term G G' Unit (fun _ => Datatypes.unit) unit (fun _ => tt).
+
+Fixpoint cohere_ctx G G' G'' {struct G} :
+  istran_ctx G G' ->
+  istran_ctx G G'' ->
+  G' = G''
+
+with cohere_subst G G' D D' sbs sbs' sbs'' {struct sbs} :
+  istran_subst G G' D D' sbs sbs' ->
+  istran_subst G G' D D' sbs sbs'' ->
+  sbs' = sbs''
+
+with cohere_type G G' A A' A'' {struct A} :
+  istran_type G G' A A' ->
+  istran_type G G' A A'' ->
+  A' = A''
+
+with cohere_term G G' A A' u u' u'' {struct u} :
+  istran_term G G' A A' u u' ->
+  istran_term G G' A A' u u'' ->
+  u' = u''.
+
+Proof.
+  (* cohere_ctx *)
+  - { destruct G ; doConfig ;
+      intros H1 H2 ;
+      inversion_clear H1 ;
+      inversion_clear H2.
+
+      (* ctxempty *)
+      - { reflexivity. }
+
+      (* ctxextend *)
+      - {
+          rename t into A, G'0 into G0, G'1 into G1, A'0 into A0.
+          destruct (cohere_ctx G G0 G1 X X1).
+          destruct (cohere_type G G0 A A' A0 X0 X2).
+          reflexivity.
+        }
+    }
+
+  (* cohere_subst *)
+  - { todo. }
+
+  (* cohere_type *)
+  - { destruct A ; doConfig.
+
+      (* Prod *)
+      - { intros H1 H2.
+          dependent destruction H1.
+          dependent destruction H2.
+          apply funext.
+          intro xs.
+          destruct (cohere_type G G' A1 A' A'0 H1_ H2_).
+          destruct (cohere_type (ctxextend G A1) (sigT A') A2 B' B'0 H1_0 H2_0).
+          reflexivity.
+        }
+
+      (* Id *)
+      - {
+          intros H1 H2.
+          dependent destruction H1.
+          dependent destruction H2.
+          apply funext. intro xs.
+          destruct (cohere_type G G' A A' A'0 H1 H2).
+          destruct (cohere_term G G' A A' t u' u'0 i i1).
+          destruct (cohere_term G G' A A' t0 v' v'0 i0 i2).
+          reflexivity.
+        }
+
+      (* Subst *)
+      - { intros H1 H2.
+          dependent destruction H1.
+          dependent destruction H2.
+          todo.
+        }
+
+      (* Empty *)
+      - { intros H1 H2.
+          dependent destruction H1.
+          dependent destruction H2.
+          reflexivity.
+        }
+
+      (* Unit *)
+      - { intros H1 H2.
+          dependent destruction H1.
+          dependent destruction H2.
+          reflexivity.
+        }
+
+      (* Bool *)
+      - { intros H1 H2.
+          dependent destruction H1.
+          dependent destruction H2.
+          reflexivity.
+        }
+    }
+
+    (* cohere_term *)
+    - {
+        todo.
+      }
+Defined.
+
+Print Assumptions cohere_ctx.
 
 Fixpoint eval_ctx G (Der : pxtt.isctx G) {struct Der} :
   { G' : Set & istran_ctx G G' }
@@ -122,16 +263,16 @@ with eval_subst {G D G' sbs} (Der : pxtt.issubst sbs G D) {struct Der} :
    istran_ctx G G' ->
    { D' : Set
    & istran_ctx D D'
-   * (Family D' -> Family G') }
+   * { sbs' : G' -> D' & istran_subst G G' D D' sbs sbs'} }
 
-with eval_ty {G G' A} (Der : pxtt.istype G A) {struct Der} :
+with eval_type {G G' A} (Der : pxtt.istype G A) {struct Der} :
   istran_ctx G G' ->
   { A' : Family G' & istran_type G G' A A' }
 
 with eval_term {G G' A A' u} (Der : pxtt.isterm G u A) {struct Der} :
   istran_ctx G G' ->
   istran_type G G' A A' ->
-  section A'
+  { u' : section A' & istran_term G G' A A' u u' }
 
 with eval_eqctx_lr {G G' D} (Der : pxtt.eqctx G D) {struct Der} :
   istran_ctx G G' ->
@@ -162,7 +303,7 @@ Proof.
 
       (* CtxExtend *)
       - { destruct (eval_ctx G i) as [G' ist_GG'].
-          destruct (eval_ty G G' A i0 ist_GG') as [A' ist_AA'].
+          destruct (eval_type G G' A i0 ist_GG') as [A' ist_AA'].
           exists (sigT A').
           now constructor.
         }
@@ -173,39 +314,55 @@ Proof.
 
       (* SubstZero *)
       - { intro ist_GG'.
-          destruct (eval_ty G G' A i0 ist_GG') as [A' ist_AA'].
-          pose (u' := eval_term G G' A A' u i ist_GG' ist_AA').
+          destruct (eval_type G G' A i0 ist_GG') as [A' ist_AA'].
+          destruct (eval_term G G' A A' u i ist_GG' ist_AA') as [u' ist_uu'].
           exists (sigT A').
           split.
           - now constructor.
-          - intros B' xs.
-            exact (B' (existT _ xs (u' xs))).
+          - eexists.
+            econstructor ; eassumption.
         }
 
       (* SubstWeak *)
       - { rename G' into G'A'.
           intro ist_G'A'.
-          inversion ist_G'A'. subst.
+          dependent destruction ist_G'A'.
           exists G'. split.
           - assumption.
-          - intros B' [xs x].
-            exact (B' xs).
+          - eexists.
+            econstructor ; eassumption.
         }
 
       (* SubstShift *)
       - { rename G' into GAs'.
           intro ist_GAs'.
-          inversion ist_GAs'. subst. rename A' into As'.
-          rename X into ist_G'. rename X0 into ist_As'.
-          (* inversion ist_As'. We have to wait until it makes sense. *)
-          todo.
+          dependent destruction ist_GAs'.
+
+
+          rename A' into As'.
+          destruct (eval_subst G D G' sbs Der ist_GAs') as
+              [D' [ist_DD' [sbs' ist_sbs']]].
+          destruct (eval_type D D' A i ist_DD') as [A' ist_AA'].
+          exists (sigT A').
+          split.
+          - now constructor.
+          - dependent destruction i2.
+            rename
+              D0 into E,
+              D' into E'',
+              A' into A'',
+              sbs' into sbs'',
+              D'0 into D',
+              sbs'0 into sbs',
+              A'0 into A'.
+            todo.
         }
 
       (* SubstId *)
       - { intro ist_GG'.
           exists G'. split.
           - assumption.
-          - exact (fun x => x).
+          - todo.
         }
 
       (* SubstComp *)
@@ -214,19 +371,20 @@ Proof.
           destruct (eval_subst D E D' sbt Der2 ist_DD') as [E' [ist_EE' sbt']].
           exists E'. split.
           - assumption.
-          - intro C. apply sbs'. apply sbt'. exact C.
+          - todo.
         }
 
       (* SubstCtxConv *)
-      - { rename G' into G2'.
-          intro ist_G2'.
-          destruct (eval_eqctx_rl G1 G2 G2' e ist_G2') as [G1' [ist_G1' eqG]].
-          destruct (eval_subst G1 D1 G1' sbs Der ist_G1') as [D1' [ist_D1' sbs']].
-          destruct (eval_eqctx_lr D1 D1' D2 e0 ist_D1') as [D2' [ist_D2' eqD]].
-          exists D2'. split.
-          - assumption.
-          - rewrite eqD.
-            rewrite <- eqG. exact sbs'.
+      - { todo.
+          (* rename G' into G2'. *)
+          (* intro ist_G2'. *)
+          (* destruct (eval_eqctx_rl G1 G2 G2' e ist_G2') as [G1' [ist_G1' eqG]]. *)
+          (* destruct (eval_subst G1 D1 G1' sbs Der ist_G1') as [D1' [ist_D1' sbs']]. *)
+          (* destruct (eval_eqctx_lr D1 D1' D2 e0 ist_D1') as [D2' [ist_D2' eqD]]. *)
+          (* exists D2'. split. *)
+          (* - assumption. *)
+          (* - rewrite eqD. *)
+          (*   rewrite <- eqG. exact sbs'. *)
         }
   }
 
@@ -236,11 +394,14 @@ Proof.
       (* TyCtxConv *)
       - { rename G' into D'.
           intros ist_DD'.
-          destruct (eval_eqctx_rl G D D' e ist_DD') as [G' [ist_GG' eq]].
-          destruct (eval_ty G G' A Der ist_GG') as [A' ist_AA'].
-          pose (A'' := transport Family eq A').
+          destruct (eval_eqctx_rl G D D' e ist_DD') as [G' [ist_GG' eq_G'D']].
+          destruct (eval_type G G' A Der ist_GG') as [A' ist_AA'].
+          pose (A'' := transport Family eq_G'D' A').
           exists A''.
-          (* Coherence problem *)
+          destruct eq_G'D'.
+          simpl in A''.
+          subst A''.
+
           todo.
         }
 
@@ -607,7 +768,7 @@ Defined.
 
 Lemma empty_to_empty :
   let Der := (TyEmpty CtxEmpty : pxtt.istype ctxempty Empty) in
-  let ist_GG' := istran_ctx_ctxempty : istran_ctx ctxempty Datatypes.unit in
+  let ist_GG' := istran_ctxempty : istran_ctx ctxempty Datatypes.unit in
   forall xs, projT1 (eval_ty Der ist_GG') xs = Empty_set.
 Proof.
   reflexivity.
@@ -616,7 +777,7 @@ Qed.
 Lemma consistency : forall u, pxtt.isterm ctxempty u Empty -> Empty_set.
 Proof.
   intros u Der.
-  pose (ist_GG' := istran_ctx_ctxempty : istran_ctx ctxempty Datatypes.unit).
+  pose (ist_GG' := istran_ctxempty : istran_ctx ctxempty Datatypes.unit).
   pose (tr := eval_ty (TyEmpty CtxEmpty) ist_GG').
   pose (u' := eval_term Der ist_GG' (projT2 tr)).
   pose (p := u' tt). apply p.
