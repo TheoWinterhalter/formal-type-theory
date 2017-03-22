@@ -527,6 +527,170 @@ Proof.
   ].
 Qed.
 
+Lemma EqCompShiftSucc :
+  forall {G D A B E k sbs sbt},
+    issubst sbs G D ->
+    isterm D (var k) B ->
+    istype D A ->
+    issubst sbt E (ctxextend G (Subst A sbs)) ->
+    istype D B ->
+    isctx G ->
+    isctx D ->
+    isctx E ->
+    eqterm E
+           (subst (var (S k)) (sbcomp (sbshift A sbs) sbt))
+           (subst (subst (subst (var k) sbs) (sbweak (Subst A sbs))) sbt)
+           (Subst (Subst (Subst B sbs) (sbweak (Subst A sbs))) sbt).
+Proof.
+  intros.
+
+  assert (isterm (ctxextend D A) (var (S k)) (Subst B (sbweak A))).
+  { ceapply TermVarSucc ; assumption. }
+  assert (issubst (sbshift A sbs) (ctxextend G (Subst A sbs)) (ctxextend D A)).
+  { capply SubstShift ; eassumption. }
+  assert (istype G (Subst A sbs)).
+  { ceapply TySubst ; eassumption. }
+  assert (isctx (ctxextend G (Subst A sbs))).
+  { capply CtxExtend ; assumption. }
+  assert (isctx (ctxextend D A)).
+  { capply CtxExtend ; assumption. }
+  assert (issubst (sbweak A) (ctxextend D A) D).
+  { capply SubstWeak ; assumption. }
+  assert (istype (ctxextend D A) (Subst B (sbweak A))).
+  { ceapply TySubst ; eassumption. }
+  assert (issubst (sbcomp (sbshift A sbs) sbt) E (ctxextend D A)).
+  { ceapply SubstComp ; eassumption. }
+  assert (
+    issubst (sbweak (Subst A sbs)) (ctxextend G (Subst A sbs)) G
+  ).
+  { capply SubstWeak ; assumption. }
+  assert (istype G (Subst B sbs)).
+  { ceapply TySubst ; eassumption. }
+  assert (issubst (sbcomp (sbweak (Subst A sbs)) sbt) E G).
+  { ceapply SubstComp ; eassumption. }
+  assert (
+    issubst (sbcomp (sbweak A) (sbshift A sbs)) (ctxextend G (Subst A sbs)) D
+  ).
+  { ceapply SubstComp ; eassumption. }
+  assert (
+    issubst (sbcomp sbs (sbweak (Subst A sbs))) (ctxextend G (Subst A sbs)) D
+  ).
+  { ceapply SubstComp ; eassumption. }
+  assert (
+    issubst (sbcomp (sbweak A) (sbcomp (sbshift A sbs) sbt)) E D
+  ).
+  { ceapply SubstComp ; eassumption. }
+  assert (issubst (sbcomp (sbcomp (sbweak A) (sbshift A sbs)) sbt) E D).
+  { ceapply SubstComp ; eassumption. }
+  assert (issubst (sbcomp (sbcomp sbs (sbweak (Subst A sbs))) sbt) E D).
+  { ceapply SubstComp ; eassumption. }
+  assert (issubst (sbcomp sbs (sbcomp (sbweak (Subst A sbs)) sbt)) E D).
+  { ceapply SubstComp ; eassumption. }
+  assert (
+    eqsubst (sbcomp sbs (sbcomp (sbweak (Subst A sbs)) sbt))
+            (sbcomp (sbweak A) (sbcomp (sbshift A sbs) sbt))
+            E
+            D
+  ).
+  { ceapply SubstTrans ; [
+      ceapply CompAssoc ; eassumption
+    | ceapply SubstTrans ; [
+        ceapply CongSubstComp ; [
+          ceapply SubstRefl ; [ .. | eassumption ] ; assumption
+        | ceapply SubstSym ; [ ceapply WeakNat | .. ] ; assumption
+        | assumption ..
+        ]
+      | ceapply SubstSym ; [
+          ceapply CompAssoc ; eassumption
+        | assumption ..
+        ]
+      | assumption ..
+      ]
+    | assumption ..
+    ].
+  }
+  assert (eqtype D B B).
+  { ceapply EqTyRefl ; assumption. }
+  assert (
+    eqtype E
+           (Subst B (sbcomp sbs (sbcomp (sbweak (Subst A sbs)) sbt)))
+           (Subst B (sbcomp (sbweak A) (sbcomp (sbshift A sbs) sbt)))
+  ).
+  { ceapply CongTySubst ; eassumption. }
+  assert (istype E (Subst B (sbcomp (sbweak A) (sbcomp (sbshift A sbs) sbt)))).
+  { ceapply TySubst ; eassumption. }
+  assert (
+    eqtype E
+           (Subst (Subst B sbs) (sbcomp (sbweak (Subst A sbs)) sbt))
+           (Subst B (sbcomp (sbweak A) (sbcomp (sbshift A sbs) sbt)))
+  ).
+  { compsubst1 ; eassumption. }
+  assert (
+    istype (ctxextend G (Subst A sbs))
+           (Subst (Subst B sbs) (sbweak (Subst A sbs)))
+  ).
+  { ceapply TySubst ; eassumption. }
+  assert (istype E (Subst (Subst (Subst B sbs) (sbweak (Subst A sbs))) sbt)).
+  { ceapply TySubst ; eassumption. }
+  assert (
+    eqtype E
+           (Subst B (sbcomp (sbweak A) (sbcomp (sbshift A sbs) sbt)))
+           (Subst (Subst (Subst B sbs) (sbweak (Subst A sbs))) sbt)
+  ).
+  { compsubst1 ; eassumption. }
+  assert (
+    eqtype E
+           (Subst (Subst B (sbweak A)) (sbcomp (sbshift A sbs) sbt))
+           (Subst (Subst (Subst B sbs) (sbweak (Subst A sbs))) sbt)
+  ).
+  { compsubst1 ; eassumption. }
+  assert (istype E (Subst (Subst B (sbweak A)) (sbcomp (sbshift A sbs) sbt))).
+  { ceapply TySubst ; eassumption. }
+  assert (
+    istype (ctxextend G (Subst A sbs))
+           (Subst (Subst B (sbweak A)) (sbshift A sbs))
+  ).
+  { ceapply TySubst ; eassumption. }
+  assert (
+    istype (ctxextend G (Subst A sbs))
+           (Subst B (sbcomp (sbweak A) (sbshift A sbs)))
+  ).
+  { ceapply TySubst ; eassumption. }
+  assert (
+    eqsubst (sbcomp sbs (sbweak (Subst A sbs)))
+            (sbcomp (sbweak A) (sbshift A sbs))
+            (ctxextend G (Subst A sbs))
+            D
+  ).
+  { ceapply SubstSym ; [ ceapply WeakNat | .. ] ; eassumption. }
+  assert (
+    eqtype (ctxextend G (Subst A sbs))
+           (Subst (Subst B (sbweak A)) (sbshift A sbs))
+           (Subst (Subst B sbs) (sbweak (Subst A sbs)))
+  ).
+  { compsubst1 ; try eassumption.
+    compsubst1 ; try eassumption.
+    ceapply CongTySubst ; eassumption.
+  }
+  assert (
+    isterm (ctxextend G (Subst A sbs))
+           (subst (var (S k)) (sbshift A sbs))
+           (Subst (Subst B sbs) (sbweak (Subst A sbs)))
+  ).
+  { ceapply TermTyConv ; [ ceapply TermSubst | .. ] ; eassumption. }
+  assert (
+    isterm E
+           (subst (subst (var (S k)) (sbshift A sbs)) sbt)
+           (Subst (Subst B (sbweak A)) (sbcomp (sbshift A sbs) sbt))
+  ).
+  { ceapply TermTyConv ; [ ceapply TermSubst | .. ] ; try eassumption.
+    admit. }
+
+  ceapply EqTrans.
+  - ceapply EqSym.
+    + ceapply EqTyConv ; [ ceapply EqSubstComp | .. ] ; try eassumption.
+Admitted.
+
 End Checking2.
 
 
@@ -776,6 +940,20 @@ Ltac prepushsubst1 sym :=
     | ceapply EqTyConv ; [
         ceapply EqTrans ; [
           ceapply EqCompZeroSucc
+        | ..
+        ]
+      | ..
+      ]
+    ]
+  | |- eqterm _ (subst (var (S ?k)) (sbshift _ _)) _ _ =>
+    first [
+      ceapply EqTrans ; [
+        ceapply EqSubstShiftSucc
+      | ..
+      ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [
+          ceapply EqSubstShiftSucc
         | ..
         ]
       | ..
