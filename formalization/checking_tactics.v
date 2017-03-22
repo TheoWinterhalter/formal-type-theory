@@ -678,18 +678,94 @@ Proof.
            (Subst (Subst B sbs) (sbweak (Subst A sbs)))
   ).
   { ceapply TermTyConv ; [ ceapply TermSubst | .. ] ; eassumption. }
+  assert (istype E (Subst B (sbcomp sbs (sbcomp (sbweak (Subst A sbs)) sbt)))).
+  { ceapply TySubst ; eassumption. }
+  assert (
+    eqsubst (sbcomp (sbweak A) (sbcomp (sbshift A sbs) sbt))
+            (sbcomp sbs (sbcomp (sbweak (Subst A sbs)) sbt))
+            E D
+  ).
+  { ceapply SubstTrans ; [
+      ceapply CompAssoc ; eassumption
+    | ceapply SubstTrans ; [
+        ceapply CongSubstComp ; [
+          ceapply SubstRefl ; [ .. | eassumption ] ; assumption
+        | ceapply WeakNat ; assumption
+        | assumption ..
+        ]
+      | ceapply SubstSym ; [
+          ceapply CompAssoc ; eassumption
+        | assumption ..
+        ]
+      | assumption ..
+      ]
+    | assumption ..
+    ].
+  }
+  assert (
+    eqtype E
+           (Subst (Subst (Subst B sbs) (sbweak (Subst A sbs))) sbt)
+           (Subst (Subst B (sbweak A)) (sbcomp (sbshift A sbs) sbt))
+  ).
+  { compsubst1 ; try eassumption.
+    compsubst1 ; try eassumption.
+    compsubst1 ; try eassumption.
+    ceapply CongTySubst ; eassumption.
+  }
   assert (
     isterm E
            (subst (subst (var (S k)) (sbshift A sbs)) sbt)
            (Subst (Subst B (sbweak A)) (sbcomp (sbshift A sbs) sbt))
   ).
-  { ceapply TermTyConv ; [ ceapply TermSubst | .. ] ; try eassumption.
-    admit. }
+  { ceapply TermTyConv ; [ ceapply TermSubst | .. ] ; eassumption. }
+  assert (
+    isterm E
+           (subst (var (S k)) (sbcomp (sbshift A sbs) sbt))
+           (Subst (Subst B (sbweak A)) (sbcomp (sbshift A sbs) sbt))
+  ).
+  { ceapply TermSubst ; eassumption. }
+  assert (
+    isterm E
+           (subst (var (S k)) (sbcomp (sbshift A sbs) sbt))
+           (Subst (Subst (Subst B sbs) (sbweak (Subst A sbs))) sbt)
+  ).
+  { ceapply TermTyConv ; [ ceapply TermSubst | .. ] ; eassumption. }
+  assert (
+    isterm E
+           (subst (subst (var (S k)) (sbshift A sbs)) sbt)
+           (Subst (Subst (Subst B sbs) (sbweak (Subst A sbs))) sbt)
+  ).
+  { ceapply TermSubst ; eassumption. }
+  assert (isterm G (subst (var k) sbs) (Subst B sbs)).
+  { ceapply TermSubst ; eassumption. }
+  assert (
+    isterm (ctxextend G (Subst A sbs))
+           (subst (subst (var k) sbs) (sbweak (Subst A sbs)))
+           (Subst (Subst B sbs) (sbweak (Subst A sbs)))
+  ).
+  { ceapply TermSubst ; eassumption. }
+  assert (
+    isterm E
+           (subst (subst (subst (var k) sbs) (sbweak (Subst A sbs))) sbt)
+           (Subst (Subst (Subst B sbs) (sbweak (Subst A sbs))) sbt)
+  ).
+  { ceapply TermSubst ; eassumption. }
 
-  ceapply EqTrans.
-  - ceapply EqSym.
-    + ceapply EqTyConv ; [ ceapply EqSubstComp | .. ] ; try eassumption.
-Admitted.
+
+  ceapply EqTrans ; [
+    ceapply EqSym ; [
+      ceapply EqTyConv ; [ ceapply EqSubstComp | .. ] ; eassumption
+    | assumption ..
+    ]
+  | ceapply CongTermSubst ; [
+      ceapply SubstRefl ; [ .. | eassumption ] ; assumption
+    | ceapply EqSubstShiftSucc ; [ .. | eassumption ] ; assumption
+    | assumption ..
+    ]
+  | assumption ..
+  ].
+Qed.
+
 
 End Checking2.
 
@@ -954,6 +1030,20 @@ Ltac prepushsubst1 sym :=
     | ceapply EqTyConv ; [
         ceapply EqTrans ; [
           ceapply EqSubstShiftSucc
+        | ..
+        ]
+      | ..
+      ]
+    ]
+  | |- eqterm _ (subst (var (S ?k)) (sbcomp (sbshift _ _) _)) _ _ =>
+    first [
+      ceapply EqTrans ; [
+        ceapply EqCompShiftSucc
+      | ..
+      ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [
+          ceapply EqCompShiftSucc
         | ..
         ]
       | ..
