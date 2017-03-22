@@ -100,42 +100,50 @@ with istran_subst :
         istran_subst G G' E E'
                      (sbcomp sbt sbs) (fun xs => sbt' (sbs' xs))
 
-with istran_type :
+with istran_type' :
   (forall (G : context) (G' : Set) (A : type) (A' : Family G'), Type) :=
 
  | istran_Empty :
      forall G G',
        istran_ctx G G' ->
-       istran_type G G' Empty (fun _ => Empty_set)
+       istran_type' G G' Empty (fun _ => Empty_set)
 
  | istran_Unit :
      forall G G',
        istran_ctx G G' ->
-       istran_type G G' Unit (fun _ => Datatypes.unit)
+       istran_type' G G' Unit (fun _ => Datatypes.unit)
 
  | istran_Bool :
      forall G G',
        istran_ctx G G' ->
-       istran_type G G' Bool (fun _ => Datatypes.bool)
+       istran_type' G G' Bool (fun _ => Datatypes.bool)
 
  | istran_Prod :
      forall G G' A A' B B',
        istran_type G G' A A' ->
        istran_type (ctxextend G A) (sigT A') B B' ->
-       istran_type G G' (Prod A B) (Pi A' B')
+       istran_type' G G' (Prod A B) (Pi A' B')
 
  | istran_Id :
      forall G G' A A' u u' v v',
        istran_type G G' A A' ->
        istran_term G G' A A' u u' ->
        istran_term G G' A A' v v' ->
-       istran_type G G' (Id A u v) (Eq A' u' v')
+       istran_type' G G' (Id A u v) (Eq A' u' v')
 
  | istran_Subst :
      forall G G' D D' A A' sbs sbs',
        istran_type D D' A A' ->
        istran_subst G G' D D' sbs sbs' ->
-       istran_type G G' (Subst A sbs) (fun xs => A' (sbs' xs))
+       istran_type' G G' (Subst A sbs) (fun xs => A' (sbs' xs))
+
+with istran_type :
+ (forall (G : context) (G' : Set) (A : type) (A' : Family G'), Type) :=
+ | istran_CtxConvert :
+     forall G G' D D' A A' p,
+       istran_type' G G' A A' ->
+       istran_eqctx G G' D D' p ->
+       istran_type D D' A (transport Family p A')
 
 with istran_term :
   forall (G : context) (G' : Set)
@@ -149,7 +157,14 @@ with istran_term :
         (* istran_type G G' Unit U' -> *)
         (* istran_term G G' Unit U' unit (fun _ => tt). *)
         istran_ctx G G' ->
-        istran_term G G' Unit (fun _ => Datatypes.unit) unit (fun _ => tt).
+        istran_term G G' Unit (fun _ => Datatypes.unit) unit (fun _ => tt)
+
+with istran_eqctx :
+  forall (G : context) (G' : Set)
+         (D : context) (D' : Set),
+    G' = D' -> Type :=
+  | istran_eqctx_todo :
+      forall G G' D D' p, istran_eqctx G G' D D' p.
 
 Fixpoint cohere_ctx G G' G'' {struct G} :
   istran_ctx G G' ->
@@ -160,6 +175,11 @@ with cohere_subst G G' D D' sbs sbs' sbs'' {struct sbs} :
   istran_subst G G' D D' sbs sbs' ->
   istran_subst G G' D D' sbs sbs'' ->
   sbs' = sbs''
+
+with cohere_type' G G' A A' A'' {struct A} :
+  istran_type' G G' A A' ->
+  istran_type' G G' A A'' ->
+  A' = A''
 
 with cohere_type G G' A A' A'' {struct A} :
   istran_type G G' A A' ->
@@ -186,14 +206,14 @@ Proof.
           rename t into A, G'0 into G0, G'1 into G1, A'0 into A0.
           destruct (cohere_ctx G G0 G1 X X1).
           destruct (cohere_type G G0 A A' A0 X0 X2).
-          reflexivity.
+          constructor.
         }
     }
 
   (* cohere_subst *)
   - { todo. }
 
-  (* cohere_type *)
+  (* cohere_type' *)
   - { destruct A ; doConfig.
 
       (* Prod *)
@@ -202,8 +222,8 @@ Proof.
           dependent destruction H2.
           apply funext.
           intro xs.
-          destruct (cohere_type G G' A1 A' A'0 H1_ H2_).
-          destruct (cohere_type (ctxextend G A1) (sigT A') A2 B' B'0 H1_0 H2_0).
+          destruct (cohere_type G G' A1 A' A'0 i i1).
+          destruct (cohere_type (ctxextend G A1) (sigT A') A2 B' B'0 i0 i2).
           reflexivity.
         }
 
@@ -213,9 +233,9 @@ Proof.
           dependent destruction H1.
           dependent destruction H2.
           apply funext. intro xs.
-          destruct (cohere_type G G' A A' A'0 H1 H2).
-          destruct (cohere_term G G' A A' t u' u'0 i i1).
-          destruct (cohere_term G G' A A' t0 v' v'0 i0 i2).
+          destruct (cohere_type G G' A A' A'0) ; [ assumption .. | idtac ].
+          destruct (cohere_term G G' A A' t u' u'0) ; [ assumption .. | idtac ].
+          destruct (cohere_term G G' A A' t0 v' v'0) ; [ assumption .. | idtac ].
           reflexivity.
         }
 
@@ -246,6 +266,10 @@ Proof.
           dependent destruction H2.
           reflexivity.
         }
+    }
+
+    (* cohere_type *)
+    - { todo.
     }
 
     (* cohere_term *)
