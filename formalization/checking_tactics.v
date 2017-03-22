@@ -300,6 +300,233 @@ Proof.
   ].
 Qed.
 
+Lemma EqCompWeak :
+  forall {G D A B k sbs},
+    issubst sbs G (ctxextend D B) ->
+    isterm D (var k) A ->
+    istype D B ->
+    istype D A ->
+    isctx G ->
+    isctx D ->
+    eqterm G
+           (subst (var k) (sbcomp (sbweak B) sbs))
+           (subst (var (S k)) sbs)
+           (Subst (Subst A (sbweak B)) sbs).
+Proof.
+  intros.
+
+  assert (issubst (sbweak B) (ctxextend D B) D).
+  { capply SubstWeak ; assumption. }
+  assert (isctx (ctxextend D B)).
+  { capply CtxExtend ; assumption. }
+  assert (istype (ctxextend D B) (Subst A (sbweak B))).
+  { ceapply TySubst ; eassumption. }
+  assert (istype G (Subst (Subst A (sbweak B)) sbs)).
+  { ceapply TySubst ; eassumption. }
+  assert (issubst (sbcomp (sbweak B) sbs) G D).
+  { ceapply SubstComp ; eassumption. }
+  assert (istype G (Subst A (sbcomp (sbweak B) sbs))).
+  { ceapply TySubst ; eassumption. }
+  assert (
+    eqtype G (Subst A (sbcomp (sbweak B) sbs)) (Subst (Subst A (sbweak B)) sbs)
+  ).
+  { ceapply EqTySym ; [ ceapply EqTySubstComp | .. ] ; eassumption. }
+  assert (
+    isterm (ctxextend D B) (subst (var k) (sbweak B)) (Subst A (sbweak B))
+  ).
+  { ceapply TermSubst ; eassumption. }
+  assert (
+    eqtype G (Subst (Subst A (sbweak B)) sbs) (Subst A (sbcomp (sbweak B) sbs))
+  ).
+  { ceapply EqTySubstComp ; eassumption. }
+  assert (
+    isterm G
+           (subst (subst (var k) (sbweak B)) sbs)
+           (Subst A (sbcomp (sbweak B) sbs))
+  ).
+  { ceapply TermTyConv ; [ ceapply TermSubst | .. ] ; eassumption. }
+  assert (
+     isterm G
+            (subst (var k) (sbcomp (sbweak B) sbs))
+            (Subst A (sbcomp (sbweak B) sbs))
+  ).
+  { ceapply TermSubst ; eassumption. }
+  assert (
+    isterm G
+           (subst (var k) (sbcomp (sbweak B) sbs))
+           (Subst (Subst A (sbweak B)) sbs)
+  ).
+  { ceapply TermTyConv ; [ ceapply TermSubst | .. ] ; eassumption. }
+  assert (
+    isterm G
+           (subst (subst (var k) (sbweak B)) sbs)
+           (Subst (Subst A (sbweak B)) sbs)
+  ).
+  { ceapply TermSubst ; eassumption. }
+  assert (isterm (ctxextend D B) (var (S k)) (Subst A (sbweak B))).
+  { ceapply TermVarSucc ; assumption. }
+  assert (isterm G (subst (var (S k)) sbs) (Subst (Subst A (sbweak B)) sbs)).
+  { ceapply TermSubst ; eassumption. }
+
+  ceapply EqTrans ; [
+    ceapply EqSym ; [
+      ceapply EqTyConv ; [ ceapply EqSubstComp | .. ] ; eassumption
+    | assumption ..
+    ]
+  | ceapply CongTermSubst ; [
+      ceapply SubstRefl ; [ .. | eassumption ] ; assumption
+    | ceapply EqSubstWeak ; assumption
+    | assumption ..
+    ]
+  | assumption ..
+  ].
+Qed.
+
+Lemma EqCompZeroSucc :
+  forall {G D A B k u sbs},
+    issubst sbs G D ->
+    isterm D (var k) A ->
+    isterm D u B ->
+    istype D A ->
+    istype D B ->
+    isctx G ->
+    isctx D ->
+    eqterm G
+           (subst (var (S k)) (sbcomp (sbzero B u) sbs))
+           (subst (var k) sbs)
+           (Subst A sbs).
+Proof.
+  intros.
+
+  assert (isterm (ctxextend D B) (var (S k)) (Subst A (sbweak B))).
+  { capply TermVarSucc ; eassumption. }
+  assert (issubst (sbzero B u) D (ctxextend D B)).
+  { capply SubstZero ; assumption. }
+  assert (isctx (ctxextend D B)).
+  { capply CtxExtend ; assumption. }
+  assert (issubst (sbweak B) (ctxextend D B) D).
+  { capply SubstWeak ; assumption. }
+  assert (istype (ctxextend D B) (Subst A (sbweak B))).
+  { ceapply TySubst ; eassumption. }
+  assert (issubst (sbcomp (sbzero B u) sbs) G (ctxextend D B)).
+  { ceapply SubstComp ; eassumption. }
+  assert (istype G (Subst A sbs)).
+  { ceapply TySubst ; eassumption. }
+  assert (issubst (sbcomp (sbweak B) (sbzero B u)) D D).
+  { ceapply SubstComp ; eassumption. }
+  assert (issubst sbid D D).
+  { capply SubstId. assumption. }
+  assert (issubst (sbcomp (sbcomp (sbweak B) (sbzero B u)) sbs) G D).
+  { ceapply SubstComp ; eassumption. }
+  assert (issubst (sbcomp sbid sbs) G D).
+  { ceapply SubstComp ; eassumption. }
+  assert (issubst (sbcomp (sbweak B) (sbcomp (sbzero B u) sbs)) G D).
+  { ceapply SubstComp ; eassumption. }
+  assert (istype G (Subst (Subst A (sbweak B)) (sbcomp (sbzero B u) sbs))).
+  { ceapply TySubst ; eassumption. }
+  assert (
+    eqtype G
+           (Subst (Subst A (sbweak B)) (sbcomp (sbzero B u) sbs))
+           (Subst A sbs)
+  ).
+  { compsubst1 ; try eassumption.
+    ceapply CongTySubst ; [
+      ceapply SubstTrans ; [
+        ceapply CompAssoc ; eassumption
+      | ceapply SubstTrans ; [
+          ceapply CongSubstComp ; [
+            ceapply SubstRefl ; [ .. | eassumption ] ; assumption
+          | capply WeakZero ; assumption
+          | assumption ..
+          ]
+        | capply CompIdLeft ; assumption
+        | assumption ..
+        ]
+      | assumption ..
+      ]
+    | capply EqTyRefl ; assumption
+    | assumption ..
+    ].
+  }
+  assert (istype D (Subst A (sbcomp (sbweak B) (sbzero B u)))).
+  { ceapply TySubst ; eassumption. }
+  assert (istype D (Subst A sbid)).
+  { ceapply TySubst ; eassumption. }
+  assert (eqtype D (Subst (Subst A (sbweak B)) (sbzero B u)) A).
+  { compsubst1 ; try eassumption.
+    ceapply EqTyTrans ; [
+      ceapply CongTySubst ; [
+        ceapply WeakZero ; assumption
+      | ceapply EqTyRefl ; assumption
+      | assumption ..
+      ]
+    | ceapply EqTyIdSubst ; assumption
+    | assumption ..
+    ].
+  }
+  assert (istype D (Subst (Subst A (sbweak B)) (sbzero B u))).
+  { ceapply TySubst ; eassumption. }
+  assert (isterm D (subst (var (S k)) (sbzero B u)) A).
+  { ceapply TermTyConv ; [ ceapply TermSubst | .. ] ; eassumption. }
+  assert (
+    eqtype G
+           (Subst A sbs)
+           (Subst (Subst A (sbweak B)) (sbcomp (sbzero B u) sbs))
+  ).
+  { compsubst1 ; try eassumption.
+    ceapply CongTySubst ; [
+      ceapply SubstTrans ; [
+        ceapply CompAssoc ; eassumption
+      | ceapply SubstTrans ; [
+          ceapply CongSubstComp ; [
+            ceapply SubstRefl ; [ .. | eassumption ] ; assumption
+          | ceapply WeakZero ; assumption
+          | assumption ..
+          ]
+        | ceapply CompIdLeft ; assumption
+        | assumption ..
+        ]
+      | assumption ..
+      ]
+    | capply EqTyRefl ; assumption
+    | assumption ..
+    ].
+  }
+  assert (
+    isterm G
+           (subst (subst (var (S k)) (sbzero B u)) sbs)
+           (Subst (Subst A (sbweak B)) (sbcomp (sbzero B u) sbs))
+  ).
+  { ceapply TermTyConv ; [ ceapply TermSubst | .. ] ; eassumption. }
+  assert (
+    isterm G
+           (subst (var (S k)) (sbcomp (sbzero B u) sbs))
+           (Subst (Subst A (sbweak B)) (sbcomp (sbzero B u) sbs))
+  ).
+  { ceapply TermSubst ; eassumption. }
+  assert (isterm G (subst (var (S k)) (sbcomp (sbzero B u) sbs)) (Subst A sbs)).
+  { ceapply TermTyConv ; [ ceapply TermSubst | .. ] ; eassumption. }
+  assert (eqtype G (Subst A sbs) (Subst A sbs)).
+  { capply EqTyRefl ; assumption. }
+  assert (isterm G (subst (subst (var (S k)) (sbzero B u)) sbs) (Subst A sbs)).
+  { ceapply TermTyConv ; [ ceapply TermSubst | .. ] ; eassumption. }
+  assert (isterm G (subst (var k) sbs) (Subst A sbs)).
+  { ceapply TermSubst ; eassumption. }
+
+  ceapply EqTrans ; [
+    ceapply EqSym ; [
+      ceapply EqTyConv ; [ ceapply EqSubstComp | .. ] ; eassumption
+    | assumption ..
+    ]
+  | ceapply CongTermSubst ; [
+      ceapply SubstRefl ; [ .. | eassumption ] ; assumption
+    | ceapply EqSubstZeroSucc ; assumption
+    | assumption ..
+    ]
+  | assumption ..
+  ].
+Qed.
+
 End Checking2.
 
 
@@ -449,8 +676,8 @@ Ltac prepushsubst1 sym :=
       | ..
       ]
     ]
-  | |- eqterm ?G ?u (subst (var 0) (sbzero ?B ?v)) ?A =>
-    ceapply EqSym ; [ ceapply EqTrans ; [ ceapply EqSubstZeroZero | .. ] | .. ]
+  (* | |- eqterm ?G ?u (subst (var 0) (sbzero ?B ?v)) ?A => *)
+  (*   ceapply EqSym ; [ ceapply EqTrans ; [ ceapply EqSubstZeroZero | .. ] | .. ] *)
   | |- eqterm ?G (subst (var 0) (sbshift ?B ?sbs)) ?v ?A =>
     ceapply EqTrans ; [
       ceapply EqTyConv ; [
@@ -459,17 +686,17 @@ Ltac prepushsubst1 sym :=
       ]
     | ..
     ]
-  | |- eqterm ?G ?u (subst (var 0) (sbshift ?B ?sbs)) ?A =>
-    ceapply EqSym ; [
-      ceapply EqTrans ; [
-        ceapply EqTyConv ; [
-          ceapply EqSubstShiftZero
-        | ..
-        ]
-      | ..
-      ]
-    | ..
-    ]
+  (* | |- eqterm ?G ?u (subst (var 0) (sbshift ?B ?sbs)) ?A => *)
+  (*   ceapply EqSym ; [ *)
+  (*     ceapply EqTrans ; [ *)
+  (*       ceapply EqTyConv ; [ *)
+  (*         ceapply EqSubstShiftZero *)
+  (*       | .. *)
+  (*       ] *)
+  (*     | .. *)
+  (*     ] *)
+  (*   | .. *)
+  (*   ] *)
   | |- eqterm ?G (subst (var 0) (sbcomp (sbzero _ ?u) ?sbt)) ?v ?A =>
     first [
       ceapply EqTrans ; [
@@ -499,6 +726,60 @@ Ltac prepushsubst1 sym :=
       | ..
       ]
     | ..
+    ]
+  | |- eqterm ?G (subst (var ?k) (sbweak _)) _ _ =>
+    first [
+      ceapply EqTrans ; [
+        ceapply EqSubstWeak
+      | ..
+      ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [
+          ceapply EqSubstWeak
+        | ..
+        ]
+      | ..
+      ]
+    ]
+  | |- eqterm _ (subst (var ?k) (sbcomp (sbweak _) _)) _ _ =>
+    first [
+      ceapply EqTrans ; [
+        ceapply EqCompWeak
+      | ..
+      ]
+    | ceapply EqTrans ; [
+        ceapply EqTyConv ; [ ceapply EqCompWeak | .. ]
+      | ..
+      ]
+    ]
+  (* It might not match on (var 1) and such... *)
+  | |- eqterm _ (subst (var (S ?k)) (sbzero _ _)) _ _ =>
+    first [
+      ceapply EqTrans ; [
+        ceapply EqSubstZeroSucc
+      | ..
+      ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [
+          ceapply EqSubstZeroSucc
+        | ..
+        ]
+      | ..
+      ]
+    ]
+  | |- eqterm _ (subst (var (S ?k)) (sbcomp (sbzero _ _) _)) _ _ =>
+    first [
+      ceapply EqTrans ; [
+        ceapply EqCompZeroSucc
+      | ..
+      ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [
+          ceapply EqCompZeroSucc
+        | ..
+        ]
+      | ..
+      ]
     ]
   (* Instead of writing all symmetry cases *)
   | |- eqterm ?G ?u ?v ?A =>
@@ -2123,6 +2404,14 @@ Ltac strictmagic := preop ; magicn false false true true.
 
 Ltac compsubst := preop ; compsubst1.
 Ltac pushsubst := preop ; pushsubst1.
+
+(* Tactic to keep judgments *)
+Ltac keep_ju :=
+  doConfig ;
+  first [
+    check_goal
+  | shelve
+  ].
 
 (* Tactic to keep equalities *)
 Ltac keep_eq :=

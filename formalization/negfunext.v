@@ -1074,6 +1074,18 @@ Proof.
     Unshelve. all:try magic.
     Unshelve. todo. (* Hopefully this is true and just shows one case is
                        missing from magic. *)
+    (* eqterm G
+    (subst (var 1)
+       (sbcomp
+          (sbshift (Id (Subst A (sbweak A)) (subst x (sbweak A)) (var 0))
+             (sbzero A x)) (sbzero (Id A x x) (refl A x)))) x
+    (Subst
+       (Subst A
+          (sbcomp (sbweak A)
+             (sbweak (Id (Subst A (sbweak A)) (subst x (sbweak A)) (var 0)))))
+       (sbcomp
+          (sbshift (Id (Subst A (sbweak A)) (subst x (sbweak A)) (var 0))
+             (sbzero A x)) (sbzero (Id A x x) (refl A x)))) *)
   - assumption.
   - assumption.
   - magic.
