@@ -1075,7 +1075,9 @@ Proof.
   - assumption.
   - assumption.
   - magic.
-    Unshelve. all:strictmagic. (* Untested. *)
+    Unshelve. all:try magic.
+    Unshelve. all:try apply CtxRefl.
+    all:strictmagic.
 Qed.
 
 
