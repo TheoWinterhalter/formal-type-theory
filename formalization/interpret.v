@@ -35,12 +35,6 @@ Axiom funext :
   forall (A : Set) (B : A -> Type) (f g : forall x, B x),
     (forall x, f x = g x) -> f = g.
 
-(* Defining this relation(s), doesn't it mean that we are able
-   to produce a translation of expressions directly somehow,
-   outside of the derivation?
-   This is where the translation happens, and the rest is just the
-   theorem that says we are preserving derivations!
-*)
 Inductive istran_ctx : context -> Set -> Type :=
 
   | istran_ctxempty :
@@ -152,12 +146,8 @@ with istran_term :
     Type
   :=
 
-  | istran_unit :
-      forall G G' (* U' *),
-        (* istran_type G G' Unit U' -> *)
-        (* istran_term G G' Unit U' unit (fun _ => tt). *)
-        istran_ctx G G' ->
-        istran_term G G' Unit (fun _ => Datatypes.unit) unit (fun _ => tt)
+  | istran_todo :
+      forall G G' A A' u u', istran_term G G' A A' u u'
 
 with istran_eqctx :
   forall (G : context) (G' : Set)
@@ -181,10 +171,11 @@ with cohere_type' G G' A A' A'' {struct A} :
   istran_type' G G' A A'' ->
   A' = A''
 
-with cohere_type G G' A A' A'' {struct A} :
+with cohere_type G G' D D' A A' A'' p {struct A} :
   istran_type G G' A A' ->
-  istran_type G G' A A'' ->
-  A' = A''
+  istran_type D D' A A'' ->
+  istran_eqctx G G' D D' p ->
+  transport Family p A' = A''
 
 with cohere_term G G' A A' u u' u'' {struct u} :
   istran_term G G' A A' u u' ->
@@ -205,8 +196,10 @@ Proof.
       - {
           rename t into A, G'0 into G0, G'1 into G1, A'0 into A0.
           destruct (cohere_ctx G G0 G1 X X1).
-          destruct (cohere_type G G0 A A' A0 X0 X2).
-          constructor.
+          pose (eq_pA'A'' := cohere_type G G0 G G0 A A' A0 eq_refl X0 X2 (istran_eqctx_todo _ _ _ _ _)).
+          simpl in eq_pA'A''.
+          destruct eq_pA'A''.
+          reflexivity.
         }
     }
 
@@ -222,8 +215,10 @@ Proof.
           dependent destruction H2.
           apply funext.
           intro xs.
-          destruct (cohere_type G G' A1 A' A'0 i i1).
-          destruct (cohere_type (ctxextend G A1) (sigT A') A2 B' B'0 i0 i2).
+          pose (eq_A'A'0 := cohere_type G G' G G' A1 A' A'0 eq_refl i i1 (istran_eqctx_todo _ _ _ _ _)).
+          simpl in eq_A'A'0 ; destruct eq_A'A'0.
+          pose (eq_B'B'0 := cohere_type (ctxextend G A1) (sigT A') (ctxextend G A1) (sigT A') A2 B' B'0 eq_refl i0 i2 (istran_eqctx_todo _ _ _ _ _)).
+          simpl in eq_B'B'0 ; destruct eq_B'B'0.
           reflexivity.
         }
 
