@@ -8,7 +8,7 @@ Local Open Scope type_scope.
 Require Import syntax. (* The syntax of ett/ptt. *)
 Require Import tt.
 
-Require ptt ett ptt_sanity.
+Require ptt ett ptt_sanity ett2ptt ptt2ett uniqueness ptt_inversion.
 Require Import tactics.
 Require pxtt.
 
@@ -78,6 +78,7 @@ Inductive istran_ctx : context -> Set -> Type :=
 
   | istran_ctxextend :
       forall G G' A A',
+        pxtt.istype G A ->
         istran_ctx G G' ->
         istran_type G G' A A' ->
         istran_ctx (ctxextend G A) (sigT A')
@@ -91,6 +92,7 @@ with istran_subst' :
 
   | istran_sbzero :
       forall G G' A A' u u',
+        pxtt.isterm G u A ->
         istran_ctx G G' ->
         istran_type G G' A A' ->
         istran_term G G' A A' u u' ->
@@ -107,6 +109,8 @@ with istran_subst' :
 
   | istran_sbshift :
       forall G G' D D' A A' sbs sbs',
+        pxtt.issubst sbs G D ->
+        pxtt.istype D A ->
         istran_ctx G G' ->
         istran_ctx D D' ->
         istran_type D D' A A' ->
@@ -118,11 +122,14 @@ with istran_subst' :
 
   | istran_sbid :
       forall G G',
+        pxtt.isctx G ->
         istran_ctx G G' ->
         istran_subst' G G' G G' sbid (fun x => x)
 
   | istran_sbcomp :
       forall G G' D D' E E' sbs sbs' sbt sbt',
+        pxtt.issubst sbs G D ->
+        pxtt.issubst sbt D E ->
         istran_ctx G G' ->
         istran_ctx D D' ->
         istran_ctx E E' ->
@@ -140,6 +147,7 @@ with istran_subst :
 
   | istran_SubstCtxConv :
       forall G1 G2 G' D1 D2 D' sbs sbs',
+        pxtt.issubst sbs G1 D1 ->
         pxtt.eqctx G1 G2 ->
         pxtt.eqctx D1 D2 ->
         istran_subst' G1 G' D1 D' sbs sbs' ->
@@ -150,12 +158,16 @@ with istran_type' :
 
  | istran_Prod :
      forall G G' A A' B B',
+       pxtt.istype G A ->
+       pxtt.istype (ctxextend G A) B ->
        istran_type G G' A A' ->
        istran_type (ctxextend G A) (sigT A') B B' ->
        istran_type' G G' (Prod A B) (Pi A' B')
 
  | istran_Id :
      forall G G' A A' u u' v v',
+       pxtt.isterm G u A ->
+       pxtt.isterm G v A ->
        istran_type G G' A A' ->
        istran_term G G' A A' u u' ->
        istran_term G G' A A' v v' ->
@@ -163,22 +175,27 @@ with istran_type' :
 
  | istran_Subst :
      forall G G' D D' A A' sbs sbs',
+       pxtt.issubst sbs G D ->
+       pxtt.istype D A ->
        istran_type D D' A A' ->
        istran_subst G G' D D' sbs sbs' ->
        istran_type' G G' (Subst A sbs) (fun xs => A' (sbs' xs))
 
  | istran_Empty :
      forall G G',
+       pxtt.isctx G ->
        istran_ctx G G' ->
        istran_type' G G' Empty (fun _ => Empty_set)
 
  | istran_Unit :
      forall G G',
+       pxtt.isctx G ->
        istran_ctx G G' ->
        istran_type' G G' Unit (fun _ => Datatypes.unit)
 
  | istran_Bool :
      forall G G',
+       pxtt.isctx G ->
        istran_ctx G G' ->
        istran_type' G G' Bool (fun _ => Datatypes.bool)
 
@@ -188,6 +205,7 @@ with istran_type :
  | istran_TyCtxConv :
      forall G1 G2 G' A A',
        pxtt.eqctx G1 G2 ->
+       pxtt.istype G1 A ->
        istran_type' G1 G' A A' ->
        istran_type G2 G' A A'
 
@@ -283,39 +301,46 @@ Fixpoint cohere_ctx G G' G''
   (H2 : istran_ctx G G'') {struct H1} :
   G' = G''
 
-with cohere_subst' G G' G'' D D' D'' sbs sbs' sbs''
-  (H1 : istran_subst' G G'  D D'  sbs sbs')
-  (H2 : istran_subst' G G'' D D'' sbs sbs'') {struct H1} :
+with cohere_subst' G1 G2 G' G'' D1 D2 D' D'' sbs sbs' sbs''
+  (eqG12 : pxtt.eqctx G1 G2)
+  (eqD12 : pxtt.eqctx D1 D2)
+  (H1 : istran_subst' G1 G'  D1 D'  sbs sbs')
+  (H2 : istran_subst' G2 G'' D2 D'' sbs sbs'') {struct H1} :
   existT _ G' (existT _ D' sbs') = existT _ G'' (existT _ D'' sbs'')
     :> { X : Set & { Y : Set & X -> Y } }
 
-with cohere_subst G G' G'' D D' D'' sbs sbs' sbs''
-  (H1 : istran_subst G G'  D D'  sbs sbs')
-  (H2 : istran_subst G G'' D D'' sbs sbs'') {struct H1} :
+with cohere_subst G1 G2 G' G'' D1 D2 D' D'' sbs sbs' sbs''
+  (eqG12 : pxtt.eqctx G1 G2)
+  (eqD12 : pxtt.eqctx D1 D2)
+  (H1 : istran_subst G1 G'  D1 D'  sbs sbs')
+  (H2 : istran_subst G2 G'' D2 D'' sbs sbs'') {struct H1} :
   existT _ G' (existT _ D' sbs') = existT _ G'' (existT _ D'' sbs'')
     :> { X : Set & { Y : Set & X -> Y } }
 
-with cohere_type' G G' G'' A A' A''
-  (H1 : istran_type' G G'  A A')
-  (H2 : istran_type' G G'' A A'') {struct H1} :
+with cohere_type' G1 G2 G' G'' A A' A''
+  (eqG12 : pxtt.eqctx G1 G2)
+  (H1 : istran_type' G1 G'  A A')
+  (H2 : istran_type' G2 G'' A A'') {struct H1} :
   existT _ G' A' = existT _ G'' A'' :> sigT Family
 
-with cohere_type G G' G'' A A' A''
-  (H1 : istran_type G G'  A A')
-  (H2 : istran_type G G'' A A'') {struct H1} :
+with cohere_type G1 G2 G' G'' A A' A''
+  (eqG12 : pxtt.eqctx G1 G2)
+  (H1 : istran_type G1 G'  A A')
+  (H2 : istran_type G2 G'' A A'') {struct H1} :
   existT _ G' A' = existT _ G'' A'' :> sigT Family
 
-with cohere_term G G' G'' A A' A'' u u' u''
-  (H1 : istran_term G G'  A A'  u u')
-  (H2 : istran_term G G'' A A'' u u'') {struct H1} :
+with cohere_term G1 G2 G' G'' A1 A2 A' A'' u u' u''
+  (eqG12 : pxtt.eqctx G1 G2)
+  (eqA12 : pxtt.eqtype G1 A1 A2)
+  (H1 : istran_term G1 G'  A1 A'  u u')
+  (H2 : istran_term G2 G'' A2 A'' u u'') {struct H1} :
   existT _ G' (existT _ A' u') = existT _ G'' (existT _ A'' u'')
     :> { X : Set & { F : Family X & section F } }
 .
 
 Proof.
   (* cohere_ctx *)
-  - { destruct G ; doConfig ;
-      dependent destruction H1 ;
+  - { destruct H1 ;
       dependent destruction H2.
 
       (* ctxempty *)
@@ -324,16 +349,81 @@ Proof.
       (* ctxextend *)
       - {
           rename
-            t into A,
             G'0 into G'',
             A'0 into A''.
             apply (path_sigT (existT _ G' A') (existT _ G'' A'')).
-            now apply (cohere_type G G' G'' A A' A'').
+            apply (cohere_type G G G' G'' A A' A'') ; [ idtac | assumption ..].
+            capply CtxRefl.
+            now apply (ptt_sanity.sane_istype G A).
         }
     }
 
   (* cohere_subst' *)
-  - { todo. }
+  - { destruct H1 ;
+      dependent destruction H2.
+
+     (* sbzero *)
+     - { rename G into G1, G0 into G2, G'0 into G'', A'0 into A'', u'0 into u''.
+         assert (eqAA : pxtt.eqtype G1 A A).
+         { capply EqTyRefl ; now apply (ptt_sanity.sane_isterm _ _ _ i). }
+         pose (p := cohere_term _ _ _ _ _ _ _ _ _ _ _ eqG12 eqAA i2 i6).
+         destruct (path_decompose_existT p) as [q r].
+         destruct q ; simpl in r.
+         destruct (path_decompose_existT r) as [qq rr].
+         destruct qq ; simpl in rr.
+         destruct rr.
+         reflexivity.
+       }
+
+     (* sbweak *)
+     - { rename G'0 into G'', A'0 into A''.
+         pose (p := cohere_type _ _ _ _ _ _ _ eqD12 i1 i4).
+         destruct (path_decompose_existT p) as [q r].
+         destruct q ; simpl in r.
+         destruct r.
+         reflexivity.
+       }
+
+     (* sbshift *)
+     - { rename G into G1, G0 into G2, eqG12 into eqextG12,
+                D into D1, D0 into D2, D'0 into D'', G'0 into G'', A'0 into A'',
+                sbs'0 into sbs'', eqD12 into eqextD12.
+         assert (eqD12 : pxtt.eqctx D1 D2).
+         { apply ett2ptt.sane_eqctx.
+           apply (uniqueness.eqctx_ctxextend D1 A D2 A).
+           now apply ptt2ett.sane_eqctx.
+         }
+         assert (eqG12 : pxtt.eqctx G1 G2).
+         { apply ett2ptt.sane_eqctx.
+           apply (uniqueness.eqctx_ctxextend G1 (Subst A sbs) G2 (Subst A sbs)).
+           now apply ptt2ett.sane_eqctx.
+         }
+         pose (p := cohere_subst G1 G2 _ _ D1 D2 _ _ _ _ _ eqG12 eqD12 i4 i10).
+         destruct (path_decompose_existT p) as [q r].
+         destruct q ; simpl in r.
+         destruct (path_decompose_existT r) as [qq rr].
+         destruct qq ; simpl in rr.
+         destruct rr.
+         pose (pp := cohere_type D1 D2 _ _ A A' A'' eqD12 i3 i9).
+         destruct (path_decompose_existT pp) as [qq rr].
+         rewrite (UIP_Set qq) in rr.
+         simpl in rr ; destruct rr.
+         reflexivity.
+       }
+
+     (* sbid *)
+     - { rename G into G1, G0 into G2, G'0 into G''.
+         (* XXX we are stuck here because i0 and i2 have different contexts. *)
+         todo.
+       }
+
+     (* sbcomp *)
+     - { 
+         rename D into D1, D0 into D2, E into E1, E0 into E2, D'0 into D'', E'0 into E'',
+                G'0 into G'', sbs'0 into sbs'', sbt'0 into sbt''.
+         pose (p := cohere_subst _ _ _ _ _ _ _ _ _ _ eqD12 i5 i12).
+       }
+    }
 
   (* cohere_subst *)
   - { todo. }
@@ -384,7 +474,13 @@ Proof.
 
       (* Subst *)
       - {
-          todo.
+          rename D into D1, D0 into D2, D' into D1', D'0 into D2',
+                 G'0 into G'', A'0 into A'', sbs'0 into sbs''.
+          assert (eqctx_GG : pxtt.eqctx G G).
+          { capply CtxRefl. apply (ptt_sanity.sane_issubst _ _ _ i). }
+          pose (eqctx_D1D2' := uniqueness.unique_subst _ _ _ i _ _ i2 eqctx_GG).
+          pose (eqctx_D1D2 := ett2ptt.sane_eqctx _ _ eqctx_D1D2').
+          
         }
 
       (* Empty *)
