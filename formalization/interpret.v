@@ -34,6 +34,14 @@ Proof.
   exact u.
 Defined.
 
+Lemma transport_path {X : Type} (P : X -> Type) {x y : X}
+      {a b : P x} (p : x = y) :
+  a = b -> transport P p a = transport P p b.
+Proof.
+  intro q.
+  destruct p.
+  exact q.
+Defined.
 
 Definition Pi {G} (A : Family G) (B : Family (sigT A)) :=
   fun xs => forall (x : A xs), B (existT _ xs x).
@@ -90,6 +98,7 @@ with istran_subst' :
 
   | istran_sbweak :
       forall G G' A A',
+        pxtt.istype G A ->
         istran_ctx G G' ->
         istran_type G G' A A' ->
         istran_subst' (ctxextend G A) (sigT A') G G' (sbweak A)
@@ -222,12 +231,11 @@ with istran_term :
   :=
 
   | istran_TermTyConv :
-      forall G G' A A' B B' u u' p,
+      forall G G' A A' B u u',
         istran_term' G G' A A' u u' ->
-        istran_eqtype G G' A A' B B' p ->
         istran_term G G'
-                    B B'
-                    u (transport _ p u')
+                    B A'
+                    u u'
 
 
 with istran_eqctx :
@@ -243,7 +251,22 @@ with istran_eqtype :
     (B : type) (B' : Family G'),
     A' = B' -> Type :=
   | istran_eqtype_todo :
-      forall G G' A A' B B' p, istran_eqtype G G' A A' B B' p.
+      forall G G' A A' B B' p, istran_eqtype G G' A A' B B' p
+.
+(* possibly we will need this:
+
+with istran_eqtype :
+  forall (G : context) (G' : Set)
+    (A : type) (A' : Family G')
+    (B : type) (B' : Family G'),
+    A' = B' -> Type :=
+
+  | istran_EqTyCtxConv :
+    forall G G' D D' A A' B B' p q,
+      istran_eqtype' G G' A A' B B' p ->
+      istran_eqctx G G' D D' q ->
+      istran_eqtype D D' A (transport _ q A') B (transport _ q B') (transport_path _ q p)
+*)
 
 Lemma ap_path {X Y} (f : X -> Y) {x y} : x = y -> f x = f y.
 Proof.
