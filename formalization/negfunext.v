@@ -1068,17 +1068,72 @@ Proof.
       * magic.
       * magic.
     + magic.
-  - magic.
-    Unshelve. all:try magic.
-    Unshelve. all:keep_eq. all:try apply CtxRefl.
-    Unshelve. all:strictmagic.
+  - (* magic. *)
+    (* Unshelve. all:try magic. *)
+    (* Unshelve. all:keep_eq. all:try apply CtxRefl. *)
+    (* Unshelve. all:strictmagic. *)
+    todo. (* It takes too long *)
   - assumption.
   - assumption.
-  - magic.
-    Unshelve. all:try magic.
-    Unshelve. all:try apply CtxRefl.
-    all:strictmagic.
+  - (* magic. *)
+    (* Unshelve. all:try magic. *)
+    (* Unshelve. all:try apply CtxRefl. *)
+    (* all:strictmagic. *)
+    todo. (* too time-consuming *)
 Qed.
+
+(* From funextUnit we derive the equality of two identities *)
+Definition funext_id_unit (funext : term) : term.
+  pose (T := trans_type funextUnit). simpl in T.
+  revert T.
+  set (T1 := (Prod (SimProd (Prod Unit (Subst Unit (sbweak Unit))) Bool)
+            (SimProd
+               (Prod (SimProd (Prod Unit Unit) Bool)
+                  (SimProd
+                     (Prod
+                        (SimProd
+                           (Prod Unit
+                              (Id Unit
+                                 (app (proj1 (Prod Unit Unit) Bool (var 2)) Unit
+                                    Unit (var 0))
+                                 (app (proj1 (Prod Unit Unit) Bool (var 1)) Unit
+                                    Unit (var 0)))) Bool)
+                        (Subst (Id (SimProd (Prod Unit Unit) Bool) (var 1) (var 0))
+                           (sbweak
+                              (SimProd
+                                 (Prod Unit
+                                    (Id Unit
+                                       (app (proj1 (Prod Unit Unit) Bool (var 2))
+                                          Unit Unit (var 0))
+                                       (app (proj1 (Prod Unit Unit) Bool (var 1))
+                                          Unit Unit (var 0)))) Bool)))) Bool)) Bool))).
+  revert T1.
+  set (T2 := (SimProd (Prod Unit (Subst Unit (sbweak Unit))) Bool)).
+  revert T2.
+  set (T3 := (SimProd (Prod Unit Unit) Bool)).
+  revert T3.
+  set (T4 := (Id Unit
+                           (app (proj1 (Prod Unit Unit) Bool (var 2)) Unit Unit
+                              (var 0))
+                           (app (proj1 (Prod Unit Unit) Bool (var 1)) Unit Unit
+                              (var 0)))).
+  set (T5 := (SimProd (Prod Unit T4) Bool)).
+  intro T3.
+  set (T6 := (Prod T5 (Subst (Id T3 (var 1) (var 0)) (sbweak T5)))).
+  set (T7 := (SimProd (Prod T3 (SimProd T6 Bool)) Bool)).
+  revert T7.
+  set (T8 := (SimProd T6 Bool)).
+  intros T7 T2 T1 T.
+
+  pose (real_funext := proj1 T1 Bool funext). (* real_funext : T1 *)
+  pose (funi := lam Unit Unit unit). (* funi : Arrow Unit Unit *)
+  pose (fun_t := pair (Arrow Unit Unit) Bool funi true). (* fun_t : T2 *)
+  pose (fun_f := pair (Arrow Unit Unit) Bool funi false). (* fun_f : T3 *)
+  pose (u := app real_funext T2 T7 fun_t). (* u : T7{fun_t} *)
+  todo.
+Defined.
+
+
 
 
 (* We'd like to have magic available *)
@@ -1087,6 +1142,7 @@ Lemma funextContradiction :
   & Ttt.isterm ctxempty
                bot
                (Arrow (trans_type funextUnit) (Id Bool true false)) }.
+Proof.
   refine (existT _ _ _).
   ceapply TermAbs.
   ceapply TermTyConv ; [
