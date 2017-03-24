@@ -8,7 +8,8 @@ Local Open Scope type_scope.
 Require Import syntax. (* The syntax of ett/ptt. *)
 Require Import tt.
 
-Require ptt ett ett_sanity.
+Require ptt ett ptt_sanity.
+Require Import tactics.
 Require pxtt.
 
 Axiom cheating : forall (A : Type), A.
@@ -138,14 +139,11 @@ with istran_subst :
   :=
 
   | istran_SubstCtxConv :
-      forall G1 G1' G2 G2' D1 D1' D2 D2' sbs sbs' p q,
-        istran_subst' G1 G1' D1 D1' sbs sbs' ->
-        istran_eqctx G1 G1' G2 G2' p ->
-        istran_eqctx D1 D1' D2 D2' q ->
-        istran_subst G2 G2'
-                     D2 D2'
-                     sbs
-                     (fun (xs : G2') => transport _ q (sbs' (transport _ (eq_sym p) xs)))
+      forall G1 G2 G' D1 D2 D' sbs sbs',
+        pxtt.eqctx G1 G2 ->
+        pxtt.eqctx D1 D2 ->
+        istran_subst' G1 G' D1 D' sbs sbs' ->
+        istran_subst G2 G' D2 D' sbs sbs'
 
 with istran_type' :
   (forall (G : context) (G' : Set) (A : type) (A' : Family G'), Type) :=
@@ -188,10 +186,10 @@ with istran_type :
        (forall (G : context) (G' : Set) (A : type) (A' : Family G'), Type) :=
 
  | istran_TyCtxConv :
-     forall G G' D D' A A' p,
-       istran_type' G G' A A' ->
-       istran_eqctx G G' D D' p ->
-       istran_type D D' A (transport Family p A')
+     forall G1 G2 G' A A',
+       pxtt.eqctx G1 G2 ->
+       istran_type' G1 G' A A' ->
+       istran_type G2 G' A A'
 
 with istran_term'' :
   forall (G : context) (G' : Set)
@@ -216,12 +214,10 @@ with istran_term' :
   :=
 
   | istran_TermCtxConv :
-      forall G G' D D' A A' u u' q,
-        istran_term'' G G' A A' u u' ->
-        istran_eqctx G G' D D' q ->
-        istran_term' D D'
-                    A (transport Family q A')
-                    u (transport_section q u')
+      forall G1 G2 G' A A' u u',
+        pxtt.eqctx G1 G2 ->
+        istran_term'' G1 G' A A' u u' ->
+        istran_term' G2 G' A A' u u'
 
 with istran_term :
   forall (G : context) (G' : Set)
@@ -231,42 +227,11 @@ with istran_term :
   :=
 
   | istran_TermTyConv :
-      forall G G' A A' B u u',
-        istran_term' G G' A A' u u' ->
-        istran_term G G'
-                    B A'
-                    u u'
-
-
-with istran_eqctx :
-  forall (G : context) (G' : Set)
-         (D : context) (D' : Set),
-    G' = D' -> Type :=
-  | istran_eqctx_todo :
-      forall G G' D D' p, istran_eqctx G G' D D' p
-
-with istran_eqtype :
-  forall (G : context) (G' : Set)
-    (A : type) (A' : Family G')
-    (B : type) (B' : Family G'),
-    A' = B' -> Type :=
-  | istran_eqtype_todo :
-      forall G G' A A' B B' p, istran_eqtype G G' A A' B B' p
+      forall G G' A1 A2 A' u u',
+        pxtt.eqtype G A1 A2 ->
+        istran_term' G G' A1 A' u u' ->
+        istran_term G G' A2 A' u u'
 .
-(* possibly we will need this:
-
-with istran_eqtype :
-  forall (G : context) (G' : Set)
-    (A : type) (A' : Family G')
-    (B : type) (B' : Family G'),
-    A' = B' -> Type :=
-
-  | istran_EqTyCtxConv :
-    forall G G' D D' A A' B B' p q,
-      istran_eqtype' G G' A A' B B' p ->
-      istran_eqctx G G' D D' q ->
-      istran_eqtype D D' A (transport _ q A') B (transport _ q B') (transport_path _ q p)
-*)
 
 Lemma ap_path {X Y} (f : X -> Y) {x y} : x = y -> f x = f y.
 Proof.
@@ -525,10 +490,10 @@ Proof.
           exists (sigT A').
           split ; [ now constructor | ..].
           eexists.
-          eapply (istran_SubstCtxConv G G' G G' (ctxextend G A) (sigT A') (ctxextend G A) (sigT A') _ _ (eq_refl) (eq_refl)).
+          apply (istran_SubstCtxConv G G _ (ctxextend G A) (ctxextend G A) _).
+          - now apply CtxRefl.
+          - capply CtxRefl. now capply CtxExtend.
           - econstructor ; eassumption.
-          - constructor.
-          - constructor.
         }
 
       (* SubstWeak *)
@@ -538,10 +503,10 @@ Proof.
           exists G'.
           split ; [ assumption | ..].
           eexists.
-          eapply (istran_SubstCtxConv (ctxextend G A) (sigT A') (ctxextend G A) (sigT A') G G' G G' _ _ (eq_refl) (eq_refl)).
+          apply (istran_SubstCtxConv (ctxextend G A) (ctxextend G A) _ G G _).
+          - capply CtxRefl. now capply CtxExtend.
+          - now capply CtxRefl.
           - econstructor ; eassumption.
-          - constructor.
-          - constructor.
         }
 
       (* SubstShift *)
@@ -553,16 +518,18 @@ Proof.
           split.
           - constructor.
             + assumption.
-            + apply (istran_TyCtxConv G G' G G' _ _ (eq_refl)).
+            + apply (istran_TyCtxConv G G).
+              * now capply CtxRefl.
               * econstructor ; eassumption.
-              * constructor.
           - exists (sigT A').
             split ; [ now constructor | ..].
             eexists.
-            eapply (istran_SubstCtxConv (ctxextend G (Subst A sbs)) _ (ctxextend G (Subst A sbs)) _ (ctxextend D A) _ (ctxextend D A) _ _ _ (eq_refl) (eq_refl)).
+            apply (istran_SubstCtxConv (ctxextend G (Subst A sbs)) (ctxextend G (Subst A sbs)) _ (ctxextend D A) (ctxextend D A) _).
+            + capply CtxRefl. capply CtxExtend.
+              * assumption.
+              * ceapply TySubst ; eassumption.
+            + capply CtxRefl. now capply CtxExtend.
             + econstructor ; eassumption.
-            + constructor.
-            + constructor.
         }
 
       (* SubstId *)
@@ -572,10 +539,10 @@ Proof.
           exists G'.
           split ; [ assumption | .. ].
           eexists.
-          eapply (istran_SubstCtxConv G _ G _ G _ G _ _ _ (eq_refl) (eq_refl)).
+          apply (istran_SubstCtxConv G G _ G G _).
+          - now capply CtxRefl.
+          - now capply CtxRefl.
           - econstructor ; eassumption.
-          - constructor.
-          - constructor.
         }
 
       (* SubstComp *)
@@ -587,10 +554,10 @@ Proof.
           exists G'. split ; [ assumption | .. ].
           exists E'. split ; [ assumption | .. ].
           eexists.
-          eapply (istran_SubstCtxConv G _ G _ E _ E _ _ _ (eq_refl) (eq_refl)).
+          apply (istran_SubstCtxConv G G _ E E _).
+          - now capply CtxRefl.
+          - now capply CtxRefl.
           - econstructor ; [ .. | eassumption ] ; eassumption.
-          - constructor.
-          - constructor.
         }
 
       (* SubstCtxConv *)
@@ -603,14 +570,17 @@ Proof.
           destruct (cohere_ctx _ _ _ ist_D1' ist_D1'').
           destruct (cohere_ctx _ _ _ ist_G1' ist_G1'').
           dependent destruction ist_sbs'.
-          destruct p, q.
           exists G2'. split ; [ assumption | .. ].
           exists D2'. split ; [ assumption | .. ].
-          eexists.
-          eapply (istran_SubstCtxConv _ _ _ _ _ _ _ _ _ _ (eqG1'G2') eqD1'D2').
-          - eassumption.
-          - constructor.
-          - constructor.
+          destruct eqG1'G2'.
+          destruct eqD1'D2'.
+          exists sbs'.
+          eapply (istran_SubstCtxConv G1 G2 _ D1 D2 _).
+          - (config eapply @CtxTrans with (D := G0)) ; [ idtac | assumption ..].
+            now apply (ptt_sanity.sane_eqctx G1 G0).
+          - (config eapply @CtxTrans with (D := D0)) ; [ idtac | assumption ..].
+            now apply (ptt_sanity.sane_eqctx D1 D0).
+          - assumption.
         }
   }
 
@@ -623,11 +593,12 @@ Proof.
           destruct (cohere_ctx _ _ _ ist_G' ist_G'').
           exists D'. split ; [ assumption | .. ].
           dependent destruction ist_A'.
-          destruct p.
-          eexists.
-          eapply (istran_TyCtxConv G _ D _ _ _ eqG'D').
-          - eassumption.
-          - constructor.
+          destruct eqG'D'.
+          exists A'.
+          apply (istran_TyCtxConv G1 D _).
+          - (config eapply @CtxTrans with (D := G2)) ; [ idtac | assumption ..].
+            now apply (ptt_sanity.sane_eqctx G1 G2).
+          - assumption. 
         }
 
       (* TySubst *)
@@ -637,9 +608,9 @@ Proof.
           destruct (cohere_ctx _ _ _ ist_D' ist_D'').
           exists G'. split ; [ assumption | .. ].
           eexists.
-          eapply (istran_TyCtxConv G _ G _ _ _ (eq_refl)).
+          eapply (istran_TyCtxConv G G _).
+          - now capply CtxRefl.
           - econstructor ; eassumption.
-          - constructor.
         }
 
       (* TyProd *)
@@ -649,9 +620,9 @@ Proof.
           destruct (cohere_ctx _ _ _ ist_GA' ist_GA'').
           exists G'. split ; [ assumption | .. ].
           eexists.
-          eapply (istran_TyCtxConv G _ G _ _ _ (eq_refl)).
+          eapply (istran_TyCtxConv G G _).
+          - now capply CtxRefl.
           - econstructor ; eassumption.
-          - constructor.
         }
 
       (* TyId *)
@@ -659,7 +630,6 @@ Proof.
             as (G' & istG' & A' & istA' & u' & istu').
           destruct (eval_term _ _ _ i2)
             as (G'' & istG'' & A'' & istA'' & v' & istv').
-          (* destruct (cohere_ctx _ _ _ istG' istG''). *)
           pose (p := cohere_type _ _ _ _ _ _ istA' istA'').
           destruct (path_decompose_existT p) as [q r].
           destruct q. simpl in *.
@@ -667,36 +637,36 @@ Proof.
           clear p.
           exists G'. split ; [ assumption | .. ].
           eexists.
-          eapply (istran_TyCtxConv G _ G _ _ _ (eq_refl)).
+          eapply (istran_TyCtxConv G G _).
+          - now capply CtxRefl.
           - econstructor ; eassumption.
-          - constructor.
         }
 
       (* TyEmpty *)
       - { destruct (eval_ctx _ i) as (G' & istG').
           exists G'. split ; [ assumption | .. ].
           eexists.
-          eapply (istran_TyCtxConv G _ G _ _ _ (eq_refl)).
+          eapply (istran_TyCtxConv G G _).
+          - now capply CtxRefl.
           - econstructor ; eassumption.
-          - constructor.
         }
 
       (* TyUnit *)
       - { destruct (eval_ctx _ i) as (G' & istG').
           exists G'. split ; [ assumption | .. ].
           eexists.
-          eapply (istran_TyCtxConv G _ G _ _ _ (eq_refl)).
+          eapply (istran_TyCtxConv G G _).
+          - now capply CtxRefl.
           - econstructor ; eassumption.
-          - constructor.
         }
 
       (* TyBool *)
       - { destruct (eval_ctx _ i) as (G' & istG').
           exists G'. split ; [ assumption | .. ].
           eexists.
-          eapply (istran_TyCtxConv G _ G _ _ _ (eq_refl)).
+          eapply (istran_TyCtxConv G G _).
+          - now capply CtxRefl.
           - econstructor ; eassumption.
-          - constructor.
         }
     }
 
@@ -788,8 +758,11 @@ Proof.
           - constructor.
             + assumption.
             + dependent destruction istB'.
-              destruct p.
-              now apply (istran_TyCtxConv G).
+              destruct eqGD.
+              apply (istran_TyCtxConv G1 D).
+              * (config eapply @CtxTrans with (D := G2)) ; [ idtac | assumption ..].
+                now apply (ptt_sanity.sane_eqctx G1 G2).
+              * assumption.
           - destruct eqAB.
             destruct eqGD.
             reflexivity.
@@ -805,16 +778,20 @@ Proof.
           destruct (eval_eqtype _ _ _ Der) as (G'' & ist_G'' & A' & ist_A' & B' & ist_B' & eq_A'B').
           destruct (cohere_ctx _ _ _ ist_G' ist_G'').
           exists D'. split ; [ assumption | ..].
-          exists (transport Family eq_G'D' A'). split.
+          destruct eq_G'D'.
+          exists A'. split.
           - dependent destruction ist_A'.
-            destruct p.
-            now apply (istran_TyCtxConv G).
-          - exists (transport Family eq_G'D' B'). split.
+            apply (istran_TyCtxConv G1).
+            + (config eapply @CtxTrans with (D := G2)) ; [ idtac | assumption ..].
+              now apply (ptt_sanity.sane_eqctx G1 G2).
+            + assumption.
+          - exists B'. split.
             + dependent destruction ist_B'.
-              destruct p.
-              now apply (istran_TyCtxConv G).
-            + destruct eq_A'B'.
-              reflexivity.
+              apply (istran_TyCtxConv G1).
+              * (config eapply @CtxTrans with (D := G2)) ; [ idtac | assumption ..].
+                now apply (ptt_sanity.sane_eqctx G1 G2).
+              * assumption.
+            + exact eq_A'B'.
         }
 
       (* EqTyRefl *)
@@ -851,16 +828,15 @@ Proof.
       - { destruct (eval_type _ _ i0) as (G' & ist_G' & A' & ist_A').
           exists G'. split ; [ assumption | ..].
           exists A'. split.
-          - apply (istran_TyCtxConv G G' G G' _ _ eq_refl).
+          - apply (istran_TyCtxConv G G).
+            + now capply CtxRefl.
             + eapply istran_Subst.
               * eassumption.
               * apply (istran_SubstCtxConv
-                         G G' G G'
-                         G G' G G'
-                         sbid (fun xs => xs)
-                         eq_refl eq_refl) ;
+                         G G G'
+                         G G G'
+                         sbid (fun xs => xs)) ;
                   now constructor.
-            + now constructor.
           - exists A'. split ; [ assumption | reflexivity ].
         }
 
@@ -872,20 +848,19 @@ Proof.
           destruct (cohere_ctx _ _ _ ist_E' ist_E'').
           exists G'. split ; [ assumption | ..].
           exists (fun xs => A' (sbt' (sbs' xs))). split.
-          - apply (istran_TyCtxConv G G' _ _ _ _ eq_refl) ; [ .. | constructor].
+          - apply (istran_TyCtxConv G G _) ; [now capply CtxRefl | ..].
             apply (istran_Subst _ _ D D' _ (fun ys => A' (sbt' ys)) sbs sbs').
-            + apply (istran_TyCtxConv D D' _ _ _ _ eq_refl) ; [ .. | constructor].
-              econstructor ; eassumption.
-            + assumption.
+              + apply (istran_TyCtxConv D D _) ; [now capply CtxRefl | ..].
+                econstructor ; eassumption.
+              + assumption.
           - exists (fun xs => A' (sbt' (sbs' xs))). split.
-            + apply (istran_TyCtxConv G G' _ _ _ _ eq_refl) ; [ .. | constructor].
+            + apply (istran_TyCtxConv G G _) ; [now capply CtxRefl | ..].
               apply (istran_Subst _ _ E E' _ _).
               * assumption.
               * apply (istran_SubstCtxConv
-                         G G' G G'
-                         E E' E E'
-                         _ (fun xs : G' => sbt' (sbs' xs))
-                         eq_refl eq_refl) ; [ idtac | constructor ..].
+                         G G G'
+                         E E E'
+                         _ (fun xs : G' => sbt' (sbs' xs))) ; [now capply CtxRefl | now capply CtxRefl | ..].
                 econstructor ; eassumption.
             + reflexivity.
       }
@@ -900,13 +875,13 @@ Proof.
       - { destruct (eval_subst _ _ _ i) as (G' & ist_G' & D' & ist_D' & sbs' & ist_sbs').
           exists G'. split ; [ assumption | ..].
           exists (fun xs => Empty_set). split.
-          - apply (istran_TyCtxConv G G' _ _ _ _ eq_refl) ; [.. | constructor].
+          - apply (istran_TyCtxConv G) ; [ now capply CtxRefl | ..].
             apply (istran_Subst _ _ D D' _ (fun ys => Empty_set) sbs sbs') ;
               [ .. | assumption].
-            apply (istran_TyCtxConv D D' _ _ _ _ eq_refl) ; [.. | constructor].
+            apply (istran_TyCtxConv D) ; [ now capply CtxRefl | ..].
             now constructor.
           - exists (fun xs => Empty_set). split.
-            + apply (istran_TyCtxConv G G' _ _ _ _ eq_refl) ; [.. | constructor].
+            + apply (istran_TyCtxConv G) ; [ now capply CtxRefl | ..].
               now constructor.
             + reflexivity.
         }
@@ -915,13 +890,13 @@ Proof.
       - { destruct (eval_subst _ _ _ i) as (G' & ist_G' & D' & ist_D' & sbs' & ist_sbs').
           exists G'. split ; [ assumption | ..].
           exists (fun xs => Datatypes.unit). split.
-          - apply (istran_TyCtxConv G G' _ _ _ _ eq_refl) ; [.. | constructor].
+          - apply (istran_TyCtxConv G) ; [ now capply CtxRefl | ..].
             apply (istran_Subst _ _ D D' _ (fun ys => Datatypes.unit) sbs sbs') ;
               [ .. | assumption].
-            apply (istran_TyCtxConv D D' _ _ _ _ eq_refl) ; [.. | constructor].
+            apply (istran_TyCtxConv D) ; [ now capply CtxRefl | ..].
             now constructor.
           - exists (fun xs => Datatypes.unit). split.
-            + apply (istran_TyCtxConv G G' _ _ _ _ eq_refl) ; [.. | constructor].
+            + apply (istran_TyCtxConv G) ; [ now capply CtxRefl | ..].
               now constructor.
             + reflexivity.
         }
@@ -930,13 +905,13 @@ Proof.
       - { destruct (eval_subst _ _ _ i) as (G' & ist_G' & D' & ist_D' & sbs' & ist_sbs').
           exists G'. split ; [ assumption | ..].
           exists (fun xs => bool). split.
-          - apply (istran_TyCtxConv G G' _ _ _ _ eq_refl) ; [.. | constructor].
+          - apply (istran_TyCtxConv G) ; [ now capply CtxRefl | ..].
             apply (istran_Subst _ _ D D' _ (fun ys => bool) sbs sbs') ;
               [ .. | assumption].
-            apply (istran_TyCtxConv D D' _ _ _ _ eq_refl) ; [.. | constructor].
+            apply (istran_TyCtxConv D) ; [ now capply CtxRefl | ..].
             now constructor.
           - exists (fun xs => bool). split.
-            + apply (istran_TyCtxConv G G' _ _ _ _ eq_refl) ; [.. | constructor].
+            + apply (istran_TyCtxConv G) ; [ now capply CtxRefl | ..].
               now constructor.
             + reflexivity.
         }
@@ -955,6 +930,7 @@ Proof.
     }
 Defined.
 
+(*
 Lemma empty_to_empty :
   let Der := (TyEmpty CtxEmpty : pxtt.istype ctxempty Empty) in
   let ist_GG' := istran_ctxempty : istran_ctx ctxempty Datatypes.unit in
@@ -971,3 +947,4 @@ Proof.
   pose (u' := eval_term Der ist_GG' (projT2 tr)).
   pose (p := u' tt). apply p.
 Qed.
+*)
