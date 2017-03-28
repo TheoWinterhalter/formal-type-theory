@@ -296,45 +296,51 @@ Proof.
   exact (path_projT2 r).
 Defined.
 
-Fixpoint cohere_ctx G G' G''
-  (H1 : istran_ctx G G')
-  (H2 : istran_ctx G G'') {struct H1} :
-  G' = G''
+Fixpoint cohere_ctx G1 G2 G1' G2'
+  (eqG12 : pxtt.eqctx G1 G2)
+  (H1 : istran_ctx G1 G1')
+  (H2 : istran_ctx G2 G2') {struct H1} :
+  G1' = G2'
 
-with cohere_subst' G1 G2 G' G'' D1 D2 D' D'' sbs sbs' sbs''
+with cohere_subst' G1 G2 G1' G2' D1 D2 D1' D2' sbs1 sbs2 sbs1' sbs2'
   (eqG12 : pxtt.eqctx G1 G2)
   (eqD12 : pxtt.eqctx D1 D2)
-  (H1 : istran_subst' G1 G'  D1 D'  sbs sbs')
-  (H2 : istran_subst' G2 G'' D2 D'' sbs sbs'') {struct H1} :
-  existT _ G' (existT _ D' sbs') = existT _ G'' (existT _ D'' sbs'')
+  (eqsbs12 : pxtt.eqsubst sbs1 sbs2 G1 G2)
+  (H1 : istran_subst' G1 G1'  D1 D1'  sbs1 sbs1')
+  (H2 : istran_subst' G2 G2' D2 D2' sbs2 sbs2') {struct H1} :
+  existT _ G1' (existT _ D1' sbs1') = existT _ G2' (existT _ D2' sbs2')
     :> { X : Set & { Y : Set & X -> Y } }
 
-with cohere_subst G1 G2 G' G'' D1 D2 D' D'' sbs sbs' sbs''
+with cohere_subst G1 G2 G1' G2' D1 D2 D1' D2' sbs1 sbs2 sbs1' sbs2'
   (eqG12 : pxtt.eqctx G1 G2)
   (eqD12 : pxtt.eqctx D1 D2)
-  (H1 : istran_subst G1 G'  D1 D'  sbs sbs')
-  (H2 : istran_subst G2 G'' D2 D'' sbs sbs'') {struct H1} :
-  existT _ G' (existT _ D' sbs') = existT _ G'' (existT _ D'' sbs'')
+  (eqsbs12 : pxtt.eqsubst sbs1 sbs2 G1 G2)
+  (H1 : istran_subst' G1 G1'  D1 D1'  sbs1 sbs1')
+  (H2 : istran_subst' G2 G2' D2 D2' sbs2 sbs2') {struct H1} :
+  existT _ G1' (existT _ D1' sbs1') = existT _ G2' (existT _ D2' sbs2')
     :> { X : Set & { Y : Set & X -> Y } }
 
-with cohere_type' G1 G2 G' G'' A A' A''
-  (eqG12 : pxtt.eqctx G1 G2)
-  (H1 : istran_type' G1 G'  A A')
-  (H2 : istran_type' G2 G'' A A'') {struct H1} :
-  existT _ G' A' = existT _ G'' A'' :> sigT Family
-
-with cohere_type G1 G2 G' G'' A A' A''
-  (eqG12 : pxtt.eqctx G1 G2)
-  (H1 : istran_type G1 G'  A A')
-  (H2 : istran_type G2 G'' A A'') {struct H1} :
-  existT _ G' A' = existT _ G'' A'' :> sigT Family
-
-with cohere_term G1 G2 G' G'' A1 A2 A' A'' u u' u''
+with cohere_type' G1 G2 G1' G2' A1 A2 A1' A2'
   (eqG12 : pxtt.eqctx G1 G2)
   (eqA12 : pxtt.eqtype G1 A1 A2)
-  (H1 : istran_term G1 G'  A1 A'  u u')
-  (H2 : istran_term G2 G'' A2 A'' u u'') {struct H1} :
-  existT _ G' (existT _ A' u') = existT _ G'' (existT _ A'' u'')
+  (H1 : istran_type' G1 G1' A1 A1')
+  (H2 : istran_type' G2 G2' A2 A2') {struct H1} :
+  existT _ G1' A1' = existT _ G2' A2' :> sigT Family
+
+with cohere_type G1 G2 G1' G2' A1 A2 A1' A2'
+  (eqG12 : pxtt.eqctx G1 G2)
+  (eqA12 : pxtt.eqtype G1 A1 A2)
+  (H1 : istran_type G1 G1' A1 A1')
+  (H2 : istran_type G2 G2' A2 A2') {struct H1} :
+  existT _ G1' A1' = existT _ G2' A2' :> sigT Family
+
+with cohere_term G1 G2 G1' G2' A1 A2 A1' A2' u1 u2 u1' u2'
+  (eqG12 : pxtt.eqctx G1 G2)
+  (eqA12 : pxtt.eqtype G1 A1 A2)
+  (equ12 : pxtt.eqterm G1 u1 u2 A1)
+  (H1 : istran_term G1 G1' A1 A1' u1 u1')
+  (H2 : istran_term G2 G2' A2 A2' u2 u2') {struct H1} :
+  existT _ G1' (existT _ A1' u1') = existT _ G2' (existT _ A2' u2')
     :> { X : Set & { F : Family X & section F } }
 .
 
