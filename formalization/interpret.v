@@ -83,7 +83,7 @@ Inductive istran_ctx : context -> Set -> Type :=
         istran_type G G' A A' ->
         istran_ctx (ctxextend G A) (sigT A')
 
-with istran_subst' :
+with istran_subst'' :
   forall (G : context) (G' : Set)
     (D : context) (D' : Set)
     (sbs : substitution) (sbs' : G' -> D'),
@@ -96,7 +96,7 @@ with istran_subst' :
         istran_ctx G G' ->
         istran_type G G' A A' ->
         istran_term G G' A A' u u' ->
-        istran_subst' G G' (ctxextend G A) (sigT A') (sbzero A u)
+        istran_subst'' G G' (ctxextend G A) (sigT A') (sbzero A u)
                      (fun xs => existT _ xs (u' xs))
 
   | istran_sbweak :
@@ -104,7 +104,7 @@ with istran_subst' :
         pxtt.istype G A ->
         istran_ctx G G' ->
         istran_type G G' A A' ->
-        istran_subst' (ctxextend G A) (sigT A') G G' (sbweak A)
+        istran_subst'' (ctxextend G A) (sigT A') G G' (sbweak A)
                      (@projT1 _ _)
 
   | istran_sbshift :
@@ -114,8 +114,8 @@ with istran_subst' :
         istran_ctx G G' ->
         istran_ctx D D' ->
         istran_type D D' A A' ->
-        istran_subst G G' D D' sbs sbs' ->
-        istran_subst'
+        istran_subst' G G' D D' sbs sbs' ->
+        istran_subst''
           (ctxextend G (Subst A sbs)) (sigT (fun xs => A' (sbs' xs)))
           (ctxextend D A) (sigT A')
           (sbshift A sbs) (fun xs => existT _ (sbs' (projT1 xs)) (projT2 xs))
@@ -124,7 +124,7 @@ with istran_subst' :
       forall G G',
         pxtt.isctx G ->
         istran_ctx G G' ->
-        istran_subst' G G' G G' sbid (fun x => x)
+        istran_subst'' G G' G G' sbid (fun x => x)
 
   | istran_sbcomp :
       forall G G' D D' E E' sbs sbs' sbt sbt',
@@ -133,10 +133,28 @@ with istran_subst' :
         istran_ctx G G' ->
         istran_ctx D D' ->
         istran_ctx E E' ->
-        istran_subst G G' D D' sbs sbs' ->
-        istran_subst D D' E E' sbt sbt' ->
-        istran_subst' G G' E E'
+        istran_subst' G G' D D' sbs sbs' ->
+        istran_subst' D D' E E' sbt sbt' ->
+        istran_subst'' G G' E E'
                      (sbcomp sbt sbs) (fun xs => sbt' (sbs' xs))
+
+with istran_subst' :
+  forall (G : context) (G' : Set)
+    (D : context) (D' : Set)
+    (sbs : substitution) (sbs' : G' -> D'),
+    Type
+  :=
+
+  | istran_SubstCtxConv_left :
+      forall G1 G2 G1' G2' D D' sbs sbs' p,
+        pxtt.issubst sbs G2 D ->
+        pxtt.eqctx G1 G2 ->
+        istran_ctx G1 G1' ->
+        istran_ctx G2 G2' ->
+        istran_ctx D D' ->
+        istran_eqctx G1 G1' G2 G2' p ->
+        istran_subst'' G1 G1' D D' sbs sbs' ->
+        istran_subst' G2 G2' D D' sbs (transport (fun (G' : Set) => G' -> D') p sbs')
 
 with istran_subst :
   forall (G : context) (G' : Set)
@@ -145,13 +163,16 @@ with istran_subst :
     Type
   :=
 
-  | istran_SubstCtxConv :
-      forall G1 G2 G' D1 D2 D' sbs sbs',
-        pxtt.issubst sbs G1 D1 ->
-        pxtt.eqctx G1 G2 ->
+  | istran_SubstCtxConv_right :
+      forall G G' D1 D2 D1' D2' sbs sbs' q,
+        pxtt.issubst sbs G D1 ->
         pxtt.eqctx D1 D2 ->
-        istran_subst' G1 G' D1 D' sbs sbs' ->
-        istran_subst G2 G' D2 D' sbs sbs'
+        istran_ctx G G' ->
+        istran_ctx D1 D1' ->
+        istran_ctx D2 D2' ->
+        istran_eqctx D1 D1' D2 D2' q ->
+        istran_subst' G G' D1 D1' sbs sbs' ->
+        istran_subst G G' D2 D2' sbs (transport (fun (D' : Set) => G' -> D') q sbs')
 
 with istran_type' :
   (forall (G : context) (G' : Set) (A : type) (A' : Family G'), Type) :=
@@ -249,7 +270,16 @@ with istran_term :
         pxtt.eqtype G A1 A2 ->
         istran_term' G G' A1 A' u u' ->
         istran_term G G' A2 A' u u'
-.
+
+with istran_eqctx :
+  forall (G : context) (G' : Set)
+    (D : context) (D' : Set)
+    (p : G' = D'),
+    Type
+  :=
+
+  | istran_eqctx_always :
+    forall G G' D D' p, istran_eqctx G G' D D' p.
 
 Lemma ap_path {X Y} (f : X -> Y) {x y} : x = y -> f x = f y.
 Proof.
@@ -296,6 +326,7 @@ Proof.
   exact (path_projT2 r).
 Defined.
 
+(*
 Fixpoint cohere_ctx G1 G2 G1' G2'
   (eqG12 : pxtt.eqctx G1 G2)
   (H1 : istran_ctx G1 G1')
@@ -518,53 +549,66 @@ Proof.
       }
 Defined.
 
-Print Assumptions cohere_ctx.
+*)
+
+Lemma istran_subst''_subst {G G' D D' sbs sbs'} :
+  pxtt.issubst sbs G D ->
+  istran_ctx G G' ->
+  istran_ctx D D' ->
+  istran_subst'' G G' D D' sbs sbs' ->
+  istran_subst   G G' D D' sbs sbs'.
+Proof.
+  intros pistsbs istG istD istsbs.
+  apply (istran_SubstCtxConv_right G G' D D D' D' sbs sbs' eq_refl) ;
+    try assumption.
+  - capply CtxRefl.
+    apply (ptt_sanity.sane_issubst _ _ _ pistsbs).
+  - constructor.
+  - apply (istran_SubstCtxConv_left G G G' G' D D' sbs sbs' eq_refl) ;
+      try assumption.
+    + capply CtxRefl.
+      apply (ptt_sanity.sane_issubst _ _ _ pistsbs).
+    + constructor.
+Defined.
+
 
 Fixpoint eval_ctx G (Der : pxtt.isctx G) {struct Der} :
   { G' : Set & istran_ctx G G' }
 
-with eval_subst {G D sbs} (Der : pxtt.issubst sbs G D) {struct Der} :
-  { G' : Set &
-    istran_ctx G G' * {
-    D' : Set &
+with eval_subst {G G' D sbs} (Der : pxtt.issubst sbs G D) {struct Der} :
+  istran_ctx G G' ->
+  { D' : Set &
     istran_ctx D D' * {
     sbs' : G' -> D' &
     istran_subst G G' D D' sbs sbs'
-  } } }
-
-with eval_type {G A} (Der : pxtt.istype G A) {struct Der} :
-  { G' : Set &
-    istran_ctx G G' * {
-    A' : Family G' &
-    istran_type G G' A A'
   } }
 
-with eval_term {G A u} (Der : pxtt.isterm G u A) {struct Der} :
-  { G' : Set &
-    istran_ctx G G' * {
-    A' : Family G' &
-    istran_type G G' A A' * {
-    u' : section A' &
-    istran_term G G' A A' u u'
-  } } }
+with eval_type {G G' A} (Der : pxtt.istype G A) {struct Der} :
+  istran_ctx G G' ->
+  { A' : Family G' & istran_type G G' A A'}
 
-with eval_eqctx {G D} (Der : pxtt.eqctx G D) {struct Der} :
-  { G' : Set &
-    istran_ctx G G' * {
-    D' : Set &
-    istran_ctx D D' *
-    (G' = D')
-  } }
+with eval_term {G G' A A' u} (Der : pxtt.isterm G u A) {struct Der} :
+ istran_ctx G G' ->
+ istran_type G G' A A' ->
+ { u' : section A' & istran_term G G' A A' u u' }
 
-with eval_eqtype {G A B} (Der : pxtt.eqtype G A B) {struct Der} :
-  { G' : Set &
-    istran_ctx G G' * {
-    A' : Family G' &
-    istran_type G G' A A' * {
-    B' : Family G' &
-    istran_type G G' B B' *
-    (A' = B')
-  } } }.
+with eval_eqctx {G G' D D'} (Der : pxtt.eqctx G D) {struct Der} :
+  istran_ctx G G' ->
+  istran_ctx D D' ->
+  G' = D'
+
+with eval_eqtype {G G' A A' B B'} (Der : pxtt.eqtype G A B) {struct Der} :
+  istran_ctx G G' ->
+  istran_type G G' A A' ->
+  istran_type G G' B B' ->
+  A' = B'
+
+with eval_eqterm {G G' A A' u u' v v'} (Der : pxtt.eqterm G u v A) {struct Der} :
+  istran_ctx G G' ->
+  istran_type G G' A A' ->
+  istran_term G G' A A' u u' ->
+  istran_term G G' A A' v v' ->
+  u' = v'.
 
 Proof.
   (* eval_ctx *)
@@ -575,37 +619,40 @@ Proof.
         constructor.
 
       (* CtxExtend *)
-      - { destruct (eval_type _ _ i0) as [G' [ist_GG' [A' ist_A']]].
+      - { destruct (eval_ctx _ i) as (G' & istG' ).
+          destruct (eval_type _ G' _ i0 istG') as (A' & istA').
           exists (sigT A').
           now constructor.
         }
     }
 
   (* eval_subst *)
-  - { destruct Der ; doConfig.
+  - { intro istG'.
+      destruct Der ; doConfig.
 
       (* SubstZero *)
-      - { destruct (eval_term _ _ _ i) as
-              (G' & ist_G' & A' & ist_A' & u' & ist_u').
-          exists G'.
-          split ; [ assumption | ..].
+      - { destruct (eval_type _ G' _ i0 istG') as (A' & istA').
+          destruct (eval_term _ _ _ _ _ i istG' istA') as (u' & istu').
           exists (sigT A').
           split ; [ now constructor | ..].
           eexists.
-          apply (istran_SubstCtxConv G G _ (ctxextend G A) (ctxextend G A) _).
-          - now apply CtxRefl.
-          - capply CtxRefl. now capply CtxExtend.
-          - econstructor ; eassumption.
+          eapply istran_subst''_subst.
+          - now constructor.
+          - assumption.
+          - now constructor.
+          - econstructor ; eassumption. 
         }
 
       (* SubstWeak *)
-      - { destruct (eval_type _ _ i) as (G' & ist_G' & A' & ist_A').
+      - { 
+          destruct (eval_type _ _ i) as (G' & ist_G' & A' & ist_A').
           exists (sigT A').
           split ; [ now constructor | ..].
           exists G'.
           split ; [ assumption | ..].
           eexists.
           apply (istran_SubstCtxConv (ctxextend G A) (ctxextend G A) _ G G _).
+          - now capply SubstWeak.
           - capply CtxRefl. now capply CtxExtend.
           - now capply CtxRefl.
           - econstructor ; eassumption.
