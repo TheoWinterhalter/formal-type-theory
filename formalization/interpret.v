@@ -114,7 +114,7 @@ with istran_subst'' :
         istran_ctx G G' ->
         istran_ctx D D' ->
         istran_type D D' A A' ->
-        istran_subst' G G' D D' sbs sbs' ->
+        istran_subst G G' D D' sbs sbs' ->
         istran_subst''
           (ctxextend G (Subst A sbs)) (sigT (fun xs => A' (sbs' xs)))
           (ctxextend D A) (sigT A')
@@ -133,8 +133,8 @@ with istran_subst'' :
         istran_ctx G G' ->
         istran_ctx D D' ->
         istran_ctx E E' ->
-        istran_subst' G G' D D' sbs sbs' ->
-        istran_subst' D D' E E' sbt sbt' ->
+        istran_subst G G' D D' sbs sbs' ->
+        istran_subst D D' E E' sbt sbt' ->
         istran_subst'' G G' E E'
                      (sbcomp sbt sbs) (fun xs => sbt' (sbs' xs))
 
@@ -236,6 +236,35 @@ with istran_term'' :
     (u : term) (u' : section A'),
     Type
   :=
+
+  (* It can't be called istran_subst, so we use the name of the rule *)
+  | istran_TermSubst :
+      forall G G' D D' A A' u u' sbs sbs',
+        pxtt.issubst sbs G D ->
+        pxtt.isterm D u A ->
+        istran_subst G G' D D' sbs sbs' ->
+        istran_term D D' A A' u u' ->
+        istran_term'' G G'
+                      (Subst A sbs) (fun xs => A' (sbs' xs))
+                      (subst u sbs) (fun xs => u' (sbs' xs))
+
+  | istran_TermVarZero :
+      forall G G' A A',
+        pxtt.istype G A ->
+        istran_type G G' A A' ->
+        istran_term'' (ctxextend G A) (sigT A')
+                      (Subst A (sbweak A)) (fun xs => A' ((@projT1 _ _) xs))
+                      (var 0) (fun xs => projT2 xs)
+
+  | istran_TermVarSucc :
+      forall G G' A A' B B' k vk',
+        pxtt.isterm G (var k) A ->
+        pxtt.istype G B ->
+        istran_term G G' A A' (var k) vk' ->
+        istran_type G G' B B' ->
+        istran_term'' (ctxextend G B) (sigT B')
+                      (Subst A (sbweak B)) (fun xs => A' ((@projT1 _ _) xs))
+                      (var (S k)) (fun xs => vk' ((@projT1 _ _) xs))
 
   (* | istran_refl : *)
   (*     forall G G' A A' u u', *)
@@ -455,7 +484,7 @@ Proof.
        }
 
      (* sbcomp *)
-     - { 
+     - {
          rename D into D1, D0 into D2, E into E1, E0 into E2, D'0 into D'', E'0 into E'',
                 G'0 into G'', sbs'0 into sbs'', sbt'0 into sbt''.
          pose (p := cohere_subst _ _ _ _ _ _ _ _ _ _ eqD12 i5 i12).
@@ -517,7 +546,7 @@ Proof.
           { capply CtxRefl. apply (ptt_sanity.sane_issubst _ _ _ i). }
           pose (eqctx_D1D2' := uniqueness.unique_subst _ _ _ i _ _ i2 eqctx_GG).
           pose (eqctx_D1D2 := ett2ptt.sane_eqctx _ _ eqctx_D1D2').
-          
+
         }
 
       (* Empty *)
@@ -640,73 +669,84 @@ Proof.
           - now constructor.
           - assumption.
           - now constructor.
-          - econstructor ; eassumption. 
+          - econstructor ; eassumption.
         }
 
       (* SubstWeak *)
-      - { 
-          destruct (eval_type _ _ i) as (G' & ist_G' & A' & ist_A').
-          exists (sigT A').
-          split ; [ now constructor | ..].
-          exists G'.
-          split ; [ assumption | ..].
+      - { rename G' into GA', istG' into istGA'.
+          inversion istGA'. subst.
+          rename X0 into istG', X1 into istA'.
+
+          exists G'. split ; [ assumption | .. ].
           eexists.
-          apply (istran_SubstCtxConv (ctxextend G A) (ctxextend G A) _ G G _).
-          - now capply SubstWeak.
-          - capply CtxRefl. now capply CtxExtend.
-          - now capply CtxRefl.
-          - econstructor ; eassumption.
+          eapply istran_subst''_subst.
+          - now constructor.
+          - assumption.
+          - assumption.
+          - econstructor ; assumption.
         }
 
       (* SubstShift *)
-      - { destruct (eval_subst _ _ _ Der) as
-              (G' & ist_G' & D' & ist_D' & sbs' & ist_sbs').
-          destruct (eval_type _ _ i) as (D'' & ist_D'' & A' & ist_A').
-          destruct (cohere_ctx _ _ _ ist_D' ist_D'').
-          exists (sigT (fun xs => A' (sbs' xs))).
-          split.
-          - constructor.
-            + assumption.
-            + apply (istran_TyCtxConv G G).
-              * now capply CtxRefl.
-              * econstructor ; eassumption.
-          - exists (sigT A').
-            split ; [ now constructor | ..].
-            eexists.
-            apply (istran_SubstCtxConv (ctxextend G (Subst A sbs)) (ctxextend G (Subst A sbs)) _ (ctxextend D A) (ctxextend D A) _).
-            + capply CtxRefl. capply CtxExtend.
-              * assumption.
-              * ceapply TySubst ; eassumption.
-            + capply CtxRefl. now capply CtxExtend.
-            + econstructor ; eassumption.
+      - { rename G' into GAs', istG' into istGAs'.
+          inversion istGAs'. subst.
+          rename A' into As', X0 into istG', X1 into istAs'.
+          inversion istAs'. subst.
+          inversion X2. subst.
+          (* destruct (path_decompose_existT H5). *)
+
+          (* exists (sigT A'0). split. *)
+          (* - constructor. *)
+          (*   + assumption. *)
+          (*   + *)
+          (* We have D0 where we would like to have D... *)
+          todo.
+
+
+
+          (* destruct (eval_subst _ _ _ Der) as *)
+          (*     (G' & ist_G' & D' & ist_D' & sbs' & ist_sbs'). *)
+          (* destruct (eval_type _ _ i) as (D'' & ist_D'' & A' & ist_A'). *)
+          (* destruct (cohere_ctx _ _ _ ist_D' ist_D''). *)
+          (* exists (sigT (fun xs => A' (sbs' xs))). *)
+          (* split. *)
+          (* - constructor. *)
+          (*   + assumption. *)
+          (*   + apply (istran_TyCtxConv G G). *)
+          (*     * now capply CtxRefl. *)
+          (*     * econstructor ; eassumption. *)
+          (* - exists (sigT A'). *)
+          (*   split ; [ now constructor | ..]. *)
+          (*   eexists. *)
+          (*   apply (istran_SubstCtxConv (ctxextend G (Subst A sbs)) (ctxextend G (Subst A sbs)) _ (ctxextend D A) (ctxextend D A) _). *)
+          (*   + capply CtxRefl. capply CtxExtend. *)
+          (*     * assumption. *)
+          (*     * ceapply TySubst ; eassumption. *)
+          (*   + capply CtxRefl. now capply CtxExtend. *)
+          (*   + econstructor ; eassumption. *)
         }
 
       (* SubstId *)
-      - { destruct (eval_ctx _ i) as [G' ist_G'].
-          exists G'.
-          split ; [ assumption | .. ].
-          exists G'.
-          split ; [ assumption | .. ].
+      - { exists G'. split ; [ assumption | .. ].
           eexists.
-          apply (istran_SubstCtxConv G G _ G G _).
-          - now capply CtxRefl.
-          - now capply CtxRefl.
-          - econstructor ; eassumption.
+          eapply istran_subst''_subst.
+          - now constructor.
+          - assumption.
+          - assumption.
+          - econstructor ; assumption.
         }
 
       (* SubstComp *)
-      - { destruct (eval_subst _ _ _ Der1) as
-              (G' & ist_G' & D' & ist_D' & sbs' & ist_sbs').
-          destruct (eval_subst _ _ _ Der2) as
-              (D'' & ist_D'' & E' & ist_E' & sbt' & ist_sbt').
-          destruct (cohere_ctx _ _ _ ist_D' ist_D'').
-          exists G'. split ; [ assumption | .. ].
+      - { destruct (eval_subst _ G' _ _ Der1 istG')
+            as (D' & istD' & sbs' & ist_sbs').
+          destruct (eval_subst _ D' _ _ Der2 istD')
+            as (E' & istE' & sbt' & ist_sbt').
           exists E'. split ; [ assumption | .. ].
           eexists.
-          apply (istran_SubstCtxConv G G _ E E _).
-          - now capply CtxRefl.
-          - now capply CtxRefl.
-          - econstructor ; [ .. | eassumption ] ; eassumption.
+          eapply istran_subst''_subst.
+          - ceapply SubstComp ; eassumption.
+          - assumption.
+          - assumption.
+          - econstructor ; eassumption.
         }
 
       (* SubstCtxConv *)
@@ -747,7 +787,7 @@ Proof.
           apply (istran_TyCtxConv G1 D _).
           - (config eapply @CtxTrans with (D := G2)) ; [ idtac | assumption ..].
             now apply (ptt_sanity.sane_eqctx G1 G2).
-          - assumption. 
+          - assumption.
         }
 
       (* TySubst *)
@@ -829,7 +869,7 @@ Proof.
       - todo.
 
       (* TermSubst *)
-      - todo.
+      - {
 
       (* TermVarZero *)
       - todo.
