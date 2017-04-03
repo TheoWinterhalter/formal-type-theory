@@ -691,8 +691,12 @@ Proof.
           inversion istGAs'. subst.
           rename A' into As', X0 into istG', X1 into istAs'.
           inversion istAs'. subst.
-          inversion X2. subst.
-          (* destruct (path_decompose_existT H5). *)
+          rename A' into As'', X2 into istAs''.
+          inversion istAs''. subst.
+          destruct (path_decompose_existT H5).
+          (* Removing the 'subst' before doesn't help in destructing the
+             equality G' = G'.
+           *)
 
           (* exists (sigT A'0). split. *)
           (* - constructor. *)
