@@ -754,26 +754,67 @@ Proof.
         }
 
       (* SubstCtxConv *)
-      - { destruct (eval_eqctx _ _ e) as
-              (G1' & ist_G1' & G2' & ist_G2' & eqG1'G2').
-          destruct (eval_eqctx _ _ e0) as
-              (D1' & ist_D1' & D2' & ist_D2' & eqD1'D2').
-          destruct (eval_subst _ _ _ Der) as
-              (G1'' & ist_G1'' & D1'' & ist_D1'' & sbs' & ist_sbs').
-          destruct (cohere_ctx _ _ _ ist_D1' ist_D1'').
-          destruct (cohere_ctx _ _ _ ist_G1' ist_G1'').
-          dependent destruction ist_sbs'.
-          exists G2'. split ; [ assumption | .. ].
+      - { rename G' into G2', istG' into istG2'.
+          destruct (eval_ctx _ i) as (G1' & istG1').
+          pose (eqG := eval_eqctx _ G1' _ G2' e istG1' istG2').
+          destruct (eval_subst _ G1' _ _ Der istG1')
+            as (D1' & istD1' & sbs' & ist_sbs').
+          destruct (eval_ctx _ i2) as (D2' & istD2').
+          pose (eqD := eval_eqctx _ D1' _ D2' e0 istD1' istD2').
+
           exists D2'. split ; [ assumption | .. ].
-          destruct eqG1'G2'.
-          destruct eqD1'D2'.
-          exists sbs'.
-          eapply (istran_SubstCtxConv G1 G2 _ D1 D2 _).
-          - (config eapply @CtxTrans with (D := G0)) ; [ idtac | assumption ..].
-            now apply (ptt_sanity.sane_eqctx G1 G0).
-          - (config eapply @CtxTrans with (D := D0)) ; [ idtac | assumption ..].
-            now apply (ptt_sanity.sane_eqctx D1 D0).
+          (* destruct eqG. destruct eqD. *)
+          (* eexists. *)
+          (* eapply istran_subst''_subst. *)
+          (* - ceapply SubstCtxConv ; eassumption. *)
+          (* - assumption. *)
+          (* - assumption. *)
+          (* -  *)
+          eexists.
+          apply istran_SubstCtxConv_right with (D1 := D1) ; [
+            ..
+          | apply istran_SubstCtxConv_left with (G1 := G1)
+          ].
+          - ceapply SubstCtxConv ; try eassumption.
+            capply CtxRefl. assumption.
           - assumption.
+          - assumption.
+          - eassumption.
+          - assumption.
+          - constructor.
+          - ceapply SubstCtxConv ; try eassumption.
+            capply CtxRefl. assumption.
+          - assumption.
+          - eassumption.
+          - assumption.
+          - assumption.
+          - constructor.
+          - inversion ist_sbs'.
+            inversion X5.
+            (* This doesn't seem to work... *)
+            todo.
+
+
+          (* destruct (eval_eqctx _ _ e) as *)
+          (*     (G1' & ist_G1' & G2' & ist_G2' & eqG1'G2'). *)
+          (* destruct (eval_eqctx _ _ e0) as *)
+          (*     (D1' & ist_D1' & D2' & ist_D2' & eqD1'D2'). *)
+          (* destruct (eval_subst _ _ _ Der) as *)
+          (*     (G1'' & ist_G1'' & D1'' & ist_D1'' & sbs' & ist_sbs'). *)
+          (* destruct (cohere_ctx _ _ _ ist_D1' ist_D1''). *)
+          (* destruct (cohere_ctx _ _ _ ist_G1' ist_G1''). *)
+          (* dependent destruction ist_sbs'. *)
+          (* exists G2'. split ; [ assumption | .. ]. *)
+          (* exists D2'. split ; [ assumption | .. ]. *)
+          (* destruct eqG1'G2'. *)
+          (* destruct eqD1'D2'. *)
+          (* exists sbs'. *)
+          (* eapply (istran_SubstCtxConv G1 G2 _ D1 D2 _). *)
+          (* - (config eapply @CtxTrans with (D := G0)) ; [ idtac | assumption ..]. *)
+          (*   now apply (ptt_sanity.sane_eqctx G1 G0). *)
+          (* - (config eapply @CtxTrans with (D := D0)) ; [ idtac | assumption ..]. *)
+          (*   now apply (ptt_sanity.sane_eqctx D1 D0). *)
+          (* - assumption. *)
         }
   }
 
