@@ -1099,6 +1099,7 @@ Proof.
   unfold goal1.
   ceapply TermAbs.
   unfold trans_funext. set (T := trans_type funextUnit). simpl in T.
+
   ceapply TermTyConv ; [ ceapply TermApp | .. ].
   - ceapply TermTyConv ; [ ceapply TermApp | .. ].
     + ceapply TermTyConv ; [ ceapply TermProj1 | .. ].
@@ -1112,8 +1113,12 @@ Proof.
         Unshelve. all: keep_ju.
         all: capply EqTyRefl.
         all: magic.
-    + instantiate (1 := subst fun_true (sbweak _)).
+    + instantiate (1 := subst fun_true (sbweak T)).
       ceapply TermTyConv ; [ ceapply TermSubst | .. ].
+      * unfold T ; magic.
+      * unfold fun_true. unfold funi. magic.
+      * unfold T ; magic.
+    +
 Abort.
 
 
