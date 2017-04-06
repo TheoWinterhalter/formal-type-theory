@@ -1101,25 +1101,48 @@ Proof.
   unfold trans_funext. set (T := trans_type funextUnit). simpl in T.
 
   ceapply TermTyConv ; [ ceapply TermApp | .. ].
-  - ceapply TermTyConv ; [ ceapply TermApp | .. ].
-    + ceapply TermTyConv ; [ ceapply TermProj1 | .. ].
-      * ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
-        -- unfold T ; magic.
-        -- unfold T ; magic.
+  - ceapply TermTyConv ; [ ceapply TermProj1 | .. ].
+    + ceapply TermTyConv ; [ ceapply TermApp | .. ].
+      * ceapply TermTyConv ; [ ceapply TermProj1 | .. ].
+        -- ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
+           ++ unfold T ; magic.
+           ++ unfold T ; magic.
+              Unshelve. all: keep_ju.
+              all: capply EqTyRefl.
+              all: magic.
+        -- magic.
            Unshelve. all: keep_ju.
            all: capply EqTyRefl.
            all: magic.
-      * magic.
-        Unshelve. all: keep_ju.
-        all: capply EqTyRefl.
-        all: magic.
-    + instantiate (1 := subst fun_true (sbweak T)).
-      ceapply TermTyConv ; [ ceapply TermSubst | .. ].
-      * unfold T ; magic.
-      * unfold fun_true. unfold funi. magic.
-      * unfold T ; magic.
-    +
-Abort.
+      * instantiate (1 := subst fun_true (sbweak T)).
+        ceapply TermTyConv ; [ ceapply TermSubst | .. ].
+        -- unfold T ; magic.
+        -- unfold fun_true. unfold funi. magic.
+        -- unfold T ; magic.
+      * pushsubst ; [ .. | capply EqTyRefl ].
+        -- unfold T. unfold fun_true. unfold funi. magic.
+        -- unfold T. unfold fun_true. unfold funi. (* magic. *)
+           (*
+             Tactic failure: Cannot solve subgoal
+(eqtype (ctxextend (ctxextend ?D (SimProd (Prod Unit Unit) Bool)) Unit)
+   (Subst ?A (sbcomp (sbweak (SimProd (Prod Unit Unit) Bool)) (sbweak Unit)))
+   (SimProd (Prod Unit Unit) Bool)) (level 985).
+            *)
+           todo.
+        -- todo.
+        -- todo.
+    + unfold T. unfold fun_true. unfold funi. (* magic. *)
+      (*
+Tactic failure: Cannot solve subgoal
+(eqtype (ctxextend (ctxextend ?E (SimProd (Prod Unit Unit) Bool)) Unit)
+   (Subst ?A (sbcomp (sbweak (SimProd (Prod Unit Unit) Bool)) (sbweak Unit)))
+   (SimProd (Prod Unit Unit) Bool)) (level 985).
+       *)
+      todo.
+  - todo.
+  - todo.
+Admitted.
+
 
 
 (* From funextUnit we derive the equality of two identities *)
