@@ -1112,20 +1112,10 @@ Proof.
         Unshelve. all: keep_ju.
         all: capply EqTyRefl.
         all: magic.
-    + (* We could here try and use fun_true, or build it again...
-         We're going for the latter.
-       *)
-      ceapply TermPair.
-      * ceapply TermSubst.
-        -- magic.
-        -- ceapply TermAbs.
-           ceapply TermVarZero.
-           magic.
-      * ceapply TermTyConv.
-        -- ceapply TermTrue. unfold T ; magic.
-        -- magic.
-    +
+    + instantiate (1 := subst fun_true (sbweak _)).
+      ceapply TermTyConv ; [ ceapply TermSubst | .. ].
 Abort.
+
 
 (* From funextUnit we derive the equality of two identities *)
 Definition funext_id_unit (funext : term) : term.
