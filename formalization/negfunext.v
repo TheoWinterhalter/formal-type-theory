@@ -1082,6 +1082,51 @@ Proof.
     todo. (* too time-consuming *)
 Qed.
 
+(* The type of funext for unit once translated *)
+Definition trans_funext := trans_type funextUnit.
+
+(* The type we want to inhabit first *)
+(* Definition goal1 := Arrow trans_funext (Id Bool true false). *)
+Definition funi := lam Unit Unit unit.
+Definition fun_true := pair (Arrow Unit Unit) Bool funi true.
+Definition fun_false := pair (Arrow Unit Unit) Bool funi false.
+Definition fun_type := SimProd (Arrow Unit Unit) Bool.
+Definition goal1 := Arrow trans_funext (Id fun_type fun_true fun_false).
+
+Lemma prove_goal1 : { t : term & Ttt.isterm ctxempty t goal1 }.
+Proof.
+  eexists.
+  unfold goal1.
+  ceapply TermAbs.
+  unfold trans_funext. set (T := trans_type funextUnit). simpl in T.
+  ceapply TermTyConv ; [ ceapply TermApp | .. ].
+  - ceapply TermTyConv ; [ ceapply TermApp | .. ].
+    + ceapply TermTyConv ; [ ceapply TermProj1 | .. ].
+      * ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
+        -- unfold T ; magic.
+        -- unfold T ; magic.
+           Unshelve. all: keep_ju.
+           all: capply EqTyRefl.
+           all: magic.
+      * magic.
+        Unshelve. all: keep_ju.
+        all: capply EqTyRefl.
+        all: magic.
+    + (* We could here try and use fun_true, or build it again...
+         We're going for the latter.
+       *)
+      ceapply TermPair.
+      * ceapply TermSubst.
+        -- magic.
+        -- ceapply TermAbs.
+           ceapply TermVarZero.
+           magic.
+      * ceapply TermTyConv.
+        -- ceapply TermTrue. unfold T ; magic.
+        -- magic.
+    +
+Abort.
+
 (* From funextUnit we derive the equality of two identities *)
 Definition funext_id_unit (funext : term) : term.
   pose (T := trans_type funextUnit). simpl in T.
