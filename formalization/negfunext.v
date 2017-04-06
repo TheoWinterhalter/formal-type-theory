@@ -1128,7 +1128,7 @@ Proof.
    (Subst ?A (sbcomp (sbweak (SimProd (Prod Unit Unit) Bool)) (sbweak Unit)))
    (SimProd (Prod Unit Unit) Bool)) (level 985).
             *)
-           todo.
+           magic.
         -- todo.
         -- todo.
     + unfold T. unfold fun_true. unfold funi. (* magic. *)

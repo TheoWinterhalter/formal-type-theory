@@ -810,11 +810,31 @@ Ltac prepushsubst1 sym :=
   | |- eqtype ?G (Subst (Prod ?A ?B) ?sbs) ?C =>
     ceapply EqTyTrans ; [ ceapply EqTySubstProd | .. ]
   | |- eqtype ?G ?A (Subst (Prod ?B ?C) ?sbs) =>
-    ceapply EqTySym ; [ ceapply EqTyTrans ; [ ceapply EqTySubstProd | .. ] | .. ]
+    ceapply EqTySym ; [
+      ceapply EqTyTrans ; [ ceapply EqTySubstProd | .. ]
+    | ..
+    ]
+  | |- eqtype ?G (Subst ?A ?sbs) (Prod ?B ?C) =>
+    ceapply EqTyTrans ; [ ceapply EqTySubstProd | .. ]
+  | |- eqtype ?G (Prod ?A ?B) (Subst ?C ?sbs) =>
+    ceapply EqTySym ; [
+      ceapply EqTyTrans ; [ ceapply EqTySubstProd | .. ]
+    | ..
+    ]
   | |- eqtype ?G (Subst (SimProd ?A ?B) ?sbs) ?C =>
     ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ]
   | |- eqtype ?G ?C (Subst (SimProd ?A ?B) ?sbs) =>
-    ceapply EqTySym ; [ ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ] | .. ]
+    ceapply EqTySym ; [
+      ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ]
+    | ..
+    ]
+  | |- eqtype ?G (Subst ?A ?sbs) (SimProd ?B ?C) =>
+    ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ]
+  | |- eqtype ?G (SimProd ?A ?B) (Subst ?C ?sbs) =>
+    ceapply EqTySym ; [
+      ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ]
+    | ..
+    ]
   | |- eqtype ?G (Subst ?E ?sbs) Empty =>
     ceapply EqTySubstEmpty
   | |- eqtype ?G (Subst Empty ?sbs) ?A =>
