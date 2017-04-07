@@ -1131,7 +1131,13 @@ Proof.
            Unshelve. all: try trymagic.
            all: shelve.
         -- magic.
-        -- todo.
+           Unshelve. all:keep_eq.
+           all: capply CtxRefl ; magic.
+           Unshelve. all: try trymagic.
+           all: shelve.
+        -- unfold T. unfold fun_true. unfold funi.
+           (* magic. *)
+           todo. (* We didn't let magic finish. *)
     + unfold T. unfold fun_true. unfold funi. (* magic. *)
       (*
 Tactic failure: Cannot solve subgoal
