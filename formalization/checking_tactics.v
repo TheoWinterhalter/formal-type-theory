@@ -853,6 +853,13 @@ Ltac prepushsubst1 sym :=
       ceapply EqTyTrans ; [ ceapply EqTySubstUnit | .. ]
     | ..
     ]
+  | |- eqtype ?G (Subst ?A ?sbs) Unit =>
+    ceapply EqTyTrans ; [ ceapply EqTySubstUnit | .. ]
+  | |- eqtype ?G Unit (Subst ?A ?sbs) =>
+    ceapply EqTySym ; [
+      ceapply EqTyTrans ; [ ceapply EqTySubstUnit | .. ]
+    | ..
+    ]
   | |- eqtype ?G (Subst ?A ?sbs) Bool =>
     ceapply EqTySubstBool
   | |- eqtype ?G (Subst Bool ?sbs) ?A =>
@@ -2704,7 +2711,7 @@ Ltac keep_ju :=
 (* Tactic to keep equalities *)
 Ltac keep_eq :=
   doConfig ;
-  match goal with
+  lazymatch goal with
   | |- eqterm _ _ _ _ => idtac
   | |- eqtype _ _ _ => idtac
   | |- eqsubst _ _ _ _ => idtac

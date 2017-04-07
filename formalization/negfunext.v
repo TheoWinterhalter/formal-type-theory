@@ -1122,14 +1122,15 @@ Proof.
       * pushsubst ; [ .. | capply EqTyRefl ].
         -- unfold T. unfold fun_true. unfold funi. magic.
         -- unfold T. unfold fun_true. unfold funi. (* magic. *)
-           (*
-             Tactic failure: Cannot solve subgoal
-(eqtype (ctxextend (ctxextend ?D (SimProd (Prod Unit Unit) Bool)) Unit)
-   (Subst ?A (sbcomp (sbweak (SimProd (Prod Unit Unit) Bool)) (sbweak Unit)))
-   (SimProd (Prod Unit Unit) Bool)) (level 985).
-            *)
+           (* The magic is taking too long, so we admit it, but it succeeds. *)
            magic.
-        -- todo.
+           (* The following is also taking a very long time! *)
+           (* Unshelve. all: keep_ju. *)
+           Unshelve. all: keep_ju. all:keep_eq.
+           all: capply CtxRefl ; magic.
+           Unshelve. all: try trymagic.
+           all: shelve.
+        -- magic.
         -- todo.
     + unfold T. unfold fun_true. unfold funi. (* magic. *)
       (*
