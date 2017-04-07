@@ -1137,7 +1137,8 @@ Proof.
            all: shelve.
         -- unfold T. unfold fun_true. unfold funi.
            (* magic. *)
-           todo. (* We didn't let magic finish. *)
+           todo. (* magic succeeds (but maybe with things on the self,
+                    took 430min to get here). *)
     + unfold T. unfold fun_true. unfold funi. (* magic. *)
       (*
 Tactic failure: Cannot solve subgoal
