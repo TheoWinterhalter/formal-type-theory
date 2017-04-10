@@ -1036,6 +1036,7 @@ with eqtype : context -> type -> type -> Type :=
          premise: isterm G a (Uni n)
          premise: isterm G u (El a)
          premise: isterm G v (El a)
+         precond: isctx G
          conclusion:
            eqtype G
                   (El (uniId a u v))
@@ -2048,8 +2049,8 @@ with eqterm : context -> term -> term -> type -> Type :=
        universe rule
          parameters: {G D a b n sbs},
          premise: issubst sbs G D
-         premise: isterm G a (Uni n)
-         premise: isterm (ctxextend G (El a)) b (Uni n)
+         premise: isterm D a (Uni n)
+         premise: isterm (ctxextend D (El a)) b (Uni n)
          precond: isctx G
          precond: isctx D
          conclusion:
@@ -2063,9 +2064,9 @@ with eqterm : context -> term -> term -> type -> Type :=
        universe rule
          parameters: {G D a u v n sbs},
          premise: issubst sbs G D
-         premise: isterm G a (Uni n)
-         premise: isterm G u (El a)
-         premise: isterm G v (El a)
+         premise: isterm D a (Uni n)
+         premise: isterm D u (El a)
+         premise: isterm D v (El a)
          precond: isctx G
          precond: isctx D
          conclusion:

@@ -2327,20 +2327,30 @@ Ltac magicn try shelf tysym debug :=
       | myfail debug
       ] ; magicn try shelf true debug
     | |- isterm ?G (uniEmpty) ?T =>
+      (* Unless specified otherwise we inhabit universe 0 -- or not... *)
       first [
-        ceapply TermUniEmpty
+        (* config eapply @TermUniEmpty with (n := 0) *)
+      (* | ceapply TermTyConv ; [ (config eapply @TermUniEmpty with (n := 0)) | .. ] *)
+      (* | *) ceapply TermUniEmpty
       | ceapply TermTyConv ; [ ceapply TermUniEmpty | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
     | |- isterm ?G uniUnit ?T =>
+      (* Unless specified otherwise we inhabit universe 0 -- maybe not... *)
       first [
-        ceapply TermUniUnit
+        (* config eapply @TermUniUnit with (n := 0) *)
+      (* | ceapply TermTyConv ; [ (config eapply @TermUniUnit with (n := 0)) | .. ] *)
+      (* |  *)ceapply TermUniUnit
       | ceapply TermTyConv ; [ ceapply TermUniUnit | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
     | |- isterm ?G uniBool ?T =>
+      (* Unless specified otherwise we inhabit universe 0
+         -- not yet at least... *)
       first [
-        ceapply TermUniBool
+        (* config eapply @TermUniBool with (n := 0) *)
+      (* | ceapply TermTyConv ; [ (config eapply @TermUniBool with (n := 0)) | .. ] *)
+      (* |  *)ceapply TermUniBool
       | ceapply TermTyConv ; [ ceapply TermUniBool | .. ]
       | myfail debug
       ] ; magicn try shelf true debug

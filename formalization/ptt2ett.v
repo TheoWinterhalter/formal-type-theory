@@ -10,6 +10,7 @@ Section Ptt2Ett.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
+Context `{ConfigUniverses : config.Universes}.
 
 Fixpoint sane_isctx G (P : ptt.isctx G) : ett.isctx G
 
@@ -91,6 +92,12 @@ Proof.
 
       (* TySimProd *)
       - capply TySimProd ; auto.
+
+      (* TyUni *)
+      - capply TyUni ; auto.
+
+      (* TyEl *)
+      - ceapply TyEl ; eauto.
   }
 
   (* sane_isterm *)
@@ -146,6 +153,27 @@ Proof.
 
       (* TermProj2 *)
       - apply TermProj2 ; auto.
+
+      (* TermUniProd *)
+      - apply TermUniProd ; auto.
+
+      (* TermUniId *)
+      - apply TermUniId ; auto.
+
+      (* TermUniEmpty *)
+      - apply TermUniEmpty ; auto.
+
+      (* TermUniUnit *)
+      - apply TermUniUnit ; auto.
+
+      (* TermUniBool *)
+      - apply TermUniBool ; auto.
+
+      (* TermUniSimProd *)
+      - apply TermUniSimProd ; auto.
+
+      (* TermUniUni *)
+      - apply TermUniUni ; auto.
   }
 
   (* sane_eqctx *)
@@ -269,6 +297,36 @@ Proof.
 
       (* EqTySubstSimProd *)
       - apply @EqTySubstSimProd with (D := D) ; auto.
+
+      (* EqTySubstUni *)
+      - apply @EqTySubstUni with (D := D) ; auto.
+
+      (* ElProd *)
+      - eapply ElProd ; eauto.
+
+      (* ElId *)
+      - eapply ElId ; eauto.
+
+      (* ElSubst *)
+      - eapply ElSubst ; eauto.
+
+      (* ElEmpty *)
+      - eapply ElEmpty ; eauto.
+
+      (* ElUnit *)
+      - eapply ElUnit ; eauto.
+
+      (* ElBool *)
+      - eapply ElBool ; eauto.
+
+      (* ElSimProd *)
+      - eapply ElSimProd ; eauto.
+
+      (* ElUni *)
+      - apply ElUni ; auto.
+
+      (* CongEl *)
+      - eapply CongEl ; eauto.
   }
 
   (* sane_eqterm *)
@@ -407,6 +465,36 @@ Proof.
 
       (* PairEta *)
       - apply PairEta ; auto.
+
+      (* EqSubstUniProd *)
+      - apply @EqSubstUniProd with (D := D) ; auto.
+
+      (* EqSubstUniId *)
+      - apply @EqSubstUniId with (D := D) ; auto.
+
+      (* EqSubstUniEmpty *)
+      - apply @EqSubstUniEmpty with (D := D) ; auto.
+
+      (* EqSubstUniUnit *)
+      - apply @EqSubstUniUnit with (D := D) ; auto.
+
+      (* EqSubstUniBool *)
+      - apply @EqSubstUniBool with (D := D) ; auto.
+
+      (* EqSubstUniSimProd *)
+      - apply @EqSubstUniSimProd with (D := D) ; auto.
+
+      (* EqSubstUniUni *)
+      - apply @EqSubstUniUni with (D := D) ; auto.
+
+      (* CongUniProd *)
+      - apply CongUniProd ; auto.
+
+      (* CongUniId *)
+      - apply CongUniId ; auto.
+
+      (* CongUniSimProd *)
+      - apply CongUniSimProd ; auto.
     }
 Defined.
 
