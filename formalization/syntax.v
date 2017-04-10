@@ -29,8 +29,13 @@ with term : Type :=
      | pair : type -> type -> term -> term -> term
      | proj1 : type -> type -> term -> term
      | proj2 : type -> type -> term -> term
-     (* TODO: Add codes for type constructors *)
-     (* | pi : term -> term -> term *)
+     | uniProd : term -> term -> term
+     | uniId : term -> term -> term -> term
+     | uniEmpty : term
+     | uniUnit : term
+     | uniBool : term
+     | uniSimProd : term -> term -> term
+     | uniUni : nat -> term
 
 with substitution : Type :=
      | sbzero : type -> term -> substitution

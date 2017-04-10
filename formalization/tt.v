@@ -421,27 +421,89 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermProj1 :
-         simpleproduct rule
-           parameters: {G A B p},
-           precond: isctx G
-           precond: istype G A
-           precond: istype G B
-           premise: isterm G p (SimProd A B)
-           conclusion:
-             isterm G (proj1 A B p) A
-         endrule
+       simpleproduct rule
+         parameters: {G A B p},
+         precond: isctx G
+         precond: istype G A
+         precond: istype G B
+         premise: isterm G p (SimProd A B)
+         conclusion:
+           isterm G (proj1 A B p) A
+       endrule
 
      | TermProj2 :
-         simpleproduct rule
-           parameters: {G A B p},
-           precond: isctx G
-           precond: istype G A
-           precond: istype G B
-           premise: isterm G p (SimProd A B)
-           conclusion:
-             isterm G (proj2 A B p) B
-         endrule
+       simpleproduct rule
+         parameters: {G A B p},
+         precond: isctx G
+         precond: istype G A
+         precond: istype G B
+         premise: isterm G p (SimProd A B)
+         conclusion:
+           isterm G (proj2 A B p) B
+       endrule
 
+     | TermUniProd :
+       universe rule
+         parameters: {G a b n},
+         premise: isterm G a (Uni n)
+         premise: isterm (ctxextend G (El a)) b (Uni n)
+         precond: isctx G
+         conclusion:
+           isterm G (uniProd a b) (Uni n)
+       endrule
+
+     | TermUniId :
+       universe rule
+         parameters: {G a u v n},
+         premise: isterm G a (Uni n)
+         premise: isterm G u (El a)
+         premise: isterm G v (El a)
+         precond: isctx G
+         conclusion:
+           isterm G (uniId a u v) (Uni n)
+       endrule
+
+     | TermUniEmpty :
+       universe rule
+         parameters: {G n},
+         premise: isctx G
+         conclusion:
+           isterm G (uniEmpty) (Uni n)
+       endrule
+
+     | TermUniUnit :
+       universe rule
+         parameters: {G n},
+         premise: isctx G
+         conclusion:
+           isterm G (uniUnit) (Uni n)
+       endrule
+
+     | TermUniBool :
+       universe rule
+         parameters: {G n},
+         premise: isctx G
+         conclusion:
+           isterm G (uniBool) (Uni n)
+       endrule
+
+     | TermUniSimProd :
+       universe simpleproduct rule
+         parameters: {G a b n},
+         premise: isterm G a (Uni n)
+         premise: isterm G b (Uni n)
+         precond: isctx G
+         conclusion:
+           isterm G (uniSimProd a b) (Uni n)
+       endrule
+
+     | TermUniUni :
+       universe rule
+         parameters: {G n},
+         premise: isctx G
+         conclusion:
+           isterm G (uniUni n) (Uni (S n))
+       endrule
 
 
 with eqctx : context -> context -> Type :=
