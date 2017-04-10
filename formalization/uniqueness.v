@@ -15,6 +15,8 @@ Require Import tactics config_tactics.
 Section Uniqueness.
 
 Context `{configReflection : config.Reflection}.
+Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configProdEta : config.ProdEta}.
 
 (* Auxiliary inversion lemmas. *)
 
@@ -148,7 +150,7 @@ Ltac doTyConv unique_term' :=
 Ltac doCtxConv D' unique_term' :=
   eapply unique_term' ;
   [ ehyp
-  | capply (@CtxTrans _ _ _ D') ; hyp ].
+  | (config apply @CtxTrans with (D := D')) ; hyp ].
 
 Ltac doSubstConv unique_subst' :=
   ceapply CtxTrans ; [
@@ -203,7 +205,7 @@ Proof.
 
     (* H1: TermTyConv *)
     - {
-        capply (@EqTyTrans _ _ G _ A B').
+        config apply @EqTyTrans with (B := A).
         + capply EqTySym. hyp.
         + eapply (unique_term_ctx G u A) ; eassumption.
       }
@@ -214,7 +216,7 @@ Proof.
         - eapply unique_term_ctx'.
           + ehyp.
           + ehyp.
-          + capply (@CtxTrans _ _ _ D).
+          + config apply @CtxTrans with (D := D).
             * hyp.
             * capply CtxSym. hyp.
         - hyp.
@@ -429,6 +431,42 @@ Proof.
                 + ceapply EqTyRefl. constructor. hyp.
                 + ceapply EqRefl. hyp.
               - ceapply EqTyRefl. hyp.
+            }
+        }
+
+      (* TermPair *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - { capply EqTyRefl.
+              capply TySimProd.
+              - hyp.
+              - hyp.
+            }
+        }
+
+      (* TermProj1 *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - { capply EqTyRefl.
+              ceapply TyCtxConv.
+              - ehyp.
+              - hyp.
+            }
+        }
+
+      (* TermProj2 *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - { capply EqTyRefl.
+              ceapply TyCtxConv.
+              - ehyp.
+              - hyp.
             }
         }
   }

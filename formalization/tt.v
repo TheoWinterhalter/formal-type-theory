@@ -8,11 +8,19 @@ Section TypeTheoryRules.
 
 Context `{ConfigPrecond : config.Precond}.
 Context `{ConfigReflection : config.Reflection}.
+Context `{ConfigSimpleProducts : config.SimpleProducts}.
+Context `{ConfigProdEta : config.ProdEta}.
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
 Notation "'extensional' r" :=
   (forall { _ : reflectionFlag }, r) (only parsing, at level 97).
+
+Notation "'simpleproduct' r" :=
+  (forall { _ : simpleproductsFlag }, r) (only parsing, at level 97).
+
+Notation "'prodeta' r" :=
+  (forall { _ : prodetaFlag }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
@@ -40,14 +48,14 @@ Inductive isctx : context -> Type :=
 with issubst : substitution -> context -> context -> Type :=
 
      | SubstZero :
-         rule
-           parameters: {G u A},
-           premise: isterm G u A
-           precond: istype G A
-           precond: isctx G
-           conclusion:
-             issubst (sbzero A u) G (ctxextend G A)
-         endrule
+       rule
+         parameters: {G u A},
+         premise: isterm G u A
+         precond: istype G A
+         precond: isctx G
+         conclusion:
+           issubst (sbzero A u) G (ctxextend G A)
+       endrule
 
      | SubstWeak :
        rule
@@ -172,6 +180,16 @@ with istype : context -> type -> Type :=
          premise: isctx G
          conclusion:
            istype G Bool
+       endrule
+
+     | TySimProd :
+       simpleproduct rule
+         parameters: {G A B},
+         precond: isctx G
+         premise: istype G A
+         premise: istype G B
+         conclusion:
+           istype G (SimProd A B)
        endrule
 
 
@@ -368,6 +386,40 @@ with isterm : context -> term -> type -> Type :=
                   (cond C u v w)
                   (Subst C (sbzero Bool u))
        endrule
+
+     | TermPair :
+       simpleproduct rule
+         parameters: {G A B u v},
+         precond: isctx G
+         precond: istype G A
+         precond: istype G B
+         premise: isterm G u A
+         premise: isterm G v B
+         conclusion:
+           isterm G (pair A B u v) (SimProd A B)
+       endrule
+
+     | TermProj1 :
+         simpleproduct rule
+           parameters: {G A B p},
+           precond: isctx G
+           precond: istype G A
+           precond: istype G B
+           premise: isterm G p (SimProd A B)
+           conclusion:
+             isterm G (proj1 A B p) A
+         endrule
+
+     | TermProj2 :
+         simpleproduct rule
+           parameters: {G A B p},
+           precond: isctx G
+           precond: istype G A
+           precond: istype G B
+           premise: isterm G p (SimProd A B)
+           conclusion:
+             isterm G (proj2 A B p) B
+         endrule
 
 
 
@@ -843,6 +895,34 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G (Subst A sbs) (Subst B sbt)
        endrule
 
+     | CongSimProd :
+       simpleproduct rule
+         parameters: {G A1 A2 B1 B2},
+         precond: isctx G
+         precond: istype G A1
+         precond: istype G A2
+         precond: istype G B1
+         precond: istype G B2
+         premise: eqtype G A1 A2
+         premise: eqtype G B1 B2
+         conclusion:
+           eqtype G (SimProd A1 B1) (SimProd A2 B2)
+       endrule
+
+     | EqTySubstSimProd :
+         simpleproduct rule
+           parameters: {G D A B sbs},
+           precond: isctx G
+           precond: isctx D
+           premise: issubst sbs G D
+           premise: istype D A
+           premise: istype D B
+           conclusion:
+             eqtype G
+                    (Subst (SimProd A B) sbs)
+                    (SimProd (Subst A sbs) (Subst B sbs))
+         endrule
+
 
 with eqterm : context -> term -> term -> type -> Type :=
 
@@ -1304,7 +1384,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | ProdEta :
-       rule
+       prodeta rule
          parameters: {G A B u v},
          precond: isctx G
          precond: istype G A
@@ -1609,6 +1689,163 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (subst u1 sbs)
                   (subst u2 sbt)
                   (Subst A sbs)
-       endrule.
+       endrule
+
+     | CongPair :
+       simpleproduct rule
+         parameters: {G A1 A2 B1 B2 u1 u2 v1 v2},
+         premise: eqterm G u1 u2 A1
+         premise: eqterm G v1 v2 B1
+         premise: eqtype G A1 A2
+         premise: eqtype G B1 B2
+         precond: isctx G
+         precond: istype G A1
+         precond: istype G A2
+         precond: istype G B1
+         precond: istype G B2
+         precond: isterm G u1 A1
+         precond: isterm G u2 A1
+         precond: isterm G v1 B1
+         precond: isterm G v2 B1
+         conclusion:
+           eqterm G
+                  (pair A1 B1 u1 v1)
+                  (pair A2 B2 u2 v2)
+                  (SimProd A1 B1)
+       endrule
+
+     | CongProj1 :
+       simpleproduct rule
+         parameters: {G A1 A2 B1 B2 p1 p2},
+         premise: eqterm G p1 p2 (SimProd A1 B1)
+         premise: eqtype G A1 A2
+         premise: eqtype G B1 B2
+         precond: isctx G
+         precond: istype G A1
+         precond: istype G A2
+         precond: istype G B1
+         precond: istype G B2
+         precond: isterm G p1 (SimProd A1 B1)
+         precond: isterm G p2 (SimProd A1 B1)
+         conclusion:
+           eqterm G
+                  (proj1 A1 B1 p1)
+                  (proj1 A2 B2 p2)
+                  A1
+       endrule
+
+     | CongProj2 :
+       simpleproduct rule
+         parameters: {G A1 A2 B1 B2 p1 p2},
+         premise: eqterm G p1 p2 (SimProd A1 B1)
+         premise: eqtype G A1 A2
+         premise: eqtype G B1 B2
+         precond: isctx G
+         precond: istype G A1
+         precond: istype G A2
+         precond: istype G B1
+         precond: istype G B2
+         precond: isterm G p1 (SimProd A1 B1)
+         precond: isterm G p2 (SimProd A1 B1)
+         conclusion:
+           eqterm G
+                  (proj2 A1 B1 p1)
+                  (proj2 A2 B2 p2)
+                  B1
+       endrule
+
+     | EqSubstPair :
+       simpleproduct rule
+         parameters: {G D A B u v sbs},
+         premise: issubst sbs G D
+         premise: isterm D u A
+         premise: isterm D v B
+         precond: isctx G
+         precond: isctx D
+         precond: istype D A
+         precond: istype D B
+         conclusion:
+           eqterm G
+                  (subst (pair A B u v) sbs)
+                  (pair (Subst A sbs) (Subst B sbs) (subst u sbs) (subst v sbs))
+                  (SimProd (Subst A sbs) (Subst B sbs))
+       endrule
+
+     | EqSubstProj1 :
+       simpleproduct rule
+         parameters: {G D A B p sbs},
+         premise: issubst sbs G D
+         premise: isterm D p (SimProd A B)
+         precond: isctx G
+         precond: isctx D
+         precond: istype D A
+         precond: istype D B
+         conclusion:
+           eqterm G
+                  (subst (proj1 A B p) sbs)
+                  (proj1 (Subst A sbs) (Subst B sbs) (subst p sbs))
+                  (Subst A sbs)
+       endrule
+
+     | EqSubstProj2 :
+       simpleproduct rule
+         parameters: {G D A B p sbs},
+         premise: issubst sbs G D
+         premise: isterm D p (SimProd A B)
+         precond: isctx G
+         precond: isctx D
+         precond: istype D A
+         precond: istype D B
+         conclusion:
+           eqterm G
+                  (subst (proj2 A B p) sbs)
+                  (proj2 (Subst A sbs) (Subst B sbs) (subst p sbs))
+                  (Subst B sbs)
+       endrule
+
+     | Proj1Pair :
+       simpleproduct rule
+         parameters: {G A B u v},
+         premise: isterm G u A
+         premise: isterm G v B
+         precond: isctx G
+         precond: istype G A
+         precond: istype G B
+         conclusion:
+           eqterm G
+                  (proj1 A B (pair A B u v))
+                  u
+                  A
+       endrule
+
+     | Proj2Pair :
+       simpleproduct rule
+         parameters: {G A B u v},
+         premise: isterm G u A
+         premise: isterm G v B
+         precond: isctx G
+         precond: istype G A
+         precond: istype G B
+         conclusion:
+           eqterm G
+                  (proj2 A B (pair A B u v))
+                  v
+                  B
+       endrule
+
+     | PairEta :
+       simpleproduct rule
+         parameters: {G A B p q},
+         premise: eqterm G (proj1 A B p) (proj1 A B q) A
+         premise: eqterm G (proj2 A B p) (proj2 A B q) B
+         premise: isterm G p (SimProd A B)
+         premise: isterm G q (SimProd A B)
+         precond: isctx G
+         precond: istype G A
+         precond: istype G B
+         conclusion:
+           eqterm G p q (SimProd A B)
+       endrule
+.
 
 End TypeTheoryRules.

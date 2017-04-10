@@ -107,7 +107,7 @@ VFILES:=config.v\
   tt.v\
   ett.v\
   ptt.v\
-  ptt_tactics.v\
+  checking_tactics.v\
   ptt_admissible.v\
   ptt_inversion.v\
   ptt_sanity.v\
@@ -117,6 +117,7 @@ VFILES:=config.v\
   tactics.v\
   inversion.v\
   uniqueness.v\
+  negfunext.v\
   hml.v\
   coerce.v\
   coerce_action.v\

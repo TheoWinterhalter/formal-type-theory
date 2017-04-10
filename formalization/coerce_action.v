@@ -108,7 +108,7 @@ Proof.
             exact (sbcomp s6 s9).
             (* D, B, ---> G, A *)
 
-          - { intro C. induction C as [? | ? | C tC sbs | | | ].
+          - { intro C. induction C as [? | ? | C tC sbs | | | | ? ].
               (* Prod *)
               - { todo. }
               (* Id *)
@@ -121,6 +121,8 @@ Proof.
               - { exact (var 0). }
               (* Bool *)
               - { exact (var 0). }
+              (* SimProd *)
+              - { todo. }
             }
           - todo.
         }.

@@ -15,6 +15,8 @@ Require Import ett2ptt ptt2ett.
 Section EttSanity.
 
 Context `{configReflection : config.Reflection}.
+Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configProdEta : config.ProdEta}.
 
 Theorem sane_issubst sbs G D :
   issubst sbs G D -> isctx G * isctx D.

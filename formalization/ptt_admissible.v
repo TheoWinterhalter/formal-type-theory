@@ -4,12 +4,14 @@ Require config.
 Require Import config_tactics.
 Require Import tt.
 Require Import syntax.
-Require Import ptt_tactics.
+Require Import checking_tactics.
 
 Section PttAdmissible.
 
 Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
 Context `{configReflection : config.Reflection}.
+Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configProdEta : config.ProdEta}.
 
 (* Some preliminary lemmata *)
 Lemma EqTyWeakNat :
