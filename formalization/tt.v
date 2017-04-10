@@ -1107,6 +1107,19 @@ with eqtype : context -> type -> type -> Type :=
                   (Uni n)
        endrule
 
+     | CongEl :
+       universe rule
+         parameters: {G a b n},
+         premise: eqterm G a b (Uni n)
+         precond: isterm G a (Uni n)
+         precond: isterm G b (Uni n)
+         precond: isctx G
+         conclusion:
+           eqtype G
+                  (El a)
+                  (El b)
+       endrule
+
 
 with eqterm : context -> term -> term -> type -> Type :=
 
