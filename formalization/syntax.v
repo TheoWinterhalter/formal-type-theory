@@ -10,6 +10,9 @@ with type : Type :=
      | Unit : type
      | Bool : type
      | SimProd : type -> type -> type
+     | Uni : nat -> type
+     (* TODO: Add a Prop universe *)
+     | El : term -> type
 
 with term : Type :=
      | var : nat -> term
@@ -26,6 +29,8 @@ with term : Type :=
      | pair : type -> type -> term -> term -> term
      | proj1 : type -> type -> term -> term
      | proj2 : type -> type -> term -> term
+     (* TODO: Add codes for type constructors *)
+     (* | pi : term -> term -> term *)
 
 with substitution : Type :=
      | sbzero : type -> term -> substitution
@@ -34,6 +39,7 @@ with substitution : Type :=
      | sbid : substitution
      | sbcomp : substitution -> substitution -> substitution.
 
+(* TODO: Create a clean branch where we remove all these failed attempts *)
 Parameter reflective : type -> type.
 
 Definition Arrow (A B : type) : type :=

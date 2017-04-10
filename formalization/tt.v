@@ -10,6 +10,7 @@ Context `{ConfigPrecond : config.Precond}.
 Context `{ConfigReflection : config.Reflection}.
 Context `{ConfigSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
+Context `{ConfigUniverses : config.Universes}.
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
@@ -21,6 +22,9 @@ Notation "'simpleproduct' r" :=
 
 Notation "'prodeta' r" :=
   (forall { _ : prodetaFlag }, r) (only parsing, at level 97).
+
+Notation "'universe' r" :=
+  (forall { _ : universesFlag }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
@@ -190,6 +194,23 @@ with istype : context -> type -> Type :=
          premise: istype G B
          conclusion:
            istype G (SimProd A B)
+       endrule
+
+     | TyUni :
+       universe rule
+         parameters: {G n},
+         premise: isctx G
+         conclusion:
+           istype G (Uni n)
+       endrule
+
+     | TyEl :
+       universe rule
+         parameters: {G a n},
+         premise: isterm G a (Uni n)
+         precond: isctx G
+         conclusion:
+           istype G (El a)
        endrule
 
 
