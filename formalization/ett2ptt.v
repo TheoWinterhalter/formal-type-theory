@@ -10,6 +10,7 @@ Section Ett2Ptt.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
+Context `{ConfigUniverses : config.Universes}.
 
 (* Renaming ptt_sanity lemmata for readability. *)
 Definition ptt_sane_issubst := ptt_sanity.sane_issubst.
@@ -183,6 +184,17 @@ Proof.
       - now apply sane_istype.
       - now apply sane_istype.
     }
+
+    (* TyUni *)
+    { capply TyUni.
+      now apply sane_isctx.
+    }
+
+    (* TyEl *)
+    { config apply @TyEl with (n := n).
+      - now apply sane_isterm.
+      - now apply (ptt_sane_isterm G a (Uni n)), sane_isterm.
+    }
   }
 
   (****** sane_isterm ******)
@@ -330,6 +342,48 @@ Proof.
                     (ptt_sane_isterm G p (SimProd A B)),
                     sane_isterm.
         - now apply sane_isterm.
+      }
+
+    (* TermUniProd *)
+    - { capply TermUniProd.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply (ptt_sane_isterm G a (Uni n)), sane_isterm.
+      }
+
+    (* TermUniId *)
+    - { capply TermUniId.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply (ptt_sane_isterm G a (Uni n)), sane_isterm.
+      }
+
+    (* TermUniEmpty *)
+    - { capply TermUniEmpty.
+        now apply sane_isctx.
+      }
+
+    (* TermUniUnit *)
+    - { capply TermUniUnit.
+        now apply sane_isctx.
+      }
+
+    (* TermUniBool *)
+    - { capply TermUniBool.
+        now apply sane_isctx.
+      }
+
+    (* TermUniSimProd *)
+    - { capply TermUniSimProd.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply (ptt_sane_isterm G a (Uni n)), sane_isterm.
+      }
+
+    (* TermUniUni *)
+    - { capply TermUniUni.
+        now apply sane_isctx.
       }
   }
 
@@ -678,6 +732,31 @@ Proof.
       - now apply sane_istype.
       - now apply sane_istype.
     }
+
+    (* EqTySubstUni *)
+    { config apply @EqTySubstUni with (D := D).
+      - now apply sane_issubst.
+      - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+      - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+    }
+
+    (* ElProd *)
+    { config apply @ElProd with (n := n).
+      - now apply sane_isterm.
+      - now apply sane_isterm.
+      - now apply (ptt_sane_isterm G a (Uni n)), sane_isterm.
+    }
+
+    (* ElId *)
+    { config apply @ElId with (n := n).
+      - now apply sane_isterm.
+      - now apply sane_isterm.
+      - now apply sane_isterm.
+      - now apply (ptt_sane_isterm G a (Uni n)), sane_isterm.
+    }
+
+    fail.
+
   }
 
   (****** sane_eqterm ******)
