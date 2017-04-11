@@ -965,7 +965,7 @@ Ltac prepushsubst1 sym :=
       | ..
       ]
     ]
-  | |- eqterm ?G (subst (uniProd ?a ?b) ?sbs) _ _ =>
+  | |- eqterm ?G (subst (uniProd ?n ?a ?b) ?sbs) _ _ =>
     first [
       ceapply EqTrans ; [ ceapply EqSubstUniProd | .. ]
     | ceapply EqTyConv ; [
@@ -973,7 +973,7 @@ Ltac prepushsubst1 sym :=
       | ..
       ]
     ]
-  | |- eqterm ?G (subst (uniId ?a ?u ?v) ?sbs) _ _ =>
+  | |- eqterm ?G (subst (uniId ?n ?a ?u ?v) ?sbs) _ _ =>
     first [
       ceapply EqTrans ; [ ceapply EqSubstUniId | .. ]
     | ceapply EqTyConv ; [
@@ -981,7 +981,7 @@ Ltac prepushsubst1 sym :=
       | ..
       ]
     ]
-  | |- eqterm ?G (subst uniEmpty ?sbs) _ _ =>
+  | |- eqterm ?G (subst (uniEmpty ?n) ?sbs) _ _ =>
     first [
       ceapply EqTrans ; [ ceapply EqSubstUniEmpty | .. ]
     | ceapply EqTyConv ; [
@@ -989,7 +989,7 @@ Ltac prepushsubst1 sym :=
       | ..
       ]
     ]
-  | |- eqterm ?G (subst uniUnit ?sbs) _ _ =>
+  | |- eqterm ?G (subst (uniUnit ?n) ?sbs) _ _ =>
     first [
       ceapply EqTrans ; [ ceapply EqSubstUniUnit | .. ]
     | ceapply EqTyConv ; [
@@ -997,7 +997,7 @@ Ltac prepushsubst1 sym :=
       | ..
       ]
     ]
-  | |- eqterm ?G (subst uniBool ?sbs) _ _ =>
+  | |- eqterm ?G (subst (uniBool ?n) ?sbs) _ _ =>
     first [
       ceapply EqTrans ; [ ceapply EqSubstUniBool | .. ]
     | ceapply EqTyConv ; [
@@ -1005,7 +1005,7 @@ Ltac prepushsubst1 sym :=
       | ..
       ]
     ]
-  | |- eqterm ?G (subst (uniSimProd ?a ?b) ?sbs) _ _ =>
+  | |- eqterm ?G (subst (uniSimProd ?n ?a ?b) ?sbs) _ _ =>
     first [
       ceapply EqTrans ; [ ceapply EqSubstUniSimProd | .. ]
     | ceapply EqTyConv ; [
@@ -2314,37 +2314,37 @@ Ltac magicn try shelf tysym debug :=
       | ceapply TermTyConv ; [ ceapply TermProj2 | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- isterm ?G (uniProd ?a ?b) ?T =>
+    | |- isterm ?G (uniProd ?n ?a ?b) ?T =>
       first [
         ceapply TermUniProd
       | ceapply TermTyConv ; [ ceapply TermUniProd | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- isterm ?G (uniId ?a ?u ?v) ?T =>
+    | |- isterm ?G (uniId ?n ?a ?u ?v) ?T =>
       first [
         ceapply TermUniId
       | ceapply TermTyConv ; [ ceapply TermUniId | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- isterm ?G (uniEmpty) ?T =>
+    | |- isterm ?G (uniEmpty ?n) ?T =>
       first [
         ceapply TermUniEmpty
       | ceapply TermTyConv ; [ ceapply TermUniEmpty | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- isterm ?G uniUnit ?T =>
+    | |- isterm ?G (uniUnit ?n) ?T =>
       first [
         ceapply TermUniUnit
       | ceapply TermTyConv ; [ ceapply TermUniUnit | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- isterm ?G uniBool ?T =>
+    | |- isterm ?G (uniBool ?n) ?T =>
       first [
         ceapply TermUniBool
       | ceapply TermTyConv ; [ ceapply TermUniBool | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- isterm ?G (uniSimProd ?a ?b) ?T =>
+    | |- isterm ?G (uniSimProd ?n ?a ?b) ?T =>
       first [
         ceapply TermUniSimProd
       | ceapply TermTyConv ; [ ceapply TermUniSimProd | .. ]
@@ -2816,19 +2816,19 @@ Ltac magicn try shelf tysym debug :=
       | ceapply EqTyConv ; [ ceapply CongProj2 | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- eqterm ?G (uniProd _ _) (uniProd _ _) _ =>
+    | |- eqterm ?G (uniProd _ _ _) (uniProd _ _ _) _ =>
       first [
         ceapply CongUniProd
       | ceapply EqTyConv ; [ ceapply CongUniProd | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- eqterm ?G (uniId _ _ _) (uniId _ _ _) _ =>
+    | |- eqterm ?G (uniId _ _ _ _) (uniId _ _ _ _) _ =>
       first [
         ceapply CongUniId
       | ceapply EqTyConv ; [ ceapply CongUniId | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- eqterm ?G (uniSimProd _ _) (uniSimProd _ _) _ =>
+    | |- eqterm ?G (uniSimProd _ _ _) (uniSimProd _ _ _) _ =>
       first [
         ceapply CongUniSimProd
       | ceapply EqTyConv ; [ ceapply CongUniSimProd | .. ]

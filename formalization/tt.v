@@ -449,7 +449,7 @@ with isterm : context -> term -> type -> Type :=
          premise: isterm (ctxextend G (El a)) b (Uni n)
          precond: isctx G
          conclusion:
-           isterm G (uniProd a b) (Uni n)
+           isterm G (uniProd n a b) (Uni n)
        endrule
 
      | TermUniId :
@@ -460,31 +460,31 @@ with isterm : context -> term -> type -> Type :=
          premise: isterm G v (El a)
          precond: isctx G
          conclusion:
-           isterm G (uniId a u v) (Uni n)
+           isterm G (uniId n a u v) (Uni n)
        endrule
 
      | TermUniEmpty :
        universe rule
-         parameters: {G},
+         parameters: {G n},
          premise: isctx G
          conclusion:
-           isterm G (uniEmpty) (Uni 0)
+           isterm G (uniEmpty n) (Uni n)
        endrule
 
      | TermUniUnit :
        universe rule
-         parameters: {G},
+         parameters: {G n},
          premise: isctx G
          conclusion:
-           isterm G (uniUnit) (Uni 0)
+           isterm G (uniUnit n) (Uni n)
        endrule
 
      | TermUniBool :
        universe rule
-         parameters: {G},
+         parameters: {G n},
          premise: isctx G
          conclusion:
-           isterm G (uniBool) (Uni 0)
+           isterm G (uniBool n) (Uni n)
        endrule
 
      | TermUniSimProd :
@@ -494,7 +494,7 @@ with isterm : context -> term -> type -> Type :=
          premise: isterm G b (Uni n)
          precond: isctx G
          conclusion:
-           isterm G (uniSimProd a b) (Uni n)
+           isterm G (uniSimProd n a b) (Uni n)
        endrule
 
      | TermUniUni :
@@ -1026,7 +1026,7 @@ with eqtype : context -> type -> type -> Type :=
          precond: isctx G
          conclusion:
            eqtype G
-                  (El (uniProd a b))
+                  (El (uniProd n a b))
                   (Prod (El a) (El b))
        endrule
 
@@ -1039,7 +1039,7 @@ with eqtype : context -> type -> type -> Type :=
          precond: isctx G
          conclusion:
            eqtype G
-                  (El (uniId a u v))
+                  (El (uniId n a u v))
                   (Id (El a) u v)
        endrule
 
@@ -1058,31 +1058,31 @@ with eqtype : context -> type -> type -> Type :=
 
      | ElEmpty :
        universe rule
-         parameters: {G},
+         parameters: {G n},
          premise: isctx G
          conclusion:
            eqtype G
-                  (El uniEmpty)
+                  (El (uniEmpty n))
                   Empty
        endrule
 
      | ElUnit :
        universe rule
-         parameters: {G},
+         parameters: {G n},
          premise: isctx G
          conclusion:
            eqtype G
-                  (El uniUnit)
+                  (El (uniUnit n))
                   Unit
        endrule
 
      | ElBool :
        universe rule
-         parameters: {G},
+         parameters: {G n},
          premise: isctx G
          conclusion:
            eqtype G
-                  (El uniBool)
+                  (El (uniBool n))
                   Bool
        endrule
 
@@ -1094,7 +1094,7 @@ with eqtype : context -> type -> type -> Type :=
          precond: isctx G
          conclusion:
            eqtype G
-                  (El (uniSimProd a b))
+                  (El (uniSimProd n a b))
                   (SimProd (El a) (El b))
        endrule
 
@@ -2055,8 +2055,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          precond: isctx D
          conclusion:
            eqterm G
-                  (subst (uniProd a b) sbs)
-                  (uniProd (subst a sbs) (subst b (sbshift (El a) sbs)))
+                  (subst (uniProd n a b) sbs)
+                  (uniProd n (subst a sbs) (subst b (sbshift (El a) sbs)))
                   (Uni n)
        endrule
 
@@ -2071,48 +2071,48 @@ with eqterm : context -> term -> term -> type -> Type :=
          precond: isctx D
          conclusion:
            eqterm G
-                  (subst (uniId a u v) sbs)
-                  (uniId (subst a sbs) (subst u sbs) (subst v sbs))
+                  (subst (uniId n a u v) sbs)
+                  (uniId n (subst a sbs) (subst u sbs) (subst v sbs))
                   (Uni n)
        endrule
 
      | EqSubstUniEmpty :
        universe rule
-         parameters: {G D sbs},
+         parameters: {G D n sbs},
          premise: issubst sbs G D
          precond: isctx G
          precond: isctx D
          conclusion:
            eqterm G
-                  (subst uniEmpty sbs)
-                  uniEmpty
-                  (Uni 0)
+                  (subst (uniEmpty n) sbs)
+                  (uniEmpty n)
+                  (Uni n)
        endrule
 
      | EqSubstUniUnit :
        universe rule
-         parameters: {G D sbs},
+         parameters: {G D n sbs},
          premise: issubst sbs G D
          precond: isctx G
          precond: isctx D
          conclusion:
            eqterm G
-                  (subst uniUnit sbs)
-                  uniUnit
-                  (Uni 0)
+                  (subst (uniUnit n) sbs)
+                  (uniUnit n)
+                  (Uni n)
        endrule
 
      | EqSubstUniBool :
        universe rule
-         parameters: {G D sbs},
+         parameters: {G D n sbs},
          premise: issubst sbs G D
          precond: isctx G
          precond: isctx D
          conclusion:
            eqterm G
-                  (subst uniBool sbs)
-                  uniBool
-                  (Uni 0)
+                  (subst (uniBool n) sbs)
+                  (uniBool n)
+                  (Uni n)
        endrule
 
      | EqSubstUniSimProd :
@@ -2125,8 +2125,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          precond: isctx D
          conclusion:
            eqterm G
-                  (subst (uniSimProd a b) sbs)
-                  (uniSimProd (subst a sbs) (subst b sbs))
+                  (subst (uniSimProd n a b) sbs)
+                  (uniSimProd n (subst a sbs) (subst b sbs))
                   (Uni n)
        endrule
 
@@ -2155,8 +2155,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          precond: isctx G
          conclusion:
            eqterm G
-                  (uniProd a1 b1)
-                  (uniProd a2 b2)
+                  (uniProd n a1 b1)
+                  (uniProd n a2 b2)
                   (Uni n)
        endrule
 
@@ -2175,8 +2175,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          precond: isctx G
          conclusion:
            eqterm G
-                  (uniId a1 u1 v1)
-                  (uniId a2 u2 v2)
+                  (uniId n a1 u1 v1)
+                  (uniId n a2 u2 v2)
                   (Uni n)
        endrule
 
@@ -2192,8 +2192,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          precond: isctx G
          conclusion:
            eqterm G
-                  (uniSimProd a1 b1)
-                  (uniSimProd a2 b2)
+                  (uniSimProd n a1 b1)
+                  (uniSimProd n a2 b2)
                   (Uni n)
        endrule
 .
