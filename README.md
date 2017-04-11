@@ -1,7 +1,18 @@
-# Sanity of type theory for elimination of equality reflection
+# Meta-theoretic results for formalisation of translations
 
-The ultimate goal is to be able to eliminate equality reflection, hopefully using weaker axioms than previous works (like UIP for instance), in the hope of being compatible with HoTT.
-This results in a formalisation setting for meta-theory of translations.
+We formalise various meta-theoretic properties in a modular fashion. We provide a unique notion of type theory that can be parametrised 
+over the rules and constructors it has.
+For instance, we differentiate between economic and paranoid variants of type theory regarding the amount of premises a rule should have and show a theorem stating that they prove the exact same judgments.
+
+One can see the difference between the two in the introduction rule for the identity type:
+```
+    Γ ⊢ u : A                      Γ ctx     Γ ⊢ A type     Γ ⊢ u : A
+------------------(economic)  or   ------------------------------------(paranoid).
+Γ ⊢ refl u : u = u                         Γ ⊢ refl u : u = u
+```
+We also provide proofs of sanity (`Γ ⊢ u : A` implies `Γ ctx` and `Γ ⊢ A` for instance) and of uniqueness of typing that are agnostic
+on the parameters of the type theory (whether it's economic or paranoid, has simple products or not, universes or not…).
+This also comes with tactics to type check terms automatically (although time-consuming for the time being).
 
 ## Structure of the repository
 
