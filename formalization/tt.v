@@ -1527,13 +1527,12 @@ with eqterm : context -> term -> term -> type -> Type :=
 
      | EqReflection :
        extensional rule
-         parameters: {G A u v w1 w2},
+         parameters: {G A u v p},
          precond: isctx G
          precond: istype G A
          precond: isterm G u A
          precond: isterm G v A
-         premise: isterm G w1 (Id A u v)
-         premise: isterm G w2 (reflective A)
+         premise: isterm G p (Id A u v)
          conclusion:
            eqterm G u v A
        endrule

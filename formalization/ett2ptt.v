@@ -1017,18 +1017,17 @@ Proof.
       }
 
     (* EqReflection *)
-    - { config apply @EqReflection with (w1 := w1) (w2 := w2).
-        - now apply (@ptt_sane_isterm G w1 (Id A u v)), sane_isterm.
+    - { config apply @EqReflection with (p := p).
+        - now apply (@ptt_sane_isterm G p (Id A u v)), sane_isterm.
         - now apply (ptt_TyIdInversion G A u v),
-                    (ptt_sane_isterm G w1 (Id A u v)),
+                    (ptt_sane_isterm G p (Id A u v)),
                     sane_isterm.
         - now apply (ptt_TyIdInversion G A u v),
-                    (ptt_sane_isterm G w1 (Id A u v)),
+                    (ptt_sane_isterm G p (Id A u v)),
                     sane_isterm.
         - now apply (ptt_TyIdInversion G A u v),
-                    (ptt_sane_isterm G w1 (Id A u v)),
+                    (ptt_sane_isterm G p (Id A u v)),
                     sane_isterm.
-        - now apply sane_isterm.
         - now apply sane_isterm.
       }
 

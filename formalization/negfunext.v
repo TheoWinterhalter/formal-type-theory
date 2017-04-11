@@ -871,13 +871,8 @@ Proof.
         }
 
       (* EqReflection *)
-      - { config apply @EqReflection with (w1 := trans_term w1) (w2 := trans_term w2).
-          - now apply (trans_isterm G w1 (Id A u v)).
-          - (* now apply (trans_isterm G w2 (reflective A)). *)
-            (* Problem: trans_type and reflective should commute
-               We have no other choice but to admit it for the time being.
-             *)
-            todo.
+      - { config apply @EqReflection with (p := trans_term p).
+          now apply (trans_isterm G p (Id A u v)).
         }
 
       (* ProdBeta *)
