@@ -188,4 +188,4 @@ TSWLatexianTemp*
 
 *.pdf
 
-formalization/*.tex
+src/*.tex
