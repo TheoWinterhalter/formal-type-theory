@@ -28,7 +28,6 @@ The user should focus on `master`, the rest is here for legacy.
 * `faster-magic` is its counter-part and maybe should be kept instead of `simpler-substitutions`,
 * `untyped-refl` corrresponds to an experiment regarding the removal of typing annotation to `refl`,
 * `inversion` corresponds to inversion lemmata (probably subsumed by more recent work),
-* `universes` is about adding Tarski universes to the current formalisation,
 * `into-coq` and `into-coq-attempt` were branches where we were trying to eliminate reflection by translation from our formalised type theory to Coq directly,
 * `bool-disjoint` is about showing that true = false -> Empty (but inside the theory),
 * `bool-large-elim` is about adding large elimination for Bool.
