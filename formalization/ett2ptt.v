@@ -755,7 +755,48 @@ Proof.
       - now apply (ptt_sane_isterm G a (Uni n)), sane_isterm.
     }
 
-    fail.
+    (* ElSubst *)
+    { config apply @ElSubst with (D := D) (n := n).
+      - now apply sane_issubst.
+      - now apply sane_isterm.
+      - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+      - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+    }
+
+    (* ElEmpty *)
+    { capply ElEmpty.
+      now apply sane_isctx.
+    }
+
+    (* ElUnit *)
+    { capply ElUnit.
+      now apply sane_isctx.
+    }
+
+    (* ElBool *)
+    { capply ElBool.
+      now apply sane_isctx.
+    }
+
+    (* ElSimProd *)
+    { config apply @ElSimProd with (n := n).
+      - now apply sane_isterm.
+      - now apply sane_isterm.
+      - now apply (ptt_sane_isterm G a (Uni n)), sane_isterm.
+    }
+
+    (* ElUni *)
+    { config apply @ElUni with (n := n).
+      now apply sane_isctx.
+    }
+
+    (* CongEl *)
+    { config apply @CongEl with (n := n).
+      - now apply sane_eqterm.
+      - now apply (ptt_sane_eqterm G a b (Uni n)), sane_eqterm.
+      - now apply (ptt_sane_eqterm G a b (Uni n)), sane_eqterm.
+      - now apply (ptt_sane_eqterm G a b (Uni n)), sane_eqterm.
+    }
 
   }
 
@@ -1251,6 +1292,111 @@ Proof.
                     sane_eqterm.
         - now apply (ptt_sane_eqterm G (proj2 A B p) (proj2 A B q) B),
                     sane_eqterm.
+      }
+
+    (* EqSubstUniProd *)
+    - { config apply @EqSubstUniProd with (D := D).
+        - now apply sane_issubst.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+      }
+
+    (* EqSubstUniId *)
+    - { config apply @EqSubstUniId with (D := D).
+        - now apply sane_issubst.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+      }
+
+    (* EqSubstUniEmpty *)
+    - { config apply @EqSubstUniEmpty with (D := D).
+        - now apply sane_issubst.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+      }
+
+    (* EqSubstUniUnit *)
+    - { config apply @EqSubstUniUnit with (D := D).
+        - now apply sane_issubst.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+      }
+
+    (* EqSubstUniBool *)
+    - { config apply @EqSubstUniBool with (D := D).
+        - now apply sane_issubst.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+      }
+
+    (* EqSubstUniSimProd *)
+    - { config apply @EqSubstUniSimProd with (D := D).
+        - now apply sane_issubst.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+      }
+
+    (* EqSubstUniUni *)
+    - { config apply @EqSubstUniUni with (D := D).
+        - now apply sane_issubst.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+      }
+
+    (* CongUniProd *)
+    - { capply CongUniProd.
+        - now apply sane_eqterm.
+        - now apply sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
+        - now apply (ptt_sane_eqterm (ctxextend G (El a1)) b1 b2 (Uni n)),
+                    sane_eqterm.
+        - now apply (ptt_sane_eqterm (ctxextend G (El a1)) b1 b2 (Uni n)),
+                    sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
+      }
+
+    (* CongUniId *)
+    - { capply CongUniId.
+        - now apply sane_eqterm.
+        - now apply sane_eqterm.
+        - now apply sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G u1 u2 (El a1)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G u1 u2 (El a1)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G v1 v2 (El a1)), sane_eqterm.
+        - ceapply TermTyConv.
+          + now apply (ptt_sane_eqterm G v1 v2 (El a1)), sane_eqterm.
+          + config apply @CongEl with (n := n).
+            * now apply sane_eqterm.
+            * now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
+            * now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
+            * now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
+          + now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
+          + now apply (ptt_sane_eqterm G v1 v2 (El a1)), sane_eqterm.
+          + config apply @TyEl with (n := n).
+            * now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
+            * now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
+      }
+
+    (* CongUniSimProd *)
+    - { capply CongUniSimProd.
+        - now apply sane_eqterm.
+        - now apply sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G b1 b2 (Uni n)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G b1 b2 (Uni n)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G b1 b2 (Uni n)), sane_eqterm.
       }
   }
 

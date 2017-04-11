@@ -17,6 +17,10 @@ Section Uniqueness.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
+Context `{ConfigUniverses : config.Universes}.
+
+Axiom false : forall A, A.
+Ltac todo := apply false.
 
 (* Auxiliary inversion lemmas. *)
 
@@ -468,6 +472,68 @@ Proof.
               - ehyp.
               - hyp.
             }
+        }
+
+      (* TermUniProd *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - { apply unique_term_ctx' with (u := a) (D := D').
+              - assumption.
+              - hyp.
+              - hyp.
+            }
+        }
+
+      (* TermUniId *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - { apply unique_term_ctx' with (u := a) (D := D').
+              - assumption.
+              - hyp.
+              - hyp.
+            }
+        }
+
+      (* TermUniEmpty *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - todo.
+            (* If we want uniqueness of typing we need to have the types in
+               Uni 0, or have them universe polymorphic explicitely! *)
+        }
+
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - todo.
+        }
+
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - todo.
+        }
+
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - todo.
+        }
+
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - todo.
         }
   }
 
