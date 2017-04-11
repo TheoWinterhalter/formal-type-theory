@@ -21,6 +21,7 @@ Module Stt.
   Context `{ConfigSimpleProducts : config.SimpleProducts}.
   Local Instance hasProdEta : config.ProdEta
     := {| config.prodetaFlag := config.No |}.
+  Context `{ConfigUniverses : config.Universes}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -47,6 +48,7 @@ Module Ttt.
     := {| config.simpleproductsFlag := config.Yes |}.
   Local Instance hasProdEta : config.ProdEta
     := {| config.prodetaFlag := config.No |}.
+  Context `{ConfigUniverses : config.Universes}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -65,17 +67,12 @@ Section Translation.
 
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{ConfigUniverses : config.Universes}.
 
 Axiom cheating : forall A : Type, A.
 Ltac todo := apply cheating.
 
-Fixpoint trans_ctx (G : context) : context :=
-  match G with
-  | ctxempty => ctxempty
-  | ctxextend G A => ctxextend (trans_ctx G) (trans_type A)
-  end
-
-with trans_type (A : type) : type :=
+Fixpoint trans_type (A : type) : type :=
   match A with
   | Prod A B => SimProd (Prod (trans_type A) (trans_type B)) Bool
   | Id A u v => Id (trans_type A) (trans_term u) (trans_term v)
@@ -84,6 +81,8 @@ with trans_type (A : type) : type :=
   | Unit => Unit
   | Bool => Bool
   | SimProd A B => SimProd (trans_type A) (trans_type B)
+  | Uni n => Uni n
+  | El a => El (trans_term a)
   end
 
 with trans_term (t : term) : term :=
@@ -120,6 +119,14 @@ with trans_term (t : term) : term :=
     proj1 (trans_type A) (trans_type B) (trans_term p)
   | proj2 A B p =>
     proj2 (trans_type A) (trans_type B) (trans_term p)
+  | uniProd a b =>
+    uniSimProd (uniProd (trans_term a) (trans_term b)) uniBool
+  | uniId a u v => uniId (trans_term a) (trans_term u) (trans_term v)
+  | uniEmpty => uniEmpty
+  | uniUnit => uniUnit
+  | uniBool => uniBool
+  | uniSimProd a b => uniSimProd (trans_term a) (trans_term b)
+  | uniUni n => uniUni n
   end
 
 with trans_subst (sbs : substitution) : substitution :=
@@ -129,6 +136,12 @@ with trans_subst (sbs : substitution) : substitution :=
   | sbshift A sbs => sbshift (trans_type A) (trans_subst sbs)
   | sbid => sbid
   | sbcomp sbs sbt => sbcomp (trans_subst sbs) (trans_subst sbt)
+  end.
+
+Fixpoint trans_ctx (G : context) : context :=
+  match G with
+  | ctxempty => ctxempty
+  | ctxextend G A => ctxextend (trans_ctx G) (trans_type A)
   end.
 
 Ltac ih :=
@@ -268,6 +281,14 @@ Proof.
           - ih.
           - ih.
         }
+
+      (* TyUni *)
+      - { simpl. capply TyUni. ih. }
+
+      (* TyEl *)
+      - { simpl. config apply @TyEl with (n := n).
+          now apply (trans_isterm G a (Uni n)).
+        }
     }
 
   (* trans_isterm *)
@@ -371,6 +392,15 @@ Proof.
       (* TermProj2 *)
       - { simpl. capply TermProj2.
           - now apply (trans_isterm G p (SimProd A B)).
+        }
+
+      (* TermUniProd *)
+      - { simpl. capply TermUniSimProd.
+          - capply TermUniProd.
+            + now apply (trans_isterm G a (Uni n)).
+            + now apply (trans_isterm (ctxextend G (El a)) b (Uni n)).
+          - todo.
+            (* It seems we do need universe polymorphism! *)
         }
     }
 

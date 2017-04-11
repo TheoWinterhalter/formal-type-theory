@@ -19,9 +19,6 @@ Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 
-Axiom false : forall A, A.
-Ltac todo := apply false.
-
 (* Auxiliary inversion lemmas. *)
 
 Fixpoint eqctx_ctxextend_left G A D
@@ -503,37 +500,55 @@ Proof.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.
 
-          - todo.
-            (* If we want uniqueness of typing we need to have the types in
-               Uni 0, or have them universe polymorphic explicitely! *)
+          - { capply EqTyRefl.
+              capply TyUni.
+              hyp.
+            }
         }
 
+      (* TermUniUnit *)
       - { inversion_clear H2' ; doConfig.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.
 
-          - todo.
+          - { capply EqTyRefl.
+              capply TyUni.
+              hyp.
+            }
         }
 
+      (* TermUniBool *)
       - { inversion_clear H2' ; doConfig.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.
 
-          - todo.
+          - { capply EqTyRefl.
+              capply TyUni.
+              hyp.
+            }
         }
 
+      (* TermUniSimProd *)
       - { inversion_clear H2' ; doConfig.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.
 
-          - todo.
+          - { apply unique_term_ctx' with (u := a) (D := D').
+              - assumption.
+              - hyp.
+              - hyp.
+            }
         }
 
+      (* TermUniUni *)
       - { inversion_clear H2' ; doConfig.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.
 
-          - todo.
+          - { capply EqTyRefl.
+              capply TyUni.
+              hyp.
+            }
         }
   }
 

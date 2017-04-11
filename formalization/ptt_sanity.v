@@ -285,19 +285,19 @@ Proof.
 
   (* ElEmpty *)
   { split.
-    - magic. Unshelve. exact 0.
+    - magic.
     - magic.
   }
 
   (* ElUnit *)
   { split.
-    - magic. Unshelve. exact 0.
+    - magic.
     - magic.
   }
 
   (* ElBool *)
   { split.
-    - magic. Unshelve. exact 0.
+    - magic.
     - magic.
   }
 

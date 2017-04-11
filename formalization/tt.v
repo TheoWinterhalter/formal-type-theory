@@ -465,26 +465,26 @@ with isterm : context -> term -> type -> Type :=
 
      | TermUniEmpty :
        universe rule
-         parameters: {G n},
+         parameters: {G},
          premise: isctx G
          conclusion:
-           isterm G (uniEmpty) (Uni n)
+           isterm G (uniEmpty) (Uni 0)
        endrule
 
      | TermUniUnit :
        universe rule
-         parameters: {G n},
+         parameters: {G},
          premise: isctx G
          conclusion:
-           isterm G (uniUnit) (Uni n)
+           isterm G (uniUnit) (Uni 0)
        endrule
 
      | TermUniBool :
        universe rule
-         parameters: {G n},
+         parameters: {G},
          premise: isctx G
          conclusion:
-           isterm G (uniBool) (Uni n)
+           isterm G (uniBool) (Uni 0)
        endrule
 
      | TermUniSimProd :
@@ -2078,7 +2078,7 @@ with eqterm : context -> term -> term -> type -> Type :=
 
      | EqSubstUniEmpty :
        universe rule
-         parameters: {G D n sbs},
+         parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
          precond: isctx D
@@ -2086,12 +2086,12 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G
                   (subst uniEmpty sbs)
                   uniEmpty
-                  (Uni n)
+                  (Uni 0)
        endrule
 
      | EqSubstUniUnit :
        universe rule
-         parameters: {G D n sbs},
+         parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
          precond: isctx D
@@ -2099,12 +2099,12 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G
                   (subst uniUnit sbs)
                   uniUnit
-                  (Uni n)
+                  (Uni 0)
        endrule
 
      | EqSubstUniBool :
        universe rule
-         parameters: {G D n sbs},
+         parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
          precond: isctx D
@@ -2112,7 +2112,7 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G
                   (subst uniBool sbs)
                   uniBool
-                  (Uni n)
+                  (Uni 0)
        endrule
 
      | EqSubstUniSimProd :
