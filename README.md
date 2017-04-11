@@ -16,9 +16,7 @@ This also comes with tactics to type check terms automatically (although time-co
 
 ## Structure of the repository
 
-* `formalization` contains a coq formalization of various types theories and the ongoing translation,
-* `paper` contains a LaTeX version of the rules (of ETT) (This is old and might need to be removed).
-
+`src` contains the formalisaton as advertised above.  
 Refer to the `README` inside the folder to get more information about its strucutre.
 
 ## Getting the rules in LaTeX / PDF
