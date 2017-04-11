@@ -12,6 +12,7 @@ Context `{configPrecond : config.Precond}.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
+Context `{ConfigUniverses : config.Universes}.
 
 (* Some tactic to compose substitutions. *)
 Lemma eqtype_subst_left :
@@ -155,6 +156,7 @@ Context `{configPrecond : config.Precond}.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
+Context `{ConfigUniverses : config.Universes}.
 
 Lemma EqCompZero :
   forall {G D A u sbs},
@@ -869,6 +871,34 @@ Ltac prepushsubst1 sym :=
       ceapply EqTyTrans ; [ ceapply EqTySubstBool | .. ]
     | ..
     ]
+  | |- eqtype ?G (Subst (Uni ?n) ?sbs) ?B =>
+    ceapply EqTyTrans ; [ ceapply EqTySubstUni | .. ]
+  | |- eqtype ?G ?A (Subst (Uni ?n) ?sbs) =>
+    ceapply EqTySym ; [
+      ceapply EqTyTrans ; [ ceapply EqTySubstUni | .. ]
+    | ..
+    ]
+  | |- eqtype ?G (Subst ?A ?sbs) (Uni ?n) =>
+    ceapply EqTyTrans ; [ ceapply EqTySubstUni | .. ]
+  | |- eqtype ?G (Uni ?n) (Subst ?A ?sbs) =>
+    ceapply EqTySym ; [
+      ceapply EqTyTrans ; [ ceapply EqTySubstUni | .. ]
+    | ..
+    ]
+  | |- eqtype ?G (Subst (El ?A) ?sbs) ?B =>
+    ceapply EqTySym ; [
+      ceapply EqTyTrans ; [ ceapply ElSubst | .. ]
+    | ..
+    ]
+  | |- eqtype ?G ?A (Subst (El ?B) ?sbs) =>
+    ceapply EqTyTrans ; [ ceapply ElSubst | .. ]
+  | |- eqtype ?G (Subst ?A ?sbs) (El ?B) =>
+    ceapply EqTySym ; [
+      ceapply EqTyTrans ; [ ceapply ElSubst | .. ]
+    | ..
+    ]
+  | |- eqtype ?G (El ?A) (Subst ?A ?sbs) =>
+    ceapply EqTyTrans ; [ ceapply ElSubst | .. ]
 
   (*! Pushing in terms !*)
   | |- eqterm ?G (subst (lam ?A ?B ?u) ?sbs) _ _ =>
@@ -935,6 +965,63 @@ Ltac prepushsubst1 sym :=
       | ..
       ]
     ]
+  | |- eqterm ?G (subst (uniProd ?n ?a ?b) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstUniProd | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstUniProd | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (uniId ?n ?a ?u ?v) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstUniId | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstUniId | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (uniEmpty ?n) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstUniEmpty | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstUniEmpty | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (uniUnit ?n) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstUniUnit | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstUniUnit | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (uniBool ?n) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstUniBool | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstUniBool | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (uniSimProd ?n ?a ?b) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstUniSimProd | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstUniSimProd | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (uniUni ?n) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstUniUni | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstUniUni | .. ]
+      | ..
+      ]
+    ]
+  (* Dealing with variables *)
   | |- eqterm ?G (subst (var 0) (sbzero ?B ?u)) ?v ?A =>
     first [
       ceapply EqTrans ; [ ceapply EqSubstZeroZero | .. ]
@@ -1092,6 +1179,7 @@ Context `{configPrecond : config.Precond}.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
+Context `{ConfigUniverses : config.Universes}.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
    some ZeroShift3 if ever we add a constructor that has three variables. *)
@@ -2103,6 +2191,16 @@ Ltac magicn try shelf tysym debug :=
         ceapply TySimProd
       | myfail debug
       ] ; magicn try shelf true debug
+    | |- istype ?G (Uni ?n) =>
+      first [
+        ceapply TyUni
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- istype ?G (El ?a) =>
+      first [
+        ceapply TyEl
+      | myfail debug
+      ] ; magicn try shelf true debug
     | |- istype ?G ?A =>
       tryif (is_var A)
       then first [
@@ -2214,6 +2312,48 @@ Ltac magicn try shelf tysym debug :=
       first [
         ceapply TermProj2
       | ceapply TermTyConv ; [ ceapply TermProj2 | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- isterm ?G (uniProd ?n ?a ?b) ?T =>
+      first [
+        ceapply TermUniProd
+      | ceapply TermTyConv ; [ ceapply TermUniProd | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- isterm ?G (uniId ?n ?a ?u ?v) ?T =>
+      first [
+        ceapply TermUniId
+      | ceapply TermTyConv ; [ ceapply TermUniId | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- isterm ?G (uniEmpty ?n) ?T =>
+      first [
+        ceapply TermUniEmpty
+      | ceapply TermTyConv ; [ ceapply TermUniEmpty | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- isterm ?G (uniUnit ?n) ?T =>
+      first [
+        ceapply TermUniUnit
+      | ceapply TermTyConv ; [ ceapply TermUniUnit | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- isterm ?G (uniBool ?n) ?T =>
+      first [
+        ceapply TermUniBool
+      | ceapply TermTyConv ; [ ceapply TermUniBool | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- isterm ?G (uniSimProd ?n ?a ?b) ?T =>
+      first [
+        ceapply TermUniSimProd
+      | ceapply TermTyConv ; [ ceapply TermUniSimProd | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- isterm ?G (uniUni ?n) ?T =>
+      first [
+        ceapply TermUniUni
+      | ceapply TermTyConv ; [ ceapply TermUniUni | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
     | [ H : isterm ?G ?v ?A, H' : isterm ?G ?v ?B |- isterm ?G ?v ?C ] =>
@@ -2482,6 +2622,16 @@ Ltac magicn try shelf tysym debug :=
         ceapply CongSimProd
       | myfail debug
       ] ; magicn try shelf true debug
+    | |- eqtype ?G (Uni _) (Uni _) =>
+      first [
+        ceapply EqTyRefl
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- eqtype ?G (El ?a) (El ?b) =>
+      first [
+        ceapply CongEl
+      | myfail debug
+      ] ; magicn try shelf true debug
     | |- eqtype ?G ?A ?B =>
       tryif (is_var A ; is_var B)
       then (
@@ -2664,6 +2814,24 @@ Ltac magicn try shelf tysym debug :=
       first [
         ceapply CongProj2
       | ceapply EqTyConv ; [ ceapply CongProj2 | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- eqterm ?G (uniProd _ _ _) (uniProd _ _ _) _ =>
+      first [
+        ceapply CongUniProd
+      | ceapply EqTyConv ; [ ceapply CongUniProd | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- eqterm ?G (uniId _ _ _ _) (uniId _ _ _ _) _ =>
+      first [
+        ceapply CongUniId
+      | ceapply EqTyConv ; [ ceapply CongUniId | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- eqterm ?G (uniSimProd _ _ _) (uniSimProd _ _ _) _ =>
+      first [
+        ceapply CongUniSimProd
+      | ceapply EqTyConv ; [ ceapply CongUniSimProd | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
     | |- eqterm ?G ?u ?v ?A =>

@@ -13,6 +13,7 @@ Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Ye
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
+Context `{ConfigUniverses : config.Universes}.
 
 Axiom cheating : forall A, A.
 
@@ -127,6 +128,27 @@ Proof.
 
   (* TermProj2 *)
   { magic. }
+
+  (* TermUniProd *)
+  { magic. }
+
+  (* TermUniId *)
+  { magic. }
+
+  (* TermUniEmpty *)
+  { magic. }
+
+  (* TermUniUnit *)
+  { magic. }
+
+  (* TermUniBool *)
+  { magic. }
+
+  (* TermUniSimProd *)
+  { magic. }
+
+  (* TermUniUni *)
+  { magic. }
 Qed.
 
 
@@ -232,6 +254,66 @@ Proof.
   }
 
   (* EqTySubstSimProd *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* EqTySubstUni *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* ElProd *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* ElId *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* ElSubst *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* ElEmpty *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* ElUnit *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* ElBool *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* ElSimProd *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* ElUni *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* CongEl *)
   { split.
     - magic.
     - magic.
@@ -692,6 +774,68 @@ Proof.
     }
 
   (* PairEta *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* EqSubstUniProd *)
+  - { split.
+      - magic.
+      - magic.
+        Unshelve. all: try apply CtxRefl. all:strictmagic.
+    }
+
+  (* EqSubstUniId *)
+  - { split.
+      - magic.
+      - magic.
+        Unshelve. all:strictmagic.
+    }
+
+  (* EqSubstUniEmpty *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* EqSubstUniUnit *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* EqSubstUniBool *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* EqSubstUniSimProd *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* EqSubstUniUni *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* CongUniProd *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* CongUniId *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* CongUniSimProd *)
   - { split.
       - magic.
       - magic.

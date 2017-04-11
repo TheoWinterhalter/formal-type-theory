@@ -21,6 +21,7 @@ Module Stt.
   Context `{ConfigSimpleProducts : config.SimpleProducts}.
   Local Instance hasProdEta : config.ProdEta
     := {| config.prodetaFlag := config.No |}.
+  Context `{ConfigUniverses : config.Universes}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -47,6 +48,7 @@ Module Ttt.
     := {| config.simpleproductsFlag := config.Yes |}.
   Local Instance hasProdEta : config.ProdEta
     := {| config.prodetaFlag := config.No |}.
+  Context `{ConfigUniverses : config.Universes}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -65,17 +67,12 @@ Section Translation.
 
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{ConfigUniverses : config.Universes}.
 
 Axiom cheating : forall A : Type, A.
 Ltac todo := apply cheating.
 
-Fixpoint trans_ctx (G : context) : context :=
-  match G with
-  | ctxempty => ctxempty
-  | ctxextend G A => ctxextend (trans_ctx G) (trans_type A)
-  end
-
-with trans_type (A : type) : type :=
+Fixpoint trans_type (A : type) : type :=
   match A with
   | Prod A B => SimProd (Prod (trans_type A) (trans_type B)) Bool
   | Id A u v => Id (trans_type A) (trans_term u) (trans_term v)
@@ -84,6 +81,8 @@ with trans_type (A : type) : type :=
   | Unit => Unit
   | Bool => Bool
   | SimProd A B => SimProd (trans_type A) (trans_type B)
+  | Uni n => Uni n
+  | El a => El (trans_term a)
   end
 
 with trans_term (t : term) : term :=
@@ -120,6 +119,14 @@ with trans_term (t : term) : term :=
     proj1 (trans_type A) (trans_type B) (trans_term p)
   | proj2 A B p =>
     proj2 (trans_type A) (trans_type B) (trans_term p)
+  | uniProd n a b =>
+    uniSimProd n (uniProd n (trans_term a) (trans_term b)) (uniBool n)
+  | uniId n a u v => uniId n (trans_term a) (trans_term u) (trans_term v)
+  | uniEmpty n => uniEmpty n
+  | uniUnit n => uniUnit n
+  | uniBool n => uniBool n
+  | uniSimProd n a b => uniSimProd n (trans_term a) (trans_term b)
+  | uniUni n => uniUni n
   end
 
 with trans_subst (sbs : substitution) : substitution :=
@@ -129,6 +136,12 @@ with trans_subst (sbs : substitution) : substitution :=
   | sbshift A sbs => sbshift (trans_type A) (trans_subst sbs)
   | sbid => sbid
   | sbcomp sbs sbt => sbcomp (trans_subst sbs) (trans_subst sbt)
+  end.
+
+Fixpoint trans_ctx (G : context) : context :=
+  match G with
+  | ctxempty => ctxempty
+  | ctxextend G A => ctxextend (trans_ctx G) (trans_type A)
   end.
 
 Ltac ih :=
@@ -268,6 +281,14 @@ Proof.
           - ih.
           - ih.
         }
+
+      (* TyUni *)
+      - { simpl. capply TyUni. ih. }
+
+      (* TyEl *)
+      - { simpl. config apply @TyEl with (n := n).
+          now apply (trans_isterm G a (Uni n)).
+        }
     }
 
   (* trans_isterm *)
@@ -372,6 +393,39 @@ Proof.
       - { simpl. capply TermProj2.
           - now apply (trans_isterm G p (SimProd A B)).
         }
+
+      (* TermUniProd *)
+      - { simpl. capply TermUniSimProd.
+          - capply TermUniProd.
+            + now apply (trans_isterm G a (Uni n)).
+            + now apply (trans_isterm (ctxextend G (El a)) b (Uni n)).
+          - capply TermUniBool. ih.
+        }
+
+      (* TermUniId *)
+      - { simpl. capply TermUniId.
+          - now apply (trans_isterm G a (Uni n)).
+          - now apply (trans_isterm G u0 (El a)).
+          - now apply (trans_isterm G v (El a)).
+        }
+
+      (* TermUniEmpty *)
+      - { simpl. capply TermUniEmpty. ih. }
+
+      (* TermUniUnit *)
+      - { simpl. capply TermUniUnit. ih. }
+
+      (* TermUniBool *)
+      - { simpl. capply TermUniBool. ih. }
+
+      (* TermUniSimProd *)
+      - { simpl. capply TermUniSimProd.
+          - now apply (trans_isterm G a (Uni n)).
+          - now apply (trans_isterm G b (Uni n)).
+        }
+
+      (* TermUniUni *)
+      - { simpl. capply TermUniUni. ih. }
     }
 
   (* trans_issubst *)
@@ -524,6 +578,60 @@ Proof.
           - ih.
           - ih.
           - ih.
+        }
+
+      (* EqTySubstUni *)
+      - { simpl. config apply @EqTySubstUni with (D := trans_ctx D). ih. }
+
+      (* ElProd *)
+      - { simpl.
+          ceapply EqTyTrans.
+          - ceapply ElSimProd.
+            + capply TermUniProd.
+              * now apply (trans_isterm G a (Uni n)).
+              * now apply (trans_isterm (ctxextend G (El a)) b (Uni n)).
+            + capply TermUniBool. ih.
+          - capply CongSimProd.
+            + capply ElProd.
+              * now apply (trans_isterm G a (Uni n)).
+              * now apply (trans_isterm (ctxextend G (El a)) b (Uni n)).
+            + capply ElBool. ih.
+        }
+
+      (* ElId *)
+      - { simpl. capply ElId.
+          - now apply (trans_isterm G a (Uni n)).
+          - now apply (trans_isterm G u0 (El a)).
+          - now apply (trans_isterm G v (El a)).
+        }
+
+      (* ElSubst *)
+      - { simpl. config apply @ElSubst with (D := trans_ctx D) (n := n).
+          - ih.
+          - now apply (trans_isterm D a (Uni n)).
+        }
+
+      (* ElEmpty *)
+      - { simpl. capply ElEmpty. ih. }
+
+      (* ElUnit *)
+      - { simpl. capply ElUnit. ih. }
+
+      (* ElBool *)
+      - { simpl. capply ElBool. ih. }
+
+      (* ElSimProd *)
+      - { simpl. capply ElSimProd.
+          - now apply (trans_isterm G a (Uni n)).
+          - now apply (trans_isterm G b (Uni n)).
+        }
+
+      (* ElUni *)
+      - { simpl. capply ElUni. ih. }
+
+      (* CongEl *)
+      - { simpl. config apply @CongEl with (n := n).
+          now apply (trans_eqterm G a b (Uni n)).
         }
     }
 
@@ -925,6 +1033,71 @@ Proof.
           - now apply (trans_isterm G p (SimProd A B)).
           - now apply (trans_isterm G q (SimProd A B)).
         }
+
+      (* EqSubstUniProd *)
+      - { simpl.
+          ceapply EqTrans.
+          - ceapply EqSubstUniSimProd.
+            + now apply (trans_issubst sbs G D).
+            + capply TermUniProd.
+              * now apply (trans_isterm D a (Uni n)).
+              * now apply (trans_isterm (ctxextend D (El a)) b (Uni n)).
+            + capply TermUniBool. ih.
+          - capply CongUniSimProd.
+            + config apply @EqSubstUniProd with (D := trans_ctx D).
+              * ih.
+              * now apply (trans_isterm D a (Uni n)).
+              * now apply (trans_isterm (ctxextend D (El a)) b (Uni n)).
+            + config apply @EqSubstUniBool with (D := trans_ctx D). ih.
+        }
+
+      (* EqSubstUniId *)
+      - { simpl. config apply @EqSubstUniId with (D := trans_ctx D).
+          - ih.
+          - now apply (trans_isterm D a (Uni n)).
+          - now apply (trans_isterm D u0 (El a)).
+          - now apply (trans_isterm D v (El a)).
+        }
+
+      (* EqSubstUniEmpty *)
+      - { simpl. config apply @EqSubstUniEmpty with (D := trans_ctx D). ih. }
+
+      (* EqSubstUniUnit *)
+      - { simpl. config apply @EqSubstUniUnit with (D := trans_ctx D). ih. }
+
+      (* EqSubstUniBool *)
+      - { simpl. config apply @EqSubstUniBool with (D := trans_ctx D). ih. }
+
+      (* EqSubstUniSimProd *)
+      - { simpl. config apply @EqSubstUniSimProd with (D := trans_ctx D).
+          - ih.
+          - now apply (trans_isterm D a (Uni n)).
+          - now apply (trans_isterm D b (Uni n)).
+        }
+
+      (* EqSubstUniUni *)
+      - { simpl. config apply @EqSubstUniUni with (D := trans_ctx D). ih. }
+
+      (* CongUniProd *)
+      - { simpl. capply CongUniSimProd.
+          - capply CongUniProd.
+            + now apply (trans_eqterm G a1 a2 (Uni n)).
+            + now apply (trans_eqterm (ctxextend G (El a1)) b1 b2 (Uni n)).
+          - capply EqRefl. capply TermUniBool. ih.
+        }
+
+      (* CongUniId *)
+      - { simpl. capply CongUniId.
+          - now apply (trans_eqterm G a1 a2 (Uni n)).
+          - now apply (trans_eqterm G u1 u2 (El a1)).
+          - now apply (trans_eqterm G v1 v2 (El a1)).
+        }
+
+      (* CongUniSimProd *)
+      - { simpl. capply CongUniSimProd.
+          - now apply (trans_eqterm G a1 a2 (Uni n)).
+          - now apply (trans_eqterm G b1 b2 (Uni n)).
+        }
     }
 
   (* trans_eqsubst *)
@@ -1008,327 +1181,327 @@ Proof.
   now apply (trans_isterm h).
 Qed.
 
-(* In Stt, we have the negation of funext *)
-(* We don't have universes, so we will just negate funext for Unit → Unit *)
-Definition funextUnit :=
-  Prod (Arrow Unit Unit) (* f : 1 → 1 *)
-       (Prod (Prod Unit Unit) (* g : 1 → 1 *)
-             (Arrow (Prod Unit (* x : Unit *)
-                          (Id Unit
-                              (app (var 2) Unit Unit (var 0))
-                              (app (var 1) Unit Unit (var 0))))
-                    (Id (Prod Unit Unit) (var 1) (var 0)))).
+(* (* In Stt, we have the negation of funext *) *)
+(* (* We don't have universes, so we will just negate funext for Unit → Unit *) *)
+(* Definition funextUnit := *)
+(*   Prod (Arrow Unit Unit) (* f : 1 → 1 *) *)
+(*        (Prod (Prod Unit Unit) (* g : 1 → 1 *) *)
+(*              (Arrow (Prod Unit (* x : Unit *) *)
+(*                           (Id Unit *)
+(*                               (app (var 2) Unit Unit (var 0)) *)
+(*                               (app (var 1) Unit Unit (var 0)))) *)
+(*                     (Id (Prod Unit Unit) (var 1) (var 0)))). *)
 
-Definition ap A B f x y p :=
-  let w1  := sbweak A in
-  let w2' := sbweak (Id (Subst A w1) (subst x w1) (var 0)) in
-  let w2  := sbcomp w1 w2' in
-  let w3' := sbweak (Subst A w2) in
-  let w3  := sbcomp w2 w3' in
-  let Bw1 := Subst B w1 in
-  let Aw2 := Subst A w2 in
-  let Bw2 := Subst B w2 in
-  let fw2 := subst f w2 in
-  let xw2 := subst x w2 in
-  let Bw3 := Subst B w3 in
-  j A x
-    (Id Bw2 (app fw2 Aw2 Bw3 xw2) (app fw2 Aw2 Bw3 (var 1)))
-    (refl B (app f A Bw1 x))
-    y p.
+(* Definition ap A B f x y p := *)
+(*   let w1  := sbweak A in *)
+(*   let w2' := sbweak (Id (Subst A w1) (subst x w1) (var 0)) in *)
+(*   let w2  := sbcomp w1 w2' in *)
+(*   let w3' := sbweak (Subst A w2) in *)
+(*   let w3  := sbcomp w2 w3' in *)
+(*   let Bw1 := Subst B w1 in *)
+(*   let Aw2 := Subst A w2 in *)
+(*   let Bw2 := Subst B w2 in *)
+(*   let fw2 := subst f w2 in *)
+(*   let xw2 := subst x w2 in *)
+(*   let Bw3 := Subst B w3 in *)
+(*   j A x *)
+(*     (Id Bw2 (app fw2 Aw2 Bw3 xw2) (app fw2 Aw2 Bw3 (var 1))) *)
+(*     (refl B (app f A Bw1 x)) *)
+(*     y p. *)
 
-Lemma ap_typing :
-  forall {G A B f x y p},
-    let Bw := Subst B (sbweak A) in
-    Ttt.isctx G ->
-    Ttt.istype G A ->
-    Ttt.istype G B ->
-    Ttt.isterm G f (Arrow A B) ->
-    Ttt.isterm G x A ->
-    Ttt.isterm G y A ->
-    Ttt.isterm G p (Id A x y) ->
-    Ttt.isterm G (ap A B f x y p) (Id B (app f A Bw x) (app f A Bw y)).
-Proof.
-  simpl.
-  intros.
-  ceapply TermTyConv ; [ ceapply TermJ | .. ].
-  - assumption.
-  - capply TyId.
-    + ceapply TermTyConv ; [ capply TermApp | .. ].
-      * ceapply TermTyConv ; [ ceapply TermSubst | .. ].
-        -- ceapply SubstComp.
-           ++ ceapply SubstWeak.
-              capply TyId.
-              ** ceapply TermSubst.
-                 --- capply SubstWeak. assumption.
-                 --- assumption.
-              ** ceapply TermVarZero. assumption.
-           ++ capply SubstWeak. assumption.
-        -- eassumption.
-        -- magic.
-      * magic.
-      * magic.
-    + magic.
-  - (* magic. *)
-    (* Unshelve. all:try magic. *)
-    (* Unshelve. all:keep_eq. all:try apply CtxRefl. *)
-    (* Unshelve. all:strictmagic. *)
-    todo. (* It takes too long *)
-  - assumption.
-  - assumption.
-  - (* magic. *)
-    (* Unshelve. all:try magic. *)
-    (* Unshelve. all:try apply CtxRefl. *)
-    (* all:strictmagic. *)
-    todo. (* too time-consuming *)
-Qed.
+(* Lemma ap_typing : *)
+(*   forall {G A B f x y p}, *)
+(*     let Bw := Subst B (sbweak A) in *)
+(*     Ttt.isctx G -> *)
+(*     Ttt.istype G A -> *)
+(*     Ttt.istype G B -> *)
+(*     Ttt.isterm G f (Arrow A B) -> *)
+(*     Ttt.isterm G x A -> *)
+(*     Ttt.isterm G y A -> *)
+(*     Ttt.isterm G p (Id A x y) -> *)
+(*     Ttt.isterm G (ap A B f x y p) (Id B (app f A Bw x) (app f A Bw y)). *)
+(* Proof. *)
+(*   simpl. *)
+(*   intros. *)
+(*   ceapply TermTyConv ; [ ceapply TermJ | .. ]. *)
+(*   - assumption. *)
+(*   - capply TyId. *)
+(*     + ceapply TermTyConv ; [ capply TermApp | .. ]. *)
+(*       * ceapply TermTyConv ; [ ceapply TermSubst | .. ]. *)
+(*         -- ceapply SubstComp. *)
+(*            ++ ceapply SubstWeak. *)
+(*               capply TyId. *)
+(*               ** ceapply TermSubst. *)
+(*                  --- capply SubstWeak. assumption. *)
+(*                  --- assumption. *)
+(*               ** ceapply TermVarZero. assumption. *)
+(*            ++ capply SubstWeak. assumption. *)
+(*         -- eassumption. *)
+(*         -- magic. *)
+(*       * magic. *)
+(*       * magic. *)
+(*     + magic. *)
+(*   - (* magic. *) *)
+(*     (* Unshelve. all:try magic. *) *)
+(*     (* Unshelve. all:keep_eq. all:try apply CtxRefl. *) *)
+(*     (* Unshelve. all:strictmagic. *) *)
+(*     todo. (* It takes too long *) *)
+(*   - assumption. *)
+(*   - assumption. *)
+(*   - (* magic. *) *)
+(*     (* Unshelve. all:try magic. *) *)
+(*     (* Unshelve. all:try apply CtxRefl. *) *)
+(*     (* all:strictmagic. *) *)
+(*     todo. (* too time-consuming *) *)
+(* Qed. *)
 
-(* The type of funext for unit once translated *)
-Definition trans_funext := trans_type funextUnit.
+(* (* The type of funext for unit once translated *) *)
+(* Definition trans_funext := trans_type funextUnit. *)
 
-(* The type we want to inhabit first *)
-(* Definition goal1 := Arrow trans_funext (Id Bool true false). *)
-Definition funi := lam Unit Unit unit.
-Definition fun_true := pair (Arrow Unit Unit) Bool funi true.
-Definition fun_false := pair (Arrow Unit Unit) Bool funi false.
-Definition fun_type := SimProd (Arrow Unit Unit) Bool.
-Definition goal1 := Arrow trans_funext (Id fun_type fun_true fun_false).
+(* (* The type we want to inhabit first *) *)
+(* (* Definition goal1 := Arrow trans_funext (Id Bool true false). *) *)
+(* Definition funi := lam Unit Unit unit. *)
+(* Definition fun_true := pair (Arrow Unit Unit) Bool funi true. *)
+(* Definition fun_false := pair (Arrow Unit Unit) Bool funi false. *)
+(* Definition fun_type := SimProd (Arrow Unit Unit) Bool. *)
+(* Definition goal1 := Arrow trans_funext (Id fun_type fun_true fun_false). *)
 
-Lemma prove_goal1 : { t : term & Ttt.isterm ctxempty t goal1 }.
-Proof.
-  eexists.
-  unfold goal1.
-  ceapply TermAbs.
-  unfold trans_funext. set (T := trans_type funextUnit). simpl in T.
+(* Lemma prove_goal1 : { t : term & Ttt.isterm ctxempty t goal1 }. *)
+(* Proof. *)
+(*   eexists. *)
+(*   unfold goal1. *)
+(*   ceapply TermAbs. *)
+(*   unfold trans_funext. set (T := trans_type funextUnit). simpl in T. *)
 
-  ceapply TermTyConv ; [ ceapply TermApp | .. ].
-  - ceapply TermTyConv ; [ ceapply TermProj1 | .. ].
-    + ceapply TermTyConv ; [ ceapply TermApp | .. ].
-      * ceapply TermTyConv ; [ ceapply TermProj1 | .. ].
-        -- ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
-           ++ unfold T ; magic.
-           ++ unfold T ; magic.
-              Unshelve. all: keep_ju.
-              all: capply EqTyRefl.
-              all: magic.
-        -- magic.
-           Unshelve. all: keep_ju.
-           all: capply EqTyRefl.
-           all: magic.
-      * instantiate (1 := subst fun_true (sbweak T)).
-        ceapply TermTyConv ; [ ceapply TermSubst | .. ].
-        -- unfold T ; magic.
-        -- unfold fun_true. unfold funi. magic.
-        -- unfold T ; magic.
-      * pushsubst ; [ .. | capply EqTyRefl ].
-        -- unfold T. unfold fun_true. unfold funi. magic.
-        -- unfold T. unfold fun_true. unfold funi. (* magic. *)
-           (* The magic is taking too long, so we admit it, but it succeeds. *)
-           magic.
-           (* The following is also taking a very long time! *)
-           (* Unshelve. all: keep_ju. *)
-           Unshelve. all: keep_ju. all:keep_eq.
-           all: capply CtxRefl ; magic.
-           Unshelve. all: try trymagic.
-           all: shelve.
-        -- magic.
-           Unshelve. all:keep_eq.
-           all: capply CtxRefl ; magic.
-           Unshelve. all: try trymagic.
-           all: shelve.
-        -- unfold T. unfold fun_true. unfold funi.
-           (* magic. *)
-           todo. (* magic succeeds (but maybe with things on the self,
-                    took 430min to get here). *)
-    + unfold T. unfold fun_true. unfold funi. (* magic. *)
-      (*
-Tactic failure: Cannot solve subgoal
-(eqtype (ctxextend (ctxextend ?E (SimProd (Prod Unit Unit) Bool)) Unit)
-   (Subst ?A (sbcomp (sbweak (SimProd (Prod Unit Unit) Bool)) (sbweak Unit)))
-   (SimProd (Prod Unit Unit) Bool)) (level 985).
-       *)
-      todo.
-  - todo.
-  - todo.
-Admitted.
-
-
-
-(* From funextUnit we derive the equality of two identities *)
-Definition funext_id_unit (funext : term) : term.
-  pose (T := trans_type funextUnit). simpl in T.
-  revert T.
-  set (T1 := (Prod (SimProd (Prod Unit (Subst Unit (sbweak Unit))) Bool)
-            (SimProd
-               (Prod (SimProd (Prod Unit Unit) Bool)
-                  (SimProd
-                     (Prod
-                        (SimProd
-                           (Prod Unit
-                              (Id Unit
-                                 (app (proj1 (Prod Unit Unit) Bool (var 2)) Unit
-                                    Unit (var 0))
-                                 (app (proj1 (Prod Unit Unit) Bool (var 1)) Unit
-                                    Unit (var 0)))) Bool)
-                        (Subst (Id (SimProd (Prod Unit Unit) Bool) (var 1) (var 0))
-                           (sbweak
-                              (SimProd
-                                 (Prod Unit
-                                    (Id Unit
-                                       (app (proj1 (Prod Unit Unit) Bool (var 2))
-                                          Unit Unit (var 0))
-                                       (app (proj1 (Prod Unit Unit) Bool (var 1))
-                                          Unit Unit (var 0)))) Bool)))) Bool)) Bool))).
-  revert T1.
-  set (T2 := (SimProd (Prod Unit (Subst Unit (sbweak Unit))) Bool)).
-  revert T2.
-  set (T3 := (SimProd (Prod Unit Unit) Bool)).
-  revert T3.
-  set (T4 := (Id Unit
-                           (app (proj1 (Prod Unit Unit) Bool (var 2)) Unit Unit
-                              (var 0))
-                           (app (proj1 (Prod Unit Unit) Bool (var 1)) Unit Unit
-                              (var 0)))).
-  set (T5 := (SimProd (Prod Unit T4) Bool)).
-  intro T3.
-  set (T6 := (Prod T5 (Subst (Id T3 (var 1) (var 0)) (sbweak T5)))).
-  set (T7 := (SimProd (Prod T3 (SimProd T6 Bool)) Bool)).
-  revert T7.
-  set (T8 := (SimProd T6 Bool)).
-  intros T7 T2 T1 T.
-
-  pose (real_funext := proj1 T1 Bool funext). (* real_funext : T1 *)
-  pose (funi := lam Unit Unit unit). (* funi : Arrow Unit Unit *)
-  pose (fun_t := pair (Arrow Unit Unit) Bool funi true). (* fun_t : T2 *)
-  pose (fun_f := pair (Arrow Unit Unit) Bool funi false). (* fun_f : T3 *)
-  pose (u := app real_funext T2 T7 fun_t). (* u : T7{fun_t} *)
-  todo.
-Defined.
+(*   ceapply TermTyConv ; [ ceapply TermApp | .. ]. *)
+(*   - ceapply TermTyConv ; [ ceapply TermProj1 | .. ]. *)
+(*     + ceapply TermTyConv ; [ ceapply TermApp | .. ]. *)
+(*       * ceapply TermTyConv ; [ ceapply TermProj1 | .. ]. *)
+(*         -- ceapply TermTyConv ; [ ceapply TermVarZero | .. ]. *)
+(*            ++ unfold T ; magic. *)
+(*            ++ unfold T ; magic. *)
+(*               Unshelve. all: keep_ju. *)
+(*               all: capply EqTyRefl. *)
+(*               all: magic. *)
+(*         -- magic. *)
+(*            Unshelve. all: keep_ju. *)
+(*            all: capply EqTyRefl. *)
+(*            all: magic. *)
+(*       * instantiate (1 := subst fun_true (sbweak T)). *)
+(*         ceapply TermTyConv ; [ ceapply TermSubst | .. ]. *)
+(*         -- unfold T ; magic. *)
+(*         -- unfold fun_true. unfold funi. magic. *)
+(*         -- unfold T ; magic. *)
+(*       * pushsubst ; [ .. | capply EqTyRefl ]. *)
+(*         -- unfold T. unfold fun_true. unfold funi. magic. *)
+(*         -- unfold T. unfold fun_true. unfold funi. (* magic. *) *)
+(*            (* The magic is taking too long, so we admit it, but it succeeds. *) *)
+(*            magic. *)
+(*            (* The following is also taking a very long time! *) *)
+(*            (* Unshelve. all: keep_ju. *) *)
+(*            Unshelve. all: keep_ju. all:keep_eq. *)
+(*            all: capply CtxRefl ; magic. *)
+(*            Unshelve. all: try trymagic. *)
+(*            all: shelve. *)
+(*         -- magic. *)
+(*            Unshelve. all:keep_eq. *)
+(*            all: capply CtxRefl ; magic. *)
+(*            Unshelve. all: try trymagic. *)
+(*            all: shelve. *)
+(*         -- unfold T. unfold fun_true. unfold funi. *)
+(*            (* magic. *) *)
+(*            todo. (* magic succeeds (but maybe with things on the self, *)
+(*                     took 430min to get here). *) *)
+(*     + unfold T. unfold fun_true. unfold funi. (* magic. *) *)
+(*       (* *)
+(* Tactic failure: Cannot solve subgoal *)
+(* (eqtype (ctxextend (ctxextend ?E (SimProd (Prod Unit Unit) Bool)) Unit) *)
+(*    (Subst ?A (sbcomp (sbweak (SimProd (Prod Unit Unit) Bool)) (sbweak Unit))) *)
+(*    (SimProd (Prod Unit Unit) Bool)) (level 985). *)
+(*        *) *)
+(*       todo. *)
+(*   - todo. *)
+(*   - todo. *)
+(* Admitted. *)
 
 
 
+(* (* From funextUnit we derive the equality of two identities *) *)
+(* Definition funext_id_unit (funext : term) : term. *)
+(*   pose (T := trans_type funextUnit). simpl in T. *)
+(*   revert T. *)
+(*   set (T1 := (Prod (SimProd (Prod Unit (Subst Unit (sbweak Unit))) Bool) *)
+(*             (SimProd *)
+(*                (Prod (SimProd (Prod Unit Unit) Bool) *)
+(*                   (SimProd *)
+(*                      (Prod *)
+(*                         (SimProd *)
+(*                            (Prod Unit *)
+(*                               (Id Unit *)
+(*                                  (app (proj1 (Prod Unit Unit) Bool (var 2)) Unit *)
+(*                                     Unit (var 0)) *)
+(*                                  (app (proj1 (Prod Unit Unit) Bool (var 1)) Unit *)
+(*                                     Unit (var 0)))) Bool) *)
+(*                         (Subst (Id (SimProd (Prod Unit Unit) Bool) (var 1) (var 0)) *)
+(*                            (sbweak *)
+(*                               (SimProd *)
+(*                                  (Prod Unit *)
+(*                                     (Id Unit *)
+(*                                        (app (proj1 (Prod Unit Unit) Bool (var 2)) *)
+(*                                           Unit Unit (var 0)) *)
+(*                                        (app (proj1 (Prod Unit Unit) Bool (var 1)) *)
+(*                                           Unit Unit (var 0)))) Bool)))) Bool)) Bool))). *)
+(*   revert T1. *)
+(*   set (T2 := (SimProd (Prod Unit (Subst Unit (sbweak Unit))) Bool)). *)
+(*   revert T2. *)
+(*   set (T3 := (SimProd (Prod Unit Unit) Bool)). *)
+(*   revert T3. *)
+(*   set (T4 := (Id Unit *)
+(*                            (app (proj1 (Prod Unit Unit) Bool (var 2)) Unit Unit *)
+(*                               (var 0)) *)
+(*                            (app (proj1 (Prod Unit Unit) Bool (var 1)) Unit Unit *)
+(*                               (var 0)))). *)
+(*   set (T5 := (SimProd (Prod Unit T4) Bool)). *)
+(*   intro T3. *)
+(*   set (T6 := (Prod T5 (Subst (Id T3 (var 1) (var 0)) (sbweak T5)))). *)
+(*   set (T7 := (SimProd (Prod T3 (SimProd T6 Bool)) Bool)). *)
+(*   revert T7. *)
+(*   set (T8 := (SimProd T6 Bool)). *)
+(*   intros T7 T2 T1 T. *)
 
-(* We'd like to have magic available *)
-Lemma funextContradiction :
-  { bot : term
-  & Ttt.isterm ctxempty
-               bot
-               (Arrow (trans_type funextUnit) (Id Bool true false)) }.
-Proof.
-  refine (existT _ _ _).
-  ceapply TermAbs.
-  ceapply TermTyConv ; [
-    ceapply TermApp
-  | ..
-  ].
-  - ceapply TermTyConv ; [
-      ceapply TermVarZero
-    | ..
-    ].
-    + simpl. capply TySimProd.
-      * capply TyProd.
-        capply TySimProd.
-        -- capply TyProd.
-           capply TySimProd.
-           ++ capply TyProd.
-              ceapply TySubst.
-              ** capply SubstWeak.
-                 capply TySimProd.
-                 --- capply TyProd.
-                     capply TyId.
-                     +++ ceapply TermTyConv ; [ ceapply TermApp | .. ].
-                         *** capply TermProj1.
-                             ceapply TermTyConv ; [
-                               ceapply TermVarSucc
-                             | ..
-                             ].
-                             ---- ceapply TermVarSucc.
-                                  ++++ capply TermVarZero.
-                                       capply TySimProd.
-                                       **** capply TyProd.
-                                            ceapply TySubst.
-                                            ----- capply SubstWeak.
-                                                  capply TyUnit.
-                                                  capply CtxEmpty.
-                                            ----- capply TyUnit.
-                                                  capply CtxEmpty.
-                                       **** capply TyBool.
-                                            capply CtxEmpty.
-                                  ++++ capply TySimProd.
-                                       **** capply TyProd.
-                                            ----- capply TyUnit.
-                                            capply CtxExtend.
-                                            capply TyUnit.
-                                            capply CtxExtend.
-                                            capply TySimProd.
-                                            +++++ capply TyProd.
-                                            ceapply TySubst.
-                                            ***** capply SubstWeak.
-                                            capply TyUnit.
-                                            capply CtxEmpty.
-                                            ***** capply TyUnit.
-                                            capply CtxEmpty.
-                                            +++++ capply TyBool.
-                                            capply CtxEmpty.
-                                       **** capply TyBool.
-                                            capply CtxExtend.
-                                            capply TySimProd.
-                                            ----- capply TyProd.
-                                            +++++ ceapply TySubst.
-                                            ***** capply SubstWeak.
-                                            capply TyUnit.
-                                            capply CtxEmpty.
-                                            ***** capply TyUnit.
-                                            capply CtxEmpty.
-                                            ----- capply TyBool.
-                                            capply CtxEmpty.
-                             ---- capply TyUnit.
-                                  capply CtxExtend.
-                                  capply TySimProd.
-                                  ++++ capply TyProd.
-                                       **** capply TyUnit.
-                                            capply CtxExtend.
-                                            capply TyUnit.
-                                            capply CtxExtend.
-                                            capply TySimProd.
-                                            ----- capply TyProd.
-                                            ceapply TySubst.
-                                            +++++ capply SubstWeak.
-                                            capply TyUnit.
-                                            capply CtxEmpty.
-                                            +++++ capply TyUnit.
-                                            capply CtxEmpty.
-                                            ----- capply TyBool.
-                                            capply CtxEmpty.
-                                  ++++ capply TyBool.
-                                       capply CtxExtend.
-                                       capply TySimProd.
-                                       **** capply TyProd.
-                                            ceapply TySubst.
-                                            ----- capply SubstWeak.
-                                            capply TyUnit.
-                                            capply CtxEmpty.
-                                            ----- capply TyUnit.
-                                            capply CtxEmpty.
-                                       **** capply TyBool.
-                                            capply CtxEmpty.
-                             ---- todo.
-                         *** ceapply TermTyConv ; [
-                               capply TermVarZero
-                             | ..
-                             ].
-                             ---- todo.
-                             ---- todo.
-                         *** todo.
-                     +++ todo.
-                 --- todo.
-              ** todo.
-           ++ todo.
-        -- todo.
-      * todo.
-    + todo.
-  - todo.
-  - todo.
-    Unshelve. all:todo.
-Qed.
+(*   pose (real_funext := proj1 T1 Bool funext). (* real_funext : T1 *) *)
+(*   pose (funi := lam Unit Unit unit). (* funi : Arrow Unit Unit *) *)
+(*   pose (fun_t := pair (Arrow Unit Unit) Bool funi true). (* fun_t : T2 *) *)
+(*   pose (fun_f := pair (Arrow Unit Unit) Bool funi false). (* fun_f : T3 *) *)
+(*   pose (u := app real_funext T2 T7 fun_t). (* u : T7{fun_t} *) *)
+(*   todo. *)
+(* Defined. *)
+
+
+
+
+(* (* We'd like to have magic available *) *)
+(* Lemma funextContradiction : *)
+(*   { bot : term *)
+(*   & Ttt.isterm ctxempty *)
+(*                bot *)
+(*                (Arrow (trans_type funextUnit) (Id Bool true false)) }. *)
+(* Proof. *)
+(*   refine (existT _ _ _). *)
+(*   ceapply TermAbs. *)
+(*   ceapply TermTyConv ; [ *)
+(*     ceapply TermApp *)
+(*   | .. *)
+(*   ]. *)
+(*   - ceapply TermTyConv ; [ *)
+(*       ceapply TermVarZero *)
+(*     | .. *)
+(*     ]. *)
+(*     + simpl. capply TySimProd. *)
+(*       * capply TyProd. *)
+(*         capply TySimProd. *)
+(*         -- capply TyProd. *)
+(*            capply TySimProd. *)
+(*            ++ capply TyProd. *)
+(*               ceapply TySubst. *)
+(*               ** capply SubstWeak. *)
+(*                  capply TySimProd. *)
+(*                  --- capply TyProd. *)
+(*                      capply TyId. *)
+(*                      +++ ceapply TermTyConv ; [ ceapply TermApp | .. ]. *)
+(*                          *** capply TermProj1. *)
+(*                              ceapply TermTyConv ; [ *)
+(*                                ceapply TermVarSucc *)
+(*                              | .. *)
+(*                              ]. *)
+(*                              ---- ceapply TermVarSucc. *)
+(*                                   ++++ capply TermVarZero. *)
+(*                                        capply TySimProd. *)
+(*                                        **** capply TyProd. *)
+(*                                             ceapply TySubst. *)
+(*                                             ----- capply SubstWeak. *)
+(*                                                   capply TyUnit. *)
+(*                                                   capply CtxEmpty. *)
+(*                                             ----- capply TyUnit. *)
+(*                                                   capply CtxEmpty. *)
+(*                                        **** capply TyBool. *)
+(*                                             capply CtxEmpty. *)
+(*                                   ++++ capply TySimProd. *)
+(*                                        **** capply TyProd. *)
+(*                                             ----- capply TyUnit. *)
+(*                                             capply CtxExtend. *)
+(*                                             capply TyUnit. *)
+(*                                             capply CtxExtend. *)
+(*                                             capply TySimProd. *)
+(*                                             +++++ capply TyProd. *)
+(*                                             ceapply TySubst. *)
+(*                                             ***** capply SubstWeak. *)
+(*                                             capply TyUnit. *)
+(*                                             capply CtxEmpty. *)
+(*                                             ***** capply TyUnit. *)
+(*                                             capply CtxEmpty. *)
+(*                                             +++++ capply TyBool. *)
+(*                                             capply CtxEmpty. *)
+(*                                        **** capply TyBool. *)
+(*                                             capply CtxExtend. *)
+(*                                             capply TySimProd. *)
+(*                                             ----- capply TyProd. *)
+(*                                             +++++ ceapply TySubst. *)
+(*                                             ***** capply SubstWeak. *)
+(*                                             capply TyUnit. *)
+(*                                             capply CtxEmpty. *)
+(*                                             ***** capply TyUnit. *)
+(*                                             capply CtxEmpty. *)
+(*                                             ----- capply TyBool. *)
+(*                                             capply CtxEmpty. *)
+(*                              ---- capply TyUnit. *)
+(*                                   capply CtxExtend. *)
+(*                                   capply TySimProd. *)
+(*                                   ++++ capply TyProd. *)
+(*                                        **** capply TyUnit. *)
+(*                                             capply CtxExtend. *)
+(*                                             capply TyUnit. *)
+(*                                             capply CtxExtend. *)
+(*                                             capply TySimProd. *)
+(*                                             ----- capply TyProd. *)
+(*                                             ceapply TySubst. *)
+(*                                             +++++ capply SubstWeak. *)
+(*                                             capply TyUnit. *)
+(*                                             capply CtxEmpty. *)
+(*                                             +++++ capply TyUnit. *)
+(*                                             capply CtxEmpty. *)
+(*                                             ----- capply TyBool. *)
+(*                                             capply CtxEmpty. *)
+(*                                   ++++ capply TyBool. *)
+(*                                        capply CtxExtend. *)
+(*                                        capply TySimProd. *)
+(*                                        **** capply TyProd. *)
+(*                                             ceapply TySubst. *)
+(*                                             ----- capply SubstWeak. *)
+(*                                             capply TyUnit. *)
+(*                                             capply CtxEmpty. *)
+(*                                             ----- capply TyUnit. *)
+(*                                             capply CtxEmpty. *)
+(*                                        **** capply TyBool. *)
+(*                                             capply CtxEmpty. *)
+(*                              ---- todo. *)
+(*                          *** ceapply TermTyConv ; [ *)
+(*                                capply TermVarZero *)
+(*                              | .. *)
+(*                              ]. *)
+(*                              ---- todo. *)
+(*                              ---- todo. *)
+(*                          *** todo. *)
+(*                      +++ todo. *)
+(*                  --- todo. *)
+(*               ** todo. *)
+(*            ++ todo. *)
+(*         -- todo. *)
+(*       * todo. *)
+(*     + todo. *)
+(*   - todo. *)
+(*   - todo. *)
+(*     Unshelve. all:todo. *)
+(* Qed. *)
 
 End Translation.

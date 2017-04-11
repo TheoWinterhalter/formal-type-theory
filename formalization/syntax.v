@@ -10,6 +10,9 @@ with type : Type :=
      | Unit : type
      | Bool : type
      | SimProd : type -> type -> type
+     | Uni : nat -> type
+     (* TODO: Add a Prop universe *)
+     | El : term -> type
 
 with term : Type :=
      | var : nat -> term
@@ -26,6 +29,13 @@ with term : Type :=
      | pair : type -> type -> term -> term -> term
      | proj1 : type -> type -> term -> term
      | proj2 : type -> type -> term -> term
+     | uniProd : nat -> term -> term -> term
+     | uniId : nat -> term -> term -> term -> term
+     | uniEmpty : nat -> term
+     | uniUnit : nat -> term
+     | uniBool : nat -> term
+     | uniSimProd : nat -> term -> term -> term
+     | uniUni : nat -> term
 
 with substitution : Type :=
      | sbzero : type -> term -> substitution
@@ -34,6 +44,7 @@ with substitution : Type :=
      | sbid : substitution
      | sbcomp : substitution -> substitution -> substitution.
 
+(* TODO: Create a clean branch where we remove all these failed attempts *)
 Parameter reflective : type -> type.
 
 Definition Arrow (A B : type) : type :=

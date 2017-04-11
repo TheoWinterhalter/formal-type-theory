@@ -17,6 +17,7 @@ Section Uniqueness.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
+Context `{ConfigUniverses : config.Universes}.
 
 (* Auxiliary inversion lemmas. *)
 
@@ -467,6 +468,86 @@ Proof.
               ceapply TyCtxConv.
               - ehyp.
               - hyp.
+            }
+        }
+
+      (* TermUniProd *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - { apply unique_term_ctx' with (u := a) (D := D').
+              - assumption.
+              - hyp.
+              - hyp.
+            }
+        }
+
+      (* TermUniId *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - { apply unique_term_ctx' with (u := a) (D := D').
+              - assumption.
+              - hyp.
+              - hyp.
+            }
+        }
+
+      (* TermUniEmpty *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - { capply EqTyRefl.
+              capply TyUni.
+              hyp.
+            }
+        }
+
+      (* TermUniUnit *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - { capply EqTyRefl.
+              capply TyUni.
+              hyp.
+            }
+        }
+
+      (* TermUniBool *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - { capply EqTyRefl.
+              capply TyUni.
+              hyp.
+            }
+        }
+
+      (* TermUniSimProd *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - { apply unique_term_ctx' with (u := a) (D := D').
+              - assumption.
+              - hyp.
+              - hyp.
+            }
+        }
+
+      (* TermUniUni *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - { capply EqTyRefl.
+              capply TyUni.
+              hyp.
             }
         }
   }
