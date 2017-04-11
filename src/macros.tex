@@ -1,0 +1,95 @@
+%%% Type theory
+
+% Generic entities
+\newcommand{\G}{\Gamma} % a context
+\newcommand{\D}{\Delta} % another context
+\newcommand{\E}{\Xi} % another context
+\newcommand{\A}{A} % a type
+\newcommand{\B}{B} % another type
+\newcommand{\C}{C} % yet another type
+\newcommand{\x}{x} % a term variable
+\newcommand{\y}{y} % another term variable
+\newcommand{\uu}{u} % a term
+\newcommand{\vv}{v} % another term
+\newcommand{\ww}{w} % yet another term
+\newcommand{\sbs}{\sigma} % a substitution
+\newcommand{\sbt}{\theta} % another substitution
+\newcommand{\sbr}{\rho} % a third substitution
+\newcommand{\f}{f} % a morphism
+\newcommand{\g}{g} % another morphism
+\newcommand{\p}{p} % a path
+\newcommand{\q}{q} % anoter path
+
+%% Syntax
+\newcommand{\bnf}{\ \mathrel{{:}{:}{=}}\ }
+\newcommand{\bnfor}{\ \mid\ \ }
+
+%% Contexts
+\newcommand{\ctxempty}{\bullet} % empty context
+\newcommand{\ctxextend}[2]{#1, #2} % extended context
+
+%\newcommand{\ctxdom}[1]{\mathsf{dom}(#1)} % the domain of a context
+
+%% Substitution
+
+\newcommand{\sbzero}[3]{\{#3\}_{#1,#2}}        % substitition of the zeroth index
+\newcommand{\sbweak}[2]{\mathsf{w}_{(#1, #2)}} % weakening substitution
+\newcommand{\sbshift}[3]{#3 {\mid}_{#1} #2}    % shifted substitution
+\newcommand{\sbid}[1]{\mathsf{id}_{#1}}        % identity substitution
+\newcommand{\sbcomp}[2]{#1 \circ #2}           % composition of substitutions
+
+\newcommand{\subst}[2]{#1[#2]}                 % substitution operation
+
+
+% Type formers
+\newcommand{\Prod}[1]{\mathop{\textstyle\prod_{#1}}} % dependent product
+\newcommand{\Id}[3]{\mathsf{Id}_{#1}(#2,#3)}         % identity type
+\newcommand{\Empty}{\mathsf{Empty}}                  % empty type
+\newcommand{\Unit}{\mathsf{Unit}}                    % unit type
+\newcommand{\Bool}{\mathsf{Bool}}                    % bool type
+\newcommand{\Cond}[3]{\mathsf{Cond}(#1,#2,#3)}       % condtional type
+
+% Terms
+\newcommand{\var}[1]{\mathsf{x}_{#1}}             % the first de Bruijn index
+\newcommand{\lam}[2]{\lambda #1 . #2 .}           % $\lambda$-abstraction
+\newcommand{\app}[4]{#1\mathbin{@^{#2.#3}} #4}    % application
+\newcommand{\refl}[1]{{\mathsf{refl}_{#1}}\ }     % reflexivity
+\newcommand{\exfalso}[1]{\mathsf{exfalso}_{#1}\ } % ex falso quodlibet
+\newcommand{\unit}{\star}                         % the unit inhabitant
+\newcommand{\true}{\mathsf{true}}                 % the true boolean
+\newcommand{\false}{\mathsf{false}}               % the false boolean
+\newcommand{\cond}[4]{\mathsf{cond}_{#1}(#2,#3,#4)}    % condtional term
+\newcommand{\J}[6]{\mathsf{J}(#1,#2,#3,#4,#5,#6)} % the J eliminator
+
+% Judgments
+\newcommand{\isctx}[1]{#1\ \mathsf{ctx}} % well formed context
+\newcommand{\istype}[2]{#1 \vdash #2 \ \mathsf{type}} % well formed type
+\newcommand{\isterm}[3]{#1 \vdash #2 : #3} % well formed term
+\newcommand{\issubst}[3]{#1 : #2 \to #3} % well formed substitution
+
+\newcommand{\eqctx}[2]{#1 \equiv #2} % equal contexts
+\newcommand{\eqsubst}[4]{#1 \equiv #2 : #3 \to #4} % equal substitutions
+\newcommand{\eqtype}[3]{#1 \vdash #2 \equiv #3} % equal types
+\newcommand{\eqterm}[4]{#1 \vdash #2 \equiv #3 : #4} % equal terms
+
+%%%% Translation
+
+\newcommand{\defeq}{\mathrel{{:}{\equiv}}}
+
+\newcommand{\Iso}[2]{#1 \cong #2}
+
+\newcommand{\JJ}{\mathcal{J}} % any judgment
+
+\newcommand{\DD}{\mathcal{D}} % a derivation
+\newcommand{\EE}{\mathcal{E}} % another derivation
+\newcommand{\derives}[2]{#1 \mathbin{{:}{:}} #2} % a derivation with its conclusion
+
+\newcommand{\tran}[1]{\langle\!\langle #1 \rangle\!\rangle} % direct translation
+\newcommand{\conn}[2]{\tran{#1} \rightleftharpoons \tran{#2}} % path between translations
+
+\newcommand{\Case}[1]{\subsubsection{Case $\rl{#1}$}}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

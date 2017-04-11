@@ -1,8 +1,7 @@
 \documentclass{article}
 
 % BEFORE LATEXING THIS, RUN:
-% ./coq2latex ptt.tex > ptt.tex
-% ./coq2latex ett.tex > ett.tex
+% ./coq2latex ttt.v > tt.tex
 
 \usepackage[utf8]{inputenc}
 \usepackage{mathpartir}
@@ -16,83 +15,48 @@
 
 \newcommand{\suc}[1]{#1 + 1}
 
-\input{../paper/macros.tex}
+\input{macros.tex}
 
 
 \begin{document}
 
-\input{ptt.tex}
-\input{ett.tex}
+\input{tt.tex}
 
-\section*{Extensional type theory}
-\label{sec:extensional-type-theory}
+\section*{Modular Type theory}
+\label{sec:type-theory}
 
-\subsection*{Judgment $\isctx{\G}$}
-
-\showEttIsctxRules
-
-\subsection*{Judgment $\issubst{\sbs}{\G}{\D}$}
-
-\showEttIssubstRules
-
-\subsection*{Judgment $\istype{\G}{\A}$}
-
-\showEttIstypeRules
-
-\subsection*{Judgment $\isterm{\G}{\uu}{\A}$}
-
-\showEttIstermRules
-
-\subsection*{Judgment $\eqctx{\G}{\D}$}
-
-\showEttEqctxRules
-
-\subsection*{Judgment $\eqsubst{\sbs}{\sbt}{\G}{\D}$}
-
-\showEttEqsubstRules
-
-\subsection*{Judgment $\eqtype{\G}{\A}{\B}$}
-
-\showEttEqtypeRules
-
-\subsection*{Judgment $\eqterm{\G}{\uu}{\vv}{\A}$}
-
-\showEttEqtermRules
-
-
-\section*{Paranoid type theory}
-\label{sec:paranoid-type-theory}
+In this section we all the rules (as if all the flags were on).
 
 \subsection*{Judgment $\isctx{\G}$}
 
-\showPttIsctxRules
+\showIsctxRules
 
 \subsection*{Judgment $\issubst{\sbs}{\G}{\D}$}
 
-\showPttIssubstRules
+\showIssubstRules
 
 \subsection*{Judgment $\istype{\G}{\A}$}
 
-\showPttIstypeRules
+\showIstypeRules
 
 \subsection*{Judgment $\isterm{\G}{\uu}{\A}$}
 
-\showPttIstermRules
+\showIstermRules
 
 \subsection*{Judgment $\eqctx{\G}{\D}$}
 
-\showPttEqctxRules
+\showEqctxRules
 
 \subsection*{Judgment $\eqsubst{\sbs}{\sbt}{\G}{\D}$}
 
-\showPttEqsubstRules
+\showEqsubstRules
 
 \subsection*{Judgment $\eqtype{\G}{\A}{\B}$}
 
-\showPttEqtypeRules
+\showEqtypeRules
 
 \subsection*{Judgment $\eqterm{\G}{\uu}{\vv}{\A}$}
 
-\showPttEqtermRules
+\showEqtermRules
 
 \end{document}
