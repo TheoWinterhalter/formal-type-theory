@@ -32,15 +32,11 @@ The purpose here is to state and prove theorems about the sanity of different ty
 ### Elimination of Substitutions (*WIP*)
 * `substitution_elim.v`: Proof that substitutions can be eliminated (*WIP*).
 
-## Translation
+## Translations
 
-The main translation goes from PTT to CTT, the complete scheme being:
-ETT → **PTT → CTT** → ITT.
-This translation is still very much a *work in progress*.
-* `ctt.v`: Syntax and typing rules of CTT (Coercive Type Theory) that goes with explicit coercions,
-* `itt.v`: ITT (Intentional Type Theory), its syntax and typing rules, doesn't have equality reflection or type annotations on application when compared with ETT,
-* `eval.v`: Evaluate coercions of CTT to get ITT expressions,
-* `translation.v`: Proof of translation between PTT and CTT (CTT is only typed through it's evaluation into ITT).
+We offer an alternative translation of the negation of funext
+translation from Boulier et al. in the file `negfunext.v` as a proof
+of concept.
 
 ## LaTeX Generation
 
