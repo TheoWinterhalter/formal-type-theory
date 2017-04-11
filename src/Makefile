@@ -117,15 +117,7 @@ VFILES:=config.v\
   tactics.v\
   inversion.v\
   uniqueness.v\
-  negfunext.v\
-  hml.v\
-  coerce.v\
-  coerce_action.v\
-  ctt.v\
-  eitt.v\
-  pxtt.v\
-  eval.v\
-  translation.v
+  negfunext.v
 
 ifneq ($(filter-out archclean clean cleanall printenv,$(MAKECMDGOALS)),)
 -include $(addsuffix .d,$(VFILES))

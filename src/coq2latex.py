@@ -44,6 +44,19 @@ macros = {
     'var' : (1, 'var'),
     'S' : (1, 'suc'),
     'cond' : (4, 'cond'),
+    'SimProd' : (2, 'SimProd'),
+    'U' : (1, 'Uni'),
+    'El' : (1, 'El'),
+    'pair' : (4, 'pair'),
+    'proj1' : (3, 'proj1'),
+    'proj2' : (3, 'proj2'),
+    'uniProd' : (3, 'uniProd'),
+    'uniId' : (4, 'uniId'),
+    'uniEmpty' : (1, 'uniEmpty'),
+    'uniUnit' : (1, 'uniUnit'),
+    'uniBool' : (1, 'uniBool'),
+    'uniSimProd' : (3, 'uniSimProd'),
+    'uniUni' : (1, 'uniUni')
 }
 
 # We're actually going to parse stuff here, so we work with
@@ -184,7 +197,7 @@ def section(title, prefix, src):
     rules = re.findall(
             r'^\s*\|\s+'                   # the beginning of a rule
             r'(?P<rulename>\w+)\s*:\s*$'   # rule name
-            r'\s*rule\s*'                 # header
+            r'\s*rule\s*'                  # header
             r'(?P<rulebody>.*?)'           # rule body
             r'endrule',                    # footer
             src,
@@ -231,7 +244,8 @@ def section(title, prefix, src):
 # load the source file
 filename = sys.argv[1]
 
-prefix = re.match('^(\w+)\.v$', filename).group(1)
+# prefix = re.match('^(\w+)\.v$', filename).group(1)
+prefix = ""
 
 with open(filename, "r") as f:
     src = f.read()

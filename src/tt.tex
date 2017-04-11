@@ -1,0 +1,33 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% isctx
+
+\newcommand{\rlCtxEmpty}{\referTo{CtxEmpty}{rul:CtxEmpty}}
+\newcommand{\showCtxEmpty}{%
+    \infer
+    { }
+    {\isctx{{\ctxempty}}}
+}
+
+\newcommand{\rlCtxExtend}{\referTo{CtxExtend}{rul:CtxExtend}}
+\newcommand{\showCtxExtend}{%
+    \infer
+    { \mathtt{precond:}\, \mathtt{isctx}\, {\Gamma} \\
+\istype{{\Gamma}}{A}}
+    {\isctx{\ctxextend{{\Gamma}}{A}}}
+}
+
+\newcommand{\showIsctxRules}{
+\begin{equation}
+                           \showCtxEmpty
+                           \tag{\textsc{-ctx-empty}}
+                           \end{equation}
+\begin{equation}
+                           \showCtxExtend
+                           \tag{\textsc{-ctx-extend}}
+                           \end{equation}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% issubst
+

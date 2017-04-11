@@ -44,8 +44,5 @@ with substitution : Type :=
      | sbid : substitution
      | sbcomp : substitution -> substitution -> substitution.
 
-(* TODO: Create a clean branch where we remove all these failed attempts *)
-Parameter reflective : type -> type.
-
 Definition Arrow (A B : type) : type :=
   Prod A (Subst B (sbweak A)).

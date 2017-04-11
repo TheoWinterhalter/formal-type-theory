@@ -1,11 +1,12 @@
 default: rules.pdf
 
-formalization/ptt.tex: formalization/ptt.v
-	cd ./formalization && ./coq2latex.py ptt.v > ptt.tex
+src/tt.tex: src/tt.v
+	cd ./src && ./coq2latex.py tt.v > tt.tex
 
-formalization/ett.tex: formalization/ett.v
-	cd ./formalization && ./coq2latex.py ett.v > ett.tex
+rules.pdf: src/rules.tex src/tt.tex
+	cd ./src && pdflatex rules.tex
+	mv src/rules.pdf .
 
-rules.pdf: formalization/rules.tex formalization/ptt.tex formalization/ett.tex
-	cd ./formalization && pdflatex rules.tex
-	mv formalization/rules.pdf .
+clean:
+	rm -f src/tt.tex
+	rm -f rules.pdf

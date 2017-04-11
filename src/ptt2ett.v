@@ -404,7 +404,7 @@ Proof.
       - apply UnitEta ; auto.
 
       (* EqReflection *)
-      - apply @EqReflection with (w1 := w1) (w2 := w2) ; auto.
+      - apply @EqReflection with (p := p) ; auto.
 
       (* ProdBeta *)
       - apply ProdBeta ; auto.
