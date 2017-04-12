@@ -1,9 +1,11 @@
 Require syntax altsyntax.
-Require Import List String.
+Require Import List String Strings.Ascii.
 
 Definition named_ctx := list altsyntax.variable.
 
 Open Scope type_scope.
+Open Scope string_scope.
+Open Scope list_scope.
 
 Inductive Error := error.
 
@@ -47,16 +49,6 @@ Fixpoint totype (Gx : named_ctx) (A : altsyntax.type) : syntax.type + Error :=
       end
     | inr _ => inr error
     end
-
-  (* | altsyntax.Subst A sbs => *)
-  (*   match totype Gx A with *)
-  (*   | inl A' => *)
-  (*     match tosubst sbs with *)
-  (*     | inl sbs' => inl (syntax.Subst A' sbs') *)
-  (*     | inr _ => inr error *)
-  (*     end *)
-  (*   | inr _ => inr error *)
-  (*   end *)
 
   | altsyntax.Empty => inl syntax.Empty
 
@@ -294,40 +286,6 @@ with toterm (Gx : named_ctx) (u : altsyntax.term) : syntax.term + Error :=
 
   end.
 
-(* We won't handle explicit substitutions for now *)
-(* with tosubst (Gx : named_ctx) (sbs : altsyntax.substitution) *)
-(*   : syntax.substitution + Error := *)
-(*   match sbs with *)
-(*   | altsyntax.sbvar A x u => *)
-(*     (* Is it the right named_ctx for A? *) *)
-(*     (* Maybe we need a named_ctx for the codomain as well? *) *)
-(*     match totype Gx A with *)
-(*     | inl A' => *)
-(*       (* Same for u *) *)
-(*       match toterm Gx u with *)
-(*       | inl u' => *)
-(*         match lookup Gx x with *)
-(*         | inl n => *)
-(*           inl ((fix aux n := *)
-(*              match n with *)
-(*              | 0 => syntax.sbzero A' u' *)
-(*              | S n => syntax.sbshift ??? *)
-(*           ) n) *)
-
-(*   | altsyntax.sbid => inl (syntax.sbid) *)
-
-(*   | altsyntax.sbcomp sbs sbt => *)
-(*     match tosubst sbs with *)
-(*     | inl sbs' => *)
-(*       match tosubst sbt with *)
-(*       | inl sbt' => inl (syntax.sbcomp sbs' sbt') *)
-(*       | inr _ => inr error *)
-(*       end *)
-(*     | inr _ => inr error *)
-(*     end *)
-
-(*   end. *)
-
 Fixpoint toctx (G : altsyntax.context) : (syntax.context * named_ctx) + Error :=
   match G with
   | altsyntax.ctxempty => inl (syntax.ctxempty, nil)
@@ -344,5 +302,104 @@ Fixpoint toctx (G : altsyntax.context) : (syntax.context * named_ctx) + Error :=
 
   end.
 
-(* We might, later, consider also translating the other way around for
-   printing purposes. *)
+(* Translating the other way around *)
+
+(* This doesn't work for some reason... *)
+(* Definition names := *)
+(*   [ "x" ; "y" ; "z" ; "a" ; "b" ; "c" ; "d" ; "e" ; "f" ]. *)
+Definition names :=
+  (cons "x" (cons "y" (cons "z" nil))).
+
+Definition cur_names := nat * list string.
+
+Definition next_names (c : cur_names) : cur_names :=
+  match c with
+  | (n, nil) => (S n, names)
+  | (n, e :: nil) => (S n, names)
+  | (n, e :: r) => (n, r)
+  end.
+
+Open Scope char_scope.
+
+Definition natToDigit (n : nat) : ascii :=
+  match n with
+    | 0 => "0"
+    | 1 => "1"
+    | 2 => "2"
+    | 3 => "3"
+    | 4 => "4"
+    | 5 => "5"
+    | 6 => "6"
+    | 7 => "7"
+    | 8 => "8"
+    | _ => "9"
+  end.
+
+Fixpoint writeNatAux (time n : nat) (acc : string) : string :=
+  let acc' := String (natToDigit (Nat.modulo n 10)) acc in
+  match time with
+    | 0 => acc'
+    | S time' =>
+      match Nat.div n 10 with
+        | 0 => acc'
+        | n' => writeNatAux time' n' acc'
+      end
+  end.
+
+Definition writeNat (n : nat) : string :=
+  writeNatAux n n "".
+
+Close Scope char_scope.
+
+Definition get_name (c : cur_names) : string :=
+  match c with
+  | (_, nil) => "ERROR!"
+  | (0, e :: r) => e
+  | (S n, e :: r) => e ++ (writeNat n)
+  end.
+
+Definition get (c : cur_names) : string * cur_names :=
+  (get_name c, next_names c).
+
+Fixpoint _fromtype (A : syntax.type) (c : cur_names) : altsyntax.type :=
+  match A with
+  | syntax.Prod A B =>
+    let (x,c') := get c in
+    altsyntax.Prod x (_fromtype A c) (_fromtype B c')
+
+  | syntax.Id A u v =>
+    altsyntax.Id (_fromtype A c) (_fromterm u c) (_fromterm v c)
+
+  (* TODO: Handle substitutions! *)
+  (* | syntax.Subst A sbs => *)
+
+  | syntax.Empty => altsyntax.Empty
+
+  | syntax.Unit => altsyntax.Unit
+
+  | syntax.Bool => altsyntax.Bool
+
+  | syntax.SimProd A B =>
+    altsyntax.SimProd (_fromtype A c) (_fromtype B c)
+
+  | syntax.Uni n => altsyntax.Uni n
+
+  | syntax.El a => altsyntax.El (_fromterm a c)
+
+  | _ => altsyntax.Empty
+
+  end
+
+with _fromterm (u : syntax.term) (c : cur_names) : altsyntax.term :=
+  match u with
+  | syntax.var n =>
+    (* We must actually the variable names we used... *)
+    altsyntax.var "ERROR"
+
+  | _ => altsyntax.var "ERROR"
+
+  end.
+
+Close Scope string_scope.
+Close Scope list_scope.
+Close Scope type_scope.

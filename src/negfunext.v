@@ -1189,16 +1189,32 @@ Open Scope string_scope.
 
 (* We will negate (and thus instantiate) funext on Unit -> Unit only *)
 
-Definition arrow := Prod "_" Unit Unit.
+Definition arrow := Unit → Unit.
+
+(* Definition funextUnit := *)
+(*   Π ("f" in arrow) → *)
+(*     Π ("g" in arrow) → *)
+(*       (Π ("x" in Unit) → *)
+(*          (var "f") @[Unit → Unit] (var "x") ≡ (var "g") @[Unit → Unit] (var "x") in Unit) → *)
+(*       (var "f") ≡ (var "g") in arrow. *)
 
 Definition funextUnit :=
-  Prod "f" arrow
-       (Prod "g" arrow
-             (Prod "_" (Prod "x" Unit
-                             (Id Unit
-                                 (app (var "f") "_" Unit Unit (var "x"))
-                                 (app (var "g") "_" Unit Unit (var "x"))))
-                   (Id arrow (var "f") (var "g")))).
+  Π ("f" in arrow) →
+    Π ("g" in arrow) →
+      (Π ("x" in Unit) →
+         ((app (var "f") "_" Unit Unit (var "x"))
+       ≡ (app (var "g") "_" Unit Unit (var "x"))
+       in Unit)) →
+      ((var "f") ≡ (var "g") in arrow).
+
+(* Definition funextUnit := *)
+(*   Prod "f" arrow *)
+(*        (Prod "g" arrow *)
+(*              (Prod "_" (Prod "x" Unit *)
+(*                              (Id Unit *)
+(*                                  (app (var "f") "_" Unit Unit (var "x")) *)
+(*                                  (app (var "g") "_" Unit Unit (var "x")))) *)
+(*                    (Id arrow (var "f") (var "g")))). *)
 
 (* We will prove that [funextUnit] -> true = false by applying the funext
    to two identity functions with different booleans.
@@ -1222,5 +1238,7 @@ Proof.
 
   (* Maybe we should translate back to altsyntax... *)
 Abort.
+
+Close Scope string_scope.
 
 End Negation.
