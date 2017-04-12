@@ -25,29 +25,9 @@ Lemma eqtype_subst_left :
     isctx G ->
     isctx D ->
     isctx E ->
-    (* istype G (Subst (Subst A sbt) sbs) -> *)
-    (* istype G (Subst A (sbcomp sbt sbs)) -> *)
     eqtype G (Subst (Subst A sbt) sbs) B.
 Proof.
   intros.
-  (* ceapply EqTyTrans. *)
-  (* - ceapply EqTySubstComp. *)
-  (*   + eassumption. *)
-  (*   + eassumption. *)
-  (*   + eassumption. *)
-  (*   + match goal with *)
-  (*     | |- ?P -> ?Q => *)
-  (*       (* match (eval cbv in P) with *) *)
-  (*       (* | config.Yes => intros _ *) *)
-  (*       (* | config.No => let H := fresh "H" in (intros H ; now elim H) *) *)
-  (*       (* | config.precondFlag => *) *)
-  (*       (*   let H := fresh "precondFlag" in intros H *) *)
-  (*       (* end *) *)
-  (*       idtac "P =" P ; *)
-  (*       match eval cbv in P with *)
-  (*       | ?H => idtac "eval cbv in H =" H *)
-  (*       end *)
-  (*     end. *)
 
   ceapply EqTyTrans ; [
     ceapply EqTySubstComp ; eassumption
@@ -69,10 +49,6 @@ Lemma eqterm_subst_left :
     isctx G ->
     isctx D ->
     isctx E ->
-    (* istype G (Subst (Subst A sbt) sbs) -> *)
-    (* istype G (Subst A (sbcomp sbt sbs)) -> *)
-    (* isterm G (subst (subst u sbt) sbs) (Subst A (sbcomp sbt sbs)) -> *)
-    (* isterm G (subst u (sbcomp sbt sbs)) (Subst A (sbcomp sbt sbs)) -> *)
     isterm G v (Subst A (sbcomp sbt sbs)) ->
     eqterm G (subst (subst u sbt) sbs) v (Subst (Subst A sbt) sbs).
 Proof.
@@ -965,7 +941,15 @@ Ltac prepushsubst1 sym :=
       | ..
       ]
     ]
-  | |- eqterm ?G (subst (uniProd ?n ?a ?b) ?sbs) _ _ =>
+  | |- eqterm ?G (subst (uniProd ?l prop ?a ?b) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstUniProdProp | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstUniProdProp | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (uniProd ?n ?m ?a ?b) ?sbs) _ _ =>
     first [
       ceapply EqTrans ; [ ceapply EqSubstUniProd | .. ]
     | ceapply EqTyConv ; [
@@ -1005,7 +989,15 @@ Ltac prepushsubst1 sym :=
       | ..
       ]
     ]
-  | |- eqterm ?G (subst (uniSimProd ?n ?a ?b) ?sbs) _ _ =>
+  | |- eqterm ?G (subst (uniSimProd prop prop ?a ?b) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstUniSimProdProp | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstUniSimProdProp | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (uniSimProd ?n ?m ?a ?b) ?sbs) _ _ =>
     first [
       ceapply EqTrans ; [ ceapply EqSubstUniSimProd | .. ]
     | ceapply EqTyConv ; [
@@ -1013,11 +1005,19 @@ Ltac prepushsubst1 sym :=
       | ..
       ]
     ]
-  | |- eqterm ?G (subst (uniUni ?n) ?sbs) _ _ =>
+  | |- eqterm ?G (subst (uniUni (uni ?n)) ?sbs) _ _ =>
     first [
       ceapply EqTrans ; [ ceapply EqSubstUniUni | .. ]
     | ceapply EqTyConv ; [
         ceapply EqTrans ; [ ceapply EqSubstUniUni | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (uniUni prop) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstUniProp | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstUniProp | .. ]
       | ..
       ]
     ]
@@ -2314,7 +2314,13 @@ Ltac magicn try shelf tysym debug :=
       | ceapply TermTyConv ; [ ceapply TermProj2 | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- isterm ?G (uniProd ?n ?a ?b) ?T =>
+    | |- isterm ?G (uniProd ?l prop ?a ?b) ?T =>
+      first [
+        ceapply TermUniProdProp
+      | ceapply TermTyConv ; [ ceapply TermUniProdProp | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- isterm ?G (uniProd ?n ?m ?a ?b) ?T =>
       first [
         ceapply TermUniProd
       | ceapply TermTyConv ; [ ceapply TermUniProd | .. ]
@@ -2344,10 +2350,22 @@ Ltac magicn try shelf tysym debug :=
       | ceapply TermTyConv ; [ ceapply TermUniBool | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- isterm ?G (uniSimProd ?n ?a ?b) ?T =>
+    | |- isterm ?G (uniSimProd prop prop ?a ?b) ?T =>
+      first [
+        ceapply TermUniSimProdProp
+      | ceapply TermTyConv ; [ ceapply TermUniSimProdProp | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- isterm ?G (uniSimProd ?n ?m ?a ?b) ?T =>
       first [
         ceapply TermUniSimProd
       | ceapply TermTyConv ; [ ceapply TermUniSimProd | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- isterm ?G (uniUni prop) ?T =>
+      first [
+        ceapply TermUniProp
+      | ceapply TermTyConv ; [ ceapply TermUniProp | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
     | |- isterm ?G (uniUni ?n) ?T =>
@@ -2816,7 +2834,13 @@ Ltac magicn try shelf tysym debug :=
       | ceapply EqTyConv ; [ ceapply CongProj2 | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- eqterm ?G (uniProd _ _ _) (uniProd _ _ _) _ =>
+    | |- eqterm ?G (uniProd _ prop _ _) (uniProd _ prop _ _) _ =>
+      first [
+        ceapply CongUniProdProp
+      | ceapply EqTyConv ; [ ceapply CongUniProdProp | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- eqterm ?G (uniProd _ _ _ _) (uniProd _ _ _ _) _ =>
       first [
         ceapply CongUniProd
       | ceapply EqTyConv ; [ ceapply CongUniProd | .. ]
@@ -2828,7 +2852,13 @@ Ltac magicn try shelf tysym debug :=
       | ceapply EqTyConv ; [ ceapply CongUniId | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- eqterm ?G (uniSimProd _ _ _) (uniSimProd _ _ _) _ =>
+    | |- eqterm ?G (uniSimProd prop prop _ _) (uniSimProd prop prop _ _) _ =>
+      first [
+        ceapply CongUniSimProdProp
+      | ceapply EqTyConv ; [ ceapply CongUniSimProdProp | .. ]
+      | myfail debug
+      ] ; magicn try shelf true debug
+    | |- eqterm ?G (uniSimProd _ _ _ _) (uniSimProd _ _ _ _) _ =>
       first [
         ceapply CongUniSimProd
       | ceapply EqTyConv ; [ ceapply CongUniSimProd | .. ]

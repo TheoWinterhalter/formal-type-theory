@@ -348,7 +348,14 @@ Proof.
     - { capply TermUniProd.
         - now apply sane_isterm.
         - now apply sane_isterm.
-        - now apply (ptt_sane_isterm G a (Uni n)), sane_isterm.
+        - now apply (ptt_sane_isterm G a (Uni (uni n))), sane_isterm.
+      }
+
+    (* TermUniProdProp *)
+    - { capply TermUniProdProp.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply (ptt_sane_isterm G a (Uni l)), sane_isterm.
       }
 
     (* TermUniId *)
@@ -378,11 +385,23 @@ Proof.
     - { capply TermUniSimProd.
         - now apply sane_isterm.
         - now apply sane_isterm.
-        - now apply (ptt_sane_isterm G a (Uni n)), sane_isterm.
+        - now apply (ptt_sane_isterm G a (Uni (uni n))), sane_isterm.
+      }
+
+    (* TermUniSimProdProp *)
+    - { capply TermUniSimProdProp.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply (ptt_sane_isterm G a (Uni prop)), sane_isterm.
       }
 
     (* TermUniUni *)
     - { capply TermUniUni.
+        now apply sane_isctx.
+      }
+
+    (* TermUniProp *)
+    - { capply TermUniProp.
         now apply sane_isctx.
       }
   }
@@ -741,14 +760,21 @@ Proof.
     }
 
     (* ElProd *)
-    { config apply @ElProd with (n := n).
+    { config apply @ElProd.
       - now apply sane_isterm.
       - now apply sane_isterm.
-      - now apply (ptt_sane_isterm G a (Uni n)), sane_isterm.
+      - now apply (ptt_sane_isterm G a (Uni (uni n))), sane_isterm.
+    }
+
+    (* ElProdProp *)
+    { config apply @ElProdProp.
+      - now apply sane_isterm.
+      - now apply sane_isterm.
+      - now apply (ptt_sane_isterm G a (Uni l)), sane_isterm.
     }
 
     (* ElId *)
-    { config apply @ElId with (n := n).
+    { config apply @ElId.
       - now apply sane_isterm.
       - now apply sane_isterm.
       - now apply sane_isterm.
@@ -779,14 +805,26 @@ Proof.
     }
 
     (* ElSimProd *)
-    { config apply @ElSimProd with (n := n).
+    { config apply @ElSimProd.
       - now apply sane_isterm.
       - now apply sane_isterm.
-      - now apply (ptt_sane_isterm G a (Uni n)), sane_isterm.
+      - now apply (ptt_sane_isterm G a (Uni (uni n))), sane_isterm.
+    }
+
+    (* ElSimProdProp *)
+    { config apply @ElSimProdProp.
+      - now apply sane_isterm.
+      - now apply sane_isterm.
+      - now apply (ptt_sane_isterm G a (Uni prop)), sane_isterm.
     }
 
     (* ElUni *)
     { config apply @ElUni with (n := n).
+      now apply sane_isctx.
+    }
+
+    (* ElProp *)
+    { config apply @ElProp.
       now apply sane_isctx.
     }
 
@@ -1302,6 +1340,15 @@ Proof.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
       }
 
+    (* EqSubstUniProdProp *)
+    - { config apply @EqSubstUniProdProp with (D := D).
+        - now apply sane_issubst.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+      }
+
     (* EqSubstUniId *)
     - { config apply @EqSubstUniId with (D := D).
         - now apply sane_issubst.
@@ -1342,8 +1389,24 @@ Proof.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
       }
 
+    (* EqSubstUniSimProdProp *)
+    - { config apply @EqSubstUniSimProdProp with (D := D).
+        - now apply sane_issubst.
+        - now apply sane_isterm.
+        - now apply sane_isterm.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+      }
+
     (* EqSubstUniUni *)
     - { config apply @EqSubstUniUni with (D := D).
+        - now apply sane_issubst.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+        - now apply (ptt_sane_issubst sbs G D), sane_issubst.
+      }
+
+    (* EqSubstUniProp *)
+    - { config apply @EqSubstUniProp with (D := D).
         - now apply sane_issubst.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
@@ -1353,13 +1416,26 @@ Proof.
     - { capply CongUniProd.
         - now apply sane_eqterm.
         - now apply sane_eqterm.
-        - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
-        - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
-        - now apply (ptt_sane_eqterm (ctxextend G (El a1)) b1 b2 (Uni n)),
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni (uni n))), sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni (uni n))), sane_eqterm.
+        - now apply (ptt_sane_eqterm (ctxextend G (El a1)) b1 b2 (Uni (uni m))),
                     sane_eqterm.
-        - now apply (ptt_sane_eqterm (ctxextend G (El a1)) b1 b2 (Uni n)),
+        - now apply (ptt_sane_eqterm (ctxextend G (El a1)) b1 b2 (Uni (uni m))),
                     sane_eqterm.
-        - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni (uni n))), sane_eqterm.
+      }
+
+    (* CongUniProdProp *)
+    - { capply CongUniProdProp.
+        - now apply sane_eqterm.
+        - now apply sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni l)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni l)), sane_eqterm.
+        - now apply (ptt_sane_eqterm (ctxextend G (El a1)) b1 b2 (Uni prop)),
+                    sane_eqterm.
+        - now apply (ptt_sane_eqterm (ctxextend G (El a1)) b1 b2 (Uni prop)),
+                    sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni l)), sane_eqterm.
       }
 
     (* CongUniId *)
@@ -1391,11 +1467,22 @@ Proof.
     - { capply CongUniSimProd.
         - now apply sane_eqterm.
         - now apply sane_eqterm.
-        - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
-        - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
-        - now apply (ptt_sane_eqterm G b1 b2 (Uni n)), sane_eqterm.
-        - now apply (ptt_sane_eqterm G b1 b2 (Uni n)), sane_eqterm.
-        - now apply (ptt_sane_eqterm G b1 b2 (Uni n)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni (uni n))), sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni (uni n))), sane_eqterm.
+        - now apply (ptt_sane_eqterm G b1 b2 (Uni (uni m))), sane_eqterm.
+        - now apply (ptt_sane_eqterm G b1 b2 (Uni (uni m))), sane_eqterm.
+        - now apply (ptt_sane_eqterm G b1 b2 (Uni (uni m))), sane_eqterm.
+      }
+
+    (* CongUniSimProdProp *)
+    - { capply CongUniSimProdProp.
+        - now apply sane_eqterm.
+        - now apply sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni prop)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G a1 a2 (Uni prop)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G b1 b2 (Uni prop)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G b1 b2 (Uni prop)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G b1 b2 (Uni prop)), sane_eqterm.
       }
   }
 
