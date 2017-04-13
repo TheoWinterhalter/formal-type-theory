@@ -476,10 +476,20 @@ Proof.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.
 
-          - { apply unique_term_ctx' with (u := a) (D := D').
-              - assumption.
-              - hyp.
-              - hyp.
+          - { capply EqTyRefl.
+              capply TyUni.
+              hyp.
+            }
+        }
+
+      (* TermUniProdProp *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - { capply EqTyRefl.
+              capply TyUni.
+              hyp.
             }
         }
 
@@ -488,10 +498,9 @@ Proof.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.
 
-          - { apply unique_term_ctx' with (u := a) (D := D').
-              - assumption.
-              - hyp.
-              - hyp.
+          - { capply EqTyRefl.
+              capply TyUni.
+              hyp.
             }
         }
 
@@ -533,14 +542,35 @@ Proof.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.
 
-          - { apply unique_term_ctx' with (u := a) (D := D').
-              - assumption.
-              - hyp.
-              - hyp.
+          - { capply EqTyRefl.
+              capply TyUni.
+              hyp.
+            }
+        }
+
+      (* TermUniSimProdProp *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - { capply EqTyRefl.
+              capply TyUni.
+              hyp.
             }
         }
 
       (* TermUniUni *)
+      - { inversion_clear H2' ; doConfig.
+          - doTyConv unique_term'.
+          - doCtxConv D' unique_term'.
+
+          - { capply EqTyRefl.
+              capply TyUni.
+              hyp.
+            }
+        }
+
+      (* TermUniProp *)
       - { inversion_clear H2' ; doConfig.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.
