@@ -22,6 +22,8 @@ Module Stt.
   Local Instance hasProdEta : config.ProdEta
     := {| config.prodetaFlag := config.No |}.
   Context `{ConfigUniverses : config.Universes}.
+  Local Instance hasProp : config.WithProp
+    := {| config.withpropFlag := config.No |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -49,6 +51,8 @@ Module Ttt.
   Local Instance hasProdEta : config.ProdEta
     := {| config.prodetaFlag := config.No |}.
   Context `{ConfigUniverses : config.Universes}.
+  Local Instance hasProp : config.WithProp
+    := {| config.withpropFlag := config.No |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -414,22 +418,6 @@ Proof.
             capply EqTyRefl. capply TyUni. ih.
         }
 
-      (* TermUniProdProp *)
-      - { simpl. destruct l.
-          - capply TermUniSimProdProp.
-
-          ceapply TermTyConv.
-          - capply TermUniSimProd.
-            + capply TermUniProd.
-              * now apply (trans_isterm G a (Uni (uni n))).
-              * now apply (trans_isterm (ctxextend G (El a)) b (Uni (uni m))).
-            + capply TermUniBool. ih.
-          - assert (eq : (max (max n m) 0) = max n m).
-            { apply max_l. apply le_0_n. }
-            rewrite eq.
-            capply EqTyRefl. capply TyUni. ih.
-        }
-
       (* TermUniId *)
       - { simpl. capply TermUniId.
           - now apply (trans_isterm G a (Uni n)).
@@ -448,8 +436,8 @@ Proof.
 
       (* TermUniSimProd *)
       - { simpl. capply TermUniSimProd.
-          - now apply (trans_isterm G a (Uni n)).
-          - now apply (trans_isterm G b (Uni n)).
+          - now apply (trans_isterm G a (Uni (uni n))).
+          - now apply (trans_isterm G b (Uni (uni m))).
         }
 
       (* TermUniUni *)
@@ -616,13 +604,13 @@ Proof.
           ceapply EqTyTrans.
           - ceapply ElSimProd.
             + capply TermUniProd.
-              * now apply (trans_isterm G a (Uni n)).
-              * now apply (trans_isterm (ctxextend G (El a)) b (Uni n)).
+              * now apply (trans_isterm G a (Uni (uni n))).
+              * now apply (trans_isterm (ctxextend G (El a)) b (Uni (uni m))).
             + capply TermUniBool. ih.
           - capply CongSimProd.
             + capply ElProd.
-              * now apply (trans_isterm G a (Uni n)).
-              * now apply (trans_isterm (ctxextend G (El a)) b (Uni n)).
+              * now apply (trans_isterm G a (Uni (uni n))).
+              * now apply (trans_isterm (ctxextend G (El a)) b (Uni (uni m))).
             + capply ElBool. ih.
         }
 
@@ -650,8 +638,8 @@ Proof.
 
       (* ElSimProd *)
       - { simpl. capply ElSimProd.
-          - now apply (trans_isterm G a (Uni n)).
-          - now apply (trans_isterm G b (Uni n)).
+          - now apply (trans_isterm G a (Uni (uni n))).
+          - now apply (trans_isterm G b (Uni (uni m))).
         }
 
       (* ElUni *)
@@ -1060,18 +1048,32 @@ Proof.
       (* EqSubstUniProd *)
       - { simpl.
           ceapply EqTrans.
-          - ceapply EqSubstUniSimProd.
-            + now apply (trans_issubst sbs G D).
-            + capply TermUniProd.
-              * now apply (trans_isterm D a (Uni n)).
-              * now apply (trans_isterm (ctxextend D (El a)) b (Uni n)).
-            + capply TermUniBool. ih.
-          - capply CongUniSimProd.
-            + config apply @EqSubstUniProd with (D := trans_ctx D).
-              * ih.
-              * now apply (trans_isterm D a (Uni n)).
-              * now apply (trans_isterm (ctxextend D (El a)) b (Uni n)).
-            + config apply @EqSubstUniBool with (D := trans_ctx D). ih.
+          - ceapply EqTyConv.
+            + ceapply EqSubstUniSimProd.
+              * now apply (trans_issubst sbs G D).
+              * capply TermUniProd.
+                -- now apply (trans_isterm D a (Uni (uni n))).
+                -- now apply (trans_isterm (ctxextend D (El a)) b (Uni (uni m))).
+              * capply TermUniBool. ih.
+            + assert (eq : (max (max n m) 0) = max n m).
+              { apply max_l. apply le_0_n. }
+              rewrite eq.
+              capply EqTyRefl.
+              capply TyUni.
+              ih.
+          - ceapply EqTyConv.
+            + capply CongUniSimProd.
+              * config apply @EqSubstUniProd with (D := trans_ctx D).
+                -- ih.
+                -- now apply (trans_isterm D a (Uni (uni n))).
+                -- now apply (trans_isterm (ctxextend D (El a)) b (Uni (uni m))).
+              * config apply @EqSubstUniBool with (D := trans_ctx D). ih.
+            + assert (eq : (max (max n m) 0) = max n m).
+              { apply max_l. apply le_0_n. }
+              rewrite eq.
+              capply EqTyRefl.
+              capply TyUni.
+              ih.
         }
 
       (* EqSubstUniId *)
@@ -1094,8 +1096,8 @@ Proof.
       (* EqSubstUniSimProd *)
       - { simpl. config apply @EqSubstUniSimProd with (D := trans_ctx D).
           - ih.
-          - now apply (trans_isterm D a (Uni n)).
-          - now apply (trans_isterm D b (Uni n)).
+          - now apply (trans_isterm D a (Uni (uni n))).
+          - now apply (trans_isterm D b (Uni (uni m))).
         }
 
       (* EqSubstUniUni *)

@@ -11,6 +11,7 @@ Context `{ConfigReflection : config.Reflection}.
 Context `{ConfigSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
+Context `{ConfigWithProp : config.WithProp}.
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
@@ -25,6 +26,9 @@ Notation "'prodeta' r" :=
 
 Notation "'universe' r" :=
   (forall { _ : universesFlag }, r) (only parsing, at level 97).
+
+Notation "'withprop' r" :=
+  (forall { _ : withpropFlag }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
@@ -453,7 +457,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUniProdProp :
-       universe rule
+       universe withprop rule
          parameters: {G a b l},
          premise: isterm G a (Uni l)
          premise: isterm (ctxextend G (El a)) b (Uni prop)
@@ -508,7 +512,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUniSimProdProp :
-       universe simpleproduct rule
+       universe withprop simpleproduct rule
          parameters: {G a b},
          premise: isterm G a (Uni prop)
          premise: isterm G b (Uni prop)
@@ -526,7 +530,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUniProp :
-       universe rule
+       universe withprop rule
          parameters: {G},
          premise: isctx G
          conclusion:
@@ -1059,7 +1063,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElProdProp :
-       universe rule
+       universe withprop rule
          parameters: {G a b l},
          premise: isterm G a (Uni l)
          premise: isterm (ctxextend G (El a)) b (Uni prop)
@@ -1139,7 +1143,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElSimProdProp :
-       universe simpleproduct rule
+       universe withprop simpleproduct rule
          parameters: {G a b},
          premise: isterm G a (Uni prop)
          premise: isterm G b (Uni prop)
@@ -1161,7 +1165,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElProp :
-       universe rule
+       universe withprop rule
          parameters: {G},
          premise: isctx G
          conclusion:
@@ -2125,7 +2129,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUniProdProp :
-       universe rule
+       universe withprop rule
          parameters: {G D a b l sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni l)
@@ -2210,7 +2214,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUniSimProdProp :
-       universe simpleproduct rule
+       universe withprop simpleproduct rule
          parameters: {G D a b sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni prop)
@@ -2238,7 +2242,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUniProp :
-       universe rule
+       universe withprop rule
          parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -2268,7 +2272,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongUniProdProp :
-       universe rule
+       universe withprop rule
          parameters: {G a1 a2 b1 b2 l},
          premise: eqterm G a1 a2 (Uni l)
          premise: eqterm (ctxextend G (El a1)) b1 b2 (Uni prop)
@@ -2322,7 +2326,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongUniSimProdProp :
-       universe simpleproduct rule
+       universe withprop simpleproduct rule
          parameters: {G a1 a2 b1 b2},
          premise: eqterm G a1 a2 (Uni prop)
          premise: eqterm G b1 b2 (Uni prop)
