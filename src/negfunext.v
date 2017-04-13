@@ -51,8 +51,7 @@ Module Ttt.
   Local Instance hasProdEta : config.ProdEta
     := {| config.prodetaFlag := config.No |}.
   Context `{ConfigUniverses : config.Universes}.
-  Local Instance hasProp : config.WithProp
-    := {| config.withpropFlag := config.No |}.
+  Context `{ConfigWithProp : config.WithProp}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -72,6 +71,7 @@ Section Translation.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigUniverses : config.Universes}.
+Context `{ConfigWithProp : config.WithProp}.
 
 Fixpoint trans_type (A : type) : type :=
   match A with
