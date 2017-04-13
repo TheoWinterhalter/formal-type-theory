@@ -116,13 +116,23 @@ with trans_term (t : term) : term :=
     proj1 (trans_type A) (trans_type B) (trans_term p)
   | proj2 A B p =>
     proj2 (trans_type A) (trans_type B) (trans_term p)
-  | uniProd n a b =>
-    uniSimProd n (uniProd n (trans_term a) (trans_term b)) (uniBool n)
+  | uniProd (uni n) (uni m) a b =>
+    uniSimProd (uni (max n m)) (uni 0)
+               (uniProd (uni n) (uni m) (trans_term a) (trans_term b))
+               (uniBool 0)
+  | uniProd l prop a b =>
+    uniSimProd prop (uni 0)
+               (uniProd l prop (trans_term a) (trans_term b))
+               (uniBool 0)
+  | uniProd prop (uni n) a b =>
+    uniSimProd (uni n) (uni 0)
+               (uniProd prop (uni n) (trans_term a) (trans_term b))
+               (uniBool 0)
   | uniId n a u v => uniId n (trans_term a) (trans_term u) (trans_term v)
   | uniEmpty n => uniEmpty n
   | uniUnit n => uniUnit n
   | uniBool n => uniBool n
-  | uniSimProd n a b => uniSimProd n (trans_term a) (trans_term b)
+  | uniSimProd n m a b => uniSimProd n m (trans_term a) (trans_term b)
   | uniUni n => uniUni n
   end
 
@@ -392,11 +402,32 @@ Proof.
         }
 
       (* TermUniProd *)
-      - { simpl. capply TermUniSimProd.
-          - capply TermUniProd.
-            + now apply (trans_isterm G a (Uni n)).
-            + now apply (trans_isterm (ctxextend G (El a)) b (Uni n)).
-          - capply TermUniBool. ih.
+      - { simpl. ceapply TermTyConv.
+          - capply TermUniSimProd.
+            + capply TermUniProd.
+              * now apply (trans_isterm G a (Uni (uni n))).
+              * now apply (trans_isterm (ctxextend G (El a)) b (Uni (uni m))).
+            + capply TermUniBool. ih.
+          - assert (eq : (max (max n m) 0) = max n m).
+            { apply max_l. apply le_0_n. }
+            rewrite eq.
+            capply EqTyRefl. capply TyUni. ih.
+        }
+
+      (* TermUniProdProp *)
+      - { simpl. destruct l.
+          - capply TermUniSimProdProp.
+
+          ceapply TermTyConv.
+          - capply TermUniSimProd.
+            + capply TermUniProd.
+              * now apply (trans_isterm G a (Uni (uni n))).
+              * now apply (trans_isterm (ctxextend G (El a)) b (Uni (uni m))).
+            + capply TermUniBool. ih.
+          - assert (eq : (max (max n m) 0) = max n m).
+            { apply max_l. apply le_0_n. }
+            rewrite eq.
+            capply EqTyRefl. capply TyUni. ih.
         }
 
       (* TermUniId *)
