@@ -1104,11 +1104,18 @@ Proof.
       - { simpl. config apply @EqSubstUniUni with (D := trans_ctx D). ih. }
 
       (* CongUniProd *)
-      - { simpl. capply CongUniSimProd.
-          - capply CongUniProd.
-            + now apply (trans_eqterm G a1 a2 (Uni n)).
-            + now apply (trans_eqterm (ctxextend G (El a1)) b1 b2 (Uni n)).
-          - capply EqRefl. capply TermUniBool. ih.
+      - { simpl. ceapply EqTyConv.
+          - capply CongUniSimProd.
+            + capply CongUniProd.
+              * now apply (trans_eqterm G a1 a2 (Uni (uni n))).
+              * now apply (trans_eqterm (ctxextend G (El a1)) b1 b2 (Uni (uni m))).
+            + capply EqRefl. capply TermUniBool. ih.
+          - assert (eq : (max (max n m) 0) = max n m).
+            { apply max_l. apply le_0_n. }
+            rewrite eq.
+            capply EqTyRefl.
+            capply TyUni.
+            ih.
         }
 
       (* CongUniId *)
@@ -1120,8 +1127,8 @@ Proof.
 
       (* CongUniSimProd *)
       - { simpl. capply CongUniSimProd.
-          - now apply (trans_eqterm G a1 a2 (Uni n)).
-          - now apply (trans_eqterm G b1 b2 (Uni n)).
+          - now apply (trans_eqterm G a1 a2 (Uni (uni n))).
+          - now apply (trans_eqterm G b1 b2 (Uni (uni m))).
         }
     }
 
