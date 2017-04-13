@@ -11,6 +11,7 @@ Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
+Context `{ConfigWithProp : config.WithProp}.
 
 Fixpoint sane_isctx G (P : ptt.isctx G) : ett.isctx G
 
@@ -157,6 +158,9 @@ Proof.
       (* TermUniProd *)
       - apply TermUniProd ; auto.
 
+      (* TermUniProdProp *)
+      - apply TermUniProdProp ; auto.
+
       (* TermUniId *)
       - apply TermUniId ; auto.
 
@@ -172,8 +176,14 @@ Proof.
       (* TermUniSimProd *)
       - apply TermUniSimProd ; auto.
 
+      (* TermUniSimProdProp *)
+      - apply TermUniSimProdProp ; auto.
+
       (* TermUniUni *)
       - apply TermUniUni ; auto.
+
+      (* TermUniProp *)
+      - apply TermUniProp ; auto.
   }
 
   (* sane_eqctx *)
@@ -304,6 +314,9 @@ Proof.
       (* ElProd *)
       - eapply ElProd ; eauto.
 
+      (* ElProdProp *)
+      - eapply ElProdProp ; eauto.
+
       (* ElId *)
       - eapply ElId ; eauto.
 
@@ -322,8 +335,14 @@ Proof.
       (* ElSimProd *)
       - eapply ElSimProd ; eauto.
 
+      (* ElSimProdProp *)
+      - eapply ElSimProdProp ; eauto.
+
       (* ElUni *)
       - apply ElUni ; auto.
+
+      (* ElProp *)
+      - apply ElProp ; auto.
 
       (* CongEl *)
       - eapply CongEl ; eauto.
@@ -469,6 +488,9 @@ Proof.
       (* EqSubstUniProd *)
       - apply @EqSubstUniProd with (D := D) ; auto.
 
+      (* EqSubstUniProdProp *)
+      - apply @EqSubstUniProdProp with (D := D) ; auto.
+
       (* EqSubstUniId *)
       - apply @EqSubstUniId with (D := D) ; auto.
 
@@ -484,17 +506,29 @@ Proof.
       (* EqSubstUniSimProd *)
       - apply @EqSubstUniSimProd with (D := D) ; auto.
 
+      (* EqSubstUniSimProdProp *)
+      - apply @EqSubstUniSimProdProp with (D := D) ; auto.
+
       (* EqSubstUniUni *)
       - apply @EqSubstUniUni with (D := D) ; auto.
 
+      (* EqSubstUniProp *)
+      - apply @EqSubstUniProp with (D := D) ; auto.
+
       (* CongUniProd *)
       - apply CongUniProd ; auto.
+
+      (* CongUniProdProp *)
+      - apply CongUniProdProp ; auto.
 
       (* CongUniId *)
       - apply CongUniId ; auto.
 
       (* CongUniSimProd *)
       - apply CongUniSimProd ; auto.
+
+      (* CongUniSimProdProp *)
+      - apply CongUniSimProdProp ; auto.
     }
 Defined.
 

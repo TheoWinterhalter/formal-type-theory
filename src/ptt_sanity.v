@@ -14,6 +14,7 @@ Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
+Context `{ConfigWithProp : config.WithProp}.
 
 Axiom cheating : forall A, A.
 
@@ -132,6 +133,9 @@ Proof.
   (* TermUniProd *)
   { magic. }
 
+  (* TermUniProdProp *)
+  { magic. }
+
   (* TermUniId *)
   { magic. }
 
@@ -147,7 +151,13 @@ Proof.
   (* TermUniSimProd *)
   { magic. }
 
+  (* TermUniSimProdProp *)
+  { magic. }
+
   (* TermUniUni *)
+  { magic. }
+
+  (* TermUniProp *)
   { magic. }
 Qed.
 
@@ -271,6 +281,12 @@ Proof.
     - magic.
   }
 
+  (* ElProdProp *)
+  { split.
+    - magic.
+    - magic.
+  }
+
   (* ElId *)
   { split.
     - magic.
@@ -307,7 +323,19 @@ Proof.
     - magic.
   }
 
+  (* ElSimProdProp *)
+  { split.
+    - magic.
+    - magic.
+  }
+
   (* ElUni *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* ElProp *)
   { split.
     - magic.
     - magic.
@@ -786,6 +814,13 @@ Proof.
         Unshelve. all: try apply CtxRefl. all:strictmagic.
     }
 
+  (* EqSubstUniProdProp *)
+  - { split.
+      - magic.
+      - magic.
+        Unshelve. all: try apply CtxRefl. all:strictmagic.
+    }
+
   (* EqSubstUniId *)
   - { split.
       - magic.
@@ -817,13 +852,31 @@ Proof.
       - magic.
     }
 
+  (* EqSubstUniSimProdProp *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
   (* EqSubstUniUni *)
   - { split.
       - magic.
       - magic.
     }
 
+  (* EqSubstUniProp *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
   (* CongUniProd *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* CongUniProdProp *)
   - { split.
       - magic.
       - magic.
@@ -836,6 +889,12 @@ Proof.
     }
 
   (* CongUniSimProd *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* CongUniSimProdProp *)
   - { split.
       - magic.
       - magic.

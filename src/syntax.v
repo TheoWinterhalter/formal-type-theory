@@ -1,3 +1,9 @@
+(* Universe levels *)
+Inductive level : Type :=
+| uni : nat -> level
+| prop : level
+.
+
 Inductive context : Type :=
      | ctxempty : context
      | ctxextend : context -> type -> context
@@ -10,8 +16,7 @@ with type : Type :=
      | Unit : type
      | Bool : type
      | SimProd : type -> type -> type
-     | Uni : nat -> type
-     (* TODO: Add a Prop universe *)
+     | Uni : level -> type
      | El : term -> type
 
 with term : Type :=
@@ -29,13 +34,13 @@ with term : Type :=
      | pair : type -> type -> term -> term -> term
      | proj1 : type -> type -> term -> term
      | proj2 : type -> type -> term -> term
-     | uniProd : nat -> term -> term -> term
-     | uniId : nat -> term -> term -> term -> term
-     | uniEmpty : nat -> term
-     | uniUnit : nat -> term
+     | uniProd : level -> level -> term -> term -> term
+     | uniId : level -> term -> term -> term -> term
+     | uniEmpty : level -> term
+     | uniUnit : level -> term
      | uniBool : nat -> term
-     | uniSimProd : nat -> term -> term -> term
-     | uniUni : nat -> term
+     | uniSimProd : level -> level -> term -> term -> term
+     | uniUni : level -> term
 
 with substitution : Type :=
      | sbzero : type -> term -> substitution
