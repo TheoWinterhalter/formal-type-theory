@@ -100,7 +100,8 @@ Definition comp p q r f g :=
 (* This is really illegible so we need to complete the alternative syntax. *)
 
 (* We require extra definitional equalities *)
-Context `{CompIdℙLeft : forall Γ f p q, Stt.isterm Γ f (Hom p q) -> Stt.eqterm Γ (comp p p q (idℙ p) f) f (Hom p q)}.
-(* Context `{CompIdℙRight} *)
+Context `{CompIdℙLeft : forall Γ p q f, Stt.isterm Γ f (Hom p q) -> Stt.eqterm Γ (comp p p q (idℙ p) f) f (Hom p q)}.
+Context `{CompIdℙRight : forall Γ p q f, Stt.isterm Γ f (Hom p q) -> Stt.eqterm Γ (comp p q q f (idℙ q)) f (Hom p q)}.
+Context `{CompℙAssoc : forall Γ p q r s f g h, Stt.isterm Γ f (Hom p q) -> Stt.isterm Γ g (Hom q r) -> Stt.isterm Γ h (Hom r s) -> Stt.eqterm Γ (comp p q s f (comp q r s g h)) (comp p r s (comp p q r f g) h) (Hom p s)}.
 
 End Translation.
