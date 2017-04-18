@@ -11,8 +11,6 @@ Require Import syntax.
 Require Import tt.
 Require Import checking_tactics.
 
-Require Import String.
-
 (* Source type theory *)
 Module Stt.
 
@@ -108,19 +106,39 @@ Context `{CompℙAssoc : forall Γ p q r s f g h, Stt.isterm Γ f (Hom p q) -> S
 
 (* We also introduce the notion of forcing context *)
 Inductive fctx :=
-| cond : string -> fctx
+| cond : fctx
 | fxvar : fctx -> fctx
-| fxhom : fctx -> string -> string -> fctx.
+| fxhom : fctx -> fctx.
 
 (* As well as a validity judgment for them *)
 Inductive isfctx : context -> fctx -> Type :=
-| valid_cond : forall p, isfctx ctxempty (cond p)
-| valid_fxhom : forall Γ σ q f, isfctx Γ σ -> isfctx Γ (fxhom σ q f)
-| valid_fxvar : forall Γ σ A, isfctx Γ σ -> isfctx (ctxextend Γ A) (fxvar σ).
+| valid_cond : isfctx ctxempty cond
+| valid_fxvar : forall Γ σ A, isfctx Γ σ -> isfctx (ctxextend Γ A) (fxvar σ)
+| valid_fxhom : forall Γ σ, isfctx Γ σ -> isfctx Γ (fxhom σ).
+
+(* Last condition of a forcing context *)
+Fixpoint _last_cond (o : nat) (σ : fctx) : nat :=
+  match σ with
+  | cond => o
+  | fxvar σ => _last_cond (S o) σ
+  | fxhom σ => o
+  end.
+
+Definition last_cond σ := _last_cond 0 σ.
+
+(* Morphism of a variable *)
+(* Fixpoint morph (σ : fctx) (x : nat) : term := *)
+(*   match σ, x with *)
+(*   | cond, _ => (idℙ (var o)) *)
+(*   | fxvar σ, 0 => (idℙ (last_cond σ)) *)
+(*   | fxvar σ, (S x) => morph σ x *)
+(*   | fxhom σ, x => comp ? ? ? (morph σ x (* ?? x-1 we'd like, no? *)) (var 0). *)
+(*                       (* maybe not var 0, but rather an offset? *) *)
+
+(* Translation *)
 
 (* Notation "'λ' (q f : σ). M" := (lam (El ℙ) ? ?) *)
 
-(* Translation *)
 (* Fixpoint trans_ctx (σ : fctx) (Γ : context) : context := *)
 (*   match Γ with *)
 (*   | Uni l => lam (El ℙ) ? (lam (Hom ? (var 0))) *)
