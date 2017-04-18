@@ -24,4 +24,7 @@ uniqueness.v
 
 # substitution_elim.v
 
+# Translations (examples/applications)
+
 negfunext.v
+forcing.v
