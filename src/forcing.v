@@ -137,15 +137,20 @@ Definition last_cond σ := _last_cond 0 σ.
 
 (* Translation *)
 
-(* Notation "'λ' (q f : σ). M" := (lam (El ℙ) ? ?) *)
-
 Axiom todo : forall {A}, A.
 
 Reserved Notation "[[ A ]] σ" (at level 5).
+Reserved Notation "[[ A ]]! σ" (at level 5).
 
-Fixpoint trans_type (σ : fctx) (A : type) {struct A} : term :=
+Definition flam (σ : fctx) (u : term) : term :=
+  lam (El ℙ) todo (lam (Hom (var (S (last_cond σ))) (var 0)) todo u).
+
+Definition fProd (σ : fctx) (A : type) : type :=
+  Prod (El ℙ) (Prod (Hom (var (S (last_cond σ))) (var 0)) A).
+
+Fixpoint trans_type (σ : fctx) (A : type) {struct A} : type :=
   match A with
-  | Prod A B => lam (El ℙ) todo (lam (Hom todo (var 0)) todo todo)
+  | Prod A B => Prod ([[ A ]]! (fxpath σ)) ([[ B ]] (fxvar (fxpath σ)))
 
   | _ => todo
 
@@ -162,14 +167,22 @@ with trans_subst (σ : fctx) (ρ : substitution) {struct ρ} : substitution :=
   end
 
 where "[[ A ]] σ" :=
-  (El (app (app (trans_type σ A) todo todo (var (last_cond σ)))
-           todo
-           todo
-           (idℙ (var (last_cond σ)))))
+  (Subst (Subst (trans_type σ A)
+                (sbshift (Hom (var (S (last_cond σ)))
+                              (var 0))
+                         (sbzero (El ℙ)
+                                 (var (S (last_cond σ))))))
+         (sbzero (Hom (var (S (last_cond σ))) (var (S (last_cond σ))))
+                 (idℙ (var (S (last_cond σ))))))
+
+  (* (El (app (app (trans_type σ A) todo todo (var (last_cond σ))) *)
+  (*          todo *)
+  (*          todo *)
+  (*          (idℙ (var (last_cond σ))))) *)
 
 (* where "[ u ]! σ" := ? *)
 
-(* where "[[ A ]]! σ" := ? *).
+and "[[ A ]]! σ" := (fProd σ (trans_type (fxpath σ) A)).
 
 Fixpoint trans_ctx (σ : fctx) (Γ : context) : context :=
   match Γ, σ with
