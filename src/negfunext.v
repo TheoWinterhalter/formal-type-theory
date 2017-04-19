@@ -25,6 +25,7 @@ Module Stt.
   Local Instance hasProp : config.WithProp
     := {| config.withpropFlag := config.No |}.
   Context `{ConfigWithJ : config.WithJ}.
+  Context `{ConfigEmpty : config.WithEmpty}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -54,6 +55,7 @@ Module Ttt.
   Context `{ConfigUniverses : config.Universes}.
   Context `{ConfigWithProp : config.WithProp}.
   Context `{ConfigWithJ : config.WithJ}.
+  Context `{ConfigEmpty : config.WithEmpty}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -75,6 +77,7 @@ Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
 Context `{ConfigWithJ : config.WithJ}.
+Context `{ConfigEmpty : config.WithEmpty}.
 
 Fixpoint trans_type (A : type) : type :=
   match A with
@@ -877,10 +880,10 @@ Proof.
         }
 
       (* EqTermExfalso *)
-      - { config apply @EqTermExfalso with (w := trans_term w).
+      - { config apply @EqTermExfalso with (w := trans_term w0).
           - ih.
           - ih.
-          - now apply (trans_isterm G w Empty).
+          - now apply (trans_isterm G w0 Empty).
         }
 
       (* UnitEta *)

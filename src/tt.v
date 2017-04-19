@@ -13,6 +13,7 @@ Context `{ConfigProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
 Context `{ConfigWithJ : config.WithJ}.
+Context `{ConfigEmpty : config.WithEmpty}.
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
@@ -33,6 +34,9 @@ Notation "'withprop' r" :=
 
 Notation "'withj' r" :=
   (forall { _ : withjFlag }, r) (only parsing, at level 97).
+
+Notation "'withempty' r" :=
+  (forall { _ : withemptyFlag }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
@@ -171,7 +175,7 @@ with istype : context -> type -> Type :=
        endrule
 
      | TyEmpty :
-       rule
+       withempty rule
          parameters: {G},
          premise: isctx G
          conclusion:
@@ -369,7 +373,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermExfalso :
-       rule
+       withempty rule
          parameters: {G A u},
          precond: isctx G
          premise: istype G A
@@ -482,7 +486,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUniEmpty :
-       universe rule
+       withempty universe rule
          parameters: {G n},
          premise: isctx G
          conclusion:
@@ -922,7 +926,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | EqTySubstEmpty :
-       rule
+       withempty rule
          parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -958,7 +962,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | EqTyExfalso :
-       rule
+       withempty rule
          parameters: {G A B u},
          precond: isctx G
          premise: istype G A
@@ -1105,7 +1109,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElEmpty :
-       universe rule
+       withempty universe rule
          parameters: {G n},
          premise: isctx G
          conclusion:
@@ -1500,7 +1504,7 @@ with eqterm : context -> term -> term -> type -> Type :=
 
      (* This rule is subsumed by EqTermExfalso *)
      | EqSubstExfalso :
-       rule
+       withempty rule
          parameters: {G D A u sbs},
          precond: isctx G
          precond: isctx D
@@ -1574,7 +1578,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqTermExfalso :
-       rule
+       withempty rule
          parameters: {G A u v w},
          precond: isctx G
          precond: istype G A
@@ -2164,7 +2168,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUniEmpty :
-       universe rule
+       withempty universe rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
          precond: isctx G

@@ -26,5 +26,9 @@ Class WithJ := {
   withjFlag : Type
 }.
 
+Class WithEmpty := {
+  withemptyFlag : Type
+}.
+
 Inductive Yes : Type := yes.
 Inductive No : Type := .
