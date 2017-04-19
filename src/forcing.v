@@ -139,12 +139,37 @@ Definition last_cond σ := _last_cond 0 σ.
 
 (* Notation "'λ' (q f : σ). M" := (lam (El ℙ) ? ?) *)
 
-Fixpoint trans_type (σ : fctx) (A : type) : type
+Axiom todo : forall {A}, A.
 
-with trans_term (σ : fctx) (u : term) : term
+Reserved Notation "[[ A ]] σ" (at level 5).
 
-with trans_subst (σ : fctx) (ρ : substitution) : substitution.
-Admitted.
+Fixpoint trans_type (σ : fctx) (A : type) {struct A} : term :=
+  match A with
+  | Prod A B => lam (El ℙ) todo (lam (Hom todo (var 0)) todo todo)
+
+  | _ => todo
+
+  end
+
+with trans_term (σ : fctx) (u : term) {struct u} : term :=
+  match u with
+  | _ => todo
+  end
+
+with trans_subst (σ : fctx) (ρ : substitution) {struct ρ} : substitution :=
+  match ρ with
+  | _ => todo
+  end
+
+where "[[ A ]] σ" :=
+  (El (app (app (trans_type σ A) todo todo (var (last_cond σ)))
+           todo
+           todo
+           (idℙ (var (last_cond σ)))))
+
+(* where "[ u ]! σ" := ? *)
+
+(* where "[[ A ]]! σ" := ? *).
 
 Fixpoint trans_ctx (σ : fctx) (Γ : context) : context :=
   match Γ, σ with
@@ -156,7 +181,7 @@ Fixpoint trans_ctx (σ : fctx) (Γ : context) : context :=
               (Hom (var (S (last_cond σ))) (var 0))
 
   | ctxextend Γ A, fxvar σ =>
-    ctxextend (trans_ctx σ Γ) (trans_type σ A)
+    ctxextend (trans_ctx σ Γ) ([[A]] σ)
 
   (* Case that can't happen when considering valid forcing contexts *)
   | _, _ => ctxempty
