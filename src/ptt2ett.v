@@ -12,6 +12,7 @@ Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigWithJ : config.WithJ}.
 
 Fixpoint sane_isctx G (P : ptt.isctx G) : ett.isctx G
 

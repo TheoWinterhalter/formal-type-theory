@@ -24,6 +24,7 @@ Module Stt.
   Context `{ConfigUniverses : config.Universes}.
   Local Instance hasProp : config.WithProp
     := {| config.withpropFlag := config.No |}.
+  Context `{ConfigWithJ : config.WithJ}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -52,6 +53,7 @@ Module Ttt.
     := {| config.prodetaFlag := config.No |}.
   Context `{ConfigUniverses : config.Universes}.
   Context `{ConfigWithProp : config.WithProp}.
+  Context `{ConfigWithJ : config.WithJ}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -72,6 +74,7 @@ Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigWithJ : config.WithJ}.
 
 Fixpoint trans_type (A : type) : type :=
   match A with
@@ -357,7 +360,7 @@ Proof.
           - ih.
           - now apply (trans_istype (ctxextend (ctxextend G A)
             (Id (Subst A (sbweak A)) (subst u (sbweak A)) (var 0))) C).
-          - now apply (trans_isterm G w
+          - now apply (trans_isterm G w0
          (Subst
             (Subst C
                (sbshift (Id (Subst A (sbweak A)) (subst u (sbweak A)) (var 0))

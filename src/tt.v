@@ -12,6 +12,7 @@ Context `{ConfigSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigWithJ : config.WithJ}.
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
@@ -29,6 +30,9 @@ Notation "'universe' r" :=
 
 Notation "'withprop' r" :=
   (forall { _ : withpropFlag }, r) (only parsing, at level 97).
+
+Notation "'withj' r" :=
+  (forall { _ : withjFlag }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
@@ -311,7 +315,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermJ :
-       rule
+       withj rule
          parameters: {G A C u v w p},
          precond: isctx G
          precond: istype G A
@@ -1416,7 +1420,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstJ :
-       rule
+       withj rule
          parameters: {G D A C u v w p sbs},
          precond: isctx G
          precond: isctx D
@@ -1669,7 +1673,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | JRefl :
-       rule
+       withj rule
          parameters: {G A C u w},
          precond: isctx G
          precond: istype G A
@@ -1781,7 +1785,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongJ :
-       rule
+       withj rule
          parameters: {G A1 A2 C1 C2 u1 u2 v1 v2 w1 w2 p1 p2},
          precond: isctx G
          precond: istype G A1

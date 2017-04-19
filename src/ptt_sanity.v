@@ -15,6 +15,7 @@ Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigWithJ : config.WithJ}.
 
 Axiom cheating : forall A, A.
 

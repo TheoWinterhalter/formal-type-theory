@@ -22,5 +22,9 @@ Class WithProp := {
   withpropFlag : Type
 }.
 
+Class WithJ := {
+  withjFlag : Type
+}.
+
 Inductive Yes : Type := yes.
 Inductive No : Type := .

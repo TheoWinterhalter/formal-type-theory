@@ -14,6 +14,7 @@ Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigWithJ : config.WithJ}.
 
 (* Some tactic to compose substitutions. *)
 Lemma eqtype_subst_left :
@@ -135,6 +136,7 @@ Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigWithJ : config.WithJ}.
 
 Lemma EqCompZero :
   forall {G D A u sbs},
@@ -1183,6 +1185,7 @@ Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigWithJ : config.WithJ}.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
    some ZeroShift3 if ever we add a constructor that has three variables. *)

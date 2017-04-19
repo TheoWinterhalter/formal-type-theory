@@ -9,6 +9,7 @@ Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigWithJ : config.WithJ}.
 
 Definition isctx := isctx.
 Definition issubst := issubst.

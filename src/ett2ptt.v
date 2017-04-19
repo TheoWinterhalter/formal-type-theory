@@ -12,6 +12,7 @@ Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigWithJ : config.WithJ}.
 
 (* Renaming ptt_sanity lemmata for readability. *)
 Definition ptt_sane_issubst := ptt_sanity.sane_issubst.

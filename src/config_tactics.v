@@ -20,6 +20,8 @@ Ltac doConfig :=
       let H := fresh "universesFlag" in intros H
     | withpropFlag =>
       let H := fresh "withpropFlag" in intros H
+    | withjFlag =>
+      let H := fresh "withjFlag" in intros H
     | _ => idtac
     end
   | |- ?P =>
@@ -32,6 +34,7 @@ Ltac doConfig :=
   | H : prodetaFlag |- prodetaFlag => exact H
   | H : universesFlag |- universesFlag => exact H
   | H : withpropFlag |- withpropFlag => exact H
+  | H : withjFlag |- withjFlag => exact H
   | _ => idtac
   end ;
   (* Configure the hypotheses *)
@@ -64,6 +67,10 @@ Ltac doConfig :=
      | @withpropFlag ?F =>
        match goal with
        | R : @withpropFlag F |- _ => specialize (H R)
+       end
+     | @withjFlag ?F =>
+       match goal with
+       | R : @withjFlag F |- _ => specialize (H R)
        end
      end
    | H : ?P |- _ =>

@@ -20,6 +20,7 @@ Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigWithJ : config.WithJ}.
 
 Fixpoint TermAbsInversion {G A B u T}
          (H : ptt.isterm G (lam A B u) T) {struct H} :
