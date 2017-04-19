@@ -108,20 +108,20 @@ Context `{CompℙAssoc : forall Γ p q r s f g h, Stt.isterm Γ f (Hom p q) -> S
 Inductive fctx :=
 | cond : fctx
 | fxvar : fctx -> fctx
-| fxhom : fctx -> fctx.
+| fxpath : fctx -> fctx.
 
 (* As well as a validity judgment for them *)
 Inductive isfctx : context -> fctx -> Type :=
 | valid_cond : isfctx ctxempty cond
 | valid_fxvar : forall Γ σ A, isfctx Γ σ -> isfctx (ctxextend Γ A) (fxvar σ)
-| valid_fxhom : forall Γ σ, isfctx Γ σ -> isfctx Γ (fxhom σ).
+| valid_fxpath : forall Γ σ, isfctx Γ σ -> isfctx Γ (fxpath σ).
 
 (* Last condition of a forcing context *)
 Fixpoint _last_cond (o : nat) (σ : fctx) : nat :=
   match σ with
   | cond => o
   | fxvar σ => _last_cond (S o) σ
-  | fxhom σ => o
+  | fxpath σ => o
   end.
 
 Definition last_cond σ := _last_cond 0 σ.
@@ -132,15 +132,35 @@ Definition last_cond σ := _last_cond 0 σ.
 (*   | cond, _ => (idℙ (var o)) *)
 (*   | fxvar σ, 0 => (idℙ (last_cond σ)) *)
 (*   | fxvar σ, (S x) => morph σ x *)
-(*   | fxhom σ, x => comp ? ? ? (morph σ x (* ?? x-1 we'd like, no? *)) (var 0). *)
+(*   | fxpath σ, x => comp ? ? ? (morph σ x (* ?? x-1 we'd like, no? *)) (var 0). *)
 (*                       (* maybe not var 0, but rather an offset? *) *)
 
 (* Translation *)
 
 (* Notation "'λ' (q f : σ). M" := (lam (El ℙ) ? ?) *)
 
-(* Fixpoint trans_ctx (σ : fctx) (Γ : context) : context := *)
-(*   match Γ with *)
-(*   | Uni l => lam (El ℙ) ? (lam (Hom ? (var 0))) *)
+Fixpoint trans_type (σ : fctx) (A : type) : type
+
+with trans_term (σ : fctx) (u : term) : term
+
+with trans_subst (σ : fctx) (ρ : substitution) : substitution.
+Admitted.
+
+Fixpoint trans_ctx (σ : fctx) (Γ : context) : context :=
+  match Γ, σ with
+  | ctxempty, cond =>
+    ctxextend ctxempty (El ℙ)
+
+  | Γ, fxpath σ =>
+    ctxextend (ctxextend (trans_ctx σ Γ) (El ℙ))
+              (Hom (var (S (last_cond σ))) (var 0))
+
+  | ctxextend Γ A, fxvar σ =>
+    ctxextend (trans_ctx σ Γ) (trans_type σ A)
+
+  (* Case that can't happen when considering valid forcing contexts *)
+  | _, _ => ctxempty
+
+  end.
 
 End Translation.
