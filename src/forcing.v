@@ -94,31 +94,87 @@ Section Translation.
 (* We give ourselves a category in the source *)
 (* Note: This should also hold in the target by equivalence ett/ptt. *)
 Context `{ℙ : term}.
-Context `{hℙ : Stt.isterm ctxempty ℙ (Uni (uni 0))}.
+Context `{hℙ : Ttt.isterm ctxempty ℙ (Uni (uni 0))}.
 Context `{_Hom : term}.
-Context `{hHom : Stt.isterm ctxempty _Hom (Arrow (El ℙ) (Arrow (El ℙ) (Uni (uni 0))))}.
+Context `{
+  hHom : Ttt.isterm ctxempty _Hom (Arrow (El ℙ) (Arrow (El ℙ) (Uni (uni 0))))
+}.
 
 Definition Hom p q :=
-  El (app (app _Hom (El ℙ) (Arrow (El ℙ) (Uni (uni 0))) p) (El ℙ) (Uni (uni 0)) q).
+  El (app (app _Hom (El ℙ) (Arrow (El ℙ) (Uni (uni 0))) p)
+          (El ℙ)
+          (Uni (uni 0))
+          q).
 
 Context `{_idℙ : term}.
-Context `{hidℙ : Stt.isterm ctxempty _idℙ (Prod (El ℙ) (Hom (var 0) (var 0)))}.
+Context `{hidℙ : Ttt.isterm ctxempty _idℙ (Prod (El ℙ) (Hom (var 0) (var 0)))}.
 
 Definition idℙ p :=
   app _idℙ (El ℙ) (Hom (var 0) (var 0)) p.
 
 Context `{_comp : term}.
-Context `{hcomp : Stt.isterm ctxempty _comp (Prod (El ℙ) (Prod (El ℙ) (Prod (El ℙ) (Arrow (Hom (var 2) (var 1)) (Arrow (Hom (var 1) (var 0)) (Hom (var 2) (var 0)))))))}.
+Context `{
+  hcomp :
+    Ttt.isterm ctxempty
+               _comp
+               (Prod (El ℙ)
+                     (Prod (El ℙ)
+                           (Prod (El ℙ)
+                                 (Arrow (Hom (var 2) (var 1))
+                                        (Arrow (Hom (var 1) (var 0))
+                                               (Hom (var 2) (var 0)))))))
+}.
 
 Definition comp p q r f g :=
-  app (app (app (app (app _comp (El ℙ) (Prod (El ℙ) (Arrow (Hom (var 2) (var 1)) (Arrow (Hom (var 1) (var 0)) (Hom (var 2) (var 0))))) p) (El ℙ) (Prod (El ℙ) (Arrow (Hom p (var 1)) (Arrow (Hom (var 1) (var 0)) (Hom p (var 0))))) q) (El ℙ) (Arrow (Hom p q) (Arrow (Hom q (var 0)) (Hom p (var 0)))) r) (Hom p q) (Arrow (Hom q r) (Hom p r)) f) (Hom q r) (Hom p r) g.
+  app (app (app (app (app _comp
+                          (El ℙ)
+                          (Prod (El ℙ)
+                                (Arrow (Hom (var 2) (var 1))
+                                       (Arrow (Hom (var 1) (var 0))
+                                              (Hom (var 2) (var 0)))))
+                          p)
+                     (El ℙ)
+                     (Prod (El ℙ)
+                           (Arrow (Hom p (var 1))
+                                  (Arrow (Hom (var 1) (var 0))
+                                         (Hom p (var 0)))))
+                     q)
+                (El ℙ)
+                (Arrow (Hom p q)
+                       (Arrow (Hom q (var 0)) (Hom p (var 0)))) r)
+           (Hom p q)
+           (Arrow (Hom q r) (Hom p r))
+           f)
+      (Hom q r)
+      (Hom p r)
+      g.
 
 (* This is really illegible so we need to complete the alternative syntax. *)
 
 (* We require extra definitional equalities *)
-Context `{CompIdℙLeft : forall Γ p q f, Stt.isterm Γ f (Hom p q) -> Stt.eqterm Γ (comp p p q (idℙ p) f) f (Hom p q)}.
-Context `{CompIdℙRight : forall Γ p q f, Stt.isterm Γ f (Hom p q) -> Stt.eqterm Γ (comp p q q f (idℙ q)) f (Hom p q)}.
-Context `{CompℙAssoc : forall Γ p q r s f g h, Stt.isterm Γ f (Hom p q) -> Stt.isterm Γ g (Hom q r) -> Stt.isterm Γ h (Hom r s) -> Stt.eqterm Γ (comp p q s f (comp q r s g h)) (comp p r s (comp p q r f g) h) (Hom p s)}.
+Context `{
+  CompIdℙLeft :
+    forall Γ p q f,
+      Ttt.isterm Γ f (Hom p q) ->
+      Ttt.eqterm Γ (comp p p q (idℙ p) f) f (Hom p q)
+}.
+Context `{
+  CompIdℙRight :
+    forall Γ p q f,
+      Ttt.isterm Γ f (Hom p q) ->
+      Ttt.eqterm Γ (comp p q q f (idℙ q)) f (Hom p q)
+}.
+Context `{
+  CompℙAssoc :
+    forall Γ p q r s f g h,
+      Ttt.isterm Γ f (Hom p q) ->
+      Ttt.isterm Γ g (Hom q r) ->
+      Ttt.isterm Γ h (Hom r s) ->
+      Ttt.eqterm Γ
+                 (comp p q s f (comp q r s g h))
+                 (comp p r s (comp p q r f g) h)
+                 (Hom p s)
+}.
 
 (* We also introduce the notion of forcing context *)
 Inductive fctx :=
@@ -238,15 +294,28 @@ Proof.
 
           (* valid_cond *)
           - simpl. capply CtxExtend.
-            (* apply hℙ. *)
-            (* This is true but we need to convince Coq it can apply the
-             equivalence between Ett and Ptt here. *)
-            todo.
+            ceapply TyEl.
+            apply hℙ.
 
           (* valid_fxpath *)
           - simpl. capply CtxExtend.
-            (* Same kind of problem here... *)
-            todo.
+            ceapply TyEl.
+            ceapply TermTyConv ; [ ceapply TermApp | .. ].
+            + ceapply TermTyConv ; [ ceapply TermApp | .. ].
+              * (* apply hHom. *)
+                (* Hold modulo the context, we could always use weakenings
+                   here, but it feels unnecessary... *)
+                todo.
+              * ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
+                -- todo.
+                -- ceapply TyEl.
+                   todo.
+                -- todo.
+              * trymagic. all:todo.
+            + ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
+              * todo.
+              * todo.
+            + trymagic. todo.
         }
 
       (* CtxExtend *)
@@ -257,7 +326,10 @@ Proof.
             pose (hh := sound_trans_type σ0 G A H2 i0).
             ceapply TySubst.
             + capply SubstZero.
-              todo. (* again *)
+              ceapply TermTyConv ; [ ceapply TermApp | .. ].
+              * (* apply hidℙ. *) todo.
+              * todo.
+              * todo.
             + ceapply TySubst.
               * ceapply SubstCtxConv ; [ ceapply SubstShift | .. ].
                 -- ceapply SubstZero.
