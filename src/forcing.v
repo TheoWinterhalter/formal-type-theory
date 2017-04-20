@@ -28,6 +28,14 @@ Module Stt.
     := {| config.universesFlag := config.Yes |}.
   Local Instance hasProp : config.WithProp
     := {| config.withpropFlag := config.Yes |}.
+  Local Instance hasJ : config.WithJ
+    := {| config.withjFlag := config.No |}.
+  Local Instance hasEmpty : config.WithEmpty
+    := {| config.withemptyFlag := config.No |}.
+  Local Instance hasUnit : config.WithUnit
+    := {| config.withunitFlag := config.No |}.
+  Local Instance hasBool : config.WithBool
+    := {| config.withboolFlag := config.No |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -59,6 +67,14 @@ Module Ttt.
     := {| config.universesFlag := config.Yes |}.
   Local Instance hasProp : config.WithProp
     := {| config.withpropFlag := config.Yes |}.
+  Local Instance hasJ : config.WithJ
+    := {| config.withjFlag := config.No |}.
+  Local Instance hasEmpty : config.WithEmpty
+    := {| config.withemptyFlag := config.No |}.
+  Local Instance hasUnit : config.WithUnit
+    := {| config.withunitFlag := config.No |}.
+  Local Instance hasBool : config.WithBool
+    := {| config.withboolFlag := config.No |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
