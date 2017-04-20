@@ -26,6 +26,8 @@ Ltac doConfig :=
       let H := fresh "withemptyFlag" in intros H
     | withunitFlag =>
       let H := fresh "withunitFlag" in intros H
+    | withboolFlag =>
+      let H := fresh "withboolFlag" in intros H
     | _ => idtac
     end
   | |- ?P =>
@@ -41,6 +43,7 @@ Ltac doConfig :=
   | H : withjFlag |- withjFlag => exact H
   | H : withemptyFlag |- withemptyFlag => exact H
   | H : withunitFlag |- withunitFlag => exact H
+  | H : withboolFlag |- withboolFlag => exact H
   | _ => idtac
   end ;
   (* Configure the hypotheses *)
@@ -85,6 +88,10 @@ Ltac doConfig :=
      | @withunitFlag ?F =>
        match goal with
        | R : @withunitFlag F |- _ => specialize (H R)
+       end
+     | @withboolFlag ?F =>
+       match goal with
+       | R : @withboolFlag F |- _ => specialize (H R)
        end
      end
    | H : ?P |- _ =>

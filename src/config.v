@@ -34,5 +34,9 @@ Class WithUnit := {
   withunitFlag : Type
 }.
 
+Class WithBool := {
+  withboolFlag : Type
+}.
+
 Inductive Yes : Type := yes.
 Inductive No : Type := .

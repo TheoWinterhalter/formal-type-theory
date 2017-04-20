@@ -27,6 +27,7 @@ Module Stt.
   Context `{ConfigWithJ : config.WithJ}.
   Context `{ConfigEmpty : config.WithEmpty}.
   Context `{ConfigUnit : config.WithUnit}.
+  Context `{ConfigBool : config.WithBool}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -58,6 +59,8 @@ Module Ttt.
   Context `{ConfigWithJ : config.WithJ}.
   Context `{ConfigEmpty : config.WithEmpty}.
   Context `{ConfigUnit : config.WithUnit}.
+  Local Instance hasBool : config.WithBool
+    := {| config.withboolFlag := config.Yes |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -81,6 +84,7 @@ Context `{ConfigWithProp : config.WithProp}.
 Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
+Context `{ConfigBool : config.WithBool}.
 
 Fixpoint trans_type (A : type) : type :=
   match A with

@@ -22,6 +22,7 @@ Context `{ConfigWithProp : config.WithProp}.
 Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
+Context `{ConfigBool : config.WithBool}.
 
 Theorem sane_issubst sbs G D :
   issubst sbs G D -> isctx G * isctx D.
