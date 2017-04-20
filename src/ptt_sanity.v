@@ -17,6 +17,7 @@ Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
 Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
+Context `{ConfigUnit : config.WithUnit}.
 
 Axiom cheating : forall A, A.
 

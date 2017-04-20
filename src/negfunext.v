@@ -26,6 +26,7 @@ Module Stt.
     := {| config.withpropFlag := config.No |}.
   Context `{ConfigWithJ : config.WithJ}.
   Context `{ConfigEmpty : config.WithEmpty}.
+  Context `{ConfigUnit : config.WithUnit}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -56,6 +57,7 @@ Module Ttt.
   Context `{ConfigWithProp : config.WithProp}.
   Context `{ConfigWithJ : config.WithJ}.
   Context `{ConfigEmpty : config.WithEmpty}.
+  Context `{ConfigUnit : config.WithUnit}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -78,6 +80,7 @@ Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
 Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
+Context `{ConfigUnit : config.WithUnit}.
 
 Fixpoint trans_type (A : type) : type :=
   match A with

@@ -30,5 +30,9 @@ Class WithEmpty := {
   withemptyFlag : Type
 }.
 
+Class WithUnit := {
+  withunitFlag : Type
+}.
+
 Inductive Yes : Type := yes.
 Inductive No : Type := .

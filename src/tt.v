@@ -14,6 +14,7 @@ Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
 Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
+Context `{ConfigUnit : config.WithUnit}.
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
@@ -37,6 +38,9 @@ Notation "'withj' r" :=
 
 Notation "'withempty' r" :=
   (forall { _ : withemptyFlag }, r) (only parsing, at level 97).
+
+Notation "'withunit' r" :=
+  (forall { _ : withunitFlag }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
@@ -183,7 +187,7 @@ with istype : context -> type -> Type :=
        endrule
 
      | TyUnit :
-       rule
+       withunit rule
          parameters: {G},
          premise: isctx G
          conclusion:
@@ -383,7 +387,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUnit :
-       rule
+       withunit rule
          parameters: {G},
          premise: isctx G
          conclusion:
@@ -494,7 +498,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUniUnit :
-       universe rule
+       withunit universe rule
          parameters: {G n},
          premise: isctx G
          conclusion:
@@ -938,7 +942,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | EqTySubstUnit :
-       rule
+       withunit rule
          parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -1119,7 +1123,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElUnit :
-       universe rule
+       withunit universe rule
          parameters: {G n},
          premise: isctx G
          conclusion:
@@ -1519,7 +1523,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUnit :
-       rule
+       withunit rule
          parameters: {G D sbs},
          precond: isctx G
          precond: isctx D
@@ -1590,7 +1594,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | UnitEta :
-       rule
+       withunit rule
          parameters: {G u v},
          precond: isctx G
          premise: isterm G u Unit
@@ -2181,7 +2185,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUniUnit :
-       universe rule
+       withunit universe rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
          precond: isctx G
