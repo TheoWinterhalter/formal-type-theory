@@ -94,10 +94,18 @@ Section Translation.
 (* We give ourselves a category in the source *)
 (* Note: This should also hold in the target by equivalence ett/ptt. *)
 Context `{ℙ : term}.
-Context `{hℙ : Ttt.isterm ctxempty ℙ (Uni (uni 0))}.
+Context `{
+  hℙ :
+    forall {Γ},
+      Ttt.isctx Γ ->
+      Ttt.isterm Γ ℙ (Uni (uni 0))
+}.
 Context `{_Hom : term}.
 Context `{
-  hHom : Ttt.isterm ctxempty _Hom (Arrow (El ℙ) (Arrow (El ℙ) (Uni (uni 0))))
+  hHom :
+    forall {Γ},
+      Ttt.isctx Γ ->
+      Ttt.isterm Γ _Hom (Arrow (El ℙ) (Arrow (El ℙ) (Uni (uni 0))))
 }.
 
 Definition Hom p q :=
@@ -107,7 +115,12 @@ Definition Hom p q :=
           q).
 
 Context `{_idℙ : term}.
-Context `{hidℙ : Ttt.isterm ctxempty _idℙ (Prod (El ℙ) (Hom (var 0) (var 0)))}.
+Context `{
+  hidℙ :
+    forall {Γ},
+      Ttt.isctx Γ ->
+      Ttt.isterm Γ _idℙ (Prod (El ℙ) (Hom (var 0) (var 0)))
+}.
 
 Definition idℙ p :=
   app _idℙ (El ℙ) (Hom (var 0) (var 0)) p.
@@ -115,14 +128,16 @@ Definition idℙ p :=
 Context `{_comp : term}.
 Context `{
   hcomp :
-    Ttt.isterm ctxempty
-               _comp
-               (Prod (El ℙ)
-                     (Prod (El ℙ)
-                           (Prod (El ℙ)
-                                 (Arrow (Hom (var 2) (var 1))
-                                        (Arrow (Hom (var 1) (var 0))
-                                               (Hom (var 2) (var 0)))))))
+    forall {Γ},
+      Ttt.isctx Γ ->
+      Ttt.isterm Γ
+                 _comp
+                 (Prod (El ℙ)
+                       (Prod (El ℙ)
+                             (Prod (El ℙ)
+                                   (Arrow (Hom (var 2) (var 1))
+                                          (Arrow (Hom (var 1) (var 0))
+                                                 (Hom (var 2) (var 0)))))))
 }.
 
 Definition comp p q r f g :=
@@ -154,19 +169,19 @@ Definition comp p q r f g :=
 (* We require extra definitional equalities *)
 Context `{
   CompIdℙLeft :
-    forall Γ p q f,
+    forall {Γ p q f},
       Ttt.isterm Γ f (Hom p q) ->
       Ttt.eqterm Γ (comp p p q (idℙ p) f) f (Hom p q)
 }.
 Context `{
   CompIdℙRight :
-    forall Γ p q f,
+    forall {Γ p q f},
       Ttt.isterm Γ f (Hom p q) ->
       Ttt.eqterm Γ (comp p q q f (idℙ q)) f (Hom p q)
 }.
 Context `{
   CompℙAssoc :
-    forall Γ p q r s f g h,
+    forall {Γ p q r s f g h},
       Ttt.isterm Γ f (Hom p q) ->
       Ttt.isterm Γ g (Hom q r) ->
       Ttt.isterm Γ h (Hom r s) ->
@@ -175,6 +190,35 @@ Context `{
                  (comp p r s (comp p q r f g) h)
                  (Hom p s)
 }.
+
+(* As well as those due to the presence of explicit substitutions and
+   de Bruijn indices. *)
+Context `{
+  EqSubstℙ :
+    forall {Γ Δ ρ},
+      Ttt.issubst ρ Γ Δ ->
+      Ttt.eqterm Γ (subst ℙ ρ) ℙ (Uni (uni 0))
+}.
+
+Axiom todo : forall {A}, A.
+Ltac todo := apply todo.
+
+Lemma EqTySubstℙ :
+  forall {Γ Δ ρ},
+    Ttt.issubst ρ Γ Δ ->
+    Ttt.eqtype Γ (Subst (El ℙ) ρ) (El ℙ).
+Proof.
+  intros Γ Δ ρ h.
+  ceapply EqTyTrans.
+  - ceapply EqTySym.
+    ceapply ElSubst.
+    + eassumption.
+    + apply hℙ. todo. (* sanity *)
+  - ceapply CongEl.
+    eapply EqSubstℙ.
+    eassumption.
+Defined.
+
 
 (* We also introduce the notion of forcing context *)
 Inductive fctx :=
@@ -208,8 +252,6 @@ Definition last_cond σ := _last_cond 0 σ.
 (*                       (* maybe not var 0, but rather an offset? *) *)
 
 (* Translation *)
-
-Axiom todo : forall {A}, A.
 
 Reserved Notation "[[ A ]] σ" (at level 5).
 Reserved Notation "[ u ]! σ" (at level 5).
@@ -276,8 +318,6 @@ Fixpoint trans_ctx (σ : fctx) (Γ : context) : context :=
 
   end.
 
-Ltac todo := apply todo.
-
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
   Ttt.isctx (trans_ctx σ Γ)
 
@@ -296,16 +336,41 @@ Proof.
           - simpl. capply CtxExtend.
             ceapply TyEl.
             apply hℙ.
+            capply CtxEmpty.
 
           (* valid_fxpath *)
           - simpl. capply CtxExtend.
             ceapply TyEl.
             ceapply TermTyConv ; [ ceapply TermApp | .. ].
             + ceapply TermTyConv ; [ ceapply TermApp | .. ].
-              * (* apply hHom. *)
-                (* Hold modulo the context, we could always use weakenings
-                   here, but it feels unnecessary... *)
-                todo.
+              * ceapply TermTyConv ; [ apply hHom | .. ].
+                -- capply CtxExtend.
+                   ceapply TyEl.
+                   apply hℙ.
+                   todo.
+                -- unfold Arrow.
+                   assert (
+                     Ttt.isterm (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
+                                ℙ
+                                (Uni (uni 0))
+                   ).
+                   { apply hℙ. capply CtxExtend.
+                     ceapply TyEl.
+                     apply hℙ.
+                     todo.
+                   }
+                   trymagic.
+                   ++ eapply EqTySubstℙ.
+                      ceapply SubstWeak.
+                      ceapply TyEl. apply hℙ.
+                      capply CtxExtend.
+                      ceapply TyEl. apply hℙ.
+                      todo.
+                   ++ todo. (* Problem here! *)
+                   ++ eapply EqTySubstℙ.
+                      ceapply SubstWeak.
+                      ceapply TyEl. apply hℙ.
+                      todo.
               * ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
                 -- todo.
                 -- ceapply TyEl.
@@ -315,7 +380,7 @@ Proof.
             + ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
               * todo.
               * todo.
-            + trymagic. todo.
+            + trymagic. all:todo.
         }
 
       (* CtxExtend *)
