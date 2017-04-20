@@ -156,6 +156,7 @@ Definition last_cond σ := _last_cond 0 σ.
 Axiom todo : forall {A}, A.
 
 Reserved Notation "[[ A ]] σ" (at level 5).
+Reserved Notation "[ u ]! σ" (at level 5).
 Reserved Notation "[[ A ]]! σ" (at level 5).
 
 Definition flam (σ : fctx) (u : term) : term :=
@@ -168,7 +169,14 @@ Fixpoint trans_type (σ : fctx) (A : type) {struct A} : type :=
   match A with
   | Prod A B => Prod ([[ A ]]! (fxpath σ)) ([[ B ]] (fxvar (fxpath σ)))
 
-  | _ => todo
+  | Id A u v => Id ([[ A ]] (fxpath σ)) ([ u ]! (fxpath σ)) ([ v ]! (fxpath σ))
+
+  | Subst A ρ => Subst ([[ A ]] (fxpath σ)) (trans_subst (fxpath σ) ρ)
+
+  | Uni l => fProd (fxpath σ) (Uni l)
+
+  (* Case that don't happen given our config *)
+  | _ => Empty
 
   end
 
@@ -191,12 +199,7 @@ where "[[ A ]] σ" :=
          (sbzero (Hom (var (S (last_cond σ))) (var (S (last_cond σ))))
                  (idℙ (var (S (last_cond σ))))))
 
-  (* (El (app (app (trans_type σ A) todo todo (var (last_cond σ))) *)
-  (*          todo *)
-  (*          todo *)
-  (*          (idℙ (var (last_cond σ))))) *)
-
-(* where "[ u ]! σ" := ? *)
+and "[ u ]! σ" := (flam σ (trans_term (fxpath σ) u))
 
 and "[[ A ]]! σ" := (fProd σ (trans_type (fxpath σ) A)).
 
@@ -216,5 +219,67 @@ Fixpoint trans_ctx (σ : fctx) (Γ : context) : context :=
   | _, _ => ctxempty
 
   end.
+
+Ltac todo := apply todo.
+
+Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
+  Ttt.isctx (trans_ctx σ Γ)
+
+with sound_trans_type σ Γ A (hσ : isfctx Γ σ) (H : Stt.istype Γ A) {struct H} :
+  Ttt.istype (trans_ctx (fxpath σ) Γ) (trans_type σ A).
+
+Proof.
+
+  (* sound_trans_ctx *)
+  - { destruct H.
+
+      (* CtxEmpty *)
+      - { inversion hσ.
+
+          (* valid_cond *)
+          - simpl. capply CtxExtend.
+            (* apply hℙ. *)
+            (* This is true but we need to convince Coq it can apply the
+             equivalence between Ett and Ptt here. *)
+            todo.
+
+          (* valid_fxpath *)
+          - simpl. capply CtxExtend.
+            (* Same kind of problem here... *)
+            todo.
+        }
+
+      (* CtxExtend *)
+      - { inversion hσ.
+
+          (* valid_fxvar *)
+          - simpl. capply CtxExtend. subst.
+            pose (hh := sound_trans_type σ0 G A H2 i0).
+            ceapply TySubst.
+            + capply SubstZero.
+              todo. (* again *)
+            + ceapply TySubst.
+              * ceapply SubstCtxConv ; [ ceapply SubstShift | .. ].
+                -- ceapply SubstZero.
+                   ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
+                   ++ todo. (* We probably need a lemma here *)
+                   ++ todo.
+                   ++ todo.
+                -- todo.
+                -- todo.
+                -- todo.
+              * eassumption.
+
+          (* valid_fxpath *)
+          - simpl. capply CtxExtend. subst.
+            todo.
+        }
+    }
+
+  (* sound_trans_type *)
+  - { todo. }
+
+  Unshelve. all:todo.
+Defined.
 
 End Translation.
