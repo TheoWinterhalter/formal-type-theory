@@ -12,6 +12,10 @@ Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigWithJ : config.WithJ}.
+Context `{ConfigEmpty : config.WithEmpty}.
+Context `{ConfigUnit : config.WithUnit}.
+Context `{ConfigBool : config.WithBool}.
 
 (* Renaming ptt_sanity lemmata for readability. *)
 Definition ptt_sane_issubst := ptt_sanity.sane_issubst.
@@ -1040,7 +1044,7 @@ Proof.
       }
 
     (* EqTermExfalso *)
-    - { config apply @EqTermExfalso with (w := w).
+    - { config apply @EqTermExfalso with (w := w0).
         - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply sane_isterm.

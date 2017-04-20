@@ -14,6 +14,10 @@ Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigWithJ : config.WithJ}.
+Context `{ConfigEmpty : config.WithEmpty}.
+Context `{ConfigUnit : config.WithUnit}.
+Context `{ConfigBool : config.WithBool}.
 
 Definition CtxExtendInversion G A (H : isctx (ctxextend G A)) :
   isctx G * istype G A.
