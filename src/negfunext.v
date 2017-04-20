@@ -24,6 +24,10 @@ Module Stt.
   Context `{ConfigUniverses : config.Universes}.
   Local Instance hasProp : config.WithProp
     := {| config.withpropFlag := config.No |}.
+  Context `{ConfigWithJ : config.WithJ}.
+  Context `{ConfigEmpty : config.WithEmpty}.
+  Context `{ConfigUnit : config.WithUnit}.
+  Context `{ConfigBool : config.WithBool}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -52,6 +56,11 @@ Module Ttt.
     := {| config.prodetaFlag := config.No |}.
   Context `{ConfigUniverses : config.Universes}.
   Context `{ConfigWithProp : config.WithProp}.
+  Context `{ConfigWithJ : config.WithJ}.
+  Context `{ConfigEmpty : config.WithEmpty}.
+  Context `{ConfigUnit : config.WithUnit}.
+  Local Instance hasBool : config.WithBool
+    := {| config.withboolFlag := config.Yes |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -72,6 +81,10 @@ Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigWithJ : config.WithJ}.
+Context `{ConfigEmpty : config.WithEmpty}.
+Context `{ConfigUnit : config.WithUnit}.
+Context `{ConfigBool : config.WithBool}.
 
 Fixpoint trans_type (A : type) : type :=
   match A with
@@ -357,7 +370,7 @@ Proof.
           - ih.
           - now apply (trans_istype (ctxextend (ctxextend G A)
             (Id (Subst A (sbweak A)) (subst u (sbweak A)) (var 0))) C).
-          - now apply (trans_isterm G w
+          - now apply (trans_isterm G w0
          (Subst
             (Subst C
                (sbshift (Id (Subst A (sbweak A)) (subst u (sbweak A)) (var 0))
@@ -386,7 +399,7 @@ Proof.
           - now apply (trans_isterm G u Bool).
           - now apply (trans_istype (ctxextend G Bool) C).
           - now apply (trans_isterm G v (Subst C (sbzero Bool true))).
-          - now apply (trans_isterm G w (Subst C (sbzero Bool false))).
+          - now apply (trans_isterm G w0 (Subst C (sbzero Bool false))).
         }
 
       (* TermPair *)
@@ -870,14 +883,14 @@ Proof.
           - now apply (trans_isterm D u Bool).
           - now apply (trans_istype (ctxextend D Bool) C).
           - now apply (trans_isterm D v _ i4).
-          - now apply (trans_isterm D w _ i5).
+          - now apply (trans_isterm D w0 _ i5).
         }
 
       (* EqTermExfalso *)
-      - { config apply @EqTermExfalso with (w := trans_term w).
+      - { config apply @EqTermExfalso with (w := trans_term w0).
           - ih.
           - ih.
-          - now apply (trans_isterm G w Empty).
+          - now apply (trans_isterm G w0 Empty).
         }
 
       (* UnitEta *)
@@ -911,14 +924,14 @@ Proof.
       - { simpl. capply CondTrue.
           - now apply (trans_istype (ctxextend G Bool) C).
           - now apply (trans_isterm G v (Subst C (sbzero Bool true))).
-          - now apply (trans_isterm G w (Subst C (sbzero Bool false))).
+          - now apply (trans_isterm G w0 (Subst C (sbzero Bool false))).
         }
 
       (* CondFalse *)
       - { simpl. capply CondFalse.
           - now apply (trans_istype (ctxextend G Bool) C).
           - now apply (trans_isterm G v (Subst C (sbzero Bool true))).
-          - now apply (trans_isterm G w (Subst C (sbzero Bool false))).
+          - now apply (trans_isterm G w0 (Subst C (sbzero Bool false))).
         }
 
       (* JRefl *)

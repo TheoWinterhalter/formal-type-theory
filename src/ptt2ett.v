@@ -12,6 +12,10 @@ Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigWithJ : config.WithJ}.
+Context `{ConfigEmpty : config.WithEmpty}.
+Context `{ConfigUnit : config.WithUnit}.
+Context `{ConfigBool : config.WithBool}.
 
 Fixpoint sane_isctx G (P : ptt.isctx G) : ett.isctx G
 
@@ -417,7 +421,7 @@ Proof.
       - apply @EqSubstCond with (D := D) ; auto.
 
       (* EqTermExfalso *)
-      - apply @EqTermExfalso with (w := w) ; auto.
+      - apply @EqTermExfalso with (w := w0) ; auto.
 
       (* UnitEta *)
       - apply UnitEta ; auto.
