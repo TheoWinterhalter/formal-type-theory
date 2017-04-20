@@ -399,7 +399,7 @@ Proof.
           - now apply (trans_isterm G u Bool).
           - now apply (trans_istype (ctxextend G Bool) C).
           - now apply (trans_isterm G v (Subst C (sbzero Bool true))).
-          - now apply (trans_isterm G w (Subst C (sbzero Bool false))).
+          - now apply (trans_isterm G w0 (Subst C (sbzero Bool false))).
         }
 
       (* TermPair *)
@@ -883,7 +883,7 @@ Proof.
           - now apply (trans_isterm D u Bool).
           - now apply (trans_istype (ctxextend D Bool) C).
           - now apply (trans_isterm D v _ i4).
-          - now apply (trans_isterm D w _ i5).
+          - now apply (trans_isterm D w0 _ i5).
         }
 
       (* EqTermExfalso *)
@@ -924,14 +924,14 @@ Proof.
       - { simpl. capply CondTrue.
           - now apply (trans_istype (ctxextend G Bool) C).
           - now apply (trans_isterm G v (Subst C (sbzero Bool true))).
-          - now apply (trans_isterm G w (Subst C (sbzero Bool false))).
+          - now apply (trans_isterm G w0 (Subst C (sbzero Bool false))).
         }
 
       (* CondFalse *)
       - { simpl. capply CondFalse.
           - now apply (trans_istype (ctxextend G Bool) C).
           - now apply (trans_isterm G v (Subst C (sbzero Bool true))).
-          - now apply (trans_isterm G w (Subst C (sbzero Bool false))).
+          - now apply (trans_isterm G w0 (Subst C (sbzero Bool false))).
         }
 
       (* JRefl *)

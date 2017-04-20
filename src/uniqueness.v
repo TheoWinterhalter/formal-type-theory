@@ -434,7 +434,7 @@ Proof.
 
           - { ceapply CongTySubst.
               - ceapply CongSubstZero.
-                + ceapply EqTyRefl. constructor. hyp.
+                + ceapply EqTyRefl. capply TyBool. hyp.
                 + ceapply EqRefl. hyp.
               - ceapply EqTyRefl. hyp.
             }
