@@ -320,204 +320,244 @@ Fixpoint trans_ctx (σ : fctx) (Γ : context) : context :=
 
   end.
 
-Lemma isctx_trans_empty :
-  forall {σ},
-    isfctx ctxempty σ ->
-    Ttt.isctx (trans_ctx σ ctxempty).
+Fixpoint isctx_trans_empty {σ} :
+  isfctx ctxempty σ ->
+  Ttt.isctx (trans_ctx σ ctxempty)
+
+with isterm_last_cond {σ} :
+  isfctx ctxempty σ ->
+  Ttt.isterm (trans_ctx σ ctxempty) (var (last_cond σ)) (El ℙ).
 Proof.
-  intros σ h.
-  dependent induction h.
-  - simpl. capply CtxExtend.
-    ceapply TyEl. apply hℙ.
-    capply CtxEmpty.
-  - simpl. capply CtxExtend.
-    ceapply TyEl.
-    ceapply TermTyConv ; [ ceapply TermApp | .. ].
-    + ceapply TermTyConv ; [ ceapply TermApp | .. ].
-      * ceapply TermTyConv ; [ apply hHom | .. ].
-        -- capply CtxExtend.
-           ceapply TyEl. apply hℙ.
-           now apply IHh.
-        -- assert (
-             Ttt.isterm (ctxextend (trans_ctx σ ctxempty) (El ℙ))
-                        ℙ
-                        (Uni (uni 0))
-           ).
-           { apply hℙ. capply CtxExtend.
-             ceapply TyEl. apply hℙ.
-             now apply IHh.
-           }
-           unfold Arrow.
-           capply CongProd.
-           ++ capply EqTyRefl.
-              ceapply TyEl. apply hℙ.
-              capply CtxExtend.
-              ceapply TyEl. apply hℙ.
-              now apply IHh.
-           ++ pushsubst.
-              ** magic.
-              ** ceapply TySubst.
-                 --- capply SubstWeak.
-                     ceapply TyEl. apply hℙ.
-                     capply CtxExtend.
-                     ceapply TyEl. apply hℙ.
+  (* isctx_trans_empty *)
+  - { intro h.
+      dependent destruction h.
+
+      - simpl. capply CtxExtend.
+        ceapply TyEl. apply hℙ.
+        capply CtxEmpty.
+
+      - pose (IHh := isctx_trans_empty σ h).
+        simpl. capply CtxExtend.
+        ceapply TyEl.
+        ceapply TermTyConv ; [ ceapply TermApp | .. ].
+        + ceapply TermTyConv ; [ ceapply TermApp | .. ].
+          * ceapply TermTyConv ; [ apply hHom | .. ].
+            -- capply CtxExtend.
+               ceapply TyEl. apply hℙ.
+               now apply IHh.
+            -- assert (
+                   Ttt.isterm (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+                              ℙ
+                              (Uni (uni 0))
+                 ).
+               { apply hℙ. capply CtxExtend.
+                 ceapply TyEl. apply hℙ.
+                 now apply IHh.
+               }
+               unfold Arrow.
+               capply CongProd.
+               ++ capply EqTyRefl.
+                  ceapply TyEl. apply hℙ.
+                  capply CtxExtend.
+                  ceapply TyEl. apply hℙ.
+                  now apply IHh.
+               ++ pushsubst.
+                  ** magic.
+                  ** ceapply TySubst.
+                     --- capply SubstWeak.
+                         ceapply TyEl. apply hℙ.
+                         capply CtxExtend.
+                         ceapply TyEl. apply hℙ.
+                         now apply IHh.
+                     --- capply TyUni.
+                         capply CtxExtend.
+                         ceapply TyEl. apply hℙ.
+                         now apply IHh.
+                  ** capply CongProd.
+                     --- eapply EqTySubstℙ.
+                         capply SubstWeak.
+                         ceapply TyEl. apply hℙ.
+                         capply CtxExtend.
+                         ceapply TyEl. apply hℙ.
+                         now apply IHh.
+                     --- pushsubst.
+                         +++ magic.
+                         +++ magic.
+                         +++ capply EqTyRefl. magic.
+                         +++ pushsubst.
+                             *** magic.
+                             *** pushsubst.
+                                 ---- ceapply SubstCtxConv ; [
+                                        ceapply SubstWeak
+                                      | ..
+                                      ].
+                                      ++++ ceapply TyEl. apply hℙ.
+                                           shelve.
+                                      ++++ ceapply EqCtxExtend.
+                                           **** capply CtxRefl.
+                                                capply CtxExtend.
+                                                ceapply TyEl. apply hℙ.
+                                                capply CtxExtend.
+                                                ceapply TyEl. apply hℙ.
+                                                now apply IHh.
+                                           **** capply EqTySym.
+                                                eapply EqTySubstℙ.
+                                                capply SubstWeak.
+                                                ceapply TyEl. apply hℙ.
+                                                capply CtxExtend.
+                                                ceapply TyEl. apply hℙ.
+                                                now apply IHh.
+                                      ++++ capply CtxRefl.
+                                           capply CtxExtend.
+                                           ceapply TyEl. apply hℙ.
+                                           capply CtxExtend.
+                                           ceapply TyEl. apply hℙ.
+                                           now apply IHh.
+                                 ---- capply EqTyRefl.
+                                      magic.
+          * ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
+            -- now apply isterm_last_cond.
+            -- ceapply TyEl. apply hℙ.
+               now apply IHh.
+            -- eapply EqTySubstℙ.
+               capply SubstWeak.
+               ceapply TyEl. apply hℙ.
+               now apply IHh.
+          * pushsubst.
+            -- capply SubstZero.
+               ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
+               ++ now apply isterm_last_cond.
+               ++ ceapply TyEl. apply hℙ.
+                  now apply IHh.
+               ++ eapply EqTySubstℙ.
+                  capply SubstWeak.
+                  ceapply TyEl. apply hℙ.
+                  now apply IHh.
+            -- ceapply TySubst.
+               ++ capply SubstWeak.
+                  ceapply TyEl. apply hℙ.
+                  capply CtxExtend.
+                  ceapply TyEl. apply hℙ.
+                  capply CtxExtend.
+                  ceapply TyEl. apply hℙ.
+                  now apply IHh.
+               ++ capply TyUni.
+                  capply CtxExtend.
+                  ceapply TyEl. apply hℙ.
+                  capply CtxExtend.
+                  ceapply TyEl. apply hℙ.
+                  now apply IHh.
+            -- capply CongProd.
+               ++ eapply EqTySubstℙ.
+                  capply SubstZero.
+                  ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
+                  ** now apply isterm_last_cond.
+                  ** ceapply TyEl. apply hℙ.
                      now apply IHh.
-                 --- capply TyUni.
-                     capply CtxExtend.
-                     ceapply TyEl. apply hℙ.
-                     now apply IHh.
-              ** capply CongProd.
-                 --- eapply EqTySubstℙ.
+                  ** eapply EqTySubstℙ.
                      capply SubstWeak.
                      ceapply TyEl. apply hℙ.
-                     capply CtxExtend.
-                     ceapply TyEl. apply hℙ.
                      now apply IHh.
-                 --- pushsubst.
-                     +++ magic.
-                     +++ magic.
-                     +++ capply EqTyRefl. magic.
-                     +++ pushsubst.
-                         *** magic.
-                         *** pushsubst.
-                             ---- ceapply SubstCtxConv ; [
-                                    ceapply SubstWeak
-                                  | ..
-                                  ].
-                                  ++++ ceapply TyEl. apply hℙ.
-                                       shelve.
-                                  ++++ ceapply EqCtxExtend.
-                                       **** capply CtxRefl.
-                                            capply CtxExtend.
-                                            ceapply TyEl. apply hℙ.
-                                            capply CtxExtend.
-                                            ceapply TyEl. apply hℙ.
-                                            now apply IHh.
-                                       **** capply EqTySym.
-                                            eapply EqTySubstℙ.
-                                            capply SubstWeak.
-                                            ceapply TyEl. apply hℙ.
-                                            capply CtxExtend.
-                                            ceapply TyEl. apply hℙ.
-                                            now apply IHh.
-                                  ++++ capply CtxRefl.
-                                       capply CtxExtend.
-                                       ceapply TyEl. apply hℙ.
-                                       capply CtxExtend.
-                                       ceapply TyEl. apply hℙ.
-                                       now apply IHh.
-                             ---- capply EqTyRefl.
-                                  magic.
-      * ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-        -- assert (Ttt.isterm (trans_ctx σ ctxempty) (var (last_cond σ)) (El ℙ))
-            by todo.
-           eassumption.
-        -- ceapply TyEl. apply hℙ.
-           now apply IHh.
-        -- eapply EqTySubstℙ.
-           capply SubstWeak.
-           ceapply TyEl. apply hℙ.
-           now apply IHh.
-      * pushsubst.
-        -- capply SubstZero.
-           ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-           ++ todo.
-           ++ todo.
-           ++ todo.
-        -- ceapply TySubst.
-           ++ capply SubstWeak.
-              ceapply TyEl. apply hℙ.
-              capply CtxExtend.
-              ceapply TyEl. apply hℙ.
-              capply CtxExtend.
-              ceapply TyEl. apply hℙ.
-              now apply IHh.
-           ++ capply TyUni.
-              capply CtxExtend.
-              ceapply TyEl. apply hℙ.
-              capply CtxExtend.
-              ceapply TyEl. apply hℙ.
-              now apply IHh.
-        -- capply CongProd.
-           ++ eapply EqTySubstℙ.
-              capply SubstZero.
-              todo.
-           ++ pushsubst.
-              ** ceapply SubstShift.
-                 --- capply SubstZero.
-                     todo.
-                 --- ceapply TyEl. apply hℙ.
-                     capply CtxExtend.
-                     ceapply TyEl. apply hℙ.
-                     capply CtxExtend.
-                     ceapply TyEl. apply hℙ.
-                     now apply IHh.
-              ** capply SubstWeak.
-                 ceapply TyEl. apply hℙ.
-                 capply CtxExtend.
-                 ceapply TyEl. apply hℙ.
-                 capply CtxExtend.
-                 ceapply TyEl. apply hℙ.
-                 now apply IHh.
-              ** capply EqTyRefl.
-                 capply TyUni.
-                 capply CtxExtend.
-                 ceapply TyEl. apply hℙ.
-                 capply CtxExtend.
-                 ceapply TyEl. apply hℙ.
-                 capply CtxExtend.
-                 ceapply TyEl. apply hℙ.
-                 now apply IHh.
-              ** pushsubst.
-                 --- ceapply SubstShift.
-                     +++ capply SubstZero.
-                         todo.
-                     +++ ceapply TyEl. apply hℙ.
+               ++ pushsubst.
+                  ** ceapply SubstShift.
+                     --- capply SubstZero.
+                         ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
+                         +++ now apply isterm_last_cond.
+                         +++ ceapply TyEl. apply hℙ.
+                             now apply IHh.
+                         +++ eapply EqTySubstℙ.
+                             capply SubstWeak.
+                             ceapply TyEl. apply hℙ.
+                             now apply IHh.
+                     --- ceapply TyEl. apply hℙ.
                          capply CtxExtend.
                          ceapply TyEl. apply hℙ.
                          capply CtxExtend.
                          ceapply TyEl. apply hℙ.
                          now apply IHh.
-                 --- capply EqTyRefl.
+                  ** capply SubstWeak.
+                     ceapply TyEl. apply hℙ.
+                     capply CtxExtend.
+                     ceapply TyEl. apply hℙ.
+                     capply CtxExtend.
+                     ceapply TyEl. apply hℙ.
+                     now apply IHh.
+                  ** capply EqTyRefl.
                      capply TyUni.
                      capply CtxExtend.
-                     ceapply TySubst.
-                     +++ ceapply SubstZero. todo.
-                     +++ ceapply TyEl. apply hℙ.
+                     ceapply TyEl. apply hℙ.
+                     capply CtxExtend.
+                     ceapply TyEl. apply hℙ.
+                     capply CtxExtend.
+                     ceapply TyEl. apply hℙ.
+                     now apply IHh.
+                  ** pushsubst.
+                     --- ceapply SubstShift.
+                         +++ capply SubstZero.
+                             ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
+                             *** now apply isterm_last_cond.
+                             *** ceapply TyEl. apply hℙ.
+                                 now apply IHh.
+                             *** eapply EqTySubstℙ.
+                                 capply SubstWeak.
+                                 ceapply TyEl. apply hℙ.
+                                 now apply IHh.
+                         +++ ceapply TyEl. apply hℙ.
+                             capply CtxExtend.
+                             ceapply TyEl. apply hℙ.
+                             capply CtxExtend.
+                             ceapply TyEl. apply hℙ.
+                             now apply IHh.
+                     --- capply EqTyRefl.
+                         capply TyUni.
                          capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         now apply IHh.
-    + ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
-      * ceapply TyEl. apply hℙ.
-        now apply IHh.
-      * ceapply EqTySubstℙ.
-        capply SubstWeak.
-        ceapply TyEl. apply hℙ.
-        now apply IHh.
-    + pushsubst.
-      * capply SubstZero.
-        ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
-        -- ceapply TyEl. apply hℙ.
-           now apply IHh.
-        -- ceapply EqTySubstℙ.
-           capply SubstWeak.
-           ceapply TyEl. apply hℙ.
-           now apply IHh.
-      * capply EqTyRefl.
-        ceapply TyUni.
-        capply CtxExtend.
-        ceapply TyEl. apply hℙ.
-        now apply IHh.
-  Unshelve.
-  { capply CtxExtend.
-    ceapply TyEl. apply hℙ.
-    capply CtxExtend.
-    ceapply TyEl. apply hℙ.
-    now apply IHh.
-  }
-  { todo. }
+                         ceapply TySubst.
+                         +++ ceapply SubstZero.
+                             ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
+                             *** now apply isterm_last_cond.
+                             *** ceapply TyEl. apply hℙ.
+                                 now apply IHh.
+                             *** eapply EqTySubstℙ.
+                                 capply SubstWeak.
+                                 ceapply TyEl. apply hℙ.
+                                 now apply IHh.
+                         +++ ceapply TyEl. apply hℙ.
+                             capply CtxExtend.
+                             ceapply TyEl. apply hℙ.
+                             capply CtxExtend.
+                             ceapply TyEl. apply hℙ.
+                             now apply IHh.
+        + ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
+          * ceapply TyEl. apply hℙ.
+            now apply IHh.
+          * ceapply EqTySubstℙ.
+            capply SubstWeak.
+            ceapply TyEl. apply hℙ.
+            now apply IHh.
+        + pushsubst.
+          * capply SubstZero.
+            ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
+            -- ceapply TyEl. apply hℙ.
+               now apply IHh.
+            -- ceapply EqTySubstℙ.
+               capply SubstWeak.
+               ceapply TyEl. apply hℙ.
+               now apply IHh.
+          * capply EqTyRefl.
+            ceapply TyUni.
+            capply CtxExtend.
+            ceapply TyEl. apply hℙ.
+            now apply IHh.
+            Unshelve.
+            capply CtxExtend.
+            ceapply TyEl. apply hℙ.
+            capply CtxExtend.
+            ceapply TyEl. apply hℙ.
+            now apply IHh.
+    }
+
+  (* isterm_last_cond *)
+  - { todo. }
 Defined.
 
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
