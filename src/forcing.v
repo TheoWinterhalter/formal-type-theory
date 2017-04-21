@@ -239,7 +239,7 @@ Fixpoint _last_cond (o : nat) (σ : fctx) : nat :=
   match σ with
   | cond => o
   | fxvar σ => _last_cond (S o) σ
-  | fxpath σ => o
+  | fxpath σ => S o
   end.
 
 Definition last_cond σ := _last_cond 0 σ.
@@ -566,7 +566,10 @@ Proof.
           capply CtxEmpty.
 
       - unfold last_cond. simpl.
-        ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
+        ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
+        + ceapply TermVarZero.
+          ceapply TyEl. apply hℙ.
+          now apply isctx_trans_empty.
         + ceapply TyEl.
           ceapply TermTyConv ; [ ceapply TermApp | .. ].
           * ceapply TermTyConv ; [ ceapply TermApp | .. ].
@@ -821,7 +824,50 @@ Proof.
                capply CtxExtend.
                ceapply TyEl. apply hℙ.
                now apply isctx_trans_empty.
-        + todo. (* This doesn't seem to be provable... *)
+        + ceapply EqTyTrans ; [
+            ceapply CongTySubst ; [ ceapply SubstRefl | eapply EqTySubstℙ | .. ]
+          | ..
+          ].
+          * capply SubstWeak.
+            ceapply TyEl.
+            ceapply TermTyConv ; [ ceapply TermApp | .. ].
+            -- ceapply TermTyConv ; [ ceapply TermApp | .. ].
+               ++ ceapply TermTyConv ; [ apply hHom | .. ].
+                  ** capply CtxExtend.
+                     ceapply TyEl. apply hℙ.
+                     now apply isctx_trans_empty.
+                  ** capply CongProd.
+                     --- capply EqTyRefl.
+                         ceapply TyEl. apply hℙ.
+                         capply CtxExtend.
+                         ceapply TyEl. apply hℙ.
+                         now apply isctx_trans_empty.
+                     --- pushsubst.
+                         +++ capply SubstWeak.
+                             ceapply TyEl. apply hℙ.
+                             capply CtxExtend.
+                             ceapply TyEl. apply hℙ.
+                             now apply isctx_trans_empty.
+                         +++ ceapply TySubst.
+                             *** capply SubstWeak.
+                                 ceapply TyEl. apply hℙ.
+                                 capply CtxExtend.
+                                 ceapply TyEl. apply hℙ.
+                                 now apply isctx_trans_empty.
+                             *** capply TyUni.
+                                 capply CtxExtend.
+                                 ceapply TyEl. apply hℙ.
+                                 now apply isctx_trans_empty.
+                         +++ capply CongProd.
+                             *** todo.
+                             *** todo.
+               ++ todo.
+               ++ todo.
+            -- todo.
+            -- todo.
+          * todo.
+          * todo.
+            Unshelve. all:todo.
     }
 Defined.
 
