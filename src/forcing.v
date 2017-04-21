@@ -356,7 +356,16 @@ Proof.
               now apply IHh.
            ++ pushsubst.
               ** magic.
-              ** magic.
+              ** ceapply TySubst.
+                 --- capply SubstWeak.
+                     ceapply TyEl. apply hℙ.
+                     capply CtxExtend.
+                     ceapply TyEl. apply hℙ.
+                     now apply IHh.
+                 --- capply TyUni.
+                     capply CtxExtend.
+                     ceapply TyEl. apply hℙ.
+                     now apply IHh.
               ** capply CongProd.
                  --- eapply EqTySubstℙ.
                      capply SubstWeak.
@@ -480,17 +489,36 @@ Proof.
                          capply CtxExtend.
                          ceapply TyEl. apply hℙ.
                          now apply IHh.
-    + todo.
+    + ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
+      * ceapply TyEl. apply hℙ.
+        now apply IHh.
+      * ceapply EqTySubstℙ.
+        capply SubstWeak.
+        ceapply TyEl. apply hℙ.
+        now apply IHh.
     + pushsubst.
       * capply SubstZero.
-        todo.
+        ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
+        -- ceapply TyEl. apply hℙ.
+           now apply IHh.
+        -- ceapply EqTySubstℙ.
+           capply SubstWeak.
+           ceapply TyEl. apply hℙ.
+           now apply IHh.
       * capply EqTyRefl.
         ceapply TyUni.
         capply CtxExtend.
         ceapply TyEl. apply hℙ.
         now apply IHh.
-  (* Something is wrong on the shelf *)
-Admitted.
+  Unshelve.
+  { capply CtxExtend.
+    ceapply TyEl. apply hℙ.
+    capply CtxExtend.
+    ceapply TyEl. apply hℙ.
+    now apply IHh.
+  }
+  { todo. }
+Defined.
 
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
   Ttt.isctx (trans_ctx σ Γ)
