@@ -11,6 +11,8 @@ Require Import syntax.
 Require Import tt.
 Require Import checking_tactics.
 
+Require Import Coq.Program.Equality.
+
 (* Source type theory *)
 Module Stt.
 
@@ -317,6 +319,37 @@ Fixpoint trans_ctx (σ : fctx) (Γ : context) : context :=
   | _, _ => ctxempty
 
   end.
+
+Lemma isctx_trans_empty :
+  forall {σ},
+    isfctx ctxempty σ ->
+    Ttt.isctx (trans_ctx σ ctxempty).
+Proof.
+  intros σ h.
+  dependent induction h.
+  - simpl. capply CtxExtend.
+    ceapply TyEl. apply hℙ.
+    capply CtxEmpty.
+  - simpl. capply CtxExtend.
+    ceapply TyEl.
+    ceapply TermTyConv ; [ ceapply TermApp | .. ].
+    + ceapply TermTyConv ; [ ceapply TermApp | .. ].
+      * ceapply TermTyConv ; [ apply hHom | .. ].
+        -- capply CtxExtend.
+           ceapply TyEl. apply hℙ.
+           now apply IHh.
+        -- assert (
+             Ttt.isterm (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+                        ℙ
+                        (Uni (uni 0))
+           ).
+           { apply hℙ. capply CtxExtend.
+             ceapply TyEl. apply hℙ.
+             now apply IHh.
+           }
+           (* trymagic. *)
+           (* Since it doesn't know ℙ magic doesn't behave. *)
+Admitted.
 
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
   Ttt.isctx (trans_ctx σ Γ)
