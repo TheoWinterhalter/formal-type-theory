@@ -347,8 +347,149 @@ Proof.
              ceapply TyEl. apply hℙ.
              now apply IHh.
            }
-           (* trymagic. *)
-           (* Since it doesn't know ℙ magic doesn't behave. *)
+           unfold Arrow.
+           capply CongProd.
+           ++ capply EqTyRefl.
+              ceapply TyEl. apply hℙ.
+              capply CtxExtend.
+              ceapply TyEl. apply hℙ.
+              now apply IHh.
+           ++ pushsubst.
+              ** magic.
+              ** magic.
+              ** capply CongProd.
+                 --- eapply EqTySubstℙ.
+                     capply SubstWeak.
+                     ceapply TyEl. apply hℙ.
+                     capply CtxExtend.
+                     ceapply TyEl. apply hℙ.
+                     now apply IHh.
+                 --- pushsubst.
+                     +++ magic.
+                     +++ magic.
+                     +++ capply EqTyRefl. magic.
+                     +++ pushsubst.
+                         *** magic.
+                         *** pushsubst.
+                             ---- ceapply SubstCtxConv ; [
+                                    ceapply SubstWeak
+                                  | ..
+                                  ].
+                                  ++++ ceapply TyEl. apply hℙ.
+                                       shelve.
+                                  ++++ ceapply EqCtxExtend.
+                                       **** capply CtxRefl.
+                                            capply CtxExtend.
+                                            ceapply TyEl. apply hℙ.
+                                            capply CtxExtend.
+                                            ceapply TyEl. apply hℙ.
+                                            now apply IHh.
+                                       **** capply EqTySym.
+                                            eapply EqTySubstℙ.
+                                            capply SubstWeak.
+                                            ceapply TyEl. apply hℙ.
+                                            capply CtxExtend.
+                                            ceapply TyEl. apply hℙ.
+                                            now apply IHh.
+                                  ++++ capply CtxRefl.
+                                       capply CtxExtend.
+                                       ceapply TyEl. apply hℙ.
+                                       capply CtxExtend.
+                                       ceapply TyEl. apply hℙ.
+                                       now apply IHh.
+                             ---- capply EqTyRefl.
+                                  magic.
+      * ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
+        -- assert (Ttt.isterm (trans_ctx σ ctxempty) (var (last_cond σ)) (El ℙ))
+            by todo.
+           eassumption.
+        -- ceapply TyEl. apply hℙ.
+           now apply IHh.
+        -- eapply EqTySubstℙ.
+           capply SubstWeak.
+           ceapply TyEl. apply hℙ.
+           now apply IHh.
+      * pushsubst.
+        -- capply SubstZero.
+           ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
+           ++ todo.
+           ++ todo.
+           ++ todo.
+        -- ceapply TySubst.
+           ++ capply SubstWeak.
+              ceapply TyEl. apply hℙ.
+              capply CtxExtend.
+              ceapply TyEl. apply hℙ.
+              capply CtxExtend.
+              ceapply TyEl. apply hℙ.
+              now apply IHh.
+           ++ capply TyUni.
+              capply CtxExtend.
+              ceapply TyEl. apply hℙ.
+              capply CtxExtend.
+              ceapply TyEl. apply hℙ.
+              now apply IHh.
+        -- capply CongProd.
+           ++ eapply EqTySubstℙ.
+              capply SubstZero.
+              todo.
+           ++ pushsubst.
+              ** ceapply SubstShift.
+                 --- capply SubstZero.
+                     todo.
+                 --- ceapply TyEl. apply hℙ.
+                     capply CtxExtend.
+                     ceapply TyEl. apply hℙ.
+                     capply CtxExtend.
+                     ceapply TyEl. apply hℙ.
+                     now apply IHh.
+              ** capply SubstWeak.
+                 ceapply TyEl. apply hℙ.
+                 capply CtxExtend.
+                 ceapply TyEl. apply hℙ.
+                 capply CtxExtend.
+                 ceapply TyEl. apply hℙ.
+                 now apply IHh.
+              ** capply EqTyRefl.
+                 capply TyUni.
+                 capply CtxExtend.
+                 ceapply TyEl. apply hℙ.
+                 capply CtxExtend.
+                 ceapply TyEl. apply hℙ.
+                 capply CtxExtend.
+                 ceapply TyEl. apply hℙ.
+                 now apply IHh.
+              ** pushsubst.
+                 --- ceapply SubstShift.
+                     +++ capply SubstZero.
+                         todo.
+                     +++ ceapply TyEl. apply hℙ.
+                         capply CtxExtend.
+                         ceapply TyEl. apply hℙ.
+                         capply CtxExtend.
+                         ceapply TyEl. apply hℙ.
+                         now apply IHh.
+                 --- capply EqTyRefl.
+                     capply TyUni.
+                     capply CtxExtend.
+                     ceapply TySubst.
+                     +++ ceapply SubstZero. todo.
+                     +++ ceapply TyEl. apply hℙ.
+                         capply CtxExtend.
+                         ceapply TyEl. apply hℙ.
+                         capply CtxExtend.
+                         ceapply TyEl. apply hℙ.
+                         now apply IHh.
+    + todo.
+    + pushsubst.
+      * capply SubstZero.
+        todo.
+      * capply EqTyRefl.
+        ceapply TyUni.
+        capply CtxExtend.
+        ceapply TyEl. apply hℙ.
+        now apply IHh.
+  (* Something is wrong on the shelf *)
 Admitted.
 
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
