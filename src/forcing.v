@@ -320,17 +320,14 @@ Fixpoint trans_ctx (σ : fctx) (Γ : context) : context :=
 
   end.
 
-Fixpoint isctx_trans_empty {σ} :
-  isfctx ctxempty σ ->
+Fixpoint isctx_trans_empty {σ} (h : isfctx ctxempty σ) {struct h} :
   Ttt.isctx (trans_ctx σ ctxempty)
 
-with isterm_last_cond {σ} :
-  isfctx ctxempty σ ->
+with isterm_last_cond {σ} (h : isfctx ctxempty σ) {struct h} :
   Ttt.isterm (trans_ctx σ ctxempty) (var (last_cond σ)) (El ℙ).
 Proof.
   (* isctx_trans_empty *)
-  - { intro h.
-      dependent destruction h.
+  - { dependent destruction h.
 
       - simpl. capply CtxExtend.
         ceapply TyEl. apply hℙ.
@@ -557,7 +554,12 @@ Proof.
     }
 
   (* isterm_last_cond *)
-  - { todo. }
+  - { dependent destruction h.
+
+      - todo.
+
+      - todo.
+    }
 Defined.
 
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
