@@ -204,6 +204,17 @@ Context `{
       Ttt.eqterm Γ (subst ℙ ρ) ℙ (Uni (uni 0))
 }.
 
+(* I'm not sure about this *)
+Context `{
+  EqSubstHom :
+    forall {Γ Δ ρ},
+      Ttt.issubst ρ Γ Δ ->
+      Ttt.eqterm Γ
+                 (subst _Hom ρ)
+                 _Hom
+                 (Arrow (El ℙ) (Arrow (El ℙ) (Uni (uni 0))))
+}.
+
 Axiom todo : forall {A}, A.
 Ltac todo := apply todo.
 
@@ -298,11 +309,65 @@ Proof.
         -- ceapply EqTyConv ; [ ceapply CongApp | .. ].
            ++ todo.
            ++ todo.
-           ++
-Abort.
+           ++ ceapply EqTyConv ; [ eapply EqSubstHom | .. ].
+              ** eassumption.
+              ** todo.
+           ++ capply EqRefl. ceapply TermSubst ; eassumption.
+           ++ todo.
+        -- todo.
+      * capply EqRefl. ceapply TermSubst ; eassumption.
+      * todo.
+    + pushsubst.
+      * eassumption.
+      * capply SubstZero. assumption.
+      * capply EqTyRefl. capply TyUni.
+        apply (ett_sanity.sane_issubst _ _ _ hρ).
+      * pushsubst.
+        -- eassumption.
+        -- capply EqTyRefl. capply TyUni.
+           apply (ett_sanity.sane_issubst _ _ _ hρ).
+Defined.
 
+Lemma CongHom :
+  forall {Γ u1 u2 v1 v2},
+    Ttt.eqterm Γ u1 u2 (El ℙ) ->
+    Ttt.eqterm Γ v1 v2 (El ℙ) ->
+    Ttt.eqtype Γ (Hom u1 v1) (Hom u2 v2).
+Proof.
+  intros.
+  unfold Hom.
+  ceapply CongEl.
+  ceapply EqTyConv ; [ ceapply CongApp | .. ].
+  - capply EqTyRefl.
+    apply (ett_sanity.sane_eqterm _ _ _ _ X).
+  - capply EqTyRefl.
+    capply TyUni. capply CtxExtend.
+    apply (ett_sanity.sane_eqterm _ _ _ _ X).
+  - ceapply EqTyConv ; [ ceapply CongApp | .. ].
+    + capply EqTyRefl.
+      apply (ett_sanity.sane_eqterm _ _ _ _ X).
+    + capply EqTyRefl. capply TyProd.
+      ceapply TySubst.
+      * capply SubstWeak. ceapply TyEl. apply hℙ.
+        capply CtxExtend.
+        apply (ett_sanity.sane_eqterm _ _ _ _ X).
+      * capply TyUni. capply CtxExtend.
+        apply (ett_sanity.sane_eqterm _ _ _ _ X).
+    + capply EqRefl.
+      ceapply TermTyConv ; [ eapply hHom | .. ].
+      * apply (ett_sanity.sane_eqterm _ _ _ _ X).
+      * todo.
+    + assumption.
+    + todo.
+  - assumption.
+  - pushsubst.
+    + capply SubstZero.
+      apply (ett_sanity.sane_eqterm _ _ _ _ X0).
+    + capply EqTyRefl. capply TyUni.
+      apply (ett_sanity.sane_eqterm _ _ _ _ X).
+Defined.
 
-Lemma hidx :
+Lemma hidℙ' :
   forall {Γ x},
     Ttt.isterm Γ x (El ℙ) ->
     Ttt.isterm Γ (idℙ x) (Hom x x).
@@ -313,7 +378,21 @@ Proof.
   - apply hidℙ.
     apply (ett_sanity.sane_isterm _ _ _ h).
   - assumption.
-  - todo.
+  - ceapply EqTyTrans ; [ eapply EqTySubstHom | .. ].
+    + capply SubstZero. assumption.
+    + ceapply TermTyConv ; [ capply TermVarZero | .. ].
+      * apply (ett_sanity.sane_isterm _ _ _ h).
+      * todo.
+    + ceapply TermTyConv ; [ capply TermVarZero | .. ].
+      * apply (ett_sanity.sane_isterm _ _ _ h).
+      * todo.
+    + capply CongHom.
+      * unfold Ttt.eqterm. pushsubst.
+        -- assumption.
+        -- capply EqRefl. assumption.
+      * unfold Ttt.eqterm. pushsubst.
+        -- assumption.
+        -- capply EqRefl. assumption.
 Defined.
 
 
