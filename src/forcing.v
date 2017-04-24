@@ -1351,380 +1351,380 @@ Proof.
     }
 Defined.
 
-Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
-  Ttt.isctx (trans_ctx σ Γ)
-
-with sound_trans_type σ Γ A (hσ : isfctx Γ σ) (H : Stt.istype Γ A) {struct H} :
+Fixpoint sound_trans_type σ Γ A (hσ : isfctx Γ σ) (H : Stt.istype Γ A) {struct H} :
   Ttt.istype (trans_ctx (fxpath σ) Γ) (trans_type σ A).
-
 Proof.
-
-  (* sound_trans_ctx *)
-  - { destruct H.
-
-      (* CtxEmpty *)
-      - { inversion hσ.
-
-          (* valid_cond *)
-          - simpl. capply CtxExtend.
-            ceapply TyEl.
-            apply hℙ.
-            capply CtxEmpty.
-
-          (* valid_fxpath *)
-          - assert (Ttt.isctx (trans_ctx σ0 ctxempty)).
-            { now apply isctx_trans_empty. }
-            assert (Ttt.istype (trans_ctx σ0 ctxempty) (El ℙ)).
-            { ceapply TyEl. apply hℙ. assumption. }
-            assert (Ttt.isctx (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))).
-            { capply CtxExtend. assumption. }
-            assert (
-              Ttt.istype (ctxextend (trans_ctx σ0 ctxempty) (El ℙ)) (El ℙ)
-            ).
-            { ceapply TyEl. apply hℙ. assumption. }
-            assert (
-             Ttt.eqtype (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                        (El ℙ) (El ℙ)
-            ).
-            { capply EqTyRefl. assumption. }
-            assert (
-              Ttt.issubst
-                (sbweak (El ℙ))
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ)) (El ℙ))
-                (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-            ).
-            { capply SubstWeak. assumption. }
-            assert (
-              Ttt.istype (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                         (Uni (uni 0))
-            ).
-            { capply TyUni. assumption. }
-            assert (
-              Ttt.istype
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ)) (El ℙ))
-                (Subst (Uni (uni 0)) (sbweak (El ℙ)))
-            ).
-            { ceapply TySubst ; eassumption. }
-            assert (
-              Ttt.eqtype
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ)) (El ℙ))
-                (Subst (El ℙ) (sbweak (El ℙ)))
-                (El ℙ)
-            ).
-            { eapply EqTySubstℙ ; eassumption. }
-            assert (
-              Ttt.issubst
-                (sbshift (El ℙ) (sbweak (El ℙ)))
-                (ctxextend (ctxextend (ctxextend (trans_ctx σ0 ctxempty)
-                                                 (El ℙ))
-                                      (El ℙ))
-                           (Subst (El ℙ) (sbweak (El ℙ))))
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty)
-                                                 (El ℙ))
-                                      (El ℙ))
-            ).
-            { ceapply SubstShift ; assumption. }
-            assert (
-              Ttt.isctx
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ)) (El ℙ))
-            ).
-            { capply CtxExtend. assumption. }
-            assert (
-              Ttt.istype
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ)) (El ℙ))
-                (Uni (uni 0))
-            ).
-            { capply TyUni. assumption. }
-            assert (
-              Ttt.istype
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ)) (El ℙ))
-                (El ℙ)
-            ).
-            { ceapply TyEl. apply hℙ. assumption. }
-            assert (
-              Ttt.eqtype
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ)) (El ℙ))
-                (El ℙ)
-                (Subst (El ℙ) (sbweak (El ℙ)))
-            ).
-            { ceapply EqTySym. assumption. }
-            assert (
-              Ttt.issubst
-                (sbweak (El ℙ))
-                (ctxextend (ctxextend (ctxextend (trans_ctx σ0 ctxempty)
-                                                 (El ℙ))
-                                      (El ℙ))
-                           (Subst (El ℙ) (sbweak (El ℙ))))
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty)
-                                                 (El ℙ))
-                                      (El ℙ))
-            ).
-            { ceapply SubstCtxConv ; [
-                ceapply SubstWeak
-              | ceapply EqCtxExtend ; [
-                  ceapply CtxRefl
-                | ..
-                ]
-              | capply CtxRefl
-              ] ; assumption.
-            }
-            assert (
-              Ttt.istype
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ)) (El ℙ))
-                (Subst (El ℙ) (sbweak (El ℙ)))
-            ).
-            { ceapply TySubst ; eassumption. }
-            assert (
-              Ttt.isctx
-                (ctxextend (ctxextend (ctxextend (trans_ctx σ0 ctxempty)
-                                                 (El ℙ))
-                                      (El ℙ))
-                           (Subst (El ℙ) (sbweak (El ℙ))))
-            ).
-            { capply CtxExtend. assumption. }
-            assert (
-              Ttt.istype
-                (ctxextend (ctxextend (ctxextend (trans_ctx σ0 ctxempty)
-                                                 (El ℙ))
-                                      (El ℙ))
-                           (Subst (El ℙ) (sbweak (El ℙ)))) (Uni (uni 0))
-            ).
-            { capply TyUni. assumption. }
-            assert (
-              Ttt.eqtype
-                (ctxextend (ctxextend (ctxextend (trans_ctx σ0 ctxempty)
-                                                 (El ℙ))
-                                      (El ℙ))
-                           (Subst (El ℙ) (sbweak (El ℙ))))
-                (Subst (Subst (Uni (uni 0)) (sbweak (El ℙ)))
-                       (sbshift (El ℙ) (sbweak (El ℙ))))
-                (Subst (Uni (uni 0)) (sbweak (El ℙ)))
-            ).
-            { unfold Ttt.eqtype. pushsubst.
-              - eassumption.
-              - eassumption.
-              - capply EqTyRefl. assumption.
-              - pushsubst.
-                + eassumption.
-                + pushsubst.
-                  * eassumption.
-                  * capply EqTyRefl. assumption.
-            }
-            assert (
-              Ttt.eqtype
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ)) (El ℙ))
-                (Subst (Arrow (El ℙ) (Uni (uni 0))) (sbweak (El ℙ)))
-                (Arrow (El ℙ) (Uni (uni 0)))
-            ).
-            { unfold Ttt.eqtype. pushsubst.
-              - eassumption.
-              - assumption.
-              - capply CongProd.
-                + assumption.
-                + assumption.
-            }
-            assert (
-              Ttt.eqtype (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                         (Arrow (El ℙ) (Arrow (El ℙ) (Uni (uni 0))))
-                         (Prod (El ℙ) (Arrow (El ℙ) (Uni (uni 0))))
-            ).
-            { capply CongProd.
-              - assumption.
-              - assumption.
-            }
-            assert (
-              Ttt.isterm (trans_ctx σ0 ctxempty) (var (last_cond σ0)) (El ℙ)
-            ).
-            { now apply isterm_last_cond. }
-            assert (
-              Ttt.issubst (sbweak (El ℙ))
-                          (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                          (trans_ctx σ0 ctxempty)
-            ).
-            { capply SubstWeak. assumption. }
-            assert (
-              Ttt.eqtype
-                (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                (Subst (El ℙ) (sbweak (El ℙ)))
-                (El ℙ)
-            ).
-            { eapply EqTySubstℙ. eassumption. }
-            assert (
-              Ttt.isterm
-                (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                (var (S (last_cond σ0)))
-                (El ℙ)
-            ).
-            { ceapply TermTyConv ; [ ceapply TermVarSucc | .. ] ; eassumption. }
-            assert (
-              Ttt.issubst
-                (sbzero (El ℙ) (var (S (last_cond σ0))))
-                (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ)) (El ℙ))
-            ).
-            { capply SubstZero. assumption. }
-            assert (
-              Ttt.issubst
-                (sbweak (El ℙ))
-                (ctxextend (ctxextend (ctxextend (trans_ctx σ0 ctxempty)
-                                                 (El ℙ))
-                                      (El ℙ))
-                           (El ℙ))
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty)
-                                      (El ℙ))
-                           (El ℙ))
-            ).
-            { capply SubstWeak. assumption. }
-            assert (
-              Ttt.istype
-                (ctxextend (ctxextend (ctxextend (trans_ctx σ0 ctxempty)
-                                                 (El ℙ))
-                                      (El ℙ))
-                           (El ℙ))
-                (Subst (Uni (uni 0)) (sbweak (El ℙ)))
-            ).
-            { ceapply TySubst ; eassumption. }
-            assert (
-              Ttt.eqtype
-                (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                (Subst (El ℙ) (sbzero (El ℙ) (var (S (last_cond σ0)))))
-                (El ℙ)
-            ).
-            { eapply EqTySubstℙ. eassumption. }
-            assert (
-              Ttt.issubst
-                (sbshift (El ℙ) (sbzero (El ℙ) (var (S (last_cond σ0)))))
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                           (Subst (El ℙ)
-                                  (sbzero (El ℙ) (var (S (last_cond σ0))))
-                ))
-                (ctxextend (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                           (El ℙ)) (El ℙ))
-            ).
-            { ceapply SubstShift ; assumption. }
-            assert (
-              Ttt.isctx
-                (ctxextend (ctxextend (ctxextend (trans_ctx σ0 ctxempty)
-                                                 (El ℙ))
-                                      (El ℙ))
-                           (El ℙ))
-            ).
-            { capply CtxExtend. assumption. }
-            assert (
-              Ttt.istype
-                (ctxextend (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                                      (El ℙ))
-                           (El ℙ)) (Uni (uni 0))
-            ).
-            { capply TyUni. assumption. }
-            assert (
-              Ttt.istype (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                         (Subst (El ℙ) (sbzero (El ℙ) (var (S (last_cond σ0)))))
-            ).
-            { ceapply TySubst ; eassumption. }
-            assert (
-              Ttt.isctx
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                           (Subst (El ℙ) (sbzero (El ℙ) (var (S (last_cond σ0))))))
-            ).
-            { capply CtxExtend. assumption. }
-            assert (
-              Ttt.istype
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                           (Subst (El ℙ)
-                                  (sbzero (El ℙ) (var (S (last_cond σ0))))))
-                (Uni (uni 0))
-            ).
-            { capply TyUni. assumption. }
-            assert (
-              Ttt.eqtype
-                (ctxextend (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                           (Subst (El ℙ) (sbzero (El ℙ) (var (S (last_cond σ0))))))
-                (Subst (Subst (Uni (uni 0)) (sbweak (El ℙ)))
-                       (sbshift (El ℙ) (sbzero (El ℙ) (var (S (last_cond σ0))))))
-                (Uni (uni 0))
-            ).
-            { unfold Ttt.eqtype. pushsubst.
-              - eassumption.
-              - eassumption.
-              - capply EqTyRefl. assumption.
-              - pushsubst.
-                + eassumption.
-                + capply EqTyRefl. assumption.
-            }
-            assert (
-              Ttt.eqtype
-                (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                (Prod (Subst (El ℙ) (sbzero (El ℙ) (var (S (last_cond σ0)))))
-                      (Subst (Subst (Uni (uni 0)) (sbweak (El ℙ)))
-                             (sbshift (El ℙ)
-                                      (sbzero (El ℙ) (var (S (last_cond σ0))))
-                )))
-                (Prod (El ℙ) (Uni (uni 0)))
-            ).
-            { capply CongProd ; assumption. }
-            assert (
-              Ttt.eqtype
-                (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                (Subst (Arrow (El ℙ) (Uni (uni 0)))
-                       (sbzero (El ℙ) (var (S (last_cond σ0)))))
-                (Prod (El ℙ) (Uni (uni 0)))
-            ).
-            { unfold Ttt.eqtype. pushsubst ; eassumption. }
-            assert (
-              Ttt.isterm (ctxextend (trans_ctx σ0 ctxempty) (El ℙ))
-                         (var 0)
-                         (El ℙ)
-            ).
-            { ceapply TermTyConv ; [ ceapply TermVarZero | .. ] ; assumption. }
-
-            simpl. capply CtxExtend.
-            ceapply TyEl.
-            ceapply TermTyConv ; [ ceapply TermApp | .. ].
-            + ceapply TermTyConv ; [ ceapply TermApp | .. ].
-              * ceapply TermTyConv ; [ apply hHom | .. ].
-                -- assumption.
-                -- assumption.
-              * assumption.
-              * assumption.
-            + assumption.
-            + pushsubst.
-              * ceapply SubstZero. eassumption.
-              * capply EqTyRefl. assumption.
-        }
-
-      (* CtxExtend *)
-      - { inversion hσ.
-
-          (* valid_fxvar *)
-          - simpl. capply CtxExtend. subst.
-            pose (hh := sound_trans_type σ0 G A H2 i0).
-            ceapply TySubst.
-            + capply SubstZero.
-              ceapply TermTyConv ; [ ceapply TermApp | .. ].
-              * (* apply hidℙ. *) todo.
-              * todo.
-              * todo.
-            + ceapply TySubst.
-              * ceapply SubstCtxConv ; [ ceapply SubstShift | .. ].
-                -- ceapply SubstZero.
-                   ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-                   ++ todo. (* We probably need a lemma here *)
-                   ++ todo.
-                   ++ todo.
-                -- todo.
-                -- todo.
-                -- todo.
-              * eassumption.
-
-          (* valid_fxpath *)
-          - simpl. capply CtxExtend. subst.
-            todo.
-        }
-    }
-
   (* sound_trans_type *)
   - { todo. }
+Defined.
+
+Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct hσ} :
+  Ttt.isctx (trans_ctx σ Γ).
+Proof.
+  destruct H.
+
+  (* CtxEmpty *)
+  - { dependent destruction hσ.
+
+      (* valid_cond *)
+      - simpl. capply CtxExtend.
+        ceapply TyEl.
+        apply hℙ.
+        capply CtxEmpty.
+
+      (* valid_fxpath *)
+      - assert (Ttt.isctx (trans_ctx σ ctxempty)).
+        { now apply isctx_trans_empty. }
+        assert (Ttt.istype (trans_ctx σ ctxempty) (El ℙ)).
+        { ceapply TyEl. apply hℙ. assumption. }
+        assert (Ttt.isctx (ctxextend (trans_ctx σ ctxempty) (El ℙ))).
+        { capply CtxExtend. assumption. }
+        assert (
+          Ttt.istype (ctxextend (trans_ctx σ ctxempty) (El ℙ)) (El ℙ)
+        ).
+        { ceapply TyEl. apply hℙ. assumption. }
+        assert (
+          Ttt.eqtype (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+                     (El ℙ) (El ℙ)
+        ).
+        { capply EqTyRefl. assumption. }
+        assert (
+          Ttt.issubst
+            (sbweak (El ℙ))
+            (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ)) (El ℙ))
+            (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+        ).
+        { capply SubstWeak. assumption. }
+        assert (
+          Ttt.istype (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+                     (Uni (uni 0))
+        ).
+        { capply TyUni. assumption. }
+        assert (
+          Ttt.istype
+            (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ)) (El ℙ))
+            (Subst (Uni (uni 0)) (sbweak (El ℙ)))
+        ).
+        { ceapply TySubst ; eassumption. }
+        assert (
+          Ttt.eqtype
+            (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ)) (El ℙ))
+            (Subst (El ℙ) (sbweak (El ℙ)))
+            (El ℙ)
+        ).
+        { eapply EqTySubstℙ ; eassumption. }
+        assert (
+          Ttt.issubst
+            (sbshift (El ℙ) (sbweak (El ℙ)))
+            (ctxextend (ctxextend (ctxextend (trans_ctx σ ctxempty)
+                                             (El ℙ))
+                                  (El ℙ))
+                       (Subst (El ℙ) (sbweak (El ℙ))))
+            (ctxextend (ctxextend (trans_ctx σ ctxempty)
+                                  (El ℙ))
+                       (El ℙ))
+        ).
+        { ceapply SubstShift ; assumption. }
+        assert (
+          Ttt.isctx
+            (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ)) (El ℙ))
+        ).
+        { capply CtxExtend. assumption. }
+        assert (
+          Ttt.istype
+            (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ)) (El ℙ))
+            (Uni (uni 0))
+        ).
+        { capply TyUni. assumption. }
+        assert (
+          Ttt.istype
+            (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ)) (El ℙ))
+            (El ℙ)
+        ).
+        { ceapply TyEl. apply hℙ. assumption. }
+        assert (
+          Ttt.eqtype
+            (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ)) (El ℙ))
+            (El ℙ)
+            (Subst (El ℙ) (sbweak (El ℙ)))
+        ).
+        { ceapply EqTySym. assumption. }
+        assert (
+          Ttt.issubst
+            (sbweak (El ℙ))
+            (ctxextend (ctxextend (ctxextend (trans_ctx σ ctxempty)
+                                             (El ℙ))
+                                  (El ℙ))
+                       (Subst (El ℙ) (sbweak (El ℙ))))
+            (ctxextend (ctxextend (trans_ctx σ ctxempty)
+                                  (El ℙ))
+                       (El ℙ))
+        ).
+        { ceapply SubstCtxConv ; [
+            ceapply SubstWeak
+          | ceapply EqCtxExtend ; [
+              ceapply CtxRefl
+            | ..
+            ]
+          | capply CtxRefl
+          ] ; assumption.
+        }
+        assert (
+          Ttt.istype
+            (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ)) (El ℙ))
+            (Subst (El ℙ) (sbweak (El ℙ)))
+        ).
+        { ceapply TySubst ; eassumption. }
+        assert (
+          Ttt.isctx
+            (ctxextend (ctxextend (ctxextend (trans_ctx σ ctxempty)
+                                             (El ℙ))
+                                  (El ℙ))
+                       (Subst (El ℙ) (sbweak (El ℙ))))
+        ).
+        { capply CtxExtend. assumption. }
+        assert (
+          Ttt.istype
+            (ctxextend (ctxextend (ctxextend (trans_ctx σ ctxempty)
+                                             (El ℙ))
+                                  (El ℙ))
+                       (Subst (El ℙ) (sbweak (El ℙ)))) (Uni (uni 0))
+        ).
+        { capply TyUni. assumption. }
+        assert (
+          Ttt.eqtype
+            (ctxextend (ctxextend (ctxextend (trans_ctx σ ctxempty)
+                                             (El ℙ))
+                                  (El ℙ))
+                       (Subst (El ℙ) (sbweak (El ℙ))))
+            (Subst (Subst (Uni (uni 0)) (sbweak (El ℙ)))
+                   (sbshift (El ℙ) (sbweak (El ℙ))))
+            (Subst (Uni (uni 0)) (sbweak (El ℙ)))
+        ).
+        { unfold Ttt.eqtype. pushsubst.
+          - eassumption.
+          - eassumption.
+          - capply EqTyRefl. assumption.
+          - pushsubst.
+            + eassumption.
+            + pushsubst.
+              * eassumption.
+              * capply EqTyRefl. assumption.
+        }
+        assert (
+          Ttt.eqtype
+            (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ)) (El ℙ))
+            (Subst (Arrow (El ℙ) (Uni (uni 0))) (sbweak (El ℙ)))
+            (Arrow (El ℙ) (Uni (uni 0)))
+        ).
+        { unfold Ttt.eqtype. pushsubst.
+          - eassumption.
+          - assumption.
+          - capply CongProd.
+            + assumption.
+            + assumption.
+        }
+        assert (
+          Ttt.eqtype (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+                     (Arrow (El ℙ) (Arrow (El ℙ) (Uni (uni 0))))
+                     (Prod (El ℙ) (Arrow (El ℙ) (Uni (uni 0))))
+        ).
+        { capply CongProd.
+          - assumption.
+          - assumption.
+        }
+        assert (
+          Ttt.isterm (trans_ctx σ ctxempty) (var (last_cond σ)) (El ℙ)
+        ).
+        { now apply isterm_last_cond. }
+        assert (
+          Ttt.issubst (sbweak (El ℙ))
+                      (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+                      (trans_ctx σ ctxempty)
+        ).
+        { capply SubstWeak. assumption. }
+        assert (
+          Ttt.eqtype
+            (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+            (Subst (El ℙ) (sbweak (El ℙ)))
+            (El ℙ)
+        ).
+        { eapply EqTySubstℙ. eassumption. }
+        assert (
+          Ttt.isterm
+            (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+            (var (S (last_cond σ)))
+            (El ℙ)
+        ).
+        { ceapply TermTyConv ; [ ceapply TermVarSucc | .. ] ; eassumption. }
+        assert (
+          Ttt.issubst
+            (sbzero (El ℙ) (var (S (last_cond σ))))
+            (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+            (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ)) (El ℙ))
+        ).
+        { capply SubstZero. assumption. }
+        assert (
+          Ttt.issubst
+            (sbweak (El ℙ))
+            (ctxextend (ctxextend (ctxextend (trans_ctx σ ctxempty)
+                                             (El ℙ))
+                                  (El ℙ))
+                       (El ℙ))
+            (ctxextend (ctxextend (trans_ctx σ ctxempty)
+                                  (El ℙ))
+                       (El ℙ))
+        ).
+        { capply SubstWeak. assumption. }
+        assert (
+          Ttt.istype
+            (ctxextend (ctxextend (ctxextend (trans_ctx σ ctxempty)
+                                             (El ℙ))
+                                  (El ℙ))
+                       (El ℙ))
+            (Subst (Uni (uni 0)) (sbweak (El ℙ)))
+        ).
+        { ceapply TySubst ; eassumption. }
+        assert (
+          Ttt.eqtype
+            (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+            (Subst (El ℙ) (sbzero (El ℙ) (var (S (last_cond σ)))))
+            (El ℙ)
+        ).
+        { eapply EqTySubstℙ. eassumption. }
+        assert (
+          Ttt.issubst
+            (sbshift (El ℙ) (sbzero (El ℙ) (var (S (last_cond σ)))))
+            (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+                       (Subst (El ℙ)
+                              (sbzero (El ℙ) (var (S (last_cond σ))))
+            ))
+            (ctxextend (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+                                  (El ℙ)) (El ℙ))
+        ).
+        { ceapply SubstShift ; assumption. }
+        assert (
+          Ttt.isctx
+            (ctxextend (ctxextend (ctxextend (trans_ctx σ ctxempty)
+                                             (El ℙ))
+                                  (El ℙ))
+                       (El ℙ))
+        ).
+        { capply CtxExtend. assumption. }
+        assert (
+          Ttt.istype
+            (ctxextend (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+                                  (El ℙ))
+                       (El ℙ)) (Uni (uni 0))
+        ).
+        { capply TyUni. assumption. }
+        assert (
+          Ttt.istype (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+                     (Subst (El ℙ) (sbzero (El ℙ) (var (S (last_cond σ)))))
+        ).
+        { ceapply TySubst ; eassumption. }
+        assert (
+          Ttt.isctx
+            (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+                       (Subst (El ℙ) (sbzero (El ℙ) (var (S (last_cond σ))))))
+        ).
+        { capply CtxExtend. assumption. }
+        assert (
+          Ttt.istype
+            (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+                       (Subst (El ℙ)
+                              (sbzero (El ℙ) (var (S (last_cond σ))))))
+            (Uni (uni 0))
+        ).
+        { capply TyUni. assumption. }
+        assert (
+          Ttt.eqtype
+            (ctxextend (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+                       (Subst (El ℙ) (sbzero (El ℙ) (var (S (last_cond σ))))))
+            (Subst (Subst (Uni (uni 0)) (sbweak (El ℙ)))
+                   (sbshift (El ℙ) (sbzero (El ℙ) (var (S (last_cond σ))))))
+            (Uni (uni 0))
+        ).
+        { unfold Ttt.eqtype. pushsubst.
+          - eassumption.
+          - eassumption.
+          - capply EqTyRefl. assumption.
+          - pushsubst.
+            + eassumption.
+            + capply EqTyRefl. assumption.
+        }
+        assert (
+          Ttt.eqtype
+            (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+            (Prod (Subst (El ℙ) (sbzero (El ℙ) (var (S (last_cond σ)))))
+                  (Subst (Subst (Uni (uni 0)) (sbweak (El ℙ)))
+                         (sbshift (El ℙ)
+                                  (sbzero (El ℙ) (var (S (last_cond σ))))
+            )))
+            (Prod (El ℙ) (Uni (uni 0)))
+        ).
+        { capply CongProd ; assumption. }
+        assert (
+          Ttt.eqtype
+            (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+            (Subst (Arrow (El ℙ) (Uni (uni 0)))
+                   (sbzero (El ℙ) (var (S (last_cond σ)))))
+            (Prod (El ℙ) (Uni (uni 0)))
+        ).
+        { unfold Ttt.eqtype. pushsubst ; eassumption. }
+        assert (
+          Ttt.isterm (ctxextend (trans_ctx σ ctxempty) (El ℙ))
+                     (var 0)
+                     (El ℙ)
+        ).
+        { ceapply TermTyConv ; [ ceapply TermVarZero | .. ] ; assumption. }
+
+        simpl. capply CtxExtend.
+        ceapply TyEl.
+        ceapply TermTyConv ; [ ceapply TermApp | .. ].
+        + ceapply TermTyConv ; [ ceapply TermApp | .. ].
+          * ceapply TermTyConv ; [ apply hHom | .. ].
+            -- assumption.
+            -- assumption.
+          * assumption.
+          * assumption.
+        + assumption.
+        + pushsubst.
+          * ceapply SubstZero. eassumption.
+          * capply EqTyRefl. assumption.
+    }
+
+  (* CtxExtend *)
+  - { dependent destruction hσ.
+
+      (* valid_fxvar *)
+      - simpl. capply CtxExtend. subst.
+        pose (hh := sound_trans_type σ G A hσ i0).
+        ceapply TySubst.
+        + capply SubstZero.
+          ceapply TermTyConv ; [ ceapply TermApp | .. ].
+          * apply hidℙ. (* now apply isctx_trans_empty. *)
+            (* Seems like we need to extend the lemma we proved
+                   to any context. *)
+            todo.
+          * todo.
+          * todo.
+        + ceapply TySubst.
+          * ceapply SubstCtxConv ; [ ceapply SubstShift | .. ].
+            -- ceapply SubstZero.
+               ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
+               ++ todo. (* We probably need a lemma here *)
+               ++ todo.
+               ++ todo.
+            -- todo.
+            -- todo.
+            -- todo.
+          * eassumption.
+
+      (* valid_fxpath *)
+      - simpl. capply CtxExtend. subst.
+        todo.
+    }
 
   Unshelve. all:todo.
 Defined.
