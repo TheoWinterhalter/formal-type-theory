@@ -224,6 +224,99 @@ Proof.
     eassumption.
 Defined.
 
+Lemma EqTySubstHom :
+  forall {Γ Δ ρ u v},
+    Ttt.issubst ρ Γ Δ ->
+    Ttt.isterm Δ u (El ℙ) ->
+    Ttt.isterm Δ v (El ℙ) ->
+    Ttt.eqtype Γ
+               (Subst (Hom u v) ρ)
+               (Hom (subst u ρ) (subst v ρ)).
+Proof.
+  intros Γ Δ ρ u v hρ hu hv.
+  unfold Hom.
+  (* unfold Ttt.eqtype. pushsubst. *)
+  (* This shouldn't be necessary! *)
+  ceapply EqTyTrans ; [
+    ceapply EqTySym ; [
+      ceapply EqTyTrans ; [
+        ceapply ElSubst
+      | ceapply EqTyRefl
+      | ..
+      ]
+    | ..
+    ]
+  | ..
+  ].
+  - eassumption.
+  - ceapply TermTyConv ; [ ceapply TermApp | .. ].
+    + ceapply TermTyConv ; [ ceapply TermApp | .. ].
+      * ceapply TermTyConv ; [ apply hHom | .. ].
+        -- apply (ett_sanity.sane_issubst _ _ _ hρ).
+        -- todo. (* It's true and tiresome *)
+      * assumption.
+      * todo.
+    + assumption.
+    + pushsubst.
+      * capply SubstZero. assumption.
+      * capply EqTyRefl. capply TyUni.
+        apply (ett_sanity.sane_issubst _ _ _ hρ).
+  - ceapply TySubst.
+    + eassumption.
+    + ceapply TyEl.
+      * ceapply TermTyConv ; [ ceapply TermApp | .. ].
+        -- ceapply TermTyConv ; [ ceapply TermApp | .. ].
+           ++ ceapply TermTyConv ; [ apply hHom | .. ].
+              ** apply (ett_sanity.sane_issubst _ _ _ hρ).
+              ** todo.
+           ++ assumption.
+           ++ todo.
+        -- assumption.
+        -- pushsubst.
+           ++ capply SubstZero. assumption.
+           ++ capply EqTyRefl. capply TyUni.
+              apply (ett_sanity.sane_issubst _ _ _ hρ).
+  - ceapply CongEl.
+    pushsubst ; [ instantiate (1 := Δ) | .. ].
+    + ceapply TermTyConv ; [ ceapply TermApp | .. ].
+      * ceapply TermTyConv ; [ apply hHom | .. ].
+        -- apply (ett_sanity.sane_issubst _ _ _ hρ).
+        -- todo.
+      * assumption.
+      * todo.
+    + assumption.
+    + assumption.
+    + ceapply EqTyConv ; [ ceapply CongApp | .. ].
+      * todo.
+      * todo.
+      * pushsubst ; [ instantiate (1 := Δ) | .. ].
+        -- ceapply TermTyConv ; [ apply hHom | .. ].
+           ++ apply (ett_sanity.sane_issubst _ _ _ hρ).
+           ++ todo.
+        -- assumption.
+        -- assumption.
+        -- ceapply EqTyConv ; [ ceapply CongApp | .. ].
+           ++ todo.
+           ++ todo.
+           ++
+Abort.
+
+
+Lemma hidx :
+  forall {Γ x},
+    Ttt.isterm Γ x (El ℙ) ->
+    Ttt.isterm Γ (idℙ x) (Hom x x).
+Proof.
+  intros Γ x h.
+  unfold idℙ.
+  ceapply TermTyConv ; [ ceapply TermApp | .. ].
+  - apply hidℙ.
+    apply (ett_sanity.sane_isterm _ _ _ h).
+  - assumption.
+  - todo.
+Defined.
+
+
 
 (* We also introduce the notion of forcing context *)
 Inductive fctx :=
@@ -1703,10 +1796,8 @@ Proof.
         ceapply TySubst.
         + capply SubstZero.
           ceapply TermTyConv ; [ ceapply TermApp | .. ].
-          * apply hidℙ. (* now apply isctx_trans_empty. *)
-            (* Seems like we need to extend the lemma we proved
-                   to any context. *)
-            todo.
+          * apply hidℙ.
+            now apply sound_trans_ctx.
           * todo.
           * todo.
         + ceapply TySubst.
