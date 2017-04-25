@@ -1870,15 +1870,14 @@ Proof.
   - { dependent destruction hσ.
 
       (* valid_fxvar *)
-      - simpl. capply CtxExtend. subst.
+      - simpl. capply CtxExtend.
         pose (hh := sound_trans_type σ G A hσ i0).
         ceapply TySubst.
         + capply SubstZero.
-          ceapply TermTyConv ; [ ceapply TermApp | .. ].
-          * apply hidℙ.
-            now apply sound_trans_ctx.
-          * todo.
-          * todo.
+          apply hidℙ'.
+          (* Problem: the S should probably be removed.
+             [[A]] σ is ill-defined. *)
+          todo.
         + ceapply TySubst.
           * ceapply SubstCtxConv ; [ ceapply SubstShift | .. ].
             -- ceapply SubstZero.
