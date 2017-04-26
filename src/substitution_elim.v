@@ -1,9 +1,13 @@
+Require config.
+Require Import config_tactics.
+
 Require Import syntax.
 Require Import ett.
 Require ptt.
 Require ptt_sanity.
 Require Import tactics.
 
+Require Import Coq.Program.Equality.
 
 Inductive subst_free_term : term -> Type :=
   | subst_free_var :
@@ -66,6 +70,63 @@ Inductive subst_free_term : term -> Type :=
         subst_free_term w ->
         subst_free_term (cond A u v w)
 
+  | subst_free_pair :
+      forall A B u v,
+        subst_free_type A ->
+        subst_free_type B ->
+        subst_free_term u ->
+        subst_free_term v ->
+        subst_free_term (pair A B u v)
+
+  | subst_free_proj1 :
+      forall A B p,
+        subst_free_type A ->
+        subst_free_type B ->
+        subst_free_term p ->
+        subst_free_term (proj1 A B p)
+
+  | subst_free_proj2 :
+      forall A B p,
+        subst_free_type A ->
+        subst_free_type B ->
+        subst_free_term p ->
+        subst_free_term (proj2 A B p)
+
+  | subst_free_uniProd :
+      forall n m a b,
+        subst_free_term a ->
+        subst_free_term b ->
+        subst_free_term (uniProd n m a b)
+
+  | subst_free_uniId :
+      forall n a u v,
+        subst_free_term a ->
+        subst_free_term u ->
+        subst_free_term v ->
+        subst_free_term (uniId n a u v)
+
+  | subst_free_uniEmpty :
+      forall n,
+        subst_free_term (uniEmpty n)
+
+  | subst_free_uniUnit :
+      forall n,
+        subst_free_term (uniUnit n)
+
+  | subst_free_uniBool :
+      forall n,
+        subst_free_term (uniBool n)
+
+  | subst_free_uniSimProd :
+      forall n m a b,
+        subst_free_term a ->
+        subst_free_term b ->
+        subst_free_term (uniSimProd n m a b)
+
+  | subst_free_uniUni :
+      forall n,
+        subst_free_term (uniUni n)
+
 with subst_free_type : type -> Type :=
 
   | subst_free_Prod :
@@ -91,10 +152,31 @@ with subst_free_type : type -> Type :=
 
   | subst_free_Bool :
       subst_free_type Bool
+
+  | subst_free_Uni :
+      forall n,
+        subst_free_type (Uni n)
+
+  | subst_free_El :
+      forall a,
+        subst_free_term a ->
+        subst_free_type (El a)
 .
 
 Hypothesis temporary : forall {A}, A.
 Ltac todo := exact temporary.
+
+Section Elimination.
+
+Context `{configReflection : config.Reflection}.
+Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{ConfigProdEta : config.ProdEta}.
+Context `{ConfigUniverses : config.Universes}.
+Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigWithJ : config.WithJ}.
+Context `{ConfigEmpty : config.WithEmpty}.
+Context `{ConfigUnit : config.WithUnit}.
+Context `{ConfigBool : config.WithBool}.
 
 Fixpoint apply_subst_var {G D A n sbs}
   (H1 : ptt.isterm D (var n) A) (H2 : ptt.issubst sbs G D) {struct H2} :
@@ -102,7 +184,7 @@ Fixpoint apply_subst_var {G D A n sbs}
     subst_free_term v * eqterm G (subst (var n) sbs) v (Subst A sbs)
   }%type.
 Proof.
-  destruct H2.
+  dependent destruction H2 ; doConfig.
 
   (* SubstZero *)
   - { destruct n.
