@@ -496,11 +496,55 @@ Fixpoint trans_ctx (σ : fctx) (Γ : context) : context :=
 
   end.
 
+Lemma last_cond_S :
+  forall {σ Γ},
+    isfctx Γ σ ->
+    forall n, _last_cond (S n) σ = S (_last_cond n σ).
+Proof.
+  intros σ Γ h n.
+  dependent induction h.
+
+  - simpl. easy.
+  - simpl. apply IHh.
+  - simpl. easy.
+Defined.
+
+
+Lemma last_cond_var :
+  forall {σ Γ},
+    isfctx Γ σ ->
+    last_cond (fxvar σ) = S (last_cond σ).
+Proof.
+  intros σ Γ h.
+  dependent induction h.
+
+  - unfold last_cond. simpl. easy.
+
+  - unfold last_cond. simpl.
+    now rewrite @last_cond_S with (Γ := Γ).
+
+  - unfold last_cond. simpl. easy.
+Defined.
+
+Lemma trans_ctx_fxpath :
+  forall {Γ σ},
+    trans_ctx (fxpath σ) Γ =
+    ctxextend (ctxextend (trans_ctx σ Γ) (El ℙ))
+              (Hom (var (S (last_cond σ))) (var 0)).
+Proof.
+  intros Γ σ.
+  destruct Γ.
+  - simpl. reflexivity.
+  - simpl. reflexivity.
+Defined.
+
+
 Fixpoint isctx_trans_empty {σ} (h : isfctx ctxempty σ) {struct h} :
   Ttt.isctx (trans_ctx σ ctxempty)
 
-with isterm_last_cond {σ} (h : isfctx ctxempty σ) {struct h} :
-  Ttt.isterm (trans_ctx σ ctxempty) (var (last_cond σ)) (El ℙ).
+with isterm_last_cond {σ Γ} (h : isfctx Γ σ) {struct h} :
+  Ttt.isctx Γ ->
+  Ttt.isterm (trans_ctx σ Γ) (var (last_cond σ)) (El ℙ).
 Proof.
   (* isctx_trans_empty *)
   - { dependent destruction h.
@@ -589,7 +633,9 @@ Proof.
                                  ---- capply EqTyRefl.
                                       magic.
           * ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-            -- now apply isterm_last_cond.
+            -- apply isterm_last_cond.
+               ++ assumption.
+               ++ capply CtxEmpty.
             -- ceapply TyEl. apply hℙ.
                now apply IHh.
             -- eapply EqTySubstℙ.
@@ -599,7 +645,9 @@ Proof.
           * pushsubst.
             -- capply SubstZero.
                ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-               ++ now apply isterm_last_cond.
+               ++ apply isterm_last_cond.
+                  ** assumption.
+                  ** capply CtxEmpty.
                ++ ceapply TyEl. apply hℙ.
                   now apply IHh.
                ++ eapply EqTySubstℙ.
@@ -624,7 +672,9 @@ Proof.
                ++ eapply EqTySubstℙ.
                   capply SubstZero.
                   ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-                  ** now apply isterm_last_cond.
+                  ** apply isterm_last_cond.
+                     --- assumption.
+                     --- capply CtxEmpty.
                   ** ceapply TyEl. apply hℙ.
                      now apply IHh.
                   ** eapply EqTySubstℙ.
@@ -635,7 +685,8 @@ Proof.
                   ** ceapply SubstShift.
                      --- capply SubstZero.
                          ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-                         +++ now apply isterm_last_cond.
+                         +++ apply isterm_last_cond ; [ assumption | .. ].
+                             capply CtxEmpty.
                          +++ ceapply TyEl. apply hℙ.
                              now apply IHh.
                          +++ eapply EqTySubstℙ.
@@ -668,7 +719,8 @@ Proof.
                      --- ceapply SubstShift.
                          +++ capply SubstZero.
                              ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-                             *** now apply isterm_last_cond.
+                             *** apply isterm_last_cond ; [ assumption | .. ].
+                                 capply CtxEmpty.
                              *** ceapply TyEl. apply hℙ.
                                  now apply IHh.
                              *** eapply EqTySubstℙ.
@@ -687,7 +739,8 @@ Proof.
                          ceapply TySubst.
                          +++ ceapply SubstZero.
                              ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-                             *** now apply isterm_last_cond.
+                             *** apply isterm_last_cond ; [ assumption | .. ].
+                                 capply CtxEmpty.
                              *** ceapply TyEl. apply hℙ.
                                  now apply IHh.
                              *** eapply EqTySubstℙ.
@@ -730,7 +783,7 @@ Proof.
     }
 
   (* isterm_last_cond *)
-  - { dependent destruction h.
+  - { dependent destruction h ; intro hΓ.
 
       - unfold last_cond. simpl.
         ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
@@ -741,11 +794,30 @@ Proof.
           ceapply TyEl. apply hℙ.
           capply CtxEmpty.
 
-      - unfold last_cond. simpl.
+      - rewrite @last_cond_var with (Γ := Γ) ; [ .. | exact h ].
+        unfold last_cond. simpl.
+        ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
+        + apply isterm_last_cond.
+          * assumption.
+          * todo. (* Inversion *)
+        + ceapply TySubst.
+          * ceapply SubstZero. apply hidℙ'.
+            apply isterm_last_cond.
+            -- assumption.
+            -- todo. (* Inversion *)
+          * ceapply TySubst.
+            -- todo. (*TODO*)
+            -- todo.
+        + todo.
+
+      - rewrite trans_ctx_fxpath.
+        unfold last_cond. simpl.
         ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
         + ceapply TermVarZero.
           ceapply TyEl. apply hℙ.
-          now apply isctx_trans_empty.
+          (* now apply isctx_trans_empty. *)
+          todo. (* Maybe we should prove all these statements
+                   silmutaneuously. *)
         + ceapply TyEl.
           ceapply TermTyConv ; [ ceapply TermApp | .. ].
           * ceapply TermTyConv ; [ ceapply TermApp | .. ].
