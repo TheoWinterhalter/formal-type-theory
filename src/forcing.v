@@ -465,14 +465,15 @@ with trans_subst (σ : fctx) (ρ : substitution) {struct ρ} : substitution :=
   | _ => todo
   end
 
+(* Intuition: [[ A ]]σ := [ A ]σ {1 := σe} {0 := id σe} *)
 where "[[ A ]] σ" :=
   (Subst (Subst (trans_type σ A)
                 (sbshift (Hom (var (S (last_cond σ)))
                               (var 0))
                          (sbzero (El ℙ)
-                                 (var (S (last_cond σ))))))
-         (sbzero (Hom (var (S (last_cond σ))) (var (S (last_cond σ))))
-                 (idℙ (var (S (last_cond σ))))))
+                                 (var (last_cond σ)))))
+         (sbzero (Hom (var (last_cond σ)) (var (last_cond σ)))
+                 (idℙ (var (last_cond σ)))))
 
 and "[ u ]! σ" := (flam σ (trans_term (fxpath σ) u))
 
@@ -1875,8 +1876,6 @@ Proof.
         ceapply TySubst.
         + capply SubstZero.
           apply hidℙ'.
-          (* Problem: the S should probably be removed.
-             [[A]] σ is ill-defined. *)
           todo.
         + ceapply TySubst.
           * ceapply SubstCtxConv ; [ ceapply SubstShift | .. ].
