@@ -554,7 +554,14 @@ Proof.
        in paranoid tt! *)
     assert (eq' : Δ = ctxempty) by todo.
     rewrite eq'. apply valid_cond.
-  - (* Similar problem with ctxextend. *)
+  - (* Here again we have a result on ett where we need it on ptt,
+       we could always invoke the translation between them. *)
+    assert (eq' : {Δ' : context & {A' : type & Δ = ctxextend Δ' A'}}) by todo.
+    destruct eq' as [Δ' [A' eq'] ].
+    rewrite eq' in *.
+    apply valid_fxvar.
+    apply IHhσ.
+    (* This also holds by inversion. *)
     todo.
   - apply valid_fxpath. now apply IHhσ.
 Qed.
