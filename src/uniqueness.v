@@ -10,6 +10,7 @@ Require ptt2ett ett2ptt.
 Require ptt_admissible.
 Require ett_sanity ptt_sanity.
 Require ptt_inversion.
+Require Import inversion.
 Require Import tactics config_tactics.
 
 Section Uniqueness.
@@ -23,108 +24,6 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
-
-(* Auxiliary inversion lemmas. *)
-
-Fixpoint eqctx_ctxextend_left G A D
-         (H : ett.eqctx (ctxextend G A) D) {struct H} :
-  { G' : context &
-    { A' : type &
-      (D = ctxextend G' A') * ett.eqctx G G' * ett.eqtype G A A'
-    }
-  }%type
-
-with eqctx_ctxextend_right D G A
-                           (H : ett.eqctx D (ctxextend G A)) {struct H} :
-  { G' : context &
-    { A' : type &
-      (D = ctxextend G' A') * ett.eqctx G G' * ett.eqtype G A A'
-    }
-  }%type.
-Proof.
-  (**** left ****)
-  - { inversion_clear H ; doConfig.
-
-      (* CtxRefl *)
-      - exists G, A. repeat split.
-        + capply CtxRefl.
-          eapply ptt2ett.sane_isctx.
-          apply (ptt_inversion.CtxExtendInversion G A).
-          now eapply ett2ptt.sane_isctx.
-        + capply EqTyRefl.
-          eapply ptt2ett.sane_istype.
-          apply (ptt_inversion.CtxExtendInversion G A).
-          now eapply ett2ptt.sane_isctx.
-
-      (* CtxSym *)
-      - destruct (eqctx_ctxextend_right _ _ _ X) as [G' [A' [[eq HG] HA]]].
-        exists G', A'. repeat split ; assumption.
-
-      (* CtxTrans *)
-      - destruct (eqctx_ctxextend_left _ _ _ X2) as [G' [A' [[eq HG] HA]]].
-        subst.
-        destruct (eqctx_ctxextend_left _ _ _ X3) as [G'' [A'' [[eq' HG'] HA']]].
-        exists G'', A''. repeat split.
-        + assumption.
-        + ceapply CtxTrans ; eassumption.
-        + ceapply EqTyTrans.
-          * eassumption.
-          * ceapply EqTyCtxConv ; try eassumption.
-            capply CtxSym ; assumption.
-
-      (* EqCtxExtend *)
-      - exists D0, B. repeat split ; assumption.
-
-    }
-
-  (**** right ****)
-  - { inversion_clear H ; doConfig.
-
-      (* CtxRefl *)
-      - exists G, A. repeat split.
-        + capply CtxRefl.
-          eapply ptt2ett.sane_isctx.
-          apply (ptt_inversion.CtxExtendInversion G A).
-          now eapply ett2ptt.sane_isctx.
-        + capply EqTyRefl.
-          eapply ptt2ett.sane_istype.
-          apply (ptt_inversion.CtxExtendInversion G A).
-          now eapply ett2ptt.sane_isctx.
-
-      (* CtxSym *)
-      - destruct (eqctx_ctxextend_left _ _ _ X) as [G' [A' [[eq HG] HA]]].
-        exists G', A'. repeat split ; assumption.
-
-      (* CtxTrans *)
-      - destruct (eqctx_ctxextend_right _ _ _ X3) as [G' [A' [[eq HG] HA]]].
-        subst.
-        destruct (eqctx_ctxextend_right _ _ _ X2) as [G'' [A'' [[eq' HG'] HA']]].
-        exists G'', A''. repeat split.
-        + assumption.
-        + ceapply CtxTrans ; eassumption.
-        + ceapply EqTyTrans.
-          * eassumption.
-          * ceapply EqTyCtxConv ; try eassumption.
-            capply CtxSym ; assumption.
-
-      (* EqCtxExtend *)
-      - exists G0, A0. repeat split.
-        + now capply CtxSym.
-        + capply EqTySym.
-          ceapply EqTyCtxConv ; eassumption.
-
-    }
-
-Defined.
-
-Definition eqctx_ctxextend G A G' A'
-         (H : ett.eqctx (ctxextend G A) (ctxextend G' A')) :
-  (ett.eqctx G G' * ett.eqtype G A A')%type.
-Proof.
-  destruct (eqctx_ctxextend_left _ _ _ H) as [G'' [A'' [[eq HG] HA]]].
-  inversion eq. subst.
-  split ; assumption.
-Defined.
 
 
 (* It looks like we need to strengthen some inference

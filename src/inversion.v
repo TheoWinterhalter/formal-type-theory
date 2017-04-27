@@ -13,6 +13,8 @@ Require ptt2ett ett2ptt.
 Require ett_sanity.
 Require Import tactics.
 
+Require Import Coq.Program.Equality.
+
 Section Inversion.
 
 Context `{configReflection : config.Reflection}.
@@ -366,6 +368,136 @@ Proof.
       - hyp.
     }
 
+Defined.
+
+Fixpoint eqctx_ctxextend_left G A D
+         (H : ett.eqctx (ctxextend G A) D) {struct H} :
+  { G' : context &
+    { A' : type &
+      (D = ctxextend G' A') * ett.eqctx G G' * ett.eqtype G A A'
+    }
+  }%type
+
+with eqctx_ctxextend_right D G A
+                           (H : ett.eqctx D (ctxextend G A)) {struct H} :
+  { G' : context &
+    { A' : type &
+      (D = ctxextend G' A') * ett.eqctx G G' * ett.eqtype G A A'
+    }
+  }%type.
+Proof.
+  (**** left ****)
+  - { inversion_clear H ; doConfig.
+
+      (* CtxRefl *)
+      - exists G, A. repeat split.
+        + capply CtxRefl.
+          eapply ptt2ett.sane_isctx.
+          apply (ptt_inversion.CtxExtendInversion G A).
+          now eapply ett2ptt.sane_isctx.
+        + capply EqTyRefl.
+          eapply ptt2ett.sane_istype.
+          apply (ptt_inversion.CtxExtendInversion G A).
+          now eapply ett2ptt.sane_isctx.
+
+      (* CtxSym *)
+      - destruct (eqctx_ctxextend_right _ _ _ X) as [G' [A' [[eq HG] HA]]].
+        exists G', A'. repeat split ; assumption.
+
+      (* CtxTrans *)
+      - destruct (eqctx_ctxextend_left _ _ _ X2) as [G' [A' [[eq HG] HA]]].
+        subst.
+        destruct (eqctx_ctxextend_left _ _ _ X3) as [G'' [A'' [[eq' HG'] HA']]].
+        exists G'', A''. repeat split.
+        + assumption.
+        + ceapply CtxTrans ; eassumption.
+        + ceapply EqTyTrans.
+          * eassumption.
+          * ceapply EqTyCtxConv ; try eassumption.
+            capply CtxSym ; assumption.
+
+      (* EqCtxExtend *)
+      - exists D0, B. repeat split ; assumption.
+
+    }
+
+  (**** right ****)
+  - { inversion_clear H ; doConfig.
+
+      (* CtxRefl *)
+      - exists G, A. repeat split.
+        + capply CtxRefl.
+          eapply ptt2ett.sane_isctx.
+          apply (ptt_inversion.CtxExtendInversion G A).
+          now eapply ett2ptt.sane_isctx.
+        + capply EqTyRefl.
+          eapply ptt2ett.sane_istype.
+          apply (ptt_inversion.CtxExtendInversion G A).
+          now eapply ett2ptt.sane_isctx.
+
+      (* CtxSym *)
+      - destruct (eqctx_ctxextend_left _ _ _ X) as [G' [A' [[eq HG] HA]]].
+        exists G', A'. repeat split ; assumption.
+
+      (* CtxTrans *)
+      - destruct (eqctx_ctxextend_right _ _ _ X3) as [G' [A' [[eq HG] HA]]].
+        subst.
+        destruct (eqctx_ctxextend_right _ _ _ X2) as [G'' [A'' [[eq' HG'] HA']]].
+        exists G'', A''. repeat split.
+        + assumption.
+        + ceapply CtxTrans ; eassumption.
+        + ceapply EqTyTrans.
+          * eassumption.
+          * ceapply EqTyCtxConv ; try eassumption.
+            capply CtxSym ; assumption.
+
+      (* EqCtxExtend *)
+      - exists G0, A0. repeat split.
+        + now capply CtxSym.
+        + capply EqTySym.
+          ceapply EqTyCtxConv ; eassumption.
+
+    }
+
+Defined.
+
+Definition eqctx_ctxextend G A G' A'
+         (H : ett.eqctx (ctxextend G A) (ctxextend G' A')) :
+  (ett.eqctx G G' * ett.eqtype G A A')%type.
+Proof.
+  destruct (eqctx_ctxextend_left _ _ _ H) as [G'' [A'' [[eq HG] HA]]].
+  inversion eq. subst.
+  split ; assumption.
+Defined.
+
+Axiom todo : forall {A}, A.
+Ltac todo := apply todo.
+
+Fixpoint eqctx_ctxempty_right {Γ} (h : ett.eqctx Γ ctxempty) {struct h} :
+  Γ = ctxempty
+
+with eqctx_ctxempty_left {Γ} (h : ett.eqctx ctxempty Γ) {struct h} :
+  Γ = ctxempty.
+Proof.
+  (* eqctx_ctxempty_right *)
+  - { dependent destruction h ; doConfig.
+      - reflexivity.
+      - now apply eqctx_ctxempty_left.
+      - pose (eqctx_ctxempty_right D h2).
+        rewrite e in h1.
+        apply (eqctx_ctxempty_right G h1).
+      - reflexivity.
+    }
+
+  (* eqctx_ctxempty_left *)
+  - { dependent destruction h ; doConfig.
+      - reflexivity.
+      - now apply eqctx_ctxempty_right.
+      - pose (eqctx_ctxempty_left D h1).
+        rewrite e in h2.
+        apply (eqctx_ctxempty_left E h2).
+      - reflexivity.
+    }
 Defined.
 
 End Inversion.
