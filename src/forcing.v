@@ -818,789 +818,827 @@ Proof.
           (* now apply isctx_trans_empty. *)
           todo. (* Maybe we should prove all these statements
                    silmutaneuously. *)
-        + ceapply TyEl.
-          ceapply TermTyConv ; [ ceapply TermApp | .. ].
-          * ceapply TermTyConv ; [ ceapply TermApp | .. ].
-            -- ceapply TermTyConv ; [ apply hHom | .. ].
-               ++ capply CtxExtend.
-                  ceapply TyEl. apply hℙ.
-                  now apply isctx_trans_empty.
-               ++ unfold Arrow.
-                  capply CongProd.
-                  ** capply EqTyRefl.
-                     ceapply TyEl. apply hℙ.
-                     capply CtxExtend.
-                     ceapply TyEl. apply hℙ.
-                     now apply isctx_trans_empty.
-                  ** pushsubst.
-                     --- capply SubstWeak.
-                         ceapply TyEl. apply hℙ.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         now apply isctx_trans_empty.
-                     --- ceapply TySubst.
-                         +++ capply SubstWeak.
-                             ceapply TyEl. apply hℙ.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             now apply isctx_trans_empty.
-                         +++ capply TyUni.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             now apply isctx_trans_empty.
-                     --- capply CongProd.
-                         +++ eapply EqTySubstℙ.
-                             capply SubstWeak.
-                             ceapply TyEl. apply hℙ.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             now apply isctx_trans_empty.
-                         +++ pushsubst.
-                             *** ceapply SubstShift.
-                                 ---- capply SubstWeak.
-                                      ceapply TyEl. apply hℙ.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-                                 ---- ceapply TyEl. apply hℙ.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-                             *** capply SubstWeak.
-                                 ceapply TyEl. apply hℙ.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 now apply isctx_trans_empty.
-                             *** capply EqTyRefl.
-                                 capply TyUni.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 now apply isctx_trans_empty.
-                             *** pushsubst.
-                                 ---- ceapply SubstShift.
-                                      ++++ capply SubstWeak.
-                                           ceapply TyEl. apply hℙ.
-                                           capply CtxExtend.
-                                           ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                                      ++++ ceapply TyEl. apply hℙ.
-                                           capply CtxExtend.
-                                           ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                                 ---- pushsubst.
-                                      ++++ ceapply SubstCtxConv ; [
-                                             ceapply SubstWeak
-                                           | ..
-                                           ].
-                                           Focus 2.
-                                             ceapply EqCtxExtend.
-                                             (**)
-                                               capply CtxRefl.
-                                               capply CtxExtend.
-                                               ceapply TyEl. apply hℙ.
-                                               capply CtxExtend.
-                                               ceapply TyEl. apply hℙ.
-                                               now apply isctx_trans_empty.
-                                             (**)
-                                               capply EqTySym.
-                                               eapply EqTySubstℙ.
-                                               capply SubstWeak.
-                                               ceapply TyEl. apply hℙ.
-                                               capply CtxExtend.
-                                               ceapply TyEl. apply hℙ.
-                                               now apply isctx_trans_empty.
-                                           **** ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                           **** capply CtxRefl.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                      ++++ capply EqTyRefl.
-                                           capply TyUni.
-                                           capply CtxExtend.
-                                           ceapply TySubst.
-                                           **** capply SubstWeak.
-                                                ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                           **** ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-            -- ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-               ++ now apply isterm_last_cond.
-               ++ ceapply TyEl. apply hℙ.
-                  now apply isctx_trans_empty.
-               ++ eapply EqTySubstℙ.
-                  capply SubstWeak.
-                  ceapply TyEl. apply hℙ.
-                  now apply isctx_trans_empty.
-            -- pushsubst.
-               ++ capply SubstZero.
-                  ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-                  ** now apply isterm_last_cond.
-                  ** ceapply TyEl. apply hℙ.
-                     now apply isctx_trans_empty.
-                  ** eapply EqTySubstℙ.
-                     capply SubstWeak.
-                     ceapply TyEl. apply hℙ.
-                     now apply isctx_trans_empty.
-               ++ ceapply TySubst.
-                  ** capply SubstWeak.
-                     ceapply TyEl. apply hℙ.
-                     capply CtxExtend.
-                     ceapply TyEl. apply hℙ.
-                     capply CtxExtend.
-                     ceapply TyEl. apply hℙ.
-                     now apply isctx_trans_empty.
-                  ** capply TyUni.
-                     capply CtxExtend.
-                     ceapply TyEl. apply hℙ.
-                     capply CtxExtend.
-                     ceapply TyEl. apply hℙ.
-                     now apply isctx_trans_empty.
-               ++ capply CongProd.
-                  ** eapply EqTySubstℙ.
-                     capply SubstZero.
-                     ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-                     --- now apply isterm_last_cond.
-                     --- ceapply TyEl. apply hℙ.
-                         now apply isctx_trans_empty.
-                     --- eapply EqTySubstℙ.
-                         capply SubstWeak.
-                         ceapply TyEl. apply hℙ.
-                         now apply isctx_trans_empty.
-                  ** pushsubst.
-                     --- ceapply SubstShift.
-                         +++ capply SubstZero.
-                             ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-                             *** now apply isterm_last_cond.
-                             *** ceapply TyEl. apply hℙ.
-                                 now apply isctx_trans_empty.
-                             *** eapply EqTySubstℙ.
-                                 capply SubstWeak.
-                                 ceapply TyEl. apply hℙ.
-                                 now apply isctx_trans_empty.
-                         +++ ceapply TyEl. apply hℙ.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             now apply isctx_trans_empty.
-                     --- capply SubstWeak.
-                         ceapply TyEl. apply hℙ.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         now apply isctx_trans_empty.
-                     --- capply EqTyRefl.
-                         capply TyUni.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         now apply isctx_trans_empty.
-                     --- pushsubst.
-                         +++ ceapply SubstShift.
-                             *** capply SubstZero.
-                                 ceapply TermTyConv ; [
-                                   ceapply TermVarSucc
-                                 | ..
-                                 ].
-                                 ---- now apply isterm_last_cond.
-                                 ---- ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-                                 ---- eapply EqTySubstℙ.
-                                      capply SubstWeak.
-                                      ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-                             *** ceapply TyEl. apply hℙ.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 now apply isctx_trans_empty.
-                         +++ capply EqTyRefl.
-                             capply TyUni.
-                             capply CtxExtend.
-                             ceapply TySubst.
-                             *** capply SubstZero.
-                                 ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-                                 ---- now apply isterm_last_cond.
-                                 ---- ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-                                 ---- eapply EqTySubstℙ.
-                                      capply SubstWeak.
-                                      ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-                             *** ceapply TyEl. apply hℙ.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 now apply isctx_trans_empty.
-          * ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
-            -- ceapply TyEl. apply hℙ.
-               now apply isctx_trans_empty.
-            -- eapply EqTySubstℙ.
-               capply SubstWeak.
-               ceapply TyEl. apply hℙ.
-               now apply isctx_trans_empty.
-          * pushsubst.
-            -- capply SubstZero.
-               ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
-               ++ ceapply TyEl. apply hℙ.
-                  now apply isctx_trans_empty.
-               ++ eapply EqTySubstℙ.
-                  capply SubstWeak.
-                  ceapply TyEl. apply hℙ.
-                  now apply isctx_trans_empty.
-            -- capply EqTyRefl.
-               capply TyUni.
-               capply CtxExtend.
-               ceapply TyEl. apply hℙ.
-               now apply isctx_trans_empty.
-        + ceapply EqTyTrans ; [
-            ceapply CongTySubst ; [ ceapply SubstRefl | eapply EqTySubstℙ | .. ]
-          | ..
-          ].
-          * capply SubstWeak.
-            ceapply TyEl.
-            ceapply TermTyConv ; [ ceapply TermApp | .. ].
-            -- ceapply TermTyConv ; [ ceapply TermApp | .. ].
-               ++ ceapply TermTyConv ; [ apply hHom | .. ].
-                  ** capply CtxExtend.
-                     ceapply TyEl. apply hℙ.
-                     now apply isctx_trans_empty.
-                  ** capply CongProd.
-                     --- capply EqTyRefl.
-                         ceapply TyEl. apply hℙ.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         now apply isctx_trans_empty.
-                     --- pushsubst.
-                         +++ capply SubstWeak.
-                             ceapply TyEl. apply hℙ.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             now apply isctx_trans_empty.
-                         +++ ceapply TySubst.
-                             *** capply SubstWeak.
-                                 ceapply TyEl. apply hℙ.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 now apply isctx_trans_empty.
-                             *** capply TyUni.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 now apply isctx_trans_empty.
-                         +++ capply CongProd.
-                             *** eapply EqTySubstℙ.
-                                 capply SubstWeak.
-                                 ceapply TyEl. apply hℙ.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 now apply isctx_trans_empty.
-                             *** pushsubst.
-                                 ---- ceapply SubstShift.
-                                      ++++ capply SubstWeak.
-                                           ceapply TyEl. apply hℙ.
-                                           capply CtxExtend.
-                                           ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                                      ++++ ceapply TyEl. apply hℙ.
-                                           capply CtxExtend.
-                                           ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                                 ---- capply SubstWeak.
-                                      ceapply TyEl. apply hℙ.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-                                 ---- capply EqTyRefl.
-                                      capply TyUni.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-                                 ---- pushsubst.
-                                      ++++ ceapply SubstShift.
-                                           **** capply SubstWeak.
-                                                ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                           **** ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                      ++++ pushsubst.
-                                           **** ceapply SubstCtxConv ; [
-                                                  ceapply SubstWeak
-                                                | ceapply EqCtxExtend ; [
-                                                    capply CtxRefl
-                                                  | ..
-                                                  ]
-                                                | ..
-                                                ].
-                                                ----- ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                                ----- capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                                ----- capply EqTySym.
-                                                eapply EqTySubstℙ.
-                                                ceapply SubstWeak.
-                                                ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                                ----- capply CtxRefl.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                           **** capply EqTyRefl.
-                                                capply TyUni.
-                                                capply CtxExtend.
-                                                ceapply TySubst.
-                                                ----- capply SubstWeak.
-                                                ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                                ----- ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-               ++ ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-                  ** now apply isterm_last_cond.
-                  ** ceapply TyEl. apply hℙ.
-                     now apply isctx_trans_empty.
-                  ** eapply EqTySubstℙ.
-                     capply SubstWeak.
-                     ceapply TyEl. apply hℙ.
-                     now apply isctx_trans_empty.
-               ++ pushsubst.
-                  ** capply SubstZero.
-                     ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-                     --- now apply isterm_last_cond.
-                     --- ceapply TyEl. apply hℙ.
-                         now apply isctx_trans_empty.
-                     --- eapply EqTySubstℙ.
-                         capply SubstWeak.
-                         ceapply TyEl. apply hℙ.
-                         now apply isctx_trans_empty.
-                  ** ceapply TySubst.
-                     --- capply SubstWeak.
-                         ceapply TyEl. apply hℙ.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         now apply isctx_trans_empty.
-                     --- capply TyUni.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         now apply isctx_trans_empty.
-                  ** capply CongProd.
-                     --- eapply EqTySubstℙ.
-                         capply SubstZero.
-                         ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-                         +++ now apply isterm_last_cond.
-                         +++ ceapply TyEl. apply hℙ.
-                             now apply isctx_trans_empty.
-                         +++ eapply EqTySubstℙ.
-                             capply SubstWeak.
-                             ceapply TyEl. apply hℙ.
-                             now apply isctx_trans_empty.
-                     --- pushsubst.
-                         +++ ceapply SubstShift.
-                             *** capply SubstZero.
-                                 ---- ceapply TermTyConv ; [
-                                        ceapply TermVarSucc
-                                      | ..
-                                      ].
-                                      ++++ now apply isterm_last_cond.
-                                      ++++ ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                                      ++++ eapply EqTySubstℙ.
-                                           capply SubstWeak.
-                                           ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                             *** ceapply TyEl. apply hℙ.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 now apply isctx_trans_empty.
-                         +++ capply SubstWeak.
-                             ceapply TyEl. apply hℙ.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             now apply isctx_trans_empty.
-                         +++ capply EqTyRefl.
-                             capply TyUni.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             now apply isctx_trans_empty.
-                         +++ pushsubst.
-                             *** ceapply SubstShift.
-                                 ---- ceapply SubstZero.
-                                      ceapply TermTyConv ; [
-                                        ceapply TermVarSucc
-                                      | ..
-                                      ].
-                                      ++++ now apply isterm_last_cond.
-                                      ++++ ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                                      ++++ eapply EqTySubstℙ.
-                                           capply SubstWeak.
-                                           ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                                 ---- ceapply TyEl. apply hℙ.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-                             *** capply EqTyRefl.
-                                 capply TyUni.
-                                 capply CtxExtend.
-                                 ceapply TySubst.
-                                 ---- ceapply SubstZero.
-                                      ceapply TermTyConv ; [
-                                        ceapply TermVarSucc
-                                      | ..
-                                      ].
-                                      ++++ now apply isterm_last_cond.
-                                      ++++ ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                                      ++++ eapply EqTySubstℙ.
-                                           capply SubstWeak.
-                                           ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                                 ---- ceapply TyEl. apply hℙ.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-            -- ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
-               ++ ceapply TyEl. apply hℙ.
-                  now apply isctx_trans_empty.
-               ++ eapply EqTySubstℙ.
-                  capply SubstWeak.
-                  ceapply TyEl. apply hℙ.
-                  now apply isctx_trans_empty.
-            -- pushsubst.
-               ++ capply SubstZero.
-                  ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
-                  ** ceapply TyEl. apply hℙ.
-                     now apply isctx_trans_empty.
-                  ** eapply EqTySubstℙ.
-                     capply SubstWeak.
-                     ceapply TyEl. apply hℙ.
-                     now apply isctx_trans_empty.
-               ++ capply EqTyRefl. capply TyUni.
-                  capply CtxExtend.
-                  ceapply TyEl. apply hℙ.
-                  now apply isctx_trans_empty.
-          * capply SubstWeak.
-            ceapply TyEl. apply hℙ.
-            now apply isctx_trans_empty.
-          * eapply EqTySubstℙ.
-            capply SubstWeak.
-            ceapply TyEl.
-            ceapply TermTyConv ; [ ceapply TermApp | .. ].
-            -- ceapply TermTyConv ; [ ceapply TermApp | .. ].
-               ++ ceapply TermTyConv ; [ apply hHom | .. ].
-                  ** capply CtxExtend.
-                     ceapply TyEl. apply hℙ.
-                     now apply isctx_trans_empty.
-                  ** capply CongProd.
-                     --- capply EqTyRefl.
-                         ceapply TyEl. apply hℙ.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         now apply isctx_trans_empty.
-                     --- pushsubst.
-                         +++ capply SubstWeak.
-                             ceapply TyEl. apply hℙ.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             now apply isctx_trans_empty.
-                         +++ ceapply TySubst.
-                             *** capply SubstWeak.
-                                 ceapply TyEl. apply hℙ.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 now apply isctx_trans_empty.
-                             *** capply TyUni.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 now apply isctx_trans_empty.
-                         +++ capply CongProd.
-                             *** eapply EqTySubstℙ.
-                                 capply SubstWeak.
-                                 ceapply TyEl. apply hℙ.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 now apply isctx_trans_empty.
-                             *** pushsubst.
-                                 ---- ceapply SubstShift.
-                                      ++++ capply SubstWeak.
-                                           ceapply TyEl. apply hℙ.
-                                           capply CtxExtend.
-                                           ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                                      ++++ ceapply TyEl. apply hℙ.
-                                           capply CtxExtend.
-                                           ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                                 ---- capply SubstWeak.
-                                      ceapply TyEl. apply hℙ.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-                                 ---- capply EqTyRefl. capply TyUni.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-                                 ---- pushsubst.
-                                      ++++ ceapply SubstShift.
-                                           **** capply SubstWeak.
-                                                ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                           **** ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                      ++++ pushsubst.
-                                           **** ceapply SubstCtxConv ; [
-                                                  ceapply SubstWeak
-                                                | ceapply EqCtxExtend ; [
-                                                    capply CtxRefl
-                                                  | ..
-                                                  ]
-                                                | ..
-                                                ].
-                                                ----- ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                                ----- capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                                ----- capply EqTySym.
-                                                eapply EqTySubstℙ.
-                                                ***** capply SubstWeak.
-                                                ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                                ----- capply CtxRefl.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                           **** capply EqTyRefl.
-                                                capply TyUni.
-                                                capply CtxExtend.
-                                                ceapply TySubst.
-                                                ----- capply SubstWeak.
-                                                ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-                                                ----- ceapply TyEl. apply hℙ.
-                                                capply CtxExtend.
-                                                ceapply TyEl. apply hℙ.
-                                                now apply isctx_trans_empty.
-               ++ ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-                  ** now apply isterm_last_cond.
-                  ** ceapply TyEl. apply hℙ.
-                     now apply isctx_trans_empty.
-                  ** eapply EqTySubstℙ.
-                     capply SubstWeak.
-                     ceapply TyEl. apply hℙ.
-                     now apply isctx_trans_empty.
-               ++ pushsubst.
-                  ** capply SubstZero.
-                     ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-                     --- now apply isterm_last_cond.
-                     --- ceapply TyEl. apply hℙ.
-                         now apply isctx_trans_empty.
-                     --- eapply EqTySubstℙ.
-                         capply SubstWeak.
-                         ceapply TyEl. apply hℙ.
-                         now apply isctx_trans_empty.
-                  ** ceapply TySubst.
-                     --- capply SubstWeak.
-                         ceapply TyEl. apply hℙ.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         now apply isctx_trans_empty.
-                     --- capply TyUni.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         capply CtxExtend.
-                         ceapply TyEl. apply hℙ.
-                         now apply isctx_trans_empty.
-                  ** capply CongProd.
-                     eapply EqTySubstℙ.
-                     --- ceapply SubstZero.
-                         ceapply TermTyConv ; [ ceapply TermVarSucc | .. ].
-                         +++ now apply isterm_last_cond.
-                         +++ ceapply TyEl. apply hℙ.
-                             now apply isctx_trans_empty.
-                         +++ eapply EqTySubstℙ.
-                             capply SubstWeak.
-                             ceapply TyEl. apply hℙ.
-                             now apply isctx_trans_empty.
-                     --- pushsubst.
-                         +++ ceapply SubstShift.
-                             *** ceapply SubstZero.
-                                 ceapply TermTyConv ; [
-                                   ceapply TermVarSucc
-                                 | ..
-                                 ].
-                                 ---- now apply isterm_last_cond.
-                                 ---- ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-                                 ---- eapply EqTySubstℙ.
-                                      capply SubstWeak.
-                                      ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-                             *** ceapply TyEl. apply hℙ.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 capply CtxExtend.
-                                 ceapply TyEl. apply hℙ.
-                                 now apply isctx_trans_empty.
-                         +++ capply SubstWeak.
-                             ceapply TyEl. apply hℙ.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             now apply isctx_trans_empty.
-                         +++ capply EqTyRefl. capply TyUni.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             capply CtxExtend.
-                             ceapply TyEl. apply hℙ.
-                             now apply isctx_trans_empty.
-                         +++ pushsubst.
-                             *** ceapply SubstShift.
-                                 ---- capply SubstZero.
-                                      ceapply TermTyConv ; [
-                                        ceapply TermVarSucc
-                                      | ..
-                                      ].
-                                      ++++ now apply isterm_last_cond.
-                                      ++++ ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                                      ++++ eapply EqTySubstℙ.
-                                           capply SubstWeak.
-                                           ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                                 ---- ceapply TyEl. apply hℙ.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-                             *** capply EqTyRefl. capply TyUni.
-                                 capply CtxExtend.
-                                 ceapply TySubst.
-                                 ---- capply SubstZero.
-                                      ceapply TermTyConv ; [
-                                        ceapply TermVarSucc
-                                      | ..
-                                      ].
-                                      ++++ now apply isterm_last_cond.
-                                      ++++ ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                                      ++++ eapply EqTySubstℙ.
-                                           capply SubstWeak.
-                                           ceapply TyEl. apply hℙ.
-                                           now apply isctx_trans_empty.
-                                 ---- ceapply TyEl. apply hℙ.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      capply CtxExtend.
-                                      ceapply TyEl. apply hℙ.
-                                      now apply isctx_trans_empty.
-            -- ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
-               ++ ceapply TyEl. apply hℙ.
-                  now apply isctx_trans_empty.
-               ++ eapply EqTySubstℙ.
-                  capply SubstWeak.
-                  ceapply TyEl. apply hℙ.
-                  now apply isctx_trans_empty.
-            -- pushsubst.
-               ++ capply SubstZero.
-                  ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
-                  ** ceapply TyEl. apply hℙ.
-                     now apply isctx_trans_empty.
-                  ** eapply EqTySubstℙ.
-                     capply SubstWeak.
-                     ceapply TyEl. apply hℙ.
-                     now apply isctx_trans_empty.
-               ++ capply EqTyRefl. capply TyUni.
-                  capply CtxExtend.
-                  ceapply TyEl. apply hℙ.
-                  now apply isctx_trans_empty.
-    }
-Defined.
+        (* + ceapply TyEl. *)
+(*           ceapply TermTyConv ; [ ceapply TermApp | .. ]. *)
+(*           * ceapply TermTyConv ; [ ceapply TermApp | .. ]. *)
+(*             -- ceapply TermTyConv ; [ apply hHom | .. ]. *)
+(*                ++ capply CtxExtend. *)
+(*                   ceapply TyEl. apply hℙ. *)
+(*                   now apply isctx_trans_empty. *)
+(*                ++ unfold Arrow. *)
+(*                   capply CongProd. *)
+(*                   ** capply EqTyRefl. *)
+(*                      ceapply TyEl. apply hℙ. *)
+(*                      capply CtxExtend. *)
+(*                      ceapply TyEl. apply hℙ. *)
+(*                      now apply isctx_trans_empty. *)
+(*                   ** pushsubst. *)
+(*                      --- capply SubstWeak. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          now apply isctx_trans_empty. *)
+(*                      --- ceapply TySubst. *)
+(*                          +++ capply SubstWeak. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              now apply isctx_trans_empty. *)
+(*                          +++ capply TyUni. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              now apply isctx_trans_empty. *)
+(*                      --- capply CongProd. *)
+(*                          +++ eapply EqTySubstℙ. *)
+(*                              capply SubstWeak. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              now apply isctx_trans_empty. *)
+(*                          +++ pushsubst. *)
+(*                              *** ceapply SubstShift. *)
+(*                                  ---- capply SubstWeak. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*                                  ---- ceapply TyEl. apply hℙ. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*                              *** capply SubstWeak. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  now apply isctx_trans_empty. *)
+(*                              *** capply EqTyRefl. *)
+(*                                  capply TyUni. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  now apply isctx_trans_empty. *)
+(*                              *** pushsubst. *)
+(*                                  ---- ceapply SubstShift. *)
+(*                                       ++++ capply SubstWeak. *)
+(*                                            ceapply TyEl. apply hℙ. *)
+(*                                            capply CtxExtend. *)
+(*                                            ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                                       ++++ ceapply TyEl. apply hℙ. *)
+(*                                            capply CtxExtend. *)
+(*                                            ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                                  ---- pushsubst. *)
+(*                                       ++++ ceapply SubstCtxConv ; [ *)
+(*                                              ceapply SubstWeak *)
+(*                                            | .. *)
+(*                                            ]. *)
+(*                                            Focus 2. *)
+(*                                              ceapply EqCtxExtend. *)
+(*                                              (**) *)
+(*                                                capply CtxRefl. *)
+(*                                                capply CtxExtend. *)
+(*                                                ceapply TyEl. apply hℙ. *)
+(*                                                capply CtxExtend. *)
+(*                                                ceapply TyEl. apply hℙ. *)
+(*                                                now apply isctx_trans_empty. *)
+(*                                              (**) *)
+(*                                                capply EqTySym. *)
+(*                                                eapply EqTySubstℙ. *)
+(*                                                capply SubstWeak. *)
+(*                                                ceapply TyEl. apply hℙ. *)
+(*                                                capply CtxExtend. *)
+(*                                                ceapply TyEl. apply hℙ. *)
+(*                                                now apply isctx_trans_empty. *)
+(*                                            **** ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                            **** capply CtxRefl. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                       ++++ capply EqTyRefl. *)
+(*                                            capply TyUni. *)
+(*                                            capply CtxExtend. *)
+(*                                            ceapply TySubst. *)
+(*                                            **** capply SubstWeak. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                            **** ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*             -- ceapply TermTyConv ; [ ceapply TermVarSucc | .. ]. *)
+(*                ++ now apply isterm_last_cond. *)
+(*                ++ ceapply TyEl. apply hℙ. *)
+(*                   now apply isctx_trans_empty. *)
+(*                ++ eapply EqTySubstℙ. *)
+(*                   capply SubstWeak. *)
+(*                   ceapply TyEl. apply hℙ. *)
+(*                   now apply isctx_trans_empty. *)
+(*             -- pushsubst. *)
+(*                ++ capply SubstZero. *)
+(*                   ceapply TermTyConv ; [ ceapply TermVarSucc | .. ]. *)
+(*                   ** now apply isterm_last_cond. *)
+(*                   ** ceapply TyEl. apply hℙ. *)
+(*                      now apply isctx_trans_empty. *)
+(*                   ** eapply EqTySubstℙ. *)
+(*                      capply SubstWeak. *)
+(*                      ceapply TyEl. apply hℙ. *)
+(*                      now apply isctx_trans_empty. *)
+(*                ++ ceapply TySubst. *)
+(*                   ** capply SubstWeak. *)
+(*                      ceapply TyEl. apply hℙ. *)
+(*                      capply CtxExtend. *)
+(*                      ceapply TyEl. apply hℙ. *)
+(*                      capply CtxExtend. *)
+(*                      ceapply TyEl. apply hℙ. *)
+(*                      now apply isctx_trans_empty. *)
+(*                   ** capply TyUni. *)
+(*                      capply CtxExtend. *)
+(*                      ceapply TyEl. apply hℙ. *)
+(*                      capply CtxExtend. *)
+(*                      ceapply TyEl. apply hℙ. *)
+(*                      now apply isctx_trans_empty. *)
+(*                ++ capply CongProd. *)
+(*                   ** eapply EqTySubstℙ. *)
+(*                      capply SubstZero. *)
+(*                      ceapply TermTyConv ; [ ceapply TermVarSucc | .. ]. *)
+(*                      --- now apply isterm_last_cond. *)
+(*                      --- ceapply TyEl. apply hℙ. *)
+(*                          now apply isctx_trans_empty. *)
+(*                      --- eapply EqTySubstℙ. *)
+(*                          capply SubstWeak. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          now apply isctx_trans_empty. *)
+(*                   ** pushsubst. *)
+(*                      --- ceapply SubstShift. *)
+(*                          +++ capply SubstZero. *)
+(*                              ceapply TermTyConv ; [ ceapply TermVarSucc | .. ]. *)
+(*                              *** now apply isterm_last_cond. *)
+(*                              *** ceapply TyEl. apply hℙ. *)
+(*                                  now apply isctx_trans_empty. *)
+(*                              *** eapply EqTySubstℙ. *)
+(*                                  capply SubstWeak. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  now apply isctx_trans_empty. *)
+(*                          +++ ceapply TyEl. apply hℙ. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              now apply isctx_trans_empty. *)
+(*                      --- capply SubstWeak. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          now apply isctx_trans_empty. *)
+(*                      --- capply EqTyRefl. *)
+(*                          capply TyUni. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          now apply isctx_trans_empty. *)
+(*                      --- pushsubst. *)
+(*                          +++ ceapply SubstShift. *)
+(*                              *** capply SubstZero. *)
+(*                                  ceapply TermTyConv ; [ *)
+(*                                    ceapply TermVarSucc *)
+(*                                  | .. *)
+(*                                  ]. *)
+(*                                  ---- now apply isterm_last_cond. *)
+(*                                  ---- ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*                                  ---- eapply EqTySubstℙ. *)
+(*                                       capply SubstWeak. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*                              *** ceapply TyEl. apply hℙ. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  now apply isctx_trans_empty. *)
+(*                          +++ capply EqTyRefl. *)
+(*                              capply TyUni. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TySubst. *)
+(*                              *** capply SubstZero. *)
+(*                                  ceapply TermTyConv ; [ ceapply TermVarSucc | .. ]. *)
+(*                                  ---- now apply isterm_last_cond. *)
+(*                                  ---- ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*                                  ---- eapply EqTySubstℙ. *)
+(*                                       capply SubstWeak. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*                              *** ceapply TyEl. apply hℙ. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  now apply isctx_trans_empty. *)
+(*           * ceapply TermTyConv ; [ ceapply TermVarZero | .. ]. *)
+(*             -- ceapply TyEl. apply hℙ. *)
+(*                now apply isctx_trans_empty. *)
+(*             -- eapply EqTySubstℙ. *)
+(*                capply SubstWeak. *)
+(*                ceapply TyEl. apply hℙ. *)
+(*                now apply isctx_trans_empty. *)
+(*           * pushsubst. *)
+(*             -- capply SubstZero. *)
+(*                ceapply TermTyConv ; [ ceapply TermVarZero | .. ]. *)
+(*                ++ ceapply TyEl. apply hℙ. *)
+(*                   now apply isctx_trans_empty. *)
+(*                ++ eapply EqTySubstℙ. *)
+(*                   capply SubstWeak. *)
+(*                   ceapply TyEl. apply hℙ. *)
+(*                   now apply isctx_trans_empty. *)
+(*             -- capply EqTyRefl. *)
+(*                capply TyUni. *)
+(*                capply CtxExtend. *)
+(*                ceapply TyEl. apply hℙ. *)
+(*                now apply isctx_trans_empty. *)
+(*         + ceapply EqTyTrans ; [ *)
+(*             ceapply CongTySubst ; [ ceapply SubstRefl | eapply EqTySubstℙ | .. ] *)
+(*           | .. *)
+(*           ]. *)
+(*           * capply SubstWeak. *)
+(*             ceapply TyEl. *)
+(*             ceapply TermTyConv ; [ ceapply TermApp | .. ]. *)
+(*             -- ceapply TermTyConv ; [ ceapply TermApp | .. ]. *)
+(*                ++ ceapply TermTyConv ; [ apply hHom | .. ]. *)
+(*                   ** capply CtxExtend. *)
+(*                      ceapply TyEl. apply hℙ. *)
+(*                      now apply isctx_trans_empty. *)
+(*                   ** capply CongProd. *)
+(*                      --- capply EqTyRefl. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          now apply isctx_trans_empty. *)
+(*                      --- pushsubst. *)
+(*                          +++ capply SubstWeak. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              now apply isctx_trans_empty. *)
+(*                          +++ ceapply TySubst. *)
+(*                              *** capply SubstWeak. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  now apply isctx_trans_empty. *)
+(*                              *** capply TyUni. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  now apply isctx_trans_empty. *)
+(*                          +++ capply CongProd. *)
+(*                              *** eapply EqTySubstℙ. *)
+(*                                  capply SubstWeak. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  now apply isctx_trans_empty. *)
+(*                              *** pushsubst. *)
+(*                                  ---- ceapply SubstShift. *)
+(*                                       ++++ capply SubstWeak. *)
+(*                                            ceapply TyEl. apply hℙ. *)
+(*                                            capply CtxExtend. *)
+(*                                            ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                                       ++++ ceapply TyEl. apply hℙ. *)
+(*                                            capply CtxExtend. *)
+(*                                            ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                                  ---- capply SubstWeak. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*                                  ---- capply EqTyRefl. *)
+(*                                       capply TyUni. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*                                  ---- pushsubst. *)
+(*                                       ++++ ceapply SubstShift. *)
+(*                                            **** capply SubstWeak. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                            **** ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                       ++++ pushsubst. *)
+(*                                            **** ceapply SubstCtxConv ; [ *)
+(*                                                   ceapply SubstWeak *)
+(*                                                 | ceapply EqCtxExtend ; [ *)
+(*                                                     capply CtxRefl *)
+(*                                                   | .. *)
+(*                                                   ] *)
+(*                                                 | .. *)
+(*                                                 ]. *)
+(*                                                 ----- ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                                 ----- capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                                 ----- capply EqTySym. *)
+(*                                                 eapply EqTySubstℙ. *)
+(*                                                 ceapply SubstWeak. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                                 ----- capply CtxRefl. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                            **** capply EqTyRefl. *)
+(*                                                 capply TyUni. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TySubst. *)
+(*                                                 ----- capply SubstWeak. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                                 ----- ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                ++ ceapply TermTyConv ; [ ceapply TermVarSucc | .. ]. *)
+(*                   ** now apply isterm_last_cond. *)
+(*                   ** ceapply TyEl. apply hℙ. *)
+(*                      now apply isctx_trans_empty. *)
+(*                   ** eapply EqTySubstℙ. *)
+(*                      capply SubstWeak. *)
+(*                      ceapply TyEl. apply hℙ. *)
+(*                      now apply isctx_trans_empty. *)
+(*                ++ pushsubst. *)
+(*                   ** capply SubstZero. *)
+(*                      ceapply TermTyConv ; [ ceapply TermVarSucc | .. ]. *)
+(*                      --- now apply isterm_last_cond. *)
+(*                      --- ceapply TyEl. apply hℙ. *)
+(*                          now apply isctx_trans_empty. *)
+(*                      --- eapply EqTySubstℙ. *)
+(*                          capply SubstWeak. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          now apply isctx_trans_empty. *)
+(*                   ** ceapply TySubst. *)
+(*                      --- capply SubstWeak. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          now apply isctx_trans_empty. *)
+(*                      --- capply TyUni. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          now apply isctx_trans_empty. *)
+(*                   ** capply CongProd. *)
+(*                      --- eapply EqTySubstℙ. *)
+(*                          capply SubstZero. *)
+(*                          ceapply TermTyConv ; [ ceapply TermVarSucc | .. ]. *)
+(*                          +++ now apply isterm_last_cond. *)
+(*                          +++ ceapply TyEl. apply hℙ. *)
+(*                              now apply isctx_trans_empty. *)
+(*                          +++ eapply EqTySubstℙ. *)
+(*                              capply SubstWeak. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              now apply isctx_trans_empty. *)
+(*                      --- pushsubst. *)
+(*                          +++ ceapply SubstShift. *)
+(*                              *** capply SubstZero. *)
+(*                                  ---- ceapply TermTyConv ; [ *)
+(*                                         ceapply TermVarSucc *)
+(*                                       | .. *)
+(*                                       ]. *)
+(*                                       ++++ now apply isterm_last_cond. *)
+(*                                       ++++ ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                                       ++++ eapply EqTySubstℙ. *)
+(*                                            capply SubstWeak. *)
+(*                                            ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                              *** ceapply TyEl. apply hℙ. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  now apply isctx_trans_empty. *)
+(*                          +++ capply SubstWeak. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              now apply isctx_trans_empty. *)
+(*                          +++ capply EqTyRefl. *)
+(*                              capply TyUni. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              now apply isctx_trans_empty. *)
+(*                          +++ pushsubst. *)
+(*                              *** ceapply SubstShift. *)
+(*                                  ---- ceapply SubstZero. *)
+(*                                       ceapply TermTyConv ; [ *)
+(*                                         ceapply TermVarSucc *)
+(*                                       | .. *)
+(*                                       ]. *)
+(*                                       ++++ now apply isterm_last_cond. *)
+(*                                       ++++ ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                                       ++++ eapply EqTySubstℙ. *)
+(*                                            capply SubstWeak. *)
+(*                                            ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                                  ---- ceapply TyEl. apply hℙ. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*                              *** capply EqTyRefl. *)
+(*                                  capply TyUni. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TySubst. *)
+(*                                  ---- ceapply SubstZero. *)
+(*                                       ceapply TermTyConv ; [ *)
+(*                                         ceapply TermVarSucc *)
+(*                                       | .. *)
+(*                                       ]. *)
+(*                                       ++++ now apply isterm_last_cond. *)
+(*                                       ++++ ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                                       ++++ eapply EqTySubstℙ. *)
+(*                                            capply SubstWeak. *)
+(*                                            ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                                  ---- ceapply TyEl. apply hℙ. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*             -- ceapply TermTyConv ; [ ceapply TermVarZero | .. ]. *)
+(*                ++ ceapply TyEl. apply hℙ. *)
+(*                   now apply isctx_trans_empty. *)
+(*                ++ eapply EqTySubstℙ. *)
+(*                   capply SubstWeak. *)
+(*                   ceapply TyEl. apply hℙ. *)
+(*                   now apply isctx_trans_empty. *)
+(*             -- pushsubst. *)
+(*                ++ capply SubstZero. *)
+(*                   ceapply TermTyConv ; [ ceapply TermVarZero | .. ]. *)
+(*                   ** ceapply TyEl. apply hℙ. *)
+(*                      now apply isctx_trans_empty. *)
+(*                   ** eapply EqTySubstℙ. *)
+(*                      capply SubstWeak. *)
+(*                      ceapply TyEl. apply hℙ. *)
+(*                      now apply isctx_trans_empty. *)
+(*                ++ capply EqTyRefl. capply TyUni. *)
+(*                   capply CtxExtend. *)
+(*                   ceapply TyEl. apply hℙ. *)
+(*                   now apply isctx_trans_empty. *)
+(*           * capply SubstWeak. *)
+(*             ceapply TyEl. apply hℙ. *)
+(*             now apply isctx_trans_empty. *)
+(*           * eapply EqTySubstℙ. *)
+(*             capply SubstWeak. *)
+(*             ceapply TyEl. *)
+(*             ceapply TermTyConv ; [ ceapply TermApp | .. ]. *)
+(*             -- ceapply TermTyConv ; [ ceapply TermApp | .. ]. *)
+(*                ++ ceapply TermTyConv ; [ apply hHom | .. ]. *)
+(*                   ** capply CtxExtend. *)
+(*                      ceapply TyEl. apply hℙ. *)
+(*                      now apply isctx_trans_empty. *)
+(*                   ** capply CongProd. *)
+(*                      --- capply EqTyRefl. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          now apply isctx_trans_empty. *)
+(*                      --- pushsubst. *)
+(*                          +++ capply SubstWeak. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              now apply isctx_trans_empty. *)
+(*                          +++ ceapply TySubst. *)
+(*                              *** capply SubstWeak. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  now apply isctx_trans_empty. *)
+(*                              *** capply TyUni. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  now apply isctx_trans_empty. *)
+(*                          +++ capply CongProd. *)
+(*                              *** eapply EqTySubstℙ. *)
+(*                                  capply SubstWeak. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  now apply isctx_trans_empty. *)
+(*                              *** pushsubst. *)
+(*                                  ---- ceapply SubstShift. *)
+(*                                       ++++ capply SubstWeak. *)
+(*                                            ceapply TyEl. apply hℙ. *)
+(*                                            capply CtxExtend. *)
+(*                                            ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                                       ++++ ceapply TyEl. apply hℙ. *)
+(*                                            capply CtxExtend. *)
+(*                                            ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                                  ---- capply SubstWeak. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*                                  ---- capply EqTyRefl. capply TyUni. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*                                  ---- pushsubst. *)
+(*                                       ++++ ceapply SubstShift. *)
+(*                                            **** capply SubstWeak. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                            **** ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                       ++++ pushsubst. *)
+(*                                            **** ceapply SubstCtxConv ; [ *)
+(*                                                   ceapply SubstWeak *)
+(*                                                 | ceapply EqCtxExtend ; [ *)
+(*                                                     capply CtxRefl *)
+(*                                                   | .. *)
+(*                                                   ] *)
+(*                                                 | .. *)
+(*                                                 ]. *)
+(*                                                 ----- ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                                 ----- capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                                 ----- capply EqTySym. *)
+(*                                                 eapply EqTySubstℙ. *)
+(*                                                 ***** capply SubstWeak. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                                 ----- capply CtxRefl. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                            **** capply EqTyRefl. *)
+(*                                                 capply TyUni. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TySubst. *)
+(*                                                 ----- capply SubstWeak. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                                                 ----- ceapply TyEl. apply hℙ. *)
+(*                                                 capply CtxExtend. *)
+(*                                                 ceapply TyEl. apply hℙ. *)
+(*                                                 now apply isctx_trans_empty. *)
+(*                ++ ceapply TermTyConv ; [ ceapply TermVarSucc | .. ]. *)
+(*                   ** now apply isterm_last_cond. *)
+(*                   ** ceapply TyEl. apply hℙ. *)
+(*                      now apply isctx_trans_empty. *)
+(*                   ** eapply EqTySubstℙ. *)
+(*                      capply SubstWeak. *)
+(*                      ceapply TyEl. apply hℙ. *)
+(*                      now apply isctx_trans_empty. *)
+(*                ++ pushsubst. *)
+(*                   ** capply SubstZero. *)
+(*                      ceapply TermTyConv ; [ ceapply TermVarSucc | .. ]. *)
+(*                      --- now apply isterm_last_cond. *)
+(*                      --- ceapply TyEl. apply hℙ. *)
+(*                          now apply isctx_trans_empty. *)
+(*                      --- eapply EqTySubstℙ. *)
+(*                          capply SubstWeak. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          now apply isctx_trans_empty. *)
+(*                   ** ceapply TySubst. *)
+(*                      --- capply SubstWeak. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          now apply isctx_trans_empty. *)
+(*                      --- capply TyUni. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          capply CtxExtend. *)
+(*                          ceapply TyEl. apply hℙ. *)
+(*                          now apply isctx_trans_empty. *)
+(*                   ** capply CongProd. *)
+(*                      eapply EqTySubstℙ. *)
+(*                      --- ceapply SubstZero. *)
+(*                          ceapply TermTyConv ; [ ceapply TermVarSucc | .. ]. *)
+(*                          +++ now apply isterm_last_cond. *)
+(*                          +++ ceapply TyEl. apply hℙ. *)
+(*                              now apply isctx_trans_empty. *)
+(*                          +++ eapply EqTySubstℙ. *)
+(*                              capply SubstWeak. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              now apply isctx_trans_empty. *)
+(*                      --- pushsubst. *)
+(*                          +++ ceapply SubstShift. *)
+(*                              *** ceapply SubstZero. *)
+(*                                  ceapply TermTyConv ; [ *)
+(*                                    ceapply TermVarSucc *)
+(*                                  | .. *)
+(*                                  ]. *)
+(*                                  ---- now apply isterm_last_cond. *)
+(*                                  ---- ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*                                  ---- eapply EqTySubstℙ. *)
+(*                                       capply SubstWeak. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*                              *** ceapply TyEl. apply hℙ. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TyEl. apply hℙ. *)
+(*                                  now apply isctx_trans_empty. *)
+(*                          +++ capply SubstWeak. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              now apply isctx_trans_empty. *)
+(*                          +++ capply EqTyRefl. capply TyUni. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              capply CtxExtend. *)
+(*                              ceapply TyEl. apply hℙ. *)
+(*                              now apply isctx_trans_empty. *)
+(*                          +++ pushsubst. *)
+(*                              *** ceapply SubstShift. *)
+(*                                  ---- capply SubstZero. *)
+(*                                       ceapply TermTyConv ; [ *)
+(*                                         ceapply TermVarSucc *)
+(*                                       | .. *)
+(*                                       ]. *)
+(*                                       ++++ now apply isterm_last_cond. *)
+(*                                       ++++ ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                                       ++++ eapply EqTySubstℙ. *)
+(*                                            capply SubstWeak. *)
+(*                                            ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                                  ---- ceapply TyEl. apply hℙ. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*                              *** capply EqTyRefl. capply TyUni. *)
+(*                                  capply CtxExtend. *)
+(*                                  ceapply TySubst. *)
+(*                                  ---- capply SubstZero. *)
+(*                                       ceapply TermTyConv ; [ *)
+(*                                         ceapply TermVarSucc *)
+(*                                       | .. *)
+(*                                       ]. *)
+(*                                       ++++ now apply isterm_last_cond. *)
+(*                                       ++++ ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                                       ++++ eapply EqTySubstℙ. *)
+(*                                            capply SubstWeak. *)
+(*                                            ceapply TyEl. apply hℙ. *)
+(*                                            now apply isctx_trans_empty. *)
+(*                                  ---- ceapply TyEl. apply hℙ. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       capply CtxExtend. *)
+(*                                       ceapply TyEl. apply hℙ. *)
+(*                                       now apply isctx_trans_empty. *)
+(*             -- ceapply TermTyConv ; [ ceapply TermVarZero | .. ]. *)
+(*                ++ ceapply TyEl. apply hℙ. *)
+(*                   now apply isctx_trans_empty. *)
+(*                ++ eapply EqTySubstℙ. *)
+(*                   capply SubstWeak. *)
+(*                   ceapply TyEl. apply hℙ. *)
+(*                   now apply isctx_trans_empty. *)
+(*             -- pushsubst. *)
+(*                ++ capply SubstZero. *)
+(*                   ceapply TermTyConv ; [ ceapply TermVarZero | .. ]. *)
+(*                   ** ceapply TyEl. apply hℙ. *)
+(*                      now apply isctx_trans_empty. *)
+(*                   ** eapply EqTySubstℙ. *)
+(*                      capply SubstWeak. *)
+(*                      ceapply TyEl. apply hℙ. *)
+(*                      now apply isctx_trans_empty. *)
+(*                ++ capply EqTyRefl. capply TyUni. *)
+(*                   capply CtxExtend. *)
+(*                   ceapply TyEl. apply hℙ. *)
+(*                   now apply isctx_trans_empty. *)
+(*     } *)
+(* Defined. *)
+Abort.
 
 Fixpoint sound_trans_type σ Γ A (hσ : isfctx Γ σ) (H : Stt.istype Γ A) {struct H} :
   Ttt.istype (trans_ctx (fxpath σ) Γ) (trans_type σ A).
 Proof.
   (* sound_trans_type *)
-  - { todo. }
+  - { dependent destruction H ; doConfig ; rewrite trans_ctx_fxpath.
+
+      - ceapply TyCtxConv.
+        + apply @sound_trans_type with (Γ := G).
+          * todo. (* Need lemma *)
+          * assumption.
+        + rewrite trans_ctx_fxpath.
+          capply EqCtxExtend.
+          * capply EqCtxExtend.
+            -- todo. (* Need sound_trans_eqctx *)
+            -- capply EqTyRefl.
+               ceapply TyEl. apply hℙ.
+               todo. (* Need sound_trans_ctx *)
+          * capply EqTyRefl. todo.
+
+      - simpl. config eapply @TySubst with (D := D).
+        + todo. (* Need sound_trans_subst *)
+        + todo. (* Need something to deduce sound_trans_type scales to [[]] *)
+
+      - simpl. capply TyProd.
+        todo. (* Same need *)
+
+      - simpl. capply TyId.
+        + todo. (* Need sound_trans_term *)
+        + todo. (* Same *)
+
+      - simpl. todo. (* Something for fProd? *)
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+    }
 Defined.
 
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct hσ} :
