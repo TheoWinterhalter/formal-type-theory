@@ -470,9 +470,6 @@ Proof.
   split ; assumption.
 Defined.
 
-Axiom todo : forall {A}, A.
-Ltac todo := apply todo.
-
 Fixpoint eqctx_ctxempty_right {Γ} (h : ett.eqctx Γ ctxempty) {struct h} :
   Γ = ctxempty
 
@@ -497,6 +494,39 @@ Proof.
         rewrite e in h2.
         apply (eqctx_ctxempty_left E h2).
       - reflexivity.
+    }
+Defined.
+
+Fixpoint eqctx_ctxextend_one_right
+  {Γ Δ B} (h : ett.eqctx Γ (ctxextend Δ B)) {struct h} :
+  { Γ' : context & { A : type & Γ = ctxextend Γ' A } }
+
+with eqctx_ctxextend_one_left
+  {Γ Δ B} (h : ett.eqctx (ctxextend Δ B) Γ) {struct h} :
+  { Γ' : context & { A : type & Γ = ctxextend Γ' A } }.
+Proof.
+  - { dependent destruction h ; doConfig.
+
+      - exists Δ, B. reflexivity.
+      - destruct (eqctx_ctxextend_one_left D Δ B h) as [Γ' [A eq]].
+        exists Γ', A. assumption.
+      - destruct (eqctx_ctxextend_one_right D Δ B h2) as [Γ' [A eq]].
+        rewrite eq in h1.
+        destruct (eqctx_ctxextend_one_right G Γ' A h1) as [Δ' [A' eq']].
+        exists Δ', A'. assumption.
+      - exists G, A. reflexivity.
+    }
+
+  - { dependent destruction h ; doConfig.
+
+      - exists Δ, B. reflexivity.
+      - destruct (eqctx_ctxextend_one_right G Δ B h) as [Γ' [A eq]].
+        exists Γ', A. assumption.
+      - destruct (eqctx_ctxextend_one_left D Δ B h1) as [Γ' [A eq]].
+        rewrite eq in h2.
+        destruct (eqctx_ctxextend_one_left E Γ' A h2) as [Δ' [A' eq']].
+        exists Δ', A'. assumption.
+      - exists D, B0. reflexivity.
     }
 Defined.
 
