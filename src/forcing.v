@@ -12,6 +12,7 @@ Require Import tt.
 Require Import checking_tactics.
 
 Require ett_sanity.
+Require Import inversion.
 
 Require Import Coq.Program.Equality.
 
@@ -538,6 +539,27 @@ Proof.
   - simpl. reflexivity.
 Defined.
 
+Lemma isfctx_conv :
+  forall {Γ σ},
+    isfctx Γ σ ->
+    forall Δ,
+      Stt.eqctx Δ Γ ->
+      isfctx Δ σ.
+Proof.
+  intros Γ σ hσ.
+  dependent induction hσ ; intros Δ eq.
+
+  - (* pose (eqctx_ctxempty_right eq). *)
+    (* Problem: inversion has been proven on economic tt and I want this
+       in paranoid tt! *)
+    assert (eq' : Δ = ctxempty) by todo.
+    rewrite eq'. apply valid_cond.
+  - (* Similar problem with ctxextend. *)
+    todo.
+  - apply valid_fxpath. now apply IHhσ.
+Qed.
+
+
 Fixpoint sound_trans_type σ Γ A (hσ : isfctx Γ σ) (H : Stt.istype Γ A) {struct H} :
   Ttt.istype (trans_ctx (fxpath σ) Γ) (trans_type σ A).
 Proof.
@@ -546,7 +568,7 @@ Proof.
 
       - ceapply TyCtxConv.
         + apply @sound_trans_type with (Γ := G).
-          * todo. (* Need lemma *)
+          * eapply isfctx_conv ; eassumption.
           * assumption.
         + rewrite trans_ctx_fxpath.
           capply EqCtxExtend.
@@ -571,18 +593,12 @@ Proof.
       - simpl. todo. (* Something for fProd? *)
 
       - todo.
-
-      - todo.
-
-      - todo.
-
-      - todo.
-
-      - todo.
     }
 Defined.
 
 (** OLD BELOW **)
+
+Eval cbn in ltac:(fail "This should happen").
 
 Fixpoint isctx_trans_empty {σ} (h : isfctx ctxempty σ) {struct h} :
   Ttt.isctx (trans_ctx σ ctxempty)
