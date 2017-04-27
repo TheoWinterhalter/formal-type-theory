@@ -538,6 +538,51 @@ Proof.
   - simpl. reflexivity.
 Defined.
 
+Fixpoint sound_trans_type σ Γ A (hσ : isfctx Γ σ) (H : Stt.istype Γ A) {struct H} :
+  Ttt.istype (trans_ctx (fxpath σ) Γ) (trans_type σ A).
+Proof.
+  (* sound_trans_type *)
+  - { dependent destruction H ; doConfig ; rewrite trans_ctx_fxpath.
+
+      - ceapply TyCtxConv.
+        + apply @sound_trans_type with (Γ := G).
+          * todo. (* Need lemma *)
+          * assumption.
+        + rewrite trans_ctx_fxpath.
+          capply EqCtxExtend.
+          * capply EqCtxExtend.
+            -- todo. (* Need sound_trans_eqctx *)
+            -- capply EqTyRefl.
+               ceapply TyEl. apply hℙ.
+               todo. (* Need sound_trans_ctx *)
+          * capply EqTyRefl. todo.
+
+      - simpl. config eapply @TySubst with (D := D).
+        + todo. (* Need sound_trans_subst *)
+        + todo. (* Need something to deduce sound_trans_type scales to [[]] *)
+
+      - simpl. capply TyProd.
+        todo. (* Same need *)
+
+      - simpl. capply TyId.
+        + todo. (* Need sound_trans_term *)
+        + todo. (* Same *)
+
+      - simpl. todo. (* Something for fProd? *)
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+    }
+Defined.
+
+(** OLD BELOW **)
 
 Fixpoint isctx_trans_empty {σ} (h : isfctx ctxempty σ) {struct h} :
   Ttt.isctx (trans_ctx σ ctxempty)
@@ -1596,50 +1641,6 @@ Proof.
 (*     } *)
 (* Defined. *)
 Abort.
-
-Fixpoint sound_trans_type σ Γ A (hσ : isfctx Γ σ) (H : Stt.istype Γ A) {struct H} :
-  Ttt.istype (trans_ctx (fxpath σ) Γ) (trans_type σ A).
-Proof.
-  (* sound_trans_type *)
-  - { dependent destruction H ; doConfig ; rewrite trans_ctx_fxpath.
-
-      - ceapply TyCtxConv.
-        + apply @sound_trans_type with (Γ := G).
-          * todo. (* Need lemma *)
-          * assumption.
-        + rewrite trans_ctx_fxpath.
-          capply EqCtxExtend.
-          * capply EqCtxExtend.
-            -- todo. (* Need sound_trans_eqctx *)
-            -- capply EqTyRefl.
-               ceapply TyEl. apply hℙ.
-               todo. (* Need sound_trans_ctx *)
-          * capply EqTyRefl. todo.
-
-      - simpl. config eapply @TySubst with (D := D).
-        + todo. (* Need sound_trans_subst *)
-        + todo. (* Need something to deduce sound_trans_type scales to [[]] *)
-
-      - simpl. capply TyProd.
-        todo. (* Same need *)
-
-      - simpl. capply TyId.
-        + todo. (* Need sound_trans_term *)
-        + todo. (* Same *)
-
-      - simpl. todo. (* Something for fProd? *)
-
-      - todo.
-
-      - todo.
-
-      - todo.
-
-      - todo.
-
-      - todo.
-    }
-Defined.
 
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct hσ} :
   Ttt.isctx (trans_ctx σ Γ).
