@@ -567,9 +567,29 @@ Proof.
 Qed.
 
 
-Fixpoint sound_trans_type σ Γ A (hσ : isfctx Γ σ) (H : Stt.istype Γ A) {struct H} :
+Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
+  Ttt.isctx (trans_ctx σ Γ)
+
+with sound_trans_type σ Γ A (hσ : isfctx Γ σ) (H : Stt.istype Γ A) {struct H} :
   Ttt.istype (trans_ctx (fxpath σ) Γ) (trans_type σ A).
 Proof.
+  (* sound_trans_ctx *)
+  - { dependent destruction H ; doConfig.
+
+      (* CtxEmpty *)
+      - dependent induction hσ.
+
+        + simpl. capply CtxExtend.
+          ceapply TyEl. apply hℙ.
+          capply CtxEmpty.
+
+        + simpl. capply CtxExtend.
+          todo.
+
+      (* CtxExtend *)
+      - todo.
+    }
+
   (* sound_trans_type *)
   - { dependent destruction H ; doConfig ; rewrite trans_ctx_fxpath.
 
@@ -583,7 +603,9 @@ Proof.
             -- todo. (* Need sound_trans_eqctx *)
             -- capply EqTyRefl.
                ceapply TyEl. apply hℙ.
-               todo. (* Need sound_trans_ctx *)
+               apply sound_trans_ctx.
+               ++ eapply isfctx_conv ; eassumption.
+               ++ assumption.
           * capply EqTyRefl. todo.
 
       - simpl. config eapply @TySubst with (D := D).
