@@ -452,6 +452,14 @@ Definition last_cond σ := _last_cond 0 σ.
 (*   | fxpath σ, x => comp ? ? ? (morph σ x (* ?? x-1 we'd like, no? *)) (var 0). *)
 (*                       (* maybe not var 0, but rather an offset? *) *)
 
+Fixpoint lift_var (σ : fctx) (x : nat) : nat :=
+  match σ, x with
+  | cond, _ => 0 (* This case doesn't happend with well-typed things *)
+  | fxvar σ, 0 => 0
+  | fxvar σ, S x => S (lift_var σ x)
+  | fxpath σ, x => S (S (lift_var σ x))
+  end.
+
 (* Translation *)
 
 Reserved Notation "[[ A ]] σ" (at level 5).
@@ -476,18 +484,28 @@ Fixpoint trans_type (σ : fctx) (A : type) {struct A} : type :=
 
   | El a => El (trans_term σ a)
 
-  (* Case that don't happen given our config *)
+  (* Cases that don't happen given our config *)
   | _ => Empty
 
   end
 
 with trans_term (σ : fctx) (u : term) {struct u} : term :=
   match u with
-  | _ => todo
+  | var n => var (lift_var σ n)
+
+  (* TODO *)
+
+  (* Cases that don't happen given our config *)
+  | _ => unit
   end
 
 with trans_subst (σ : fctx) (ρ : substitution) {struct ρ} : substitution :=
   match ρ with
+  | sbid => sbid
+
+  (* TODO *)
+
+  (* Cases that don't happen given our config *)
   | _ => todo
   end
 
@@ -596,7 +614,11 @@ Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H
   Ttt.isctx (trans_ctx σ Γ)
 
 with sound_trans_type σ Γ A (hσ : isfctx Γ σ) (H : Stt.istype Γ A) {struct H} :
-  Ttt.istype (trans_ctx (fxpath σ) Γ) (trans_type σ A).
+  Ttt.istype (trans_ctx (fxpath σ) Γ) (trans_type σ A)
+
+with sound_trans_term σ Γ A u
+  (hσ : isfctx Γ σ) (H : Stt.isterm Γ u A) {struct H} :
+  Ttt.isterm (trans_ctx σ Γ) (trans_term σ u) (trans_type σ A).
 Proof.
   (* sound_trans_ctx *)
   - { dependent destruction H ; doConfig.
@@ -673,6 +695,48 @@ Proof.
         (* ceapply TyEl. *)
         todo. (* We need sound_trans_term before we can fix the translation of
                  El. *)
+    }
+
+  (* sound_trans_term *)
+  - { dependent destruction H ; doConfig.
+
+      (* TermTyConv *)
+      - pose (ih := sound_trans_term _ _ _ _ hσ H).
+        ceapply TermTyConv.
+        + apply ih.
+        + todo. (* Need sound_trans_eqtype *)
+
+      (* TermCtxConv *)
+      - pose (hσ' := isfctx_conv hσ _ e).
+        pose (ih := sound_trans_term _ _ _ _ hσ' H).
+        ceapply TermCtxConv.
+        + apply ih.
+        + todo. (* Need sound_trans_eqctx *)
+
+      (* TermSubst *)
+      - todo. (* Need the corresponding translation *)
+
+      (* TermVarZero *)
+      - todo. (* Incomplete translation. *)
+
+      (* TermVarSucc *)
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
+
+      - todo.
     }
 Defined.
 
