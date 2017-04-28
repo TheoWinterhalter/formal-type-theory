@@ -474,6 +474,8 @@ Fixpoint trans_type (σ : fctx) (A : type) {struct A} : type :=
 
   | Uni l => fProd (fxpath σ) (Uni l)
 
+  | El a => El (trans_term σ a)
+
   (* Case that don't happen given our config *)
   | _ => Empty
 
@@ -667,7 +669,10 @@ Proof.
         + todo.
         + todo.
 
-      - todo.
+      - simpl.
+        (* ceapply TyEl. *)
+        todo. (* We need sound_trans_term before we can fix the translation of
+                 El. *)
     }
 Defined.
 
