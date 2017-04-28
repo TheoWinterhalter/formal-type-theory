@@ -613,9 +613,12 @@ Qed.
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
   Ttt.isctx (trans_ctx σ Γ)
 
-with sound_trans_subst σ δ ρ Γ Δ
-  (hσ : isfctx Γ σ) (hδ : isfctx Δ δ) (H : Stt.issubst ρ Γ Δ) {struct H} :
-  Ttt.issubst (trans_subst σ ρ) (trans_ctx σ Γ) (trans_ctx δ Δ)
+with sound_trans_subst σ ρ Γ Δ
+  (hσ : isfctx Γ σ) (H : Stt.issubst ρ Γ Δ) {struct H} :
+  { δ : fctx &
+    isfctx Δ δ *
+    Ttt.issubst (trans_subst σ ρ) (trans_ctx σ Γ) (trans_ctx δ Δ)
+  }%type
 
 with sound_trans_type σ Γ A (hσ : isfctx Γ σ) (H : Stt.istype Γ A) {struct H} :
   Ttt.istype (trans_ctx (fxpath σ) Γ) (trans_type σ A)
@@ -627,9 +630,15 @@ with sound_trans_term σ Γ A u
 with sound_trans_eqctx σ Γ Δ (hσ : isfctx Γ σ) (H : Stt.eqctx Γ Δ) {struct H} :
   Ttt.eqctx (trans_ctx σ Γ) (trans_ctx σ Δ)
 
-with sound_trans_eqsubst σ δ ρ θ Γ Δ
-  (hσ : isfctx Γ σ) (hδ : isfctx Δ δ) (H : Stt.eqsubst ρ θ Γ Δ) {struct H} :
-  Ttt.eqsubst (trans_subst σ ρ) (trans_subst σ θ) (trans_ctx σ Γ) (trans_ctx δ Δ)
+with sound_trans_eqsubst σ ρ θ Γ Δ
+  (hσ : isfctx Γ σ) (H : Stt.eqsubst ρ θ Γ Δ) {struct H} :
+  { δ : fctx &
+    isfctx Δ δ *
+    Ttt.eqsubst (trans_subst σ ρ)
+                (trans_subst σ θ)
+                (trans_ctx σ Γ)
+                (trans_ctx δ Δ)
+  }%type
 
 with sound_trans_eqtype σ Γ A B
   (hσ : isfctx Γ σ) (H : Stt.eqtype Γ A B) {struct H} :
@@ -696,16 +705,17 @@ Proof.
             -- todo.
             -- todo.
 
-      (* - simpl. ceapply TySubst. *)
-      (*   + ceapply SubstCtxConv ; [ eapply sound_trans_subst | .. ]. *)
-      (*     * apply valid_fxpath. exact hσ. *)
-      (*     * todo. (* We shouldn't habe to provide it. *) *)
-      (*     * eassumption. *)
-      (*     * rewrite trans_ctx_fxpath. *)
-      (*       capply CtxRefl. todo. *)
-      (*     * capply CtxRefl. todo. *)
-      (*   + todo. (* Need something to deduce sound_trans_type scales to [[]] *) *)
-      - todo.
+      - simpl.
+        assert (hxσ : isfctx G (fxpath σ)).
+        { apply valid_fxpath. assumption. }
+        destruct (sound_trans_subst (fxpath σ) sbs G D hxσ i) as [δ [hδ ?] ].
+        ceapply TySubst.
+        + ceapply SubstCtxConv ; [ eapply i2 | .. ].
+          * rewrite trans_ctx_fxpath.
+            capply CtxRefl. todo.
+          * ceapply CtxRefl.
+            apply (ett_sanity.sane_issubst _ _ _ i2).
+        + todo. (* Need something to deduce sound_trans_type scales to [[]] *)
 
       - simpl. capply TyProd.
         todo. (* Same need *)
