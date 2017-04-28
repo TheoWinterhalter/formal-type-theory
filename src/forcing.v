@@ -613,6 +613,10 @@ Qed.
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
   Ttt.isctx (trans_ctx σ Γ)
 
+with sound_trans_susbt σ δ ρ Γ Δ
+  (hσ : isfctx Γ σ) (hδ : isfctx Δ δ) (H : Stt.issubst ρ Γ Δ) {struct H} :
+  Ttt.issubst (trans_subst σ ρ) (trans_ctx σ Γ) (trans_ctx δ Δ)
+
 with sound_trans_type σ Γ A (hσ : isfctx Γ σ) (H : Stt.istype Γ A) {struct H} :
   Ttt.istype (trans_ctx (fxpath σ) Γ) (trans_type σ A)
 
@@ -621,7 +625,19 @@ with sound_trans_term σ Γ A u
   Ttt.isterm (trans_ctx σ Γ) (trans_term σ u) (trans_type σ A)
 
 with sound_trans_eqctx σ Γ Δ (hσ : isfctx Γ σ) (H : Stt.eqctx Γ Δ) {struct H} :
-  Ttt.eqctx (trans_ctx σ Γ) (trans_ctx σ Δ).
+  Ttt.eqctx (trans_ctx σ Γ) (trans_ctx σ Δ)
+
+with sound_trans_eqsubst σ δ ρ θ Γ Δ
+  (hσ : isfctx Γ σ) (hδ : isfctx Δ δ) (H : Stt.eqsubst ρ θ Γ Δ) {struct H} :
+  Ttt.eqsubst (trans_subst σ ρ) (trans_subst σ θ) (trans_ctx σ Γ) (trans_ctx δ Δ)
+
+with sound_trans_eqtype σ Γ A B
+  (hσ : isfctx Γ σ) (H : Stt.eqtype Γ A B) {struct H} :
+  Ttt.eqtype (trans_ctx (fxpath σ) Γ) (trans_type σ A) (trans_type σ B)
+
+with sound_trans_eqterm σ Γ A u v
+  (hσ : isfctx Γ σ) (H : Stt.eqterm Γ u v A) {struct H} :
+  Ttt.eqterm (trans_ctx σ Γ) (trans_term σ u) (trans_term σ u) (trans_type σ A).
 Proof.
   (* sound_trans_ctx *)
   - { dependent destruction H ; doConfig.
@@ -653,6 +669,9 @@ Proof.
             -- todo.
             -- todo.
     }
+
+  (* sound_trans_subst *)
+  - todo.
 
   (* sound_trans_type *)
   - { dependent destruction H ; doConfig ; rewrite trans_ctx_fxpath.
@@ -781,6 +800,15 @@ Proof.
             -- todo.
           * capply EqTyRefl. todo.
     }
+
+  (* sound_trans_eqsubst *)
+  - todo.
+
+  (* sound_trans_eqtype *)
+  - todo.
+
+  (* sound_trans_eqterm *)
+  - todo.
 Defined.
 
 End Translation.
