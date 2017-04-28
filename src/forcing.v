@@ -329,6 +329,29 @@ Proof.
            apply (ett_sanity.sane_issubst _ _ _ hρ).
 Defined.
 
+Lemma TyHom :
+  forall {Γ u v},
+    Ttt.isterm Γ u (El ℙ) ->
+    Ttt.isterm Γ v (El ℙ) ->
+    Ttt.istype Γ (Hom u v).
+Proof.
+  intros Γ u v hu hv.
+  ceapply TyEl.
+  ceapply TermTyConv ; [ ceapply TermApp | .. ].
+  - ceapply TermTyConv ; [ ceapply TermApp | .. ].
+    + ceapply TermTyConv ; [ apply hHom | .. ].
+      * apply (ett_sanity.sane_isterm _ _ _ hu).
+      * todo.
+    + assumption.
+    + todo.
+  - assumption.
+  - pushsubst.
+    + capply SubstZero. assumption.
+    + capply EqTyRefl. capply TyUni.
+      apply (ett_sanity.sane_isterm _ _ _ hu).
+Defined.
+
+
 Lemma CongHom :
   forall {Γ u1 u2 v1 v2},
     Ttt.eqterm Γ u1 u2 (El ℙ) ->
@@ -584,10 +607,24 @@ Proof.
           capply CtxEmpty.
 
         + simpl. capply CtxExtend.
-          todo.
+          apply TyHom.
+          * todo.
+          * ceapply TermTyConv ; [ capply TermVarZero | .. ].
+            -- todo.
+            -- todo.
 
       (* CtxExtend *)
-      - todo.
+      - dependent induction hσ.
+
+        + simpl. capply CtxExtend.
+          todo. (* Need something for [[A]] σ typing. *)
+
+        + simpl. capply CtxExtend.
+          apply TyHom.
+          * todo.
+          * ceapply TermTyConv ; [ capply TermVarZero | .. ].
+            -- todo.
+            -- todo.
     }
 
   (* sound_trans_type *)
@@ -606,7 +643,10 @@ Proof.
                apply sound_trans_ctx.
                ++ eapply isfctx_conv ; eassumption.
                ++ assumption.
-          * capply EqTyRefl. todo.
+          * capply EqTyRefl.
+            apply TyHom.
+            -- todo.
+            -- todo.
 
       - simpl. config eapply @TySubst with (D := D).
         + todo. (* Need sound_trans_subst *)
@@ -619,7 +659,13 @@ Proof.
         + todo. (* Need sound_trans_term *)
         + todo. (* Same *)
 
-      - simpl. todo. (* Something for fProd? *)
+      - simpl. (* Maybe we should deduce something for fProd? *)
+        unfold fProd.
+        capply TyProd. capply TyProd. capply TyUni.
+        capply CtxExtend.
+        apply TyHom.
+        + todo.
+        + todo.
 
       - todo.
     }
