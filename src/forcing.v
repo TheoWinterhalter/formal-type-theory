@@ -609,6 +609,41 @@ Proof.
   - apply valid_fxpath. now apply IHhσ.
 Qed.
 
+Lemma sound_trans_type' σ Γ A (hσ : isfctx Γ σ) (H : Stt.istype Γ A) :
+  Ttt.istype (trans_ctx (fxpath σ) Γ) (trans_type σ A) ->
+  Ttt.istype (trans_ctx σ Γ) ([[A]] σ).
+Proof.
+  intro h.
+  ceapply TySubst.
+  - ceapply SubstZero. apply hidℙ'.
+    todo. (* We need to find how to properly prove it. *)
+  - ceapply TySubst.
+    + ceapply SubstCtxConv ; [
+        ceapply SubstShift
+      | ceapply EqCtxExtend ; [ capply CtxRefl | .. ]
+      | capply CtxRefl
+      ].
+      * ceapply SubstZero. todo. (* Same here *)
+      * apply TyHom.
+        -- todo. (* Similar *)
+        -- todo. (* Similar' *)
+      * rewrite trans_ctx_fxpath in h.
+        todo. (* Some sanity and inversion *)
+      * ceapply EqTyTrans ; [ eapply EqTySubstHom | .. ].
+        -- ceapply SubstZero. todo. (* Same again *)
+        -- todo. (* Repeat *)
+        -- todo. (* ... *)
+        -- capply CongHom.
+           ++ unfold Ttt.eqterm. pushsubst.
+              all:todo. (* ... *)
+           ++ unfold Ttt.eqterm. pushsubst.
+              all:todo. (* ... *)
+      * capply CtxExtend.
+        apply TyHom.
+        -- todo. (* ... *)
+        -- todo. (* ... *)
+    + rewrite trans_ctx_fxpath in h. apply h.
+Qed.
 
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
   Ttt.isctx (trans_ctx σ Γ)
