@@ -582,6 +582,16 @@ Proof.
   - simpl. reflexivity.
 Defined.
 
+Lemma trans_ctx_fxvar :
+  forall {Γ A σ},
+    trans_ctx (fxvar σ) (ctxextend Γ A) =
+    ctxextend (trans_ctx σ Γ) ([[A]] σ).
+Proof.
+  intros Γ A σ.
+  simpl. reflexivity.
+Defined.
+
+
 Lemma isfctx_conv :
   forall {Γ σ},
     isfctx Γ σ ->
@@ -704,7 +714,8 @@ Proof.
       - dependent induction hσ.
 
         + simpl. capply CtxExtend.
-          todo. (* Need something for [[A]] σ typing. *)
+          apply sound_trans_type' ; [ assumption .. | idtac ].
+          apply sound_trans_type ; assumption.
 
         + simpl. capply CtxExtend.
           apply TyHom.
@@ -715,11 +726,31 @@ Proof.
     }
 
   (* sound_trans_subst *)
-  - todo.
+  - { dependent destruction H ; doConfig.
+
+      (* SubstZero *)
+      - todo.
+
+      (* SubstWeak *)
+      - todo.
+
+      (* SubstShift *)
+      - todo.
+
+      (* SubstId *)
+      - todo.
+
+      (* SubstComp *)
+      - todo.
+
+      (* SubstCtxConv *)
+      - todo.
+    }
 
   (* sound_trans_type *)
   - { dependent destruction H ; doConfig ; rewrite trans_ctx_fxpath.
 
+      (* TyCtxConv *)
       - ceapply TyCtxConv.
         + apply @sound_trans_type with (Γ := G).
           * eapply isfctx_conv ; eassumption.
@@ -740,6 +771,7 @@ Proof.
             -- todo.
             -- todo.
 
+      (* TySubst *)
       - simpl.
         assert (hxσ : isfctx G (fxpath σ)).
         { apply valid_fxpath. assumption. }
@@ -750,10 +782,24 @@ Proof.
             capply CtxRefl. todo.
           * ceapply CtxRefl.
             apply (ett_sanity.sane_issubst _ _ _ i2).
-        + todo. (* Need something to deduce sound_trans_type scales to [[]] *)
+        + (* apply sound_trans_type'. *)
+          (* Mismatch between δ and (fxpath σ), maybe the translation is
+             wrong in this case, maybe we need to have δ as the result of
+             a function. *)
+          todo.
 
+      (* TyProd *)
       - simpl. capply TyProd.
-        todo. (* Same need *)
+        ceapply TyCtxConv ; [ apply sound_trans_type' | .. ].
+        + eapply valid_fxvar. eapply valid_fxpath. exact hσ.
+        + exact H.
+        + apply sound_trans_type.
+          * apply valid_fxvar. apply valid_fxpath. assumption.
+          * assumption.
+        + rewrite trans_ctx_fxvar.
+          rewrite trans_ctx_fxpath.
+          todo. (* Mismatch in the translation, we need to figure which one
+                   is incorrect here! *)
 
       - simpl. capply TyId.
         + todo. (* Need sound_trans_term *)
