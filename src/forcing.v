@@ -329,6 +329,16 @@ Proof.
            apply (ett_sanity.sane_issubst _ _ _ hρ).
 Defined.
 
+Lemma Tyℙ :
+  forall {Γ},
+    Ttt.isctx Γ ->
+    Ttt.istype Γ (El ℙ).
+Proof.
+  intros Γ h.
+  ceapply TyEl. apply hℙ. assumption.
+Defined.
+
+
 Lemma TyHom :
   forall {Γ u v},
     Ttt.isterm Γ u (El ℙ) ->
@@ -521,7 +531,10 @@ where "[[ A ]] σ" :=
 
 and "[ u ]! σ" := (flam σ (trans_term (fxpath σ) u))
 
-and "[[ A ]]! σ" := (fProd σ (trans_type (fxpath σ) A)).
+and "[[ A ]]! σ" :=
+  (fProd σ
+         (Subst (Subst ([[A]] σ) (sbweak (El ℙ)))
+                (sbweak (Hom (var (S (last_cond σ))) (var 0))))).
 
 Fixpoint trans_ctx (σ : fctx) (Γ : context) : context :=
   match Γ, σ with
@@ -655,16 +668,20 @@ Proof.
     + rewrite trans_ctx_fxpath in h. apply h.
 Qed.
 
-(* The lemma is correct but does not correspond to what we are looking for! *)
-(* Lemma sound_trans_type'' {σ Γ A} : *)
-(*   Ttt.istype (trans_ctx (fxpath σ) Γ) (trans_type (fxpath σ) A) -> *)
-(*   Ttt.istype (trans_ctx σ Γ) ([[A]]! σ). *)
-(* Proof. *)
-(*   intro h. *)
-(*   ceapply TyProd. ceapply TyProd. *)
-(*   rewrite trans_ctx_fxpath in h. *)
-(*   exact h. *)
-(* Defined. *)
+Lemma sound_trans_type'' {σ Γ A} :
+  Ttt.istype (trans_ctx (fxpath σ) Γ) (trans_type σ A) ->
+  Ttt.istype (trans_ctx σ Γ) ([[A]]! σ).
+Proof.
+  intro h.
+  ceapply TyProd. ceapply TyProd. ceapply TySubst.
+  - capply SubstWeak. apply TyHom.
+    + todo.
+    + todo.
+  - ceapply TySubst.
+    + capply SubstWeak. apply Tyℙ.
+      todo. (* Something like sanity and inversion. *)
+    + now apply sound_trans_type'.
+Qed.
 
 
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
@@ -726,9 +743,8 @@ Proof.
       - dependent induction hσ.
 
         + simpl. capply CtxExtend.
-          (* apply sound_trans_type''. *)
-          (* apply sound_trans_type. *)
-          todo. (* We need to fix something... *)
+          apply sound_trans_type''.
+          apply sound_trans_type ; assumption.
 
         + simpl. capply CtxExtend.
           apply TyHom.
