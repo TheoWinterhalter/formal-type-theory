@@ -473,20 +473,25 @@ Fixpoint lift_var (σ : fctx) (x : nat) : nat :=
 (* Translation *)
 
 Reserved Notation "[[ A ]] σ" (at level 5).
-Reserved Notation "[ u ]! σ" (at level 5).
+Reserved Notation "[ u | A ]! σ" (at level 5).
 Reserved Notation "[[ A ]]! σ" (at level 5).
 
-Definition flam (σ : fctx) (u : term) : term :=
-  lam (El ℙ) todo (lam (Hom (var (S (last_cond σ))) (var 0)) todo u).
+Definition fProd' (σ : fctx) (A : type) : type :=
+  Prod (Hom (var (S (last_cond σ))) (var 0)) A.
+
+Definition flam (σ : fctx) (A : type) (u : term) : term :=
+  lam (El ℙ) (fProd' σ A) (lam (Hom (var (S (last_cond σ))) (var 0)) A u).
 
 Definition fProd (σ : fctx) (A : type) : type :=
-  Prod (El ℙ) (Prod (Hom (var (S (last_cond σ))) (var 0)) A).
+  Prod (El ℙ) (fProd' σ A).
 
 Fixpoint trans_type (σ : fctx) (A : type) {struct A} : type :=
   match A with
   | Prod A B => Prod ([[ A ]]! (fxpath σ)) ([[ B ]] (fxvar (fxpath σ)))
 
-  | Id A u v => Id ([[ A ]] (fxpath σ)) ([ u ]! (fxpath σ)) ([ v ]! (fxpath σ))
+  | Id A u v => Id ([[ A ]] (fxpath σ))
+                  ([ u | A ]! (fxpath σ))
+                  ([ v | A ]! (fxpath σ))
 
   | Subst A ρ => Subst ([[ A ]] (fxpath σ)) (trans_subst (fxpath σ) ρ)
 
@@ -529,7 +534,12 @@ where "[[ A ]] σ" :=
          (sbzero (Hom (var (last_cond σ)) (var (last_cond σ)))
                  (idℙ (var (last_cond σ)))))
 
-and "[ u ]! σ" := (flam σ (trans_term (fxpath σ) u))
+and "[ u | A ]! σ" :=
+    (flam σ
+          A
+          (subst (subst (trans_term σ u)
+                        (sbweak (El ℙ)))
+                 (sbweak (Hom (var (S (last_cond σ))) (var 0)))))
 
 and "[[ A ]]! σ" :=
   (fProd σ
@@ -683,6 +693,25 @@ Proof.
     + now apply sound_trans_type'.
 Qed.
 
+Lemma sound_trans_term' {σ Γ A u} :
+  Ttt.isterm (trans_ctx σ Γ) (trans_term σ u) ([[A]] σ) ->
+  Ttt.isterm (trans_ctx σ Γ) ([u | [[A]] σ]! σ) ([[A]]! σ).
+Proof.
+  intro h.
+  ceapply TermTyConv ; [ ceapply TermAbs | .. ].
+  - ceapply TermAbs.
+    ceapply TermTyConv ; [ ceapply TermSubst | .. ].
+    + capply SubstWeak. apply TyHom.
+      * todo.
+      * todo.
+    + ceapply TermSubst.
+      * capply SubstWeak. apply Tyℙ.
+        todo. (* Sanity *)
+      * exact h.
+    +
+Abort.
+
+
 
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
   Ttt.isctx (trans_ctx σ Γ)
@@ -699,7 +728,7 @@ with sound_trans_type σ Γ A (hσ : isfctx Γ σ) (H : Stt.istype Γ A) {struct
 
 with sound_trans_term σ Γ A u
   (hσ : isfctx Γ σ) (H : Stt.isterm Γ u A) {struct H} :
-  Ttt.isterm (trans_ctx σ Γ) (trans_term σ u) (trans_type σ A)
+  Ttt.isterm (trans_ctx σ Γ) (trans_term σ u) ([[A]] σ)
 
 with sound_trans_eqctx σ Γ Δ (hσ : isfctx Γ σ) (H : Stt.eqctx Γ Δ) {struct H} :
   Ttt.eqctx (trans_ctx σ Γ) (trans_ctx σ Δ)
