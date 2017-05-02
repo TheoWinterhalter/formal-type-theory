@@ -536,7 +536,8 @@ where "[[ A ]] σ" :=
 
 and "[ u | A ]! σ" :=
     (flam σ
-          A
+          (Subst (Subst A (sbweak (El ℙ)))
+                 (sbweak (Hom (var (S (last_cond σ))) (var 0))))
           (subst (subst (trans_term σ u)
                         (sbweak (El ℙ)))
                  (sbweak (Hom (var (S (last_cond σ))) (var 0)))))
@@ -698,20 +699,16 @@ Lemma sound_trans_term' {σ Γ A u} :
   Ttt.isterm (trans_ctx σ Γ) ([u | [[A]] σ]! σ) ([[A]]! σ).
 Proof.
   intro h.
-  ceapply TermTyConv ; [ ceapply TermAbs | .. ].
-  - ceapply TermAbs.
-    ceapply TermTyConv ; [ ceapply TermSubst | .. ].
-    + capply SubstWeak. apply TyHom.
-      * todo.
-      * todo.
-    + ceapply TermSubst.
-      * capply SubstWeak. apply Tyℙ.
-        todo. (* Sanity *)
-      * exact h.
-    +
-Abort.
-
-
+  ceapply TermAbs. ceapply TermAbs.
+  ceapply TermSubst.
+  - capply SubstWeak. apply TyHom.
+    + todo.
+    + todo.
+  - ceapply TermSubst.
+    + capply SubstWeak. apply Tyℙ.
+      todo. (* Sanity *)
+    + exact h.
+Qed.
 
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
   Ttt.isctx (trans_ctx σ Γ)
@@ -866,7 +863,12 @@ Proof.
 
       (* TyId *)
       - simpl. capply TyId.
-        + todo. (* Actually need sound_trans_term' for [u]! σ *)
+        + assert (hσ' : isfctx G (fxpath σ)).
+          { apply valid_fxpath. assumption. }
+          pose (sound_trans_term _ _ _ _ hσ' i1).
+          pose (sound_trans_term' i3).
+          rewrite trans_ctx_fxpath in i4.
+          todo. (* Mismatch again... *)
         + todo. (* Same *)
 
       (* TyUni *)
