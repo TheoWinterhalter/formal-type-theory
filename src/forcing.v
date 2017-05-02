@@ -499,8 +499,15 @@ Fixpoint trans_type (σ : fctx) (A : type) {struct A} : type :=
 
   | Uni l => fProd (fxpath σ) (Uni l)
 
-  (* Seems we're gonna need to have El n instead of just El! *)
-  | El a => El [a | Uni (uni 0)]! σ
+  (* We probably need to have El depend on the universe level! *)
+  | El a =>
+    El (app (app (trans_term σ a)
+                 (El ℙ)
+                 (fProd' σ (Uni (uni 0)))
+                 (var (last_cond σ)))
+            (Hom (var (S (last_cond σ))) (var 0))
+            (Uni (uni 0))
+            (idℙ (var (last_cond σ))))
 
   (* Cases that don't happen given our config *)
   | _ => Empty
@@ -892,10 +899,14 @@ Proof.
       (* TyEL *)
       - simpl.
         pose (h' := sound_trans_term _ _ _ _ hσ i).
-        pose (h'' := sound_trans_term' h').
-        simpl in h''.
-        (* Maybe not the right direction. Possibly we should just apply
-           last_cond σ and id to the translated term. *)
+        simpl in h'.
+        ceapply TyEl.
+        ceapply TermTyConv ; [ ceapply TermApp | .. ].
+        + ceapply TermTyConv ; [ ceapply TermApp | .. ].
+          * ceapply TermCtxConv ; [ ceapply TermTyConv ; [ exact h' | .. ] | .. ].
+            -- unfold fProd'. todo.
+            -- fail.
+
 
         (* ceapply TyEl. simpl in i1. *)
         todo. (* We need sound_trans_term before we can fix the translation of
