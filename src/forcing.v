@@ -826,12 +826,21 @@ Proof.
         + rewrite trans_ctx_fxvar.
           rewrite trans_ctx_fxpath.
           capply CtxRefl. capply CtxExtend.
-          todo. (* Need to fix well-typedness of [[A]]! σ *)
+          ceapply TyCtxConv ; [ eapply sound_trans_type'' | .. ].
+          * eapply sound_trans_type.
+            -- eapply valid_fxpath. eassumption.
+            -- assumption.
+          * rewrite trans_ctx_fxpath. capply CtxRefl.
+            capply CtxExtend. apply TyHom.
+            -- todo.
+            -- todo.
 
+      (* TyId *)
       - simpl. capply TyId.
-        + todo. (* Need sound_trans_term *)
+        + todo. (* Actually need sound_trans_term' for [u]! σ *)
         + todo. (* Same *)
 
+      (* TyUni *)
       - simpl. (* Maybe we should deduce something for fProd? *)
         unfold fProd.
         capply TyProd. capply TyProd. capply TyUni.
@@ -840,8 +849,10 @@ Proof.
         + todo.
         + todo.
 
+      (* TyEL *)
       - simpl.
-        (* ceapply TyEl. *)
+        (* pose (sound_trans_term _ _ _ _ hσ i). *)
+        (* ceapply TyEl. simpl in i1. *)
         todo. (* We need sound_trans_term before we can fix the translation of
                  El. *)
     }
