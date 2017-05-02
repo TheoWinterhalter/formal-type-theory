@@ -490,8 +490,10 @@ Fixpoint trans_type (σ : fctx) (A : type) {struct A} : type :=
   | Prod A B => Prod ([[ A ]]! (fxpath σ)) ([[ B ]] (fxvar (fxpath σ)))
 
   | Id A u v => Id ([[ A ]] (fxpath σ))
-                  ([ u | A ]! (fxpath σ))
-                  ([ v | A ]! (fxpath σ))
+                  (trans_term (fxpath σ) u)
+                  (trans_term (fxpath σ) v)
+                  (* ([ u | A ]! (fxpath σ)) *)
+                  (* ([ v | A ]! (fxpath σ)) *)
 
   | Subst A ρ => Subst ([[ A ]] (fxpath σ)) (trans_subst (fxpath σ) ρ)
 
@@ -866,10 +868,16 @@ Proof.
         + assert (hσ' : isfctx G (fxpath σ)).
           { apply valid_fxpath. assumption. }
           pose (sound_trans_term _ _ _ _ hσ' i1).
-          pose (sound_trans_term' i3).
-          rewrite trans_ctx_fxpath in i4.
-          todo. (* Mismatch again... *)
-        + todo. (* Same *)
+          (* pose (sound_trans_term' i3). *)
+          (* rewrite trans_ctx_fxpath in i4. *)
+          (* todo. (* Mismatch again... *) *)
+          rewrite trans_ctx_fxpath in i3.
+          assumption.
+        + assert (hσ' : isfctx G (fxpath σ)).
+          { apply valid_fxpath. assumption. }
+          pose (sound_trans_term _ _ _ _ hσ' i2).
+          rewrite trans_ctx_fxpath in i3.
+          assumption.
 
       (* TyUni *)
       - simpl. (* Maybe we should deduce something for fProd? *)
