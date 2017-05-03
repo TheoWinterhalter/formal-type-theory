@@ -105,17 +105,23 @@ Context `{
       Ttt.isctx Γ ->
       Ttt.isterm Γ ℙ (Uni (uni 0))
 }.
+
+Definition Tℙ := El (uni 0) ℙ.
+
 Context `{_Hom : term}.
 Context `{
   hHom :
     forall {Γ},
       Ttt.isctx Γ ->
-      Ttt.isterm Γ _Hom (Arrow (El ℙ) (Arrow (El ℙ) (Uni (uni 0))))
+      Ttt.isterm Γ
+                 _Hom
+                 (Arrow Tℙ (Arrow Tℙ (Uni (uni 0))))
 }.
 
 Definition Hom p q :=
-  El (app (app _Hom (El ℙ) (Arrow (El ℙ) (Uni (uni 0))) p)
-          (El ℙ)
+  El (uni 0)
+     (app (app _Hom Tℙ (Arrow Tℙ (Uni (uni 0))) p)
+          Tℙ
           (Uni (uni 0))
           q).
 
@@ -124,11 +130,11 @@ Context `{
   hidℙ :
     forall {Γ},
       Ttt.isctx Γ ->
-      Ttt.isterm Γ _idℙ (Prod (El ℙ) (Hom (var 0) (var 0)))
+      Ttt.isterm Γ _idℙ (Prod Tℙ (Hom (var 0) (var 0)))
 }.
 
 Definition idℙ p :=
-  app _idℙ (El ℙ) (Hom (var 0) (var 0)) p.
+  app _idℙ Tℙ (Hom (var 0) (var 0)) p.
 
 Context `{_comp : term}.
 Context `{
@@ -137,9 +143,9 @@ Context `{
       Ttt.isctx Γ ->
       Ttt.isterm Γ
                  _comp
-                 (Prod (El ℙ)
-                       (Prod (El ℙ)
-                             (Prod (El ℙ)
+                 (Prod Tℙ
+                       (Prod Tℙ
+                             (Prod Tℙ
                                    (Arrow (Hom (var 2) (var 1))
                                           (Arrow (Hom (var 1) (var 0))
                                                  (Hom (var 2) (var 0)))))))
@@ -147,19 +153,19 @@ Context `{
 
 Definition comp p q r f g :=
   app (app (app (app (app _comp
-                          (El ℙ)
-                          (Prod (El ℙ)
+                          Tℙ
+                          (Prod Tℙ
                                 (Arrow (Hom (var 2) (var 1))
                                        (Arrow (Hom (var 1) (var 0))
                                               (Hom (var 2) (var 0)))))
                           p)
-                     (El ℙ)
-                     (Prod (El ℙ)
+                     Tℙ
+                     (Prod Tℙ
                            (Arrow (Hom p (var 1))
                                   (Arrow (Hom (var 1) (var 0))
                                          (Hom p (var 0)))))
                      q)
-                (El ℙ)
+                Tℙ
                 (Arrow (Hom p q)
                        (Arrow (Hom q (var 0)) (Hom p (var 0)))) r)
            (Hom p q)
@@ -213,7 +219,7 @@ Context `{
       Ttt.eqterm Γ
                  (subst _Hom ρ)
                  _Hom
-                 (Arrow (El ℙ) (Arrow (El ℙ) (Uni (uni 0))))
+                 (Arrow Tℙ (Arrow Tℙ (Uni (uni 0))))
 }.
 
 Axiom todo : forall {A}, A.
@@ -222,7 +228,7 @@ Ltac todo := apply todo.
 Lemma EqTySubstℙ :
   forall {Γ Δ ρ},
     Ttt.issubst ρ Γ Δ ->
-    Ttt.eqtype Γ (Subst (El ℙ) ρ) (El ℙ).
+    Ttt.eqtype Γ (Subst Tℙ ρ) Tℙ.
 Proof.
   intros Γ Δ ρ h.
   ceapply EqTyTrans.
@@ -239,8 +245,8 @@ Defined.
 Lemma EqTySubstHom :
   forall {Γ Δ ρ u v},
     Ttt.issubst ρ Γ Δ ->
-    Ttt.isterm Δ u (El ℙ) ->
-    Ttt.isterm Δ v (El ℙ) ->
+    Ttt.isterm Δ u Tℙ ->
+    Ttt.isterm Δ v Tℙ ->
     Ttt.eqtype Γ
                (Subst (Hom u v) ρ)
                (Hom (subst u ρ) (subst v ρ)).
@@ -332,7 +338,7 @@ Defined.
 Lemma Tyℙ :
   forall {Γ},
     Ttt.isctx Γ ->
-    Ttt.istype Γ (El ℙ).
+    Ttt.istype Γ Tℙ.
 Proof.
   intros Γ h.
   ceapply TyEl. apply hℙ. assumption.
@@ -341,8 +347,8 @@ Defined.
 
 Lemma TyHom :
   forall {Γ u v},
-    Ttt.isterm Γ u (El ℙ) ->
-    Ttt.isterm Γ v (El ℙ) ->
+    Ttt.isterm Γ u Tℙ ->
+    Ttt.isterm Γ v Tℙ ->
     Ttt.istype Γ (Hom u v).
 Proof.
   intros Γ u v hu hv.
@@ -364,8 +370,8 @@ Defined.
 
 Lemma CongHom :
   forall {Γ u1 u2 v1 v2},
-    Ttt.eqterm Γ u1 u2 (El ℙ) ->
-    Ttt.eqterm Γ v1 v2 (El ℙ) ->
+    Ttt.eqterm Γ u1 u2 Tℙ ->
+    Ttt.eqterm Γ v1 v2 Tℙ ->
     Ttt.eqtype Γ (Hom u1 v1) (Hom u2 v2).
 Proof.
   intros.
@@ -403,7 +409,7 @@ Defined.
 
 Lemma hidℙ' :
   forall {Γ x},
-    Ttt.isterm Γ x (El ℙ) ->
+    Ttt.isterm Γ x Tℙ ->
     Ttt.isterm Γ (idℙ x) (Hom x x).
 Proof.
   intros Γ x h.
@@ -480,10 +486,10 @@ Definition fProd' (σ : fctx) (A : type) : type :=
   Prod (Hom (var (S (last_cond σ))) (var 0)) A.
 
 Definition flam (σ : fctx) (A : type) (u : term) : term :=
-  lam (El ℙ) (fProd' σ A) (lam (Hom (var (S (last_cond σ))) (var 0)) A u).
+  lam Tℙ (fProd' σ A) (lam (Hom (var (S (last_cond σ))) (var 0)) A u).
 
 Definition fProd (σ : fctx) (A : type) : type :=
-  Prod (El ℙ) (fProd' σ A).
+  Prod Tℙ (fProd' σ A).
 
 Fixpoint trans_type (σ : fctx) (A : type) {struct A} : type :=
   match A with
@@ -499,10 +505,10 @@ Fixpoint trans_type (σ : fctx) (A : type) {struct A} : type :=
 
   | Uni l => fProd (fxpath σ) (Uni l)
 
-  (* We probably need to have El depend on the universe level! *)
-  | El a =>
-    El (app (app (trans_term σ a)
-                 (El ℙ)
+  | El l a =>
+    El l
+       (app (app (trans_term σ a)
+                 Tℙ
                  (fProd' σ (Uni (uni 0)))
                  (var (last_cond σ)))
             (Hom (var (S (last_cond σ))) (var 0))
@@ -539,31 +545,31 @@ where "[[ A ]] σ" :=
   (Subst (Subst (trans_type σ A)
                 (sbshift (Hom (var (S (last_cond σ)))
                               (var 0))
-                         (sbzero (El ℙ)
+                         (sbzero Tℙ
                                  (var (last_cond σ)))))
          (sbzero (Hom (var (last_cond σ)) (var (last_cond σ)))
                  (idℙ (var (last_cond σ)))))
 
 and "[ u | A ]! σ" :=
     (flam σ
-          (Subst (Subst A (sbweak (El ℙ)))
+          (Subst (Subst A (sbweak Tℙ))
                  (sbweak (Hom (var (S (last_cond σ))) (var 0))))
           (subst (subst (trans_term σ u)
-                        (sbweak (El ℙ)))
+                        (sbweak Tℙ))
                  (sbweak (Hom (var (S (last_cond σ))) (var 0)))))
 
 and "[[ A ]]! σ" :=
   (fProd σ
-         (Subst (Subst ([[A]] σ) (sbweak (El ℙ)))
+         (Subst (Subst ([[A]] σ) (sbweak Tℙ))
                 (sbweak (Hom (var (S (last_cond σ))) (var 0))))).
 
 Fixpoint trans_ctx (σ : fctx) (Γ : context) : context :=
   match Γ, σ with
   | ctxempty, cond =>
-    ctxextend ctxempty (El ℙ)
+    ctxextend ctxempty Tℙ
 
   | Γ, fxpath σ =>
-    ctxextend (ctxextend (trans_ctx σ Γ) (El ℙ))
+    ctxextend (ctxextend (trans_ctx σ Γ) Tℙ)
               (Hom (var (S (last_cond σ))) (var 0))
 
   | ctxextend Γ A, fxvar σ =>
@@ -607,7 +613,7 @@ Defined.
 Lemma trans_ctx_fxpath :
   forall {Γ σ},
     trans_ctx (fxpath σ) Γ =
-    ctxextend (ctxextend (trans_ctx σ Γ) (El ℙ))
+    ctxextend (ctxextend (trans_ctx σ Γ) Tℙ)
               (Hom (var (S (last_cond σ))) (var 0)).
 Proof.
   intros Γ σ.
@@ -897,15 +903,15 @@ Proof.
         + todo.
 
       (* TyEL *)
-      - simpl.
-        pose (h' := sound_trans_term _ _ _ _ hσ i).
-        simpl in h'.
-        ceapply TyEl.
-        ceapply TermTyConv ; [ ceapply TermApp | .. ].
-        + ceapply TermTyConv ; [ ceapply TermApp | .. ].
-          * ceapply TermCtxConv ; [ ceapply TermTyConv ; [ exact h' | .. ] | .. ].
-            -- unfold fProd'. todo.
-            -- fail.
+      - (* simpl. *)
+        (* pose (h' := sound_trans_term _ _ _ _ hσ i). *)
+        (* simpl in h'. *)
+        (* ceapply TyEl. *)
+        (* ceapply TermTyConv ; [ ceapply TermApp | .. ]. *)
+        (* + ceapply TermTyConv ; [ ceapply TermApp | .. ]. *)
+        (*   * ceapply TermCtxConv ; [ ceapply TermTyConv ; [ exact h' | .. ] | .. ]. *)
+        (*     -- unfold fProd'. todo. *)
+        (*     -- fail. *)
 
 
         (* ceapply TyEl. simpl in i1. *)
