@@ -196,9 +196,9 @@ Proof.
     }
 
     (* TyEl *)
-    { config apply @TyEl with (n := n).
+    { capply TyEl.
       - now apply sane_isterm.
-      - now apply (ptt_sane_isterm G a (Uni n)), sane_isterm.
+      - now apply (ptt_sane_isterm G a (Uni l)), sane_isterm.
     }
   }
 
@@ -1423,9 +1423,10 @@ Proof.
         - now apply sane_eqterm.
         - now apply (ptt_sane_eqterm G a1 a2 (Uni (uni n))), sane_eqterm.
         - now apply (ptt_sane_eqterm G a1 a2 (Uni (uni n))), sane_eqterm.
-        - now apply (ptt_sane_eqterm (ctxextend G (El a1)) b1 b2 (Uni (uni m))),
+        - now apply (ptt_sane_eqterm (ctxextend G (El (uni n) a1))
+                                     b1 b2 (Uni (uni m))),
                     sane_eqterm.
-        - now apply (ptt_sane_eqterm (ctxextend G (El a1)) b1 b2 (Uni (uni m))),
+        - now apply (ptt_sane_eqterm (ctxextend G (El (uni n) a1)) b1 b2 (Uni (uni m))),
                     sane_eqterm.
         - now apply (ptt_sane_eqterm G a1 a2 (Uni (uni n))), sane_eqterm.
       }
@@ -1436,9 +1437,9 @@ Proof.
         - now apply sane_eqterm.
         - now apply (ptt_sane_eqterm G a1 a2 (Uni l)), sane_eqterm.
         - now apply (ptt_sane_eqterm G a1 a2 (Uni l)), sane_eqterm.
-        - now apply (ptt_sane_eqterm (ctxextend G (El a1)) b1 b2 (Uni prop)),
+        - now apply (ptt_sane_eqterm (ctxextend G (El l a1)) b1 b2 (Uni prop)),
                     sane_eqterm.
-        - now apply (ptt_sane_eqterm (ctxextend G (El a1)) b1 b2 (Uni prop)),
+        - now apply (ptt_sane_eqterm (ctxextend G (El l a1)) b1 b2 (Uni prop)),
                     sane_eqterm.
         - now apply (ptt_sane_eqterm G a1 a2 (Uni l)), sane_eqterm.
       }
@@ -1450,19 +1451,19 @@ Proof.
         - now apply sane_eqterm.
         - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
         - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
-        - now apply (ptt_sane_eqterm G u1 u2 (El a1)), sane_eqterm.
-        - now apply (ptt_sane_eqterm G u1 u2 (El a1)), sane_eqterm.
-        - now apply (ptt_sane_eqterm G v1 v2 (El a1)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G u1 u2 (El n a1)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G u1 u2 (El n a1)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G v1 v2 (El n a1)), sane_eqterm.
         - ceapply TermTyConv.
-          + now apply (ptt_sane_eqterm G v1 v2 (El a1)), sane_eqterm.
+          + now apply (ptt_sane_eqterm G v1 v2 (El n a1)), sane_eqterm.
           + config apply @CongEl with (n := n).
             * now apply sane_eqterm.
             * now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
             * now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
             * now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
           + now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
-          + now apply (ptt_sane_eqterm G v1 v2 (El a1)), sane_eqterm.
-          + config apply @TyEl with (n := n).
+          + now apply (ptt_sane_eqterm G v1 v2 (El n a1)), sane_eqterm.
+          + capply @TyEl.
             * now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
             * now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
         - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
