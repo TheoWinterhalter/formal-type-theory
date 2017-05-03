@@ -871,19 +871,19 @@ Ltac prepushsubst1 sym :=
       ceapply EqTyTrans ; [ ceapply EqTySubstUni | .. ]
     | ..
     ]
-  | |- eqtype ?G (Subst (El ?A) ?sbs) ?B =>
+  | |- eqtype ?G (Subst (El ?l ?A) ?sbs) ?B =>
     ceapply EqTySym ; [
       ceapply EqTyTrans ; [ ceapply ElSubst | .. ]
     | ..
     ]
-  | |- eqtype ?G ?A (Subst (El ?B) ?sbs) =>
+  | |- eqtype ?G ?A (Subst (El ?l ?B) ?sbs) =>
     ceapply EqTyTrans ; [ ceapply ElSubst | .. ]
-  | |- eqtype ?G (Subst ?A ?sbs) (El ?B) =>
+  | |- eqtype ?G (Subst ?A ?sbs) (El ?l ?B) =>
     ceapply EqTySym ; [
       ceapply EqTyTrans ; [ ceapply ElSubst | .. ]
     | ..
     ]
-  | |- eqtype ?G (El ?A) (Subst ?A ?sbs) =>
+  | |- eqtype ?G (El ?l ?A) (Subst ?A ?sbs) =>
     ceapply EqTyTrans ; [ ceapply ElSubst | .. ]
 
   (*! Pushing in terms !*)
@@ -2211,7 +2211,7 @@ Ltac magicn try shelf tysym debug :=
         ceapply TyUni
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- istype ?G (El ?a) =>
+    | |- istype ?G (El ?l ?a) =>
       first [
         ceapply TyEl
       | myfail debug
@@ -2660,7 +2660,7 @@ Ltac magicn try shelf tysym debug :=
         ceapply EqTyRefl
       | myfail debug
       ] ; magicn try shelf true debug
-    | |- eqtype ?G (El ?a) (El ?b) =>
+    | |- eqtype ?G (El ?l ?a) (El ?l' ?b) =>
       first [
         ceapply CongEl
       | myfail debug

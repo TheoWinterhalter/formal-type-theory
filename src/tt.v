@@ -226,11 +226,11 @@ with istype : context -> type -> Type :=
 
      | TyEl :
        universe rule
-         parameters: {G a n},
-         premise: isterm G a (Uni n)
+         parameters: {G a l},
+         premise: isterm G a (Uni l)
          precond: isctx G
          conclusion:
-           istype G (El a)
+           istype G (El l a)
        endrule
 
 
@@ -466,7 +466,7 @@ with isterm : context -> term -> type -> Type :=
        universe rule
          parameters: {G a b n m},
          premise: isterm G a (Uni (uni n))
-         premise: isterm (ctxextend G (El a)) b (Uni (uni m))
+         premise: isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))
          precond: isctx G
          conclusion:
            isterm G (uniProd (uni n) (uni m) a b) (Uni (uni (max n m)))
@@ -476,7 +476,7 @@ with isterm : context -> term -> type -> Type :=
        universe withprop rule
          parameters: {G a b l},
          premise: isterm G a (Uni l)
-         premise: isterm (ctxextend G (El a)) b (Uni prop)
+         premise: isterm (ctxextend G (El l a)) b (Uni prop)
          precond: isctx G
          conclusion:
            isterm G (uniProd l prop a b) (Uni prop)
@@ -486,8 +486,8 @@ with isterm : context -> term -> type -> Type :=
        universe rule
          parameters: {G a u v n},
          premise: isterm G a (Uni n)
-         premise: isterm G u (El a)
-         premise: isterm G v (El a)
+         premise: isterm G u (El n a)
+         premise: isterm G v (El n a)
          precond: isctx G
          conclusion:
            isterm G (uniId n a u v) (Uni n)
@@ -1070,37 +1070,37 @@ with eqtype : context -> type -> type -> Type :=
        universe rule
          parameters: {G a b n m},
          premise: isterm G a (Uni (uni n))
-         premise: isterm (ctxextend G (El a)) b (Uni (uni m))
+         premise: isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))
          precond: isctx G
          conclusion:
            eqtype G
-                  (El (uniProd (uni n) (uni m) a b))
-                  (Prod (El a) (El b))
+                  (El (uni (max n m)) (uniProd (uni n) (uni m) a b))
+                  (Prod (El (uni n) a) (El (uni m) b))
        endrule
 
      | ElProdProp :
        universe withprop rule
          parameters: {G a b l},
          premise: isterm G a (Uni l)
-         premise: isterm (ctxextend G (El a)) b (Uni prop)
+         premise: isterm (ctxextend G (El l a)) b (Uni prop)
          precond: isctx G
          conclusion:
            eqtype G
-                  (El (uniProd l prop a b))
-                  (Prod (El a) (El b))
+                  (El prop (uniProd l prop a b))
+                  (Prod (El l a) (El prop b))
        endrule
 
      | ElId :
        universe rule
          parameters: {G a u v n},
          premise: isterm G a (Uni n)
-         premise: isterm G u (El a)
-         premise: isterm G v (El a)
+         premise: isterm G u (El n a)
+         premise: isterm G v (El n a)
          precond: isctx G
          conclusion:
            eqtype G
-                  (El (uniId n a u v))
-                  (Id (El a) u v)
+                  (El n (uniId n a u v))
+                  (Id (El n a) u v)
        endrule
 
      | ElSubst :
@@ -1112,8 +1112,8 @@ with eqtype : context -> type -> type -> Type :=
          precond: isctx D
          conclusion:
            eqtype G
-                  (El (subst a sbs))
-                  (Subst (El a) sbs)
+                  (El n (subst a sbs))
+                  (Subst (El n a) sbs)
        endrule
 
      | ElEmpty :
@@ -1122,7 +1122,7 @@ with eqtype : context -> type -> type -> Type :=
          premise: isctx G
          conclusion:
            eqtype G
-                  (El (uniEmpty n))
+                  (El n (uniEmpty n))
                   Empty
        endrule
 
@@ -1132,7 +1132,7 @@ with eqtype : context -> type -> type -> Type :=
          premise: isctx G
          conclusion:
            eqtype G
-                  (El (uniUnit n))
+                  (El n (uniUnit n))
                   Unit
        endrule
 
@@ -1142,7 +1142,7 @@ with eqtype : context -> type -> type -> Type :=
          premise: isctx G
          conclusion:
            eqtype G
-                  (El (uniBool n))
+                  (El (uni n) (uniBool n))
                   Bool
        endrule
 
@@ -1154,8 +1154,8 @@ with eqtype : context -> type -> type -> Type :=
          precond: isctx G
          conclusion:
            eqtype G
-                  (El (uniSimProd (uni n) (uni m) a b))
-                  (SimProd (El a) (El b))
+                  (El (uni (max n m)) (uniSimProd (uni n) (uni m) a b))
+                  (SimProd (El (uni n) a) (El (uni m) b))
        endrule
 
      | ElSimProdProp :
@@ -1166,8 +1166,8 @@ with eqtype : context -> type -> type -> Type :=
          precond: isctx G
          conclusion:
            eqtype G
-                  (El (uniSimProd prop prop a b))
-                  (SimProd (El a) (El b))
+                  (El prop (uniSimProd prop prop a b))
+                  (SimProd (El prop a) (El prop b))
        endrule
 
      | ElUni :
@@ -1176,7 +1176,7 @@ with eqtype : context -> type -> type -> Type :=
          premise: isctx G
          conclusion:
            eqtype G
-                  (El (uniUni (uni n)))
+                  (El (uni (S n)) (uniUni (uni n)))
                   (Uni (uni n))
        endrule
 
@@ -1186,7 +1186,7 @@ with eqtype : context -> type -> type -> Type :=
          premise: isctx G
          conclusion:
            eqtype G
-                  (El (uniUni prop))
+                  (El (uni 0) (uniUni prop))
                   (Uni prop)
        endrule
 
@@ -1199,8 +1199,8 @@ with eqtype : context -> type -> type -> Type :=
          precond: isctx G
          conclusion:
            eqtype G
-                  (El a)
-                  (El b)
+                  (El n a)
+                  (El n b)
        endrule
 
 
@@ -2131,7 +2131,7 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G D a b n m sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni (uni n))
-         premise: isterm (ctxextend D (El a)) b (Uni (uni m))
+         premise: isterm (ctxextend D (El (uni n) a)) b (Uni (uni m))
          precond: isctx G
          precond: isctx D
          conclusion:
@@ -2140,7 +2140,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (uniProd (uni n)
                            (uni m)
                            (subst a sbs)
-                           (subst b (sbshift (El a) sbs)))
+                           (subst b (sbshift (El (uni n) a) sbs)))
                   (Uni (uni (max n m)))
        endrule
 
@@ -2149,13 +2149,15 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G D a b l sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni l)
-         premise: isterm (ctxextend D (El a)) b (Uni prop)
+         premise: isterm (ctxextend D (El l a)) b (Uni prop)
          precond: isctx G
          precond: isctx D
          conclusion:
            eqterm G
                   (subst (uniProd l prop a b) sbs)
-                  (uniProd l prop (subst a sbs) (subst b (sbshift (El a) sbs)))
+                  (uniProd l prop
+                           (subst a sbs)
+                           (subst b (sbshift (El l a) sbs)))
                   (Uni prop)
        endrule
 
@@ -2164,8 +2166,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G D a u v n sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni n)
-         premise: isterm D u (El a)
-         premise: isterm D v (El a)
+         premise: isterm D u (El n a)
+         premise: isterm D v (El n a)
          precond: isctx G
          precond: isctx D
          conclusion:
@@ -2274,11 +2276,11 @@ with eqterm : context -> term -> term -> type -> Type :=
        universe rule
          parameters: {G a1 a2 b1 b2 n m},
          premise: eqterm G a1 a2 (Uni (uni n))
-         premise: eqterm (ctxextend G (El a1)) b1 b2 (Uni (uni m))
+         premise: eqterm (ctxextend G (El (uni n) a1)) b1 b2 (Uni (uni m))
          precond: isterm G a1 (Uni (uni n))
          precond: isterm G a2 (Uni (uni n))
-         precond: isterm (ctxextend G (El a1)) b1 (Uni (uni m))
-         precond: isterm (ctxextend G (El a1)) b2 (Uni (uni m))
+         precond: isterm (ctxextend G (El (uni n) a1)) b1 (Uni (uni m))
+         precond: isterm (ctxextend G (El (uni n) a1)) b2 (Uni (uni m))
          precond: isctx G
          conclusion:
            eqterm G
@@ -2291,11 +2293,11 @@ with eqterm : context -> term -> term -> type -> Type :=
        universe withprop rule
          parameters: {G a1 a2 b1 b2 l},
          premise: eqterm G a1 a2 (Uni l)
-         premise: eqterm (ctxextend G (El a1)) b1 b2 (Uni prop)
+         premise: eqterm (ctxextend G (El l a1)) b1 b2 (Uni prop)
          precond: isterm G a1 (Uni l)
          precond: isterm G a2 (Uni l)
-         precond: isterm (ctxextend G (El a1)) b1 (Uni prop)
-         precond: isterm (ctxextend G (El a1)) b2 (Uni prop)
+         precond: isterm (ctxextend G (El l a1)) b1 (Uni prop)
+         precond: isterm (ctxextend G (El l a1)) b2 (Uni prop)
          precond: isctx G
          conclusion:
            eqterm G
@@ -2308,14 +2310,14 @@ with eqterm : context -> term -> term -> type -> Type :=
        universe rule
          parameters: {G a1 a2 u1 u2 v1 v2 n},
          premise: eqterm G a1 a2 (Uni n)
-         premise: eqterm G u1 u2 (El a1)
-         premise: eqterm G v1 v2 (El a1)
+         premise: eqterm G u1 u2 (El n a1)
+         premise: eqterm G v1 v2 (El n a1)
          precond: isterm G a1 (Uni n)
          precond: isterm G a2 (Uni n)
-         precond: isterm G u1 (El a1)
-         precond: isterm G u2 (El a1)
-         precond: isterm G v1 (El a1)
-         precond: isterm G v2 (El a2)
+         precond: isterm G u1 (El n a1)
+         precond: isterm G u2 (El n a1)
+         precond: isterm G v1 (El n a1)
+         precond: isterm G v2 (El n a2)
          precond: isctx G
          conclusion:
            eqterm G

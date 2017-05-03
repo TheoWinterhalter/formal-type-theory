@@ -17,7 +17,7 @@ with type : Type :=
      | Bool : type
      | SimProd : type -> type -> type
      | Uni : level -> type
-     | El : term -> type
+     | El : level -> term -> type
 
 with term : Type :=
      | var : nat -> term
