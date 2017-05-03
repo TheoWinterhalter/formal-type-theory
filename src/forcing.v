@@ -505,15 +505,7 @@ Fixpoint trans_type (σ : fctx) (A : type) {struct A} : type :=
 
   | Uni l => fProd (fxpath σ) (Uni l)
 
-  | El l a =>
-    El l
-       (app (app (trans_term σ a)
-                 Tℙ
-                 (fProd' σ (Uni (uni 0)))
-                 (var (last_cond σ)))
-            (Hom (var (S (last_cond σ))) (var 0))
-            (Uni (uni 0))
-            (idℙ (var (last_cond σ))))
+  | El l a => El l (trans_term (fxpath σ) a)
 
   (* Cases that don't happen given our config *)
   | _ => Empty
@@ -771,7 +763,7 @@ Proof.
       - dependent induction hσ.
 
         + simpl. capply CtxExtend.
-          ceapply TyEl. apply hℙ.
+          ceapply Tyℙ.
           capply CtxEmpty.
 
         + simpl. capply CtxExtend.
@@ -833,7 +825,7 @@ Proof.
                ++ eapply isfctx_conv ; eassumption.
                ++ assumption.
             -- capply EqTyRefl.
-               ceapply TyEl. apply hℙ.
+               ceapply Tyℙ.
                apply sound_trans_ctx.
                ++ eapply isfctx_conv ; eassumption.
                ++ assumption.
@@ -903,20 +895,18 @@ Proof.
         + todo.
 
       (* TyEL *)
-      - (* simpl. *)
-        (* pose (h' := sound_trans_term _ _ _ _ hσ i). *)
-        (* simpl in h'. *)
-        (* ceapply TyEl. *)
-        (* ceapply TermTyConv ; [ ceapply TermApp | .. ]. *)
-        (* + ceapply TermTyConv ; [ ceapply TermApp | .. ]. *)
-        (*   * ceapply TermCtxConv ; [ ceapply TermTyConv ; [ exact h' | .. ] | .. ]. *)
-        (*     -- unfold fProd'. todo. *)
-        (*     -- fail. *)
-
-
-        (* ceapply TyEl. simpl in i1. *)
-        todo. (* We need sound_trans_term before we can fix the translation of
-                 El. *)
+      - simpl.
+        ceapply TyEl.
+        assert (hσ' : isfctx G (fxpath σ)).
+        { apply valid_fxpath. assumption. }
+        pose (h' := sound_trans_term _ _ _ _ hσ' i).
+        rewrite trans_ctx_fxpath in h'.
+        ceapply TermTyConv ; [ exact h' | .. ].
+        simpl. (* compsubst. *)
+        (* + capply SubstZero. apply hidℙ'. todo. *)
+        (* + todo. *)
+        (* +  *)
+        todo. (* I believe in it. *)
     }
 
   (* sound_trans_term *)
