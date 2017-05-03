@@ -459,14 +459,30 @@ Fixpoint _last_cond (o : nat) (σ : fctx) : nat :=
 
 Definition last_cond σ := _last_cond 0 σ.
 
+(* Also known as length *)
+Fixpoint _first_cond o σ :=
+  match σ with
+  | cond => o
+  | fxvar σ => _first_cond (S o) σ
+  | fxpath σ => _first_cond (S (S o)) σ
+  end.
+
+Definition first_cond σ := _first_cond 0 σ.
+
 (* Morphism of a variable *)
-(* Fixpoint morph (σ : fctx) (x : nat) : term := *)
-(*   match σ, x with *)
-(*   | cond, _ => (idℙ (var o)) *)
-(*   | fxvar σ, 0 => (idℙ (last_cond σ)) *)
-(*   | fxvar σ, (S x) => morph σ x *)
-(*   | fxpath σ, x => comp ? ? ? (morph σ x (* ?? x-1 we'd like, no? *)) (var 0). *)
-(*                       (* maybe not var 0, but rather an offset? *) *)
+Fixpoint _morph (o : nat) (σ : fctx) (x : nat) : term :=
+  match σ, x with
+  | cond, _ => idℙ (var o) (* Should never happen should it? *)
+  | fxvar σ, 0 => idℙ (var (_last_cond o σ))
+  | fxvar σ, S x => _morph (S o) σ x
+  | fxpath σ, S (S x) =>
+    comp todo todo todo
+         (_morph (S (S o)) σ x)
+         (var o)
+  | fxpath σ, _ => idℙ (var (_first_cond o σ))
+  end.
+
+Definition morph σ x := _morph 0 σ x.
 
 Fixpoint lift_var (σ : fctx) (x : nat) : nat :=
   match σ, x with
@@ -514,7 +530,14 @@ Fixpoint trans_type (σ : fctx) (A : type) {struct A} : type :=
 
 with trans_term (σ : fctx) (u : term) {struct u} : term :=
   match u with
-  | var n => var (lift_var σ n)
+  | var n =>
+    app (app (var (lift_var σ n))
+             todo
+             todo
+             (var (last_cond σ)))
+        todo
+        todo
+        (morph σ n)
 
   (* TODO *)
 
