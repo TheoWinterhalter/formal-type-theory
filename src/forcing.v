@@ -118,12 +118,14 @@ Context `{
                  (Arrow Tℙ (Arrow Tℙ (Uni (uni 0))))
 }.
 
+Definition hom p q :=
+  app (app _Hom Tℙ (Arrow Tℙ (Uni (uni 0))) p)
+      Tℙ
+      (Uni (uni 0))
+      q.
+
 Definition Hom p q :=
-  El (uni 0)
-     (app (app _Hom Tℙ (Arrow Tℙ (Uni (uni 0))) p)
-          Tℙ
-          (Uni (uni 0))
-          q).
+  El (uni 0) (hom p q).
 
 Context `{_idℙ : term}.
 Context `{
@@ -294,7 +296,7 @@ Proof.
            ++ capply SubstZero. assumption.
            ++ capply EqTyRefl. capply TyUni.
               apply (ett_sanity.sane_issubst _ _ _ hρ).
-  - ceapply CongEl.
+  - ceapply CongEl. unfold hom.
     pushsubst ; [ instantiate (1 := Δ) | .. ].
     + ceapply TermTyConv ; [ ceapply TermApp | .. ].
       * ceapply TermTyConv ; [ apply hHom | .. ].
@@ -528,6 +530,8 @@ Fixpoint trans_type (σ : fctx) (A : type) {struct A} : type :=
 
   end
 
+(* Maybe add the target type so that we can deal properly with the
+   variable case *)
 with trans_term (σ : fctx) (u : term) {struct u} : term :=
   match u with
   | var n =>
@@ -554,7 +558,43 @@ with trans_term (σ : fctx) (u : term) {struct u} : term :=
     refl ([[A]] σ)
          (trans_term σ u)
 
-  (* TODO *)
+  | uniProd l prop a b =>
+    flam σ
+         (Uni prop)
+         (uniProd l prop
+                  ([a | Uni l]! (fxpath σ))
+                  (trans_term (fxvar (fxpath σ)) b))
+
+  | uniProd (uni n) (uni m) a b =>
+    flam σ
+         (Uni (uni (max n m)))
+         (uniProd (uni n) (uni m)
+                  ([a | Uni (uni n)]! (fxpath σ))
+                  (trans_term (fxvar (fxpath σ)) b))
+
+  | uniId l a u v =>
+    flam σ
+         (Uni l)
+         (uniId l
+                (trans_term (fxpath σ) a)
+                (trans_term (fxpath σ) u)
+                (trans_term (fxpath σ) v))
+
+  | uniUni prop =>
+    flam σ (Uni (uni 0))
+         (uniProd (uni 0) (uni 0)
+                  ℙ
+                  (uniProd (uni 0) (uni 0)
+                           (hom (var (S (last_cond σ))) (var 0))
+                           (uniUni prop)))
+
+  | uniUni (uni n) =>
+    flam σ (Uni (uni (S n)))
+         (uniProd (uni 0) (uni (S n))
+                  ℙ
+                  (uniProd (uni 0) (uni (S n))
+                           (hom (var (S (last_cond σ))) (var 0))
+                           (uniUni (uni n))))
 
   (* Cases that don't happen given our config *)
   | _ => unit
@@ -1032,16 +1072,25 @@ Proof.
           * todo.
         + todo.
 
+      (* TermRefl *)
+      - simpl. ceapply TermTyConv.
+        + ceapply TermRefl.
+          apply sound_trans_term ; assumption.
+        + todo. (* I'll have to prove lemmata. *)
+
+      (* TermUniProd *)
       - todo.
 
+      (* TermUniProdProp *)
       - todo.
 
+      (* TermUniId *)
       - todo.
 
+      (* TermUniUni *)
       - todo.
 
-      - todo.
-
+      (* TermUniProp *)
       - todo.
     }
 
