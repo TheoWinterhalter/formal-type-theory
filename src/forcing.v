@@ -1013,9 +1013,24 @@ Proof.
       (* TermVarSucc *)
       - todo.
 
-      - todo.
+      (* TermAbs *)
+      - simpl. ceapply TermTyConv.
+        + ceapply TermAbs.
+          assert (hσ' : isfctx (ctxextend G A) (fxvar σ)).
+          { apply valid_fxvar. assumption. }
+          pose (sound_trans_term _ _ _ _ hσ' H).
+          rewrite trans_ctx_fxvar in i2. assumption.
+        + todo. (* Not sure it holds... *)
 
-      - todo.
+      (* TermApp *)
+      - simpl. ceapply TermTyConv.
+        + ceapply TermApp.
+          * pose (ih := sound_trans_term _ _ _ _ hσ H).
+            simpl in ih.
+            (* Same conversion problem! *)
+            todo.
+          * todo.
+        + todo.
 
       - todo.
 
