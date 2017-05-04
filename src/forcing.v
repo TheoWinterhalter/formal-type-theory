@@ -1079,7 +1079,19 @@ Proof.
         + todo. (* I'll have to prove lemmata. *)
 
       (* TermUniProd *)
-      - todo.
+      - simpl. ceapply TermTyConv ; [ ceapply TermAbs | .. ].
+        + ceapply TermTyConv ; [ ceapply TermAbs | .. ].
+          * ceapply TermUniProd.
+            -- assert (hσ' : isfctx G (fxpath σ)).
+               { apply valid_fxpath. assumption. }
+               pose (ih := sound_trans_term _ _ _ _ hσ' H).
+               pose (ih' := sound_trans_term' ih).
+               rewrite trans_ctx_fxpath in ih'.
+               (* ceapply TermTyConv ; [ exact ih' | .. ]. *)
+               todo. (* Mismatch... again... *)
+            -- todo.
+          * todo.
+        + todo.
 
       (* TermUniProdProp *)
       - todo.
