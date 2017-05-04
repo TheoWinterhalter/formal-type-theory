@@ -539,6 +539,21 @@ with trans_term (σ : fctx) (u : term) {struct u} : term :=
         todo
         (morph σ n)
 
+  | lam A B t =>
+    lam ([[A]]! σ)
+        ([[B]] (fxvar σ))
+        (trans_term (fxvar σ) t)
+
+  | app u A B v =>
+    app (trans_term σ u)
+        ([[A]]! σ)
+        ([[B]] (fxvar σ))
+        ([ v | A ]! σ)
+
+  | refl A u =>
+    refl ([[A]] σ)
+         (trans_term σ u)
+
   (* TODO *)
 
   (* Cases that don't happen given our config *)
@@ -741,6 +756,43 @@ Proof.
     + exact h.
 Qed.
 
+Lemma sound_trans_eqtype' {σ Γ A B} :
+  Ttt.eqtype (trans_ctx (fxpath σ) Γ) (trans_type σ A) (trans_type σ B) ->
+  Ttt.eqtype (trans_ctx σ Γ) ([[A]] σ) ([[B]] σ).
+Proof.
+  intro h.
+  ceapply CongTySubst.
+  - ceapply SubstRefl. capply SubstZero.
+    apply hidℙ'. todo.
+  - ceapply CongTySubst.
+    + ceapply SubstRefl.
+      ceapply SubstCtxConv ; [
+        ceapply SubstShift
+      | ceapply EqCtxExtend ; [ capply CtxRefl | .. ]
+      | capply CtxRefl
+      ].
+      * capply SubstZero. todo.
+      * apply TyHom.
+        -- todo. (* Similar *)
+        -- todo. (* Similar' *)
+      * rewrite trans_ctx_fxpath in h.
+        todo. (* Some sanity and inversion *)
+      * ceapply EqTyTrans ; [ eapply EqTySubstHom | .. ].
+        -- ceapply SubstZero. todo. (* Same again *)
+        -- todo. (* Repeat *)
+        -- todo. (* ... *)
+        -- capply CongHom.
+           ++ unfold Ttt.eqterm. pushsubst.
+              all:todo. (* ... *)
+           ++ unfold Ttt.eqterm. pushsubst.
+              all:todo. (* ... *)
+      * capply CtxExtend.
+        apply TyHom.
+        -- todo. (* ... *)
+        -- todo. (* ... *)
+    + rewrite trans_ctx_fxpath in h. assumption.
+Qed.
+
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
   Ttt.isctx (trans_ctx σ Γ)
 
@@ -939,20 +991,24 @@ Proof.
       - pose (ih := sound_trans_term _ _ _ _ hσ H).
         ceapply TermTyConv.
         + apply ih.
-        + todo. (* Need sound_trans_eqtype *)
+        + apply sound_trans_eqtype'.
+          apply sound_trans_eqtype ; assumption.
 
       (* TermCtxConv *)
       - pose (hσ' := isfctx_conv hσ _ e).
         pose (ih := sound_trans_term _ _ _ _ hσ' H).
         ceapply TermCtxConv.
         + apply ih.
-        + todo. (* Need sound_trans_eqctx *)
+        + apply sound_trans_eqctx ; assumption.
 
       (* TermSubst *)
       - todo. (* Need the corresponding translation *)
 
       (* TermVarZero *)
-      - todo. (* Incomplete translation. *)
+      - simpl. (* ceapply TermApp. *)
+        (* Won't we have trouble with the lack of typing information
+           when translating variables? *)
+        todo.
 
       (* TermVarSucc *)
       - todo.
