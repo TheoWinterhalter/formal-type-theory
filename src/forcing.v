@@ -796,6 +796,39 @@ Proof.
     + exact h.
 Qed.
 
+Lemma cong_trans_term' {σ Γ A u B} :
+  Ttt.isterm (trans_ctx σ Γ) (trans_term σ u) ([[A]] σ) ->
+  Ttt.eqtype (trans_ctx σ Γ) ([[A]] σ) B ->
+  Ttt.isterm (trans_ctx σ Γ) ([u | B]! σ) ([[A]]! σ).
+Proof.
+  intros h1 h2.
+  ceapply TermTyConv ; [ ceapply TermAbs | .. ].
+  - ceapply TermAbs. ceapply TermSubst.
+    + capply SubstWeak. apply TyHom.
+      * todo.
+      * todo.
+    + ceapply TermSubst.
+      * capply SubstWeak. apply Tyℙ.
+        todo.
+      * ceapply TermTyConv.
+        -- exact h1.
+        -- exact h2.
+  - ceapply CongProd.
+    + capply EqTyRefl. apply Tyℙ. todo.
+    + ceapply CongProd.
+      * capply EqTyRefl. apply TyHom.
+        -- todo.
+        -- todo.
+      * ceapply CongTySubst.
+        -- ceapply SubstRefl. capply SubstWeak.
+           apply TyHom.
+           ++ todo.
+           ++ todo.
+        -- ceapply CongTySubst.
+           ++ ceapply SubstRefl. capply SubstWeak. apply Tyℙ. todo.
+           ++ capply EqTySym. assumption.
+Qed.
+
 Lemma sound_trans_eqtype' {σ Γ A B} :
   Ttt.eqtype (trans_ctx (fxpath σ) Γ) (trans_type σ A) (trans_type σ B) ->
   Ttt.eqtype (trans_ctx σ Γ) ([[A]] σ) ([[B]] σ).
@@ -1082,13 +1115,14 @@ Proof.
       - simpl. ceapply TermTyConv ; [ ceapply TermAbs | .. ].
         + ceapply TermTyConv ; [ ceapply TermAbs | .. ].
           * ceapply TermUniProd.
-            -- assert (hσ' : isfctx G (fxpath σ)).
-               { apply valid_fxpath. assumption. }
-               pose (ih := sound_trans_term _ _ _ _ hσ' H).
-               pose (ih' := sound_trans_term' ih).
-               rewrite trans_ctx_fxpath in ih'.
-               (* ceapply TermTyConv ; [ exact ih' | .. ]. *)
-               todo. (* Mismatch... again... *)
+            -- rewrite <- trans_ctx_fxpath.
+               ceapply TermTyConv.
+               ++ eapply cong_trans_term'.
+                  ** apply sound_trans_term.
+                     --- apply valid_fxpath. assumption.
+                     --- exact H.
+                  ** todo. (* I'd like to know if it's true! *)
+               ++ todo. (* Same *)
             -- todo.
           * todo.
         + todo.
