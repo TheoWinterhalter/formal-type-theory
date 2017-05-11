@@ -10,7 +10,6 @@ Require Import syntax.
 Require Import tt.
 Require Import checking_tactics.
 
-Require Setoid.
 
 (* Source type theory *)
 Module Stt.
