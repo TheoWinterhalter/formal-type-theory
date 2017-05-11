@@ -100,8 +100,9 @@ theory of the proof assistant. After several trials and make-overs we opted for 
 representation of variables, explicit substitutions, and terms fully annotated with types.
 
 At present the formalization includes product and identity types, base types (the empty
-type, the unit type, and booleans), as well as simple products. The modular design ought
-to make it easy to add other constructions.
+type, the unit type, and booleans), simple products, a hierarchy of Tarski universes, and
+an impredicative universe of propositions. The modular design ought to make it easy to add
+other constructions.
 
 % - syntax, judgments, inference rules
 % - explicit substitutions
@@ -138,13 +139,14 @@ more convenient in a given situation.
 
 % - configurability through type classes
 
-The inductive types for the syntax and the judgment forms are parameterized by type classes
-that either enable or disable various features of the formalization. By providing
-instances of the type classes, the user may combine the features to their liking. It is
-also possible to leave a feature unconfigured, and thus have a development which is
-agnostic with respect to it. At present we support the following features: paranoid
-vs.~economic rules, extensional vs.~intensional identity types, presence of simple product
-types, and presence of the $\eta$-rule for functions.
+The inductive types for the judgment forms are parameterized by type classes that either
+enable or disable various features of the formalization. By providing instances of the
+type classes, the user may combine the features to their liking. It is also possible to
+leave a feature unconfigured, and thus have a development which is agnostic with respect
+to it. At present we support configurability of the following features: paranoid
+vs.~economic rules, the $\eta$-rule for functions, equality reflection, identity types,
+simple products, base types, a hierarchy of Tarski universes, and an impredicative
+universe of propositions.
 
 \paragraph*{Sanity theorems and other meta-theorem.}
 \label{sec:sanity-theorems}
