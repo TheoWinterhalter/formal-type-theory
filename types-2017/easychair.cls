@@ -3,7 +3,7 @@
 %
 
 \def\easychairstyleauthor{easychair class style, by Serguei A. Mokhov and Andrei Voronkov <10 December 2015>}
-\def\easychairstylerevision{CVS Revision: $Id: easychair.cls,v 3.5 2015/12/10 09:52 voronkov Exp $}
+\def\easychairstylerevision{CVS Revision: $Id: easychair.cls,v 3.4 2017/03/26 09:52 voronkov Exp $}
 \def\easychairstylepurpose{Designed for easyChair.org, under guidelines and suggestions of}
 \def\easychairstylevoronkov{\space\space\space\space\space\space\space\space\space\space\space\space\space Andrei Voronkov <www.voronkov.com>, and}
 \def\easychairstylesutcliffe{\space\space\space\space\space\space\space\space\space\space\space\space\space Geoff Sutcliffe <www.cs.miami.edu/^geoff>}
@@ -31,7 +31,7 @@
 %
 
 \NeedsTeXFormat{LaTeX2e}[1995/12/01]
-\ProvidesClass{easychair}[2017/03/15 v3.5]
+\ProvidesClass{easychair}[2017/03/26 v3.5]
 \def\@tempa#1#2\@nil{\edef\@classname{#1}}
 \expandafter\@tempa\@currnamestack{}{}{}\@nil
 \ifx\@classname\@empty \edef\@classname{\@currname}\fi
@@ -52,11 +52,19 @@
 \newif\ifEPiC
 \EPiCfalse
 \DeclareOption{EPiC}{\EPiCtrue}
+\newif\ifKalpa
+\Kalpafalse
+\DeclareOption{Kalpa}{\Kalpatrue}
 
 % EPiC with the empty header
 \newif\ifEPiCempty
 \EPiCemptyfalse
 \DeclareOption{EPiCempty}{\EPiCemptytrue}
+
+% Kalpa with the empty header
+\newif\ifKalpaempty
+\Kalpaemptyfalse
+\DeclareOption{Kalpaempty}{\Kalpa emptytrue}
 
 \newif\ifEPiCfinal
 \EPiCfinalfalse
@@ -374,7 +382,7 @@
 \definecolor{linkcolor}{RGB}{170,0,0} % aa0000
 \definecolor{citecolor}{RGB}{44,160,46} % 2ca02d
 \definecolor{urlcolor}{RGB}{0,51,153} % 003399
-\RequirePackage[linktocpage,pdfcreator=easychair.cls-3.5,colorlinks=True,urlcolor=urlcolor,citecolor=citecolor,linkcolor=linkcolor]{hyperref}
+\RequirePackage[linktocpage,pdfcreator=easychair.cls-3.4,colorlinks=True,urlcolor=urlcolor,citecolor=citecolor,linkcolor=linkcolor]{hyperref}
 
 % Traditional graphics processing
 \RequirePackage{graphicx}
@@ -643,7 +651,7 @@
 \definecolor{volume}{RGB}{0,112,144}
 \def\EPiCSeries{EPiC Series in Computer Science}
 \def\EPiCVolume{XXX}
-\def\EPiCYear{2016}
+\def\EPiCYear{2017}
 \def\EPiCPages{Pages 19--27}
 \def\EPiCConference{99th International Conference on Topics of Superb Significance (CATSS)}
 \def\ChairLogo{logo_chair.png}
@@ -682,8 +690,7 @@
   ]%
 {\Large \EPiCSeries}\par\vfill%
 {\color{volume}Volume \EPiCVolume, \EPiCYear, \EPiCPages}\par\vfill%
-% righthyphenmin below is set to prevent hyphenation
-{\righthyphenmin62\raggedright\EPiCConference}
+\EPiCConference
 \end{tcolorbox}
 
 \par\ \vspace*{12pt}\par
@@ -710,36 +717,6 @@
 \oldmaketitle
 \fi\fi\fi
 }
-% ------------------------------------------------
-
-% ------------------------------------------------
-% change the abstract command
-\let\old@abstract=\abstract
-\let\old@endabstract=\endabstract
-% ------------------------------------------------
-\def\abstract{%
-\ifEPiC
-\noindent\hrulefill\par
-\vspace*{5pt}\noindent\textbf{Abstract}\par\noindent\ignorespaces
-\else \ifEPiCfinal
-\noindent\hrulefill\par
-\vspace*{5pt}\noindent\textbf{Abstract}\par\noindent\ignorespaces
-\else \ifEPiCempty
-\noindent\hrulefill\par
-\vspace*{5pt}\noindent\textbf{Abstract}\par\noindent\ignorespaces
-\else
-\old@abstract
-\fi\fi\fi}
-\def\endabstract{%
-\ifEPiC
-\par\noindent \hrulefill
-\else \ifEPiCfinal
-\par\noindent \hrulefill
-\old@endabstract
-\else \ifEPiCempty
-\par\noindent \hrulefill
-\old@endabstract
-\fi\fi\fi}
 % ------------------------------------------------
 
 % Tighten up bibliography
