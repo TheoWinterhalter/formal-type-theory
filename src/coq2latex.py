@@ -250,8 +250,12 @@ prefix = ""
 with open(filename, "r") as f:
     src = f.read()
 
-sections = re.split(r'Inductive|with', src)[1:]
+# remove prelude
+sections = re.split(r'Inductive', src, 1)[1]
+
+sections = re.split(r'Inductive|with', sections)
 for sect in sections:
+    print sect
     m = re.match(r'^\s+(\w+)\s+:', sect) or die ("Could not find section title")
     title = m.group(1)
     section(title, prefix, sect)
