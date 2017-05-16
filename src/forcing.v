@@ -532,6 +532,8 @@ Fixpoint trans_type (σ : fctx) (A : type) {struct A} : type :=
 
 (* Maybe add the target type so that we can deal properly with the
    variable case *)
+(* Another possibility would be to have the type in the σ, but it wouldn't
+   be translated... *)
 with trans_term (σ : fctx) (u : term) {struct u} : term :=
   match u with
   | var n =>
@@ -1022,9 +1024,6 @@ Proof.
         + assert (hσ' : isfctx G (fxpath σ)).
           { apply valid_fxpath. assumption. }
           pose (sound_trans_term _ _ _ _ hσ' i1).
-          (* pose (sound_trans_term' i3). *)
-          (* rewrite trans_ctx_fxpath in i4. *)
-          (* todo. (* Mismatch again... *) *)
           rewrite trans_ctx_fxpath in i3.
           assumption.
         + assert (hσ' : isfctx G (fxpath σ)).
