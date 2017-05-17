@@ -1209,9 +1209,7 @@ Proof.
           * assumption.
 
       (* EqCtxEmpty *)
-      - capply CtxRefl. apply sound_trans_ctx.
-        + assumption.
-        + capply CtxEmpty.
+      - capply CtxRefl. todo. (* Need a way to prove it! *)
 
       (* EqCtxExtend *)
       - dependent induction hσ.
