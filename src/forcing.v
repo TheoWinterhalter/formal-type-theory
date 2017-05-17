@@ -509,78 +509,93 @@ Definition flam (σ : fctx) (A : type) (u : term) : term :=
 Definition fProd (σ : fctx) (A : type) : type :=
   Prod Tℙ (fProd' σ A).
 
+Definition trans_type' (σ : fctx) (tA : type) : type :=
+  (Subst (Subst tA
+                (sbshift (Hom (var (S (last_cond σ)))
+                              (var 0))
+                         (sbzero Tℙ
+                                 (var (last_cond σ)))))
+         (sbzero (Hom (var (last_cond σ)) (var (last_cond σ)))
+                 (idℙ (var (last_cond σ))))).
+
+Definition trans_type'' σ ttA : type :=
+  (fProd σ
+         (Subst (Subst ttA (sbweak Tℙ))
+                (sbweak (Hom (var (S (last_cond σ))) (var 0))))).
+
+Definition uni_trans σ l :=
+  fProd (fxpath σ) (Uni l).
+
 Fixpoint trans_type (σ : fctx) (A : type) {struct A} : type :=
   match A with
-  | Prod A B => Prod ([[ A ]]! (fxpath σ)) ([[ B ]] (fxvar (fxpath σ)))
+  | Prod A B =>
+    Prod ([[ A ]]! (fxpath σ)) ([[ B ]] (fxvar (fxpath σ)))
 
   | Id A u v => Id ([[ A ]] (fxpath σ))
-                  (trans_term (fxpath σ) u)
-                  (trans_term (fxpath σ) v)
-                  (* ([ u | A ]! (fxpath σ)) *)
-                  (* ([ v | A ]! (fxpath σ)) *)
+                  (trans_term (fxpath σ) ([[ A ]] (fxpath σ)) u)
+                  (trans_term (fxpath σ) ([[ A ]] (fxpath σ)) v)
 
   | Subst A ρ => Subst ([[ A ]] (fxpath σ)) (trans_subst (fxpath σ) ρ)
 
-  | Uni l => fProd (fxpath σ) (Uni l)
+  | Uni l => uni_trans σ l
 
-  | El l a => El l (trans_term (fxpath σ) a)
+  | El l a =>
+    El l (trans_term (fxpath σ) (trans_type' σ (uni_trans σ l)) a)
 
   (* Cases that don't happen given our config *)
   | _ => Empty
 
   end
 
-(* Maybe add the target type so that we can deal properly with the
-   variable case *)
-(* Another possibility would be to have the type in the σ, but it wouldn't
-   be translated... *)
-with trans_term (σ : fctx) (u : term) {struct u} : term :=
+(* This takes the [[A]]σ as input *)
+with trans_term (σ : fctx) (tA : type) (u : term) {struct u} : term :=
   match u with
   | var n =>
     app (app (var (lift_var σ n))
-             todo
-             todo
+             Tℙ
+             (Prod (Hom (var (S (last_cond σ))) (var 0))
+                   todo)
              (var (last_cond σ)))
-        todo
+        (Hom (var (S (last_cond σ))) (var 0))
         todo
         (morph σ n)
 
   | lam A B t =>
     lam ([[A]]! σ)
         ([[B]] (fxvar σ))
-        (trans_term (fxvar σ) t)
+        (trans_term (fxvar σ) ([[B]] (fxvar σ)) t)
 
   | app u A B v =>
-    app (trans_term σ u)
+    app (trans_term σ todo u)
         ([[A]]! σ)
         ([[B]] (fxvar σ))
         ([ v | A ]! σ)
 
   | refl A u =>
     refl ([[A]] σ)
-         (trans_term σ u)
+         (trans_term σ todo u)
 
   | uniProd l prop a b =>
     flam σ
          (Uni prop)
          (uniProd l prop
                   ([a | Uni l]! (fxpath σ))
-                  (trans_term (fxvar (fxpath σ)) b))
+                  (trans_term (fxvar (fxpath σ)) todo b))
 
   | uniProd (uni n) (uni m) a b =>
     flam σ
          (Uni (uni (max n m)))
          (uniProd (uni n) (uni m)
                   ([a | Uni (uni n)]! (fxpath σ))
-                  (trans_term (fxvar (fxpath σ)) b))
+                  (trans_term (fxvar (fxpath σ)) todo b))
 
   | uniId l a u v =>
     flam σ
          (Uni l)
          (uniId l
-                (trans_term (fxpath σ) a)
-                (trans_term (fxpath σ) u)
-                (trans_term (fxpath σ) v))
+                (trans_term (fxpath σ) todo a)
+                (trans_term (fxpath σ) todo u)
+                (trans_term (fxpath σ) todo v))
 
   | uniUni prop =>
     flam σ (Uni (uni 0))
@@ -614,26 +629,18 @@ with trans_subst (σ : fctx) (ρ : substitution) {struct ρ} : substitution :=
 
 (* Intuition: [[ A ]]σ := [ A ]σ {1 := σe} {0 := id σe} *)
 where "[[ A ]] σ" :=
-  (Subst (Subst (trans_type σ A)
-                (sbshift (Hom (var (S (last_cond σ)))
-                              (var 0))
-                         (sbzero Tℙ
-                                 (var (last_cond σ)))))
-         (sbzero (Hom (var (last_cond σ)) (var (last_cond σ)))
-                 (idℙ (var (last_cond σ)))))
+  (trans_type' σ (trans_type σ A))
 
-and "[ u | A ]! σ" :=
+and "[ u | tA ]! σ" :=
     (flam σ
-          (Subst (Subst A (sbweak Tℙ))
+          (Subst (Subst tA (sbweak Tℙ))
                  (sbweak (Hom (var (S (last_cond σ))) (var 0))))
-          (subst (subst (trans_term σ u)
+          (subst (subst (trans_term σ tA u)
                         (sbweak Tℙ))
                  (sbweak (Hom (var (S (last_cond σ))) (var 0)))))
 
 and "[[ A ]]! σ" :=
-  (fProd σ
-         (Subst (Subst ([[A]] σ) (sbweak Tℙ))
-                (sbweak (Hom (var (S (last_cond σ))) (var 0))))).
+  (trans_type'' σ ([[A]] σ)).
 
 Fixpoint trans_ctx (σ : fctx) (Γ : context) : context :=
   match Γ, σ with
@@ -783,7 +790,7 @@ Proof.
 Qed.
 
 Lemma sound_trans_term' {σ Γ A u} :
-  Ttt.isterm (trans_ctx σ Γ) (trans_term σ u) ([[A]] σ) ->
+  Ttt.isterm (trans_ctx σ Γ) (trans_term σ ([[A]] σ) u) ([[A]] σ) ->
   Ttt.isterm (trans_ctx σ Γ) ([u | [[A]] σ]! σ) ([[A]]! σ).
 Proof.
   intro h.
@@ -799,7 +806,7 @@ Proof.
 Qed.
 
 Lemma cong_trans_term' {σ Γ A u B} :
-  Ttt.isterm (trans_ctx σ Γ) (trans_term σ u) ([[A]] σ) ->
+  Ttt.isterm (trans_ctx σ Γ) (trans_term σ B u) ([[A]] σ) ->
   Ttt.eqtype (trans_ctx σ Γ) ([[A]] σ) B ->
   Ttt.isterm (trans_ctx σ Γ) ([u | B]! σ) ([[A]]! σ).
 Proof.
@@ -883,7 +890,7 @@ with sound_trans_type σ Γ A (hσ : isfctx Γ σ) (H : Stt.istype Γ A) {struct
 
 with sound_trans_term σ Γ A u
   (hσ : isfctx Γ σ) (H : Stt.isterm Γ u A) {struct H} :
-  Ttt.isterm (trans_ctx σ Γ) (trans_term σ u) ([[A]] σ)
+  Ttt.isterm (trans_ctx σ Γ) (trans_term σ ([[A]] σ) u) ([[A]] σ)
 
 with sound_trans_eqctx σ Γ Δ (hσ : isfctx Γ σ) (H : Stt.eqctx Γ Δ) {struct H} :
   Ttt.eqctx (trans_ctx σ Γ) (trans_ctx σ Δ)
@@ -904,7 +911,10 @@ with sound_trans_eqtype σ Γ A B
 
 with sound_trans_eqterm σ Γ A u v
   (hσ : isfctx Γ σ) (H : Stt.eqterm Γ u v A) {struct H} :
-  Ttt.eqterm (trans_ctx σ Γ) (trans_term σ u) (trans_term σ u) (trans_type σ A).
+  Ttt.eqterm (trans_ctx σ Γ)
+             (trans_term σ ([[A]] σ) u)
+             (trans_term σ ([[A]] σ) v)
+             ([[A]] σ).
 Proof.
   (* sound_trans_ctx *)
   - { dependent destruction H ; doConfig.
