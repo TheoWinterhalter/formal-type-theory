@@ -540,7 +540,10 @@ Fixpoint trans_type (σ : fctx) (A : type) {struct A} : type :=
   | Uni l => uni_trans σ l
 
   | El l a =>
-    El l (trans_term (fxpath σ) (trans_type' σ (uni_trans σ l)) a)
+    El l
+       (trans_term (fxpath σ)
+                   (trans_type' (fxpath σ) (uni_trans (fxpath σ) l))
+                   a)
 
   (* Cases that don't happen given our config *)
   | _ => Empty
@@ -875,6 +878,26 @@ Proof.
     + rewrite trans_ctx_fxpath in h. assumption.
 Qed.
 
+Lemma trans_type_uni :
+  forall σ l,
+    trans_type σ (Uni l) = uni_trans σ l.
+Proof.
+  intros. reflexivity.
+Qed.
+
+Lemma trans_type'_eq :
+  forall σ A,
+    [[ A ]] σ = trans_type' σ (trans_type σ A).
+Proof.
+  intros. reflexivity.
+Qed.
+
+Lemma trans_type'_uni :
+  forall σ l, [[ Uni l ]] σ = trans_type' σ (uni_trans σ l).
+Proof.
+  intros. reflexivity.
+Qed.
+
 Fixpoint sound_trans_ctx σ Γ (hσ : isfctx Γ σ) (H : Stt.isctx Γ) {struct H} :
   Ttt.isctx (trans_ctx σ Γ)
 
@@ -1058,6 +1081,7 @@ Proof.
         { apply valid_fxpath. assumption. }
         pose (h' := sound_trans_term _ _ _ _ hσ' i).
         rewrite trans_ctx_fxpath in h'.
+        rewrite <- trans_type'_uni.
         ceapply TermTyConv ; [ exact h' | .. ].
         simpl. (* compsubst. *)
         (* + capply SubstZero. apply hidℙ'. todo. *)
@@ -1072,7 +1096,7 @@ Proof.
       (* TermTyConv *)
       - pose (ih := sound_trans_term _ _ _ _ hσ H).
         ceapply TermTyConv.
-        + apply ih.
+        + apply ih. (* We need a conversion for trans_term *)
         + apply sound_trans_eqtype'.
           apply sound_trans_eqtype ; assumption.
 
