@@ -576,7 +576,7 @@ with trans_term (σ : fctx) (tA : type) (u : term) {struct u} : term :=
 
   | refl A u =>
     refl ([[A]] σ)
-         (trans_term σ todo u)
+         (trans_term σ ([[A]] σ) u)
 
   | uniProd l prop a b =>
     flam σ
@@ -1163,10 +1163,12 @@ Proof.
             -- rewrite <- trans_ctx_fxpath.
                ceapply TermTyConv.
                ++ eapply cong_trans_term'.
-                  ** apply sound_trans_term.
-                     --- apply valid_fxpath. assumption.
-                     --- exact H.
-                  ** todo. (* I'd like to know if it's true! *)
+                  ** eapply conv_trans_term.
+                     --- apply sound_trans_term.
+                         +++ apply valid_fxpath. assumption.
+                         +++ exact H.
+                     --- todo. (* I'd like to know if it's true! *)
+                  ** todo. (* Same *)
                ++ todo. (* Same *)
             -- todo.
           * todo.
