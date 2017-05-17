@@ -878,6 +878,16 @@ Proof.
     + rewrite trans_ctx_fxpath in h. assumption.
 Qed.
 
+Lemma conv_trans_term {σ Γ A B u} :
+  Ttt.isterm (trans_ctx σ Γ) (trans_term σ ([[A]] σ) u) ([[A]] σ) ->
+  Ttt.eqtype (trans_ctx σ Γ) ([[A]] σ) B ->
+  Ttt.isterm (trans_ctx σ Γ) (trans_term σ B u) ([[A]] σ).
+Proof.
+  intros h1 h2.
+  dependent induction u ; eauto.
+Qed.
+
+
 Lemma trans_type_uni :
   forall σ l,
     trans_type σ (Uni l) = uni_trans σ l.
@@ -1096,7 +1106,9 @@ Proof.
       (* TermTyConv *)
       - pose (ih := sound_trans_term _ _ _ _ hσ H).
         ceapply TermTyConv.
-        + apply ih. (* We need a conversion for trans_term *)
+        + eapply conv_trans_term ; [ apply ih | .. ].
+          apply sound_trans_eqtype'.
+          apply sound_trans_eqtype ; assumption.
         + apply sound_trans_eqtype'.
           apply sound_trans_eqtype ; assumption.
 
