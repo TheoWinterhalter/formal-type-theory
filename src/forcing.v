@@ -1123,10 +1123,19 @@ Proof.
       - todo. (* Need the corresponding translation *)
 
       (* TermVarZero *)
-      - simpl. (* ceapply TermApp. *)
-        (* Won't we have trouble with the lack of typing information
-           when translating variables? *)
-        todo.
+      - simpl. ceapply TermTyConv ; [ ceapply TermApp | .. ].
+        + ceapply TermTyConv ; [ ceapply TermApp | .. ].
+          * dependent induction hσ.
+            -- simpl.
+               ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
+               ++ apply sound_trans_type''.
+                  apply sound_trans_type ; assumption.
+               ++ todo. (* Problem? *)
+            -- todo.
+          * todo.
+          * todo.
+        + todo.
+        + todo.
 
       (* TermVarSucc *)
       - todo.
