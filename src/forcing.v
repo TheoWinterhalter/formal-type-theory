@@ -557,10 +557,12 @@ with trans_term (σ : fctx) (tA : type) (u : term) {struct u} : term :=
     app (app (var (lift_var σ n))
              Tℙ
              (Prod (Hom (var (S (last_cond σ))) (var 0))
-                   todo)
+                   (Subst (trans_type'' σ tA)
+                          (sbweak (trans_type'' σ tA))))
              (var (last_cond σ)))
         (Hom (var (S (last_cond σ))) (var 0))
-        todo
+        (Subst (trans_type'' σ tA)
+               (sbweak (trans_type'' σ tA)))
         (morph σ n)
 
   | lam A B t =>
@@ -885,6 +887,8 @@ Lemma conv_trans_term {σ Γ A B u} :
 Proof.
   intros h1 h2.
   dependent induction u ; eauto.
+  - simpl in h1. simpl.
+    todo. (* This should be doable, but very annoying. *)
 Qed.
 
 
@@ -898,6 +902,12 @@ Qed.
 Lemma trans_type'_eq :
   forall σ A,
     [[ A ]] σ = trans_type' σ (trans_type σ A).
+Proof.
+  intros. reflexivity.
+Qed.
+
+Lemma trans_type''_eq :
+  forall σ A, [[ A ]]! σ = trans_type'' σ (trans_type' σ (trans_type σ A)).
 Proof.
   intros. reflexivity.
 Qed.
@@ -1130,7 +1140,9 @@ Proof.
                ceapply TermTyConv ; [ ceapply TermVarZero | .. ].
                ++ apply sound_trans_type''.
                   apply sound_trans_type ; assumption.
-               ++ todo. (* Problem? *)
+               ++ (* rewrite <- trans_type''_eq. *)
+                  (* Something feels odd with the presence of trans_type'
+                     around [[A]]. *)
             -- todo.
           * todo.
           * todo.
