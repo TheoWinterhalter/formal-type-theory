@@ -133,17 +133,6 @@ Tactic Notation "admit" := (exact admit).
 w  write (and type check!) about them.
  *)
 
-(* Definition contextᵗ (Γ : context) : Type := *)
-(*   { Γᵗ : context & *)
-(*     Ttt.isctx Γᵗ *)
-(*   }. *)
-
-(* Definition substitutionᵗ *)
-(*   {Γ Δ} (Γᵗ : contextᵗ Γ) (Δᵗ : contextᵗ Δ) (σ : substitution) : Type := *)
-(*   { σᵗ : substitution & *)
-(*     Ttt.issubst σᵗ Γᵗ Δᵗ *)
-(*   }. *)
-
 Record contextᵗ (Γ : context) := mkctxᵗ {
   context : context ;
   isctx   : Ttt.isctx context
@@ -200,17 +189,22 @@ with trans_term {Γ A u} (H : Stt.isterm Γ u A) {struct H} :
   } }
 .
 Proof.
-  (**** trans_ctx ****)
+  (**** trans_isctx ****)
   - { dependent destruction H ; doConfig.
 
       (* CtxEmpty *)
       - { exists ctxempty. capply CtxEmpty. }
 
       (* CtxExtend *)
-      - admit.
+      - { (* pose (Gᵗ := trans_isctx _ i). *)
+          destruct (trans_istype _ _ i0) as [Gᵗ Aᵗ].
+          unshelve (eapply mkctxᵗ).
+          - exact (ctxextend (context Gᵗ) (type Aᵗ)).
+          - capply CtxExtend. apply (istype Aᵗ).
+        }
     }
 
-  (**** trans_subst ****)
+  (**** trans_issubst ****)
   - { dependent destruction H ; doConfig.
 
       (* SubstZero *)
@@ -232,7 +226,7 @@ Proof.
       - admit.
     }
 
-  (**** trans_type ****)
+  (**** trans_istype ****)
   - { dependent destruction H ; doConfig.
 
       (* TyCtxConv *)
@@ -248,7 +242,7 @@ Proof.
       - admit.
     }
 
-  (**** trans_term ****)
+  (**** trans_isterm ****)
   - { dependent destruction H ; doConfig.
 
       (* TermTyConv *)
