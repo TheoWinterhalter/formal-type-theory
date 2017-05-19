@@ -133,56 +133,71 @@ Tactic Notation "admit" := (exact admit).
 w  write (and type check!) about them.
  *)
 
-(* We explain beforhand what it means to be a translation *)
-(* Inductive istran_ctx : context -> context -> Type := *)
-(* | istran_ctxempty : *)
-(*     istran_ctx ctxempty ctxempty *)
+(* Definition contextᵗ (Γ : context) : Type := *)
+(*   { Γᵗ : context & *)
+(*     Ttt.isctx Γᵗ *)
+(*   }. *)
 
-(* | istran_ctxextend : *)
-(*     forall Γ A Γᵗ Aᵗ, *)
-(*       istran_ctx Γ Γᵗ -> *)
-(*       (* istran_type Γ A Γᵗ Aᵗ -> *) *)
-(*       istran_ctx (ctxextend Γ A) (ctxextend Γᵗ Aᵗ). *)
+(* Definition substitutionᵗ *)
+(*   {Γ Δ} (Γᵗ : contextᵗ Γ) (Δᵗ : contextᵗ Δ) (σ : substitution) : Type := *)
+(*   { σᵗ : substitution & *)
+(*     Ttt.issubst σᵗ Γᵗ Δᵗ *)
+(*   }. *)
 
-Definition istran_ctx (Γ : context) Γᵗ :=
-  Ttt.isctx Γᵗ.
+Record contextᵗ (Γ : context) := mkctxᵗ {
+  context : context ;
+  isctx   : Ttt.isctx context
+}.
 
-Definition istran_subst (Γ : context) (Δ : context) (σ : substitution) Γᵗ Δᵗ σᵗ :=
-  Ttt.issubst σᵗ Γᵗ Δᵗ.
+Arguments context {_} _.
+Arguments isctx {_} _.
 
-Definition istran_type (Γ : context) (A : type) Γᵗ Aᵗ :=
-  Ttt.istype Γᵗ Aᵗ.
+Record substitutionᵗ
+  {Γ} (Γᵗ : contextᵗ Γ) {Δ} (Δᵗ : contextᵗ Δ) (σ : substitution) := mksubstᵗ {
+  substitution : substitution ;
+  issubst      : Ttt.issubst substitution (context Γᵗ) (context Δᵗ)
+}.
 
-Definition istran_term (Γ : context) (A : type) (u : term) Γᵗ Aᵗ uᵗ :=
-  Ttt.isterm Γᵗ uᵗ Aᵗ.
+Arguments substitution {_ _ _ _ _} _.
+Arguments issubst {_ _ _ _ _} _.
+
+Record typeᵗ {Γ} (Γᵗ : contextᵗ Γ) (A : type) := mktypeᵗ {
+  type   : type ;
+  istype : Ttt.istype (context Γᵗ) type
+}.
+
+Arguments type {_ _ _} _.
+Arguments istype {_ _ _} _.
+
+Record termᵗ {Γ} {Γᵗ : contextᵗ Γ} {A} (Aᵗ : typeᵗ Γᵗ A) (u : term) := mktermᵗ {
+  term   : term ;
+  isterm : Ttt.isterm (context Γᵗ) term (type Aᵗ)
+}.
+
+Arguments term {_ _ _ _ _} _.
+Arguments isterm {_ _ _ _ _} _.
+
+(* Note this is still not ok, we want to have telescopes and also
+   constraints on the translation itself, like homology to the original
+   perhaps. *)
 
 Fixpoint trans_isctx {Γ} (H : Stt.isctx Γ) {struct H} :
-  { Γᵗ : context & istran_ctx Γ Γᵗ }
+  contextᵗ Γ
 
 with trans_issubst {Γ Δ σ} (H : Stt.issubst σ Γ Δ) {struct H} :
-  { Γᵗ : context &
-    istran_ctx Γ Γᵗ * {
-    Δᵗ : context &
-    istran_ctx Δ Δᵗ * {
-    σᵗ : substitution &
-    istran_subst Γ Δ σ Γᵗ Δᵗ σᵗ
-  } } }
-
-with trans_istype {Γ A} (H : Stt.istype Γ A) {struct H} :
-  { Γᵗ : context &
-    istran_ctx Γ Γᵗ * {
-    Aᵗ : type &
-    istran_type Γ A Γᵗ Aᵗ
+  { Γᵗ : contextᵗ Γ &
+  { Δᵗ : contextᵗ Δ &
+    substitutionᵗ Γᵗ Δᵗ σ
   } }
 
+with trans_istype {Γ A} (H : Stt.istype Γ A) {struct H} :
+  { Γᵗ : contextᵗ Γ & typeᵗ Γᵗ A }
+
 with trans_term {Γ A u} (H : Stt.isterm Γ u A) {struct H} :
-  { Γᵗ : context &
-    istran_ctx Γ Γᵗ * {
-    Aᵗ : type &
-    istran_type Γ A Γᵗ Aᵗ * {
-    uᵗ : term &
-    istran_term Γ A u Γᵗ Aᵗ uᵗ
-  } } }
+  { Γᵗ : contextᵗ Γ &
+  { Aᵗ : typeᵗ Γᵗ A &
+    termᵗ Aᵗ u
+  } }
 .
 Proof.
   (**** trans_ctx ****)
