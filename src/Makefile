@@ -117,7 +117,8 @@ VFILES:=config.v\
   tactics.v\
   inversion.v\
   uniqueness.v\
-  negfunext.v
+  negfunext.v\
+  dset_translation.v
 
 ifneq ($(filter-out archclean clean cleanall printenv,$(MAKECMDGOALS)),)
 -include $(addsuffix .d,$(VFILES))
