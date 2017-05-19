@@ -9,6 +9,8 @@ Require Import syntax.
 Require Import tt.
 Require Import checking_tactics.
 
+Require Import Coq.Program.Equality.
+
 (* Source type theory *)
 Module Stt.
 
@@ -103,6 +105,40 @@ End Ttt.
 
 Section Translation.
 
+Open Scope type_scope.
+
 Context `{isdset : context -> type -> config.Dec}.
+
+Axiom admit : forall {A}, A.
+Tactic Notation "admit" := (exact admit).
+
+(* We explain beforhand what it means to be a translation *)
+(* Inductive istran_ctx : context -> context -> Type := *)
+(* | istran_ctxempty : *)
+(*     istran_ctx ctxempty ctxempty *)
+
+(* | istran_ctxextend : *)
+(*     forall Γ A Γᵗ Aᵗ, *)
+(*       istran_ctx Γ Γᵗ -> *)
+(*       (* istran_type Γ A Γᵗ Aᵗ -> *) *)
+(*       istran_ctx (ctxextend Γ A) (ctxextend Γᵗ Aᵗ). *)
+
+Definition istran_ctx : context -> context -> Type :=
+  fun Γ Γᵗ => @Ttt.isctx isdset Γᵗ.
+
+Fixpoint trans_isctx {Γ} (H : @Stt.isctx isdset Γ) {struct H} :
+  { Γᵗ : context & istran_ctx Γ Γᵗ }.
+
+Proof.
+  (**** trans_ctx ****)
+  - { dependent destruction H.
+
+      (* CtxEmpty *)
+      - { exists ctxempty. capply CtxEmpty. }
+
+      (* CtxExtend *)
+      - admit.
+    }
+Qed.
 
 End Translation.
