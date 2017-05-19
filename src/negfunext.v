@@ -29,6 +29,9 @@ Module Stt.
   Context `{ConfigEmpty : config.WithEmpty}.
   Context `{ConfigUnit : config.WithUnit}.
   Context `{ConfigBool : config.WithBool}.
+  Local Instance hasDSetReflection : config.DSetReflection
+    := {| config.dsetreflectionFlag := config.No ;
+         config.dsetreflectionCriterion G A := config.ko |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -62,6 +65,9 @@ Module Ttt.
   Context `{ConfigUnit : config.WithUnit}.
   Local Instance hasBool : config.WithBool
     := {| config.withboolFlag := config.Yes |}.
+  Local Instance hasDSetReflection : config.DSetReflection
+    := {| config.dsetreflectionFlag := config.No ;
+         config.dsetreflectionCriterion G A := config.ko |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.

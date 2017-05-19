@@ -19,6 +19,7 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
+Context `{ConfigDSetReflection : config.DSetReflection}.
 
 Axiom cheating : forall A, A.
 
@@ -680,6 +681,12 @@ Proof.
     }
 
   (* EqReflection *)
+  - { split.
+      - { assumption. }
+      - { magic. }
+    }
+
+  (* DSetReflection *)
   - { split.
       - { assumption. }
       - { magic. }
