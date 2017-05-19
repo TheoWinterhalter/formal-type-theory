@@ -112,6 +112,27 @@ Context `{isdset : config.DSetCriterion}.
 Axiom admit : forall {A}, A.
 Tactic Notation "admit" := (exact admit).
 
+(* The main idea is that we translate types as types with holes for the
+   dSets inhabitants together with the inhabitants that fill them.
+   This way, two translations of the same type only diverge in what fills the
+   holes.
+   Terms are translated in a similar way.
+   However, the definitional equalities are translated into propositional
+   equalities between the Σ-types inhabitants that are produced.
+
+   Note: The main idea is that being a dSet is a syntactic criterion,
+   which allows us to place the holes without fail and thus make sure
+   the rest of the strucuture doesn't have reflection, while eveything
+   filling the holes verifies some definitional UIP in the target.
+
+   This probably means that beside istran_*, the trans_* theorem is also
+   wrongly stated.
+   Question: Do we need to internalise Σ-types in order to do that? Or is there
+   hope we can actually have the telescopes on the meta-level.
+   This would also allow us to avoid all sorts of proofs of equality to
+w  write (and type check!) about them.
+ *)
+
 (* We explain beforhand what it means to be a translation *)
 (* Inductive istran_ctx : context -> context -> Type := *)
 (* | istran_ctxempty : *)
@@ -132,6 +153,9 @@ Definition istran_subst (Γ : context) (Δ : context) (σ : substitution) Γᵗ 
 Definition istran_type (Γ : context) (A : type) Γᵗ Aᵗ :=
   Ttt.istype Γᵗ Aᵗ.
 
+Definition istran_term (Γ : context) (A : type) (u : term) Γᵗ Aᵗ uᵗ :=
+  Ttt.isterm Γᵗ uᵗ Aᵗ.
+
 Fixpoint trans_isctx {Γ} (H : Stt.isctx Γ) {struct H} :
   { Γᵗ : context & istran_ctx Γ Γᵗ }
 
@@ -150,6 +174,15 @@ with trans_istype {Γ A} (H : Stt.istype Γ A) {struct H} :
     Aᵗ : type &
     istran_type Γ A Γᵗ Aᵗ
   } }
+
+with trans_term {Γ A u} (H : Stt.isterm Γ u A) {struct H} :
+  { Γᵗ : context &
+    istran_ctx Γ Γᵗ * {
+    Aᵗ : type &
+    istran_type Γ A Γᵗ Aᵗ * {
+    uᵗ : term &
+    istran_term Γ A u Γᵗ Aᵗ uᵗ
+  } } }
 .
 Proof.
   (**** trans_ctx ****)
@@ -197,6 +230,34 @@ Proof.
       - admit.
 
       (* TyId *)
+      - admit.
+    }
+
+  (**** trans_term ****)
+  - { dependent destruction H ; doConfig.
+
+      (* TermTyConv *)
+      - admit.
+
+      (* TermCtxConv *)
+      - admit.
+
+      (* TermSubst *)
+      - admit.
+
+      (* TermVarZero *)
+      - admit.
+
+      (* TermVarSucc *)
+      - admit.
+
+      (* TermAbs *)
+      - admit.
+
+      (* TermApp *)
+      - admit.
+
+      (* TermRefl *)
       - admit.
     }
 Qed.
