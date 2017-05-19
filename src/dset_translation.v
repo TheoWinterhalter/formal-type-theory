@@ -123,20 +123,80 @@ Tactic Notation "admit" := (exact admit).
 (*       (* istran_type Γ A Γᵗ Aᵗ -> *) *)
 (*       istran_ctx (ctxextend Γ A) (ctxextend Γᵗ Aᵗ). *)
 
-Definition istran_ctx : context -> context -> Type :=
-  fun Γ Γᵗ => Ttt.isctx Γᵗ.
+Definition istran_ctx (Γ : context) Γᵗ :=
+  Ttt.isctx Γᵗ.
+
+Definition istran_subst (Γ : context) (Δ : context) (σ : substitution) Γᵗ Δᵗ σᵗ :=
+  Ttt.issubst σᵗ Γᵗ Δᵗ.
+
+Definition istran_type (Γ : context) (A : type) Γᵗ Aᵗ :=
+  Ttt.istype Γᵗ Aᵗ.
 
 Fixpoint trans_isctx {Γ} (H : Stt.isctx Γ) {struct H} :
-  { Γᵗ : context & istran_ctx Γ Γᵗ }.
+  { Γᵗ : context & istran_ctx Γ Γᵗ }
 
+with trans_issubst {Γ Δ σ} (H : Stt.issubst σ Γ Δ) {struct H} :
+  { Γᵗ : context &
+    istran_ctx Γ Γᵗ * {
+    Δᵗ : context &
+    istran_ctx Δ Δᵗ * {
+    σᵗ : substitution &
+    istran_subst Γ Δ σ Γᵗ Δᵗ σᵗ
+  } } }
+
+with trans_istype {Γ A} (H : Stt.istype Γ A) {struct H} :
+  { Γᵗ : context &
+    istran_ctx Γ Γᵗ * {
+    Aᵗ : type &
+    istran_type Γ A Γᵗ Aᵗ
+  } }
+.
 Proof.
   (**** trans_ctx ****)
-  - { dependent destruction H.
+  - { dependent destruction H ; doConfig.
 
       (* CtxEmpty *)
       - { exists ctxempty. capply CtxEmpty. }
 
       (* CtxExtend *)
+      - admit.
+    }
+
+  (**** trans_subst ****)
+  - { dependent destruction H ; doConfig.
+
+      (* SubstZero *)
+      - admit.
+
+      (* SubstWeak *)
+      - admit.
+
+      (* SubstShift *)
+      - admit.
+
+      (* SubstId *)
+      - admit.
+
+      (* SubstComp *)
+      - admit.
+
+      (* SubstCtxConv *)
+      - admit.
+    }
+
+  (**** trans_type ****)
+  - { dependent destruction H ; doConfig.
+
+      (* TyCtxConv *)
+      - admit.
+
+      (* TySubst *)
+      - admit.
+
+      (* TyProd *)
+      - admit.
+
+      (* TyId *)
       - admit.
     }
 Qed.
