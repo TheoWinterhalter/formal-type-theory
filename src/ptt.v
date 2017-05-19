@@ -14,6 +14,7 @@ Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
 Context `{ConfigDSetReflection : config.DSetReflection}.
+Context `{ConfigDSetUIP : config.DSetUIP}.
 
 Definition isctx := isctx.
 Definition issubst := issubst.

@@ -32,6 +32,9 @@ Module Stt.
   Local Instance hasDSetReflection : config.DSetReflection
     := {| config.dsetreflectionFlag := config.No ;
          config.dsetreflectionCriterion G A := config.ko |}.
+  Local Instance hasDSetUIP : config.DSetUIP
+    := {| config.dsetuipFlag := config.No ;
+         config.dsetuipCriterion G A := config.ko |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -68,6 +71,9 @@ Module Ttt.
   Local Instance hasDSetReflection : config.DSetReflection
     := {| config.dsetreflectionFlag := config.No ;
          config.dsetreflectionCriterion G A := config.ko |}.
+  Local Instance hasDSetUIP : config.DSetUIP
+    := {| config.dsetuipFlag := config.No ;
+         config.dsetuipCriterion G A := config.ko |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.

@@ -45,6 +45,11 @@ Class WithBool := {
 }.
 
 Class DSetReflection := {
-  dsetreflectionFlag : Type;
+  dsetreflectionFlag : Type ;
   dsetreflectionCriterion : syntax.context -> syntax.type -> Dec
+}.
+
+Class DSetUIP := {
+  dsetuipFlag : Type ;
+  dsetuipCriterion : syntax.context -> syntax.type -> Dec
 }.

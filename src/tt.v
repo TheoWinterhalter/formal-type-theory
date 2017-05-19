@@ -17,6 +17,7 @@ Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
 Context `{ConfigDSetReflection : config.DSetReflection}.
+Context `{ConfigDSetUIP : config.DSetUIP}.
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
@@ -49,6 +50,9 @@ Notation "'withbool' r" :=
 
 Notation "'dsetreflection' r" :=
   (forall { _ : dsetreflectionFlag }, r) (only parsing, at level 97).
+
+Notation "'dsetuip' r" :=
+  (forall { _ : dsetuipFlag }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
@@ -1634,6 +1638,20 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: dsetreflectionCriterion G A = ok
          conclusion:
            eqterm G u v A
+       endrule
+
+     | DSetUIP :
+       dsetuip rule
+         parameters: {G A u v p q},
+         precond: isctx G
+         precond: istype G A
+         precond: isterm G u A
+         precond: isterm G v A
+         premise: isterm G p (Id A u v)
+         premise: isterm G q (Id A u v)
+         premise: dsetuipCriterion G A = ok
+         conclusion:
+           eqterm G p q (Id A u v)
        endrule
 
      | ProdBeta :
