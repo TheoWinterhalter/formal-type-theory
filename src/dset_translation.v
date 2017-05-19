@@ -36,10 +36,10 @@ Module Stt.
     := {| config.withunitFlag := config.No |}.
   Local Instance hasBool : config.WithBool
     := {| config.withboolFlag := config.No |}.
-  Context `{isdset : context -> type -> config.Dec}.
+  Context `{isdset : config.DSetCriterion}.
   Local Instance hasDSetReflection : config.DSetReflection
     := {| config.dsetreflectionFlag := config.Yes ;
-         config.dsetreflectionCriterion := isdset |}.
+         config.dsetreflectionCriterion := config.dsetcriterion |}.
   Local Instance hasDSetUIP : config.DSetUIP
     := {| config.dsetuipFlag := config.No ;
          config.dsetuipCriterion G A := config.ko |}.
@@ -82,13 +82,13 @@ Module Ttt.
     := {| config.withunitFlag := config.No |}.
   Local Instance hasBool : config.WithBool
     := {| config.withboolFlag := config.No |}.
-  Context `{isdset : context -> type -> config.Dec}.
+  Context `{isdset : config.DSetCriterion}.
   Local Instance hasDSetReflection : config.DSetReflection
     := {| config.dsetreflectionFlag := config.No ;
          config.dsetreflectionCriterion G A := config.ko |}.
   Local Instance hasDSetUIP : config.DSetUIP
     := {| config.dsetuipFlag := config.No ;
-         config.dsetuipCriterion := isdset |}.
+         config.dsetuipCriterion := config.dsetcriterion |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -107,7 +107,7 @@ Section Translation.
 
 Open Scope type_scope.
 
-Context `{isdset : context -> type -> config.Dec}.
+Context `{isdset : config.DSetCriterion}.
 
 Axiom admit : forall {A}, A.
 Tactic Notation "admit" := (exact admit).
@@ -124,9 +124,9 @@ Tactic Notation "admit" := (exact admit).
 (*       istran_ctx (ctxextend Γ A) (ctxextend Γᵗ Aᵗ). *)
 
 Definition istran_ctx : context -> context -> Type :=
-  fun Γ Γᵗ => @Ttt.isctx isdset Γᵗ.
+  fun Γ Γᵗ => Ttt.isctx Γᵗ.
 
-Fixpoint trans_isctx {Γ} (H : @Stt.isctx isdset Γ) {struct H} :
+Fixpoint trans_isctx {Γ} (H : Stt.isctx Γ) {struct H} :
   { Γᵗ : context & istran_ctx Γ Γᵗ }.
 
 Proof.

@@ -44,6 +44,10 @@ Class WithBool := {
   withboolFlag : Type
 }.
 
+Class DSetCriterion := {
+  dsetcriterion : syntax.context -> syntax.type -> Dec
+}.
+
 Class DSetReflection := {
   dsetreflectionFlag : Type ;
   dsetreflectionCriterion : syntax.context -> syntax.type -> Dec
