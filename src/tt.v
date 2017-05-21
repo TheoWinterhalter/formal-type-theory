@@ -852,7 +852,7 @@ with eqtype : context -> type -> type -> Type :=
            eqtype D A B
        endrule
 
-     | EqTyRefl:
+     | EqTyRefl :
        rule
          parameters: {G A},
          precond: isctx G

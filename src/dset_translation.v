@@ -170,6 +170,35 @@ Arguments term {_ _ _ _ _} _.
 Arguments isterm {_ _ _ _ _} _.
 Coercion term : termᵗ >-> syntax.term.
 
+Record eqctxᵗ {Γ} (Γᵗ : contextᵗ Γ) {Δ} (Δᵗ : contextᵗ Δ) := {
+  (* TODO *)
+}.
+
+Record eqsubstᵗ
+  {Γ} {Γᵗ : contextᵗ Γ} {Δ} {Δᵗ : contextᵗ Δ}
+  {σ} (σᵗ : substitutionᵗ Γᵗ Δᵗ σ)
+  {ρ} (ρᵗ : substitutionᵗ Γᵗ Δᵗ ρ)
+  := {
+  (* TODO *)
+}.
+
+Record eqtypeᵗ
+  {Γ} {Γᵗ : contextᵗ Γ}
+  {A} (Aᵗ : typeᵗ Γᵗ A)
+  {B} (Bᵗ : typeᵗ Γᵗ B)
+  := {
+  (* TODO *)
+}.
+
+Record eqtermᵗ
+  {Γ} {Γᵗ : contextᵗ Γ}
+  {A} {Aᵗ : typeᵗ Γᵗ A}
+  {u} (uᵗ : termᵗ Aᵗ u)
+  {v} (vᵗ : termᵗ Aᵗ v)
+  := {
+  (* TODO *)
+}.
+
 (* Note this is still not ok, we want to have telescopes and also
    constraints on the translation itself, like homology to the original
    perhaps. *)
@@ -191,6 +220,35 @@ with trans_term {Γ A u} (H : Stt.isterm Γ u A) {struct H} :
   { Aᵗ : typeᵗ Γᵗ A &
     termᵗ Aᵗ u
   } }
+
+with trans_eqctx {Γ Δ} (H : Stt.eqctx Γ Δ) {struct H} :
+  { Γᵗ : contextᵗ Γ &
+  { Δᵗ : contextᵗ Δ &
+    eqctxᵗ Γᵗ Δᵗ
+  } }
+
+with trans_eqsubst {Γ Δ σ ρ} (H : Stt.eqsubst σ ρ Γ Δ) {struct H} :
+  { Γᵗ : contextᵗ Γ &
+  { Δᵗ : contextᵗ Δ &
+  { σᵗ : substitutionᵗ Γᵗ Δᵗ σ &
+  { ρᵗ : substitutionᵗ Γᵗ Δᵗ ρ &
+    eqsubstᵗ σᵗ ρᵗ
+  } } } }
+
+with trans_eqtype {Γ A B} (H : Stt.eqtype Γ A B) {struct H} :
+  { Γᵗ : contextᵗ Γ &
+  { Aᵗ : typeᵗ Γᵗ A &
+  { Bᵗ : typeᵗ Γᵗ B &
+    eqtypeᵗ Aᵗ Bᵗ
+  } } }
+
+with trans_eqterm {Γ A u v} (H : Stt.eqterm Γ u v A) {struct H} :
+  { Γᵗ : contextᵗ Γ &
+  { Aᵗ : typeᵗ Γᵗ A &
+  { uᵗ : termᵗ Aᵗ u &
+  { vᵗ : termᵗ Aᵗ v &
+    eqtermᵗ uᵗ vᵗ
+  } } } }
 .
 Proof.
   (**** trans_isctx ****)
@@ -271,6 +329,178 @@ Proof.
       - admit.
 
       (* TermRefl *)
+      - admit.
+    }
+
+  (**** trans_eqctx ****)
+  - { dependent destruction H ; doConfig.
+
+      (* CtxRefl *)
+      - admit.
+
+      (* CtxSym *)
+      - admit.
+
+      (* CtxTrans *)
+      - admit.
+
+      (* EqCtxEmpty *)
+      - admit.
+
+      (* EqCtxExtend *)
+      - admit.
+    }
+
+  (**** trans_eqsubst ****)
+  - { dependent destruction H ; doConfig.
+
+      (* SubstRefl *)
+      - admit.
+
+      (* SubstSym *)
+      - admit.
+
+      (* SubstTrans *)
+      - admit.
+
+      (* CongSubstZero *)
+      - admit.
+
+      (* CongSubstWeak *)
+      - admit.
+
+      (* CongSubstShift *)
+      - admit.
+
+      (* CongSubstComp *)
+      - admit.
+
+      (* EqSubstCtxConv *)
+      - admit.
+
+      (* CompAssoc *)
+      - admit.
+
+      (* WeakNat *)
+      - admit.
+
+      (* WeakZero *)
+      - admit.
+
+      (* ShiftZero *)
+      - admit.
+
+      (* CompShift *)
+      - admit.
+
+      (* CompIdRight *)
+      - admit.
+
+      (* CompIdLeft *)
+      - admit.
+    }
+
+  (**** trans_eqtype ****)
+  - { dependent destruction H ; doConfig.
+
+      (* EqTyCtxConv *)
+      - admit.
+
+      (* EqTyRefl *)
+      - admit.
+
+      (* EqTySym *)
+      - admit.
+
+      (* EqTyTrans *)
+      - admit.
+
+      (* EqTyIdSubst *)
+      - admit.
+
+      (* EqTySubstComp *)
+      - admit.
+
+      (* EqTySubstProd *)
+      - admit.
+
+      (* EqTySubstId *)
+      - admit.
+
+      (* CongProd *)
+      - admit.
+
+      (* CongId *)
+      - admit.
+
+      (* CongTySubst *)
+      - admit.
+    }
+
+  (**** trans_eqterm ****)
+  - { dependent destruction H ; doConfig.
+
+      (* EqTyConv *)
+      - admit.
+
+      (* EqCtxConv *)
+      - admit.
+
+      (* EqRefl *)
+      - admit.
+
+      (* EqSym *)
+      - admit.
+
+      (* EqTrans *)
+      - admit.
+
+      (* EqIdSubst *)
+      - admit.
+
+      (* EqSubstComp *)
+      - admit.
+
+      (* EqSubstWeak *)
+      - admit.
+
+      (* EqSubstZeroZero *)
+      - admit.
+
+      (* EqSubstZeroSucc *)
+      - admit.
+
+      (* EqSubstShiftZero *)
+      - admit.
+
+      (* EqSubstShiftSucc *)
+      - admit.
+
+      (* EqSubstAbs *)
+      - admit.
+
+      (* EqSubstApp *)
+      - admit.
+
+      (* EqSubstRefl *)
+      - admit.
+
+      (* DSetReflection *)
+      - admit.
+
+      (* ProdBeta *)
+      - admit.
+
+      (* CongAbs *)
+      - admit.
+
+      (* CongApp *)
+      - admit.
+
+      (* CongRefl *)
+      - admit.
+
+      (* CongTermSubst *)
       - admit.
     }
 Qed.
