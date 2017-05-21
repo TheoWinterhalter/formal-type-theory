@@ -217,7 +217,7 @@ with trans_istype {Γ A} (H : Stt.istype Γ A) {struct H} :
     typeᵗ Γᵗ A
   }
 
-with trans_term {Γ A u} (H : Stt.isterm Γ u A) {struct H} :
+with trans_isterm {Γ A u} (H : Stt.isterm Γ u A) {struct H} :
   { Γᵗ : contextᵗ Γ &
   { Aᵗ : typeᵗ Γᵗ A &
     termᵗ Aᵗ u
@@ -488,7 +488,15 @@ Proof.
       - admit.
 
       (* DSetReflection *)
-      - admit.
+      - { destruct (trans_isterm _ _ _ i3) as [Gᵗ [Eqᵗ pᵗ]].
+          exists Gᵗ.
+          (* Now we'd like some inversion on Eqᵗ to get some Aᵗ, uᵗ and vᵗ. *)
+          (* I was hoping this case would help me see how to build the ᵗ
+             types... *)
+          (* In a way, the Aᵗ, uᵗ and vᵗ we would get would be what would
+             fill the only hole for each. *)
+          admit.
+        }
 
       (* ProdBeta *)
       - admit.
