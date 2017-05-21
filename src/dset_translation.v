@@ -140,31 +140,35 @@ Record contextᵗ (Γ : context) := mkctxᵗ {
 
 Arguments context {_} _.
 Arguments isctx {_} _.
+Coercion context : contextᵗ >-> syntax.context.
 
 Record substitutionᵗ
   {Γ} (Γᵗ : contextᵗ Γ) {Δ} (Δᵗ : contextᵗ Δ) (σ : substitution) := mksubstᵗ {
   substitution : substitution ;
-  issubst      : Ttt.issubst substitution (context Γᵗ) (context Δᵗ)
+  issubst      : Ttt.issubst substitution Γᵗ Δᵗ
 }.
 
 Arguments substitution {_ _ _ _ _} _.
 Arguments issubst {_ _ _ _ _} _.
+Coercion substitution : substitutionᵗ >-> syntax.substitution.
 
 Record typeᵗ {Γ} (Γᵗ : contextᵗ Γ) (A : type) := mktypeᵗ {
   type   : type ;
-  istype : Ttt.istype (context Γᵗ) type
+  istype : Ttt.istype Γᵗ type
 }.
 
 Arguments type {_ _ _} _.
 Arguments istype {_ _ _} _.
+Coercion type : typeᵗ >-> syntax.type.
 
 Record termᵗ {Γ} {Γᵗ : contextᵗ Γ} {A} (Aᵗ : typeᵗ Γᵗ A) (u : term) := mktermᵗ {
   term   : term ;
-  isterm : Ttt.isterm (context Γᵗ) term (type Aᵗ)
+  isterm : Ttt.isterm Γᵗ term Aᵗ
 }.
 
 Arguments term {_ _ _ _ _} _.
 Arguments isterm {_ _ _ _ _} _.
+Coercion term : termᵗ >-> syntax.term.
 
 (* Note this is still not ok, we want to have telescopes and also
    constraints on the translation itself, like homology to the original
@@ -199,7 +203,7 @@ Proof.
       - { (* pose (Gᵗ := trans_isctx _ i). *)
           destruct (trans_istype _ _ i0) as [Gᵗ Aᵗ].
           unshelve (eapply mkctxᵗ).
-          - exact (ctxextend (context Gᵗ) (type Aᵗ)).
+          - exact (ctxextend Gᵗ Aᵗ).
           - capply CtxExtend. apply (istype Aᵗ).
         }
     }
