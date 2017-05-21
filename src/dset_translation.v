@@ -130,7 +130,7 @@ Tactic Notation "admit" := (exact admit).
    Question: Do we need to internalise Σ-types in order to do that? Or is there
    hope we can actually have the telescopes on the meta-level.
    This would also allow us to avoid all sorts of proofs of equality to
-w  write (and type check!) about them.
+   write (and type check!) about them.
  *)
 
 Record contextᵗ (Γ : context) := mkctxᵗ {
@@ -213,7 +213,9 @@ with trans_issubst {Γ Δ σ} (H : Stt.issubst σ Γ Δ) {struct H} :
   } }
 
 with trans_istype {Γ A} (H : Stt.istype Γ A) {struct H} :
-  { Γᵗ : contextᵗ Γ & typeᵗ Γᵗ A }
+  { Γᵗ : contextᵗ Γ &
+    typeᵗ Γᵗ A
+  }
 
 with trans_term {Γ A u} (H : Stt.isterm Γ u A) {struct H} :
   { Γᵗ : contextᵗ Γ &
