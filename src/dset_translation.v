@@ -203,6 +203,21 @@ Record eqtermᵗ
    constraints on the translation itself, like homology to the original
    perhaps. *)
 
+(* One essential lemma that we want to have on translations is that
+   two translations of the same term that live at the same type are
+   definitionally equal. This relies on the definitional UIP present
+   in the target type theory.
+
+   We cannot prove it in the current state, but this should be around to
+   guide the definition of termᵗ and typeᵗ.
+*)
+Lemma termᵗ_coh :
+  forall {Γ} {Γᵗ : contextᵗ Γ}
+    {A} {Aᵗ : typeᵗ Γᵗ A}
+    {u} (uᵗ uᵗ' : termᵗ Aᵗ u),
+    Ttt.eqterm Γᵗ uᵗ uᵗ' Aᵗ.
+Admitted.
+
 Fixpoint trans_isctx {Γ} (H : Stt.isctx Γ) {struct H} :
   contextᵗ Γ
 
