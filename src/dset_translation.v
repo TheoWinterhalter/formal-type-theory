@@ -133,31 +133,45 @@ Tactic Notation "admit" := (exact admit).
    write (and type check!) about them.
  *)
 
-(* Let's experiment with those telescopes. *)
-Inductive telescope :=
-| simple_term (u : term) : telescope
-| hole_term (n : term) (D : type) (f : term -> telescope) : telescope.
+Inductive teletype :=
+| teletype_one (A : type) : teletype
+| teletype_cons (d : term) (D : type) (f : term -> teletype) : teletype.
 
-Check (hole_term true Bool (fun x => simple_term (refl Bool x))).
+Inductive teleterm :=
+| teleterm_one (u : term) : teleterm
+| teleterm_cons (d : term) (D : type) (f : term -> teleterm) : teleterm.
 
-Fixpoint telescope_equality
-  (Γ : context) (t1 t2 : telescope) (A : type) : Type :=
-  match t1, t2 with
-  | simple_term u1, simple_term u2 =>
-    { p : term & Ttt.isterm Γ p (Id A u1 u2) }
-  | hole_term d1 D1 f1, hole_term d2 D2 f2 =>
+Fixpoint teleterm_eq
+  (Γ : context) (t1 t2 : teleterm) (T1 T2 : teletype) : Type :=
+  match t1, t2, T1, T2 with
+  | teleterm_one u1, teleterm_one u2, teletype_one A1, teletype_one A2 =>
+    Ttt.eqtype Γ A1 A2 *
+    { p : term & Ttt.isterm Γ p (Id A1 u1 u2) }
+  | teleterm_cons d1 D1 f1, teleterm_cons d2 D2 f2,
+    teletype_cons e1 E1 F1, teletype_cons e2 E2 F2 =>
     Ttt.eqtype Γ D1 D2 *
+    Ttt.eqtype Γ D1 E1 *
+    Ttt.eqtype Γ D1 E2 *
+    (* Add something to say that F1 = F2 or is it sufficient to verify that
+       they are equal for the d1s? *)
     { p : term &
       Ttt.isterm Γ p (Id D1 d1 d2) *
-      telescope_equality Γ (f1 d1) (f2 d1) A
+      teleterm_eq Γ (f1 d1) (f2 d1) (F1 d1) (F2 d1)
     }
-  | _, _ => False
+  | _, _, _, _ => False
   end.
 
-Compute (telescope_equality ctxempty (hole_term true Bool (fun x => simple_term (refl Bool x))) (hole_term false Bool (fun x => simple_term (refl Bool x))) (Id Bool true false)).
+Fixpoint tele_to_type (T : teletype) : type :=
+  match T with
+  | teletype_one A => A
+  | teletype_cons d D F => tele_to_type (F d)
+  end.
 
-(* In the telescope equality, the types also must be decomposed along the
-   same dSet base! *)
+Fixpoint tele_to_term (t : teleterm) : term :=
+  match t with
+  | teleterm_one u => u
+  | teleterm_cons d D f => tele_to_term (f d)
+  end.
 
 (* Notion of homology between expressions.
 
@@ -189,19 +203,23 @@ Arguments issubst {_ _ _ _ _} _.
 Coercion substitution : substitutionᵗ >-> syntax.substitution.
 
 Record typeᵗ {Γ} (Γᵗ : contextᵗ Γ) (A : type) := mktypeᵗ {
-  type   : type ;
-  istype : Ttt.istype Γᵗ type
+  _teletype : teletype ;
+  type      := tele_to_type _teletype ;
+  istype    : Ttt.istype Γᵗ type
 }.
 
+Arguments _teletype {_ _ _} _.
 Arguments type {_ _ _} _.
 Arguments istype {_ _ _} _.
 Coercion type : typeᵗ >-> syntax.type.
 
 Record termᵗ {Γ} {Γᵗ : contextᵗ Γ} {A} (Aᵗ : typeᵗ Γᵗ A) (u : term) := mktermᵗ {
-  term   : term ;
+  _teleterm : teleterm ;
+  term      := tele_to_term _teleterm ;
   isterm : Ttt.isterm Γᵗ term Aᵗ
 }.
 
+Arguments _teleterm {_ _ _ _ _} _.
 Arguments term {_ _ _ _ _} _.
 Arguments isterm {_ _ _ _ _} _.
 Coercion term : termᵗ >-> syntax.term.
