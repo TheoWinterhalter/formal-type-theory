@@ -133,6 +133,27 @@ Tactic Notation "admit" := (exact admit).
    write (and type check!) about them.
  *)
 
+(* Let's experiment with those telescopes. *)
+Inductive telescope :=
+| simple_term (u : term) : telescope
+| hole_term (n : term) (D : type) (f : term -> telescope) : telescope.
+
+Check (hole_term true Bool (fun x => simple_term (refl Bool x))).
+
+Fixpoint telescope_equality
+  (Γ : context) (t1 t2 : telescope) (A : type) : Type :=
+  match t1, t2 with
+  | simple_term u1, simple_term u2 =>
+    { p : term & Ttt.isterm Γ p (Id A u1 u2) }
+  | hole_term d1 D1 f1, hole_term d2 D2 f2 =>
+    Ttt.eqtype Γ D1 D2 *
+    { p : term &
+      Ttt.isterm Γ p (Id D1 d1 d2) *
+      telescope_equality Γ (f1 d1) (f2 d1) A
+    }
+  | _, _ => False
+  end.
+
 Record contextᵗ (Γ : context) := mkctxᵗ {
   context : context ;
   isctx   : Ttt.isctx context
