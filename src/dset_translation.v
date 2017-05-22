@@ -154,6 +154,21 @@ Fixpoint telescope_equality
   | _, _ => False
   end.
 
+Compute (telescope_equality ctxempty (hole_term true Bool (fun x => simple_term (refl Bool x))) (hole_term false Bool (fun x => simple_term (refl Bool x))) (Id Bool true false)).
+
+(* In the telescope equality, the types also must be decomposed along the
+   same dSet base! *)
+
+(* Notion of homology between expressions.
+
+   This is some soundness safety in a way. We're making sure
+   things get translated to similar things.
+
+   TODO: We need first to know exactly how the translation affets
+   terms: probably through transports that we wish to ignore when comparing
+   an expression and its translation.
+*)
+
 Record contextᵗ (Γ : context) := mkctxᵗ {
   context : context ;
   isctx   : Ttt.isctx context
