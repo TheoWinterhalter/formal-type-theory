@@ -16,7 +16,8 @@ keywords = {
     'Unit' : 'Unit',
     'Empty' : 'Empty',
     'true' : 'true',
-    'false' : 'false'
+    'false' : 'false',
+    'sbid' : 'sbid'
 }
 
 macros = {
@@ -38,7 +39,6 @@ macros = {
     'subst' : (2, 'subst'),
     'sbweak' : (1, 'sbweak'),
     'sbshift' : (2, 'sbshift'),
-    'sbid' : (1, 'sbid'),
     'sbcomp' : (2, 'sbcomp'),
     'sbzero' : (2, 'sbzero'),
     'var' : (1, 'var'),

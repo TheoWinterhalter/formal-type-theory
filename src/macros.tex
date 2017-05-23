@@ -32,13 +32,13 @@
 
 %% Substitution
 
-\newcommand{\sbzero}[3]{\{#3\}_{#1,#2}}        % substitition of the zeroth index
-\newcommand{\sbweak}[2]{\mathsf{w}_{(#1, #2)}} % weakening substitution
-\newcommand{\sbshift}[3]{#3 {\mid}_{#1} #2}    % shifted substitution
-\newcommand{\sbid}[1]{\mathsf{id}_{#1}}        % identity substitution
-\newcommand{\sbcomp}[2]{#1 \circ #2}           % composition of substitutions
+\newcommand{\sbzero}[2]{\{#2\}_{#1}}     % substitition of the zeroth index
+\newcommand{\sbweak}[1]{\mathsf{w}_{#1}} % weakening substitution
+\newcommand{\sbshift}[2]{(#2 {\mid} #1)}   % shifted substitution
+\newcommand{\sbid}{\mathsf{id}}          % identity substitution
+\newcommand{\sbcomp}[2]{#1 \circ #2}     % composition of substitutions
 
-\newcommand{\subst}[2]{#1[#2]}                 % substitution operation
+\newcommand{\subst}[2]{#1[#2]}           % substitution operation
 
 
 % Type formers
