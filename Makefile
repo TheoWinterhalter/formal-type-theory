@@ -1,6 +1,6 @@
 default: rules.pdf
 
-src/tt.tex: src/tt.v
+src/tt.tex: src/tt.v src/coq2latex.py
 	cd ./src && ./coq2latex.py tt.v > tt.tex
 
 rules.pdf: src/rules.tex src/tt.tex

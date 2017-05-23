@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import sys
 import re
 from string import Template
@@ -36,11 +36,11 @@ macros = {
     'j' : (6, 'J'),
     'Subst' : (2, 'subst'),
     'subst' : (2, 'subst'),
-    'sbweak' : (2, 'sbweak'),
-    'sbshift' : (3, 'sbshift'),
+    'sbweak' : (1, 'sbweak'),
+    'sbshift' : (2, 'sbshift'),
     'sbid' : (1, 'sbid'),
     'sbcomp' : (2, 'sbcomp'),
-    'sbzero' : (3, 'sbzero'),
+    'sbzero' : (2, 'sbzero'),
     'var' : (1, 'var'),
     'S' : (1, 'suc'),
     'cond' : (4, 'cond'),
@@ -214,7 +214,7 @@ def section(title, prefix, src):
             re.DOTALL)
         if not m:
             die ("Failed to parse rule {0} whose body is:\n{1}".format(rulename, rulebody))
-        premises = re.split(r'\s*premise:\s*', m.group('premises'))
+        premises = re.split(r'\s*(?:premise|precond):\s*', m.group('premises'))
         if len(premises) > 0 and not premises[0]: premises.pop(0)
         conclusion = m.group('conclusion')
         print (rule2latex(prefix, rulename, premises, conclusion))
@@ -253,9 +253,9 @@ with open(filename, "r") as f:
 # remove prelude
 sections = re.split(r'Inductive', src, 1)[1]
 
-sections = re.split(r'Inductive|with', sections)
+sections = re.split(r'Inductive|with\b', sections)
 for sect in sections:
-    print sect
+    # print sect
     m = re.match(r'^\s+(\w+)\s+:', sect) or die ("Could not find section title")
     title = m.group(1)
     section(title, prefix, sect)
