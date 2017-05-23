@@ -385,10 +385,23 @@ Proof.
       - admit.
 
       (* TyProd *)
-      - admit.
+      - { destruct (trans_istype _ _ H) as [GAᵗ Bᵗ].
+          (* We seem to need inversion to recover some Gᵗ and Aᵗ
+             or, we could maybe translate the other hypotheses to get them
+             and then use some lemma to identify them in some way. *)
+          admit.
+        }
 
       (* TyId *)
-      - admit.
+      - { destruct (trans_istype _ _ i0) as [Gᵗ Aᵗ].
+          destruct (trans_isterm _ _ _ i1) as [Gᵗ' [Aᵗ' uᵗ]].
+          destruct (trans_isterm _ _ _ i2) as [Gᵗ'' [Aᵗ'' vᵗ]].
+          (* Now we need to have a link between the different Gᵗs and Aᵗs.
+             The best would be definitional equality (or even syntactic but
+             I don't believe in it), but we might need some transport already.
+           *)
+          admit.
+        }
     }
 
   (**** trans_isterm ****)
