@@ -141,11 +141,19 @@ Inductive teleterm :=
 | teleterm_one (u : term) : teleterm
 | teleterm_cons (d : term) (D : type) (f : term -> teleterm) : teleterm.
 
-(* Fixpoint tele_eqtype *)
-(*   (Γ : context) (T1 T2 : teletype) : Type := *)
-(*   match T1, T2 with *)
-(*   | teletype_one A1, teletype_one A2 => *)
-(* What sense would it make? Do I need to have universes perhaps? *)
+Fixpoint tele_eqtype
+  (Γ : context) (T1 T2 : teletype) : Type :=
+  match T1, T2 with
+  | teletype_one A1, teletype_one A2 =>
+    Ttt.eqtype Γ A1 A2
+  | teletype_cons d1 D1 F1, teletype_cons d2 D2 F2 =>
+    Ttt.eqtype Γ D1 D2 *
+    { p : term &
+      Ttt.isterm Γ p (Id D1 d1 d2) *
+      forall d, Ttt.isterm Γ d D1 -> tele_eqtype Γ (F1 d) (F2 d)
+    }
+  | _, _ => False
+  end.
 
 Fixpoint tele_eqterm
   (Γ : context) (t1 t2 : teleterm) (T1 T2 : teletype) : Type :=
@@ -158,11 +166,10 @@ Fixpoint tele_eqterm
     Ttt.eqtype Γ D1 D2 *
     Ttt.eqtype Γ D1 E1 *
     Ttt.eqtype Γ D1 E2 *
-    (* Add something to say that F1 = F2 or is it sufficient to verify that
-       they are equal for the d1s? *)
     { p : term &
       Ttt.isterm Γ p (Id D1 d1 d2) *
-      tele_eqterm Γ (f1 d1) (f2 d1) (F1 d1) (F2 d1)
+      (* tele_eqterm Γ (f1 d1) (f2 d1) (F1 d1) (F2 d1) *)
+      forall d, Ttt.isterm Γ d D1 -> tele_eqterm Γ (f1 d) (f2 d) (F1 d) (F2 d)
     }
   | _, _, _, _ => False
   end.
