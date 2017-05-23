@@ -141,7 +141,13 @@ Inductive teleterm :=
 | teleterm_one (u : term) : teleterm
 | teleterm_cons (d : term) (D : type) (f : term -> teleterm) : teleterm.
 
-Fixpoint teleterm_eq
+(* Fixpoint tele_eqtype *)
+(*   (Γ : context) (T1 T2 : teletype) : Type := *)
+(*   match T1, T2 with *)
+(*   | teletype_one A1, teletype_one A2 => *)
+(* What sense would it make? Do I need to have universes perhaps? *)
+
+Fixpoint tele_eqterm
   (Γ : context) (t1 t2 : teleterm) (T1 T2 : teletype) : Type :=
   match t1, t2, T1, T2 with
   | teleterm_one u1, teleterm_one u2, teletype_one A1, teletype_one A2 =>
@@ -156,7 +162,7 @@ Fixpoint teleterm_eq
        they are equal for the d1s? *)
     { p : term &
       Ttt.isterm Γ p (Id D1 d1 d2) *
-      teleterm_eq Γ (f1 d1) (f2 d1) (F1 d1) (F2 d1)
+      tele_eqterm Γ (f1 d1) (f2 d1) (F1 d1) (F2 d1)
     }
   | _, _, _, _ => False
   end.
@@ -172,6 +178,11 @@ Fixpoint tele_to_term (t : teleterm) : term :=
   | teleterm_one u => u
   | teleterm_cons d D f => tele_to_term (f d)
   end.
+
+(* Notion of transport based on tele_eqtype.
+
+   TODO!
+ *)
 
 (* Notion of homology between expressions.
 
