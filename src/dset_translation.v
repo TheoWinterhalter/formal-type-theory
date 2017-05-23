@@ -230,6 +230,7 @@ Arguments _teletype {_ _ _} _.
 Arguments _type {_ _ _} _.
 Arguments istype {_ _ _} _.
 Coercion _type : typeᵗ >-> type.
+Coercion _teletype : typeᵗ >-> teletype.
 
 Record termᵗ {Γ} {Γᵗ : contextᵗ Γ} {A} (Aᵗ : typeᵗ Γᵗ A) (u : term) := mktermᵗ {
   _teleterm : teleterm ;
@@ -241,6 +242,7 @@ Arguments _teleterm {_ _ _ _ _} _.
 Arguments _term {_ _ _ _ _} _.
 Arguments isterm {_ _ _ _ _} _.
 Coercion _term : termᵗ >-> term.
+Coercion _teleterm : termᵗ >-> teleterm.
 
 Record eqctxᵗ {Γ} (Γᵗ : contextᵗ Γ) {Δ} (Δᵗ : contextᵗ Δ) := {
   (* TODO *)
@@ -258,14 +260,14 @@ Definition eqtypeᵗ
   {Γ} {Γᵗ : contextᵗ Γ}
   {A} (Aᵗ : typeᵗ Γᵗ A)
   {B} (Bᵗ : typeᵗ Γᵗ B)
-  := tele_eqtype Γᵗ (_teletype Aᵗ) (_teletype Bᵗ).
+  := tele_eqtype Γᵗ Aᵗ Bᵗ.
 
 Definition eqtermᵗ
   {Γ} {Γᵗ : contextᵗ Γ}
   {A} {Aᵗ : typeᵗ Γᵗ A}
   {u} (uᵗ : termᵗ Aᵗ u)
   {v} (vᵗ : termᵗ Aᵗ v)
-  := tele_eqterm Γᵗ (_teleterm uᵗ) (_teleterm vᵗ) (_teletype Aᵗ) (_teletype Aᵗ).
+  := tele_eqterm Γᵗ uᵗ vᵗ Aᵗ Aᵗ.
 
 (* Note this is still not ok, we want to have telescopes and also
    constraints on the translation itself, like homology to the original
