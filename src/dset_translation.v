@@ -254,22 +254,18 @@ Record eqsubstᵗ
   (* TODO *)
 }.
 
-Record eqtypeᵗ
+Definition eqtypeᵗ
   {Γ} {Γᵗ : contextᵗ Γ}
   {A} (Aᵗ : typeᵗ Γᵗ A)
   {B} (Bᵗ : typeᵗ Γᵗ B)
-  := {
-  (* TODO *)
-}.
+  := tele_eqtype Γᵗ (_teletype Aᵗ) (_teletype Bᵗ).
 
-Record eqtermᵗ
+Definition eqtermᵗ
   {Γ} {Γᵗ : contextᵗ Γ}
   {A} {Aᵗ : typeᵗ Γᵗ A}
   {u} (uᵗ : termᵗ Aᵗ u)
   {v} (vᵗ : termᵗ Aᵗ v)
-  := {
-  (* TODO *)
-}.
+  := tele_eqterm Γᵗ (_teleterm uᵗ) (_teleterm vᵗ) (_teletype Aᵗ) (_teletype Aᵗ).
 
 (* Note this is still not ok, we want to have telescopes and also
    constraints on the translation itself, like homology to the original
