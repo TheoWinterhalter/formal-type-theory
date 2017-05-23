@@ -202,45 +202,45 @@ Fixpoint tele_to_term (t : teleterm) : term :=
 *)
 
 Record contextᵗ (Γ : context) := mkctxᵗ {
-  context : context ;
-  isctx   : Ttt.isctx context
+  _context : context ;
+  isctx    : Ttt.isctx _context
 }.
 
-Arguments context {_} _.
+Arguments _context {_} _.
 Arguments isctx {_} _.
-Coercion context : contextᵗ >-> syntax.context.
+Coercion _context : contextᵗ >-> context.
 
 Record substitutionᵗ
   {Γ} (Γᵗ : contextᵗ Γ) {Δ} (Δᵗ : contextᵗ Δ) (σ : substitution) := mksubstᵗ {
-  substitution : substitution ;
-  issubst      : Ttt.issubst substitution Γᵗ Δᵗ
+  _substitution : substitution ;
+  issubst       : Ttt.issubst _substitution Γᵗ Δᵗ
 }.
 
-Arguments substitution {_ _ _ _ _} _.
+Arguments _substitution {_ _ _ _ _} _.
 Arguments issubst {_ _ _ _ _} _.
-Coercion substitution : substitutionᵗ >-> syntax.substitution.
+Coercion _substitution : substitutionᵗ >-> substitution.
 
 Record typeᵗ {Γ} (Γᵗ : contextᵗ Γ) (A : type) := mktypeᵗ {
   _teletype : teletype ;
-  type      := tele_to_type _teletype ;
-  istype    : Ttt.istype Γᵗ type
+  _type     := tele_to_type _teletype ;
+  istype    : Ttt.istype Γᵗ _type
 }.
 
 Arguments _teletype {_ _ _} _.
-Arguments type {_ _ _} _.
+Arguments _type {_ _ _} _.
 Arguments istype {_ _ _} _.
-Coercion type : typeᵗ >-> syntax.type.
+Coercion _type : typeᵗ >-> type.
 
 Record termᵗ {Γ} {Γᵗ : contextᵗ Γ} {A} (Aᵗ : typeᵗ Γᵗ A) (u : term) := mktermᵗ {
   _teleterm : teleterm ;
-  term      := tele_to_term _teleterm ;
-  isterm : Ttt.isterm Γᵗ term Aᵗ
+  _term     := tele_to_term _teleterm ;
+  isterm : Ttt.isterm Γᵗ _term Aᵗ
 }.
 
 Arguments _teleterm {_ _ _ _ _} _.
-Arguments term {_ _ _ _ _} _.
+Arguments _term {_ _ _ _ _} _.
 Arguments isterm {_ _ _ _ _} _.
-Coercion term : termᵗ >-> syntax.term.
+Coercion _term : termᵗ >-> term.
 
 Record eqctxᵗ {Γ} (Γᵗ : contextᵗ Γ) {Δ} (Δᵗ : contextᵗ Δ) := {
   (* TODO *)
