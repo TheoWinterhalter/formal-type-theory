@@ -273,6 +273,36 @@ Definition eqtermᵗ
    constraints on the translation itself, like homology to the original
    perhaps. *)
 
+(* Let's build meta constructors on translations *)
+Definition ctxemptyᵗ : contextᵗ ctxempty.
+Proof.
+  exists ctxempty. capply CtxEmpty.
+Defined.
+
+Definition ctxextendᵗ {Γ} (Γᵗ : contextᵗ Γ) {A} (Aᵗ : typeᵗ Γᵗ A) :
+  contextᵗ (ctxextend Γ A).
+Proof.
+  unshelve (eapply mkctxᵗ).
+  - exact (ctxextend Γᵗ Aᵗ).
+  - capply CtxExtend. apply (istype Aᵗ).
+Defined.
+
+Definition Idᵗ
+  {Γ} {Γᵗ : contextᵗ Γ}
+  {A} (Aᵗ : typeᵗ Γᵗ A)
+  {u} (uᵗ : termᵗ Aᵗ u)
+  {v} (vᵗ : termᵗ Aᵗ v)
+  : typeᵗ Γᵗ (Id A u v).
+Proof.
+  unshelve (eapply mktypeᵗ).
+  - destruct Aᵗ as [teleA tA isA].
+    dependent induction teleA.
+    + (* Here, I'd like to know that uᵗ and vᵗ have the same dependencies
+         as Aᵗ, otherwise there will be cases in which I won't be able to
+         conclude!
+       *)
+Abort.
+
 (* One essential lemma that we want to have on translations is that
    two translations of the same term that live at the same type are
    definitionally equal. This relies on the definitional UIP present
@@ -342,14 +372,12 @@ Proof.
   - { dependent destruction H ; doConfig.
 
       (* CtxEmpty *)
-      - { exists ctxempty. capply CtxEmpty. }
+      - { exact ctxemptyᵗ. }
 
       (* CtxExtend *)
       - { (* pose (Gᵗ := trans_isctx _ i). *)
           destruct (trans_istype _ _ i0) as [Gᵗ Aᵗ].
-          unshelve (eapply mkctxᵗ).
-          - exact (ctxextend Gᵗ Aᵗ).
-          - capply CtxExtend. apply (istype Aᵗ).
+          exact (ctxextendᵗ Gᵗ Aᵗ).
         }
     }
 
@@ -429,7 +457,9 @@ Proof.
       - admit.
 
       (* TermRefl *)
-      - admit.
+      - { destruct (trans_isterm _ _ _ H) as [Gᵗ [Aᵗ uᵗ]].
+          exists Gᵗ. admit.
+        }
     }
 
   (**** trans_eqctx ****)
