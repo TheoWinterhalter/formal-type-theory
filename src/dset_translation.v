@@ -11,6 +11,8 @@ Require Import checking_tactics.
 
 Require Import Coq.Program.Equality.
 
+Require Import Coq.Lists.List.
+
 (* Source type theory *)
 Module Stt.
 
@@ -106,6 +108,7 @@ End Ttt.
 Section Translation.
 
 Open Scope type_scope.
+Open Scope list_scope.
 
 Context `{isdset : config.DSetCriterion}.
 
@@ -133,54 +136,91 @@ Tactic Notation "admit" := (exact admit).
    write (and type check!) about them.
  *)
 
-Inductive teletype :=
-| teletype_one (A : type) : teletype
-| teletype_cons (d : term) (D : type) (f : term -> teletype) : teletype.
+Inductive teletype : list type -> Type :=
+| teletype_one (A : type) : teletype nil
+| teletype_cons
+    (d : term) (D : type) {l} (f : term -> teletype l) : teletype (D :: l)
+.
 
-Inductive teleterm :=
-| teleterm_one (u : term) : teleterm
-| teleterm_cons (d : term) (D : type) (f : term -> teleterm) : teleterm.
+Inductive teleterm : list type -> Type :=
+| teleterm_one (u : term) : teleterm nil
+| teleterm_cons
+    (d : term) (D : type) {l} (f : term -> teleterm l) : teleterm (D :: l)
+.
 
 Fixpoint tele_eqtype
-  (Γ : context) (T1 T2 : teletype) : Type :=
-  match T1, T2 with
-  | teletype_one A1, teletype_one A2 =>
-    Ttt.eqtype Γ A1 A2
-  | teletype_cons d1 D1 F1, teletype_cons d2 D2 F2 =>
-    Ttt.eqtype Γ D1 D2 *
-    { p : term &
-      Ttt.isterm Γ p (Id D1 d1 d2) *
-      forall d, Ttt.isterm Γ d D1 -> tele_eqtype Γ (F1 d) (F2 d)
-    }
-  | _, _ => False
-  end.
+  (Γ : context) {l} (T1 T2 : teletype l) : Type.
+Proof.
+  dependent destruction T1 ; dependent destruction T2.
+  - exact (Ttt.eqtype Γ A A0).
+  - exact (
+      { p : term &
+        Ttt.isterm Γ p (Id D d d0) *
+        forall d', Ttt.isterm Γ d D -> tele_eqtype Γ _ (f d') (f0 d')
+      }
+    ).
+Defined.
+
+(* Fixpoint tele_eqtype *)
+(*   (Γ : context) {l} (T1 T2 : teletype l) : Type := *)
+(*   match T1, T2 with *)
+(*   | teletype_one A1, teletype_one A2 => *)
+(*     Ttt.eqtype Γ A1 A2 *)
+(*   | teletype_cons d1 D1 F1, teletype_cons d2 D2 F2 => *)
+(*     Ttt.eqtype Γ D1 D2 * *)
+(*     { p : term & *)
+(*       Ttt.isterm Γ p (Id D1 d1 d2) * *)
+(*       forall d, Ttt.isterm Γ d D1 -> tele_eqtype Γ (F1 d) (F2 d) *)
+(*     } *)
+(*   | _, _ => False *)
+(*   end. *)
 
 Fixpoint tele_eqterm
-  (Γ : context) (t1 t2 : teleterm) (T1 T2 : teletype) : Type :=
-  match t1, t2, T1, T2 with
-  | teleterm_one u1, teleterm_one u2, teletype_one A1, teletype_one A2 =>
-    Ttt.eqtype Γ A1 A2 *
-    { p : term & Ttt.isterm Γ p (Id A1 u1 u2) }
-  | teleterm_cons d1 D1 f1, teleterm_cons d2 D2 f2,
-    teletype_cons e1 E1 F1, teletype_cons e2 E2 F2 =>
-    Ttt.eqtype Γ D1 D2 *
-    Ttt.eqtype Γ D1 E1 *
-    Ttt.eqtype Γ D1 E2 *
-    { p : term &
-      Ttt.isterm Γ p (Id D1 d1 d2) *
-      (* tele_eqterm Γ (f1 d1) (f2 d1) (F1 d1) (F2 d1) *)
-      forall d, Ttt.isterm Γ d D1 -> tele_eqterm Γ (f1 d) (f2 d) (F1 d) (F2 d)
-    }
-  | _, _, _, _ => False
-  end.
+  (Γ : context) {l} (t1 t2 : teleterm l) (T1 T2 : teletype l) : Type.
+Proof.
+  dependent destruction t1 ; dependent destruction t2 ;
+  dependent destruction T1 ; dependent destruction T2.
+  - exact (
+      Ttt.eqtype Γ A A0 *
+      { p : term & Ttt.isterm Γ p (Id A u u0) }
+    ).
+  - exact (
+      (* The two equalities should probably be in the type as well! *)
+      Ttt.eqterm Γ d d1 D *
+      Ttt.eqterm Γ d0 d2 D *
+      { p : term &
+        Ttt.isterm Γ p (Id D d d0) *
+        forall d', Ttt.isterm Γ d D -> tele_eqterm Γ _ (f d') (f0 d') (f1 d') (f2 d')
+      }
+    ).
+Defined.
 
-Fixpoint tele_to_type (T : teletype) : type :=
+(* Fixpoint tele_eqterm *)
+(*   (Γ : context) (t1 t2 : teleterm) (T1 T2 : teletype) : Type := *)
+(*   match t1, t2, T1, T2 with *)
+(*   | teleterm_one u1, teleterm_one u2, teletype_one A1, teletype_one A2 => *)
+(*     Ttt.eqtype Γ A1 A2 * *)
+(*     { p : term & Ttt.isterm Γ p (Id A1 u1 u2) } *)
+(*   | teleterm_cons d1 D1 f1, teleterm_cons d2 D2 f2, *)
+(*     teletype_cons e1 E1 F1, teletype_cons e2 E2 F2 => *)
+(*     Ttt.eqtype Γ D1 D2 * *)
+(*     Ttt.eqtype Γ D1 E1 * *)
+(*     Ttt.eqtype Γ D1 E2 * *)
+(*     { p : term & *)
+(*       Ttt.isterm Γ p (Id D1 d1 d2) * *)
+(*       (* tele_eqterm Γ (f1 d1) (f2 d1) (F1 d1) (F2 d1) *) *)
+(*       forall d, Ttt.isterm Γ d D1 -> tele_eqterm Γ (f1 d) (f2 d) (F1 d) (F2 d) *)
+(*     } *)
+(*   | _, _, _, _ => False *)
+(*   end. *)
+
+Fixpoint tele_to_type {l} (T : teletype l) : type :=
   match T with
   | teletype_one A => A
   | teletype_cons d D F => tele_to_type (F d)
   end.
 
-Fixpoint tele_to_term (t : teleterm) : term :=
+Fixpoint tele_to_term {l} (t : teleterm l) : term :=
   match t with
   | teleterm_one u => u
   | teleterm_cons d D f => tele_to_term (f d)
@@ -221,11 +261,13 @@ Arguments issubst {_ _ _ _ _} _.
 Coercion _substitution : substitutionᵗ >-> substitution.
 
 Record typeᵗ {Γ} (Γᵗ : contextᵗ Γ) (A : type) := mktypeᵗ {
-  _teletype : teletype ;
+  support   : list type ;
+  _teletype : teletype support ;
   _type     := tele_to_type _teletype ;
   istype    : Ttt.istype Γᵗ _type
 }.
 
+Arguments support {_ _ _} _.
 Arguments _teletype {_ _ _} _.
 Arguments _type {_ _ _} _.
 Arguments istype {_ _ _} _.
@@ -233,7 +275,7 @@ Coercion _type : typeᵗ >-> type.
 Coercion _teletype : typeᵗ >-> teletype.
 
 Record termᵗ {Γ} {Γᵗ : contextᵗ Γ} {A} (Aᵗ : typeᵗ Γᵗ A) (u : term) := mktermᵗ {
-  _teleterm : teleterm ;
+  _teleterm : teleterm (support Aᵗ) ;
   _term     := tele_to_term _teleterm ;
   isterm : Ttt.isterm Γᵗ _term Aᵗ
 }.
@@ -256,11 +298,13 @@ Record eqsubstᵗ
   (* TODO *)
 }.
 
+(* We need to fix something here, probably! *)
 Definition eqtypeᵗ
   {Γ} {Γᵗ : contextᵗ Γ}
   {A} (Aᵗ : typeᵗ Γᵗ A)
   {B} (Bᵗ : typeᵗ Γᵗ B)
-  := tele_eqtype Γᵗ Aᵗ Bᵗ.
+  (* := tele_eqtype Γᵗ Aᵗ Bᵗ. *)
+  := False.
 
 Definition eqtermᵗ
   {Γ} {Γᵗ : contextᵗ Γ}
