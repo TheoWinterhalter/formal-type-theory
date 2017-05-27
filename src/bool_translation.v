@@ -371,6 +371,20 @@ Proof.
   - simpl. capply TyBool. exact (isctx Γᵗ).
 Defined.
 
+(* Some inversion lemmata. *)
+
+Lemma inversion_Idᵗ :
+  forall {Γ} {Γᵗ : contextᵗ Γ} {A u v} (Eqᵗ : typeᵗ Γᵗ (Id A u v)),
+    { Aᵗ : typeᵗ Γᵗ A &
+      termᵗ Aᵗ u *
+      termᵗ Aᵗ v
+    }.
+Proof.
+  intros.
+  dependent destruction Eqᵗ.
+  dependent induction _teletype0.
+Abort.
+
 (* One essential lemma that we want to have on translations is that
    two translations of the same term that live at the same type are
    definitionally equal. This relies on the definitional UIP present
