@@ -1,5 +1,5 @@
 (* We attempt a formalisation that goes from reflection for dSet to
-   definitional UIP dSet.
+   definitional UIP dSet using only Bool as dSet.
 *)
 
 Require config.
@@ -38,13 +38,10 @@ Module Stt.
     := {| config.withunitFlag := config.No |}.
   Local Instance hasBool : config.WithBool
     := {| config.withboolFlag := config.No |}.
-  Context `{isdset : config.DSetCriterion}.
-  Local Instance hasDSetReflection : config.DSetReflection
-    := {| config.dsetreflectionFlag := config.Yes ;
-         config.dsetreflectionCriterion := config.dsetcriterion |}.
-  Local Instance hasDSetUIP : config.DSetUIP
-    := {| config.dsetuipFlag := config.No ;
-         config.dsetuipCriterion G A := config.ko |}.
+  Local Instance hasBoolReflection : config.BoolReflection
+    := {| config.boolreflectionFlag := config.Yes |}.
+  Local Instance hasBoolUIP : config.BoolUIP
+    := {| config.booluipFlag := config.No |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -84,13 +81,10 @@ Module Ttt.
     := {| config.withunitFlag := config.No |}.
   Local Instance hasBool : config.WithBool
     := {| config.withboolFlag := config.No |}.
-  Context `{isdset : config.DSetCriterion}.
-  Local Instance hasDSetReflection : config.DSetReflection
-    := {| config.dsetreflectionFlag := config.No ;
-         config.dsetreflectionCriterion G A := config.ko |}.
-  Local Instance hasDSetUIP : config.DSetUIP
-    := {| config.dsetuipFlag := config.No ;
-         config.dsetuipCriterion := config.dsetcriterion |}.
+  Local Instance hasBoolReflection : config.BoolReflection
+    := {| config.boolreflectionFlag := config.No |}.
+  Local Instance hasBoolUIP : config.BoolUIP
+    := {| config.booluipFlag := config.Yes |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -110,8 +104,6 @@ Section Translation.
 Open Scope type_scope.
 Open Scope list_scope.
 
-Context `{isdset : config.DSetCriterion}.
-
 Axiom admit : forall {A}, A.
 Tactic Notation "admit" := (exact admit).
 
@@ -128,6 +120,10 @@ Tactic Notation "admit" := (exact admit).
    the rest of the strucuture doesn't have reflection, while eveything
    filling the holes verifies some definitional UIP in the target.
 
+   We use Bool as the only dSet to examplify this for something that would
+   ideally be a dSet (we would also like things like nat and other natural
+   inductive types).
+
    This probably means that beside istran_*, the trans_* theorem is also
    wrongly stated.
    Question: Do we need to internalise Σ-types in order to do that? Or is there
@@ -136,20 +132,20 @@ Tactic Notation "admit" := (exact admit).
    write (and type check!) about them.
  *)
 
-Inductive teletype : list type -> Type :=
-| teletype_one (A : type) : teletype nil
+Inductive teletype : nat -> Type :=
+| teletype_one (A : type) : teletype 0
 | teletype_cons
-    (d : term) (D : type) {l} (f : term -> teletype l) : teletype (D :: l)
+    (d : term) (D : type) {n} (f : term -> teletype n) : teletype (S n)
 .
 
-Inductive teleterm : list type -> Type :=
-| teleterm_one (u : term) : teleterm nil
+Inductive teleterm : nat -> Type :=
+| teleterm_one (u : term) : teleterm 0
 | teleterm_cons
-    (d : term) (D : type) {l} (f : term -> teleterm l) : teleterm (D :: l)
+    (d : term) (D : type) {n} (f : term -> teleterm n) : teleterm (S n)
 .
 
 Fixpoint tele_eqtype
-  (Γ : context) {l} (T1 T2 : teletype l) : Type.
+  (Γ : context) {n} (T1 T2 : teletype n) : Type.
 Proof.
   dependent destruction T1 ; dependent destruction T2.
   - exact (Ttt.eqtype Γ A A0).
@@ -176,7 +172,7 @@ Defined.
 (*   end. *)
 
 Fixpoint tele_eqterm
-  (Γ : context) {l} (t1 t2 : teleterm l) (T1 T2 : teletype l) : Type.
+  (Γ : context) {n} (t1 t2 : teleterm n) (T1 T2 : teletype n) : Type.
 Proof.
   dependent destruction t1 ; dependent destruction t2 ;
   dependent destruction T1 ; dependent destruction T2.
@@ -186,6 +182,7 @@ Proof.
     ).
   - exact (
       (* The two equalities should probably be in the type as well! *)
+      (* Maybe have some support : teletype -> term list *)
       Ttt.eqterm Γ d d1 D *
       Ttt.eqterm Γ d0 d2 D *
       { p : term &
@@ -214,13 +211,13 @@ Defined.
 (*   | _, _, _, _ => False *)
 (*   end. *)
 
-Fixpoint tele_to_type {l} (T : teletype l) : type :=
+Fixpoint tele_to_type {n} (T : teletype n) : type :=
   match T with
   | teletype_one A => A
   | teletype_cons d D F => tele_to_type (F d)
   end.
 
-Fixpoint tele_to_term {l} (t : teleterm l) : term :=
+Fixpoint tele_to_term {n} (t : teleterm n) : term :=
   match t with
   | teleterm_one u => u
   | teleterm_cons d D f => tele_to_term (f d)
@@ -261,7 +258,7 @@ Arguments issubst {_ _ _ _ _} _.
 Coercion _substitution : substitutionᵗ >-> substitution.
 
 Record typeᵗ {Γ} (Γᵗ : contextᵗ Γ) (A : type) := mktypeᵗ {
-  support   : list type ;
+  support   : nat ;
   _teletype : teletype support ;
   _type     := tele_to_type _teletype ;
   istype    : Ttt.istype Γᵗ _type
@@ -659,14 +656,21 @@ Proof.
       (* EqSubstRefl *)
       - admit.
 
-      (* DSetReflection *)
-      - { destruct (trans_isterm _ _ _ i3) as [Gᵗ [Eqᵗ pᵗ]].
+      (* BoolReflection *)
+      - { destruct (trans_isterm _ _ _ i2) as [Gᵗ [Eqᵗ pᵗ]].
           exists Gᵗ.
-          (* Now we'd like some inversion on Eqᵗ to get some Aᵗ, uᵗ and vᵗ. *)
-          (* I was hoping this case would help me see how to build the ᵗ
-             types... *)
-          (* In a way, the Aᵗ, uᵗ and vᵗ we would get would be what would
-             fill the only hole for each. *)
+          simple refine (existT _ _ _).
+          - unshelve (eapply mktypeᵗ).
+            + exact 0.
+            + eapply teletype_one. exact Bool.
+            + simpl. capply TyBool.
+              * admit.
+              * admit.
+          - (* Now we'd like some inversion on Eqᵗ to get some Aᵗ, uᵗ and vᵗ. *)
+            (* I was hoping this case would help me see how to build the ᵗ
+               types... *)
+            (* In a way, the Aᵗ, uᵗ and vᵗ we would get would be what would
+               fill the only hole for each. *)
           admit.
         }
 
