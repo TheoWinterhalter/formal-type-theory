@@ -37,7 +37,7 @@ Module Stt.
   Local Instance hasUnit : config.WithUnit
     := {| config.withunitFlag := config.No |}.
   Local Instance hasBool : config.WithBool
-    := {| config.withboolFlag := config.No |}.
+    := {| config.withboolFlag := config.Yes |}.
   Local Instance hasBoolReflection : config.BoolReflection
     := {| config.boolreflectionFlag := config.Yes |}.
   Local Instance hasBoolUIP : config.BoolUIP
@@ -80,7 +80,7 @@ Module Ttt.
   Local Instance hasUnit : config.WithUnit
     := {| config.withunitFlag := config.No |}.
   Local Instance hasBool : config.WithBool
-    := {| config.withboolFlag := config.No |}.
+    := {| config.withboolFlag := config.Yes |}.
   Local Instance hasBoolReflection : config.BoolReflection
     := {| config.boolreflectionFlag := config.No |}.
   Local Instance hasBoolUIP : config.BoolUIP
@@ -471,6 +471,9 @@ Proof.
            *)
           admit.
         }
+
+      (* TyBool *)
+      - admit.
     }
 
   (**** trans_isterm ****)
@@ -501,6 +504,15 @@ Proof.
       - { destruct (trans_isterm _ _ _ H) as [Gᵗ [Aᵗ uᵗ]].
           exists Gᵗ. admit.
         }
+
+      (* TermTrue *)
+      - admit.
+
+      (* TermFalse *)
+      - admit.
+
+      (* TermCond *)
+      - admit.
     }
 
   (**** trans_eqctx ****)
@@ -598,6 +610,9 @@ Proof.
       (* EqTySubstId *)
       - admit.
 
+      (* EqTySubstBool *)
+      - admit.
+
       (* CongProd *)
       - admit.
 
@@ -656,6 +671,15 @@ Proof.
       (* EqSubstRefl *)
       - admit.
 
+      (* EqSubstTrue *)
+      - admit.
+
+      (* EqSubstFalse *)
+      - admit.
+
+      (* EqSubstCond *)
+      - admit.
+
       (* BoolReflection *)
       - { destruct (trans_isterm _ _ _ i2) as [Gᵗ [Eqᵗ pᵗ]].
           exists Gᵗ.
@@ -664,8 +688,7 @@ Proof.
             + exact 0.
             + eapply teletype_one. exact Bool.
             + simpl. capply TyBool.
-              * admit.
-              * admit.
+              admit.
           - (* Now we'd like some inversion on Eqᵗ to get some Aᵗ, uᵗ and vᵗ. *)
             (* I was hoping this case would help me see how to build the ᵗ
                types... *)
@@ -677,6 +700,12 @@ Proof.
       (* ProdBeta *)
       - admit.
 
+      (* CondTrue *)
+      - admit.
+
+      (* CondFalse *)
+      - admit.
+
       (* CongAbs *)
       - admit.
 
@@ -684,6 +713,9 @@ Proof.
       - admit.
 
       (* CongRefl *)
+      - admit.
+
+      (* CongCond *)
       - admit.
 
       (* CongTermSubst *)

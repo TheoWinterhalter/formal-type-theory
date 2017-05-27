@@ -1628,7 +1628,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | BoolReflection :
-       boolreflection rule
+       boolreflection withbool rule
          parameters: {G u v p},
          precond: isctx G
          precond: isterm G u Bool
@@ -1639,7 +1639,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | BoolUIP :
-       booluip rule
+       booluip withbool rule
          parameters: {G u v p q},
          precond: isctx G
          precond: isterm G u Bool
