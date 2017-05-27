@@ -276,7 +276,7 @@ Coercion _substitution : substitutionᵗ >-> substitution.
 
 Record typeᵗ {Γ} (Γᵗ : contextᵗ Γ) (A : type) := mktypeᵗ {
   support   : nat ;
-  _teletype : teletype Γ support ;
+  _teletype : teletype Γᵗ support ;
   _type     := tele_to_type _teletype ;
   istype    : Ttt.istype Γᵗ _type
 }.
@@ -367,9 +367,9 @@ Proof.
   - exact 0.
   - unshelve (eapply teletype_one).
     + exact Bool.
-    + capply TyBool.
-      (* Seems like we should be using Γᵗ and not Γ *)
-Abort.
+    + capply TyBool. exact (isctx Γᵗ).
+  - simpl. capply TyBool. exact (isctx Γᵗ).
+Defined.
 
 (* One essential lemma that we want to have on translations is that
    two translations of the same term that live at the same type are
@@ -709,14 +709,8 @@ Proof.
 
       (* BoolReflection *)
       - { destruct (trans_isterm _ _ _ i2) as [Gᵗ [Eqᵗ pᵗ]].
-          exists Gᵗ.
-          simple refine (existT _ _ _).
-          - admit. (* Should be Boolᵗ *)
-          - (* Now we'd like some inversion on Eqᵗ to get some Aᵗ, uᵗ and vᵗ. *)
-            (* I was hoping this case would help me see how to build the ᵗ
-               types... *)
-            (* In a way, the Aᵗ, uᵗ and vᵗ we would get would be what would
-               fill the only hole for each. *)
+          exists Gᵗ, (Boolᵗ Gᵗ).
+          (* Now we'd like some inversion on Eqᵗ to get some uᵗ and vᵗ. *)
           admit.
         }
 
