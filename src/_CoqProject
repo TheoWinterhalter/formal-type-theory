@@ -26,4 +26,4 @@ uniqueness.v
 
 negfunext.v
 
-dset_translation.v
+bool_translation.v
