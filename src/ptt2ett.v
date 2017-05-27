@@ -16,8 +16,8 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
-Context `{ConfigDSetReflection : config.DSetReflection}.
-Context `{ConfigDSetUIP : config.DSetUIP}.
+Context `{ConfigBoolReflection : config.BoolReflection}.
+Context `{ConfigBoolUIP : config.BoolUIP}.
 
 Fixpoint sane_isctx G (P : ptt.isctx G) : ett.isctx G
 
@@ -431,11 +431,11 @@ Proof.
       (* EqReflection *)
       - apply @EqReflection with (p := p) ; auto.
 
-      (* DSetReflection *)
-      - apply @DSetReflection with (p := p) ; auto.
+      (* BoolReflection *)
+      - apply @BoolReflection with (p := p) ; auto.
 
-      (* DSetUIP *)
-      - apply @DSetUIP ; auto.
+      (* BoolUIP *)
+      - apply @BoolUIP ; auto.
 
       (* ProdBeta *)
       - apply ProdBeta ; auto.

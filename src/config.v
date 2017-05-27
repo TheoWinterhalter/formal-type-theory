@@ -2,7 +2,6 @@ Require syntax.
 
 Inductive Yes : Type := yes.
 Inductive No : Type := .
-Inductive Dec : Type := ok | ko.
 
 Class Precond := {
   precondFlag : Type
@@ -44,16 +43,10 @@ Class WithBool := {
   withboolFlag : Type
 }.
 
-Class DSetCriterion := {
-  dsetcriterion : syntax.context -> syntax.type -> Dec
+Class BoolReflection := {
+  boolreflectionFlag : Type
 }.
 
-Class DSetReflection := {
-  dsetreflectionFlag : Type ;
-  dsetreflectionCriterion : syntax.context -> syntax.type -> Dec
-}.
-
-Class DSetUIP := {
-  dsetuipFlag : Type ;
-  dsetuipCriterion : syntax.context -> syntax.type -> Dec
+Class BoolUIP := {
+  booluipFlag : Type
 }.

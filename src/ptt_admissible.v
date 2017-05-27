@@ -18,8 +18,8 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
-Context `{ConfigDSetReflection : config.DSetReflection}.
-Context `{ConfigDSetUIP : config.DSetUIP}.
+Context `{ConfigBoolReflection : config.BoolReflection}.
+Context `{ConfigBoolUIP : config.BoolUIP}.
 
 (* Some preliminary lemmata *)
 Lemma EqTyWeakNat :

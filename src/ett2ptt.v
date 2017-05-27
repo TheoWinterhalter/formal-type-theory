@@ -16,8 +16,8 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
-Context `{ConfigDSetReflection : config.DSetReflection}.
-Context `{ConfigDSetUIP : config.DSetUIP}.
+Context `{ConfigBoolReflection : config.BoolReflection}.
+Context `{ConfigBoolUIP : config.BoolUIP}.
 
 (* Renaming ptt_sanity lemmata for readability. *)
 Definition ptt_sane_issubst := ptt_sanity.sane_issubst.
@@ -1076,37 +1076,29 @@ Proof.
         - now apply sane_isterm.
       }
 
-    (* DSetReflection *)
-    - { config apply @DSetReflection with (p := p).
-        - now apply (@ptt_sane_isterm G p (Id A u v)), sane_isterm.
-        - now apply (ptt_TyIdInversion G A u v),
-                    (ptt_sane_isterm G p (Id A u v)),
+    (* BoolReflection *)
+    - { config apply @BoolReflection with (p := p).
+        - now apply (@ptt_sane_isterm G p (Id Bool u v)), sane_isterm.
+        - now apply (ptt_TyIdInversion G Bool u v),
+                    (ptt_sane_isterm G p (Id Bool u v)),
                     sane_isterm.
-        - now apply (ptt_TyIdInversion G A u v),
-                    (ptt_sane_isterm G p (Id A u v)),
-                    sane_isterm.
-        - now apply (ptt_TyIdInversion G A u v),
-                    (ptt_sane_isterm G p (Id A u v)),
+        - now apply (ptt_TyIdInversion G Bool u v),
+                    (ptt_sane_isterm G p (Id Bool u v)),
                     sane_isterm.
         - now apply sane_isterm.
-        - assumption.
       }
 
-    (* DSetUIP *)
-    - { capply DSetUIP.
-        - now apply (@ptt_sane_isterm G p (Id A u v)), sane_isterm.
-        - now apply (ptt_TyIdInversion G A u v),
-                    (ptt_sane_isterm G p (Id A u v)),
+    (* BoolUIP *)
+    - { capply BoolUIP.
+        - now apply (@ptt_sane_isterm G p (Id Bool u v)), sane_isterm.
+        - now apply (ptt_TyIdInversion G Bool u v),
+                    (ptt_sane_isterm G p (Id Bool u v)),
                     sane_isterm.
-        - now apply (ptt_TyIdInversion G A u v),
-                    (ptt_sane_isterm G p (Id A u v)),
-                    sane_isterm.
-        - now apply (ptt_TyIdInversion G A u v),
-                    (ptt_sane_isterm G p (Id A u v)),
+        - now apply (ptt_TyIdInversion G Bool u v),
+                    (ptt_sane_isterm G p (Id Bool u v)),
                     sane_isterm.
         - now apply sane_isterm.
         - now apply sane_isterm.
-        - assumption.
       }
 
     (* ProdBeta *)

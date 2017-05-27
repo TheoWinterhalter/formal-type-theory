@@ -16,8 +16,8 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
-Context `{ConfigDSetReflection : config.DSetReflection}.
-Context `{ConfigDSetUIP : config.DSetUIP}.
+Context `{ConfigBoolReflection : config.BoolReflection}.
+Context `{ConfigBoolUIP : config.BoolUIP}.
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
@@ -48,11 +48,11 @@ Notation "'withunit' r" :=
 Notation "'withbool' r" :=
   (forall { _ : withboolFlag }, r) (only parsing, at level 97).
 
-Notation "'dsetreflection' r" :=
-  (forall { _ : dsetreflectionFlag }, r) (only parsing, at level 97).
+Notation "'boolreflection' r" :=
+  (forall { _ : boolreflectionFlag }, r) (only parsing, at level 97).
 
-Notation "'dsetuip' r" :=
-  (forall { _ : dsetuipFlag }, r) (only parsing, at level 97).
+Notation "'booluip' r" :=
+  (forall { _ : booluipFlag }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
@@ -1627,31 +1627,27 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G u v A
        endrule
 
-     | DSetReflection :
-       dsetreflection rule
-         parameters: {G A u v p},
+     | BoolReflection :
+       boolreflection rule
+         parameters: {G u v p},
          precond: isctx G
-         precond: istype G A
-         precond: isterm G u A
-         precond: isterm G v A
-         premise: isterm G p (Id A u v)
-         premise: dsetreflectionCriterion G A = ok
+         precond: isterm G u Bool
+         precond: isterm G v Bool
+         premise: isterm G p (Id Bool u v)
          conclusion:
-           eqterm G u v A
+           eqterm G u v Bool
        endrule
 
-     | DSetUIP :
-       dsetuip rule
-         parameters: {G A u v p q},
+     | BoolUIP :
+       booluip rule
+         parameters: {G u v p q},
          precond: isctx G
-         precond: istype G A
-         precond: isterm G u A
-         precond: isterm G v A
-         premise: isterm G p (Id A u v)
-         premise: isterm G q (Id A u v)
-         premise: dsetuipCriterion G A = ok
+         precond: isterm G u Bool
+         precond: isterm G v Bool
+         premise: isterm G p (Id Bool u v)
+         premise: isterm G q (Id Bool u v)
          conclusion:
-           eqterm G p q (Id A u v)
+           eqterm G p q (Id Bool u v)
        endrule
 
      | ProdBeta :

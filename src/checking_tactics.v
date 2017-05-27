@@ -18,8 +18,8 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
-Context `{ConfigDSetReflection : config.DSetReflection}.
-Context `{ConfigDSetUIP : config.DSetUIP}.
+Context `{ConfigBoolReflection : config.BoolReflection}.
+Context `{ConfigBoolUIP : config.BoolUIP}.
 
 (* Some tactic to compose substitutions. *)
 Lemma eqtype_subst_left :
@@ -145,8 +145,8 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
-Context `{ConfigDSetReflection : config.DSetReflection}.
-Context `{ConfigDSetUIP : config.DSetUIP}.
+Context `{ConfigBoolReflection : config.BoolReflection}.
+Context `{ConfigBoolUIP : config.BoolUIP}.
 
 Lemma EqCompZero :
   forall {G D A u sbs},
@@ -1199,8 +1199,8 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
-Context `{ConfigDSetReflection : config.DSetReflection}.
-Context `{ConfigDSetUIP : config.DSetUIP}.
+Context `{ConfigBoolReflection : config.BoolReflection}.
+Context `{ConfigBoolUIP : config.BoolUIP}.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
    some ZeroShift3 if ever we add a constructor that has three variables. *)
