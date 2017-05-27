@@ -361,7 +361,7 @@ Proof.
        *)
 Abort.
 
-Definition Boolᵗ {Γ} (Γᵗ : contextᵗ Γ) : typeᵗ Γᵗ Bool.
+Definition Boolᵗ {Γ} {Γᵗ : contextᵗ Γ} : typeᵗ Γᵗ Bool.
 Proof.
   unshelve (eapply mktypeᵗ).
   - exact 0.
@@ -709,7 +709,7 @@ Proof.
 
       (* BoolReflection *)
       - { destruct (trans_isterm _ _ _ i2) as [Gᵗ [Eqᵗ pᵗ]].
-          exists Gᵗ, (Boolᵗ Gᵗ).
+          exists Gᵗ, Boolᵗ.
           (* Now we'd like some inversion on Eqᵗ to get some uᵗ and vᵗ. *)
           admit.
         }
