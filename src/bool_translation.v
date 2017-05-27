@@ -132,27 +132,57 @@ Tactic Notation "admit" := (exact admit).
    write (and type check!) about them.
  *)
 
-Inductive teletype : nat -> Type :=
-| teletype_one (A : type) : teletype 0
+Record booltm (Γ : context) := {
+  bool_term : term ;
+  is_bool_term : Ttt.isterm Γ bool_term Bool
+}.
+
+Arguments bool_term {_} _.
+Coercion bool_term : booltm >-> term.
+Arguments is_bool_term {_} _.
+
+Inductive teletype : context -> nat -> Type :=
+| teletype_one {Γ} (A : type) : Ttt.istype Γ A -> teletype Γ 0
 | teletype_cons
-    (d : term) (D : type) {n} (f : term -> teletype n) : teletype (S n)
+    {Γ} (d : booltm Γ)
+    {n} (F : booltm Γ -> teletype Γ n) : teletype Γ (S n)
 .
 
-Inductive teleterm : nat -> Type :=
-| teleterm_one (u : term) : teleterm 0
+Fixpoint tele_to_type {Γ n} (T : teletype Γ n) : type :=
+  match T with
+  | teletype_one A _ => A
+  | teletype_cons d F => tele_to_type (F d)
+  end.
+
+Coercion tele_to_type : teletype >-> type.
+
+Inductive teleterm : forall {Γ n}, teletype Γ n -> Type :=
+| teleterm_one {Γ} (u : term) (A : teletype Γ 0) :
+    Ttt.isterm Γ u A -> teleterm A
 | teleterm_cons
-    (d : term) (D : type) {n} (f : term -> teleterm n) : teleterm (S n)
+    {Γ} (d : booltm Γ)
+    {n} {F : booltm Γ -> teletype Γ n}
+    (f : booltm Γ -> teleterm (F d)) : teleterm (teletype_cons d F)
 .
+
+Fixpoint tele_to_term {Γ n} {A : teletype Γ n} (t : teleterm A) : term :=
+  match t with
+  | teleterm_one u _ _ => u
+  | teleterm_cons d f => tele_to_term (f d)
+  end.
+
+Coercion tele_to_term : teleterm >-> term.
 
 Fixpoint tele_eqtype
-  (Γ : context) {n} (T1 T2 : teletype n) : Type.
+  {Γ n} (T1 T2 : teletype Γ n) {struct n} : Type.
 Proof.
+  dependent destruction n ;
   dependent destruction T1 ; dependent destruction T2.
   - exact (Ttt.eqtype Γ A A0).
   - exact (
       { p : term &
-        Ttt.isterm Γ p (Id D d d0) *
-        forall d', Ttt.isterm Γ d D -> tele_eqtype Γ _ (f d') (f0 d')
+        Ttt.isterm Γ p (Id Bool d d0) *
+        forall d', tele_eqtype _ _ (F d') (F0 d')
       }
     ).
 Defined.
@@ -172,22 +202,21 @@ Defined.
 (*   end. *)
 
 Fixpoint tele_eqterm
-  (Γ : context) {n} (t1 t2 : teleterm n) (T1 T2 : teletype n) : Type.
+  {Γ n} {T1 T2 : teletype Γ n}
+  (t1 : teleterm T1) (t2 : teleterm T2)
+  {struct n} : Type.
 Proof.
-  dependent destruction t1 ; dependent destruction t2 ;
-  dependent destruction T1 ; dependent destruction T2.
+  dependent destruction n ;
+  dependent destruction T1 ; dependent destruction T2 ;
+  dependent destruction t1 ; dependent destruction t2.
   - exact (
       Ttt.eqtype Γ A A0 *
       { p : term & Ttt.isterm Γ p (Id A u u0) }
     ).
   - exact (
-      (* The two equalities should probably be in the type as well! *)
-      (* Maybe have some support : teletype -> term list *)
-      Ttt.eqterm Γ d d1 D *
-      Ttt.eqterm Γ d0 d2 D *
       { p : term &
-        Ttt.isterm Γ p (Id D d d0) *
-        forall d', Ttt.isterm Γ d D -> tele_eqterm Γ _ (f d') (f0 d') (f1 d') (f2 d')
+        Ttt.isterm Γ p (Id Bool d d0) *
+        forall d', tele_eqterm _ _ _ _ (f d') (f0 d')
       }
     ).
 Defined.
@@ -210,18 +239,6 @@ Defined.
 (*     } *)
 (*   | _, _, _, _ => False *)
 (*   end. *)
-
-Fixpoint tele_to_type {n} (T : teletype n) : type :=
-  match T with
-  | teletype_one A => A
-  | teletype_cons d D F => tele_to_type (F d)
-  end.
-
-Fixpoint tele_to_term {n} (t : teleterm n) : term :=
-  match t with
-  | teleterm_one u => u
-  | teleterm_cons d D f => tele_to_term (f d)
-  end.
 
 (* Notion of transport based on tele_eqtype.
 
@@ -259,7 +276,7 @@ Coercion _substitution : substitutionᵗ >-> substitution.
 
 Record typeᵗ {Γ} (Γᵗ : contextᵗ Γ) (A : type) := mktypeᵗ {
   support   : nat ;
-  _teletype : teletype support ;
+  _teletype : teletype Γ support ;
   _type     := tele_to_type _teletype ;
   istype    : Ttt.istype Γᵗ _type
 }.
@@ -272,7 +289,7 @@ Coercion _type : typeᵗ >-> type.
 Coercion _teletype : typeᵗ >-> teletype.
 
 Record termᵗ {Γ} {Γᵗ : contextᵗ Γ} {A} (Aᵗ : typeᵗ Γᵗ A) (u : term) := mktermᵗ {
-  _teleterm : teleterm (support Aᵗ) ;
+  _teleterm : teleterm Aᵗ ;
   _term     := tele_to_term _teleterm ;
   isterm : Ttt.isterm Γᵗ _term Aᵗ
 }.
@@ -300,7 +317,7 @@ Definition eqtypeᵗ
   {Γ} {Γᵗ : contextᵗ Γ}
   {A} (Aᵗ : typeᵗ Γᵗ A)
   {B} (Bᵗ : typeᵗ Γᵗ B)
-  (* := tele_eqtype Γᵗ Aᵗ Bᵗ. *)
+  (* := tele_eqtype Aᵗ Bᵗ. *)
   := False.
 
 Definition eqtermᵗ
@@ -308,7 +325,7 @@ Definition eqtermᵗ
   {A} {Aᵗ : typeᵗ Γᵗ A}
   {u} (uᵗ : termᵗ Aᵗ u)
   {v} (vᵗ : termᵗ Aᵗ v)
-  := tele_eqterm Γᵗ uᵗ vᵗ Aᵗ Aᵗ.
+  := tele_eqterm uᵗ vᵗ.
 
 (* Note this is still not ok, we want to have telescopes and also
    constraints on the translation itself, like homology to the original
@@ -342,6 +359,16 @@ Proof.
          as Aᵗ, otherwise there will be cases in which I won't be able to
          conclude!
        *)
+Abort.
+
+Definition Boolᵗ {Γ} (Γᵗ : contextᵗ Γ) : typeᵗ Γᵗ Bool.
+Proof.
+  unshelve (eapply mktypeᵗ).
+  - exact 0.
+  - unshelve (eapply teletype_one).
+    + exact Bool.
+    + capply TyBool.
+      (* Seems like we should be using Γᵗ and not Γ *)
 Abort.
 
 (* One essential lemma that we want to have on translations is that
@@ -684,11 +711,7 @@ Proof.
       - { destruct (trans_isterm _ _ _ i2) as [Gᵗ [Eqᵗ pᵗ]].
           exists Gᵗ.
           simple refine (existT _ _ _).
-          - unshelve (eapply mktypeᵗ).
-            + exact 0.
-            + eapply teletype_one. exact Bool.
-            + simpl. capply TyBool.
-              admit.
+          - admit. (* Should be Boolᵗ *)
           - (* Now we'd like some inversion on Eqᵗ to get some Aᵗ, uᵗ and vᵗ. *)
             (* I was hoping this case would help me see how to build the ᵗ
                types... *)
