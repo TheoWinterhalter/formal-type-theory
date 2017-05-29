@@ -383,6 +383,7 @@ Proof.
   intros.
   dependent destruction Eqᵗ.
   dependent induction _teletype0.
+  (* We need to know the translated type is homologous to the original. *)
 Abort.
 
 (* One essential lemma that we want to have on translations is that
