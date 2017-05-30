@@ -16,6 +16,7 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
+Context `{ConfigPi : config.WithPi}.
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
@@ -45,6 +46,9 @@ Notation "'withunit' r" :=
 
 Notation "'withbool' r" :=
   (forall { _ : withboolFlag }, r) (only parsing, at level 97).
+
+Notation "'withpi' r" :=
+  (forall { _ : withpiFlag }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
@@ -162,7 +166,7 @@ with istype : context -> type -> Type :=
        endrule
 
      | TyProd :
-       rule
+       withpi rule
          parameters: {G A B},
          premise: istype (ctxextend G A) B
          precond: istype G A
@@ -294,7 +298,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermAbs :
-       rule
+       withpi rule
          parameters: {G A u B},
          precond: isctx G
          precond: istype G A
@@ -305,7 +309,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermApp :
-       rule
+       withpi rule
          parameters: {G A B u v},
          precond: isctx G
          precond: istype G A
@@ -463,7 +467,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUniProd :
-       universe rule
+       universe withpi rule
          parameters: {G a b n m},
          premise: isterm G a (Uni (uni n))
          premise: isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))
@@ -473,7 +477,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUniProdProp :
-       universe withprop rule
+       universe withprop withpi rule
          parameters: {G a b l},
          premise: isterm G a (Uni l)
          premise: isterm (ctxextend G (El l a)) b (Uni prop)
@@ -905,7 +909,7 @@ with eqtype : context -> type -> type -> Type :=
 
 
      | EqTySubstProd :
-       rule
+       withpi rule
          parameters: {G D A B sbs},
          premise: issubst sbs G D
          precond: istype D A
@@ -981,7 +985,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | CongProd :
-       rule
+       withpi rule
          parameters: {G A1 A2 B1 B2},
          precond: isctx G
          precond: istype G A1
@@ -1067,7 +1071,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElProd :
-       universe rule
+       universe withpi rule
          parameters: {G a b n m},
          premise: isterm G a (Uni (uni n))
          premise: isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))
@@ -1079,7 +1083,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElProdProp :
-       universe withprop rule
+       universe withprop withpi rule
          parameters: {G a b l},
          premise: isterm G a (Uni l)
          premise: isterm (ctxextend G (El l a)) b (Uni prop)
@@ -1375,7 +1379,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstAbs :
-       rule
+       withpi rule
          parameters: {G D A B u sbs},
          precond: isctx G
          precond: isctx D
@@ -1396,7 +1400,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstApp :
-       rule
+       withpi rule
          parameters: {G D A B u v sbs},
          precond: isctx G
          precond: isctx D
@@ -1620,7 +1624,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | ProdBeta :
-       rule
+       withpi rule
          parameters: {G A B u v},
          precond: isctx G
          precond: istype G A
@@ -1663,7 +1667,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | ProdEta :
-       prodeta rule
+       prodeta withpi rule
          parameters: {G A B u v},
          precond: isctx G
          precond: istype G A
@@ -1737,7 +1741,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongAbs :
-       rule
+       withpi rule
          parameters: {G A1 A2 B1 B2 u1 u2},
          precond: isctx G
          precond: istype G A1
@@ -1757,7 +1761,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongApp :
-       rule
+       withpi rule
          parameters: {G A1 A2 B1 B2 u1 u2 v1 v2},
          precond: isctx G
          precond: istype G A1
@@ -2127,7 +2131,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUniProd :
-       universe rule
+       universe withpi rule
          parameters: {G D a b n m sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni (uni n))
@@ -2145,7 +2149,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUniProdProp :
-       universe withprop rule
+       universe withprop withpi rule
          parameters: {G D a b l sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni l)
@@ -2273,7 +2277,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongUniProd :
-       universe rule
+       universe withpi rule
          parameters: {G a1 a2 b1 b2 n m},
          premise: eqterm G a1 a2 (Uni (uni n))
          premise: eqterm (ctxextend G (El (uni n) a1)) b1 b2 (Uni (uni m))
@@ -2290,7 +2294,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongUniProdProp :
-       universe withprop rule
+       universe withprop withpi rule
          parameters: {G a1 a2 b1 b2 l},
          premise: eqterm G a1 a2 (Uni l)
          premise: eqterm (ctxextend G (El l a1)) b1 b2 (Uni prop)

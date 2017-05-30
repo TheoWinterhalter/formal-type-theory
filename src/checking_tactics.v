@@ -18,6 +18,7 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
+Context `{ConfigPi : config.WithPi}.
 
 (* Some tactic to compose substitutions. *)
 Lemma eqtype_subst_left :
@@ -143,6 +144,7 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
+Context `{ConfigPi : config.WithPi}.
 
 Lemma EqCompZero :
   forall {G D A u sbs},
@@ -1195,6 +1197,7 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
+Context `{ConfigPi : config.WithPi}.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
    some ZeroShift3 if ever we add a constructor that has three variables. *)

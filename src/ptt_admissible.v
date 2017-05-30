@@ -18,6 +18,7 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
+Context `{ConfigPi : config.WithPi}.
 
 (* Some preliminary lemmata *)
 Lemma EqTyWeakNat :

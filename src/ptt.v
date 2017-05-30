@@ -13,6 +13,7 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
+Context `{ConfigPi : config.WithPi}.
 
 Definition isctx := isctx.
 Definition issubst := issubst.
