@@ -38,5 +38,9 @@ Class WithBool := {
   withboolFlag : Type
 }.
 
+Class WithPi := {
+  withpiFlag : Type
+}.
+
 Inductive Yes : Type := yes.
 Inductive No : Type := .

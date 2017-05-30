@@ -29,6 +29,8 @@ Module Stt.
   Context `{ConfigEmpty : config.WithEmpty}.
   Context `{ConfigUnit : config.WithUnit}.
   Context `{ConfigBool : config.WithBool}.
+  Local Instance hasPi : config.WithPi
+    := {| config.withpiFlag := config.Yes |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -62,6 +64,8 @@ Module Ttt.
   Context `{ConfigUnit : config.WithUnit}.
   Local Instance hasBool : config.WithBool
     := {| config.withboolFlag := config.Yes |}.
+  Local Instance hasPi : config.WithPi
+    := {| config.withpiFlag := config.Yes |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
