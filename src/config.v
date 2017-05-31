@@ -37,12 +37,12 @@ Class SimpleProducts `{Syntax} := {
   simpleproductsFlag : Type ;
 
   (* Type *)
-  SimProd : `{simpleproductsFlag} -> type -> type -> type ;
+  SimProd : forall {_ : simpleproductsFlag}, type -> type -> type ;
 
   (* Terms *)
-  pair  : `{simpleproductsFlag} -> type -> type -> term -> term -> term ;
-  proj1 : `{simpleproductsFlag} -> type -> type -> term -> term ;
-  proj2 : `{simpleproductsFlag} -> type -> type -> term -> term
+  pair  : forall {_ : simpleproductsFlag}, type -> type -> term -> term -> term ;
+  proj1 : forall {_ : simpleproductsFlag}, type -> type -> term -> term ;
+  proj2 : forall {_ : simpleproductsFlag}, type -> type -> term -> term
 }.
 
 Class ProdEta := {
@@ -53,47 +53,50 @@ Class WithJ `{Syntax} := {
   withjFlag : Type ;
 
   (* Term *)
-  j : `{withjFlag} -> type -> term -> type -> term -> term -> term -> term
+  j : forall {_ : withjFlag}, type -> term -> type -> term -> term -> term -> term
 }.
 
 Class WithEmpty `{Syntax} := {
   withemptyFlag : Type ;
 
   (* Type *)
-  Empty : `{withemptyFlag} -> type
+  Empty : forall {_ : withemptyFlag}, type ;
+
+  (* Term *)
+  exfalso : forall {_ : withemptyFlag}, type -> term -> term
 }.
 
 Class WithUnit `{Syntax} := {
   withunitFlag : Type ;
 
   (* Type *)
-  Unit : `{withunitFlag} -> type ;
+  Unit : forall {_ : withunitFlag}, type ;
 
   (* Term *)
-  unit : `{withunitFlag} -> term
+  unit : forall {_ : withunitFlag}, term
 }.
 
 Class WithBool `{Syntax} := {
   withboolFlag : Type ;
 
   (* Type *)
-  Bool : `{withboolFlag} -> type ;
+  Bool : forall {_ : withboolFlag}, type ;
 
   (* Terms *)
-  true  : `{withboolFlag} -> term ;
-  false : `{withboolFlag} -> term ;
-  cond  : `{withboolFlag} -> type -> term -> term -> term -> term
+  true  : forall {_ : withboolFlag}, term ;
+  false : forall {_ : withboolFlag}, term ;
+  cond  : forall {_ : withboolFlag}, type -> term -> term -> term -> term
 }.
 
 Class WithPi `{Syntax} := {
   withpiFlag : Type ;
 
   (* Type *)
-  Prod : `{withpiFlag} -> type -> type -> type ;
+  Prod : forall {_ : withpiFlag}, type -> type -> type ;
 
   (* Terms *)
-  lam : `{withpiFlag} -> type -> type -> term -> term ;
-  app : `{withpiFlag} -> term -> type -> type -> term -> term
+  lam : forall {_ : withpiFlag}, type -> type -> term -> term ;
+  app : forall {_ : withpiFlag}, term -> type -> type -> term -> term
 }.
 
 Class UniverseLevels := {
@@ -104,50 +107,50 @@ Class Universes `{Syntax} `{UniverseLevels} := {
   universesFlag : Type ;
 
   (* Levels *)
-  uni : `{universesFlag} -> nat -> level ;
+  uni : forall {_ : universesFlag}, nat -> level ;
 
   (* Types *)
-  Uni : `{universesFlag} -> level -> type ;
-  El  : `{universesFlag} -> level -> term -> type ;
+  Uni : forall {_ : universesFlag}, level -> type ;
+  El  : forall {_ : universesFlag}, level -> term -> type ;
 
   (* Terms *)
-  uniUni : `{universesFlag} -> level -> term
+  uniUni : forall {_ : universesFlag}, level -> term
 }.
 
 Class WithProp `{Universes} := {
   withpropFlag : Type ;
 
   (* Level *)
-  prop : `{withpropFlag} -> level
+  prop : forall {_ : withpropFlag}, level
 }.
 
 Class UniProd `{Universes} `{WithPi} := {
-  uniProd : `{universesFlag} -> `{withpiFlag} ->
+  uniProd : forall {_ : universesFlag}, forall {_ : withpiFlag},
             level -> level -> term -> term -> term
 }.
 
 Class UniId `{Universes} (* `{WithId} *) := {
-  uniId : `{universesFlag} -> (* `{withidFlag} -> *)
+  uniId : forall {_ : universesFlag}, (* forall {_ : withidFlag}, *)
           level -> term -> term -> term -> term
 }.
 
 Class UniEmpty `{Universes} `{WithEmpty} := {
-  uniEmpty : `{universesFlag} -> `{withemptyFlag} ->
+  uniEmpty : forall {_ : universesFlag}, forall {_ : withemptyFlag},
              level -> term
 }.
 
 Class UniUnit `{Universes} `{WithUnit} := {
-  uniUnit : `{universesFlag} -> `{withunitFlag} ->
+  uniUnit : forall {_ : universesFlag}, forall {_ : withunitFlag},
              level -> term
 }.
 
 Class UniBool `{Universes} `{WithBool} := {
-  uniBool : `{universesFlag} -> `{withboolFlag} ->
-             level -> term
+  uniBool : forall {_ : universesFlag}, forall {_ : withboolFlag},
+             nat -> term
 }.
 
 Class UniSimProd `{Universes} `{SimpleProducts} := {
-  uniSimProd : `{universesFlag} -> `{simpleproductsFlag} ->
+  uniSimProd : forall {_ : universesFlag}, forall {_ : simpleproductsFlag},
                level -> level -> term -> term -> term
 }.
 

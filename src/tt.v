@@ -1,6 +1,6 @@
 (* Confgurable type theory. *)
 
-Require Import syntax.
+(* Require Import syntax. *)
 Require Import config.
 
 Section TypeTheoryRules.
@@ -17,6 +17,12 @@ Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
 Context `{ConfigPi : config.WithPi}.
+Context `{ConfigUniProd : config.UniProd}.
+Context `{ConfigUniId : config.UniId}.
+Context `{ConfigUniEmpty : config.UniEmpty}.
+Context `{ConfigUniUnit : config.UniUnit}.
+Context `{ConfigUniBool : config.UniBool}.
+Context `{ConfigUniSimProd : config.UniSimProd}.
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
