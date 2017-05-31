@@ -1,12 +1,23 @@
-default: rules.pdf
+COQMAKEFILE = coq_makefile
+CODE_DIR = src
+LATEX_DIR = latex
 
-src/tt.tex: src/tt.v src/coq2latex.py
-	cd ./src && ./coq2latex.py tt.v > tt.tex
+default: library latex/rules.pdf
 
-rules.pdf: src/rules.tex src/tt.tex
-	cd ./src && pdflatex rules.tex
-	mv src/rules.pdf .
+.PHONY: library clean
 
-clean:
-	rm -f src/tt.tex
-	rm -f rules.pdf
+src/Makefile: src/_CoqProject
+	cd src && $(COQMAKEFILE) -f _CoqProject > Makefile
+
+latex/rules.pdf:
+	$(MAKE) -C $(LATEX_DIR) rules.pdf
+
+latex/rulesParanoid.pdf:
+	$(MAKE) -C $(LATEX_DIR) rulesParanoid.pdf
+
+library: src/Makefile
+	$(MAKE) -C $(CODE_DIR)
+
+clean: src/Makefile
+	$(MAKE) -C $(LATEX_DIR) clean
+	$(MAKE) -C $(CODE_DIR) clean

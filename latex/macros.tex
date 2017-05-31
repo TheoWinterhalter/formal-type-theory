@@ -1,5 +1,14 @@
 %%% Type theory
 
+% Macros for referring to rules.
+\newcommand{\ruleFont}[1]{\textsc{#1}}
+\newcommand{\ruleRef}[2]{\hyperref[#2]{$\ruleFont{#1}$}}
+
+% Macros for various entities appearing in the rules
+
+% Successor of a de Bruijn index
+\newcommand{\suc}[1]{#1 + 1}
+
 % Generic entities
 \newcommand{\G}{\Gamma} % a context
 \newcommand{\D}{\Delta} % another context
@@ -39,7 +48,6 @@
 \newcommand{\sbcomp}[2]{#1 \circ #2}     % composition of substitutions
 
 \newcommand{\subst}[2]{#1[#2]}           % substitution operation
-
 
 % Type formers
 \newcommand{\Prod}[1]{\mathop{\textstyle\prod_{#1}}} % dependent product
