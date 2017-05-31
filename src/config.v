@@ -33,7 +33,7 @@ Class Reflection := {
   reflectionFlag : Type
 }.
 
-Class SimpleProducts `{S : Syntax} := {
+Class SimpleProducts `{Syntax} := {
   simpleproductsFlag : Type ;
 
   (* Type *)
@@ -49,35 +49,58 @@ Class ProdEta := {
   prodetaFlag : Type
 }.
 
-Class WithProp := {
-  withpropFlag : Type
+Class WithJ `{Syntax} := {
+  withjFlag : Type ;
+
+  (* Term *)
+  j : `{withjFlag} -> type -> term -> type -> term -> term -> term -> term
 }.
 
-Class WithJ := {
-  withjFlag : Type
+Class WithEmpty `{Syntax} := {
+  withemptyFlag : Type ;
+
+  (* Type *)
+  Empty : `{withemptyFlag} -> type
 }.
 
-Class WithEmpty := {
-  withemptyFlag : Type
+Class WithUnit `{Syntax} := {
+  withunitFlag : Type ;
+
+  (* Type *)
+  Unit : `{withunitFlag} -> type ;
+
+  (* Term *)
+  unit : `{withunitFlag} -> term
 }.
 
-Class WithUnit := {
-  withunitFlag : Type
+Class WithBool `{Syntax} := {
+  withboolFlag : Type ;
+
+  (* Type *)
+  Bool : `{withboolFlag} -> type ;
+
+  (* Terms *)
+  true  : `{withboolFlag} -> term ;
+  false : `{withboolFlag} -> term ;
+  cond  : `{withboolFlag} -> type -> term -> term -> term -> term
 }.
 
-Class WithBool := {
-  withboolFlag : Type
-}.
+Class WithPi `{Syntax} := {
+  withpiFlag : Type ;
 
-Class WithPi := {
-  withpiFlag : Type
+  (* Type *)
+  Prod : `{withpiFlag} -> type -> type -> type ;
+
+  (* Terms *)
+  lam : `{withpiFlag} -> type -> type -> term -> term ;
+  app : `{withpiFlag} -> term -> type -> type -> term -> term
 }.
 
 Class UniverseLevels := {
   level : Type
 }.
 
-Class Universes `{S : Syntax} `{UL : UniverseLevels} := {
+Class Universes `{Syntax} `{UniverseLevels} := {
   universesFlag : Type ;
 
   (* Levels *)
@@ -91,7 +114,39 @@ Class Universes `{S : Syntax} `{UL : UniverseLevels} := {
   uniUni : `{universesFlag} -> level -> term
 }.
 
-Class UniSimProd `{S : Syntax} `{U : Universes} `{SP : SimpleProducts} := {
+Class WithProp `{Universes} := {
+  withpropFlag : Type ;
+
+  (* Level *)
+  prop : `{withpropFlag} -> level
+}.
+
+Class UniProd `{Universes} `{WithPi} := {
+  uniProd : `{universesFlag} -> `{withpiFlag} ->
+            level -> level -> term -> term -> term
+}.
+
+Class UniId `{Universes} (* `{WithId} *) := {
+  uniId : `{universesFlag} -> (* `{withidFlag} -> *)
+          level -> term -> term -> term -> term
+}.
+
+Class UniEmpty `{Universes} `{WithEmpty} := {
+  uniEmpty : `{universesFlag} -> `{withemptyFlag} ->
+             level -> term
+}.
+
+Class UniUnit `{Universes} `{WithUnit} := {
+  uniUnit : `{universesFlag} -> `{withunitFlag} ->
+             level -> term
+}.
+
+Class UniBool `{Universes} `{WithBool} := {
+  uniBool : `{universesFlag} -> `{withboolFlag} ->
+             level -> term
+}.
+
+Class UniSimProd `{Universes} `{SimpleProducts} := {
   uniSimProd : `{universesFlag} -> `{simpleproductsFlag} ->
                level -> level -> term -> term -> term
 }.
