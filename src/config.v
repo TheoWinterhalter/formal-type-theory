@@ -37,33 +37,16 @@ Class SimpleProducts `{S : Syntax} := {
   simpleproductsFlag : Type ;
 
   (* Type *)
-  SimProd : type -> type -> type ;
+  SimProd : `{simpleproductsFlag} -> type -> type -> type ;
 
   (* Terms *)
-  pair  : type -> type -> term -> term -> term ;
-  proj1 : type -> type -> term -> term ;
-  proj2 : type -> type -> term -> term
+  pair  : `{simpleproductsFlag} -> type -> type -> term -> term -> term ;
+  proj1 : `{simpleproductsFlag} -> type -> type -> term -> term ;
+  proj2 : `{simpleproductsFlag} -> type -> type -> term -> term
 }.
 
 Class ProdEta := {
   prodetaFlag : Type
-}.
-
-Class Universes `{S : Syntax} := {
-  universesFlag : Type ;
-
-  (* Problem: How to handle levels? *)
-
-  (* Types *)
-  Uni : level -> type ;
-  El  : level -> term -> type ;
-
-  (* Problem: The codes need to depend on other flags!
-     I need to learn more about them to see if it is possible.
-   *)
-
-  (* Terms *)
-  uniUni : level -> term
 }.
 
 Class WithProp := {
@@ -88,6 +71,29 @@ Class WithBool := {
 
 Class WithPi := {
   withpiFlag : Type
+}.
+
+Class UniverseLevels := {
+  level : Type
+}.
+
+Class Universes `{S : Syntax} `{UL : UniverseLevels} := {
+  universesFlag : Type ;
+
+  (* Levels *)
+  uni : `{universesFlag} -> nat -> level ;
+
+  (* Types *)
+  Uni : `{universesFlag} -> level -> type ;
+  El  : `{universesFlag} -> level -> term -> type ;
+
+  (* Terms *)
+  uniUni : `{universesFlag} -> level -> term
+}.
+
+Class UniSimProd `{S : Syntax} `{U : Universes} `{SP : SimpleProducts} := {
+  uniSimProd : `{universesFlag} -> `{simpleproductsFlag} ->
+               level -> level -> term -> term -> term
 }.
 
 Inductive Yes : Type := yes.
