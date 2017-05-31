@@ -100,7 +100,10 @@ Class WithPi `{Syntax} := {
 
   (* Terms *)
   lam : forall {_ : Flag withpiFlag}, type -> type -> term -> term ;
-  app : forall {_ : Flag withpiFlag}, term -> type -> type -> term -> term
+  app : forall {_ : Flag withpiFlag}, term -> type -> type -> term -> term ;
+
+  (* Notation *)
+  Arrow {h : Flag withpiFlag} A B := Prod A (Subst B (sbweak A))
 }.
 
 Class UniverseLevels := {

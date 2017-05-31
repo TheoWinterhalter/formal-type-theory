@@ -1,24 +1,31 @@
 (* Tactics and auxiliary lemmas for ptt. *)
 
-Require config.
+Require Import config.
 Require Import config_tactics.
 Require Import tt.
-Require Import syntax.
 
 Section Checking1.
 
 (* We are as modular as can be *)
-Context `{configPrecond : config.Precond}.
-Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
-Context `{configProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context {ConfigSyntax : config.Syntax}.
+Context {ConfigPrecond : config.Precond}.
+Context {ConfigReflection : config.Reflection}.
+Context {ConfigSimpleProducts : config.SimpleProducts}.
+Context {ConfigProdEta : config.ProdEta}.
+Context {ConfigUniverseLevels : config.UniverseLevels}.
+Context {ConfigUniverses : config.Universes}.
+Context {ConfigWithProp : config.WithProp}.
+Context {ConfigWithJ : config.WithJ}.
+Context {ConfigEmpty : config.WithEmpty}.
+Context {ConfigUnit : config.WithUnit}.
+Context {ConfigBool : config.WithBool}.
+Context {ConfigPi : config.WithPi}.
+Context {ConfigUniProd : config.UniProd}.
+Context {ConfigUniId : config.UniId}.
+Context {ConfigUniEmpty : config.UniEmpty}.
+Context {ConfigUniUnit : config.UniUnit}.
+Context {ConfigUniBool : config.UniBool}.
+Context {ConfigUniSimProd : config.UniSimProd}.
 
 (* Some tactic to compose substitutions. *)
 Lemma eqtype_subst_left :
@@ -134,17 +141,25 @@ Ltac compsubst1 :=
 
 Section Checking2.
 
-Context `{configPrecond : config.Precond}.
-Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
-Context `{configProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context {ConfigSyntax : config.Syntax}.
+Context {ConfigPrecond : config.Precond}.
+Context {ConfigReflection : config.Reflection}.
+Context {ConfigSimpleProducts : config.SimpleProducts}.
+Context {ConfigProdEta : config.ProdEta}.
+Context {ConfigUniverseLevels : config.UniverseLevels}.
+Context {ConfigUniverses : config.Universes}.
+Context {ConfigWithProp : config.WithProp}.
+Context {ConfigWithJ : config.WithJ}.
+Context {ConfigEmpty : config.WithEmpty}.
+Context {ConfigUnit : config.WithUnit}.
+Context {ConfigBool : config.WithBool}.
+Context {ConfigPi : config.WithPi}.
+Context {ConfigUniProd : config.UniProd}.
+Context {ConfigUniId : config.UniId}.
+Context {ConfigUniEmpty : config.UniEmpty}.
+Context {ConfigUniUnit : config.UniUnit}.
+Context {ConfigUniBool : config.UniBool}.
+Context {ConfigUniSimProd : config.UniSimProd}.
 
 Lemma EqCompZero :
   forall {G D A u sbs},
@@ -1187,17 +1202,25 @@ Ltac pushsubst1 := prepushsubst1 true.
 
 Section Checking3.
 
-Context `{configPrecond : config.Precond}.
-Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
-Context `{configProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context {ConfigSyntax : config.Syntax}.
+Context {ConfigPrecond : config.Precond}.
+Context {ConfigReflection : config.Reflection}.
+Context {ConfigSimpleProducts : config.SimpleProducts}.
+Context {ConfigProdEta : config.ProdEta}.
+Context {ConfigUniverseLevels : config.UniverseLevels}.
+Context {ConfigUniverses : config.Universes}.
+Context {ConfigWithProp : config.WithProp}.
+Context {ConfigWithJ : config.WithJ}.
+Context {ConfigEmpty : config.WithEmpty}.
+Context {ConfigUnit : config.WithUnit}.
+Context {ConfigBool : config.WithBool}.
+Context {ConfigPi : config.WithPi}.
+Context {ConfigUniProd : config.UniProd}.
+Context {ConfigUniId : config.UniId}.
+Context {ConfigUniEmpty : config.UniEmpty}.
+Context {ConfigUniUnit : config.UniUnit}.
+Context {ConfigUniBool : config.UniBool}.
+Context {ConfigUniSimProd : config.UniSimProd}.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
    some ZeroShift3 if ever we add a constructor that has three variables. *)

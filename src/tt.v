@@ -11,7 +11,7 @@ Context {ConfigPrecond : config.Precond}.
 Context {ConfigReflection : config.Reflection}.
 Context {ConfigSimpleProducts : config.SimpleProducts}.
 Context {ConfigProdEta : config.ProdEta}.
-Context {ConfigUniverseLevels : UniverseLevels}.
+Context {ConfigUniverseLevels : config.UniverseLevels}.
 Context {ConfigUniverses : config.Universes}.
 Context {ConfigWithProp : config.WithProp}.
 Context {ConfigWithJ : config.WithJ}.
