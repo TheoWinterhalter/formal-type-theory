@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import sys
 import re
+import argparse
+import subprocess
 from string import Template
 
 keywords = {
@@ -169,30 +171,45 @@ def parseExpr(tok):
         die ("premature end")
     return e
 
-def ruleTag(prefix, rulename):
-    return prefix + "-".join((w.lower() for w in re.findall(r'[A-Z][a-z]*', rulename)))
+def ruleName(rulename):
+    # We might possibly remove weird characters or some such
+    return rulename
 
-def rule2latex(prefix, name, premises, conclusion):
+def rule2latex(name, preconds, premises, conclusion):
+    preconds = [str(parseExpr(TokenStream(precond))) for precond in preconds]
     premises = [str(parseExpr(TokenStream(premise))) for premise in premises]
     conclusion = str(parseExpr(TokenStream(conclusion)))
+
+    colorPreconds = [Template(r'{\color{precondColor} $precond}').substitute({'precond':precond})
+                     for precond in preconds]
+
+    # NB: below you should keep the space in front of $premises so that axioms looks right
+
     return Template(
-r"""\newcommand{\rl$Prefix$name}{\referTo{$name}{rul:$name}}
-\newcommand{\show$Prefix$name}{%
+r"""\newcommand{\rule$ruleName}{\ruleRef{$ruleName}{rule:$ruleName}}
+\newcommand{\show$ruleName}{%
     \infer
     { $premises}
     {$conclusion}
 }
-""").substitute({"name" : name,
-                 "Prefix" : prefix.capitalize(),
+\newcommand{\show${ruleName}Paranoid}{%
+    \infer
+    { $colorPreconds $separator $premises}
+    {$conclusion}
+}
+""").substitute({"ruleName" : ruleName(name),
+                 "colorPreconds" : " \\\\\n".join(colorPreconds),
                  "premises" : " \\\\\n".join(premises),
+                 "separator" : (r'\\\\' if len(preconds) > 0 else ''),
                  "conclusion" : conclusion})
 
-
-def section(title, prefix, src):
+def section(macroFile, title, src):
     """Process one inductive definition."""
 
-    print ('\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
-    print ('% {0}\n'.format(title))
+    # We parse the rules and create macro definitions from them
+
+    macroFile.write ('\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n')
+    macroFile.write ('% {0}\n'.format(title))
 
     rules = re.findall(
             r'^\s*\|\s+'                   # the beginning of a rule
@@ -214,48 +231,93 @@ def section(title, prefix, src):
             re.DOTALL)
         if not m:
             die ("Failed to parse rule {0} whose body is:\n{1}".format(rulename, rulebody))
-        premises = re.split(r'\s*(?:premise|precond):\s*', m.group('premises'))
-        if len(premises) > 0 and not premises[0]: premises.pop(0)
+
+        # Get premises and preconditions
+        pres = re.split(r'\s*(premise|precond):\s*', m.group('premises'))
+        if len(pres) > 0 and not pres[0]: pres.pop(0)
+        premises = []
+        preconds = []
+        isPrecond = None
+        for word in pres:
+            if word == 'premise':
+                isPrecond = False
+            elif word == 'precond':
+                isPrecond = True
+            else:
+                assert (isPrecond is not None)
+                if isPrecond:
+                    preconds.append(word)
+                else:
+                    premises.append(word)
+
+        # Get the conclusion
         conclusion = m.group('conclusion')
-        print (rule2latex(prefix, rulename, premises, conclusion))
+        macroFile.write (rule2latex(rulename, preconds, premises, conclusion))
 
-    print (Template(r"\newcommand{\show${Prefix}${Title}Rules}{").substitute({
-        'Prefix' : prefix.capitalize(),
-        'Title' : title.capitalize()
+    # We also define a macro which shows all rules of this section.
+
+    macroFile.write ("%%%%%%\n")
+    macroFile.write (Template(r"\newcommand{\${title}Rules}{%").substitute({
+        'title' : title
     }))
-
     for rule in rules:
         rulename = rule[0]
-        print(Template(r"""\begin{equation}
-                           \show$Prefix$name
-                           \tag{\textsc{$ruleTag}}
-                           \end{equation}"""
+        macroFile.write ("\n")
+        macroFile.write(Template(r"""\begin{equation}
+\label{rule:$ruleName}
+\show$ruleName
+\tag{\ruleFont{$ruleName}}
+\end{equation}"""
         ).substitute({
-            'Prefix' : prefix.capitalize(),
-            'ruleTag' : ruleTag(prefix, rulename),
-            'name' : rulename}
-        ))
+            'ruleName' : ruleName(rulename),
+        }))
+    macroFile.write ('}\n\n')
 
-    print (r'}')
+    # And another one that is paranoid
 
+    macroFile.write ("%%%%%%\n")
+    macroFile.write (Template(r"\newcommand{\${title}RulesParanoid}{%").substitute({
+        'title' : title
+    }))
+    for rule in rules:
+        rulename = rule[0]
+        macroFile.write ("\n")
+        macroFile.write(Template(r"""\begin{equation}
+\label{rule-paranoid:$ruleName}
+\show${ruleName}Paranoid
+\tag{\ruleFont{$ruleName}}
+\end{equation}"""
+        ).substitute({
+            'ruleName' : ruleName(rulename),
+        }))
+    macroFile.write ('}\n\n')
 
 ### MAIN PROGRAM
 
+opts = argparse.ArgumentParser(description='Generate LaTeX from inference rules.')
+opts.add_argument('--output', default='tt.tex', help='save rule macros in this file')
+opts.add_argument('coqfile', help='the Coq file containing the rules.')
+
+args = opts.parse_args()
+
 # load the source file
-filename = sys.argv[1]
-
-# prefix = re.match('^(\w+)\.v$', filename).group(1)
-prefix = ""
-
-with open(filename, "r") as f:
+with open(args.coqfile, "r") as f:
     src = f.read()
 
-# remove prelude
+# remove prelude and split into sections.
 sections = re.split(r'Inductive', src, 1)[1]
-
 sections = re.split(r'Inductive|with\b', sections)
-for sect in sections:
-    # print sect
-    m = re.match(r'^\s+(\w+)\s+:', sect) or die ("Could not find section title")
-    title = m.group(1)
-    section(title, prefix, sect)
+
+# Write out the file with macro definitions
+with open(args.output, 'w') as macroFile:
+    # Determine the version of the rules
+    version = subprocess.check_output(['git', 'describe', '--always', '--long']).strip()
+    macroFile.write(Template(r'\newcommand{\rulesVersion}{$version}').substitute({
+        'version' : version
+    }))
+    macroFile.write("\n")
+    # Process each section separately.
+    for sect in sections:
+        m = re.match(r'^\s+(\w+)\s+:', sect) or die ("could not find section title")
+        title = m.group(1)
+        section(macroFile, title, sect)
