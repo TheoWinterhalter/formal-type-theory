@@ -368,7 +368,7 @@ Proof.
       (* TermApp *)
       - { simpl.
           capply TermApp.
-          - capply TermProj1.
+          - capply TermProjOne.
             + now apply (trans_isterm G u (Prod A B)).
           - ih.
         }
@@ -419,13 +419,13 @@ Proof.
           - ih.
         }
 
-      (* TermProj1 *)
-      - { simpl. capply TermProj1.
+      (* TermProjOne *)
+      - { simpl. capply TermProjOne.
           - now apply (trans_isterm G p (SimProd A B)).
         }
 
-      (* TermProj2 *)
-      - { simpl. capply TermProj2.
+      (* TermProjTwo *)
+      - { simpl. capply TermProjTwo.
           - now apply (trans_isterm G p (SimProd A B)).
         }
 
@@ -784,7 +784,7 @@ Proof.
       (* EqSubstApp *)
       - { simpl. ceapply EqTrans.
           - config apply @EqSubstApp with (D := trans_ctx D).
-            + capply TermProj1.
+            + capply TermProjOne.
               * now apply (trans_isterm D u (Prod A B)).
             + ih.
             + ih.
@@ -802,14 +802,14 @@ Proof.
                 -- ih.
               * ceapply EqTrans.
                 -- ceapply EqTyConv.
-                   ++ config apply @EqSubstProj1 with (D := trans_ctx D).
+                   ++ config apply @EqSubstProjOne with (D := trans_ctx D).
                       ** ih.
                       ** now apply (trans_isterm D u (Prod A B)).
                    ++ config apply @EqTySubstProd with (D := trans_ctx D).
                       ** ih.
                       ** now apply (trans_istype (ctxextend D A) B).
                 -- ceapply EqTyConv.
-                   ++ capply CongProj1.
+                   ++ capply CongProjOne.
                       ** capply EqRefl.
                          ceapply TermTyConv.
                          --- config apply @TermSubst with (D := trans_ctx D).
@@ -922,7 +922,7 @@ Proof.
             + capply EqTyRefl. ih.
             + capply EqTyRefl.
               now apply (trans_istype (ctxextend G A) B).
-            + capply Proj1Pair.
+            + capply ProjOnePair.
               * capply TermAbs.
                 now apply (trans_isterm (ctxextend G A) u B).
               * capply TermTrue. ih.
@@ -970,7 +970,7 @@ Proof.
       - { simpl. capply CongApp.
           - ih.
           - now apply (trans_eqtype _ _ _ e0).
-          - capply CongProj1.
+          - capply CongProjOne.
             + now apply (trans_eqterm _ _ _ _ H).
             + capply CongProd.
               * ih.
@@ -1017,15 +1017,15 @@ Proof.
           - ih.
         }
 
-      (* CongProj1 *)
-      - { simpl. capply CongProj1.
+      (* CongProjOne *)
+      - { simpl. capply CongProjOne.
           - now apply (trans_eqterm G p1 p2 (SimProd A1 B1)).
           - ih.
           - ih.
         }
 
-      (* CongProj2 *)
-      - { simpl. capply CongProj2.
+      (* CongProjTwo *)
+      - { simpl. capply CongProjTwo.
           - now apply (trans_eqterm G p1 p2 (SimProd A1 B1)).
           - ih.
           - ih.
@@ -1038,26 +1038,26 @@ Proof.
           - ih.
         }
 
-      (* EqSubstProj1 *)
-      - { simpl. config apply @EqSubstProj1 with (D := trans_ctx D).
+      (* EqSubstProjOne *)
+      - { simpl. config apply @EqSubstProjOne with (D := trans_ctx D).
           - ih.
           - now apply (trans_isterm D p (SimProd A B)).
         }
 
-      (* EqSubstProj2 *)
-      - { simpl. config apply @EqSubstProj2 with (D := trans_ctx D).
+      (* EqSubstProjTwo *)
+      - { simpl. config apply @EqSubstProjTwo with (D := trans_ctx D).
           - ih.
           - now apply (trans_isterm D p (SimProd A B)).
         }
 
-      (* Proj1Pair *)
-      - { simpl. capply Proj1Pair.
+      (* ProjOnePair *)
+      - { simpl. capply ProjOnePair.
           - ih.
           - ih.
         }
 
-      (* Proj2Pair *)
-      - { simpl. capply Proj2Pair.
+      (* ProjTwoPair *)
+      - { simpl. capply ProjTwoPair.
           - ih.
           - ih.
         }

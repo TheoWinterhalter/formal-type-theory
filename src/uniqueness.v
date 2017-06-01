@@ -453,7 +453,7 @@ Proof.
             }
         }
 
-      (* TermProj1 *)
+      (* TermProjOne *)
       - { inversion_clear H2' ; doConfig.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.
@@ -465,7 +465,7 @@ Proof.
             }
         }
 
-      (* TermProj2 *)
+      (* TermProjTwo *)
       - { inversion_clear H2' ; doConfig.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.

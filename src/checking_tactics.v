@@ -939,17 +939,17 @@ Ltac prepushsubst1 sym :=
     ]
   | |- eqterm ?G (subst (proj1 ?A ?B ?p) ?sbs) _ _ =>
     first [
-      ceapply EqTrans ; [ ceapply EqSubstProj1 | .. ]
+      ceapply EqTrans ; [ ceapply EqSubstProjOne | .. ]
     | ceapply EqTyConv ; [
-        ceapply EqTrans ; [ ceapply EqSubstProj1 | .. ]
+        ceapply EqTrans ; [ ceapply EqSubstProjOne | .. ]
       | ..
       ]
     ]
   | |- eqterm ?G (subst (proj2 ?A ?B ?p) ?sbs) _ _ =>
     first [
-      ceapply EqTrans ; [ ceapply EqSubstProj2 | .. ]
+      ceapply EqTrans ; [ ceapply EqSubstProjTwo | .. ]
     | ceapply EqTyConv ; [
-        ceapply EqTrans ; [ ceapply EqSubstProj2 | .. ]
+        ceapply EqTrans ; [ ceapply EqSubstProjTwo | .. ]
       | ..
       ]
     ]
@@ -2322,14 +2322,14 @@ Ltac magicn try shelf tysym debug :=
       ] ; magicn try shelf true debug
     | |- isterm ?G (proj1 ?A ?B ?p) ?T =>
       first [
-        ceapply TermProj1
-      | ceapply TermTyConv ; [ ceapply TermProj1 | .. ]
+        ceapply TermProjOne
+      | ceapply TermTyConv ; [ ceapply TermProjOne | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
     | |- isterm ?G (proj2 ?A ?B ?p) ?T =>
       first [
-        ceapply TermProj2
-      | ceapply TermTyConv ; [ ceapply TermProj2 | .. ]
+        ceapply TermProjTwo
+      | ceapply TermTyConv ; [ ceapply TermProjTwo | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
     | |- isterm ?G (uniProd ?l prop ?a ?b) ?T =>
@@ -2842,14 +2842,14 @@ Ltac magicn try shelf tysym debug :=
       ] ; magicn try shelf true debug
     | |- eqterm ?G (proj1 _ _ _ ) (proj1 _ _ _) _ =>
       first [
-        ceapply CongProj1
-      | ceapply EqTyConv ; [ ceapply CongProj1 | .. ]
+        ceapply CongProjOne
+      | ceapply EqTyConv ; [ ceapply CongProjOne | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
     | |- eqterm ?G (proj2 _ _ _ ) (proj2 _ _ _) _ =>
       first [
-        ceapply CongProj2
-      | ceapply EqTyConv ; [ ceapply CongProj2 | .. ]
+        ceapply CongProjTwo
+      | ceapply EqTyConv ; [ ceapply CongProjTwo | .. ]
       | myfail debug
       ] ; magicn try shelf true debug
     | |- eqterm ?G (uniProd _ prop _ _) (uniProd _ prop _ _) _ =>

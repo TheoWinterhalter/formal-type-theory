@@ -129,10 +129,10 @@ Proof.
   (* TermPair *)
   { magic. }
 
-  (* TermProj1 *)
+  (* TermProjOne *)
   { magic. }
 
-  (* TermProj2 *)
+  (* TermProjTwo *)
   { magic. }
 
   (* TermUniProd *)
@@ -764,13 +764,13 @@ Proof.
       - magic.
     }
 
-  (* CongProj1 *)
+  (* CongProjOne *)
   - { split.
       - magic.
       - magic.
     }
 
-  (* CongProj2 *)
+  (* CongProjTwo *)
   - { split.
       - magic.
       - magic.
@@ -782,25 +782,25 @@ Proof.
       - magic.
     }
 
-  (* EqSubstProj1 *)
+  (* EqSubstProjOne *)
   - { split.
       - magic.
       - magic. Unshelve. all:strictmagic.
     }
 
-  (* EqSubstProj2 *)
+  (* EqSubstProjTwo *)
   - { split.
       - magic.
       - magic. Unshelve. all:strictmagic.
     }
 
-  (* Proj1Pair *)
+  (* ProjOnePair *)
   - { split.
       - magic.
       - magic.
     }
 
-  (* Proj2Pair *)
+  (* ProjTwoPair *)
   - { split.
       - magic.
       - magic.

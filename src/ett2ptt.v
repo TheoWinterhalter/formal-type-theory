@@ -326,8 +326,8 @@ Proof.
         - now apply sane_isterm.
       }
 
-    (* TermProj1 *)
-    - { capply TermProj1.
+    (* TermProjOne *)
+    - { capply TermProjOne.
         - now apply (ptt_sane_isterm G p (SimProd A B)), sane_isterm.
         - now apply (ptt_TySimProdInversion G A B),
                     (ptt_sane_isterm G p (SimProd A B)),
@@ -338,8 +338,8 @@ Proof.
         - now apply sane_isterm.
       }
 
-    (* TermProj2 *)
-    - { capply TermProj2.
+    (* TermProjTwo *)
+    - { capply TermProjTwo.
         - now apply (ptt_sane_isterm G p (SimProd A B)), sane_isterm.
         - now apply (ptt_TySimProdInversion G A B),
                     (ptt_sane_isterm G p (SimProd A B)),
@@ -1235,8 +1235,8 @@ Proof.
         - now apply (ptt_sane_eqterm G v1 v2 B1), sane_eqterm.
       }
 
-    (* CongProj1 *)
-    - { capply CongProj1.
+    (* CongProjOne *)
+    - { capply CongProjOne.
         - now apply sane_eqterm.
         - now apply sane_eqtype.
         - now apply sane_eqtype.
@@ -1249,8 +1249,8 @@ Proof.
         - now apply (ptt_sane_eqterm G p1 p2 (SimProd A1 B1)), sane_eqterm.
       }
 
-    (* CongProj2 *)
-    - { capply CongProj2.
+    (* CongProjTwo *)
+    - { capply CongProjTwo.
         - now apply sane_eqterm.
         - now apply sane_eqtype.
         - now apply sane_eqtype.
@@ -1277,8 +1277,8 @@ Proof.
         - now apply (ptt_sane_isterm D v B), sane_isterm.
       }
 
-    (* EqSubstProj1 *)
-    - { config apply EqSubstProj1 with (D0 := D).
+    (* EqSubstProjOne *)
+    - { config apply EqSubstProjOne with (D0 := D).
         - now apply sane_issubst.
         - now apply sane_isterm.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
@@ -1291,8 +1291,8 @@ Proof.
                     sane_isterm.
       }
 
-    (* EqSubstProj2 *)
-    - { config apply EqSubstProj2 with (D0 := D).
+    (* EqSubstProjTwo *)
+    - { config apply EqSubstProjTwo with (D0 := D).
         - now apply sane_issubst.
         - now apply sane_isterm.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
@@ -1305,8 +1305,8 @@ Proof.
                     sane_isterm.
       }
 
-    (* Proj1Pair *)
-    - { capply Proj1Pair.
+    (* ProjOnePair *)
+    - { capply ProjOnePair.
         - now apply sane_isterm.
         - now apply sane_isterm.
         - now apply (ptt_sane_isterm G u A), sane_isterm.
@@ -1314,8 +1314,8 @@ Proof.
         - now apply (ptt_sane_isterm G v B), sane_isterm.
       }
 
-    (* Proj2Pair *)
-    - { capply Proj2Pair.
+    (* ProjTwoPair *)
+    - { capply ProjTwoPair.
         - now apply sane_isterm.
         - now apply sane_isterm.
         - now apply (ptt_sane_isterm G u A), sane_isterm.
