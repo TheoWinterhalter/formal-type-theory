@@ -27,10 +27,14 @@ Context {ConfigUniUnit : config.UniUnit}.
 Context {ConfigUniBool : config.UniBool}.
 Context {ConfigUniSimProd : config.UniSimProd}.
 
+Context {ConfigContextInjectivity : config.ContextInjectivity}.
+
 Definition CtxExtendInversion G A (H : isctx (ctxextend G A)) :
   isctx G * istype G A.
 Proof.
-  config inversion_clear H. easy.
+  config inversion H.
+  - destruct (discriminate_ctx H1).
+  - destruct (ctxextend_injective H1). subst. easy.
 Defined.
 
 Fixpoint TyIdInversion G A u v (H : istype G (Id A u v)) {struct H} :
