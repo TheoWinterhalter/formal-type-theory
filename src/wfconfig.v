@@ -47,4 +47,10 @@ Class TySimProdInversionClass := {
                          isctx G * istype G A * istype G B
 }.
 
+Class EqCtxExtendInversionClass := {
+  EqCtxExtendInversion : forall G A G' A',
+                           eqctx (ctxextend G A) (ctxextend G' A') ->
+                           eqctx G G' * eqtype G A A'
+}.
+
 End WellFormedConfiguration.
