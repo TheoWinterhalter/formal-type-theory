@@ -1,6 +1,6 @@
 # A formalization of type theory in Coq
 
-This library formalizes dependent type theory in the style of Per Martin-Löf. The
+This Coq library formalizes dependent type theory in the style of Per Martin-Löf. The
 formalization is *configurable* in the sense that various components can be turned on or
 off, or be left ambivalent. It is thus easy to instantiate many variants of type theory,
 such as extensional vs. intensional, with or without universes, etc. The library also
@@ -13,7 +13,7 @@ formalizes several meta-theorems about type theory.
 The library works with Coq 8.6, and probably with many other recent versions as well, as
 it does not use any special features of Coq. You may find out about the best way to install Coq at the [Coq web site](If you do not have Coq, visit).
 
-To compile the library you need [`make`](https://www.gnu.org/software/make/).
+To compile the library you need Coq and [`make`](https://www.gnu.org/software/make/).
 
 ### Requirements for generating the LaTeX version of rules
 
@@ -44,7 +44,9 @@ To compile the library and the LaTeX version of the rules run
 ```bash
 make
 ```
-from the command line. Specific targets for `make` are:
+from the command line. The library is in the `src` subfolder and the PDF with the rules is `latex/rules.pdf`.
+
+Specific targets for `make` are:
 
 * `clean` -- clean files
 * `latex/rules.pdf` -- the rules in PDF, the file can be found in `latex/rules.pdf`
@@ -53,7 +55,31 @@ from the command line. Specific targets for `make` are:
 
 For example, `make latex/rules.pdf` generates the file `latex/rules.pdf`.
 
-## Usage
+## Structure of the library
+
+### The files
+
+The `src` folder contains the Coq files. The more important ones are:
+
+* `config.v` -- configuration options
+* `config_tactics.v` -- tactics for dealing with configuration options
+* `ett.v` -- economic type theory
+* `ett2ptt.v` -- proof that we can pass from economic to paranoid type theory
+* `ett_sanity.v` -- proof that economic type theory is sane
+* `inversion.v` -- inversion lemmas
+* `negfunext.v` -- proof that function extensionality is not provable in MLTT
+* `ptt.v` -- paranoid type theory
+* `ptt2ett.v` -- proof that we can pass from paranoid to economic type theory
+* `ptt_admissible.v` -- various admissibility lemmas for paranoid type theory
+* `ptt_inversion.v` -- inversion principles for paranoid type theory
+* `ptt_sanity.v` -- proof that paranoid type theory is sane
+* `substitution_elim.v` -- an attempt to show that explicit substitutions can be computed
+* `syntax.v` -- definition of presytnax
+* `tactics.v` -- tactics for working with the library
+* `tt.v` -- all the rules of type theory
+* `uniqueness.v` -- proof of uniqueness of typing
+
+### Old `README`
 
 (Below is still the old version of the README.)
 
@@ -70,10 +96,6 @@ We also provide proofs of sanity (`Γ ⊢ u : A` implies `Γ ctx` and `Γ ⊢ A`
 on the parameters of the type theory (whether it's economic or paranoid, has simple products or not, universes or not…).
 This also comes with tactics to type check terms automatically (although time-consuming for the time being).
 
-### Structure of the repository
-
-`src` contains the formalisaton as advertised above.  
-Refer to the `README` inside the folder to get more information about its strucutre.
 
 ### Git branches
 
