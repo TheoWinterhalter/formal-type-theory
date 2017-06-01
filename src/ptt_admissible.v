@@ -7,8 +7,8 @@ Require Import checking_tactics.
 
 Section PttAdmissible.
 
-Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
 Context {ConfigSyntax : config.Syntax}.
+Context {ConfigPrecond : config.Precond}.
 Context {ConfigReflection : config.Reflection}.
 Context {ConfigSimpleProducts : config.SimpleProducts}.
 Context {ConfigProdEta : config.ProdEta}.
@@ -26,6 +26,7 @@ Context {ConfigUniEmpty : config.UniEmpty}.
 Context {ConfigUniUnit : config.UniUnit}.
 Context {ConfigUniBool : config.UniBool}.
 Context {ConfigUniSimProd : config.UniSimProd}.
+Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
 
 (* Some preliminary lemmata *)
 Lemma EqTyWeakNat :

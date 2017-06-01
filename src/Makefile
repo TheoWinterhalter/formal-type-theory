@@ -109,9 +109,9 @@ VFILES:=config.v\
   ptt.v\
   checking_tactics.v\
   ptt_admissible.v\
-  ptt_inversion.v\
   ptt_sanity.v\
   ptt2ett.v\
+  wfconfig.v\
   ett2ptt.v\
   ett_sanity.v\
   tactics.v\

@@ -163,10 +163,3 @@ Class UniSimProd `{Universes} `{SimpleProducts} := {
 
 Inductive Yes : Type := yes.
 Inductive No : Type := .
-
-Class ContextInjectivity `{Syntax} := {
-  discriminate_ctx : forall {G A}, ctxempty = ctxextend G A -> False ;
-  ctxextend_injective : forall {G D A B},
-      ctxextend G A = ctxextend D B ->
-      (G = D) * (A = B)
-}.

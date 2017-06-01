@@ -1,22 +1,30 @@
-Require config.
+Require Import config.
 Require Import config_tactics.
 
-Require Import syntax.
 Require Import tt.
 Require ptt ett.
 
 Section Ptt2Ett.
 
-Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
-Context `{ConfigProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context {ConfigSyntax : config.Syntax}.
+Context {ConfigPrecond : config.Precond}.
+Context {ConfigReflection : config.Reflection}.
+Context {ConfigSimpleProducts : config.SimpleProducts}.
+Context {ConfigProdEta : config.ProdEta}.
+Context {ConfigUniverseLevels : config.UniverseLevels}.
+Context {ConfigUniverses : config.Universes}.
+Context {ConfigWithProp : config.WithProp}.
+Context {ConfigWithJ : config.WithJ}.
+Context {ConfigEmpty : config.WithEmpty}.
+Context {ConfigUnit : config.WithUnit}.
+Context {ConfigBool : config.WithBool}.
+Context {ConfigPi : config.WithPi}.
+Context {ConfigUniProd : config.UniProd}.
+Context {ConfigUniId : config.UniId}.
+Context {ConfigUniEmpty : config.UniEmpty}.
+Context {ConfigUniUnit : config.UniUnit}.
+Context {ConfigUniBool : config.UniBool}.
+Context {ConfigUniSimProd : config.UniSimProd}.
 
 Fixpoint sane_isctx G (P : ptt.isctx G) : ett.isctx G
 
@@ -296,7 +304,7 @@ Proof.
       - apply @EqTySubstBool with (D := D) ; auto.
 
       (* EqTyExfalso *)
-      - apply @EqTyExfalso with (u := u) ; auto.
+      - apply @EqTyExfalso with (u := u) (H := H) ; auto.
 
       (* CongProd *)
       - apply CongProd ; auto.
@@ -422,7 +430,7 @@ Proof.
       - apply @EqSubstCond with (D := D) ; auto.
 
       (* EqTermExfalso *)
-      - apply @EqTermExfalso with (w := w0) ; auto.
+      - apply @EqTermExfalso with (w := w) (H := H) ; auto.
 
       (* UnitEta *)
       - apply UnitEta ; auto.
