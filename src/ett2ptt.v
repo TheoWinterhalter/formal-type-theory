@@ -10,7 +10,6 @@ Section Ett2Ptt.
   Open Scope type_scope.
 
 Context {ConfigSyntax : config.Syntax}.
-Context {ConfigPrecond : config.Precond}.
 Context {ConfigReflection : config.Reflection}.
 Context {ConfigSimpleProducts : config.SimpleProducts}.
 Context {ConfigProdEta : config.ProdEta}.
@@ -31,7 +30,10 @@ Context {ConfigUniSimProd : config.UniSimProd}.
 
 (* We need inversion lemmata and we can't prove them since the syntax
    is not necessarilly inductive and thus not necessarilly injective.
+
+   We want them for PTT.
 *)
+Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
 Context {ConfigCtxExtendInversion : CtxExtendInversionClass}.
 Context {ConfigTyIdInversion : TyIdInversionClass}.
 Context {ConfigTyProdInversion : TyProdInversionClass}.
@@ -708,7 +710,7 @@ Proof.
     }
 
     (* EqTyExfalso *)
-    { config apply @EqTyExfalso with (u := u).
+    { config apply @EqTyExfalso with (u := u) (H := H).
       - now apply (@ptt_sane_istype G A), sane_istype.
       - now apply sane_istype.
       - now apply sane_istype.
@@ -1059,7 +1061,7 @@ Proof.
       }
 
     (* EqTermExfalso *)
-    - { config apply @EqTermExfalso with (w := w0).
+    - { config apply @EqTermExfalso with (w := w) (H := H).
         - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply sane_isterm.
@@ -1076,6 +1078,7 @@ Proof.
 
     (* EqReflection *)
     - { config apply @EqReflection with (p := p).
+        - assumption.
         - now apply (@ptt_sane_isterm G p (Id A u v)), sane_isterm.
         - now apply (TyIdInversion G A u v),
                     (ptt_sane_isterm G p (Id A u v)),
@@ -1116,6 +1119,7 @@ Proof.
 
     (* ProdEta *)
     - { capply ProdEta.
+        - assumption.
         - now apply (@ptt_sane_isterm G u (Prod A B)), sane_isterm.
         - now apply (TyProdInversion G A B),
                     (ptt_sane_isterm G u (Prod A B)),
