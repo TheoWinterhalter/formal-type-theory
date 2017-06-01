@@ -115,7 +115,6 @@ VFILES:=config.v\
   ett2ptt.v\
   ett_sanity.v\
   tactics.v\
-  inversion.v\
   uniqueness.v\
   negfunext.v
 
