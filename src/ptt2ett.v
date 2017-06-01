@@ -154,11 +154,11 @@ Proof.
       (* TermPair *)
       - apply TermPair ; auto.
 
-      (* TermProj1 *)
-      - apply TermProj1 ; auto.
+      (* TermProjOne *)
+      - apply TermProjOne ; auto.
 
-      (* TermProj2 *)
-      - apply TermProj2 ; auto.
+      (* TermProjTwo *)
+      - apply TermProjTwo ; auto.
 
       (* TermUniProd *)
       - apply TermUniProd ; auto.
@@ -466,26 +466,26 @@ Proof.
       (* CongPair *)
       - apply CongPair ; auto.
 
-      (* CongProj1 *)
-      - apply CongProj1 ; auto.
+      (* CongProjOne *)
+      - apply CongProjOne ; auto.
 
-      (* CongProj2 *)
-      - apply CongProj2 ; auto.
+      (* CongProjTwo *)
+      - apply CongProjTwo ; auto.
 
       (* EqSubstPair *)
       - apply @EqSubstPair with (D := D) ; auto.
 
-      (* EqSubstProj1 *)
-      - apply @EqSubstProj1 with (D := D) ; auto.
+      (* EqSubstProjOne *)
+      - apply @EqSubstProjOne with (D := D) ; auto.
 
-      (* EqSubstProj2 *)
-      - apply @EqSubstProj2 with (D := D) ; auto.
+      (* EqSubstProjTwo *)
+      - apply @EqSubstProjTwo with (D := D) ; auto.
 
-      (* Proj1Pair *)
-      - apply Proj1Pair ; auto.
+      (* ProjOnePair *)
+      - apply ProjOnePair ; auto.
 
-      (* Proj2Pair *)
-      - apply Proj2Pair ; auto.
+      (* ProjTwoPair *)
+      - apply ProjTwoPair ; auto.
 
       (* PairEta *)
       - apply PairEta ; auto.

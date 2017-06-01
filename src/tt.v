@@ -1,5 +1,14 @@
 (* Confgurable type theory. *)
 
+(* Requirements:
+
+   1. Use only letters (no numerals) in rule names, because we define LaTeX macros
+      out of them, and those cannot contain numerals.
+
+   2. Do not nest comments inside comments, or else the Python script will break.
+
+*)
+
 Require Import syntax.
 Require Import config.
 
@@ -444,7 +453,7 @@ with isterm : context -> term -> type -> Type :=
            isterm G (pair A B u v) (SimProd A B)
        endrule
 
-     | TermProj1 :
+     | TermProjOne :
        simpleproduct rule
          parameters: {G A B p},
          precond: isctx G
@@ -455,7 +464,7 @@ with isterm : context -> term -> type -> Type :=
            isterm G (proj1 A B p) A
        endrule
 
-     | TermProj2 :
+     | TermProjTwo :
        simpleproduct rule
          parameters: {G A B p},
          precond: isctx G
@@ -1997,7 +2006,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (SimProd A1 B1)
        endrule
 
-     | CongProj1 :
+     | CongProjOne :
        simpleproduct rule
          parameters: {G A1 A2 B1 B2 p1 p2},
          premise: eqterm G p1 p2 (SimProd A1 B1)
@@ -2017,7 +2026,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                   A1
        endrule
 
-     | CongProj2 :
+     | CongProjTwo :
        simpleproduct rule
          parameters: {G A1 A2 B1 B2 p1 p2},
          premise: eqterm G p1 p2 (SimProd A1 B1)
@@ -2054,7 +2063,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (SimProd (Subst A sbs) (Subst B sbs))
        endrule
 
-     | EqSubstProj1 :
+     | EqSubstProjOne :
        simpleproduct rule
          parameters: {G D A B p sbs},
          premise: issubst sbs G D
@@ -2070,7 +2079,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst A sbs)
        endrule
 
-     | EqSubstProj2 :
+     | EqSubstProjTwo :
        simpleproduct rule
          parameters: {G D A B p sbs},
          premise: issubst sbs G D
@@ -2086,7 +2095,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst B sbs)
        endrule
 
-     | Proj1Pair :
+     | ProjOnePair :
        simpleproduct rule
          parameters: {G A B u v},
          premise: isterm G u A
@@ -2101,7 +2110,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                   A
        endrule
 
-     | Proj2Pair :
+     | ProjTwoPair :
        simpleproduct rule
          parameters: {G A B u v},
          premise: isterm G u A
