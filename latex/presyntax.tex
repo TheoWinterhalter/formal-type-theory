@@ -1,0 +1,56 @@
+%% It would be cool if in the future this section were generatd from the source.
+
+\begin{align*}
+%
+\intertext{Universe level $k$, $\ell$:}
+  & \univ{n} && \text{$n$-th level for $n \in \mathbb{N}$} \\
+  & \propLevel && \text{the level of propositions} \\
+\intertext{Context $\Gamma$, $\Delta$:}
+  & \ctxempty &&\text{empty context} \\
+  & \ctxextend{\Gamma}{A} &&\text{context extension} \\
+%
+\intertext{Type $A$, $B$, $C$:}
+  & \Prod{A}{B} &&\text{product} \\
+  & \Id{A}{u}{v} &&\text{identity type} \\
+  & \Subst{A}{\sigma} &&\text{substitution} \\
+  & \Empty &&\text{empty type} \\
+  & \Unit &&\text{unit type} \\
+  & \Bool &&\text{boolean type} \\
+  & \SimProd{A}{B} &&\text{simple product} \\
+  & \Univ{\ell} &&\text{universe} \\
+  & \El{\ell}{a} &&\text{universe decoding} \\
+\intertext{Term $u$, $v$, $w$:}
+ & \var{k} &&\text{$k$-th de Bruijn index} \\
+ & \lam{A}{B}{u} &&\text{$\lambda$-abstraction} \\
+ & \app{u}{A}{B}{v} &&\text{application} \\
+ & \refl{A}{u} &&\text{reflexivity} \\
+ & \J{A}{u}{C}{w}{v}{p} &&\text{identity elimination} \\
+ & \subst{u}{\sigma} &&\text{substitution} \\
+ & \exfalso{A}{u} &&\text{ex falso quodlibet} \\
+ & \unit &&\text{unit} \\
+ & \true &&\text{true} \\
+ & \false &&\text{false} \\
+ & \cond{A}{u}{v}{w} &&\text{boolean elimination} \\
+ & \pair{A}{B}{u}{v} &&\text{ordered pair} \\
+ & \projOne{A}{B}{p} &&\text{first projection} \\
+ & \projTwo{A}{B}{p} &&\text{second projection} \\
+ & \uniProd{k}{\ell}{a}{b} &&\text{code of product} \\
+ & \uniId{\ell}{a}{u}{v} &&\text{code of identity type} \\
+ & \uniEmpty{\ell} &&\text{code of empty type} \\
+ & \uniUnit{\ell} &&\text{code of unit type} \\
+ & \uniBool{\ell} &&\text{code of boolean type} \\
+ & \uniSimProd{k}{\ell}{a}{b} &&\text{code of simple product} \\
+ & \uniUni{\ell} &&\text{code of universe} \\
+%
+\intertext{Substitution $\sigma$, $\rho$, $\tau$:}
+%
+ & \sbzero{A}{u} &&\text{substitute $u$ for $\var{0}$} \\
+ & \sbweak{A} &&\text{weakening} \\
+ & \sbshift{\sigma}{A} &&\text{shift substitution} \\
+ & \sbid &&\text{identity substitution} \\
+ & \sbcomp{\sigma}{\rho} &&\text{composition} \\
+%
+\intertext{Abbreviations:}
+%
+  &A \to B \defequiv \Prod{A}{\Subst{B}{\sbweak{A}}} &&\text{function type}
+\end{align*}

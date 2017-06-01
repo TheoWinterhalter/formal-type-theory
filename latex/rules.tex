@@ -5,8 +5,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{mathpartir}
 \usepackage{hyperref}
-\usepackage{amsmath}
-\usepackage{times}
+\usepackage{amsmath,amssymb}
 \usepackage{a4wide}
 
 % General macros
@@ -25,35 +24,41 @@ These are the rules of
 \href{https://github.com/TheoWinterhalter/formal-type-theory}{\texttt{formal-type-theory}},
 version \texttt{\rulesVersion}.
 
-\section*{Judgment $\isctx{\G}$}
+\section{Presyntax}
+
+\input{presyntax.tex}
+
+\section{Judgment rules}
+
+\subsection{Judgment $\isctx{\Gamma}$}
 
 \isctxRules
 
-\section*{Judgment $\issubst{\sbs}{\G}{\D}$}
+\subsection{Judgment $\issubst{\sigma}{\Gamma}{\Delta}$}
 
 \issubstRules
 
-\section*{Judgment $\istype{\G}{\A}$}
+\subsection{Judgment $\istype{\Gamma}{A}$}
 
 \istypeRules
 
-\section*{Judgment $\isterm{\G}{\uu}{\A}$}
+\subsection{Judgment $\isterm{\Gamma}{u}{A}$}
 
 \istermRules
 
-\section*{Judgment $\eqctx{\G}{\D}$}
+\subsection{Judgment $\eqctx{\Gamma}{\Delta}$}
 
 \eqctxRules
 
-\section*{Judgment $\eqsubst{\sbs}{\sbt}{\G}{\D}$}
+\subsection{Judgment $\eqsubst{\sigma}{\rho}{\Gamma}{\Delta}$}
 
 \eqsubstRules
 
-\section*{Judgment $\eqtype{\G}{\A}{\B}$}
+\subsection{Judgment $\eqtype{\Gamma}{A}{B}$}
 
 \eqtypeRules
 
-\section*{Judgment $\eqterm{\G}{\uu}{\vv}{\A}$}
+\subsection{Judgment $\eqterm{\Gamma}{u}{v}{A}$}
 
 \eqtermRules
 
