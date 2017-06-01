@@ -1,0 +1,60 @@
+\documentclass{article}
+
+% DO NOT COMPILE THIS BY HAND, INSTEAD RUN: make rules.pdf
+
+\usepackage[utf8]{inputenc}
+\usepackage{mathpartir}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{times}
+\usepackage{a4wide}
+
+% General macros
+\input{macros.tex}
+
+% Macros for displaying and referring to rules (the file tt.tex is generated)
+\input{tt.tex}
+
+\begin{document}
+
+\title{Rules of type theory}
+\author{}
+\maketitle
+
+These are the rules of
+\href{https://github.com/TheoWinterhalter/formal-type-theory}{\texttt{formal-type-theory}},
+version \texttt{\rulesVersion}.
+
+\section*{Judgment $\isctx{\G}$}
+
+\isctxRules
+
+\section*{Judgment $\issubst{\sbs}{\G}{\D}$}
+
+\issubstRules
+
+\section*{Judgment $\istype{\G}{\A}$}
+
+\istypeRules
+
+\section*{Judgment $\isterm{\G}{\uu}{\A}$}
+
+\istermRules
+
+\section*{Judgment $\eqctx{\G}{\D}$}
+
+\eqctxRules
+
+\section*{Judgment $\eqsubst{\sbs}{\sbt}{\G}{\D}$}
+
+\eqsubstRules
+
+\section*{Judgment $\eqtype{\G}{\A}{\B}$}
+
+\eqtypeRules
+
+\section*{Judgment $\eqterm{\G}{\uu}{\vv}{\A}$}
+
+\eqtermRules
+
+\end{document}
