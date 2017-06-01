@@ -10,6 +10,41 @@ Require Import syntax.
 Require Import tt.
 Require Import checking_tactics.
 
+Instance Syntax : config.Syntax := {|
+  config.context := context ;
+  config.type := type ;
+  config.term := term ;
+  config.substitution := substitution ;
+
+  config.ctxempty := ctxempty ;
+  config.ctxextend := ctxextend ;
+
+  config.Id := Id ;
+  config.Subst := Subst ;
+
+  config.var := var ;
+  config.refl := refl ;
+  config.subst := subst ;
+
+  config.sbzero := sbzero ;
+  config.sbweak := sbweak ;
+  config.sbshift := sbshift ;
+  config.sbid := sbid ;
+  config.sbcomp := sbcomp
+|}.
+
+Definition nothing : forall {A}, config.Flag config.No -> A.
+Proof.
+  intros A f.
+  destruct f. destruct flagProof.
+Defined.
+
+Definition exactly : forall {A}, A -> config.Flag config.Yes -> A.
+Proof.
+  intros A a f.
+  exact a.
+Defined.
+
 
 (* Source type theory *)
 Module Stt.
@@ -18,19 +53,33 @@ Module Stt.
 
   Local Instance hasPrecond : config.Precond
     := {| config.precondFlag := config.Yes |}.
-  Context `{configReflection : config.Reflection}.
-  Context `{ConfigSimpleProducts : config.SimpleProducts}.
+  Context {ConfigReflection : config.Reflection}.
+  Context {ConfigSimpleProducts : config.SimpleProducts}.
   Local Instance hasProdEta : config.ProdEta
     := {| config.prodetaFlag := config.No |}.
-  Context `{ConfigUniverses : config.Universes}.
+  Context {ConfigUniverseLevels : config.UniverseLevels}.
+  Context {ConfigUniverses : config.Universes}.
   Local Instance hasProp : config.WithProp
-    := {| config.withpropFlag := config.No |}.
-  Context `{ConfigWithJ : config.WithJ}.
-  Context `{ConfigEmpty : config.WithEmpty}.
-  Context `{ConfigUnit : config.WithUnit}.
-  Context `{ConfigBool : config.WithBool}.
+    := {| config.withpropFlag := config.No ;
+          config.prop := nothing |}.
+  Context {ConfigWithJ : config.WithJ}.
+  Context {ConfigEmpty : config.WithEmpty}.
+  Context {ConfigUnit : config.WithUnit}.
+  Context {ConfigBool : config.WithBool}.
+  Context {ConfigPi : config.WithPi}.
+  Context {ConfigUniProd : config.UniProd}.
+  Context {ConfigUniId : config.UniId}.
+  Context {ConfigUniEmpty : config.UniEmpty}.
+  Context {ConfigUniUnit : config.UniUnit}.
+  Context {ConfigUniBool : config.UniBool}.
+  Context {ConfigUniSimProd : config.UniSimProd}.
   Local Instance hasPi : config.WithPi
-    := {| config.withpiFlag := config.Yes |}.
+    := {| config.withpiFlag := config.Yes ;
+
+          config.Prod := exactly Prod ;
+
+          config.lam := exactly lam ;
+          config.app := exactly app |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -52,18 +101,27 @@ Module Ttt.
 
   Local Instance hasPrecond : config.Precond
     := {| config.precondFlag := config.No |}.
-  Context `{configReflection : config.Reflection}.
+  Context {ConfigReflection : config.Reflection}.
   Local Instance hasSimpleProducts : config.SimpleProducts
     := {| config.simpleproductsFlag := config.Yes |}.
   Local Instance hasProdEta : config.ProdEta
     := {| config.prodetaFlag := config.No |}.
-  Context `{ConfigUniverses : config.Universes}.
-  Context `{ConfigWithProp : config.WithProp}.
-  Context `{ConfigWithJ : config.WithJ}.
-  Context `{ConfigEmpty : config.WithEmpty}.
-  Context `{ConfigUnit : config.WithUnit}.
+  Context {ConfigUniverseLevels : config.UniverseLevels}.
+  Context {ConfigUniverses : config.Universes}.
+  Local Instance hasProp : config.WithProp
+    := {| config.withpropFlag := config.No |}.
+  Context {ConfigWithJ : config.WithJ}.
+  Context {ConfigEmpty : config.WithEmpty}.
+  Context {ConfigUnit : config.WithUnit}.
   Local Instance hasBool : config.WithBool
     := {| config.withboolFlag := config.Yes |}.
+  Context {ConfigPi : config.WithPi}.
+  Context {ConfigUniProd : config.UniProd}.
+  Context {ConfigUniId : config.UniId}.
+  Context {ConfigUniEmpty : config.UniEmpty}.
+  Context {ConfigUniUnit : config.UniUnit}.
+  Context {ConfigUniBool : config.UniBool}.
+  Context {ConfigUniSimProd : config.UniSimProd}.
   Local Instance hasPi : config.WithPi
     := {| config.withpiFlag := config.Yes |}.
 

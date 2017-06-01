@@ -19,6 +19,7 @@ ett_sanity.v
 
 tactics.v
 
-uniqueness.v
+# We want to have it, but it doesn't work for now
+# uniqueness.v
 
 negfunext.v
