@@ -5,17 +5,19 @@ MAINPARANOID=rulesParanoid.tex
 
 default: rules.pdf
 
+all: rules.pdf rulesParanoid.pdf
+
 mathpartir.sty:
 	./getmathpartir.py
 
 tt.tex: ../src/tt.v ./coq2latex.py
 	$(COQ2LATEX) ../src/tt.v
 
-rules.pdf: tt.tex macros.tex presyntax.tex rules.tex mathpartir.sty
+rules.pdf: tt.tex macros.tex config.tex presyntax.tex rules.tex mathpartir.sty
 	$(PDFLATEX) $(MAIN)
 	$(PDFLATEX) $(MAIN)
 
-rulesParanoid.pdf: tt.tex macros.tex presyntax.tex rulesParanoid.tex mathpartir.sty
+rulesParanoid.pdf: tt.tex macros.tex config.tex presyntax.tex rulesParanoid.tex mathpartir.sty
 	$(PDFLATEX) $(MAINPARANOID)
 	$(PDFLATEX) $(MAINPARANOID)
 

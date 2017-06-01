@@ -6,18 +6,18 @@ import subprocess
 import logging
 from string import Template
 
-configurations = [
-    'extensional',
-    'simpleproduct',
-    'prodeta',
-    'universe',
-    'withprop',
-    'withj',
-    'withempty',
-    'withunit',
-    'withbool',
-    'withpi',
-]
+configurations = {
+    'extensional' : 'extensional',
+    'simpleproduct' : 'simpleproduct',
+    'prodeta' : 'prodeta',
+    'universe' : 'universe',
+    'withprop' : 'withprop',
+    'withj' : 'withj',
+    'withempty' : 'withempty',
+    'withunit' : 'withunit',
+    'withbool' : 'withbool',
+    'withpi' : 'withpi',
+}
 
 # The identifiers which are translated to macros, with the given number of arguments
 macros = {
@@ -284,7 +284,6 @@ def section(macroFile, title, src):
     for rule in rules:
         rulename = rule[0]
         logging.debug ("parsing rule {0}".format(rulename))
-        ruleconfigs = rule[1]
         rulebody = rule[2]
         m = re.match(
             r'^(\s*parameters:.*?,)?'                 # optional parameters
@@ -324,14 +323,27 @@ def section(macroFile, title, src):
     }))
     for rule in rules:
         rulename = rule[0]
+        configs = re.split('\s+', rule[1])
+        if len(configs) > 0: configs.pop()
+        if len(configs) == 0:
+            configurationOptions = ""
+        else:
+            configurationOptions = []
+            for config in configs:
+                #assert (config in configurations), "unknown configuration option {0}".format(config)
+                #configurationOptions.append("\textsc{{{0}}}".format(configurations[config]))
+                configurationOptions.append("\\textsc{{{0}}}".format(config))
+            configurationOptions = "({0})".format(", ".join(configurationOptions))
         macroFile.write ("\n")
-        macroFile.write(Template(r"""\begin{equation}
+        macroFile.write(Template(r"""\noindent
+$$\ruleFont{$ruleName}$$ \configParameters{$configurationOptions}
 \label{rule:$ruleName}
+\begin{equation*}
 \show$ruleName
-\tag{\ruleFont{$ruleName}}
-\end{equation}"""
+\end{equation*}"""
         ).substitute({
             'ruleName' : ruleName(rulename),
+            'configurationOptions' : configurationOptions,
         }))
     macroFile.write ('}\n\n')
 
@@ -344,13 +356,15 @@ def section(macroFile, title, src):
     for rule in rules:
         rulename = rule[0]
         macroFile.write ("\n")
-        macroFile.write(Template(r"""\begin{equation}
-\label{rule-paranoid:$ruleName}
+        macroFile.write(Template(r"""\noindent
+$$\ruleFont{$ruleName}$$ \configParameters{$configurationOptions}
+\label{rule:$ruleName}
+\begin{equation*}
 \show${ruleName}Paranoid
-\tag{\ruleFont{$ruleName}}
-\end{equation}"""
+\end{equation*}"""
         ).substitute({
             'ruleName' : ruleName(rulename),
+            'configurationOptions' : configurationOptions,
         }))
     macroFile.write ('}\n\n')
 
