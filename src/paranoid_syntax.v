@@ -7,7 +7,7 @@
    This includes explicit substitutions, seperate syntaxes for types and terms,
    optional Tarski universes and so on...
 
-   Thi syntax is still configurable. For instance, if you decide not to have
+   This syntax is still configurable. For instance, if you decide not to have
    the Unit type as part of your theory, it will still be part of the syntax,
    but you won't be able to derive that [Γ ⊢ Unit] type or [Γ ⊢ unit : Unit].
 *)
@@ -63,10 +63,8 @@ with substitution : Type :=
      | sbweak : type -> substitution
      | sbshift : type -> substitution -> substitution
      | sbid : substitution
-     | sbcomp : substitution -> substitution -> substitution.
-
-Definition Arrow (A B : type) : type :=
-  Prod A (Subst B (sbweak A)).
+     | sbcomp : substitution -> substitution -> substitution
+.
 
 Definition exactly : forall {F A}, A -> config.Flag F -> A.
 Proof.
