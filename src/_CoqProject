@@ -2,7 +2,6 @@
 
 config.v
 config_tactics.v
-syntax.v
 tt.v
 ett.v
 ptt.v
@@ -18,6 +17,8 @@ ett2ptt.v
 ett_sanity.v
 
 tactics.v
+
+paranoid_syntax.v
 
 # We want to have it, but it doesn't work for now
 # uniqueness.v
