@@ -11,26 +11,26 @@ Require Import tt.
 Require Import checking_tactics.
 
 Instance Syntax : config.Syntax := {|
-  config.context := context ;
-  config.type := type ;
-  config.term := term ;
+  config.context      := context ;
+  config.type         := type ;
+  config.term         := term ;
   config.substitution := substitution ;
 
-  config.ctxempty := ctxempty ;
+  config.ctxempty  := ctxempty ;
   config.ctxextend := ctxextend ;
 
-  config.Id := Id ;
+  config.Id    := Id ;
   config.Subst := Subst ;
 
-  config.var := var ;
-  config.refl := refl ;
+  config.var   := var ;
+  config.refl  := refl ;
   config.subst := subst ;
 
-  config.sbzero := sbzero ;
-  config.sbweak := sbweak ;
+  config.sbzero  := sbzero ;
+  config.sbweak  := sbweak ;
   config.sbshift := sbshift ;
-  config.sbid := sbid ;
-  config.sbcomp := sbcomp
+  config.sbid    := sbid ;
+  config.sbcomp  := sbcomp
 |}.
 
 Definition nothing : forall {A}, config.Flag config.No -> A.
@@ -66,8 +66,7 @@ Module Stt.
   Context {ConfigEmpty : config.WithEmpty}.
   Context {ConfigUnit : config.WithUnit}.
   Context {ConfigBool : config.WithBool}.
-  Context {ConfigPi : config.WithPi}.
-  Context {ConfigUniProd : config.UniProd}.
+  (* Context {ConfigUniProd : config.UniProd}. *)
   Context {ConfigUniId : config.UniId}.
   Context {ConfigUniEmpty : config.UniEmpty}.
   Context {ConfigUniUnit : config.UniUnit}.
@@ -103,19 +102,35 @@ Module Ttt.
     := {| config.precondFlag := config.No |}.
   Context {ConfigReflection : config.Reflection}.
   Local Instance hasSimpleProducts : config.SimpleProducts
-    := {| config.simpleproductsFlag := config.Yes |}.
+    := {| config.simpleproductsFlag := config.Yes ;
+
+          config.SimProd := exactly SimProd ;
+
+          config.pair := exactly pair ;
+          config.proj1 := exactly proj1 ;
+          config.proj2 := exactly proj2
+       |}.
   Local Instance hasProdEta : config.ProdEta
     := {| config.prodetaFlag := config.No |}.
   Context {ConfigUniverseLevels : config.UniverseLevels}.
   Context {ConfigUniverses : config.Universes}.
   Local Instance hasProp : config.WithProp
-    := {| config.withpropFlag := config.No |}.
+    := {| config.withpropFlag := config.No ;
+
+          config.prop := nothing
+       |}.
   Context {ConfigWithJ : config.WithJ}.
   Context {ConfigEmpty : config.WithEmpty}.
   Context {ConfigUnit : config.WithUnit}.
   Local Instance hasBool : config.WithBool
-    := {| config.withboolFlag := config.Yes |}.
-  Context {ConfigPi : config.WithPi}.
+    := {| config.withboolFlag := config.Yes ;
+
+          config.Bool := exactly Bool ;
+
+          config.true := exactly true ;
+          config.false := exactly false ;
+          config.cond := exactly cond
+       |}.
   Context {ConfigUniProd : config.UniProd}.
   Context {ConfigUniId : config.UniId}.
   Context {ConfigUniEmpty : config.UniEmpty}.
@@ -123,7 +138,13 @@ Module Ttt.
   Context {ConfigUniBool : config.UniBool}.
   Context {ConfigUniSimProd : config.UniSimProd}.
   Local Instance hasPi : config.WithPi
-    := {| config.withpiFlag := config.Yes |}.
+    := {| config.withpiFlag := config.Yes ;
+
+          config.Prod := exactly Prod ;
+
+          config.lam := exactly lam ;
+          config.app := exactly app
+       |}.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -140,14 +161,20 @@ End Ttt.
 
 Section Translation.
 
-Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
+Context {ConfigReflection : config.Reflection}.
+Context {ConfigSimpleProducts : config.SimpleProducts}.
+Context {ConfigUniverseLevels : config.UniverseLevels}.
+Context {ConfigUniverses : config.Universes}.
+Context {ConfigWithJ : config.WithJ}.
+Context {ConfigEmpty : config.WithEmpty}.
+Context {ConfigUnit : config.WithUnit}.
+Context {ConfigBool : config.WithBool}.
+Context {ConfigUniProd : config.UniProd}.
+Context {ConfigUniId : config.UniId}.
+Context {ConfigUniEmpty : config.UniEmpty}.
+Context {ConfigUniUnit : config.UniUnit}.
+Context {ConfigUniBool : config.UniBool}.
+Context {ConfigUniSimProd : config.UniSimProd}.
 
 Lemma max_0 : forall n m, max (max n m) 0 = max n m.
 Proof.
