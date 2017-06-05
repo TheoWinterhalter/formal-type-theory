@@ -98,7 +98,7 @@ Reserved Notation "t [ x ← u ]" (at level 5, x at level 0, left associativity)
 Fixpoint subst_rec u t n {struct t} :=
   match t with
   | Prod A B => Prod (A [n ← u]) (B [S n ← u])
-  | Id A u v => Id (A [n ← u]) (u [n ← u]) (v [n ← u])
+  | Id A a b => Id (A [n ← u]) (a [n ← u]) (b [n ← u])
   | Empty => Empty
   | Unit => Unit
   | Bool => Bool
@@ -132,6 +132,38 @@ where " t [ n ← u ] " := (subst_rec u t n).
 
 Notation " t [ ← u ] " := (subst_rec u t 0) (at level 5).
 
+(* Applies σ to every variable subterm above n *)
+Fixpoint sbshift σ t n {struct t} :=
+  match t with
+  | Prod A B => Prod (sbshift σ A n) (sbshift σ B (S n))
+  | Id A u v => Id (sbshift σ A n) (sbshift σ u n) (sbshift σ v n)
+  | Empty => Empty
+  | Unit => Unit
+  | Bool => Bool
+  | SimProd A B => SimProd (sbshift σ A n) (sbshift σ B n)
+  | Uni l => Uni l
+
+  | var x => if le_gt_dec n x then var x else σ (var x)
+  | lam A t => lam (sbshift σ A n) (sbshift σ t n)
+  | app a b => app (sbshift σ a n) (sbshift σ b n)
+  | refl t => refl (sbshift σ t n)
+  | j A a C w v p =>
+    j (sbshift σ A n) (sbshift σ a n) (sbshift σ C (S (S n)))
+      (sbshift σ w n) (sbshift σ v n) (sbshift σ p n)
+  | exfalso A a => exfalso (sbshift σ A n) (sbshift σ a n)
+  | unit => unit
+  | true => true
+  | false => false
+  | cond C a b c =>
+    cond (sbshift σ C n) (sbshift σ a n) (sbshift σ b n) (sbshift σ c n)
+  | pair A B a b =>
+    pair (sbshift σ A n) (sbshift σ B n) (sbshift σ a n) (sbshift σ b n)
+  | proj1 A B p =>
+    proj1 (sbshift σ A n) (sbshift σ B n) (sbshift σ p n)
+  | proj2 A B p =>
+    proj2 (sbshift σ A n) (sbshift σ B n) (sbshift σ p n)
+  end.
+
 
 Definition exactly : forall {F A}, A -> config.Flag F -> A.
 Proof.
@@ -155,10 +187,9 @@ Local Instance Syntax : config.Syntax := {|
   config.refl A u  := refl u ;
   config.subst u σ := σ u    ;
 
-  config.sbzero A u := fun t => t [ ← u] ;
-  config.sbweak A   := fun t => t ↑ ;
-  (* config.sbshift A σ := fun t =>  ; *)
-  (* Problem! How to define the shifting operation?! *)
-  (* config.sbid    := sbid ; *)
-  (* config.sbcomp  := sbcomp *)
+  config.sbzero A u  := fun t => t [ ← u]      ;
+  config.sbweak A    := fun t => t ↑           ;
+  config.sbshift A σ := fun t => sbshift σ t 0 ;
+  config.sbid        := fun t => t             ;
+  config.sbcomp σ τ  := fun t => τ (σ t)
 |}.
