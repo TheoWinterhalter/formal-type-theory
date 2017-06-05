@@ -19,6 +19,9 @@ ett_sanity.v
 tactics.v
 
 paranoid_syntax.v
+daring_syntax.v
+
+ps_inversion.v
 
 # We want to have it, but it doesn't work for now
 # uniqueness.v
