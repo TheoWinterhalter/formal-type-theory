@@ -98,6 +98,7 @@ Local Instance Syntax : config.Syntax := {|
 Context {ConfigPrecond : config.Precond}.
 Context {ConfigReflection : config.Reflection}.
 
+Context {ConfigSimpleProducts : config.Flag config.simpleproductsFlag}.
 Local Instance SimpleProducts : config.SimpleProducts := {|
   (* config.simpleproductsFlag := ? *)
 
