@@ -14,6 +14,8 @@
 
 Require config.
 
+Section ParanoidSyntax.
+
 (* Universe levels *)
 Inductive level : Type :=
 | uni : nat -> level
@@ -98,9 +100,9 @@ Local Instance Syntax : config.Syntax := {|
 Context {ConfigPrecond : config.Precond}.
 Context {ConfigReflection : config.Reflection}.
 
-Context {ConfigSimpleProducts : config.Flag config.simpleproductsFlag}.
+Context {simpleproductsFlag : Type}.
 Local Instance SimpleProducts : config.SimpleProducts := {|
-  (* config.simpleproductsFlag := ? *)
+  config.simpleproductsFlag := simpleproductsFlag ;
 
   config.SimProd := exactly SimProd ;
 
@@ -115,7 +117,10 @@ Local Instance UniverseLevels : config.UniverseLevels := {|
   config.level := level
 |}.
 
+Context {universesFlag : Type}.
 Local Instance Universes : config.Universes := {|
+  config.universesFlag := universesFlag ;
+
   config.uni := exactly uni ;
 
   config.Uni := exactly Uni ;
@@ -124,7 +129,10 @@ Local Instance Universes : config.Universes := {|
   config.uniUni := exactly uniUni
 |}.
 
+Context {withpropFlag : Type}.
 Local Instance WithProp : config.WithProp := {|
+  config.withpropFlag := withpropFlag ;
+
   config.prop := exactly prop
 |}.
 
@@ -140,3 +148,5 @@ Context {ConfigUniEmpty : config.UniEmpty}.
 Context {ConfigUniUnit : config.UniUnit}.
 Context {ConfigUniBool : config.UniBool}.
 Context {ConfigUniSimProd : config.UniSimProd}.
+
+End ParanoidSyntax.
