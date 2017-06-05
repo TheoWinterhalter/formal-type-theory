@@ -132,10 +132,6 @@ where " t [ n ← u ] " := (subst_rec u t n).
 
 Notation " t [ ← u ] " := (subst_rec u t 0) (at level 5).
 
-(* We still need to define a type for substitutions and composition. *)
-(* We could always choose substitution := term -> term
-   and subst u sbs := sbs u *)
-
 
 Definition exactly : forall {F A}, A -> config.Flag F -> A.
 Proof.
@@ -144,25 +140,25 @@ Proof.
 Defined.
 
 Local Instance Syntax : config.Syntax := {|
-  config.context      := context ;
-  config.type         := term ;
-  config.term         := term ;
-  (* config.substitution := substitution ; *)
+  config.context      := context     ;
+  config.type         := term        ;
+  config.term         := term        ;
+  config.substitution := term -> term ;
 
   config.ctxempty  := ctxempty ;
   config.ctxextend := ctxextend ;
 
-  config.Id    := Id ;
-  (* config.Subst := Subst ; *)
+  config.Id        := Id  ;
+  config.Subst A σ := σ A ;
 
-  config.var   := var ;
-  config.refl  := refl ;
-  (* TODO BELOW *)
-  (* config.subst := subst ; *)
+  config.var       := var    ;
+  config.refl A u  := refl u ;
+  config.subst u σ := σ u    ;
 
-  (* config.sbzero  := sbzero ; *)
-  (* config.sbweak  := sbweak ; *)
-  (* config.sbshift := sbshift ; *)
+  config.sbzero A u := fun t => t [ ← u] ;
+  config.sbweak A   := fun t => t ↑ ;
+  (* config.sbshift A σ := fun t =>  ; *)
+  (* Problem! How to define the shifting operation?! *)
   (* config.sbid    := sbid ; *)
   (* config.sbcomp  := sbcomp *)
 |}.
