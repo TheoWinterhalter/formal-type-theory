@@ -36,8 +36,8 @@ with term : Type :=
      | Uni : level -> term
      (* Terms *)
      | var : nat -> term
-     | lam : term -> term -> term -> term
-     | app : term -> term -> term -> term -> term
+     | lam : term -> term
+     | app : term -> term -> term
      | refl : term -> term -> term
      | j : term -> term -> term -> term -> term -> term -> term
      | exfalso : term -> term -> term
