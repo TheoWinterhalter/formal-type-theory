@@ -136,17 +136,75 @@ Local Instance WithProp : config.WithProp := {|
   config.prop := exactly prop
 |}.
 
-(* TODO BELOW! *)
-Context {ConfigWithJ : config.WithJ}.
-Context {ConfigEmpty : config.WithEmpty}.
-Context {ConfigUnit : config.WithUnit}.
-Context {ConfigBool : config.WithBool}.
-Context {ConfigPi : config.WithPi}.
-Context {ConfigUniProd : config.UniProd}.
-Context {ConfigUniId : config.UniId}.
-Context {ConfigUniEmpty : config.UniEmpty}.
-Context {ConfigUniUnit : config.UniUnit}.
-Context {ConfigUniBool : config.UniBool}.
-Context {ConfigUniSimProd : config.UniSimProd}.
+Context {withjFlag : Type}.
+Local Instance WithJ : config.WithJ := {|
+  config.withjFlag := withjFlag ;
+
+  config.j := exactly j
+|}.
+
+Context {withemptyFlag : Type}.
+Local Instance WithEmpty : config.WithEmpty := {|
+  config.withemptyFlag := withemptyFlag ;
+
+  config.Empty := exactly Empty ;
+
+  config.exfalso := exactly exfalso
+|}.
+
+Context {withunitFlag : Type}.
+Local Instance WithUnit : config.WithUnit := {|
+  config.withunitFlag := withunitFlag ;
+
+  config.Unit := exactly Unit ;
+
+  config.unit := exactly unit
+|}.
+
+Context {withboolFlag : Type}.
+Local Instance WithBool : config.WithBool := {|
+  config.withboolFlag := withboolFlag ;
+
+  config.Bool := exactly Bool ;
+
+  config.true  := exactly true  ;
+  config.false := exactly false ;
+  config.cond  := exactly cond
+|}.
+
+Context {withpiFlag : Type}.
+Local Instance WithPi : config.WithPi := {|
+  config.withpiFlag := withpiFlag ;
+
+  config.Prod := exactly Prod ;
+
+  config.lam := exactly lam ;
+  config.app := exactly app
+|}.
+
+Local Instance UniProd : config.UniProd := {|
+  config.uniProd := exactly (exactly uniProd)
+|}.
+
+Local Instance UniId : config.UniId := {|
+  (* config.uniId := exactly (exactly uniId) *)
+  config.uniId := exactly uniId
+|}.
+
+Local Instance UniEmpty : config.UniEmpty := {|
+  config.uniEmpty := exactly (exactly uniEmpty)
+|}.
+
+Local Instance UniUnit : config.UniUnit := {|
+  config.uniUnit := exactly (exactly uniUnit)
+|}.
+
+Local Instance UniBool : config.UniBool := {|
+  config.uniBool := exactly (exactly uniBool)
+|}.
+
+Local Instance UniSimProd : config.UniSimProd := {|
+  config.uniSimProd := exactly (exactly uniSimProd)
+|}.
 
 End ParanoidSyntax.
