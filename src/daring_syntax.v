@@ -199,9 +199,9 @@ Local Instance Syntax : config.Syntax := {|
 Context {ConfigPrecond : config.Precond}.
 Context {ConfigReflection : config.Reflection}.
 
-Context {simpleproductsFlag : Type}.
+Context {simpleproductsFlag : config.Flag Type}.
 Local Instance SimpleProducts : config.SimpleProducts := {|
-  config.simpleproductsFlag := simpleproductsFlag ;
+  config.simpleproductsFlag := @config.flagProof _ simpleproductsFlag ;
 
   config.SimProd := exactly SimProd ;
 
@@ -216,9 +216,9 @@ Local Instance UniverseLevels : config.UniverseLevels := {|
   config.level := level
 |}.
 
-Context {universesFlag : Type}.
+Context {universesFlag : config.Flag Type}.
 Local Instance Universes : config.Universes := {|
-  config.universesFlag := universesFlag ;
+  config.universesFlag := @config.flagProof _ universesFlag ;
 
   config.uni := exactly uni ;
 
@@ -228,41 +228,41 @@ Local Instance Universes : config.Universes := {|
   config.uniUni := exactly Uni
 |}.
 
-Context {withpropFlag : Type}.
+Context {withpropFlag : config.Flag Type}.
 Local Instance WithProp : config.WithProp := {|
-  config.withpropFlag := withpropFlag ;
+  config.withpropFlag := @config.flagProof _ withpropFlag ;
 
   config.prop := exactly prop
 |}.
 
-Context {withjFlag : Type}.
+Context {withjFlag : config.Flag Type}.
 Local Instance WithJ : config.WithJ := {|
-  config.withjFlag := withjFlag ;
+  config.withjFlag := @config.flagProof _ withjFlag ;
 
   config.j := exactly j
 |}.
 
-Context {withemptyFlag : Type}.
+Context {withemptyFlag : config.Flag Type}.
 Local Instance WithEmpty : config.WithEmpty := {|
-  config.withemptyFlag := withemptyFlag ;
+  config.withemptyFlag := @config.flagProof _ withemptyFlag ;
 
   config.Empty := exactly Empty ;
 
   config.exfalso := exactly exfalso
 |}.
 
-Context {withunitFlag : Type}.
+Context {withunitFlag : config.Flag Type}.
 Local Instance WithUnit : config.WithUnit := {|
-  config.withunitFlag := withunitFlag ;
+  config.withunitFlag := @config.flagProof _ withunitFlag ;
 
   config.Unit := exactly Unit ;
 
   config.unit := exactly unit
 |}.
 
-Context {withboolFlag : Type}.
+Context {withboolFlag : config.Flag Type}.
 Local Instance WithBool : config.WithBool := {|
-  config.withboolFlag := withboolFlag ;
+  config.withboolFlag := @config.flagProof _ withboolFlag ;
 
   config.Bool := exactly Bool ;
 
@@ -271,9 +271,9 @@ Local Instance WithBool : config.WithBool := {|
   config.cond  := exactly cond
 |}.
 
-Context {withpiFlag : Type}.
+Context {withpiFlag : config.Flag Type}.
 Local Instance WithPi : config.WithPi := {|
-  config.withpiFlag := withpiFlag ;
+  config.withpiFlag := @config.flagProof _ withpiFlag ;
 
   config.Prod := exactly Prod ;
 
