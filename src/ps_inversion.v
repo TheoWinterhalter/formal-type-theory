@@ -2,6 +2,7 @@
 
    The purpose of this file is to provide the inversion lemmata that are
    required by sanity on paranoid syntax.
+   These lemmata are proven only in the case of paranoid rules.
 *)
 
 Require config.
@@ -11,7 +12,9 @@ Require Import config_tactics.
 
 Section ParanoidSyntaxInversion.
 
-Context {ConfigPrecond : config.Precond}.
+Local Instance hasPrecond : config.Precond := {|
+  config.precondFlag := config.Yes
+|}.
 Context {ConfigReflection : config.Reflection}.
 Context {simpleproductsFlag : config.Flag Type}.
 Context {ConfigProdEta : config.ProdEta}.
@@ -30,12 +33,8 @@ Context {withpiFlag : config.Flag Type}.
 Definition CtxExtendInversion G A (H : isctx (ctxextend G A)) :
   isctx G * istype G A.
 Proof.
-  config inversion H. split.
-  - admit. (* Problem! Do we need the paranoid version for inversion?
-              In a way it should be enough for ett2ptt. *)
-  - assumption.
-(* Defined. *)
-Admitted.
+  config inversion H. easy.
+Defined.
 
 Fixpoint TyIdInversion G A u v (H : istype G (Id A u v)) {struct H} :
   isctx G * istype G A * isterm G u A * isterm G v A.
@@ -44,7 +43,7 @@ Proof.
 
   - { split ; [(split ; [split | idtac]) | idtac].
 
-      - (* assumption. *) admit.
+      - assumption.
       - apply @tt.TyCtxConv with (G := G0) ; auto.
         now apply TyIdInversion with (u := u) (v := v).
       - apply @tt.TermCtxConv with (G := G0) ; auto.
@@ -56,14 +55,13 @@ Proof.
     }
 
   - { split ; [(split ; [split | idtac]) | idtac].
-      - (* assumption. *) admit.
-      - (* assumption. *) admit.
+      - assumption.
+      - assumption.
       - assumption.
       - assumption.
     }
 
-(* Defined. *)
-Admitted.
+Defined.
 
 Fixpoint TyProdInversion G A B (H : istype G (Prod A B)) {struct H} :
   isctx G * istype G A * istype (ctxextend G A) B.
@@ -71,7 +69,7 @@ Proof.
   inversion H ; doConfig.
 
   - { split ; [ split | idtac ].
-      - (* assumption. *) admit.
+      - assumption.
       - apply @tt.TyCtxConv with (G := G0) ; auto.
         now apply (TyProdInversion G0 A B).
       - apply @tt.TyCtxConv with (G := ctxextend G0 A).
