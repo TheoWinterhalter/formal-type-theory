@@ -13,7 +13,7 @@
    be captured by our formalisation.
 *)
 
-Require config.
+Require config tt.
 
 Require Import Peano_dec.
 Require Import Compare_dec.
@@ -305,5 +305,14 @@ Local Instance UniBool : config.UniBool := {|
 Local Instance UniSimProd : config.UniSimProd := {|
   config.uniSimProd := exactly (exactly (fun l1 l2 A B => SimProd A B))
 |}.
+
+Definition isctx := tt.isctx.
+Definition issubst := tt.issubst.
+Definition istype := tt.istype.
+Definition isterm := tt.isterm.
+Definition eqctx := tt.eqctx.
+Definition eqsubst := tt.eqsubst.
+Definition eqtype := tt.eqtype.
+Definition eqterm := tt.eqterm.
 
 End DaringSyntax.

@@ -1,16 +1,16 @@
-(* Paranoid syntax inversion
+(* Daring syntax inversion
 
    The purpose of this file is to provide the inversion lemmata that are
-   required by sanity on paranoid syntax.
+   required by sanity on daring syntax.
    These lemmata are proven only in the case of paranoid rules.
 *)
 
 Require config.
 Require Import wfconfig.
-Require Import paranoid_syntax.
+Require Import daring_syntax.
 Require Import config_tactics.
 
-Section ParanoidSyntaxInversion.
+Section DaringSyntaxInversion.
 
 Local Instance hasPrecond : config.Precond := {|
   config.precondFlag := config.Yes
@@ -32,6 +32,9 @@ Proof.
   config inversion H. easy.
 Defined.
 
+Axiom admit : forall {A}, A.
+Tactic Notation "admit" := (exact admit).
+
 Fixpoint TyIdInversion G A u v (H : istype G (Id A u v)) {struct H} :
   isctx G * istype G A * isterm G u A * isterm G v A.
 Proof.
@@ -51,10 +54,25 @@ Proof.
     }
 
   - { split ; [(split ; [split | idtac]) | idtac].
+
+      - assumption.
+      - admit.
+      - admit.
+      - admit.
+    }
+
+  - { split ; [(split ; [split | idtac]) | idtac].
       - assumption.
       - assumption.
       - assumption.
       - assumption.
+    }
+
+  - { split ; [(split ; [split | idtac]) | idtac].
+      - assumption.
+      - admit.
+      - admit.
+      - admit.
     }
 
 Defined.
@@ -70,11 +88,7 @@ Proof.
         now apply (TyProdInversion G0 A B).
       - apply @tt.TyCtxConv with (G := ctxextend G0 A).
         + now apply (TyProdInversion G0 A B).
-        + (* assert (context = config.context). *)
-          (* Universe inconsistency!? *)
-          (* assert (config.context = context). *)
-          (* This doesn't want to find a Syntax for config.context *)
-          apply tt.EqCtxExtend. ; auto.
+        + apply tt.EqCtxExtend. ; auto.
           * now capply (TyProdInversion G0 A B).
           * now capply (TyProdInversion G0 A B).
           * capply EqTyRefl ; auto.
@@ -110,4 +124,4 @@ Proof.
   - { split ; [ split | .. ] ; assumption. }
 Defined.
 
-End ParanoidSyntaxInversion.
+End DaringSyntaxInversion.
