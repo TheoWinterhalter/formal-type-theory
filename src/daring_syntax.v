@@ -19,6 +19,8 @@ Require Import Peano_dec.
 Require Import Compare_dec.
 Require Import Lt Le Gt.
 
+Section DaringSyntax.
+
 (* Universe levels *)
 Inductive level : Type :=
 | uni : nat -> level
@@ -193,3 +195,115 @@ Local Instance Syntax : config.Syntax := {|
   config.sbid        := fun t => t             ;
   config.sbcomp σ τ  := fun t => τ (σ t)
 |}.
+
+Context {ConfigPrecond : config.Precond}.
+Context {ConfigReflection : config.Reflection}.
+
+Context {simpleproductsFlag : Type}.
+Local Instance SimpleProducts : config.SimpleProducts := {|
+  config.simpleproductsFlag := simpleproductsFlag ;
+
+  config.SimProd := exactly SimProd ;
+
+  config.pair  := exactly pair  ;
+  config.proj1 := exactly proj1 ;
+  config.proj2 := exactly proj2
+|}.
+
+Context {ConfigProdEta : config.ProdEta}.
+
+Local Instance UniverseLevels : config.UniverseLevels := {|
+  config.level := level
+|}.
+
+Context {universesFlag : Type}.
+Local Instance Universes : config.Universes := {|
+  config.universesFlag := universesFlag ;
+
+  config.uni := exactly uni ;
+
+  config.Uni := exactly Uni ;
+  config.El  := exactly (fun l A => A)  ;
+
+  config.uniUni := exactly Uni
+|}.
+
+Context {withpropFlag : Type}.
+Local Instance WithProp : config.WithProp := {|
+  config.withpropFlag := withpropFlag ;
+
+  config.prop := exactly prop
+|}.
+
+Context {withjFlag : Type}.
+Local Instance WithJ : config.WithJ := {|
+  config.withjFlag := withjFlag ;
+
+  config.j := exactly j
+|}.
+
+Context {withemptyFlag : Type}.
+Local Instance WithEmpty : config.WithEmpty := {|
+  config.withemptyFlag := withemptyFlag ;
+
+  config.Empty := exactly Empty ;
+
+  config.exfalso := exactly exfalso
+|}.
+
+Context {withunitFlag : Type}.
+Local Instance WithUnit : config.WithUnit := {|
+  config.withunitFlag := withunitFlag ;
+
+  config.Unit := exactly Unit ;
+
+  config.unit := exactly unit
+|}.
+
+Context {withboolFlag : Type}.
+Local Instance WithBool : config.WithBool := {|
+  config.withboolFlag := withboolFlag ;
+
+  config.Bool := exactly Bool ;
+
+  config.true  := exactly true  ;
+  config.false := exactly false ;
+  config.cond  := exactly cond
+|}.
+
+Context {withpiFlag : Type}.
+Local Instance WithPi : config.WithPi := {|
+  config.withpiFlag := withpiFlag ;
+
+  config.Prod := exactly Prod ;
+
+  config.lam := exactly (fun A B t => lam A t) ;
+  config.app := exactly (fun u A B v => app u v)
+|}.
+
+Local Instance UniProd : config.UniProd := {|
+  config.uniProd := exactly (exactly (fun l1 l2 A B => Prod A B))
+|}.
+
+Local Instance UniId : config.UniId := {|
+  (* config.uniId := exactly (exactly (fun l A u v => Id A u v)) *)
+  config.uniId := exactly (fun l A u v => Id A u v)
+|}.
+
+Local Instance UniEmpty : config.UniEmpty := {|
+  config.uniEmpty := exactly (exactly (fun l => Empty))
+|}.
+
+Local Instance UniUnit : config.UniUnit := {|
+  config.uniUnit := exactly (exactly (fun l => Unit))
+|}.
+
+Local Instance UniBool : config.UniBool := {|
+  config.uniBool := exactly (exactly (fun l => Bool))
+|}.
+
+Local Instance UniSimProd : config.UniSimProd := {|
+  config.uniSimProd := exactly (exactly (fun l1 l2 A B => SimProd A B))
+|}.
+
+End DaringSyntax.
