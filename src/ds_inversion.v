@@ -10,6 +10,8 @@ Require Import wfconfig.
 Require Import daring_syntax.
 Require Import config_tactics.
 
+Require Import Coq.Program.Equality.
+
 Section DaringSyntaxInversion.
 
 Local Instance hasPrecond : config.Precond := {|
@@ -34,6 +36,31 @@ Defined.
 
 Axiom admit : forall {A}, A.
 Tactic Notation "admit" := (exact admit).
+
+Definition TyIdInversion G A u v (H : istype G (Id A u v)) :
+  isctx G * istype G A * isterm G u A * isterm G v A.
+Proof.
+  dependent induction H ; doConfig.
+
+  - { repeat split.
+
+      - assumption.
+      - apply @tt.TyCtxConv with (G := G) ; auto.
+        now eapply IHistype.
+      - apply @tt.TermCtxConv with (G := G) ; auto.
+        + now eapply @IHistype with (u0 := u) (v0 := v).
+        + now config eapply @IHistype with (u0 := u) (v0 := v).
+      - apply @tt.TermCtxConv with (G := G) ; auto.
+        + now eapply @IHistype with (u0 := u) (v0 := v).
+        + now config eapply @IHistype with (u0 := u) (v0 := v).
+    }
+
+  - { repeat split.
+
+      - assumption.
+      - (* Maybe we need some lemma to conclude that Subst A0 σ = Id A u v
+           implies A0 is some Id as well. *)
+Abort.
 
 Fixpoint TyIdInversion G A u v (H : istype G (Id A u v)) {struct H} :
   isctx G * istype G A * isterm G u A * isterm G v A.
