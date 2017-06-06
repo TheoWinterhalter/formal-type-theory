@@ -74,8 +74,11 @@ Proof.
         now apply (TyProdInversion G0 A B).
       - apply @tt.TyCtxConv with (G := ctxextend G0 A).
         + now apply (TyProdInversion G0 A B).
-        + (* WHY? *)
-          apply tt.EqCtxExtend ; auto.
+        + (* assert (context = config.context). *)
+          (* Universe inconsistency!? *)
+          (* assert (config.context = context). *)
+          (* This doesn't want to find a Syntax for config.context *)
+          apply tt.EqCtxExtend. ; auto.
           * now capply (TyProdInversion G0 A B).
           * now capply (TyProdInversion G0 A B).
           * capply EqTyRefl ; auto.
