@@ -115,23 +115,31 @@ Proof.
         now apply (TyProdInversion G0 A B).
       - apply @tt.TyCtxConv with (G := ctxextend G0 A).
         + now apply (TyProdInversion G0 A B).
-        + apply tt.EqCtxExtend. ; auto.
+        + apply @tt.EqCtxExtend ; auto.
           * now capply (TyProdInversion G0 A B).
           * now capply (TyProdInversion G0 A B).
-          * capply EqTyRefl ; auto.
+          * capply @tt.EqTyRefl ; auto.
             now apply (TyProdInversion G0 A B).
-        + capply CtxExtend ; auto.
+        + capply @tt.CtxExtend ; auto.
           now apply (TyProdInversion G0 A B).
-        + capply CtxExtend.
+        + capply @tt.CtxExtend.
           * assumption.
-          * apply @TyCtxConv with (G := G0) ; auto.
+          * apply @tt.TyCtxConv with (G := G0) ; auto.
             now apply (TyProdInversion G0 A B).
     }
+
+  - admit.
 
   - { split ; [ split | idtac ].
       - assumption.
       - assumption.
       - assumption.
+    }
+
+  - { split ; [ split | idtac ].
+      - assumption.
+      - admit.
+      - admit.
     }
 Defined.
 
@@ -142,13 +150,17 @@ Proof.
 
   - { split ; [ split | .. ].
       - assumption.
-      - apply @TyCtxConv with (G := G0) ; auto.
+      - apply @tt.TyCtxConv with (G := G0) ; auto.
         now apply (TySimProdInversion G0 A B).
-      - apply @TyCtxConv with (G := G0) ; auto.
+      - apply @tt.TyCtxConv with (G := G0) ; auto.
         now apply (TySimProdInversion G0 A B).
     }
 
+  - admit.
+
   - { split ; [ split | .. ] ; assumption. }
+
+  - admit.
 Defined.
 
 End DaringSyntaxInversion.
