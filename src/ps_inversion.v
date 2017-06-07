@@ -6,7 +6,7 @@
 *)
 
 Require config.
-Require Import wfconfig.
+Require wfconfig.
 Require Import paranoid_syntax.
 Require Import config_tactics.
 
@@ -105,5 +105,38 @@ Proof.
 
   - { split ; [ split | .. ] ; assumption. }
 Defined.
+
+(* One shouldn't have to do that to load all instances.
+   This is merely a demonstration of my own inhability to use type classes
+   properly.
+ *)
+Local Instance LSyntax : config.Syntax := Syntax.
+Local Instance LSimpleProducts : config.SimpleProducts := SimpleProducts.
+Local Instance LUniverseLevels : config.UniverseLevels := UniverseLevels.
+Local Instance LUniverses : config.Universes := Universes.
+Local Instance LWithProp : config.WithProp := WithProp.
+Local Instance LWithJ : config.WithJ := WithJ.
+Local Instance LWithEmpty : config.WithEmpty := WithEmpty.
+Local Instance LWithUnit : config.WithUnit := WithUnit.
+Local Instance LWithBool : config.WithBool := WithBool.
+Local Instance LWithPi : config.WithPi := WithPi.
+Local Instance LUniProd : config.UniProd := UniProd.
+Local Instance LUniId : config.UniId := UniId.
+Local Instance LUniEmpty : config.UniEmpty := UniEmpty.
+Local Instance LUniUnit : config.UniUnit := UniUnit.
+Local Instance LUniBool : config.UniBool := UniBool.
+Local Instance LUniSimProd : config.UniSimProd := UniSimProd.
+
+Local Instance CtxExtendInversionInstance : wfconfig.CtxExtendInversionClass
+  := {| wfconfig.CtxExtendInversion := CtxExtendInversion |}.
+
+Local Instance TyIdInversionInstance : wfconfig.TyIdInversionClass
+  := {| wfconfig.TyIdInversion := TyIdInversion |}.
+
+Local Instance TyProdInversionInstance : wfconfig.TyProdInversionClass
+  := {| wfconfig.TyProdInversion h := TyProdInversion |}.
+
+Local Instance TySimProdInversionInstance : wfconfig.TySimProdInversionClass
+  := {| wfconfig.TySimProdInversion h := TySimProdInversion |}.
 
 End ParanoidSyntaxInversion.
