@@ -9,11 +9,10 @@ Section Ett2Ptt.
 
   Open Scope type_scope.
 
-Context {ConfigSyntax : config.Syntax}.
+Context {ConfigPrecond : config.Precond}.
 Context {ConfigReflection : config.Reflection}.
 Context {ConfigSimpleProducts : config.SimpleProducts}.
 Context {ConfigProdEta : config.ProdEta}.
-Context {ConfigUniverseLevels : config.UniverseLevels}.
 Context {ConfigUniverses : config.Universes}.
 Context {ConfigWithProp : config.WithProp}.
 Context {ConfigWithJ : config.WithJ}.
@@ -21,19 +20,16 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
-Context {ConfigUniProd : config.UniProd}.
-Context {ConfigUniId : config.UniId}.
-Context {ConfigUniEmpty : config.UniEmpty}.
-Context {ConfigUniUnit : config.UniUnit}.
-Context {ConfigUniBool : config.UniBool}.
-Context {ConfigUniSimProd : config.UniSimProd}.
+
+Context {ConfigSyntax : config.Syntax}.
 
 (* We need inversion lemmata and we can't prove them since the syntax
    is not necessarilly inductive and thus not necessarilly injective.
 
    We want them for PTT.
 *)
-Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
+Local Instance hasPrecond : config.Precond
+  := {| config.precondFlag := config.Yes |}.
 Context {ConfigCtxExtendInversion : CtxExtendInversionClass}.
 Context {ConfigTyIdInversion : TyIdInversionClass}.
 Context {ConfigTyProdInversion : TyProdInversionClass}.
@@ -342,8 +338,8 @@ Proof.
         - now apply sane_isterm.
       }
 
-    (* TermProj1 *)
-    - { capply TermProj1.
+    (* TermProjOne *)
+    - { capply TermProjOne.
         - now apply (ptt_sane_isterm G p (SimProd A B)), sane_isterm.
         - now apply (TySimProdInversion G A B),
                     (ptt_sane_isterm G p (SimProd A B)),
@@ -354,8 +350,8 @@ Proof.
         - now apply sane_isterm.
       }
 
-    (* TermProj2 *)
-    - { capply TermProj2.
+    (* TermProjTwo *)
+    - { capply TermProjTwo.
         - now apply (ptt_sane_isterm G p (SimProd A B)), sane_isterm.
         - now apply (TySimProdInversion G A B),
                     (ptt_sane_isterm G p (SimProd A B)),
@@ -1253,8 +1249,8 @@ Proof.
         - now apply (ptt_sane_eqterm G v1 v2 B1), sane_eqterm.
       }
 
-    (* CongProj1 *)
-    - { capply CongProj1.
+    (* CongProjOne *)
+    - { capply CongProjOne.
         - now apply sane_eqterm.
         - now apply sane_eqtype.
         - now apply sane_eqtype.
@@ -1267,8 +1263,8 @@ Proof.
         - now apply (ptt_sane_eqterm G p1 p2 (SimProd A1 B1)), sane_eqterm.
       }
 
-    (* CongProj2 *)
-    - { capply CongProj2.
+    (* CongProjTwo *)
+    - { capply CongProjTwo.
         - now apply sane_eqterm.
         - now apply sane_eqtype.
         - now apply sane_eqtype.
@@ -1295,8 +1291,8 @@ Proof.
         - now apply (ptt_sane_isterm D v B), sane_isterm.
       }
 
-    (* EqSubstProj1 *)
-    - { config apply EqSubstProj1 with (D0 := D).
+    (* EqSubstProjOne *)
+    - { config apply EqSubstProjOne with (D0 := D).
         - now apply sane_issubst.
         - now apply sane_isterm.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
@@ -1309,8 +1305,8 @@ Proof.
                     sane_isterm.
       }
 
-    (* EqSubstProj2 *)
-    - { config apply EqSubstProj2 with (D0 := D).
+    (* EqSubstProjTwo *)
+    - { config apply EqSubstProjTwo with (D0 := D).
         - now apply sane_issubst.
         - now apply sane_isterm.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
@@ -1323,8 +1319,8 @@ Proof.
                     sane_isterm.
       }
 
-    (* Proj1Pair *)
-    - { capply Proj1Pair.
+    (* ProjOnePair *)
+    - { capply ProjOnePair.
         - now apply sane_isterm.
         - now apply sane_isterm.
         - now apply (ptt_sane_isterm G u A), sane_isterm.
@@ -1332,8 +1328,8 @@ Proof.
         - now apply (ptt_sane_isterm G v B), sane_isterm.
       }
 
-    (* Proj2Pair *)
-    - { capply Proj2Pair.
+    (* ProjTwoPair *)
+    - { capply ProjTwoPair.
         - now apply sane_isterm.
         - now apply sane_isterm.
         - now apply (ptt_sane_isterm G u A), sane_isterm.

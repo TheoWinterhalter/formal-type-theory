@@ -7,12 +7,10 @@ Require Import tt.
 Section Checking1.
 
 (* We are as modular as can be *)
-Context {ConfigSyntax : config.Syntax}.
 Context {ConfigPrecond : config.Precond}.
 Context {ConfigReflection : config.Reflection}.
 Context {ConfigSimpleProducts : config.SimpleProducts}.
 Context {ConfigProdEta : config.ProdEta}.
-Context {ConfigUniverseLevels : config.UniverseLevels}.
 Context {ConfigUniverses : config.Universes}.
 Context {ConfigWithProp : config.WithProp}.
 Context {ConfigWithJ : config.WithJ}.
@@ -20,12 +18,8 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
-Context {ConfigUniProd : config.UniProd}.
-Context {ConfigUniId : config.UniId}.
-Context {ConfigUniEmpty : config.UniEmpty}.
-Context {ConfigUniUnit : config.UniUnit}.
-Context {ConfigUniBool : config.UniBool}.
-Context {ConfigUniSimProd : config.UniSimProd}.
+
+Context {ConfigSyntax : config.Syntax}.
 
 (* Some tactic to compose substitutions. *)
 Lemma eqtype_subst_left :
@@ -141,12 +135,10 @@ Ltac compsubst1 :=
 
 Section Checking2.
 
-Context {ConfigSyntax : config.Syntax}.
 Context {ConfigPrecond : config.Precond}.
 Context {ConfigReflection : config.Reflection}.
 Context {ConfigSimpleProducts : config.SimpleProducts}.
 Context {ConfigProdEta : config.ProdEta}.
-Context {ConfigUniverseLevels : config.UniverseLevels}.
 Context {ConfigUniverses : config.Universes}.
 Context {ConfigWithProp : config.WithProp}.
 Context {ConfigWithJ : config.WithJ}.
@@ -154,12 +146,8 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
-Context {ConfigUniProd : config.UniProd}.
-Context {ConfigUniId : config.UniId}.
-Context {ConfigUniEmpty : config.UniEmpty}.
-Context {ConfigUniUnit : config.UniUnit}.
-Context {ConfigUniBool : config.UniBool}.
-Context {ConfigUniSimProd : config.UniSimProd}.
+
+Context {ConfigSyntax : config.Syntax}.
 
 Lemma EqCompZero :
   forall {G D A u sbs},
@@ -954,17 +942,17 @@ Ltac prepushsubst1 sym :=
     ]
   | |- eqterm ?G (subst (proj1 ?A ?B ?p) ?sbs) _ _ =>
     first [
-      ceapply EqTrans ; [ ceapply EqSubstProj1 | .. ]
+      ceapply EqTrans ; [ ceapply EqSubstProjOne | .. ]
     | ceapply EqTyConv ; [
-        ceapply EqTrans ; [ ceapply EqSubstProj1 | .. ]
+        ceapply EqTrans ; [ ceapply EqSubstProjOne | .. ]
       | ..
       ]
     ]
   | |- eqterm ?G (subst (proj2 ?A ?B ?p) ?sbs) _ _ =>
     first [
-      ceapply EqTrans ; [ ceapply EqSubstProj2 | .. ]
+      ceapply EqTrans ; [ ceapply EqSubstProjTwo | .. ]
     | ceapply EqTyConv ; [
-        ceapply EqTrans ; [ ceapply EqSubstProj2 | .. ]
+        ceapply EqTrans ; [ ceapply EqSubstProjTwo | .. ]
       | ..
       ]
     ]
@@ -1202,12 +1190,10 @@ Ltac pushsubst1 := prepushsubst1 Coq.Init.Datatypes.true.
 
 Section Checking3.
 
-Context {ConfigSyntax : config.Syntax}.
 Context {ConfigPrecond : config.Precond}.
 Context {ConfigReflection : config.Reflection}.
 Context {ConfigSimpleProducts : config.SimpleProducts}.
 Context {ConfigProdEta : config.ProdEta}.
-Context {ConfigUniverseLevels : config.UniverseLevels}.
 Context {ConfigUniverses : config.Universes}.
 Context {ConfigWithProp : config.WithProp}.
 Context {ConfigWithJ : config.WithJ}.
@@ -1215,12 +1201,8 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
-Context {ConfigUniProd : config.UniProd}.
-Context {ConfigUniId : config.UniId}.
-Context {ConfigUniEmpty : config.UniEmpty}.
-Context {ConfigUniUnit : config.UniUnit}.
-Context {ConfigUniBool : config.UniBool}.
-Context {ConfigUniSimProd : config.UniSimProd}.
+
+Context {ConfigSyntax : config.Syntax}.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
    some ZeroShift3 if ever we add a constructor that has three variables. *)
@@ -2345,14 +2327,14 @@ Ltac magicn try shelf tysym debug :=
       ] ; magicn try shelf Coq.Init.Datatypes.true debug
     | |- isterm ?G (proj1 ?A ?B ?p) ?T =>
       first [
-        ceapply TermProj1
-      | ceapply TermTyConv ; [ ceapply TermProj1 | .. ]
+        ceapply TermProjOne
+      | ceapply TermTyConv ; [ ceapply TermProjOne | .. ]
       | myfail debug
       ] ; magicn try shelf Coq.Init.Datatypes.true debug
     | |- isterm ?G (proj2 ?A ?B ?p) ?T =>
       first [
-        ceapply TermProj2
-      | ceapply TermTyConv ; [ ceapply TermProj2 | .. ]
+        ceapply TermProjTwo
+      | ceapply TermTyConv ; [ ceapply TermProjTwo | .. ]
       | myfail debug
       ] ; magicn try shelf Coq.Init.Datatypes.true debug
     | |- isterm ?G (uniProd ?l prop ?a ?b) ?T =>
@@ -2865,14 +2847,14 @@ Ltac magicn try shelf tysym debug :=
       ] ; magicn try shelf Coq.Init.Datatypes.true debug
     | |- eqterm ?G (proj1 _ _ _ ) (proj1 _ _ _) _ =>
       first [
-        ceapply CongProj1
-      | ceapply EqTyConv ; [ ceapply CongProj1 | .. ]
+        ceapply CongProjOne
+      | ceapply EqTyConv ; [ ceapply CongProjOne | .. ]
       | myfail debug
       ] ; magicn try shelf Coq.Init.Datatypes.true debug
     | |- eqterm ?G (proj2 _ _ _ ) (proj2 _ _ _) _ =>
       first [
-        ceapply CongProj2
-      | ceapply EqTyConv ; [ ceapply CongProj2 | .. ]
+        ceapply CongProjTwo
+      | ceapply EqTyConv ; [ ceapply CongProjTwo | .. ]
       | myfail debug
       ] ; magicn try shelf Coq.Init.Datatypes.true debug
     | |- eqterm ?G (uniProd _ prop _ _) (uniProd _ prop _ _) _ =>

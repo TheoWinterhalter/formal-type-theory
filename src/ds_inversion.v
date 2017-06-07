@@ -18,15 +18,15 @@ Local Instance hasPrecond : config.Precond := {|
   config.precondFlag := config.Yes
 |}.
 Context {ConfigReflection : config.Reflection}.
-Context {simpleproductsFlag : config.Flag Type}.
+Context {ConfigSimpleProducts : config.SimpleProducts}.
 Context {ConfigProdEta : config.ProdEta}.
-Context {universesFlag : config.Flag Type}.
-Context {withpropFlag : config.Flag Type}.
-Context {withjFlag : config.Flag Type}.
-Context {withemptyFlag : config.Flag Type}.
-Context {withunitFlag : config.Flag Type}.
-Context {withboolFlag : config.Flag Type}.
-Context {withpiFlag : config.Flag Type}.
+Context {ConfigUniverses : config.Universes}.
+Context {ConfigWithProp : config.WithProp}.
+Context {ConfigWithJ : config.WithJ}.
+Context {ConfigEmpty : config.WithEmpty}.
+Context {ConfigUnit : config.WithUnit}.
+Context {ConfigBool : config.WithBool}.
+Context {ConfigPi : config.WithPi}.
 
 Definition CtxExtendInversion G A (H : isctx (ctxextend G A)) :
   isctx G * istype G A.
@@ -163,26 +163,7 @@ Proof.
   - admit.
 Defined.
 
-(* One shouldn't have to do that to load all instances.
-   This is merely a demonstration of my own inhability to use type classes
-   properly.
- *)
-Local Instance LSyntax : config.Syntax := Syntax.
-Local Instance LSimpleProducts : config.SimpleProducts := SimpleProducts.
-Local Instance LUniverseLevels : config.UniverseLevels := UniverseLevels.
-Local Instance LUniverses : config.Universes := Universes.
-Local Instance LWithProp : config.WithProp := WithProp.
-Local Instance LWithJ : config.WithJ := WithJ.
-Local Instance LWithEmpty : config.WithEmpty := WithEmpty.
-Local Instance LWithUnit : config.WithUnit := WithUnit.
-Local Instance LWithBool : config.WithBool := WithBool.
-Local Instance LWithPi : config.WithPi := WithPi.
-Local Instance LUniProd : config.UniProd := UniProd.
-Local Instance LUniId : config.UniId := UniId.
-Local Instance LUniEmpty : config.UniEmpty := UniEmpty.
-Local Instance LUniUnit : config.UniUnit := UniUnit.
-Local Instance LUniBool : config.UniBool := UniBool.
-Local Instance LUniSimProd : config.UniSimProd := UniSimProd.
+Local Instance LocSyntax : config.Syntax := Syntax.
 
 Local Instance CtxExtendInversionInstance : wfconfig.CtxExtendInversionClass
   := {| wfconfig.CtxExtendInversion := CtxExtendInversion |}.

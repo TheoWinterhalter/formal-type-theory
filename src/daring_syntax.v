@@ -21,6 +21,18 @@ Require Import Lt Le Gt.
 
 Section DaringSyntax.
 
+Context {ConfigPrecond : config.Precond}.
+Context {ConfigReflection : config.Reflection}.
+Context {ConfigSimpleProducts : config.SimpleProducts}.
+Context {ConfigProdEta : config.ProdEta}.
+Context {ConfigUniverses : config.Universes}.
+Context {ConfigWithProp : config.WithProp}.
+Context {ConfigWithJ : config.WithJ}.
+Context {ConfigEmpty : config.WithEmpty}.
+Context {ConfigUnit : config.WithUnit}.
+Context {ConfigBool : config.WithBool}.
+Context {ConfigPi : config.WithPi}.
+
 (* Universe levels *)
 Inductive level : Type :=
 | uni : nat -> level
@@ -178,16 +190,46 @@ Local Instance Syntax : config.Syntax := {|
   config.type         := term        ;
   config.term         := term        ;
   config.substitution := term -> term ;
+  config.level        := level ;
+
+  config.uni := exactly uni ;
+  config.prop := exactly prop ;
 
   config.ctxempty  := ctxempty ;
   config.ctxextend := ctxextend ;
 
+  config.Prod := exactly Prod ;
   config.Id        := Id  ;
   config.Subst A σ := σ A ;
+  config.Empty := exactly Empty ;
+  config.Unit := exactly Unit ;
+  config.Bool := exactly Bool ;
+  config.SimProd := exactly SimProd ;
+  config.Uni := exactly Uni ;
+  config.El  := exactly (fun l A => A)  ;
 
   config.var       := var    ;
+  config.lam := exactly (fun A B t => lam A t) ;
+  config.app := exactly (fun u A B v => app u v) ;
   config.refl A u  := refl u ;
+  config.j := exactly j ;
   config.subst u σ := σ u    ;
+  config.exfalso := exactly exfalso ;
+  config.unit := exactly unit ;
+  config.true  := exactly true  ;
+  config.false := exactly false ;
+  config.cond  := exactly cond ;
+  config.pair  := exactly pair  ;
+  config.proj1 := exactly proj1 ;
+  config.proj2 := exactly proj2 ;
+  config.uniProd := exactly (exactly (fun l1 l2 A B => Prod A B)) ;
+  (* config.uniId := exactly (exactly (fun l A u v => Id A u v)) ; *)
+  config.uniId := exactly (fun l A u v => Id A u v) ;
+  config.uniEmpty := exactly (exactly (fun l => Empty)) ;
+  config.uniUnit := exactly (exactly (fun l => Unit)) ;
+  config.uniBool := exactly (exactly (fun l => Bool)) ;
+  config.uniSimProd := exactly (exactly (fun l1 l2 A B => SimProd A B)) ;
+  config.uniUni := exactly Uni ;
 
   config.sbzero A u  := fun t => t [ ← u]      ;
   config.sbweak A    := fun t => t ↑           ;
@@ -196,115 +238,6 @@ Local Instance Syntax : config.Syntax := {|
   config.sbcomp σ τ  := fun t => τ (σ t)
 |}.
 
-Context {ConfigPrecond : config.Precond}.
-Context {ConfigReflection : config.Reflection}.
-
-Context {simpleproductsFlag : config.Flag Type}.
-Local Instance SimpleProducts : config.SimpleProducts := {|
-  config.simpleproductsFlag := @config.flagProof _ simpleproductsFlag ;
-
-  config.SimProd := exactly SimProd ;
-
-  config.pair  := exactly pair  ;
-  config.proj1 := exactly proj1 ;
-  config.proj2 := exactly proj2
-|}.
-
-Context {ConfigProdEta : config.ProdEta}.
-
-Local Instance UniverseLevels : config.UniverseLevels := {|
-  config.level := level
-|}.
-
-Context {universesFlag : config.Flag Type}.
-Local Instance Universes : config.Universes := {|
-  config.universesFlag := @config.flagProof _ universesFlag ;
-
-  config.uni := exactly uni ;
-
-  config.Uni := exactly Uni ;
-  config.El  := exactly (fun l A => A)  ;
-
-  config.uniUni := exactly Uni
-|}.
-
-Context {withpropFlag : config.Flag Type}.
-Local Instance WithProp : config.WithProp := {|
-  config.withpropFlag := @config.flagProof _ withpropFlag ;
-
-  config.prop := exactly prop
-|}.
-
-Context {withjFlag : config.Flag Type}.
-Local Instance WithJ : config.WithJ := {|
-  config.withjFlag := @config.flagProof _ withjFlag ;
-
-  config.j := exactly j
-|}.
-
-Context {withemptyFlag : config.Flag Type}.
-Local Instance WithEmpty : config.WithEmpty := {|
-  config.withemptyFlag := @config.flagProof _ withemptyFlag ;
-
-  config.Empty := exactly Empty ;
-
-  config.exfalso := exactly exfalso
-|}.
-
-Context {withunitFlag : config.Flag Type}.
-Local Instance WithUnit : config.WithUnit := {|
-  config.withunitFlag := @config.flagProof _ withunitFlag ;
-
-  config.Unit := exactly Unit ;
-
-  config.unit := exactly unit
-|}.
-
-Context {withboolFlag : config.Flag Type}.
-Local Instance WithBool : config.WithBool := {|
-  config.withboolFlag := @config.flagProof _ withboolFlag ;
-
-  config.Bool := exactly Bool ;
-
-  config.true  := exactly true  ;
-  config.false := exactly false ;
-  config.cond  := exactly cond
-|}.
-
-Context {withpiFlag : config.Flag Type}.
-Local Instance WithPi : config.WithPi := {|
-  config.withpiFlag := @config.flagProof _ withpiFlag ;
-
-  config.Prod := exactly Prod ;
-
-  config.lam := exactly (fun A B t => lam A t) ;
-  config.app := exactly (fun u A B v => app u v)
-|}.
-
-Local Instance UniProd : config.UniProd := {|
-  config.uniProd := exactly (exactly (fun l1 l2 A B => Prod A B))
-|}.
-
-Local Instance UniId : config.UniId := {|
-  (* config.uniId := exactly (exactly (fun l A u v => Id A u v)) *)
-  config.uniId := exactly (fun l A u v => Id A u v)
-|}.
-
-Local Instance UniEmpty : config.UniEmpty := {|
-  config.uniEmpty := exactly (exactly (fun l => Empty))
-|}.
-
-Local Instance UniUnit : config.UniUnit := {|
-  config.uniUnit := exactly (exactly (fun l => Unit))
-|}.
-
-Local Instance UniBool : config.UniBool := {|
-  config.uniBool := exactly (exactly (fun l => Bool))
-|}.
-
-Local Instance UniSimProd : config.UniSimProd := {|
-  config.uniSimProd := exactly (exactly (fun l1 l2 A B => SimProd A B))
-|}.
 
 Definition isctx := tt.isctx.
 Definition issubst := tt.issubst.

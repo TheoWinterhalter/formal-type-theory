@@ -6,8 +6,7 @@
 \usepackage{mathpartir}
 \usepackage{hyperref}
 \usepackage{xcolor}
-\usepackage{amsmath}
-\usepackage{times}
+\usepackage{amsmath,amssymb}
 \usepackage{a4wide}
 
 % Define a color for showing preconditions
@@ -29,35 +28,45 @@ These are the rules of
 \href{https://github.com/TheoWinterhalter/formal-type-theory}{\texttt{formal-type-theory}},
 version \texttt{\rulesVersion}. These rules display all preconditions.
 
-\section*{Judgment $\isctx{\G}$}
+\section{Presyntax}
+
+\input{presyntax.tex}
+
+\section{Configuration options}
+
+\input{config.tex}
+
+\section{Judgment rules}
+
+\subsection{Judgment $\isctx{\Gamma}$}
 
 \isctxRulesParanoid
 
-\section*{Judgment $\issubst{\sbs}{\G}{\D}$}
+\subsection{Judgment $\issubst{\sigma}{\Gamma}{\Delta}$}
 
 \issubstRulesParanoid
 
-\section*{Judgment $\istype{\G}{\A}$}
+\subsection{Judgment $\istype{\Gamma}{A}$}
 
 \istypeRulesParanoid
 
-\section*{Judgment $\isterm{\G}{\uu}{\A}$}
+\subsection{Judgment $\isterm{\Gamma}{u}{A}$}
 
 \istermRulesParanoid
 
-\section*{Judgment $\eqctx{\G}{\D}$}
+\subsection{Judgment $\eqctx{\Gamma}{\Delta}$}
 
 \eqctxRulesParanoid
 
-\section*{Judgment $\eqsubst{\sbs}{\sbt}{\G}{\D}$}
+\subsection{Judgment $\eqsubst{\sigma}{\rho}{\Gamma}{\Delta}$}
 
 \eqsubstRulesParanoid
 
-\section*{Judgment $\eqtype{\G}{\A}{\B}$}
+\subsection{Judgment $\eqtype{\Gamma}{A}{B}$}
 
 \eqtypeRulesParanoid
 
-\section*{Judgment $\eqterm{\G}{\uu}{\vv}{\A}$}
+\subsection{Judgment $\eqterm{\Gamma}{u}{v}{A}$}
 
 \eqtermRulesParanoid
 
