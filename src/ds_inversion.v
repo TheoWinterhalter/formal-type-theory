@@ -14,6 +14,8 @@ Require Import Coq.Program.Equality.
 
 Section DaringSyntaxInversion.
 
+Open Scope type_scope.
+
 Local Instance hasPrecond : config.Precond := {|
   config.precondFlag := config.Yes
 |}.
@@ -36,6 +38,25 @@ Defined.
 
 Axiom admit : forall {A}, A.
 Tactic Notation "admit" := (exact admit).
+
+Lemma SubstIdInversion {Γ Δ A u v C σ} :
+  issubst σ Γ Δ ->
+  σ C = Id A u v ->
+  { A' : term &
+  { u' : term &
+  { v' : term &
+    (C = Id A' u' v') *
+    istype Δ (Id A' u' v')
+  } } }.
+Abort.
+(* There is no way such a theorem is going to hold.
+   Indeed, substitutions are just functions and there is no way to make
+   sure that they are going to behave well (or maybe by induction on the
+   typing of said substitution?).
+
+   There would be the option of having the substitution rules optional
+   and replaced by some admissibility result whenever turned off.
+ *)
 
 Definition TyIdInversion G A u v (H : istype G (Id A u v)) :
   isctx G * istype G A * isterm G u A * isterm G v A.
