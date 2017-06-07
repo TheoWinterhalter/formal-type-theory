@@ -118,7 +118,18 @@ Proof.
 
   - { split ; [(split ; [split | idtac]) | idtac].
       - assumption.
-      - admit.
+      - cbv in H2. subst. inversion X.
+        + admit.
+        + admit.
+        + admit.
+        + admit.
+      (* Does this ever end?
+         Maybe we would like as well to limit the typing rules of istype
+         to always be about TyEl... But this doesn't play well when the flag
+         is off...
+         Any chance of admissibility of some rules to remove them from
+         inversion?
+       *)
       - admit.
       - admit.
     }
