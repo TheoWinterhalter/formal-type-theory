@@ -4,90 +4,42 @@
 *)
 
 Require config.
-Require Import config_tactics.
-
-Require Import syntax.
 Require Import tt.
+Require Import paranoid_syntax.
+Require Import config_tactics.
 Require Import checking_tactics.
-
-Instance Syntax : config.Syntax := {|
-  config.context      := context ;
-  config.type         := type ;
-  config.term         := term ;
-  config.substitution := substitution ;
-
-  config.ctxempty  := ctxempty ;
-  config.ctxextend := ctxextend ;
-
-  config.Id    := Id ;
-  config.Subst := Subst ;
-
-  config.var   := var ;
-  config.refl  := refl ;
-  config.subst := subst ;
-
-  config.sbzero  := sbzero ;
-  config.sbweak  := sbweak ;
-  config.sbshift := sbshift ;
-  config.sbid    := sbid ;
-  config.sbcomp  := sbcomp
-|}.
-
-Definition nothing : forall {A}, config.Flag config.No -> A.
-Proof.
-  intros A f.
-  destruct f. destruct flagProof.
-Defined.
-
-Definition exactly : forall {A}, A -> config.Flag config.Yes -> A.
-Proof.
-  intros A a f.
-  exact a.
-Defined.
-
 
 (* Source type theory *)
 Module Stt.
 
   Section Stt.
 
-  Local Instance hasPrecond : config.Precond
-    := {| config.precondFlag := config.Yes |}.
-  Context {ConfigReflection : config.Reflection}.
-  Context {ConfigSimpleProducts : config.SimpleProducts}.
-  Local Instance hasProdEta : config.ProdEta
-    := {| config.prodetaFlag := config.No |}.
-  Context {ConfigUniverseLevels : config.UniverseLevels}.
-  Context {ConfigUniverses : config.Universes}.
-  Local Instance hasProp : config.WithProp
-    := {| config.withpropFlag := config.No ;
-          config.prop := nothing |}.
-  Context {ConfigWithJ : config.WithJ}.
-  Context {ConfigEmpty : config.WithEmpty}.
-  Context {ConfigUnit : config.WithUnit}.
-  Context {ConfigBool : config.WithBool}.
-  (* Context {ConfigUniProd : config.UniProd}. *)
-  Context {ConfigUniId : config.UniId}.
-  Context {ConfigUniEmpty : config.UniEmpty}.
-  Context {ConfigUniUnit : config.UniUnit}.
-  Context {ConfigUniBool : config.UniBool}.
-  Context {ConfigUniSimProd : config.UniSimProd}.
-  Local Instance hasPi : config.WithPi
-    := {| config.withpiFlag := config.Yes ;
+    Local Instance hasPrecond : config.Precond
+      := {| config.precondFlag := config.Yes |}.
+    Context {ConfigReflection : config.Reflection}.
+    Context {ConfigSimpleProducts : config.SimpleProducts}.
+    Local Instance hasProdEta : config.ProdEta
+      := {| config.prodetaFlag := config.No |}.
+    Context {ConfigUniverses : config.Universes}.
+    Local Instance hasProp : config.WithProp
+      := {| config.withpropFlag := config.No |}.
+    Context {ConfigWithJ : config.WithJ}.
+    Context {ConfigEmpty : config.WithEmpty}.
+    Context {ConfigUnit : config.WithUnit}.
+    Context {ConfigBool : config.WithBool}.
+    Local Instance hasPi : config.WithPi
+      := {| config.withpiFlag := config.Yes |}.
 
-          config.Prod := exactly Prod ;
+    Local Instance Syntax : config.Syntax := Syntax.
 
-          config.lam := exactly lam ;
-          config.app := exactly app |}.
-
-  Definition isctx   := isctx.
-  Definition issubst := issubst.
-  Definition istype  := istype.
-  Definition isterm  := isterm.
-  Definition eqctx   := eqctx.
-  Definition eqsubst := eqsubst.
-  Definition eqtype  := eqtype.
-  Definition eqterm  := eqterm.
+    Definition isctx   := isctx.
+    Definition issubst := issubst.
+    Definition istype  := istype.
+    Definition isterm  := isterm.
+    Definition eqctx   := eqctx.
+    Definition eqsubst := eqsubst.
+    Definition eqtype  := eqtype.
+    Definition eqterm  := eqterm.
 
   End Stt.
 
@@ -98,62 +50,34 @@ Module Ttt.
 
   Section Ttt.
 
-  Local Instance hasPrecond : config.Precond
-    := {| config.precondFlag := config.No |}.
-  Context {ConfigReflection : config.Reflection}.
-  Local Instance hasSimpleProducts : config.SimpleProducts
-    := {| config.simpleproductsFlag := config.Yes ;
+    Local Instance hasPrecond : config.Precond
+      := {| config.precondFlag := config.No |}.
+    Context {ConfigReflection : config.Reflection}.
+    Local Instance hasSimpleProducts : config.SimpleProducts
+      := {| config.simpleproductsFlag := config.Yes |}.
+    Local Instance hasProdEta : config.ProdEta
+      := {| config.prodetaFlag := config.No |}.
+    Context {ConfigUniverses : config.Universes}.
+    Local Instance hasProp : config.WithProp
+      := {| config.withpropFlag := config.No |}.
+    Context {ConfigWithJ : config.WithJ}.
+    Context {ConfigEmpty : config.WithEmpty}.
+    Context {ConfigUnit : config.WithUnit}.
+    Local Instance hasBool : config.WithBool
+      := {| config.withboolFlag := config.Yes |}.
+    Local Instance hasPi : config.WithPi
+      := {| config.withpiFlag := config.Yes |}.
 
-          config.SimProd := exactly SimProd ;
+    Local Instance Syntax : config.Syntax := Syntax.
 
-          config.pair := exactly pair ;
-          config.proj1 := exactly proj1 ;
-          config.proj2 := exactly proj2
-       |}.
-  Local Instance hasProdEta : config.ProdEta
-    := {| config.prodetaFlag := config.No |}.
-  Context {ConfigUniverseLevels : config.UniverseLevels}.
-  Context {ConfigUniverses : config.Universes}.
-  Local Instance hasProp : config.WithProp
-    := {| config.withpropFlag := config.No ;
-
-          config.prop := nothing
-       |}.
-  Context {ConfigWithJ : config.WithJ}.
-  Context {ConfigEmpty : config.WithEmpty}.
-  Context {ConfigUnit : config.WithUnit}.
-  Local Instance hasBool : config.WithBool
-    := {| config.withboolFlag := config.Yes ;
-
-          config.Bool := exactly Bool ;
-
-          config.true := exactly true ;
-          config.false := exactly false ;
-          config.cond := exactly cond
-       |}.
-  Context {ConfigUniProd : config.UniProd}.
-  Context {ConfigUniId : config.UniId}.
-  Context {ConfigUniEmpty : config.UniEmpty}.
-  Context {ConfigUniUnit : config.UniUnit}.
-  Context {ConfigUniBool : config.UniBool}.
-  Context {ConfigUniSimProd : config.UniSimProd}.
-  Local Instance hasPi : config.WithPi
-    := {| config.withpiFlag := config.Yes ;
-
-          config.Prod := exactly Prod ;
-
-          config.lam := exactly lam ;
-          config.app := exactly app
-       |}.
-
-  Definition isctx   := isctx.
-  Definition issubst := issubst.
-  Definition istype  := istype.
-  Definition isterm  := isterm.
-  Definition eqctx   := eqctx.
-  Definition eqsubst := eqsubst.
-  Definition eqtype  := eqtype.
-  Definition eqterm  := eqterm.
+    Definition isctx   := isctx.
+    Definition issubst := issubst.
+    Definition istype  := istype.
+    Definition isterm  := isterm.
+    Definition eqctx   := eqctx.
+    Definition eqsubst := eqsubst.
+    Definition eqtype  := eqtype.
+    Definition eqterm  := eqterm.
 
   End Ttt.
 
@@ -161,20 +85,17 @@ End Ttt.
 
 Section Translation.
 
+Context {ConfigPrecond : config.Precond}.
 Context {ConfigReflection : config.Reflection}.
 Context {ConfigSimpleProducts : config.SimpleProducts}.
-Context {ConfigUniverseLevels : config.UniverseLevels}.
+Context {ConfigProdEta : config.ProdEta}.
 Context {ConfigUniverses : config.Universes}.
+Context {ConfigWithProp : config.WithProp}.
 Context {ConfigWithJ : config.WithJ}.
 Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
-Context {ConfigUniProd : config.UniProd}.
-Context {ConfigUniId : config.UniId}.
-Context {ConfigUniEmpty : config.UniEmpty}.
-Context {ConfigUniUnit : config.UniUnit}.
-Context {ConfigUniBool : config.UniBool}.
-Context {ConfigUniSimProd : config.UniSimProd}.
+Context {ConfigPi : config.WithPi}.
 
 Lemma max_0 : forall n m, max (max n m) 0 = max n m.
 Proof.
@@ -270,43 +191,43 @@ Ltac ih :=
       forall G,
         Stt.isctx G ->
         Ttt.isctx (trans_ctx G)
-    |- isctx (trans_ctx ?G) =>
+    |- tt.isctx (trans_ctx ?G) =>
     now apply (trans_isctx G)
   | trans_istype :
       forall G A,
         Stt.istype G A ->
         Ttt.istype (trans_ctx G) (trans_type A)
-    |- istype (trans_ctx ?G) (trans_type ?A) =>
+    |- tt.istype (trans_ctx ?G) (trans_type ?A) =>
     now apply (trans_istype G A)
   | trans_isterm :
       forall G u A,
         Stt.isterm G u A ->
         Ttt.isterm (trans_ctx G) (trans_term u) (trans_type A)
-    |- isterm (trans_ctx ?G) (trans_term ?u) (trans_type ?A) =>
+    |- tt.isterm (trans_ctx ?G) (trans_term ?u) (trans_type ?A) =>
     now apply (trans_isterm G u A)
   | trans_issubst :
       forall sbs G D,
         Stt.issubst sbs G D ->
         Ttt.issubst (trans_subst sbs) (trans_ctx G) (trans_ctx D)
-    |- issubst (trans_subst ?sbs) (trans_ctx ?G) (trans_ctx ?D) =>
+    |- tt.issubst (trans_subst ?sbs) (trans_ctx ?G) (trans_ctx ?D) =>
     now apply (trans_issubst sbs G D)
   | trans_eqctx :
       forall G D,
         Stt.eqctx G D ->
         Ttt.eqctx (trans_ctx G) (trans_ctx D)
-    |- eqctx (trans_ctx ?G) (trans_ctx ?D) =>
+    |- tt.eqctx (trans_ctx ?G) (trans_ctx ?D) =>
     now apply (trans_eqctx G D)
   | trans_eqtype :
       forall G A B,
         Stt.eqtype G A B ->
         Ttt.eqtype (trans_ctx G) (trans_type A) (trans_type B)
-    |- eqtype (trans_ctx ?G) (trans_type ?A) (trans_type ?B) =>
+    |- tt.eqtype (trans_ctx ?G) (trans_type ?A) (trans_type ?B) =>
     now apply (trans_eqtype G A B)
   | trans_eqterm :
       forall G u v A,
         Stt.eqterm G u v A ->
         Ttt.eqterm (trans_ctx G) (trans_term u) (trans_term v) (trans_type A)
-    |- eqterm (trans_ctx ?G) (trans_term ?u) (trans_term ?v) (trans_type ?A) =>
+    |- tt.eqterm (trans_ctx ?G) (trans_term ?u) (trans_term ?v) (trans_type ?A) =>
     now apply (trans_eqterm G u v A)
   | trans_eqsubst :
       forall sbs sbt G D,
@@ -315,7 +236,7 @@ Ltac ih :=
                     (trans_subst sbt)
                     (trans_ctx G)
                     (trans_ctx D)
-    |- eqsubst (trans_subst ?sbs)
+    |- tt.eqsubst (trans_subst ?sbs)
               (trans_subst ?sbt)
               (trans_ctx ?G)
               (trans_ctx ?D) =>
@@ -374,8 +295,8 @@ Proof.
 
       (* TyProd *)
       - { simpl.
-          capply TySimProd.
-          - capply TyProd.
+          capply @TySimProd.
+          - capply @TyProd.
             now apply (trans_istype (ctxextend G A) B).
           (* Too bad ih doesn't deal with this*)
           - capply TyBool. ih.
