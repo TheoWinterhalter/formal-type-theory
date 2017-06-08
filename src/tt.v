@@ -25,6 +25,7 @@ Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
+Context `{ConfigId : config.IdentityTypes}.
 Context `{ConfigPi : config.WithPi}.
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
@@ -43,6 +44,9 @@ Notation "'universe' r" :=
 
 Notation "'withprop' r" :=
   (forall { _ : withpropFlag }, r) (only parsing, at level 97).
+
+Notation "'identitytype' r" :=
+  (forall { _ : identitytypesFlag }, r) (only parsing, at level 97).
 
 Notation "'withj' r" :=
   (forall { _ : withjFlag }, r) (only parsing, at level 97).
@@ -185,7 +189,7 @@ with istype : context -> type -> Type :=
        endrule
 
      | TyId :
-       rule
+       identitytype rule
          parameters: {G A u v},
          precond: isctx G
          precond: istype G A
@@ -330,7 +334,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermRefl :
-       rule
+       identitytype rule
          parameters: {G A u},
          precond: isctx G
          precond: istype G A
@@ -340,7 +344,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermJ :
-       withj rule
+       identitytype withj rule
          parameters: {G A C u v w p},
          precond: isctx G
          precond: istype G A
@@ -496,7 +500,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUniId :
-       universe rule
+       universe identitytype rule
          parameters: {G a u v n},
          premise: isterm G a (Uni n)
          premise: isterm G u (El n a)
@@ -932,7 +936,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | EqTySubstId :
-       rule
+       identitytype rule
          parameters: {G D A u v sbs},
          premise: issubst sbs G D
          precond: istype D A
@@ -1008,7 +1012,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | CongId :
-       rule
+       identitytype rule
          parameters: {G A B u1 u2 v1 v2},
          precond: isctx G
          precond: istype G A
@@ -1104,7 +1108,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElId :
-       universe rule
+       universe identitytype rule
          parameters: {G a u v n},
          premise: isterm G a (Uni n)
          premise: isterm G u (El n a)
@@ -1430,7 +1434,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstRefl :
-       rule
+       identitytype rule
          parameters: {G D A u sbs},
          premise: issubst sbs G D
          premise: isterm D u A
@@ -1445,7 +1449,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstJ :
-       withj rule
+       identitytype withj rule
          parameters: {G D A C u v w p sbs},
          precond: isctx G
          precond: isctx D
@@ -1621,7 +1625,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqReflection :
-       extensional rule
+       extensional identitytype rule
          parameters: {G A u v p},
          precond: isctx G
          precond: istype G A
@@ -1698,7 +1702,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | JRefl :
-       withj rule
+       identitytype withj rule
          parameters: {G A C u w},
          precond: isctx G
          precond: istype G A
@@ -1793,7 +1797,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongRefl :
-       rule
+       identitytype rule
          parameters: {G u1 u2 A1 A2},
          precond: isctx G
          precond: istype G A1
@@ -1810,7 +1814,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongJ :
-       withj rule
+       identitytype withj rule
          parameters: {G A1 A2 C1 C2 u1 u2 v1 v2 w1 w2 p1 p2},
          precond: isctx G
          precond: istype G A1
@@ -2175,7 +2179,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUniId :
-       universe rule
+       universe identitytype rule
          parameters: {G D a u v n sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni n)
@@ -2320,7 +2324,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongUniId :
-       universe rule
+       universe identitytype rule
          parameters: {G a1 a2 u1 u2 v1 v2 n},
          premise: eqterm G a1 a2 (Uni n)
          premise: eqterm G u1 u2 (El n a1)

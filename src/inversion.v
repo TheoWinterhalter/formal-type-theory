@@ -20,6 +20,7 @@ Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigId : config.IdentityTypes}.
 Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
@@ -141,6 +142,7 @@ Defined.
 
 Fixpoint TermJInversion {G A u C w v p T}
          (H : ptt.isterm G (j A u C w v p) T) {struct H} :
+  forall {_ : config.identitytypesFlag},
   ett.isctx G *
   ett.istype G A *
   ett.isterm G u A *
@@ -189,9 +191,10 @@ Fixpoint TermJInversion {G A u C w v p T}
              )
              T.
 Proof.
+  intro idF.
   inversion H ; doConfig.
 
-  - { destruct (@TermJInversion _ _ _ _ _ _ _ _ X)
+  - { destruct (@TermJInversion _ _ _ _ _ _ _ _ X idF)
         as [[[[[[[? ?] ?] ?] ?] ?] ?] ?].
       repeat split ; try hyp.
       ceapply EqTyTrans ; [
@@ -200,7 +203,7 @@ Proof.
       ].
     }
 
-  - { destruct (@TermJInversion _ _ _ _ _ _ _ _ X)
+  - { destruct (@TermJInversion _ _ _ _ _ _ _ _ X idF)
         as [[[[[[[? ?] ?] ?] ?] ?] ?] ?].
       assert (
           ett.eqctx
@@ -216,17 +219,11 @@ Proof.
       { ceapply EqCtxExtend.
         - ceapply EqCtxExtend ; try hyp.
           ceapply EqTyRefl ; hyp.
-        - ceapply CongId.
-          + ceapply CongTySubst.
-            * ceapply CongSubstWeak ; try hyp.
-              ceapply EqTyRefl ; hyp.
-            * ceapply EqTyRefl ; hyp.
-          + ceapply CongTermSubst.
-            * ceapply CongSubstWeak ; try hyp.
-              ceapply EqTyRefl ; hyp.
-            * ceapply EqRefl ; hyp.
-          + ceapply EqRefl.
-            ceapply TermVarZero. hyp.
+        - capply EqTyRefl. capply TyId.
+          + ceapply TermSubst.
+            * ceapply SubstWeak ; hyp.
+            * hyp.
+          + ceapply TermVarZero. hyp.
       }
       repeat split.
       - hyp.

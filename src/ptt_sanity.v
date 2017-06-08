@@ -15,6 +15,7 @@ Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigId : config.IdentityTypes}.
 Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.

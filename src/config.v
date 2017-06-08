@@ -56,6 +56,11 @@ Class WithProp := {
   withpropFlag : Type
 }.
 
+(* Identity types. *)
+Class IdentityTypes := {
+  identitytypesFlag : Type
+}.
+
 (* J-eliminator. *)
 Class WithJ := {
   withjFlag : Type
