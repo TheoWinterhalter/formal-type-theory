@@ -179,11 +179,8 @@ Fixpoint sbshift σ t n {struct t} :=
   end.
 
 
-Definition exactly : forall {F A}, A -> config.Flag F -> A.
-Proof.
-  intros F A a f.
-  exact a.
-Defined.
+Definition exactly : forall {F A}, A -> config.Flag F -> A :=
+  fun {F A} a f => a.
 
 Local Instance Syntax : config.Syntax := {|
   config.context      := context     ;

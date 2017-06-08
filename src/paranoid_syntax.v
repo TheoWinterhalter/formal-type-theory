@@ -80,11 +80,8 @@ with substitution : Type :=
      | sbcomp : substitution -> substitution -> substitution
 .
 
-Definition exactly : forall {F A}, A -> config.Flag F -> A.
-Proof.
-  intros F A a f.
-  exact a.
-Defined.
+Definition exactly : forall {F A}, A -> config.Flag F -> A :=
+  fun {F A} a f => a.
 
 Local Instance Syntax : config.Syntax := {|
   config.context      := context ;
