@@ -79,6 +79,8 @@ Module Ttt.
     Definition eqtype  := eqtype.
     Definition eqterm  := eqterm.
 
+    Definition TySimProd := TySimProd.
+
   End Ttt.
 
 End Ttt.
@@ -295,7 +297,8 @@ Proof.
 
       (* TyProd *)
       - { simpl.
-          capply @TySimProd.
+          Set Printing All. idtac.
+          capply @Ttt.TySimProd.
           - capply @TyProd.
             now apply (trans_istype (ctxextend G A) B).
           (* Too bad ih doesn't deal with this*)
