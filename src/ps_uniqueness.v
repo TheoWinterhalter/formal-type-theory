@@ -1,8 +1,9 @@
 (* Uniqueness of typing. *)
 
-Require Import config.
-Require Import config_tactics.
-Require Import wfconfig.
+Require config.
+Require wfconfig.
+Require Import paranoid_syntax.
+Require Import ps_inversion.
 
 Require Import tt.
 Require ett ptt.
@@ -13,11 +14,9 @@ Require Import tactics config_tactics.
 
 Section Uniqueness.
 
-Context {ConfigSyntax : config.Syntax}.
 Context {ConfigReflection : config.Reflection}.
 Context {ConfigSimpleProducts : config.SimpleProducts}.
 Context {ConfigProdEta : config.ProdEta}.
-Context {ConfigUniverseLevels : config.UniverseLevels}.
 Context {ConfigUniverses : config.Universes}.
 Context {ConfigWithProp : config.WithProp}.
 Context {ConfigWithJ : config.WithJ}.
@@ -25,30 +24,23 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
-Context {ConfigUniProd : config.UniProd}.
-Context {ConfigUniId : config.UniId}.
-Context {ConfigUniEmpty : config.UniEmpty}.
-Context {ConfigUniUnit : config.UniUnit}.
-Context {ConfigUniBool : config.UniBool}.
-Context {ConfigUniSimProd : config.UniSimProd}.
 
-(* For PTT *)
+Local Instance LocSyntax : config.Syntax := Syntax.
+
 Definition hasPrecond : config.Precond
   := {| config.precondFlag := config.Yes |}.
-Context {ConfigCtxExtendInversion :
-           CtxExtendInversionClass (ConfigPrecond := hasPrecond)}.
-Context {ConfigTyIdInversion :
-           TyIdInversionClass (ConfigPrecond := hasPrecond)}.
-Context {ConfigTyProdInversion :
-           TyProdInversionClass (ConfigPrecond := hasPrecond)}.
-Context {ConfigTySimProdInversion :
-           TySimProdInversionClass (ConfigPrecond := hasPrecond)}.
-
-(* For ETT *)
-Definition noPrecond : config.Precond
-  := {| config.precondFlag := config.No |}.
-Context {ConfigEqCtxExtendInversion :
-           EqCtxExtendInversionClass (ConfigPrecond := noPrecond)}.
+Local Instance LocCtxExtendInversion
+  : wfconfig.CtxExtendInversionClass (ConfigPrecond := hasPrecond)
+  := CtxExtendInversionInstance.
+Local Instance LocTyIdInversion
+  : wfconfig.TyIdInversionClass (ConfigPrecond := hasPrecond)
+  := TyIdInversionInstance.
+Local Instance LocTyProdInversion
+  : wfconfig.TyProdInversionClass (ConfigPrecond := hasPrecond)
+  := TyProdInversionInstance.
+Local Instance LocTySimProdInversion
+  : wfconfig.TySimProdInversionClass (ConfigPrecond := hasPrecond)
+  := TySimProdInversionInstance.
 
 Lemma substCtxConv' :
   forall G G' D sbs (E : ett.eqctx G' G),
