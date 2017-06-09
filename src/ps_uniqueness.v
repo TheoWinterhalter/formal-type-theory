@@ -42,6 +42,106 @@ Local Instance LocTySimProdInversion
   : wfconfig.TySimProdInversionClass (ConfigPrecond := hasPrecond)
   := TySimProdInversionInstance.
 
+Fixpoint eqctx_ctxextend_left G A D
+         (H : ett.eqctx (ctxextend G A) D) {struct H} :
+  { G' : context &
+    { A' : type &
+      (D = ctxextend G' A') * ett.eqctx G G' * ett.eqtype G A A'
+    }
+  }%type
+
+with eqctx_ctxextend_right D G A
+                           (H : ett.eqctx D (ctxextend G A)) {struct H} :
+  { G' : context &
+    { A' : type &
+      (D = ctxextend G' A') * ett.eqctx G G' * ett.eqtype G A A'
+    }
+  }%type.
+Proof.
+  (**** left ****)
+  - { inversion_clear H ; doConfig.
+
+      (* CtxRefl *)
+      - exists G, A. repeat split.
+        + capply CtxRefl.
+          eapply ptt2ett.sane_isctx.
+          apply (CtxExtendInversion G A).
+          now eapply ett2ptt.sane_isctx.
+        + capply EqTyRefl.
+          eapply ptt2ett.sane_istype.
+          apply (CtxExtendInversion G A).
+          now eapply ett2ptt.sane_isctx.
+
+      (* CtxSym *)
+      - destruct (eqctx_ctxextend_right _ _ _ X) as [G' [A' [[eq HG] HA]]].
+        exists G', A'. repeat split ; assumption.
+
+      (* CtxTrans *)
+      - destruct (eqctx_ctxextend_left _ _ _ X2) as [G' [A' [[eq HG] HA]]].
+        subst.
+        destruct (eqctx_ctxextend_left _ _ _ X3) as [G'' [A'' [[eq' HG'] HA']]].
+        exists G'', A''. repeat split.
+        + assumption.
+        + ceapply CtxTrans ; eassumption.
+        + ceapply EqTyTrans.
+          * eassumption.
+          * ceapply EqTyCtxConv ; try eassumption.
+            capply CtxSym ; assumption.
+
+      (* EqCtxExtend *)
+      - exists D0, B. repeat split ; assumption.
+
+    }
+
+  (**** right ****)
+  - { inversion_clear H ; doConfig.
+
+      (* CtxRefl *)
+      - exists G, A. repeat split.
+        + capply CtxRefl.
+          eapply ptt2ett.sane_isctx.
+          apply (CtxExtendInversion G A).
+          now eapply ett2ptt.sane_isctx.
+        + capply EqTyRefl.
+          eapply ptt2ett.sane_istype.
+          apply (CtxExtendInversion G A).
+          now eapply ett2ptt.sane_isctx.
+
+      (* CtxSym *)
+      - destruct (eqctx_ctxextend_left _ _ _ X) as [G' [A' [[eq HG] HA]]].
+        exists G', A'. repeat split ; assumption.
+
+      (* CtxTrans *)
+      - destruct (eqctx_ctxextend_right _ _ _ X3) as [G' [A' [[eq HG] HA]]].
+        subst.
+        destruct (eqctx_ctxextend_right _ _ _ X2) as [G'' [A'' [[eq' HG'] HA']]].
+        exists G'', A''. repeat split.
+        + assumption.
+        + ceapply CtxTrans ; eassumption.
+        + ceapply EqTyTrans.
+          * eassumption.
+          * ceapply EqTyCtxConv ; try eassumption.
+            capply CtxSym ; assumption.
+
+      (* EqCtxExtend *)
+      - exists G0, A0. repeat split.
+        + now capply CtxSym.
+        + capply EqTySym.
+          ceapply EqTyCtxConv ; eassumption.
+
+    }
+
+Defined.
+
+Definition eqctx_ctxextend G A G' A'
+         (H : ett.eqctx (ctxextend G A) (ctxextend G' A')) :
+  (ett.eqctx G G' * ett.eqtype G A A')%type.
+Proof.
+  destruct (eqctx_ctxextend_left _ _ _ H) as [G'' [A'' [[eq HG] HA]]].
+  inversion eq. subst.
+  split ; assumption.
+Defined.
+
 Lemma substCtxConv' :
   forall G G' D sbs (E : ett.eqctx G' G),
     ett.issubst sbs G D -> ett.issubst sbs G' D.
@@ -167,7 +267,8 @@ Proof.
         - doCtxConv D' unique_term'.
 
         - { assert (L : ett.eqctx (ctxextend G0 A0) (ctxextend G A)).
-            - rewrite H. hyp.
+            - simpl in H.
+              rewrite H. hyp.
             - destruct (eqctx_ctxextend _ _ _ _  L) as [E M].
               ceapply CongTySubst.
               + ceapply CongSubstWeak.
@@ -185,7 +286,7 @@ Proof.
           - doCtxConv D' unique_term'.
 
           - { assert (L : ett.eqctx (ctxextend G0 B0) (ctxextend G B)).
-              - rewrite H. hyp.
+              - simpl in H. rewrite H. hyp.
               - destruct (eqctx_ctxextend _ _ _ _  L) as [E M].
                 ceapply CongTySubst.
                 + ceapply CongSubstWeak.
