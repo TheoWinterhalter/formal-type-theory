@@ -61,23 +61,22 @@ For example, `make latex/rules.pdf` generates the file `latex/rules.pdf`.
 
 The `src` folder contains the Coq files. The more important ones are:
 
-* `config.v` -- configuration options
+* `config.v` -- configuration options, abstract presyntax
 * `config_tactics.v` -- tactics for dealing with configuration options
+* `daring_syntax.v` -- definition of presyntax with implicit substitutions, Russel universes, less annotations than the abstract syntax
 * `ett.v` -- economic type theory
 * `ett2ptt.v` -- proof that we can pass from economic to paranoid type theory
 * `ett_sanity.v` -- proof that economic type theory is sane
-* `inversion.v` -- inversion lemmas
 * `negfunext.v` -- proof that function extensionality is not provable in MLTT
+* `paranoid_syntax.v` -- definition of paranoid presytnax
+* `ps_uniqueness.v` -- proof of uniqueness of typing for paranoid syntax
 * `ptt.v` -- paranoid type theory
 * `ptt2ett.v` -- proof that we can pass from paranoid to economic type theory
 * `ptt_admissible.v` -- various admissibility lemmas for paranoid type theory
 * `ptt_inversion.v` -- inversion principles for paranoid type theory
 * `ptt_sanity.v` -- proof that paranoid type theory is sane
-* `substitution_elim.v` -- an attempt to show that explicit substitutions can be computed
-* `syntax.v` -- definition of presytnax
 * `tactics.v` -- tactics for working with the library
 * `tt.v` -- all the rules of type theory
-* `uniqueness.v` -- proof of uniqueness of typing
 
 ### Old `README`
 
