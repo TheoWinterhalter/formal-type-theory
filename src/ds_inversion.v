@@ -48,13 +48,38 @@ Lemma SubstIdInversion {Γ Δ A u v C σ} :
     (C = Id A' u' v') *
     istype Δ (Id A' u' v')
   } } }.
-Abort.
-(* There is no way such a theorem is going to hold.
-   Indeed, substitutions are just functions and there is no way to make
-   sure that they are going to behave well (or maybe by induction on the
-   typing of said substitution?).
+Proof.
+  intros h1 h2.
+  dependent induction h1 ; doConfig.
 
-   There would be the option of having the substitution rules optional
+  - { simpl in *.
+      dependent induction C ; simpl in h2 ; try discriminate.
+      - repeat eexists. admit.
+      - admit.
+    }
+
+  - { simpl in *.
+      dependent induction C ; simpl in h2 ; try discriminate.
+      repeat eexists. admit.
+    }
+
+  - { simpl in *.
+      dependent induction C ; simpl in h2 ; try discriminate.
+      repeat eexists. admit.
+    }
+
+  - { simpl in *.
+      dependent induction C ; simpl in h2 ; try discriminate.
+      repeat eexists. admit.
+    }
+
+  - { simpl in *.
+      dependent induction C ; simpl in h2 ; try discriminate.
+      (* This case is really bothersome... *)
+      all:admit.
+    }
+Abort.
+(* There would be the option of having the substitution rules optional
    and replaced by some admissibility result whenever turned off.
  *)
 
