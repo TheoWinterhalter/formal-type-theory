@@ -83,6 +83,50 @@ Abort.
    and replaced by some admissibility result whenever turned off.
  *)
 
+Definition TermIdInversion G A u v U (H : isterm G (Id A u v) U) :
+  isctx G * isterm G A U * isterm G u A * isterm G v A.
+Proof.
+  dependent induction H ; doConfig.
+
+  - { repeat split.
+      - assumption.
+      - config apply @tt.TermTyConv with (A := A0).
+        + now eapply @IHisterm with (A1 := A).
+        + assumption.
+        + assumption.
+        + assumption.
+        + assumption.
+      - pose (IHisterm A u v). now apply p.
+      - pose (IHisterm A u v). now apply p.
+    }
+
+  - { repeat split.
+      - assumption.
+      - config apply @tt.TermCtxConv with (G := G).
+        + now eapply @IHisterm with (A1 := A).
+        + assumption.
+        + assumption.
+        + assumption.
+        + assumption.
+      - config apply @tt.TermCtxConv with (G := G).
+        + pose (IHisterm A u v). now apply p.
+        + assumption.
+        + assumption.
+        + assumption.
+        + admit. (* We need to know that A is a type as well... *)
+      - config apply @tt.TermCtxConv with (G := G).
+        + pose (IHisterm A u v). now apply p.
+        + assumption.
+        + assumption.
+        + assumption.
+        + admit.
+    }
+
+  - admit. (* Substitutions *)
+
+  - { repeat split ; assumption. }
+Abort.
+
 Definition TyIdInversion G A u v (H : istype G (Id A u v)) :
   isctx G * istype G A * isterm G u A * isterm G v A.
 Proof.
@@ -101,11 +145,21 @@ Proof.
         + now config eapply @IHistype with (u0 := u) (v0 := v).
     }
 
-  - { repeat split.
+  - (* { repeat split. *)
 
+(*       - assumption. *)
+(*       - (* Maybe we need some lemma to conclude that Subst A0 σ = Id A u v *) *)
+(* (*            implies A0 is some Id as well. *) *)
+    admit.
+
+  - { repeat split.
       - assumption.
-      - (* Maybe we need some lemma to conclude that Subst A0 σ = Id A u v
-           implies A0 is some Id as well. *)
+      - assumption.
+      - assumption.
+      - assumption.
+    }
+
+  - { cbv in x. subst.
 Abort.
 
 Fixpoint TyIdInversion G A u v (H : istype G (Id A u v)) {struct H} :
