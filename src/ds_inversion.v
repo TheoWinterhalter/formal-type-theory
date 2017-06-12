@@ -84,47 +84,52 @@ Abort.
  *)
 
 Definition TermIdInversion G A u v U (H : isterm G (Id A u v) U) :
-  isctx G * isterm G A U * isterm G u A * isterm G v A.
+  forall {l}, eqtype G U (Uni l) ->
+  isctx G * isterm G A U * istype G A * isterm G u A * isterm G v A.
 Proof.
+  intros l h.
   dependent induction H ; doConfig.
 
   - { repeat split.
       - assumption.
       - config apply @tt.TermTyConv with (A := A0).
-        + now eapply @IHisterm with (A1 := A).
-        + assumption.
-        + assumption.
-        + assumption.
-        + assumption.
-      - pose (IHisterm A u v). now apply p.
-      - pose (IHisterm A u v). now apply p.
-    }
+        + pose (IHisterm A u v (eq_refl _) JMeq_refl l).
+          apply p.
+          (config apply @tt.EqTyTrans with (B := B)) ; try assumption.
+          (* admit. *)
+  (*       + assumption. *)
+  (*       + assumption. *)
+  (*       + assumption. *)
+  (*       + assumption. *)
+  (*     - pose (IHisterm A u v (eq_refl _) JMeq_refl l). now apply p. *)
+  (*     - pose (IHisterm A u v). now apply p. *)
+  (*   } *)
 
-  - { repeat split.
-      - assumption.
-      - config apply @tt.TermCtxConv with (G := G).
-        + now eapply @IHisterm with (A1 := A).
-        + assumption.
-        + assumption.
-        + assumption.
-        + assumption.
-      - config apply @tt.TermCtxConv with (G := G).
-        + pose (IHisterm A u v). now apply p.
-        + assumption.
-        + assumption.
-        + assumption.
-        + admit. (* We need to know that A is a type as well... *)
-      - config apply @tt.TermCtxConv with (G := G).
-        + pose (IHisterm A u v). now apply p.
-        + assumption.
-        + assumption.
-        + assumption.
-        + admit.
-    }
+  (* - { repeat split. *)
+  (*     - assumption. *)
+  (*     - config apply @tt.TermCtxConv with (G := G). *)
+  (*       + now eapply @IHisterm with (A1 := A). *)
+  (*       + assumption. *)
+  (*       + assumption. *)
+  (*       + assumption. *)
+  (*       + assumption. *)
+  (*     - config apply @tt.TermCtxConv with (G := G). *)
+  (*       + pose (IHisterm A u v). now apply p. *)
+  (*       + assumption. *)
+  (*       + assumption. *)
+  (*       + assumption. *)
+  (*       + admit. (* We need to know that A is a type as well... *) *)
+  (*     - config apply @tt.TermCtxConv with (G := G). *)
+  (*       + pose (IHisterm A u v). now apply p. *)
+  (*       + assumption. *)
+  (*       + assumption. *)
+  (*       + assumption. *)
+  (*       + admit. *)
+  (*   } *)
 
-  - admit. (* Substitutions *)
+  (* - admit. (* Substitutions *) *)
 
-  - { repeat split ; assumption. }
+  (* - { repeat split ; assumption. } *)
 Abort.
 
 Definition TyIdInversion G A u v (H : istype G (Id A u v)) :
