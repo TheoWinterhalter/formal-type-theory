@@ -152,6 +152,8 @@ Proof.
 
   - { repeat split ; try assumption.
       cbv in *.
+      (* ceapply (@tt.TyEl hasPrecond ConfigReflection ConfigSimpleProducts ConfigProdEta ConfigUniverses ConfigWithProp ConfigWithJ ConfigEmpty ConfigUnit ConfigBool ConfigPi Syntax H _ _ _ H0 _). *)
+      (* exact i. *)
       (* change A with (config.El n A). *)
       pose (tyel := @tt.TyEl hasPrecond ConfigReflection ConfigSimpleProducts ConfigProdEta ConfigUniverses ConfigWithProp ConfigWithJ ConfigEmpty ConfigUnit ConfigBool ConfigPi Syntax). cbv in tyel.
       ceapply tyel.
