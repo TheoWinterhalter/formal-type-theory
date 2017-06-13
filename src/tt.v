@@ -27,47 +27,67 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
+Context {ConfigExplicitSubstitutions : config.ExplicitSubstitutions}.
 
 Context {ConfigSyntax : config.Syntax}.
 
-Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
+Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing) : rule_scope.
 
 Notation "'extensional' r" :=
-  (forall `{ _ : config.Flag reflectionFlag }, r) (only parsing, at level 97).
+  (forall `{ _ : config.Flag reflectionFlag }, r) (only parsing, at level 97)
+  : rule_scope.
 
 Notation "'simpleproduct' r" :=
-  (forall `{ _ : config.Flag simpleproductsFlag }, r) (only parsing, at level 97).
+  (forall `{ _ : config.Flag simpleproductsFlag }, r) (only parsing, at level 97)
+  : rule_scope.
 
 Notation "'prodeta' r" :=
-  (forall `{ _ : config.Flag prodetaFlag }, r) (only parsing, at level 97).
+  (forall `{ _ : config.Flag prodetaFlag }, r) (only parsing, at level 97)
+  : rule_scope.
 
 Notation "'universe' r" :=
-  (forall `{ _ : config.Flag universesFlag }, r) (only parsing, at level 97).
+  (forall `{ _ : config.Flag universesFlag }, r) (only parsing, at level 97)
+  : rule_scope.
 
 Notation "'withprop' r" :=
-  (forall `{ _ : config.Flag withpropFlag }, r) (only parsing, at level 97).
+  (forall `{ _ : config.Flag withpropFlag }, r) (only parsing, at level 97)
+  : rule_scope.
 
 Notation "'withj' r" :=
-  (forall `{ _ : config.Flag withjFlag }, r) (only parsing, at level 97).
+  (forall `{ _ : config.Flag withjFlag }, r) (only parsing, at level 97)
+  : rule_scope.
 
 Notation "'withempty' r" :=
-  (forall `{ _ : config.Flag withemptyFlag }, r) (only parsing, at level 97).
+  (forall `{ _ : config.Flag withemptyFlag }, r) (only parsing, at level 97)
+  : rule_scope.
 
 Notation "'withunit' r" :=
-  (forall `{ _ : config.Flag withunitFlag }, r) (only parsing, at level 97).
+  (forall `{ _ : config.Flag withunitFlag }, r) (only parsing, at level 97)
+  : rule_scope.
 
 Notation "'withbool' r" :=
-  (forall `{ _ : config.Flag withboolFlag }, r) (only parsing, at level 97).
+  (forall `{ _ : config.Flag withboolFlag }, r) (only parsing, at level 97)
+  : rule_scope.
 
 Notation "'withpi' r" :=
-  (forall `{ _ : config.Flag withpiFlag }, r) (only parsing, at level 97).
+  (forall `{ _ : config.Flag withpiFlag }, r) (only parsing, at level 97)
+  : rule_scope.
+
+Notation "'explisubst' r" :=
+  (forall `{ _ : config.Flag explicitsubstFlag }, r) (only parsing, at level 97)
+  : rule_scope.
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
-    (at level 200, x binder, y binder, right associativity, only parsing).
-Notation "'premise:' p q" := (p -> q) (only parsing, at level 95).
-Notation "'precond:' p q" := ((precondFlag -> p) -> q) (only parsing, at level 95).
-Notation "'conclusion:' q" := q (no associativity, only parsing, at level 94).
+    (at level 200, x binder, y binder, right associativity, only parsing)
+  : rule_scope.
+Notation "'premise:' p q" := (p -> q) (only parsing, at level 95) : rule_scope.
+Notation "'precond:' p q" := ((precondFlag -> p) -> q) (only parsing, at level 95)
+                             : rule_scope.
+Notation "'conclusion:' q" := q (no associativity, only parsing, at level 94)
+                              : rule_scope.
+
+Open Scope rule_scope.
 
 Inductive isctx : context -> Type :=
 
@@ -166,8 +186,8 @@ with istype : context -> type -> Type :=
            istype D A
        endrule
 
-     | TySubst :
-       rule
+     | _TySubst :
+       explisubst rule
          parameters: {G D A sbs},
          premise: issubst sbs G D
          premise: istype D A
@@ -277,8 +297,8 @@ with isterm : context -> term -> type -> Type :=
            isterm D u A
        endrule
 
-     | TermSubst :
-       rule
+     | _TermSubst :
+       explisubst rule
          parameters: {G D A u sbs},
          premise: issubst sbs G D
          premise: isterm D u A
@@ -624,8 +644,8 @@ with eqctx : context -> context -> Type :=
 
 with eqsubst : substitution -> substitution -> context -> context -> Type :=
 
-     | SubstRefl :
-       rule
+     | _SubstRefl :
+       explisubst rule
          parameters: {G D sbs},
          precond: isctx G
          precond: isctx D
@@ -634,8 +654,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
            eqsubst sbs sbs G D
        endrule
 
-     | SubstSym :
-       rule
+     | _SubstSym :
+       explisubst rule
          parameters: {G D sbs sbt},
          premise: eqsubst sbs sbt G D
          precond: issubst sbs G D
@@ -646,8 +666,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
            eqsubst sbt sbs G D
        endrule
 
-     | SubstTrans :
-       rule
+     | _SubstTrans :
+       explisubst rule
          parameters: {G D sb1 sb2 sb3},
          premise: eqsubst sb1 sb2 G D
          premise: eqsubst sb2 sb3 G D
@@ -660,8 +680,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
            eqsubst sb1 sb3 G D
        endrule
 
-     | CongSubstZero :
-       rule
+     | _CongSubstZero :
+       explisubst rule
          parameters: {G A1 A2 u1 u2},
          premise: eqtype G A1 A2
          premise: eqterm G u1 u2 A1
@@ -677,8 +697,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
                    (ctxextend G A1)
        endrule
 
-     | CongSubstWeak :
-       rule
+     | _CongSubstWeak :
+       explisubst rule
          parameters: {G A1 A2},
          premise: eqtype G A1 A2
          precond: isctx G
@@ -691,8 +711,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
                    G
        endrule
 
-     | CongSubstShift :
-       rule
+     | _CongSubstShift :
+       explisubst rule
          parameters: {G D A1 A2 sbs1 sbs2},
          premise: eqsubst sbs1 sbs2 G D
          premise: eqtype D A1 A2
@@ -709,8 +729,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
                    (ctxextend D A1)
        endrule
 
-     | CongSubstComp :
-       rule
+     | _CongSubstComp :
+       explisubst rule
          parameters: {G D E sbs1 sbs2 sbt1 sbt2},
          premise: eqsubst sbs1 sbs2 G D
          premise: eqsubst sbt1 sbt2 D E
@@ -728,8 +748,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
                    E
        endrule
 
-     | EqSubstCtxConv :
-       rule
+     | _EqSubstCtxConv :
+       explisubst rule
          parameters: {G1 G2 D1 D2 sbs sbt},
          premise: eqsubst sbs sbt G1 D1
          premise: eqctx G1 G2
@@ -744,8 +764,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
            eqsubst sbs sbt G2 D2
        endrule
 
-     | CompAssoc :
-       rule
+     | _CompAssoc :
+       explisubst rule
          parameters: {G D E F sbs sbt sbr},
          premise: issubst sbs G D
          premise: issubst sbt D E
@@ -761,8 +781,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
                    F
        endrule
 
-     | WeakNat :
-       rule
+     | _WeakNat :
+       explisubst rule
          parameters: {G D A sbs},
          precond: isctx G
          precond: isctx D
@@ -777,8 +797,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
                    D
        endrule
 
-     | WeakZero :
-       rule
+     | _WeakZero :
+       explisubst rule
          parameters: {G A u},
          precond: isctx G
          precond: istype G A
@@ -790,8 +810,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
                    G
        endrule
 
-     | ShiftZero :
-       rule
+     | _ShiftZero :
+       explisubst rule
          parameters: {G D A u sbs},
          precond: isctx G
          precond: isctx D
@@ -807,8 +827,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
                    (ctxextend D A)
        endrule
 
-     | CompShift :
-       rule
+     | _CompShift :
+       explisubst rule
          parameters: {G D E A sbs sbt},
          precond: isctx G
          precond: isctx D
@@ -824,8 +844,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
                    (ctxextend E A)
        endrule
 
-     | CompIdRight :
-       rule
+     | _CompIdRight :
+       explisubst rule
          parameters: {G D sbs},
          precond: isctx G
          precond: isctx D
@@ -834,8 +854,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
            eqsubst (sbcomp sbs sbid) sbs G D
        endrule
 
-     | CompIdLeft :
-       rule
+     | _CompIdLeft :
+       explisubst rule
          parameters: {G D sbs},
          precond: isctx G
          precond: isctx D
@@ -904,8 +924,8 @@ with eqtype : context -> type -> type -> Type :=
                   A
        endrule
 
-     | EqTySubstComp :
-       rule
+     | _EqTySubstComp :
+       explisubst rule
          parameters: {G D E A sbs sbt},
          premise: istype E A
          premise: issubst sbs G D
@@ -920,8 +940,8 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
 
-     | EqTySubstProd :
-       withpi rule
+     | _EqTySubstProd :
+       withpi explisubst rule
          parameters: {G D A B sbs},
          premise: issubst sbs G D
          precond: istype D A
@@ -934,8 +954,8 @@ with eqtype : context -> type -> type -> Type :=
                   (Prod (Subst A sbs) (Subst B (sbshift A sbs)))
        endrule
 
-     | EqTySubstId :
-       rule
+     | _EqTySubstId :
+       explisubst rule
          parameters: {G D A u v sbs},
          premise: issubst sbs G D
          precond: istype D A
@@ -949,8 +969,8 @@ with eqtype : context -> type -> type -> Type :=
                   (Id (Subst A sbs) (subst u sbs) (subst v sbs))
        endrule
 
-     | EqTySubstEmpty :
-       withempty rule
+     | _EqTySubstEmpty :
+       withempty explisubst rule
          parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -961,8 +981,8 @@ with eqtype : context -> type -> type -> Type :=
                   Empty
        endrule
 
-     | EqTySubstUnit :
-       withunit rule
+     | _EqTySubstUnit :
+       withunit explisubst rule
          parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -973,8 +993,8 @@ with eqtype : context -> type -> type -> Type :=
                   Unit
        endrule
 
-     | EqTySubstBool :
-       withbool rule
+     | _EqTySubstBool :
+       withbool explisubst rule
          parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -1027,8 +1047,8 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G (Id A u1 u2) (Id B v1 v2)
        endrule
 
-     | CongTySubst :
-       rule
+     | _CongTySubst :
+       explisubst rule
          parameters: {G D A B sbs sbt},
          premise: eqsubst sbs sbt G D
          premise: eqtype D A B
@@ -1056,8 +1076,8 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G (SimProd A1 B1) (SimProd A2 B2)
        endrule
 
-     | EqTySubstSimProd :
-       simpleproduct rule
+     | _EqTySubstSimProd :
+       simpleproduct explisubst rule
          parameters: {G D A B sbs},
          precond: isctx G
          precond: isctx D
@@ -1070,8 +1090,8 @@ with eqtype : context -> type -> type -> Type :=
                   (SimProd (Subst A sbs) (Subst B sbs))
        endrule
 
-     | EqTySubstUni :
-       universe rule
+     | _EqTySubstUni :
+       universe explisubst rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -1119,8 +1139,8 @@ with eqtype : context -> type -> type -> Type :=
                   (Id (El n a) u v)
        endrule
 
-     | ElSubst :
-       universe rule
+     | _ElSubst :
+       universe explisubst rule
          parameters: {G D a n sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni n)
@@ -1287,8 +1307,8 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
 
-     | EqIdSubst :
-       rule
+     | _EqIdSubst :
+       explisubst rule
          parameters: {G A u},
          precond: isctx G
          precond: istype G A
@@ -1300,8 +1320,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   A
        endrule
 
-     | EqSubstComp :
-       rule
+     | _EqSubstComp :
+       explisubst rule
          parameters: {G D E A u sbs sbt},
          premise: isterm E u A
          premise: issubst sbs G D
@@ -1317,8 +1337,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst A (sbcomp sbt sbs))
        endrule
 
-     | EqSubstWeak :
-       rule
+     | _EqSubstWeak :
+       explisubst rule
          parameters: {G A B k},
          precond: isctx G
          precond: istype G A
@@ -1332,8 +1352,8 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
 
-     | EqSubstZeroZero :
-       rule
+     | _EqSubstZeroZero :
+       explisubst rule
          parameters: {G u A},
          precond: isctx G
          precond: istype G A
@@ -1345,8 +1365,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   A
        endrule
 
-     | EqSubstZeroSucc :
-       rule
+     | _EqSubstZeroSucc :
+       explisubst rule
          parameters: {G A B u k},
          precond: isctx G
          precond: istype G A
@@ -1360,8 +1380,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   A
        endrule
 
-     | EqSubstShiftZero :
-       rule
+     | _EqSubstShiftZero :
+       explisubst rule
          parameters: {G D A sbs},
          precond: isctx G
          precond: isctx D
@@ -1374,8 +1394,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst (Subst A sbs) (sbweak (Subst A sbs)))
        endrule
 
-     | EqSubstShiftSucc :
-       rule
+     | _EqSubstShiftSucc :
+       explisubst rule
          parameters: { G D A B sbs k },
          precond: isctx G
          precond: isctx D
@@ -1390,8 +1410,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst (Subst B sbs) (sbweak (Subst A sbs)))
        endrule
 
-     | EqSubstAbs :
-       withpi rule
+     | _EqSubstAbs :
+       withpi explisubst rule
          parameters: {G D A B u sbs},
          precond: isctx G
          precond: isctx D
@@ -1411,8 +1431,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                      (Subst B (sbshift A sbs)))
        endrule
 
-     | EqSubstApp :
-       withpi rule
+     | _EqSubstApp :
+       withpi explisubst rule
          parameters: {G D A B u v sbs},
          precond: isctx G
          precond: isctx D
@@ -1432,8 +1452,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst (Subst B (sbzero A v)) sbs)
        endrule
 
-     | EqSubstRefl :
-       rule
+     | _EqSubstRefl :
+       explisubst rule
          parameters: {G D A u sbs},
          premise: issubst sbs G D
          premise: isterm D u A
@@ -1447,8 +1467,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Id (Subst A sbs) (subst u sbs) (subst u sbs))
        endrule
 
-     | EqSubstJ :
-       withj rule
+     | _EqSubstJ :
+       withj explisubst rule
          parameters: {G D A C u v w p sbs},
          precond: isctx G
          precond: isctx D
@@ -1527,8 +1547,8 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      (* This rule is subsumed by EqTermExfalso *)
-     | EqSubstExfalso :
-       withempty rule
+     | _EqSubstExfalso :
+       withempty explisubst rule
          parameters: {G D A u sbs},
          precond: isctx G
          precond: isctx D
@@ -1542,8 +1562,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst A sbs)
        endrule
 
-     | EqSubstUnit :
-       withunit rule
+     | _EqSubstUnit :
+       withunit explisubst rule
          parameters: {G D sbs},
          precond: isctx G
          precond: isctx D
@@ -1555,8 +1575,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   Unit
        endrule
 
-     | EqSubstTrue :
-       withbool rule
+     | _EqSubstTrue :
+       withbool explisubst rule
          parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -1568,8 +1588,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   Bool
        endrule
 
-     | EqSubstFalse :
-       withbool rule
+     | _EqSubstFalse :
+       withbool explisubst rule
          parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -1581,8 +1601,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   Bool
        endrule
 
-     | EqSubstCond :
-       withbool rule
+     | _EqSubstCond :
+       withbool explisubst rule
          parameters: {G D C u v w sbs},
          precond: isctx G
          precond: isctx D
@@ -1967,8 +1987,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst C1 (sbzero Bool u1))
        endrule
 
-     | CongTermSubst :
-       rule
+     | _CongTermSubst :
+       explisubst rule
          parameters: {G D A u1 u2 sbs sbt},
          premise: eqsubst sbs sbt G D
          premise: eqterm D u1 u2 A
@@ -2049,8 +2069,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   B1
        endrule
 
-     | EqSubstPair :
-       simpleproduct rule
+     | _EqSubstPair :
+       simpleproduct explisubst rule
          parameters: {G D A B u v sbs},
          premise: issubst sbs G D
          premise: isterm D u A
@@ -2066,8 +2086,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (SimProd (Subst A sbs) (Subst B sbs))
        endrule
 
-     | EqSubstProjOne :
-       simpleproduct rule
+     | _EqSubstProjOne :
+       simpleproduct explisubst rule
          parameters: {G D A B p sbs},
          premise: issubst sbs G D
          premise: isterm D p (SimProd A B)
@@ -2082,8 +2102,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Subst A sbs)
        endrule
 
-     | EqSubstProjTwo :
-       simpleproduct rule
+     | _EqSubstProjTwo :
+       simpleproduct explisubst rule
          parameters: {G D A B p sbs},
          premise: issubst sbs G D
          premise: isterm D p (SimProd A B)
@@ -2142,8 +2162,8 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G p q (SimProd A B)
        endrule
 
-     | EqSubstUniProd :
-       universe withpi rule
+     | _EqSubstUniProd :
+       universe withpi explisubst rule
          parameters: {G D a b n m sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni (uni n))
@@ -2160,8 +2180,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Uni (uni (max n m)))
        endrule
 
-     | EqSubstUniProdProp :
-       universe withprop withpi rule
+     | _EqSubstUniProdProp :
+       universe withprop withpi explisubst rule
          parameters: {G D a b l sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni l)
@@ -2177,8 +2197,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Uni prop)
        endrule
 
-     | EqSubstUniId :
-       universe rule
+     | _EqSubstUniId :
+       universe explisubst rule
          parameters: {G D a u v n sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni n)
@@ -2193,8 +2213,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Uni n)
        endrule
 
-     | EqSubstUniEmpty :
-       withempty universe rule
+     | _EqSubstUniEmpty :
+       withempty universe explisubst rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -2206,8 +2226,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Uni n)
        endrule
 
-     | EqSubstUniUnit :
-       withunit universe rule
+     | _EqSubstUniUnit :
+       withunit universe explisubst rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -2219,8 +2239,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Uni n)
        endrule
 
-     | EqSubstUniBool :
-       withbool universe rule
+     | _EqSubstUniBool :
+       withbool universe explisubst rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -2232,8 +2252,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Uni (uni n))
        endrule
 
-     | EqSubstUniSimProd :
-       universe simpleproduct rule
+     | _EqSubstUniSimProd :
+       universe simpleproduct explisubst rule
          parameters: {G D a b n m sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni (uni n))
@@ -2247,8 +2267,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Uni (uni (max n m)))
        endrule
 
-     | EqSubstUniSimProdProp :
-       universe withprop simpleproduct rule
+     | _EqSubstUniSimProdProp :
+       universe withprop simpleproduct explisubst rule
          parameters: {G D a b sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni prop)
@@ -2262,8 +2282,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Uni prop)
        endrule
 
-     | EqSubstUniUni :
-       universe rule
+     | _EqSubstUniUni :
+       universe explisubst rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -2275,8 +2295,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Uni (uni (S n)))
        endrule
 
-     | EqSubstUniProp :
-       universe withprop rule
+     | _EqSubstUniProp :
+       universe withprop explisubst rule
          parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G

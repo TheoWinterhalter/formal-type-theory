@@ -78,6 +78,26 @@ Class WithBool := {
   withboolFlag : Type
 }.
 
+(* Explicit substitutions.
+
+   Switching this flag on is mandatory to have typing rules for substitutions.
+   This means that this is a flag you need to activate to work with explicit
+   substitutions.
+   Note that the typing rules for substitutions will be required as admissible
+   rules in any case, ensuring that any notion of substitution the user would
+   like to use has to verify the typing rules.
+   In th case they are explicit (and this flag is on), proving admissibility
+   will be trivial.
+
+   This does not have to do with rules that allow to type a substitution, only
+   those that allow to deduce things on the other judgements (as well as
+   equality of substitutions).
+   Rules that must be admissible will have an underscore before their name.
+ *)
+Class ExplicitSubstitutions := {
+  explicitsubstFlag : Type
+}.
+
 Class Flag (A : Type) := {
   flagProof : A
 }.
