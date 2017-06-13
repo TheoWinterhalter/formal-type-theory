@@ -234,10 +234,10 @@ with istype : context -> type -> Type :=
 
      | TyUni :
        universe rule
-         parameters: {G n},
+         parameters: {G l},
          premise: isctx G
          conclusion:
-           istype G (Uni n)
+           istype G (Uni l)
        endrule
 
      | TyEl :

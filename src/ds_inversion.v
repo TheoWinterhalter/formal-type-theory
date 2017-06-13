@@ -83,7 +83,8 @@ Abort.
    and replaced by some admissibility result whenever turned off.
  *)
 
-Definition TermIdInversion G A u v U (H : isterm G (Id A u v) U) :
+Definition TermIdInversion `{ fl : config.Flag config.universesFlag } G A u v U
+           (H : isterm G (Id A u v) U) :
   forall {l}, eqtype G U (Uni l) ->
   isctx G * isterm G A U * istype G A * isterm G u A * isterm G v A.
 Proof.
@@ -93,44 +94,73 @@ Proof.
   - { repeat split.
       - assumption.
       - config apply @tt.TermTyConv with (A := A0).
-        + pose (IHisterm A u v (eq_refl _) JMeq_refl l).
+        + pose (IHisterm fl A u v (eq_refl _) JMeq_refl l).
           apply p.
           (config apply @tt.EqTyTrans with (B := B)) ; try assumption.
-          (* admit. *)
-  (*       + assumption. *)
-  (*       + assumption. *)
-  (*       + assumption. *)
-  (*       + assumption. *)
-  (*     - pose (IHisterm A u v (eq_refl _) JMeq_refl l). now apply p. *)
-  (*     - pose (IHisterm A u v). now apply p. *)
-  (*   } *)
+          (* Set Printing All. idtac. *)
+          (* config eapply @tt.TyUni with (ConfigUniverses := ConfigUniverses) (G := G) (l := l). *)
+          admit.
+        + assumption.
+        + assumption.
+        + assumption.
+        + assumption.
+      - pose (IHisterm fl A u v (eq_refl _) JMeq_refl l). apply p.
+        (config apply @tt.EqTyTrans with (B := B)) ; try assumption.
+        admit.
+      - pose (IHisterm fl A u v (eq_refl _) JMeq_refl l). apply p.
+        (config apply @tt.EqTyTrans with (B := B)) ; try assumption.
+        admit.
+      - pose (IHisterm fl A u v (eq_refl _) JMeq_refl l). apply p.
+        (config apply @tt.EqTyTrans with (B := B)) ; try assumption.
+        admit.
+    }
 
-  (* - { repeat split. *)
-  (*     - assumption. *)
-  (*     - config apply @tt.TermCtxConv with (G := G). *)
-  (*       + now eapply @IHisterm with (A1 := A). *)
-  (*       + assumption. *)
-  (*       + assumption. *)
-  (*       + assumption. *)
-  (*       + assumption. *)
-  (*     - config apply @tt.TermCtxConv with (G := G). *)
-  (*       + pose (IHisterm A u v). now apply p. *)
-  (*       + assumption. *)
-  (*       + assumption. *)
-  (*       + assumption. *)
-  (*       + admit. (* We need to know that A is a type as well... *) *)
-  (*     - config apply @tt.TermCtxConv with (G := G). *)
-  (*       + pose (IHisterm A u v). now apply p. *)
-  (*       + assumption. *)
-  (*       + assumption. *)
-  (*       + assumption. *)
-  (*       + admit. *)
-  (*   } *)
+  - { repeat split.
+      - assumption.
+      - config apply @tt.TermCtxConv with (G := G).
+        + pose (IHisterm fl A u v). eapply p ; try easy.
+          admit.
+        + assumption.
+        + assumption.
+        + assumption.
+        + assumption.
+      - config apply @tt.TyCtxConv with (G := G).
+        + pose (IHisterm fl A u v). eapply p ; try easy.
+          admit.
+        + assumption.
+        + assumption.
+        + assumption.
+      - config apply @tt.TermCtxConv with (G := G).
+        + pose (IHisterm fl A u v). eapply p ; try easy.
+          admit.
+        + assumption.
+        + assumption.
+        + assumption.
+        + pose (IHisterm fl A u v). eapply p ; try easy.
+          admit.
+      - config apply @tt.TermCtxConv with (G := G).
+        + pose (IHisterm fl A u v). eapply p ; try easy.
+          admit.
+        + assumption.
+        + assumption.
+        + assumption.
+        + pose (IHisterm fl A u v). eapply p ; try easy.
+          admit.
+    }
 
-  (* - admit. (* Substitutions *) *)
+  - admit. (* Substitutions *)
 
-  (* - { repeat split ; assumption. } *)
-Abort.
+  - { repeat split ; try assumption.
+      cbv in *.
+      (* change A with (config.El n A). *)
+      pose (tyel := @tt.TyEl hasPrecond ConfigReflection ConfigSimpleProducts ConfigProdEta ConfigUniverses ConfigWithProp ConfigWithJ ConfigEmpty ConfigUnit ConfigBool ConfigPi Syntax). cbv in tyel.
+      ceapply tyel.
+      - assumption.
+      - exact H0.
+      - assumption.
+    }
+    Unshelve. all:assumption.
+Admitted.
 
 Definition TyIdInversion G A u v (H : istype G (Id A u v)) :
   isctx G * istype G A * isterm G u A * isterm G v A.
