@@ -30,6 +30,8 @@ Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
 
+Local Instance Syntax : config.Syntax := Syntax.
+
 Definition CtxExtendInversion G A (H : isctx (ctxextend G A)) :
   isctx G * istype G A.
 Proof.
