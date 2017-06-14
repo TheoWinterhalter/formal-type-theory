@@ -3,6 +3,7 @@
 Require Import config.
 Require Import config_tactics.
 Require Import tt.
+Require Import wfconfig.
 
 Section Checking1.
 
@@ -18,8 +19,10 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
+Context {ConfigExplicitSubstitutions : config.ExplicitSubstitutions}.
 
 Context {ConfigSyntax : config.Syntax}.
+Context {ConfigAdmissible : AdmissibleRules}.
 
 (* Some tactic to compose substitutions. *)
 Lemma eqtype_subst_left :
@@ -146,8 +149,10 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
+Context {ConfigExplicitSubstitutions : config.ExplicitSubstitutions}.
 
 Context {ConfigSyntax : config.Syntax}.
+Context {ConfigAdmissible : AdmissibleRules}.
 
 Lemma EqCompZero :
   forall {G D A u sbs},
@@ -1201,8 +1206,10 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
+Context {ConfigExplicitSubstitutions : config.ExplicitSubstitutions}.
 
-Context {ConfigSyntax : config.Syntax}.
+ Context {ConfigSyntax : config.Syntax}.
++Context {ConfigAdmissible : AdmissibleRules}.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
    some ZeroShift3 if ever we add a constructor that has three variables. *)

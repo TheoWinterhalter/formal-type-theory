@@ -1,5 +1,6 @@
 Require config.
 Require Import tt.
+Require Import wfconfig.
 
 Section Ptt.
 
@@ -14,8 +15,10 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
+Context {ConfigExplicitSubstitutions : config.ExplicitSubstitutions}.
 
 Context {ConfigSyntax : config.Syntax}.
+Context {ConfigAdmissible : AdmissibleRules}.
 
 Definition isctx := isctx.
 Definition issubst := issubst.
