@@ -282,7 +282,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqTySubstProd :
-    rule
+    withpi rule
       parameters: {G D A B sbs},
       premise: issubst sbs G D
       precond: istype D A
@@ -311,7 +311,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqTySubstEmpty :
-    rule
+    withempty rule
       parameters: {G D sbs},
       premise: issubst sbs G D
       precond: isctx G
@@ -323,7 +323,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqTySubstUnit :
-    rule
+    withunit rule
       parameters: {G D sbs},
       premise: issubst sbs G D
       precond: isctx G
@@ -335,7 +335,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqTySubstBool :
-    rule
+    withbool rule
       parameters: {G D sbs},
       premise: issubst sbs G D
       precond: isctx G
@@ -362,7 +362,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqTySubstSimProd :
-    rule
+    simpleproduct rule
       parameters: {G D A B sbs},
       precond: isctx G
       precond: isctx D
@@ -376,7 +376,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqTySubstUni :
-    rule
+    universe rule
       parameters: {G D n sbs},
       premise: issubst sbs G D
       precond: isctx G
@@ -388,7 +388,7 @@ Class AdmissibleRules := {
     endrule ;
 
   ElSubst :
-    rule
+    universe rule
       parameters: {G D a n sbs},
       premise: issubst sbs G D
       premise: isterm D a (Uni n)
@@ -503,7 +503,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqSubstAbs :
-    rule
+    withpi rule
       parameters: {G D A B u sbs},
       precond: isctx G
       precond: isctx D
@@ -524,7 +524,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqSubstApp :
-    rule
+    withpi rule
       parameters: {G D A B u v sbs},
       precond: isctx G
       precond: isctx D
@@ -560,7 +560,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqSubstJ :
-    rule
+    withj rule
       parameters: {G D A C u v w p sbs},
       precond: isctx G
       precond: isctx D
@@ -639,7 +639,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqSubstExfalso :
-    rule
+    withempty rule
       parameters: {G D A u sbs},
       precond: isctx G
       precond: isctx D
@@ -654,7 +654,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqSubstUnit :
-    rule
+    withunit rule
       parameters: {G D sbs},
       precond: isctx G
       precond: isctx D
@@ -667,7 +667,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqSubstTrue :
-    rule
+    withbool rule
       parameters: {G D sbs},
       premise: issubst sbs G D
       precond: isctx G
@@ -680,7 +680,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqSubstFalse :
-    rule
+    withbool rule
       parameters: {G D sbs},
       premise: issubst sbs G D
       precond: isctx G
@@ -693,7 +693,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqSubstCond :
-    rule
+    withbool rule
       parameters: {G D C u v w sbs},
       precond: isctx G
       precond: isctx D
@@ -732,7 +732,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqSubstPair :
-    rule
+    simpleproduct rule
       parameters: {G D A B u v sbs},
       premise: issubst sbs G D
       premise: isterm D u A
@@ -749,7 +749,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqSubstProjOne :
-    rule
+    simpleproduct rule
       parameters: {G D A B p sbs},
       premise: issubst sbs G D
       premise: isterm D p (SimProd A B)
@@ -765,7 +765,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqSubstProjTwo :
-    rule
+    simpleproduct rule
       parameters: {G D A B p sbs},
       premise: issubst sbs G D
       premise: isterm D p (SimProd A B)
@@ -781,7 +781,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqSubstUniProd :
-    rule
+    universe withpi rule
       parameters: {G D a b n m sbs},
       premise: issubst sbs G D
       premise: isterm D a (Uni (uni n))
@@ -799,7 +799,7 @@ Class AdmissibleRules := {
     endrule ;
 
   EqSubstUniProdProp :
-    rule
+    universe withprop withpi rule
       parameters: {G D a b l sbs},
       premise: issubst sbs G D
       premise: isterm D a (Uni l)
