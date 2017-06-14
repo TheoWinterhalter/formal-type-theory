@@ -13,24 +13,6 @@
 (* Require Import syntax. *)
 Require Import config.
 
-Section TypeTheoryRules.
-(* Notations for writing down inference rules. *)
-
-Context {ConfigPrecond : config.Precond}.
-Context {ConfigReflection : config.Reflection}.
-Context {ConfigSimpleProducts : config.SimpleProducts}.
-Context {ConfigProdEta : config.ProdEta}.
-Context {ConfigUniverses : config.Universes}.
-Context {ConfigWithProp : config.WithProp}.
-Context {ConfigWithJ : config.WithJ}.
-Context {ConfigEmpty : config.WithEmpty}.
-Context {ConfigUnit : config.WithUnit}.
-Context {ConfigBool : config.WithBool}.
-Context {ConfigPi : config.WithPi}.
-Context {ConfigExplicitSubstitutions : config.ExplicitSubstitutions}.
-
-Context {ConfigSyntax : config.Syntax}.
-
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing) : rule_scope.
 
 Notation "'extensional' r" :=
@@ -86,6 +68,24 @@ Notation "'precond:' p q" := ((precondFlag -> p) -> q) (only parsing, at level 9
                              : rule_scope.
 Notation "'conclusion:' q" := q (no associativity, only parsing, at level 94)
                               : rule_scope.
+
+Section TypeTheoryRules.
+(* Notations for writing down inference rules. *)
+
+Context {ConfigPrecond : config.Precond}.
+Context {ConfigReflection : config.Reflection}.
+Context {ConfigSimpleProducts : config.SimpleProducts}.
+Context {ConfigProdEta : config.ProdEta}.
+Context {ConfigUniverses : config.Universes}.
+Context {ConfigWithProp : config.WithProp}.
+Context {ConfigWithJ : config.WithJ}.
+Context {ConfigEmpty : config.WithEmpty}.
+Context {ConfigUnit : config.WithUnit}.
+Context {ConfigBool : config.WithBool}.
+Context {ConfigPi : config.WithPi}.
+Context {ConfigExplicitSubstitutions : config.ExplicitSubstitutions}.
+
+Context {ConfigSyntax : config.Syntax}.
 
 Open Scope rule_scope.
 

@@ -3,6 +3,8 @@
 config.v
 config_tactics.v
 tt.v
+wfconfig.v
+
 ett.v
 ptt.v
 
@@ -12,7 +14,6 @@ ptt_admissible.v
 
 ptt_sanity.v
 ptt2ett.v
-wfconfig.v
 ett2ptt.v
 ett_sanity.v
 
