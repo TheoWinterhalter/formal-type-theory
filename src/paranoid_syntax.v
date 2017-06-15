@@ -147,7 +147,69 @@ Definition eqsubst := tt.eqsubst.
 Definition eqtype := tt.eqtype.
 Definition eqterm := tt.eqterm.
 
-(* Local Instance AdmissibleRules : wfconfig.AdmissibleRules := *)
-(* TODO *)
+(* The fact that we need that would be in favor of not having Flag I guess. *)
+Local Instance ESFlag : config.Flag config.explicitsubstFlag :=
+  {| config.flagProof := config.yes |}.
+
+Local Instance AdmissibleRules : wfconfig.AdmissibleRules := {
+  TySubst := fun G D A sbs => tt._TySubst _ ;
+  TermSubst := fun G D A u sbs => tt._TermSubst _ ;
+  SubstRefl := fun G D sbs => tt._SubstRefl _ ;
+  SubstSym := fun G D sbs sbt => tt._SubstSym _ ;
+  SubstTrans := fun G D sb1 sb2 sb3 => tt._SubstTrans _ ;
+  CongSubstZero := fun G A1 A2 u1 u2 => tt._CongSubstZero _ ;
+  CongSubstWeak := fun G A1 A2 => tt._CongSubstWeak _ ;
+  CongSubstShift := fun G D A1 A2 sbs1 sbs2 => tt._CongSubstShift _ ;
+  CongSubstComp := fun G D E sbs1 sbs2 sbt1 sbt2 => tt._CongSubstComp _ ;
+  EqSubstCtxConv := fun G1 G2 D1 D2 sbs sbt => tt._EqSubstCtxConv _ ;
+  CompAssoc := fun G D E F sbs sbt sbr => tt._CompAssoc _ ;
+  WeakNat := fun G D A sbs => tt._WeakNat _ ;
+  WeakZero := fun G A u => tt._WeakZero _ ;
+  ShiftZero := fun G D A u sbs => tt._ShiftZero _ ;
+  CompShift := fun G D E A sbs sbt => tt._CompShift _ ;
+  CompIdRight := fun G D sbs => tt._CompIdRight _ ;
+  CompIdLeft := fun G D sbs => tt._CompIdLeft _ ;
+  EqTySubstComp := fun G D E A sbs sbt => tt._EqTySubstComp _ ;
+  EqTySubstProd := fun _ G D A B sbs => tt._EqTySubstProd _ _ ;
+  EqTySubstId := fun G D A u v sbs => tt._EqTySubstId _ ;
+  EqTySubstEmpty := fun _ G D sbs => tt._EqTySubstEmpty _ _ ;
+  EqTySubstUnit := fun _ G D sbs => tt._EqTySubstUnit _ _ ;
+  EqTySubstBool := fun _ G D sbs => tt._EqTySubstBool _ _ ;
+  CongTySubst := fun G D A B sbs sbt => tt._CongTySubst _ ;
+  EqTySubstSimProd := fun _ G D A B sbs => tt._EqTySubstSimProd _ _ ;
+  EqTySubstUni := fun _ G D n sbs => tt._EqTySubstUni _ _ ;
+  ElSubst := fun _ G D a n sbs => tt._ElSubst _ _ ;
+  EqIdSubst := fun G A u => tt._EqIdSubst _ ;
+  EqSubstComp := fun G D E A u sbs sbt => tt._EqSubstComp _ ;
+  EqSubstWeak := fun G A B k => tt._EqSubstWeak _ ;
+  EqSubstZeroZero := fun G u A => tt._EqSubstZeroZero _ ;
+  EqSubstZeroSucc := fun G A B u k => tt._EqSubstZeroSucc _ ;
+  EqSubstShiftZero := fun G D A sbs => tt._EqSubstShiftZero _ ;
+  EqSubstShiftSucc := fun G D A B sbs k => tt._EqSubstShiftSucc _ ;
+  EqSubstAbs := fun _ G D A B u sbs => tt._EqSubstAbs _ _ ;
+  EqSubstApp := fun _ G D A B u v sbs => tt._EqSubstApp _ _ ;
+  EqSubstRefl := fun G D A u sbs => tt._EqSubstRefl _ ;
+  EqSubstJ := fun _ G D A C u v w p sbs => tt._EqSubstJ _ _ ;
+  EqSubstExfalso := fun _ G D A u sbs => tt._EqSubstExfalso _ _ ;
+  EqSubstUnit := fun _ G D sbs => tt._EqSubstUnit _ _ ;
+  EqSubstTrue := fun _ G D sbs => tt._EqSubstTrue _ _ ;
+  EqSubstFalse := fun _ G D sbs => tt._EqSubstFalse _ _ ;
+  EqSubstCond := fun _ G D C u v w sbs => tt._EqSubstCond _ _ ;
+  CongTermSubst := fun G D A u1 u2 sbs sbt => tt._CongTermSubst _ ;
+  EqSubstPair := fun _ G D A B u v sbs => tt._EqSubstPair _ _ ;
+  EqSubstProjOne := fun _ G D A B p sbs => tt._EqSubstProjOne _ _ ;
+  EqSubstProjTwo := fun _ G D A B p sbs => tt._EqSubstProjTwo _ _ ;
+  EqSubstUniProd := fun _ _ G D a b n m sb => tt._EqSubstUniProd _ _ _ ;
+  EqSubstUniProdProp := fun _ _ _ G D a b l sbs => tt._EqSubstUniProdProp _ _ _ _ ;
+  EqSubstUniId := fun _ G D a u v n sbs => tt._EqSubstUniId _ _ ;
+  EqSubstUniEmpty := fun _ _ G D n sbs => tt._EqSubstUniEmpty _ _ _ ;
+  EqSubstUniUnit := fun _ _ G D n sbs => tt._EqSubstUniUnit _ _ _ ;
+  EqSubstUniBool := fun _ _ G D n sbs => tt._EqSubstUniBool _ _ _ ;
+  EqSubstUniSimProd := fun _ _ G D a b n m sbs => tt._EqSubstUniSimProd _ _ _ ;
+  EqSubstUniSimProdProp :=
+    fun _ _ _ G D a b sbs => tt._EqSubstUniSimProdProp _ _ _ _ ;
+  EqSubstUniUni := fun _ G D n sbs => tt._EqSubstUniUni _ _ ;
+  EqSubstUniProp := fun _ _ G D sbs => tt._EqSubstUniProp _ _ _
+}.
 
 End ParanoidSyntax.
