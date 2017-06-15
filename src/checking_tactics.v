@@ -1208,8 +1208,8 @@ Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
 Context {ConfigExplicitSubstitutions : config.ExplicitSubstitutions}.
 
- Context {ConfigSyntax : config.Syntax}.
-+Context {ConfigAdmissible : AdmissibleRules}.
+Context {ConfigSyntax : config.Syntax}.
+Context {ConfigAdmissible : AdmissibleRules}.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
    some ZeroShift3 if ever we add a constructor that has three variables. *)

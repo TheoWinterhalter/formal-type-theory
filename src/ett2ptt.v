@@ -9,7 +9,6 @@ Section Ett2Ptt.
 
   Open Scope type_scope.
 
-Context {ConfigPrecond : config.Precond}.
 Context {ConfigReflection : config.Reflection}.
 Context {ConfigSimpleProducts : config.SimpleProducts}.
 Context {ConfigProdEta : config.ProdEta}.
@@ -20,8 +19,11 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
+Context {ConfigExplicitSubstitutions : config.ExplicitSubstitutions}.
 
 Context {ConfigSyntax : config.Syntax}.
+Existing Instance ptt.hasPrecond.
+Context {ConfigAdmissible : AdmissibleRules}.
 
 (* We need inversion lemmata and we can't prove them since the syntax
    is not necessarilly inductive and thus not necessarilly injective.

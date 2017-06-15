@@ -1,4 +1,5 @@
 Require Import config.
+Require Import wfconfig.
 
 (* Deal with configuration. *)
 Ltac doConfig :=
@@ -50,6 +51,7 @@ Ltac doConfig :=
   | H : withboolFlag |- withboolFlag => exact H
   | H : withpiFlag |- withpiFlag => exact H
   | H : explicitsubstFlag |- explicitsubstFlag => exact H
+  | H : AdmissibleRules |- AdmissibleRules => exact H
   | _ => idtac
   end ;
   (* Configure the hypotheses *)

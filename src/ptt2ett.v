@@ -2,11 +2,11 @@ Require Import config.
 Require Import config_tactics.
 
 Require Import tt.
+Require Import wfconfig.
 Require ptt ett.
 
 Section Ptt2Ett.
 
-Context {ConfigPrecond : config.Precond}.
 Context {ConfigReflection : config.Reflection}.
 Context {ConfigSimpleProducts : config.SimpleProducts}.
 Context {ConfigProdEta : config.ProdEta}.
@@ -17,8 +17,11 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
+Context {ConfigExplicitSubstitutions : config.ExplicitSubstitutions}.
 
 Context {ConfigSyntax : config.Syntax}.
+Existing Instance ett.hasPrecond.
+Context {ConfigAdmissible : AdmissibleRules}.
 
 Fixpoint sane_isctx G (P : ptt.isctx G) : ett.isctx G
 

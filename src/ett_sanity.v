@@ -23,10 +23,13 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
+Context {ConfigExplicitSubstitutions : config.ExplicitSubstitutions}.
 
 Context {ConfigSyntax : config.Syntax}.
+Context {PttConfigAdmissible : AdmissibleRules (ConfigPrecond := ptt.hasPrecond)}.
+Context {EttConfigAdmissible : AdmissibleRules (ConfigPrecond := ett.hasPrecond)}.
 
-Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
+Existing Instance ptt.hasPrecond.
 Context {ConfigCtxExtendInversion : CtxExtendInversionClass}.
 Context {ConfigTyIdInversion : TyIdInversionClass}.
 Context {ConfigTyProdInversion : TyProdInversionClass}.

@@ -4,6 +4,7 @@ Require Import config.
 Require Import config_tactics.
 Require Import tt.
 Require Import checking_tactics.
+Require Import wfconfig.
 
 Section PttAdmissible.
 
@@ -19,8 +20,10 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
+Context {ConfigExplicitSubstitutions : config.ExplicitSubstitutions}.
 
 Context {ConfigSyntax : config.Syntax}.
+Context {ConfigAdmissible : AdmissibleRules}.
 
 (* Some preliminary lemmata *)
 Lemma EqTyWeakNat :

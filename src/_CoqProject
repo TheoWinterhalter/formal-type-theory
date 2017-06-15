@@ -1,9 +1,9 @@
 -R . ""
 
 config.v
-config_tactics.v
 tt.v
 wfconfig.v
+config_tactics.v
 
 ett.v
 ptt.v

@@ -29,6 +29,7 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
+Existing Instance noExplicitSubstitutions.
 
 Local Instance Syntax : config.Syntax := Syntax.
 
@@ -157,7 +158,7 @@ Proof.
       (* ceapply (@tt.TyEl hasPrecond ConfigReflection ConfigSimpleProducts ConfigProdEta ConfigUniverses ConfigWithProp ConfigWithJ ConfigEmpty ConfigUnit ConfigBool ConfigPi Syntax H _ _ _ H0 _). *)
       (* exact i. *)
       (* change A with (config.El n A). *)
-      pose (tyel := @tt.TyEl hasPrecond ConfigReflection ConfigSimpleProducts ConfigProdEta ConfigUniverses ConfigWithProp ConfigWithJ ConfigEmpty ConfigUnit ConfigBool ConfigPi Syntax). cbv in tyel.
+      pose (tyel := @tt.TyEl hasPrecond ConfigReflection ConfigSimpleProducts ConfigProdEta ConfigUniverses ConfigWithProp ConfigWithJ ConfigEmpty ConfigUnit ConfigBool ConfigPi noExplicitSubstitutions Syntax). cbv in tyel.
       ceapply tyel.
       - assumption.
       - exact H0.

@@ -12,7 +12,7 @@
    but you won't be able to derive that [Γ ⊢ Unit] type or [Γ ⊢ unit : Unit].
 *)
 
-Require config tt.
+Require config tt wfconfig.
 
 Section ParanoidSyntax.
 
@@ -27,8 +27,10 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
+Local Instance hasExplicitSubstitutions : config.ExplicitSubstitutions
+  := {| config.explicitsubstFlag := config.Yes |}.
 
-(* Universe levels *)
+(* universe levels *)
 Inductive level : Type :=
 | uni : nat -> level
 | prop : level
@@ -144,5 +146,8 @@ Definition eqctx := tt.eqctx.
 Definition eqsubst := tt.eqsubst.
 Definition eqtype := tt.eqtype.
 Definition eqterm := tt.eqterm.
+
+(* Local Instance AdmissibleRules : wfconfig.AdmissibleRules := *)
+(* TODO *)
 
 End ParanoidSyntax.

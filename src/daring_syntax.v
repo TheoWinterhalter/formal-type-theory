@@ -13,7 +13,7 @@
    be captured by our formalisation.
 *)
 
-Require config tt.
+Require config tt wfconfig.
 
 Require Import Peano_dec.
 Require Import Compare_dec.
@@ -32,6 +32,8 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
+Local Instance noExplicitSubstitutions : config.ExplicitSubstitutions
+  := {| config.explicitsubstFlag := config.No |}.
 
 (* Universe levels *)
 Inductive level : Type :=
