@@ -14,10 +14,13 @@
 *)
 
 Require config tt wfconfig.
+Require Import config_tactics.
 
 Require Import Peano_dec.
 Require Import Compare_dec.
 Require Import Lt Le Gt.
+
+Require Import Coq.Program.Equality.
 
 Section DaringSyntax.
 
@@ -246,5 +249,20 @@ Definition eqctx := tt.eqctx.
 Definition eqsubst := tt.eqsubst.
 Definition eqtype := tt.eqtype.
 Definition eqterm := tt.eqterm.
+
+Local Instance AdmissibleRules : wfconfig.AdmissibleRules := {
+  TySubst := _
+}.
+Proof.
+  (* TySubst *)
+  - { intros G D A sbs h1 h2 h3 h4. simpl.
+      dependent induction h1.
+
+      - simpl in *. destruct A.
+        + simpl. Fail ceapply @tt.TyProd.
+          (* I don't get why this doesn't work.
+             In any case, we'll need inversion once we apply TyProd.
+           *)
+Admitted.
 
 End DaringSyntax.
