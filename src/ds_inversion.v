@@ -6,7 +6,7 @@
 *)
 
 Require config.
-Require wfconfig.
+Require Import wfconfig.
 Require Import daring_syntax.
 Require Import config_tactics.
 
@@ -41,50 +41,6 @@ Defined.
 
 Axiom admit : forall {A}, A.
 Tactic Notation "admit" := (exact admit).
-
-Lemma SubstIdInversion {Γ Δ A u v C σ} :
-  issubst σ Γ Δ ->
-  σ C = Id A u v ->
-  { A' : term &
-  { u' : term &
-  { v' : term &
-    (C = Id A' u' v') *
-    istype Δ (Id A' u' v')
-  } } }.
-Proof.
-  intros h1 h2.
-  dependent induction h1 ; doConfig.
-
-  - { simpl in *.
-      dependent induction C ; simpl in h2 ; try discriminate.
-      - repeat eexists. admit.
-      - admit.
-    }
-
-  - { simpl in *.
-      dependent induction C ; simpl in h2 ; try discriminate.
-      repeat eexists. admit.
-    }
-
-  - { simpl in *.
-      dependent induction C ; simpl in h2 ; try discriminate.
-      repeat eexists. admit.
-    }
-
-  - { simpl in *.
-      dependent induction C ; simpl in h2 ; try discriminate.
-      repeat eexists. admit.
-    }
-
-  - { simpl in *.
-      dependent induction C ; simpl in h2 ; try discriminate.
-      (* This case is really bothersome... *)
-      all:admit.
-    }
-Abort.
-(* There would be the option of having the substitution rules optional
-   and replaced by some admissibility result whenever turned off.
- *)
 
 Definition TermIdInversion `{ fl : config.Flag config.universesFlag } G A u v U
            (H : isterm G (Id A u v) U) :
@@ -185,11 +141,7 @@ Proof.
         + now config eapply @IHistype with (u0 := u) (v0 := v).
     }
 
-  - (* { repeat split. *)
-
-(*       - assumption. *)
-(*       - (* Maybe we need some lemma to conclude that Subst A0 σ = Id A u v *) *)
-(* (*            implies A0 is some Id as well. *) *)
+  - (* Substitutions shouldn't appear! *)
     admit.
 
   - { repeat split.
