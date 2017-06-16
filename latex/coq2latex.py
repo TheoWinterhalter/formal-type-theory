@@ -17,6 +17,7 @@ configurations = {
     'withunit' : 'withunit',
     'withbool' : 'withbool',
     'withpi' : 'withpi',
+    'explisubst' : 'explisubst'
 }
 
 # The identifiers which are translated to macros, with the given number of arguments
@@ -227,7 +228,7 @@ def parseExpr(tok):
 
 def ruleName(rulename):
     # We might possibly remove weird characters or some such
-    return rulename
+    return re.sub(r'_', '', rulename)
 
 def rule2latex(name, preconds, premises, conclusion):
     preconds = [str(parseExpr(TokenStream(precond))) for precond in preconds]
