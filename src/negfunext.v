@@ -5,6 +5,7 @@
 
 Require config.
 Require Import tt.
+Require Import wfconfig.
 Require Import paranoid_syntax.
 Require Import config_tactics.
 Require Import checking_tactics.
@@ -29,6 +30,7 @@ Module Stt.
     Context {ConfigBool : config.WithBool}.
     Local Instance hasPi : config.WithPi
       := {| config.withpiFlag := config.Yes |}.
+    Existing Instance hasExplicitSubstitutions.
 
     Local Instance Syntax : config.Syntax := Syntax.
 
@@ -40,6 +42,8 @@ Module Stt.
     Definition eqsubst := eqsubst.
     Definition eqtype  := eqtype.
     Definition eqterm  := eqterm.
+
+    Existing Instance AdmissibleRules.
 
   End Stt.
 
@@ -67,6 +71,7 @@ Module Ttt.
       := {| config.withboolFlag := config.Yes |}.
     Local Instance hasPi : config.WithPi
       := {| config.withpiFlag := config.Yes |}.
+    Existing Instance hasExplicitSubstitutions.
 
     Local Instance Syntax : config.Syntax := Syntax.
 
@@ -78,6 +83,8 @@ Module Ttt.
     Definition eqsubst := eqsubst.
     Definition eqtype  := eqtype.
     Definition eqterm  := eqterm.
+
+    Existing Instance AdmissibleRules.
 
     Definition TySimProd := TySimProd.
 
@@ -98,6 +105,8 @@ Context {ConfigEmpty : config.WithEmpty}.
 Context {ConfigUnit : config.WithUnit}.
 Context {ConfigBool : config.WithBool}.
 Context {ConfigPi : config.WithPi}.
+Existing Instance hasExplicitSubstitutions.
+Existing Instance AdmissibleRules.
 
 Lemma max_0 : forall n m, max (max n m) 0 = max n m.
 Proof.
@@ -291,6 +300,7 @@ Proof.
       (* TySubst *)
       - { simpl.
           config apply @TySubst with (D := trans_ctx D).
+          - admit.
           - ih.
           - ih.
         }
