@@ -11,7 +11,7 @@ formalizes several meta-theorems about type theory.
 ### Requirements for compiling the library
 
 The library works with Coq 8.6, and probably with many other recent versions as well, as
-it does not use any special features of Coq. You may find out about the best way to install Coq at the [Coq web site](If you do not have Coq, visit).
+it does not use any special features of Coq. You may find out about the best way to install Coq at the [Coq web site](https://coq.inria.fr/).
 
 To compile the library you need Coq and [`make`](https://www.gnu.org/software/make/).
 

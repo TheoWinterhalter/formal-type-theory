@@ -25,6 +25,7 @@ Module Stt.
   Context `{ConfigUniverses : config.Universes}.
   Local Instance hasProp : config.WithProp
     := {| config.withpropFlag := config.No |}.
+  Context `{ConfigId : config.IdentityTypes}.
   Context `{ConfigWithJ : config.WithJ}.
   Context `{ConfigEmpty : config.WithEmpty}.
   Context `{ConfigUnit : config.WithUnit}.
@@ -59,6 +60,7 @@ Module Ttt.
     := {| config.prodetaFlag := config.No |}.
   Context `{ConfigUniverses : config.Universes}.
   Context `{ConfigWithProp : config.WithProp}.
+  Context `{ConfigId : config.IdentityTypes}.
   Context `{ConfigWithJ : config.WithJ}.
   Context `{ConfigEmpty : config.WithEmpty}.
   Context `{ConfigUnit : config.WithUnit}.
@@ -86,6 +88,7 @@ Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
+Context `{ConfigId : config.IdentityTypes}.
 Context `{ConfigWithJ : config.WithJ}.
 Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
@@ -867,10 +870,10 @@ Proof.
       - { simpl. config apply @EqSubstJ with (D := trans_ctx D).
           - ih.
           - ih.
-          - now apply (trans_istype _ C i4).
-          - now apply (trans_isterm _ _ _ i5).
+          - now apply (trans_istype _ C i5).
+          - now apply (trans_isterm _ _ _ i6).
           - ih.
-          - now apply (trans_isterm _ _ _ i7).
+          - now apply (trans_isterm _ _ _ i8).
         }
 
       (* EqSubstExfalso *)
@@ -949,8 +952,8 @@ Proof.
       (* JRefl *)
       - { simpl. capply JRefl.
           - ih.
-          - now apply (trans_istype _ _ i2).
-          - now apply (trans_isterm _ _ _ i3).
+          - now apply (trans_istype _ _ i3).
+          - now apply (trans_isterm _ _ _ i4).
         }
 
       (* CongAbs *)

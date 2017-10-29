@@ -30,6 +30,8 @@ Ltac doConfig :=
       let H := fresh "withboolFlag" in intros H
     | withpiFlag =>
       let H := fresh "withpiFlag" in intros H
+    | identitytypesFlag =>
+      let H := fresh "identitytypesFlag" in intros H
     | _ => idtac
     end
   | |- ?P =>
@@ -47,6 +49,7 @@ Ltac doConfig :=
   | H : withunitFlag |- withunitFlag => exact H
   | H : withboolFlag |- withboolFlag => exact H
   | H : withpiFlag |- withpiFlag => exact H
+  | H : identitytypesFlag |- identitytypesFlag => exact H
   | _ => idtac
   end ;
   (* Configure the hypotheses *)
@@ -99,6 +102,10 @@ Ltac doConfig :=
      | @withpiFlag ?F =>
        match goal with
        | R : @withpiFlag F |- _ => specialize (H R)
+       end
+     | @identitytypesFlag ?F =>
+       match goal with
+       | R : @identitytypesFlag F |- _ => specialize (H R)
        end
      end
    | H : ?P |- _ =>

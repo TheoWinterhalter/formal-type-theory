@@ -12,6 +12,7 @@ configurations = {
     'prodeta' : 'prodeta',
     'universe' : 'universe',
     'withprop' : 'withprop',
+    'identitytype' : 'identitytype',
     'withj' : 'withj',
     'withempty' : 'withempty',
     'withunit' : 'withunit',
