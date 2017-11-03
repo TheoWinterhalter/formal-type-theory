@@ -1,5 +1,6 @@
 Require config.
-Require Import tt.
+Require tt.
+Require syntax.
 
 Section Ett.
 
@@ -15,14 +16,15 @@ Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
 Context `{ConfigPi : config.WithPi}.
+Context `{haveSyntax : syntax.Syntax}.
 
-Definition isctx := isctx.
-Definition issubst := issubst.
-Definition istype := istype.
-Definition isterm := isterm.
-Definition eqctx := eqctx.
-Definition eqsubst := eqsubst.
-Definition eqtype := eqtype.
-Definition eqterm := eqterm.
+Definition isctx := tt.isctx.
+Definition issubst := tt.issubst.
+Definition istype := tt.istype.
+Definition isterm := tt.isterm.
+Definition eqctx := tt.eqctx.
+Definition eqsubst := tt.eqsubst.
+Definition eqtype := tt.eqtype.
+Definition eqterm := tt.eqterm.
 
 End Ett.

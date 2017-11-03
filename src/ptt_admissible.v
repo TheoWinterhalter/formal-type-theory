@@ -2,9 +2,9 @@
 
 Require config.
 Require Import config_tactics.
+Require Import checking_tactics.
 Require Import tt.
 Require Import syntax.
-Require Import checking_tactics.
 
 Section PttAdmissible.
 
@@ -20,6 +20,8 @@ Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
 Context `{ConfigPi : config.WithPi}.
+
+Context `{haveSyntax : syntax.Syntax}.
 
 (* Some preliminary lemmata *)
 Lemma EqTyWeakNat :

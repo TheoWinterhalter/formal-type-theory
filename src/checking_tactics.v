@@ -21,6 +21,8 @@ Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
 Context `{ConfigPi : config.WithPi}.
 
+Context `{haveSyntax : syntax.Syntax}.
+
 (* Some tactic to compose substitutions. *)
 Lemma eqtype_subst_left :
   forall {G D E A B sbs sbt},
@@ -147,6 +149,8 @@ Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
 Context `{ConfigPi : config.WithPi}.
+
+Context `{haveSyntax : syntax.Syntax}.
 
 Lemma EqCompZero :
   forall {G D A u sbs},
@@ -1201,6 +1205,8 @@ Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
 Context `{ConfigPi : config.WithPi}.
+
+Context `{haveSyntax : syntax.Syntax}.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
    some ZeroShift3 if ever we add a constructor that has three variables. *)
