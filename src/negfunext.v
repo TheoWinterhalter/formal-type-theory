@@ -51,7 +51,7 @@ Module Ttt.
 
   Local Instance hasPrecondition : config.Precondition := {| config.flagPrecondition := config.No |}.
   Context `{configReflection : config.Reflection}.
-  Local Instance hasBinaryProdType : config.BinaryProdType := {| config.binaryProdTypeFlag := config.Yes |}.
+  Local Instance hasBinaryProdType : config.BinaryProdType := {| config.flagBinaryProdType := config.Yes |}.
   Local Instance hasProdEta : config.ProdEta := {| config.flagProdEta := config.No |}.
   Context `{configUniverses : config.Universes}.
   Context `{configWithProp : config.WithProp}.

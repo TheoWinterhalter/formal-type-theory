@@ -55,7 +55,7 @@ Class Reflection := {
 
 (* Binary products. *)
 Class BinaryProdType := {
-  binaryProdTypeFlag : Type
+  flagBinaryProdType : Type
 }.
 
 (* Universes *)

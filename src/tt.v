@@ -36,7 +36,7 @@ Notation "'extensional' r" :=
   (forall { _ : flagReflection }, r) (only parsing, at level 97).
 
 Notation "'binaryproduct' r" :=
-  (forall { _ : binaryProdTypeFlag }, r) (only parsing, at level 97).
+  (forall { _ : flagBinaryProdType }, r) (only parsing, at level 97).
 
 Notation "'prodeta' r" :=
   (forall { _ : flagProdEta }, r) (only parsing, at level 97).
