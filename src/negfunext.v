@@ -6,8 +6,9 @@
 Require config.
 Require Import config_tactics.
 
-Require Import syntax.
+Require Import syntax invconfig.
 Require Import tt.
+Require Import paranoid_syntax.
 Require Import checking_tactics.
 
 
@@ -188,43 +189,43 @@ Ltac ih :=
       forall G,
         Stt.isctx G ->
         Ttt.isctx (trans_ctx G)
-    |- isctx (trans_ctx ?G) =>
+    |- tt.isctx (trans_ctx ?G) =>
     now apply (trans_isctx G)
   | trans_istype :
       forall G A,
         Stt.istype G A ->
         Ttt.istype (trans_ctx G) (trans_type A)
-    |- istype (trans_ctx ?G) (trans_type ?A) =>
+    |- tt.istype (trans_ctx ?G) (trans_type ?A) =>
     now apply (trans_istype G A)
   | trans_isterm :
       forall G u A,
         Stt.isterm G u A ->
         Ttt.isterm (trans_ctx G) (trans_term u) (trans_type A)
-    |- isterm (trans_ctx ?G) (trans_term ?u) (trans_type ?A) =>
+    |- tt.isterm (trans_ctx ?G) (trans_term ?u) (trans_type ?A) =>
     now apply (trans_isterm G u A)
   | trans_issubst :
       forall sbs G D,
         Stt.issubst sbs G D ->
         Ttt.issubst (trans_subst sbs) (trans_ctx G) (trans_ctx D)
-    |- issubst (trans_subst ?sbs) (trans_ctx ?G) (trans_ctx ?D) =>
+    |- tt.issubst (trans_subst ?sbs) (trans_ctx ?G) (trans_ctx ?D) =>
     now apply (trans_issubst sbs G D)
   | trans_eqctx :
       forall G D,
         Stt.eqctx G D ->
         Ttt.eqctx (trans_ctx G) (trans_ctx D)
-    |- eqctx (trans_ctx ?G) (trans_ctx ?D) =>
+    |- tt.eqctx (trans_ctx ?G) (trans_ctx ?D) =>
     now apply (trans_eqctx G D)
   | trans_eqtype :
       forall G A B,
         Stt.eqtype G A B ->
         Ttt.eqtype (trans_ctx G) (trans_type A) (trans_type B)
-    |- eqtype (trans_ctx ?G) (trans_type ?A) (trans_type ?B) =>
+    |- tt.eqtype (trans_ctx ?G) (trans_type ?A) (trans_type ?B) =>
     now apply (trans_eqtype G A B)
   | trans_eqterm :
       forall G u v A,
         Stt.eqterm G u v A ->
         Ttt.eqterm (trans_ctx G) (trans_term u) (trans_term v) (trans_type A)
-    |- eqterm (trans_ctx ?G) (trans_term ?u) (trans_term ?v) (trans_type ?A) =>
+    |- tt.eqterm (trans_ctx ?G) (trans_term ?u) (trans_term ?v) (trans_type ?A) =>
     now apply (trans_eqterm G u v A)
   | trans_eqsubst :
       forall sbs sbt G D,
@@ -233,7 +234,7 @@ Ltac ih :=
                     (trans_subst sbt)
                     (trans_ctx G)
                     (trans_ctx D)
-    |- eqsubst (trans_subst ?sbs)
+    |- tt.eqsubst (trans_subst ?sbs)
               (trans_subst ?sbt)
               (trans_ctx ?G)
               (trans_ctx ?D) =>
@@ -292,36 +293,36 @@ Proof.
 
       (* TyProd *)
       - { simpl.
-          capply TySimProd.
-          - capply TyProd.
+          capply @TySimProd.
+          - capply @TyProd.
             now apply (trans_istype (ctxextend G A) B).
           (* Too bad ih doesn't deal with this*)
-          - capply TyBool. ih.
+          - capply @TyBool. ih.
         }
 
       (* TyId *)
-      - { simpl. capply TyId.
+      - { simpl. capply @TyId.
           - ih.
           - ih.
         }
 
       (* TyEmpty *)
-      - capply TyEmpty ; ih.
+      - capply @TyEmpty ; ih.
 
       (* TyUnit *)
-      - capply TyUnit ; ih.
+      - capply @TyUnit ; ih.
 
       (* TyBool *)
-      - capply TyBool ; ih.
+      - capply @TyBool ; ih.
 
       (* TySimProd *)
-      - { simpl. capply TySimProd.
+      - { simpl. capply @TySimProd.
           - ih.
           - ih.
         }
 
       (* TyUni *)
-      - { simpl. capply TyUni. ih. }
+      - { simpl. capply @TyUni. ih. }
 
       (* TyEl *)
       - { simpl. capply @TyEl.
@@ -352,35 +353,35 @@ Proof.
         }
 
       (* TermVarZero *)
-      - { simpl. capply TermVarZero. ih. }
+      - { simpl. capply @TermVarZero. ih. }
 
       (* TermVarSucc *)
-      - { simpl. capply TermVarSucc.
+      - { simpl. capply @TermVarSucc.
           - now apply (trans_isterm G (var k) A).
           - ih.
         }
 
       (* TermAbs *)
       - { simpl.
-          capply TermPair.
-          - capply TermAbs.
+          capply @TermPair.
+          - capply @TermAbs.
             now apply (trans_isterm (ctxextend G A) u B).
-          - capply TermTrue. ih.
+          - capply @TermTrue. ih.
         }
 
       (* TermApp *)
       - { simpl.
-          capply TermApp.
-          - capply TermProjOne.
+          capply @TermApp.
+          - capply @TermProjOne.
             + now apply (trans_isterm G u (Prod A B)).
           - ih.
         }
 
       (* TermRefl *)
-      - { simpl. capply TermRefl. ih. }
+      - { simpl. capply @TermRefl. ih. }
 
       (* TermJ *)
-      - { simpl. capply TermJ.
+      - { simpl. capply @TermJ.
           - ih.
           - now apply (trans_istype (ctxextend (ctxextend G A)
             (Id (Subst A (sbweak A)) (subst u (sbweak A)) (var 0))) C).
@@ -394,22 +395,22 @@ Proof.
         }
 
       (* TermExfalso *)
-      - { simpl. capply TermExfalso.
+      - { simpl. capply @TermExfalso.
           - ih.
           - now apply (trans_isterm G u Empty).
         }
 
       (* TermUnit *)
-      - { simpl. capply TermUnit. ih. }
+      - { simpl. capply @TermUnit. ih. }
 
       (* TermTrue *)
-      - { simpl. capply TermTrue. ih. }
+      - { simpl. capply @TermTrue. ih. }
 
       (* TermFalse *)
-      - { simpl. capply TermFalse. ih. }
+      - { simpl. capply @TermFalse. ih. }
 
       (* TermCond *)
-      - { simpl. capply TermCond.
+      - { simpl. capply @TermCond.
           - now apply (trans_isterm G u Bool).
           - now apply (trans_istype (ctxextend G Bool) C).
           - now apply (trans_isterm G v (Subst C (sbzero Bool true))).
@@ -417,72 +418,72 @@ Proof.
         }
 
       (* TermPair *)
-      - { simpl. capply TermPair.
+      - { simpl. capply @TermPair.
           - ih.
           - ih.
         }
 
       (* TermProjOne *)
-      - { simpl. capply TermProjOne.
+      - { simpl. capply @TermProjOne.
           - now apply (trans_isterm G p (SimProd A B)).
         }
 
       (* TermProjTwo *)
-      - { simpl. capply TermProjTwo.
+      - { simpl. capply @TermProjTwo.
           - now apply (trans_isterm G p (SimProd A B)).
         }
 
       (* TermUniProd *)
       - { simpl. ceapply TermTyConv.
-          - capply TermUniSimProd.
-            + capply TermUniProd.
+          - capply @TermUniSimProd.
+            + capply @TermUniProd.
               * now apply (trans_isterm G a (Uni (uni n))).
               * now apply (trans_isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))).
-            + capply TermUniBool. ih.
+            + capply @TermUniBool. ih.
           - rewrite max_0.
             capply EqTyRefl. capply TyUni. ih.
         }
 
       (* TermUniId *)
-      - { simpl. capply TermUniId.
+      - { simpl. capply @TermUniId.
           - now apply (trans_isterm G a (Uni n)).
           - now apply (trans_isterm G u0 (El n a)).
           - now apply (trans_isterm G v (El n a)).
         }
 
       (* TermUniEmpty *)
-      - { simpl. capply TermUniEmpty. ih. }
+      - { simpl. capply @TermUniEmpty. ih. }
 
       (* TermUniUnit *)
-      - { simpl. capply TermUniUnit. ih. }
+      - { simpl. capply @TermUniUnit. ih. }
 
       (* TermUniBool *)
-      - { simpl. capply TermUniBool. ih. }
+      - { simpl. capply @TermUniBool. ih. }
 
       (* TermUniSimProd *)
-      - { simpl. capply TermUniSimProd.
+      - { simpl. capply @TermUniSimProd.
           - now apply (trans_isterm G a (Uni (uni n))).
           - now apply (trans_isterm G b (Uni (uni m))).
         }
 
       (* TermUniUni *)
-      - { simpl. capply TermUniUni. ih. }
+      - { simpl. capply @TermUniUni. ih. }
     }
 
   (* trans_issubst *)
   - { destruct H ; doConfig.
 
       (* SubstZerp *)
-      - { simpl. capply SubstZero. ih. }
+      - { simpl. capply @SubstZero. ih. }
 
       (* SubstWeak *)
-      - { simpl. capply SubstWeak. ih. }
+      - { simpl. capply @SubstWeak. ih. }
 
       (* SubstShift *)
-      - { simpl. capply SubstShift ; ih. }
+      - { simpl. capply @SubstShift ; ih. }
 
       (* SubstId *)
-      - { simpl. capply SubstId. ih. }
+      - { simpl. capply @SubstId. ih. }
 
       (* SubstComp *)
       - { simpl. config apply @SubstComp with (D := trans_ctx D).
@@ -514,10 +515,10 @@ Proof.
         }
 
       (* EqCtxEmpty *)
-      - { capply EqCtxEmpty. }
+      - { capply @EqCtxEmpty. }
 
       (* EqCtxExtend *)
-      - { simpl. capply EqCtxExtend.
+      - { simpl. capply @EqCtxExtend.
           - ih.
           - ih.
         }
@@ -545,7 +546,7 @@ Proof.
         }
 
       (* EqTyIdSubst *)
-      - { simpl. capply EqTyIdSubst. ih. }
+      - { simpl. capply @EqTyIdSubst. ih. }
 
       (* EqTySubstComp *)
       - { simpl. config apply @EqTySubstComp with (D := trans_ctx D) (E := trans_ctx E).
@@ -556,12 +557,12 @@ Proof.
 
       (* EqTySubstProd *)
       - { simpl. ceapply EqTyTrans.
-          - ceapply EqTySubstSimProd.
+          - ceapply @EqTySubstSimProd.
             + now apply (trans_issubst sbs G D).
-            + capply TyProd.
+            + capply @TyProd.
               now apply (trans_istype (ctxextend D A) B).
-            + capply TyBool. ih.
-          - capply CongSimProd.
+            + capply @TyBool. ih.
+          - capply @CongSimProd.
             + config apply @EqTySubstProd with (D := trans_ctx D).
               * ih.
               * now apply (trans_istype (ctxextend D A) B).
@@ -592,15 +593,15 @@ Proof.
         }
 
       (* CongProd *)
-      - { simpl. capply CongSimProd.
-          - capply CongProd.
+      - { simpl. capply @CongSimProd.
+          - capply @CongProd.
             + ih.
             + now apply (trans_eqtype (ctxextend G A1) A2 B2).
-          - capply EqTyRefl. capply TyBool. ih.
+          - capply EqTyRefl. capply @TyBool. ih.
         }
 
       (* CongId *)
-      - { simpl. capply CongId ; ih. }
+      - { simpl. capply @CongId ; ih. }
 
       (* CongTySubst *)
       - { simpl. config apply @CongTySubst with (D := trans_ctx D).
@@ -609,7 +610,7 @@ Proof.
         }
 
       (* CongSimProd *)
-      - { simpl. capply CongSimProd.
+      - { simpl. capply @CongSimProd.
           - ih.
           - ih.
         }
@@ -630,20 +631,20 @@ Proof.
           - replace (El (uni (Nat.max n m)))
             with (El (uni (Nat.max (Nat.max n m) 0)))
             by now rewrite max_0.
-            ceapply ElSimProd.
-            + capply TermUniProd.
+            ceapply @ElSimProd.
+            + capply @TermUniProd.
               * now apply (trans_isterm G a (Uni (uni n))).
               * now apply (trans_isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))).
-            + capply TermUniBool. ih.
-          - capply CongSimProd.
-            + capply ElProd.
+            + capply @TermUniBool. ih.
+          - capply @CongSimProd.
+            + capply @ElProd.
               * now apply (trans_isterm G a (Uni (uni n))).
               * now apply (trans_isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))).
-            + capply ElBool. ih.
+            + capply @ElBool. ih.
         }
 
       (* ElId *)
-      - { simpl. capply ElId.
+      - { simpl. capply @ElId.
           - now apply (trans_isterm G a (Uni n)).
           - now apply (trans_isterm G u0 (El n a)).
           - now apply (trans_isterm G v (El n a)).
@@ -656,22 +657,22 @@ Proof.
         }
 
       (* ElEmpty *)
-      - { simpl. capply ElEmpty. ih. }
+      - { simpl. capply @ElEmpty. ih. }
 
       (* ElUnit *)
-      - { simpl. capply ElUnit. ih. }
+      - { simpl. capply @ElUnit. ih. }
 
       (* ElBool *)
-      - { simpl. capply ElBool. ih. }
+      - { simpl. capply @ElBool. ih. }
 
       (* ElSimProd *)
-      - { simpl. capply ElSimProd.
+      - { simpl. capply @ElSimProd.
           - now apply (trans_isterm G a (Uni (uni n))).
           - now apply (trans_isterm G b (Uni (uni m))).
         }
 
       (* ElUni *)
-      - { simpl. capply ElUni. ih. }
+      - { simpl. capply @ElUni. ih. }
 
       (* CongEl *)
       - { simpl. config apply @CongEl with (n := n).
@@ -707,7 +708,7 @@ Proof.
         }
 
       (* EqIdSubst *)
-      - { simpl. capply EqIdSubst. ih. }
+      - { simpl. capply @EqIdSubst. ih. }
 
       (* EqSubstComp *)
       - { simpl. config apply @EqSubstComp with (D := trans_ctx D) (E := trans_ctx E).
@@ -717,16 +718,16 @@ Proof.
         }
 
       (* EqSubstWeak *)
-      - { simpl. capply EqSubstWeak.
+      - { simpl. capply @EqSubstWeak.
           - now apply (trans_isterm G (var k) A).
           - ih.
         }
 
       (* EqSubstZeroZero *)
-      - { simpl. capply EqSubstZeroZero. ih. }
+      - { simpl. capply @EqSubstZeroZero. ih. }
 
       (* EqSubstZeroSucc *)
-      - { simpl. capply EqSubstZeroSucc.
+      - { simpl. capply @EqSubstZeroSucc.
           - now apply (trans_isterm G (var k) A).
           - ih.
         }
@@ -747,18 +748,18 @@ Proof.
       (* EqSubstAbs *)
       - { simpl. ceapply EqTrans.
           - ceapply EqTyConv.
-            + ceapply EqSubstPair.
+            + ceapply @EqSubstPair.
               * now apply (trans_issubst sbs G D).
-              * capply TermAbs.
+              * capply @TermAbs.
                 now apply (trans_isterm (ctxextend D A) u B).
-              * capply TermTrue. ih.
-            + capply CongSimProd.
+              * capply @TermTrue. ih.
+            + capply @CongSimProd.
               * config apply @EqTySubstProd with (D := trans_ctx D).
                 -- ih.
                 -- now apply (trans_istype (ctxextend D A) B).
               * config apply @EqTySubstBool with (D := trans_ctx D). ih.
           - ceapply EqTyConv.
-            + capply CongPair.
+            + capply @CongPair.
               * ceapply EqTyConv.
                 -- config apply @EqSubstAbs with (D := trans_ctx D).
                    ++ now apply (trans_isterm (ctxextend D A) u B).
@@ -777,7 +778,7 @@ Proof.
                 -- ih.
                 -- now apply (trans_istype (ctxextend D A) B).
               * config apply @EqTySubstBool with (D := trans_ctx D). ih.
-            + capply CongSimProd.
+            + capply @CongSimProd.
               * config apply @EqTySubstProd with (D := trans_ctx D).
                 -- ih.
                 -- now apply (trans_istype (ctxextend D A) B).
@@ -787,19 +788,19 @@ Proof.
       (* EqSubstApp *)
       - { simpl. ceapply EqTrans.
           - config apply @EqSubstApp with (D := trans_ctx D).
-            + capply TermProjOne.
+            + capply @TermProjOne.
               * now apply (trans_isterm D u (Prod A B)).
             + ih.
             + ih.
           - ceapply EqTyConv.
-            + capply CongApp.
+            + capply @CongApp.
               * capply EqTyRefl.
                 config apply @TySubst with (D := trans_ctx D).
                 -- ih.
                 -- ih.
               * capply EqTyRefl.
                 config apply @TySubst with (D := trans_ctx (ctxextend D A)).
-                -- simpl. capply SubstShift.
+                -- simpl. capply @SubstShift.
                    ++ ih.
                    ++ ih.
                 -- ih.
@@ -812,7 +813,7 @@ Proof.
                       ** ih.
                       ** now apply (trans_istype (ctxextend D A) B).
                 -- ceapply EqTyConv.
-                   ++ capply CongProjOne.
+                   ++ capply @CongProjOne.
                       ** capply EqRefl.
                          ceapply TermTyConv.
                          --- config apply @TermSubst with (D := trans_ctx D).
@@ -821,9 +822,9 @@ Proof.
                          --- simpl.
                              config apply @EqTySubstSimProd with (D := trans_ctx D).
                              +++ ih.
-                             +++ capply TyProd.
+                             +++ capply @TyProd.
                                  now apply (trans_istype (ctxextend D A) B).
-                             +++ capply TyBool. ih.
+                             +++ capply @TyBool. ih.
                       ** config apply @EqTySubstProd with (D := trans_ctx D).
                          --- ih.
                          --- now apply (trans_istype (ctxextend D A) B).
@@ -843,18 +844,18 @@ Proof.
                    config apply @TermSubst with (D := trans_ctx D).
                    ++ ih.
                    ++ ih.
-                -- simpl. capply SubstShift.
+                -- simpl. capply @SubstShift.
                    ++ ih.
                    ++ ih.
               * capply EqTySym.
                 ceapply EqTyTrans.
-                -- ceapply EqTySubstComp.
+                -- ceapply @EqTySubstComp.
                    ++ now apply (trans_istype (ctxextend D A) B).
                    ++ now apply (trans_issubst sbs G D).
-                   ++ capply SubstZero. ih.
+                   ++ capply @SubstZero. ih.
                 -- config apply @CongTySubst with (D := trans_ctx (ctxextend D A)).
                    ++ capply SubstSym.
-                      simpl. ceapply ShiftZero.
+                      simpl. ceapply @ShiftZero.
                       ** ih.
                       ** ih.
                    ++ capply EqTyRefl. ih.
@@ -909,7 +910,7 @@ Proof.
         }
 
       (* UnitEta *)
-      - { simpl. capply UnitEta.
+      - { simpl. capply @UnitEta.
           - now apply (trans_isterm G u Unit).
           - now apply (trans_isterm G v Unit).
         }
@@ -921,75 +922,75 @@ Proof.
 
       (* ProdBeta *)
       - { simpl. ceapply EqTrans.
-          - ceapply CongApp.
+          - ceapply @CongApp.
             + capply EqTyRefl. ih.
             + capply EqTyRefl.
               now apply (trans_istype (ctxextend G A) B).
-            + capply ProjOnePair.
-              * capply TermAbs.
+            + capply @ProjOnePair.
+              * capply @TermAbs.
                 now apply (trans_isterm (ctxextend G A) u B).
-              * capply TermTrue. ih.
+              * capply @TermTrue. ih.
             + capply EqRefl. ih.
-          - capply ProdBeta.
+          - capply @ProdBeta.
             + now apply (trans_isterm (ctxextend G A) u B).
             + ih.
         }
 
       (* CondTrue *)
-      - { simpl. capply CondTrue.
+      - { simpl. capply @CondTrue.
           - now apply (trans_istype (ctxextend G Bool) C).
           - now apply (trans_isterm G v (Subst C (sbzero Bool true))).
           - now apply (trans_isterm G w0 (Subst C (sbzero Bool false))).
         }
 
       (* CondFalse *)
-      - { simpl. capply CondFalse.
+      - { simpl. capply @CondFalse.
           - now apply (trans_istype (ctxextend G Bool) C).
           - now apply (trans_isterm G v (Subst C (sbzero Bool true))).
           - now apply (trans_isterm G w0 (Subst C (sbzero Bool false))).
         }
 
       (* JRefl *)
-      - { simpl. capply JRefl.
+      - { simpl. capply @JRefl.
           - ih.
           - now apply (trans_istype _ _ i3).
           - now apply (trans_isterm _ _ _ i4).
         }
 
       (* CongAbs *)
-      - { simpl. capply CongPair.
-          - capply CongAbs.
+      - { simpl. capply @CongPair.
+          - capply @CongAbs.
             + ih.
             + now apply (trans_eqtype _ _ _ e0).
             + now apply (trans_eqterm _ _ _ _ H).
-          - capply EqRefl. capply TermTrue. ih.
-          - capply CongProd.
+          - capply EqRefl. capply @TermTrue. ih.
+          - capply @CongProd.
             + ih.
             + now apply (trans_eqtype _ _ _ e0).
-          - capply EqTyRefl. capply TyBool. ih.
+          - capply EqTyRefl. capply @TyBool. ih.
         }
 
       (* CongApp *)
-      - { simpl. capply CongApp.
+      - { simpl. capply @CongApp.
           - ih.
           - now apply (trans_eqtype _ _ _ e0).
-          - capply CongProjOne.
+          - capply @CongProjOne.
             + now apply (trans_eqterm _ _ _ _ H).
-            + capply CongProd.
+            + capply @CongProd.
               * ih.
               * now apply (trans_eqtype _ _ _ e0).
-            + capply EqTyRefl. capply TyBool. ih.
+            + capply EqTyRefl. capply @TyBool. ih.
           - ih.
         }
 
       (* CongRefl *)
-      - { simpl. capply CongRefl.
+      - { simpl. capply @CongRefl.
           - ih.
           - ih.
         }
 
       (* CongJ *)
-      - { simpl. capply CongJ.
+      - { simpl. capply @CongJ.
           - ih.
           - ih.
           - now apply (trans_eqtype _ _ _ e0).
@@ -999,7 +1000,7 @@ Proof.
         }
 
       (* CongCond *)
-      - { simpl. capply CongCond.
+      - { simpl. capply @CongCond.
           - now apply (trans_eqterm G u1 u2 Bool).
           - now apply (trans_eqtype (ctxextend G Bool) C1 C2).
           - now apply (trans_eqterm G v1 v2 _ H0).
@@ -1013,7 +1014,7 @@ Proof.
         }
 
       (* CongPair *)
-      - { simpl. capply CongPair.
+      - { simpl. capply @CongPair.
           - ih.
           - ih.
           - ih.
@@ -1021,14 +1022,14 @@ Proof.
         }
 
       (* CongProjOne *)
-      - { simpl. capply CongProjOne.
+      - { simpl. capply @CongProjOne.
           - now apply (trans_eqterm G p1 p2 (SimProd A1 B1)).
           - ih.
           - ih.
         }
 
       (* CongProjTwo *)
-      - { simpl. capply CongProjTwo.
+      - { simpl. capply @CongProjTwo.
           - now apply (trans_eqterm G p1 p2 (SimProd A1 B1)).
           - ih.
           - ih.
@@ -1054,19 +1055,19 @@ Proof.
         }
 
       (* ProjOnePair *)
-      - { simpl. capply ProjOnePair.
+      - { simpl. capply @ProjOnePair.
           - ih.
           - ih.
         }
 
       (* ProjTwoPair *)
-      - { simpl. capply ProjTwoPair.
+      - { simpl. capply @ProjTwoPair.
           - ih.
           - ih.
         }
 
       (* PairEta *)
-      - { simpl. capply PairEta.
+      - { simpl. capply @PairEta.
           - now apply (trans_eqterm _ _ _ _ H).
           - now apply (trans_eqterm _ _ _ _ H0).
           - now apply (trans_isterm G p (SimProd A B)).
@@ -1077,18 +1078,18 @@ Proof.
       - { simpl.
           ceapply EqTrans.
           - ceapply EqTyConv.
-            + ceapply EqSubstUniSimProd.
+            + ceapply @EqSubstUniSimProd.
               * now apply (trans_issubst sbs G D).
-              * capply TermUniProd.
+              * capply @TermUniProd.
                 -- now apply (trans_isterm D a (Uni (uni n))).
                 -- now apply (trans_isterm (ctxextend D (El (uni n) a)) b (Uni (uni m))).
-              * capply TermUniBool. ih.
+              * capply @TermUniBool. ih.
             + rewrite max_0.
               capply EqTyRefl.
               capply TyUni.
               ih.
           - ceapply EqTyConv.
-            + capply CongUniSimProd.
+            + capply @CongUniSimProd.
               * config apply @EqSubstUniProd with (D := trans_ctx D).
                 -- ih.
                 -- now apply (trans_isterm D a (Uni (uni n))).
@@ -1129,11 +1130,11 @@ Proof.
 
       (* CongUniProd *)
       - { simpl. ceapply EqTyConv.
-          - capply CongUniSimProd.
-            + capply CongUniProd.
+          - capply @CongUniSimProd.
+            + capply @CongUniProd.
               * now apply (trans_eqterm G a1 a2 (Uni (uni n))).
               * now apply (trans_eqterm (ctxextend G (El (uni n) a1)) b1 b2 (Uni (uni m))).
-            + capply EqRefl. capply TermUniBool. ih.
+            + capply EqRefl. capply @TermUniBool. ih.
           - rewrite max_0.
             capply EqTyRefl.
             capply TyUni.
@@ -1141,14 +1142,14 @@ Proof.
         }
 
       (* CongUniId *)
-      - { simpl. capply CongUniId.
+      - { simpl. capply @CongUniId.
           - now apply (trans_eqterm G a1 a2 (Uni n)).
           - now apply (trans_eqterm G u1 u2 (El n a1)).
           - now apply (trans_eqterm G v1 v2 (El n a1)).
         }
 
       (* CongUniSimProd *)
-      - { simpl. capply CongUniSimProd.
+      - { simpl. capply @CongUniSimProd.
           - now apply (trans_eqterm G a1 a2 (Uni (uni n))).
           - now apply (trans_eqterm G b1 b2 (Uni (uni m))).
         }
@@ -1170,16 +1171,16 @@ Proof.
         }
 
       (* CongSusbtZero *)
-      - { simpl. capply CongSubstZero.
+      - { simpl. capply @CongSubstZero.
           - ih.
           - ih.
         }
 
       (* CongSubstWeak *)
-      - { simpl. capply CongSubstWeak. ih. }
+      - { simpl. capply @CongSubstWeak. ih. }
 
       (* CongSubstShift *)
-      - { simpl. capply CongSubstShift ; ih. }
+      - { simpl. capply @CongSubstShift ; ih. }
 
       (* CongSubstComp *)
       - { simpl. config apply @CongSubstComp with (D := trans_ctx D).
@@ -1202,13 +1203,13 @@ Proof.
         }
 
       (* WeakNat *)
-      - { simpl. capply WeakNat ; ih. }
+      - { simpl. capply @WeakNat ; ih. }
 
       (* WeakZero *)
-      - { simpl. capply WeakZero ; ih. }
+      - { simpl. capply @WeakZero ; ih. }
 
       (* ShiftZero *)
-      - { simpl. capply ShiftZero ; ih. }
+      - { simpl. capply @ShiftZero ; ih. }
 
       (* CompShift *)
       - { simpl. config apply @CompShift with (D := trans_ctx D).
@@ -1218,10 +1219,10 @@ Proof.
         }
 
       (* CompIdRight *)
-      - { simpl. capply CompIdRight. ih. }
+      - { simpl. capply @CompIdRight. ih. }
 
       (* CompIdLeft *)
-      - { simpl. capply CompIdLeft. ih. }
+      - { simpl. capply @CompIdLeft. ih. }
     }
 Qed.
 
