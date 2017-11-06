@@ -42,7 +42,7 @@ Notation "'prodeta' r" :=
   (forall { _ : flagProdEta }, r) (only parsing, at level 97).
 
 Notation "'universe' r" :=
-  (forall { _ : universesFlag }, r) (only parsing, at level 97).
+  (forall { _ : flagUniverses }, r) (only parsing, at level 97).
 
 Notation "'withprop' r" :=
   (forall { _ : withpropFlag }, r) (only parsing, at level 97).

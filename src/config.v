@@ -60,7 +60,7 @@ Class BinaryProdType := {
 
 (* Universes *)
 Class Universes := {
-  universesFlag : Type
+  flagUniverses : Type
 }.
 
 (* Impredicative universe of propositions. *)
