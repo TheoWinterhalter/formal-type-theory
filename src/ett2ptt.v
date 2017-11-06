@@ -27,8 +27,7 @@ Context `{haveSyntax : syntax.Syntax}.
 
    We want them for PTT.
 *)
-Local Instance hasPrecond : config.Precond
-  := {| config.precondFlag := config.Yes |}.
+Existing Instance ptt.hasPrecond.
 Context {ConfigCtxExtendInversion : CtxExtendInversionClass}.
 Context {ConfigTyIdInversion : TyIdInversionClass}.
 Context {ConfigTyProdInversion : TyProdInversionClass}.

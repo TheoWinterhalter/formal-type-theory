@@ -10,7 +10,6 @@ ptt.v
 checking_tactics.v
 
 ptt_admissible.v
-# ptt_inversion.v
 invconfig.v
 
 ptt_sanity.v
@@ -19,10 +18,5 @@ ett2ptt.v
 ett_sanity.v
 
 tactics.v
-inversion.v
-
-uniqueness.v
-
-# substitution_elim.v
 
 negfunext.v

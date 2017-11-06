@@ -11,12 +11,13 @@ Require ptt.
 Require ptt_sanity.
 Require Import ett.
 Require Import ett2ptt ptt2ett.
+Require Import invconfig.
 
 Section EttSanity.
 
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
-Context `{configProdEta : config.ProdEta}.
+Context `{ConfigProdEta : config.ProdEta}.
 Context `{ConfigUniverses : config.Universes}.
 Context `{ConfigWithProp : config.WithProp}.
 Context `{ConfigId : config.IdentityTypes}.
@@ -25,6 +26,14 @@ Context `{ConfigEmpty : config.WithEmpty}.
 Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
 Context `{ConfigPi : config.WithPi}.
+
+Context `{haveSyntax : syntax.Syntax}.
+
+Existing Instance ptt.hasPrecond.
+Context {ConfigCtxExtendInversion : CtxExtendInversionClass}.
+Context {ConfigTyIdInversion : TyIdInversionClass}.
+Context {ConfigTyProdInversion : TyProdInversionClass}.
+Context {ConfigTySimProdInversion : TySimProdInversionClass}.
 
 Theorem sane_issubst sbs G D :
   issubst sbs G D -> isctx G * isctx D.
