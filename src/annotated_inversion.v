@@ -17,7 +17,7 @@ Local Instance hasPrecondition : config.Precondition := {|
   config.preconditionFlag := config.Yes
 |}.
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
@@ -94,7 +94,7 @@ Proof.
     }
 Defined.
 
-Fixpoint TySimProdInversion G A B (H : istype G (SimProd A B)) {struct H} :
+Fixpoint TyBinaryProdInversion G A B (H : istype G (BinaryProd A B)) {struct H} :
   isctx G * istype G A * istype G B.
 Proof.
   inversion H ; doConfig.
@@ -102,9 +102,9 @@ Proof.
   - { split ; [ split | .. ].
       - assumption.
       - apply @tt.TyCtxConv with (G := G0) ; auto.
-        now apply (TySimProdInversion G0 A B).
+        now apply (TyBinaryProdInversion G0 A B).
       - apply @tt.TyCtxConv with (G := G0) ; auto.
-        now apply (TySimProdInversion G0 A B).
+        now apply (TyBinaryProdInversion G0 A B).
     }
 
   - { split ; [ split | .. ] ; assumption. }
@@ -121,7 +121,7 @@ Local Instance haveTyIdInversion : inversion.HaveTyIdInversion
 Local Instance haveTyProdInversion : inversion.HaveTyProdInversion
   := {| inversion.TyProdInversion := TyProdInversion |}.
 
-Local Instance haveTySimProdInversion : inversion.HaveTySimProdInversion
-  := {| inversion.TySimProdInversion := TySimProdInversion |}.
+Local Instance haveTyBinaryProdInversion : inversion.HaveTyBinaryProdInversion
+  := {| inversion.TyBinaryProdInversion := TyBinaryProdInversion |}.
 
 End AnnotatedSyntaxInversion.

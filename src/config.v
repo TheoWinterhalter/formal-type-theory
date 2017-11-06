@@ -33,29 +33,9 @@ Class ProdType := {
   prodTypeFlag : Type
 }.
 
-(* Equality reflection. *)
-Class Reflection := {
-  reflectionFlag : Type
-}.
-
-(* Simple binary products. *)
-Class SimpleProducts := {
-  simpleproductsFlag : Type
-}.
-
 (* The eta-rule for functions. *)
 Class ProdEta := {
   prodetaFlag : Type
-}.
-
-(* Universes *)
-Class Universes := {
-  universesFlag : Type
-}.
-
-(* Impredicative universe of propositions. *)
-Class WithProp := {
-  withpropFlag : Type
 }.
 
 (* Identity types. *)
@@ -66,6 +46,26 @@ Class IdentityTypes := {
 (* J-eliminator. *)
 Class WithJ := {
   withjFlag : Type
+}.
+
+(* Equality reflection. *)
+Class Reflection := {
+  reflectionFlag : Type
+}.
+
+(* Binary products. *)
+Class BinaryProdType := {
+  binaryProdTypeFlag : Type
+}.
+
+(* Universes *)
+Class Universes := {
+  universesFlag : Type
+}.
+
+(* Impredicative universe of propositions. *)
+Class WithProp := {
+  withpropFlag : Type
 }.
 
 (* Empty type. *)

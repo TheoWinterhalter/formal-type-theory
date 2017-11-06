@@ -11,7 +11,7 @@ Section PttSanity.
 
 Local Instance hasPrecondition : config.Precondition := {| config.preconditionFlag := config.Yes |}.
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
@@ -155,10 +155,10 @@ Proof.
   (* TermUniBool *)
   { magic. }
 
-  (* TermUniSimProd *)
+  (* TermUniBinaryProd *)
   { magic. }
 
-  (* TermUniSimProdProp *)
+  (* TermUniBinaryProdProp *)
   { magic. }
 
   (* TermUniUni *)
@@ -264,13 +264,13 @@ Proof.
     - magic.
   }
 
-  (* CongSimProd *)
+  (* CongBinaryProd *)
   { split.
     - magic.
     - magic.
   }
 
-  (* EqTySubstSimProd *)
+  (* EqTySubstBinaryProd *)
   { split.
     - magic.
     - magic.
@@ -324,13 +324,13 @@ Proof.
     - magic.
   }
 
-  (* ElSimProd *)
+  (* ElBinaryProd *)
   { split.
     - magic.
     - magic.
   }
 
-  (* ElSimProdProp *)
+  (* ElBinaryProdProp *)
   { split.
     - magic.
     - magic.
@@ -853,13 +853,13 @@ Proof.
       - magic.
     }
 
-  (* EqSubstUniSimProd *)
+  (* EqSubstUniBinaryProd *)
   - { split.
       - magic.
       - magic.
     }
 
-  (* EqSubstUniSimProdProp *)
+  (* EqSubstUniBinaryProdProp *)
   - { split.
       - magic.
       - magic.
@@ -895,13 +895,13 @@ Proof.
       - magic.
     }
 
-  (* CongUniSimProd *)
+  (* CongUniBinaryProd *)
   - { split.
       - magic.
       - magic.
     }
 
-  (* CongUniSimProdProp *)
+  (* CongUniBinaryProdProp *)
   - { split.
       - magic.
       - magic.

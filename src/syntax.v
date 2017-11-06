@@ -16,7 +16,7 @@ with type : Type :=
      | Empty : type
      | Unit : type
      | Bool : type
-     | SimProd : type -> type -> type
+     | BinaryProd : type -> type -> type
      | Uni : level -> type
      | El : level -> term -> type
 
@@ -40,7 +40,7 @@ with term : Type :=
      | uniEmpty : level -> term
      | uniUnit : level -> term
      | uniBool : nat -> term
-     | uniSimProd : level -> level -> term -> term -> term
+     | uniBinaryProd : level -> level -> term -> term -> term
      | uniUni : level -> term
 
 with substitution : Type :=
@@ -69,7 +69,7 @@ Class Syntax := {
   Empty : type;
   Unit : type;
   Bool : type;
-  SimProd : type -> type -> type;
+  BinaryProd : type -> type -> type;
   Uni : level -> type;
   El : level -> term -> type;
 
@@ -92,7 +92,7 @@ Class Syntax := {
   uniEmpty : level -> term;
   uniUnit : level -> term;
   uniBool : nat -> term;
-  uniSimProd : level -> level -> term -> term -> term;
+  uniBinaryProd : level -> level -> term -> term -> term;
   uniUni : level -> term;
 
   sbzero : type -> term -> substitution;

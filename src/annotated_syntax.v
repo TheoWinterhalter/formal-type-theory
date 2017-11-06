@@ -20,7 +20,7 @@ with type : Type :=
      | Empty : type
      | Unit : type
      | Bool : type
-     | SimProd : type -> type -> type
+     | BinaryProd : type -> type -> type
      | Uni : syntax.level -> type
      | El : syntax.level -> term -> type
 
@@ -44,7 +44,7 @@ with term : Type :=
      | uniEmpty : syntax.level -> term
      | uniUnit : syntax.level -> term
      | uniBool : nat -> term
-     | uniSimProd : syntax.level -> syntax.level -> term -> term -> term
+     | uniBinaryProd : syntax.level -> syntax.level -> term -> term -> term
      | uniUni : syntax.level -> term
 
 with substitution : Type :=
@@ -70,7 +70,7 @@ Local Instance Syntax : syntax.Syntax := {|
   syntax.Empty   := Empty ;
   syntax.Unit    := Unit ;
   syntax.Bool    := Bool ;
-  syntax.SimProd := SimProd ;
+  syntax.BinaryProd := BinaryProd ;
   syntax.Uni     := Uni ;
   syntax.El      := El  ;
 
@@ -94,7 +94,7 @@ Local Instance Syntax : syntax.Syntax := {|
   syntax.uniEmpty   := uniEmpty ;
   syntax.uniUnit    := uniUnit ;
   syntax.uniBool    := uniBool ;
-  syntax.uniSimProd := uniSimProd ;
+  syntax.uniBinaryProd := uniBinaryProd ;
   syntax.uniUni     := uniUni ;
 
   syntax.sbzero  := sbzero ;

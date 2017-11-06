@@ -16,7 +16,7 @@ Require Import inversion.
 Section EttSanity.
 
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
@@ -32,7 +32,7 @@ Existing Instance ptt.hasPrecondition.
 Context {haveCtxExtendInversion : HaveCtxExtendInversion}.
 Context {haveTyIdInversion : HaveTyIdInversion}.
 Context {haveTyProdInversion : HaveTyProdInversion}.
-Context {haveTySimProdInversion : HaveTySimProdInversion}.
+Context {haveTyBinaryProdInversion : HaveTyBinaryProdInversion}.
 
 Theorem sane_issubst sbs G D :
   issubst sbs G D -> isctx G * isctx D.

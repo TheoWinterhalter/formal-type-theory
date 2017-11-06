@@ -16,7 +16,7 @@ Require Import tactics config_tactics.
 Section Uniqueness.
 
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
@@ -31,7 +31,7 @@ Local Existing Instance annotated_syntax.Syntax.
 Local Existing Instance annotated_inversion.haveCtxExtendInversion.
 Local Existing Instance annotated_inversion.haveTyIdInversion.
 Local Existing Instance annotated_inversion.haveTyProdInversion.
-Local Existing Instance annotated_inversion.haveTySimProdInversion.
+Local Existing Instance annotated_inversion.haveTyBinaryProdInversion.
 
 (* Auxiliary inversion lemmas. *)
 
@@ -455,7 +455,7 @@ Proof.
           - doCtxConv D' unique_term'.
 
           - { capply EqTyRefl.
-              capply TySimProd.
+              capply TyBinaryProd.
               - hyp.
               - hyp.
             }
@@ -551,7 +551,7 @@ Proof.
             }
         }
 
-      (* TermUniSimProd *)
+      (* TermUniBinaryProd *)
       - { inversion_clear H2' ; doConfig.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.
@@ -562,7 +562,7 @@ Proof.
             }
         }
 
-      (* TermUniSimProdProp *)
+      (* TermUniBinaryProdProp *)
       - { inversion_clear H2' ; doConfig.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.

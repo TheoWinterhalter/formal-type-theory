@@ -6,7 +6,7 @@ Section Ptt.
 
 Local Instance hasPrecondition : config.Precondition := {| config.preconditionFlag := config.Yes |}.
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.

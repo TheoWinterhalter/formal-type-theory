@@ -19,7 +19,7 @@ Module Stt.
 
   Local Instance hasPrecondition : config.Precondition := {| config.preconditionFlag := config.Yes |}.
   Context `{configReflection : config.Reflection}.
-  Context `{configSimpleProducts : config.SimpleProducts}.
+  Context `{configBinaryProdType : config.BinaryProdType}.
   Local Instance hasProdEta : config.ProdEta := {| config.prodetaFlag := config.No |}.
   Context `{configUniverses : config.Universes}.
   Local Instance hasProp : config.WithProp := {| config.withpropFlag := config.No |}.
@@ -49,23 +49,18 @@ Module Ttt.
 
   Section Ttt.
 
-  Local Instance hasPrecondition : config.Precondition
-    := {| config.preconditionFlag := config.No |}.
+  Local Instance hasPrecondition : config.Precondition := {| config.preconditionFlag := config.No |}.
   Context `{configReflection : config.Reflection}.
-  Local Instance hasSimpleProducts : config.SimpleProducts
-    := {| config.simpleproductsFlag := config.Yes |}.
-  Local Instance hasProdEta : config.ProdEta
-    := {| config.prodetaFlag := config.No |}.
+  Local Instance hasBinaryProdType : config.BinaryProdType := {| config.binaryProdTypeFlag := config.Yes |}.
+  Local Instance hasProdEta : config.ProdEta := {| config.prodetaFlag := config.No |}.
   Context `{configUniverses : config.Universes}.
   Context `{configWithProp : config.WithProp}.
   Context `{configId : config.IdentityTypes}.
   Context `{configWithJ : config.WithJ}.
   Context `{configEmpty : config.WithEmpty}.
   Context `{configUnit : config.WithUnit}.
-  Local Instance hasBool : config.WithBool
-    := {| config.withboolFlag := config.Yes |}.
-  Local Instance hasPi : config.ProdType
-    := {| config.prodTypeFlag := config.Yes |}.
+  Local Instance hasBool : config.WithBool := {| config.withboolFlag := config.Yes |}.
+  Local Instance hasPi : config.ProdType := {| config.prodTypeFlag := config.Yes |}.
   Local Existing Instance annotated_syntax.Syntax.
 
   Definition isctx   := isctx.
@@ -84,7 +79,7 @@ End Ttt.
 Section Translation.
 
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
 Context `{configId : config.IdentityTypes}.
@@ -101,13 +96,13 @@ Defined.
 
 Fixpoint trans_type (A : type) : type :=
   match A with
-  | Prod A B => SimProd (Prod (trans_type A) (trans_type B)) Bool
+  | Prod A B => BinaryProd (Prod (trans_type A) (trans_type B)) Bool
   | Id A u v => Id (trans_type A) (trans_term u) (trans_term v)
   | Subst A sbs => Subst (trans_type A) (trans_subst sbs)
   | Empty => Empty
   | Unit => Unit
   | Bool => Bool
-  | SimProd A B => SimProd (trans_type A) (trans_type B)
+  | BinaryProd A B => BinaryProd (trans_type A) (trans_type B)
   | Uni n => Uni n
   | El l a => El l (trans_term a)
   end
@@ -147,22 +142,22 @@ with trans_term (t : term) : term :=
   | proj2 A B p =>
     proj2 (trans_type A) (trans_type B) (trans_term p)
   | uniProd (uni n) (uni m) a b =>
-    uniSimProd (uni (max n m)) (uni 0)
+    uniBinaryProd (uni (max n m)) (uni 0)
                (uniProd (uni n) (uni m) (trans_term a) (trans_term b))
                (uniBool 0)
   | uniProd l prop a b =>
-    uniSimProd prop (uni 0)
+    uniBinaryProd prop (uni 0)
                (uniProd l prop (trans_term a) (trans_term b))
                (uniBool 0)
   | uniProd prop (uni n) a b =>
-    uniSimProd (uni n) (uni 0)
+    uniBinaryProd (uni n) (uni 0)
                (uniProd prop (uni n) (trans_term a) (trans_term b))
                (uniBool 0)
   | uniId n a u v => uniId n (trans_term a) (trans_term u) (trans_term v)
   | uniEmpty n => uniEmpty n
   | uniUnit n => uniUnit n
   | uniBool n => uniBool n
-  | uniSimProd n m a b => uniSimProd n m (trans_term a) (trans_term b)
+  | uniBinaryProd n m a b => uniBinaryProd n m (trans_term a) (trans_term b)
   | uniUni n => uniUni n
   end
 
@@ -291,7 +286,7 @@ Proof.
 
       (* TyProd *)
       - { simpl.
-          capply @TySimProd.
+          capply @TyBinaryProd.
           - capply @TyProd.
             now apply (trans_istype (ctxextend G A) B).
           (* Too bad ih doesn't deal with this*)
@@ -313,8 +308,8 @@ Proof.
       (* TyBool *)
       - capply @TyBool ; ih.
 
-      (* TySimProd *)
-      - { simpl. capply @TySimProd.
+      (* TyBinaryProd *)
+      - { simpl. capply @TyBinaryProd.
           - ih.
           - ih.
         }
@@ -423,17 +418,17 @@ Proof.
 
       (* TermProjOne *)
       - { simpl. capply @TermProjOne.
-          - now apply (trans_isterm G p (SimProd A B)).
+          - now apply (trans_isterm G p (BinaryProd A B)).
         }
 
       (* TermProjTwo *)
       - { simpl. capply @TermProjTwo.
-          - now apply (trans_isterm G p (SimProd A B)).
+          - now apply (trans_isterm G p (BinaryProd A B)).
         }
 
       (* TermUniProd *)
       - { simpl. ceapply TermTyConv.
-          - capply @TermUniSimProd.
+          - capply @TermUniBinaryProd.
             + capply @TermUniProd.
               * now apply (trans_isterm G a (Uni (uni n))).
               * now apply (trans_isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))).
@@ -458,10 +453,10 @@ Proof.
       (* TermUniBool *)
       - { simpl. capply @TermUniBool. ih. }
 
-      (* TermUniSimProd *)
-      - { simpl. capply @TermUniSimProd.
+      (* TermUniBinaryProd *)
+      - { simpl. capply @TermUniBinaryProd.
           - now apply (trans_isterm G a (Uni (uni n))).
-          - now apply (trans_isterm G b (Uni (uni m))).
+          - now apply (trans_isterm G b0 (Uni (uni m))).
         }
 
       (* TermUniUni *)
@@ -555,12 +550,12 @@ Proof.
 
       (* EqTySubstProd *)
       - { simpl. ceapply EqTyTrans.
-          - ceapply @EqTySubstSimProd.
+          - ceapply @EqTySubstBinaryProd.
             + now apply (trans_issubst sbs G D).
             + capply @TyProd.
               now apply (trans_istype (ctxextend D A) B).
             + capply @TyBool. ih.
-          - capply @CongSimProd.
+          - capply @CongBinaryProd.
             + config apply @EqTySubstProd with (D := trans_ctx D).
               * ih.
               * now apply (trans_istype (ctxextend D A) B).
@@ -591,7 +586,7 @@ Proof.
         }
 
       (* CongProd *)
-      - { simpl. capply @CongSimProd.
+      - { simpl. capply @CongBinaryProd.
           - capply @CongProd.
             + ih.
             + now apply (trans_eqtype (ctxextend G A1) A2 B2).
@@ -607,14 +602,14 @@ Proof.
           - ih.
         }
 
-      (* CongSimProd *)
-      - { simpl. capply @CongSimProd.
+      (* CongBinaryProd *)
+      - { simpl. capply @CongBinaryProd.
           - ih.
           - ih.
         }
 
-      (* EqTySubstSimProd *)
-      - { simpl. config apply @EqTySubstSimProd with (D := trans_ctx D).
+      (* EqTySubstBinaryProd *)
+      - { simpl. config apply @EqTySubstBinaryProd with (D := trans_ctx D).
           - ih.
           - ih.
           - ih.
@@ -629,12 +624,12 @@ Proof.
           - replace (El (uni (Nat.max n m)))
             with (El (uni (Nat.max (Nat.max n m) 0)))
             by now rewrite max_0.
-            ceapply @ElSimProd.
+            ceapply @ElBinaryProd.
             + capply @TermUniProd.
               * now apply (trans_isterm G a (Uni (uni n))).
               * now apply (trans_isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))).
             + capply @TermUniBool. ih.
-          - capply @CongSimProd.
+          - capply @CongBinaryProd.
             + capply @ElProd.
               * now apply (trans_isterm G a (Uni (uni n))).
               * now apply (trans_isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))).
@@ -663,10 +658,10 @@ Proof.
       (* ElBool *)
       - { simpl. capply @ElBool. ih. }
 
-      (* ElSimProd *)
-      - { simpl. capply @ElSimProd.
+      (* ElBinaryProd *)
+      - { simpl. capply @ElBinaryProd.
           - now apply (trans_isterm G a (Uni (uni n))).
-          - now apply (trans_isterm G b (Uni (uni m))).
+          - now apply (trans_isterm G b0 (Uni (uni m))).
         }
 
       (* ElUni *)
@@ -751,7 +746,7 @@ Proof.
               * capply @TermAbs.
                 now apply (trans_isterm (ctxextend D A) u B).
               * capply @TermTrue. ih.
-            + capply @CongSimProd.
+            + capply @CongBinaryProd.
               * config apply @EqTySubstProd with (D := trans_ctx D).
                 -- ih.
                 -- now apply (trans_istype (ctxextend D A) B).
@@ -776,7 +771,7 @@ Proof.
                 -- ih.
                 -- now apply (trans_istype (ctxextend D A) B).
               * config apply @EqTySubstBool with (D := trans_ctx D). ih.
-            + capply @CongSimProd.
+            + capply @CongBinaryProd.
               * config apply @EqTySubstProd with (D := trans_ctx D).
                 -- ih.
                 -- now apply (trans_istype (ctxextend D A) B).
@@ -818,7 +813,7 @@ Proof.
                              +++ ih.
                              +++ now apply (trans_isterm D u (Prod A B)).
                          --- simpl.
-                             config apply @EqTySubstSimProd with (D := trans_ctx D).
+                             config apply @EqTySubstBinaryProd with (D := trans_ctx D).
                              +++ ih.
                              +++ capply @TyProd.
                                  now apply (trans_istype (ctxextend D A) B).
@@ -1021,14 +1016,14 @@ Proof.
 
       (* CongProjOne *)
       - { simpl. capply @CongProjOne.
-          - now apply (trans_eqterm G p1 p2 (SimProd A1 B1)).
+          - now apply (trans_eqterm G p1 p2 (BinaryProd A1 B1)).
           - ih.
           - ih.
         }
 
       (* CongProjTwo *)
       - { simpl. capply @CongProjTwo.
-          - now apply (trans_eqterm G p1 p2 (SimProd A1 B1)).
+          - now apply (trans_eqterm G p1 p2 (BinaryProd A1 B1)).
           - ih.
           - ih.
         }
@@ -1043,13 +1038,13 @@ Proof.
       (* EqSubstProjOne *)
       - { simpl. config apply @EqSubstProjOne with (D := trans_ctx D).
           - ih.
-          - now apply (trans_isterm D p (SimProd A B)).
+          - now apply (trans_isterm D p (BinaryProd A B)).
         }
 
       (* EqSubstProjTwo *)
       - { simpl. config apply @EqSubstProjTwo with (D := trans_ctx D).
           - ih.
-          - now apply (trans_isterm D p (SimProd A B)).
+          - now apply (trans_isterm D p (BinaryProd A B)).
         }
 
       (* ProjOnePair *)
@@ -1068,15 +1063,15 @@ Proof.
       - { simpl. capply @PairEta.
           - now apply (trans_eqterm _ _ _ _ H).
           - now apply (trans_eqterm _ _ _ _ H0).
-          - now apply (trans_isterm G p (SimProd A B)).
-          - now apply (trans_isterm G q (SimProd A B)).
+          - now apply (trans_isterm G p (BinaryProd A B)).
+          - now apply (trans_isterm G q (BinaryProd A B)).
         }
 
       (* EqSubstUniProd *)
       - { simpl.
           ceapply EqTrans.
           - ceapply EqTyConv.
-            + ceapply @EqSubstUniSimProd.
+            + ceapply @EqSubstUniBinaryProd.
               * now apply (trans_issubst sbs G D).
               * capply @TermUniProd.
                 -- now apply (trans_isterm D a (Uni (uni n))).
@@ -1087,7 +1082,7 @@ Proof.
               capply TyUni.
               ih.
           - ceapply EqTyConv.
-            + capply @CongUniSimProd.
+            + capply @CongUniBinaryProd.
               * config apply @EqSubstUniProd with (D := trans_ctx D).
                 -- ih.
                 -- now apply (trans_isterm D a (Uni (uni n))).
@@ -1116,11 +1111,11 @@ Proof.
       (* EqSubstUniBool *)
       - { simpl. config apply @EqSubstUniBool with (D := trans_ctx D). ih. }
 
-      (* EqSubstUniSimProd *)
-      - { simpl. config apply @EqSubstUniSimProd with (D := trans_ctx D).
+      (* EqSubstUniBinaryProd *)
+      - { simpl. config apply @EqSubstUniBinaryProd with (D := trans_ctx D).
           - ih.
           - now apply (trans_isterm D a (Uni (uni n))).
-          - now apply (trans_isterm D b (Uni (uni m))).
+          - now apply (trans_isterm D b0 (Uni (uni m))).
         }
 
       (* EqSubstUniUni *)
@@ -1128,7 +1123,7 @@ Proof.
 
       (* CongUniProd *)
       - { simpl. ceapply EqTyConv.
-          - capply @CongUniSimProd.
+          - capply @CongUniBinaryProd.
             + capply @CongUniProd.
               * now apply (trans_eqterm G a1 a2 (Uni (uni n))).
               * now apply (trans_eqterm (ctxextend G (El (uni n) a1)) b1 b2 (Uni (uni m))).
@@ -1146,8 +1141,8 @@ Proof.
           - now apply (trans_eqterm G v1 v2 (El n a1)).
         }
 
-      (* CongUniSimProd *)
-      - { simpl. capply @CongUniSimProd.
+      (* CongUniBinaryProd *)
+      - { simpl. capply @CongUniBinaryProd.
           - now apply (trans_eqterm G a1 a2 (Uni (uni n))).
           - now apply (trans_eqterm G b1 b2 (Uni (uni m))).
         }

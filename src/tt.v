@@ -17,7 +17,7 @@ Section TypeTheoryRules.
 
 Context `{configPrecondition : config.Precondition}.
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
@@ -35,8 +35,8 @@ Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 Notation "'extensional' r" :=
   (forall { _ : reflectionFlag }, r) (only parsing, at level 97).
 
-Notation "'simpleproduct' r" :=
-  (forall { _ : simpleproductsFlag }, r) (only parsing, at level 97).
+Notation "'binaryproduct' r" :=
+  (forall { _ : binaryProdTypeFlag }, r) (only parsing, at level 97).
 
 Notation "'prodeta' r" :=
   (forall { _ : prodetaFlag }, r) (only parsing, at level 97).
@@ -225,14 +225,14 @@ with istype : context -> type -> Type :=
            istype G Bool
        endrule
 
-     | TySimProd :
-       simpleproduct rule
+     | TyBinaryProd :
+       binaryproduct rule
          parameters: {G A B},
          precondition: isctx G
          premise: istype G A
          premise: istype G B
          conclusion:
-           istype G (SimProd A B)
+           istype G (BinaryProd A B)
        endrule
 
      | TyUni :
@@ -448,7 +448,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermPair :
-       simpleproduct rule
+       binaryproduct rule
          parameters: {G A B u v},
          precondition: isctx G
          precondition: istype G A
@@ -456,27 +456,27 @@ with isterm : context -> term -> type -> Type :=
          premise: isterm G u A
          premise: isterm G v B
          conclusion:
-           isterm G (pair A B u v) (SimProd A B)
+           isterm G (pair A B u v) (BinaryProd A B)
        endrule
 
      | TermProjOne :
-       simpleproduct rule
+       binaryproduct rule
          parameters: {G A B p},
          precondition: isctx G
          precondition: istype G A
          precondition: istype G B
-         premise: isterm G p (SimProd A B)
+         premise: isterm G p (BinaryProd A B)
          conclusion:
            isterm G (proj1 A B p) A
        endrule
 
      | TermProjTwo :
-       simpleproduct rule
+       binaryproduct rule
          parameters: {G A B p},
          precondition: isctx G
          precondition: istype G A
          precondition: istype G B
-         premise: isterm G p (SimProd A B)
+         premise: isterm G p (BinaryProd A B)
          conclusion:
            isterm G (proj2 A B p) B
        endrule
@@ -536,24 +536,24 @@ with isterm : context -> term -> type -> Type :=
            isterm G (uniBool n) (Uni (uni n))
        endrule
 
-     | TermUniSimProd :
-       universe simpleproduct rule
+     | TermUniBinaryProd :
+       universe binaryproduct rule
          parameters: {G a b n m},
          premise: isterm G a (Uni (uni n))
          premise: isterm G b (Uni (uni m))
          precondition: isctx G
          conclusion:
-           isterm G (uniSimProd (uni n) (uni m) a b) (Uni (uni (max n m)))
+           isterm G (uniBinaryProd (uni n) (uni m) a b) (Uni (uni (max n m)))
        endrule
 
-     | TermUniSimProdProp :
-       universe withprop simpleproduct rule
+     | TermUniBinaryProdProp :
+       universe withprop binaryproduct rule
          parameters: {G a b},
          premise: isterm G a (Uni prop)
          premise: isterm G b (Uni prop)
          precondition: isctx G
          conclusion:
-           isterm G (uniSimProd prop prop a b) (Uni prop)
+           isterm G (uniBinaryProd prop prop a b) (Uni prop)
        endrule
 
      | TermUniUni :
@@ -1045,8 +1045,8 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G (Subst A sbs) (Subst B sbt)
        endrule
 
-     | CongSimProd :
-       simpleproduct rule
+     | CongBinaryProd :
+       binaryproduct rule
          parameters: {G A1 A2 B1 B2},
          precondition: isctx G
          precondition: istype G A1
@@ -1056,11 +1056,11 @@ with eqtype : context -> type -> type -> Type :=
          premise: eqtype G A1 A2
          premise: eqtype G B1 B2
          conclusion:
-           eqtype G (SimProd A1 B1) (SimProd A2 B2)
+           eqtype G (BinaryProd A1 B1) (BinaryProd A2 B2)
        endrule
 
-     | EqTySubstSimProd :
-       simpleproduct rule
+     | EqTySubstBinaryProd :
+       binaryproduct rule
          parameters: {G D A B sbs},
          precondition: isctx G
          precondition: isctx D
@@ -1069,8 +1069,8 @@ with eqtype : context -> type -> type -> Type :=
          premise: istype D B
          conclusion:
            eqtype G
-                  (Subst (SimProd A B) sbs)
-                  (SimProd (Subst A sbs) (Subst B sbs))
+                  (Subst (BinaryProd A B) sbs)
+                  (BinaryProd (Subst A sbs) (Subst B sbs))
        endrule
 
      | EqTySubstUni :
@@ -1165,28 +1165,28 @@ with eqtype : context -> type -> type -> Type :=
                   Bool
        endrule
 
-     | ElSimProd :
-       universe simpleproduct rule
+     | ElBinaryProd :
+       universe binaryproduct rule
          parameters: {G a b n m},
          premise: isterm G a (Uni (uni n))
          premise: isterm G b (Uni (uni m))
          precondition: isctx G
          conclusion:
            eqtype G
-                  (El (uni (max n m)) (uniSimProd (uni n) (uni m) a b))
-                  (SimProd (El (uni n) a) (El (uni m) b))
+                  (El (uni (max n m)) (uniBinaryProd (uni n) (uni m) a b))
+                  (BinaryProd (El (uni n) a) (El (uni m) b))
        endrule
 
-     | ElSimProdProp :
-       universe withprop simpleproduct rule
+     | ElBinaryProdProp :
+       universe withprop binaryproduct rule
          parameters: {G a b},
          premise: isterm G a (Uni prop)
          premise: isterm G b (Uni prop)
          precondition: isctx G
          conclusion:
            eqtype G
-                  (El prop (uniSimProd prop prop a b))
-                  (SimProd (El prop a) (El prop b))
+                  (El prop (uniBinaryProd prop prop a b))
+                  (BinaryProd (El prop a) (El prop b))
        endrule
 
      | ElUni :
@@ -1990,7 +1990,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongPair :
-       simpleproduct rule
+       binaryproduct rule
          parameters: {G A1 A2 B1 B2 u1 u2 v1 v2},
          premise: eqterm G u1 u2 A1
          premise: eqterm G v1 v2 B1
@@ -2009,13 +2009,13 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G
                   (pair A1 B1 u1 v1)
                   (pair A2 B2 u2 v2)
-                  (SimProd A1 B1)
+                  (BinaryProd A1 B1)
        endrule
 
      | CongProjOne :
-       simpleproduct rule
+       binaryproduct rule
          parameters: {G A1 A2 B1 B2 p1 p2},
-         premise: eqterm G p1 p2 (SimProd A1 B1)
+         premise: eqterm G p1 p2 (BinaryProd A1 B1)
          premise: eqtype G A1 A2
          premise: eqtype G B1 B2
          precondition: isctx G
@@ -2023,8 +2023,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          precondition: istype G A2
          precondition: istype G B1
          precondition: istype G B2
-         precondition: isterm G p1 (SimProd A1 B1)
-         precondition: isterm G p2 (SimProd A1 B1)
+         precondition: isterm G p1 (BinaryProd A1 B1)
+         precondition: isterm G p2 (BinaryProd A1 B1)
          conclusion:
            eqterm G
                   (proj1 A1 B1 p1)
@@ -2033,9 +2033,9 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongProjTwo :
-       simpleproduct rule
+       binaryproduct rule
          parameters: {G A1 A2 B1 B2 p1 p2},
-         premise: eqterm G p1 p2 (SimProd A1 B1)
+         premise: eqterm G p1 p2 (BinaryProd A1 B1)
          premise: eqtype G A1 A2
          premise: eqtype G B1 B2
          precondition: isctx G
@@ -2043,8 +2043,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          precondition: istype G A2
          precondition: istype G B1
          precondition: istype G B2
-         precondition: isterm G p1 (SimProd A1 B1)
-         precondition: isterm G p2 (SimProd A1 B1)
+         precondition: isterm G p1 (BinaryProd A1 B1)
+         precondition: isterm G p2 (BinaryProd A1 B1)
          conclusion:
            eqterm G
                   (proj2 A1 B1 p1)
@@ -2053,7 +2053,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstPair :
-       simpleproduct rule
+       binaryproduct rule
          parameters: {G D A B u v sbs},
          premise: issubst sbs G D
          premise: isterm D u A
@@ -2066,14 +2066,14 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G
                   (subst (pair A B u v) sbs)
                   (pair (Subst A sbs) (Subst B sbs) (subst u sbs) (subst v sbs))
-                  (SimProd (Subst A sbs) (Subst B sbs))
+                  (BinaryProd (Subst A sbs) (Subst B sbs))
        endrule
 
      | EqSubstProjOne :
-       simpleproduct rule
+       binaryproduct rule
          parameters: {G D A B p sbs},
          premise: issubst sbs G D
-         premise: isterm D p (SimProd A B)
+         premise: isterm D p (BinaryProd A B)
          precondition: isctx G
          precondition: isctx D
          precondition: istype D A
@@ -2086,10 +2086,10 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstProjTwo :
-       simpleproduct rule
+       binaryproduct rule
          parameters: {G D A B p sbs},
          premise: issubst sbs G D
-         premise: isterm D p (SimProd A B)
+         premise: isterm D p (BinaryProd A B)
          precondition: isctx G
          precondition: isctx D
          precondition: istype D A
@@ -2102,7 +2102,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | ProjOnePair :
-       simpleproduct rule
+       binaryproduct rule
          parameters: {G A B u v},
          premise: isterm G u A
          premise: isterm G v B
@@ -2117,7 +2117,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | ProjTwoPair :
-       simpleproduct rule
+       binaryproduct rule
          parameters: {G A B u v},
          premise: isterm G u A
          premise: isterm G v B
@@ -2132,17 +2132,17 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | PairEta :
-       simpleproduct rule
+       binaryproduct rule
          parameters: {G A B p q},
          premise: eqterm G (proj1 A B p) (proj1 A B q) A
          premise: eqterm G (proj2 A B p) (proj2 A B q) B
-         premise: isterm G p (SimProd A B)
-         premise: isterm G q (SimProd A B)
+         premise: isterm G p (BinaryProd A B)
+         premise: isterm G q (BinaryProd A B)
          precondition: isctx G
          precondition: istype G A
          precondition: istype G B
          conclusion:
-           eqterm G p q (SimProd A B)
+           eqterm G p q (BinaryProd A B)
        endrule
 
      | EqSubstUniProd :
@@ -2235,8 +2235,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Uni (uni n))
        endrule
 
-     | EqSubstUniSimProd :
-       universe simpleproduct rule
+     | EqSubstUniBinaryProd :
+       universe binaryproduct rule
          parameters: {G D a b n m sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni (uni n))
@@ -2245,13 +2245,13 @@ with eqterm : context -> term -> term -> type -> Type :=
          precondition: isctx D
          conclusion:
            eqterm G
-                  (subst (uniSimProd (uni n) (uni m) a b) sbs)
-                  (uniSimProd (uni n) (uni m) (subst a sbs) (subst b sbs))
+                  (subst (uniBinaryProd (uni n) (uni m) a b) sbs)
+                  (uniBinaryProd (uni n) (uni m) (subst a sbs) (subst b sbs))
                   (Uni (uni (max n m)))
        endrule
 
-     | EqSubstUniSimProdProp :
-       universe withprop simpleproduct rule
+     | EqSubstUniBinaryProdProp :
+       universe withprop binaryproduct rule
          parameters: {G D a b sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni prop)
@@ -2260,8 +2260,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          precondition: isctx D
          conclusion:
            eqterm G
-                  (subst (uniSimProd prop prop a b) sbs)
-                  (uniSimProd prop prop (subst a sbs) (subst b sbs))
+                  (subst (uniBinaryProd prop prop a b) sbs)
+                  (uniBinaryProd prop prop (subst a sbs) (subst b sbs))
                   (Uni prop)
        endrule
 
@@ -2345,8 +2345,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Uni n)
        endrule
 
-     | CongUniSimProd :
-       universe simpleproduct rule
+     | CongUniBinaryProd :
+       universe binaryproduct rule
          parameters: {G a1 a2 b1 b2 n m},
          premise: eqterm G a1 a2 (Uni (uni n))
          premise: eqterm G b1 b2 (Uni (uni m))
@@ -2357,13 +2357,13 @@ with eqterm : context -> term -> term -> type -> Type :=
          precondition: isctx G
          conclusion:
            eqterm G
-                  (uniSimProd (uni n) (uni m) a1 b1)
-                  (uniSimProd (uni n) (uni m) a2 b2)
+                  (uniBinaryProd (uni n) (uni m) a1 b1)
+                  (uniBinaryProd (uni n) (uni m) a2 b2)
                   (Uni (uni (max n m)))
        endrule
 
-     | CongUniSimProdProp :
-       universe withprop simpleproduct rule
+     | CongUniBinaryProdProp :
+       universe withprop binaryproduct rule
          parameters: {G a1 a2 b1 b2},
          premise: eqterm G a1 a2 (Uni prop)
          premise: eqterm G b1 b2 (Uni prop)
@@ -2374,8 +2374,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          precondition: isctx G
          conclusion:
            eqterm G
-                  (uniSimProd prop prop a1 b1)
-                  (uniSimProd prop prop a2 b2)
+                  (uniBinaryProd prop prop a1 b1)
+                  (uniBinaryProd prop prop a2 b2)
                   (Uni prop)
        endrule
 .

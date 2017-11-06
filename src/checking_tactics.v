@@ -17,7 +17,7 @@ Section Checking1.
 (* We are as modular as can be *)
 Context `{configPrecondition : config.Precondition}.
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
@@ -145,7 +145,7 @@ Section Checking2.
 
 Context `{configPrecondition : config.Precondition}.
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
@@ -844,18 +844,18 @@ Ltac prepushsubst1 sym :=
       ceapply EqTyTrans ; [ ceapply EqTySubstProd | .. ]
     | ..
     ]
-  | |- eqtype ?G (Subst (SimProd ?A ?B) ?sbs) ?C =>
-    ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ]
-  | |- eqtype ?G ?C (Subst (SimProd ?A ?B) ?sbs) =>
+  | |- eqtype ?G (Subst (BinaryProd ?A ?B) ?sbs) ?C =>
+    ceapply EqTyTrans ; [ ceapply EqTySubstBinaryProd | .. ]
+  | |- eqtype ?G ?C (Subst (BinaryProd ?A ?B) ?sbs) =>
     ceapply EqTySym ; [
-      ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ]
+      ceapply EqTyTrans ; [ ceapply EqTySubstBinaryProd | .. ]
     | ..
     ]
-  | |- eqtype ?G (Subst ?A ?sbs) (SimProd ?B ?C) =>
-    ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ]
-  | |- eqtype ?G (SimProd ?A ?B) (Subst ?C ?sbs) =>
+  | |- eqtype ?G (Subst ?A ?sbs) (BinaryProd ?B ?C) =>
+    ceapply EqTyTrans ; [ ceapply EqTySubstBinaryProd | .. ]
+  | |- eqtype ?G (BinaryProd ?A ?B) (Subst ?C ?sbs) =>
     ceapply EqTySym ; [
-      ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ]
+      ceapply EqTyTrans ; [ ceapply EqTySubstBinaryProd | .. ]
     | ..
     ]
   | |- eqtype ?G (Subst ?E ?sbs) Empty =>
@@ -1034,19 +1034,19 @@ Ltac prepushsubst1 sym :=
       | ..
       ]
     ]
-  | |- eqterm ?G (subst (uniSimProd prop prop ?a ?b) ?sbs) _ _ =>
+  | |- eqterm ?G (subst (uniBinaryProd prop prop ?a ?b) ?sbs) _ _ =>
     first [
-      ceapply EqTrans ; [ ceapply EqSubstUniSimProdProp | .. ]
+      ceapply EqTrans ; [ ceapply EqSubstUniBinaryProdProp | .. ]
     | ceapply EqTyConv ; [
-        ceapply EqTrans ; [ ceapply EqSubstUniSimProdProp | .. ]
+        ceapply EqTrans ; [ ceapply EqSubstUniBinaryProdProp | .. ]
       | ..
       ]
     ]
-  | |- eqterm ?G (subst (uniSimProd ?n ?m ?a ?b) ?sbs) _ _ =>
+  | |- eqterm ?G (subst (uniBinaryProd ?n ?m ?a ?b) ?sbs) _ _ =>
     first [
-      ceapply EqTrans ; [ ceapply EqSubstUniSimProd | .. ]
+      ceapply EqTrans ; [ ceapply EqSubstUniBinaryProd | .. ]
     | ceapply EqTyConv ; [
-        ceapply EqTrans ; [ ceapply EqSubstUniSimProd | .. ]
+        ceapply EqTrans ; [ ceapply EqSubstUniBinaryProd | .. ]
       | ..
       ]
     ]
@@ -1222,7 +1222,7 @@ Section Checking3.
 
 Context `{configPrecondition : config.Precondition}.
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
@@ -2239,9 +2239,9 @@ Ltac magicn try shelf tysym debug :=
         ceapply TyBool
       | myfail debug
       ] ; magicn try shelf DoTysym debug
-    | |- istype ?G (SimProd ?A ?B) =>
+    | |- istype ?G (BinaryProd ?A ?B) =>
       first [
-        ceapply TySimProd
+        ceapply TyBinaryProd
       | myfail debug
       ] ; magicn try shelf DoTysym debug
     | |- istype ?G (Uni ?n) =>
@@ -2403,16 +2403,16 @@ Ltac magicn try shelf tysym debug :=
       | ceapply TermTyConv ; [ ceapply TermUniBool | .. ]
       | myfail debug
       ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (uniSimProd prop prop ?a ?b) ?T =>
+    | |- isterm ?G (uniBinaryProd prop prop ?a ?b) ?T =>
       first [
-        ceapply TermUniSimProdProp
-      | ceapply TermTyConv ; [ ceapply TermUniSimProdProp | .. ]
+        ceapply TermUniBinaryProdProp
+      | ceapply TermTyConv ; [ ceapply TermUniBinaryProdProp | .. ]
       | myfail debug
       ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (uniSimProd ?n ?m ?a ?b) ?T =>
+    | |- isterm ?G (uniBinaryProd ?n ?m ?a ?b) ?T =>
       first [
-        ceapply TermUniSimProd
-      | ceapply TermTyConv ; [ ceapply TermUniSimProd | .. ]
+        ceapply TermUniBinaryProd
+      | ceapply TermTyConv ; [ ceapply TermUniBinaryProd | .. ]
       | myfail debug
       ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (uniUni prop) ?T =>
@@ -2688,9 +2688,9 @@ Ltac magicn try shelf tysym debug :=
         ceapply EqTyRefl
       | myfail debug
       ] ; magicn try shelf DoTysym debug
-    | |- eqtype ?G (SimProd _ _) (SimProd _ _) =>
+    | |- eqtype ?G (BinaryProd _ _) (BinaryProd _ _) =>
       first [
-        ceapply CongSimProd
+        ceapply CongBinaryProd
       | myfail debug
       ] ; magicn try shelf DoTysym debug
     | |- eqtype ?G (Uni _) (Uni _) =>
@@ -2905,16 +2905,16 @@ Ltac magicn try shelf tysym debug :=
       | ceapply EqTyConv ; [ ceapply CongUniId | .. ]
       | myfail debug
       ] ; magicn try shelf DoTysym debug
-    | |- eqterm ?G (uniSimProd prop prop _ _) (uniSimProd prop prop _ _) _ =>
+    | |- eqterm ?G (uniBinaryProd prop prop _ _) (uniBinaryProd prop prop _ _) _ =>
       first [
-        ceapply CongUniSimProdProp
-      | ceapply EqTyConv ; [ ceapply CongUniSimProdProp | .. ]
+        ceapply CongUniBinaryProdProp
+      | ceapply EqTyConv ; [ ceapply CongUniBinaryProdProp | .. ]
       | myfail debug
       ] ; magicn try shelf DoTysym debug
-    | |- eqterm ?G (uniSimProd _ _ _ _) (uniSimProd _ _ _ _) _ =>
+    | |- eqterm ?G (uniBinaryProd _ _ _ _) (uniBinaryProd _ _ _ _) _ =>
       first [
-        ceapply CongUniSimProd
-      | ceapply EqTyConv ; [ ceapply CongUniSimProd | .. ]
+        ceapply CongUniBinaryProd
+      | ceapply EqTyConv ; [ ceapply CongUniBinaryProd | .. ]
       | myfail debug
       ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G ?u ?v ?A =>

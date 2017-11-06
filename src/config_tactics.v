@@ -12,8 +12,8 @@ Ltac doConfig :=
       let H := fresh "preconditionFlag" in intros H
     | reflectionFlag =>
       let H := fresh "reflectionFlag" in intros H
-    | simpleproductsFlag =>
-      let H := fresh "simpleproductsFlag" in intros H
+    | binaryProdTypeFlag =>
+      let H := fresh "binaryProdTypeFlag" in intros H
     | prodetaFlag =>
       let H := fresh "prodetaFlag" in intros H
     | universesFlag =>
@@ -40,7 +40,7 @@ Ltac doConfig :=
     end
   | H : preconditionFlag |- preconditionFlag => exact H
   | H : reflectionFlag |- reflectionFlag => exact H
-  | H : simpleproductsFlag |- simpleproductsFlag => exact H
+  | H : binaryProdTypeFlag |- binaryProdTypeFlag => exact H
   | H : prodetaFlag |- prodetaFlag => exact H
   | H : universesFlag |- universesFlag => exact H
   | H : withpropFlag |- withpropFlag => exact H
@@ -67,9 +67,9 @@ Ltac doConfig :=
        match goal with
        | R : @reflectionFlag F |- _ => specialize (H R)
        end
-     | @simpleproductsFlag ?F =>
+     | @binaryProdTypeFlag ?F =>
        match goal with
-       | R : @simpleproductsFlag F |- _ => specialize (H R)
+       | R : @binaryProdTypeFlag F |- _ => specialize (H R)
        end
      | @prodetaFlag ?F =>
        match goal with

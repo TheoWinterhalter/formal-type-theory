@@ -9,7 +9,7 @@ Require Import inversion.
 Section Ett2Ptt.
 
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
@@ -30,7 +30,7 @@ Existing Instance ptt.hasPrecondition.
 Context {haveCtxExtendInversion : HaveCtxExtendInversion}.
 Context {haveTyIdInversion : HaveTyIdInversion}.
 Context {haveTyProdInversion : HaveTyProdInversion}.
-Context {haveTySimProdInversion : HaveTySimProdInversion}.
+Context {haveTyBinaryProdInversion : HaveTyBinaryProdInversion}.
 
 (* Renaming ptt_sanity lemmata for readability. *)
 Definition ptt_sane_issubst := ptt_sanity.sane_issubst.
@@ -192,8 +192,8 @@ Proof.
       - now apply sane_isctx.
     }
 
-    (* TySimProd *)
-    { capply TySimProd.
+    (* TyBinaryProd *)
+    { capply TyBinaryProd.
       - now apply (ptt_sane_istype G A), sane_istype.
       - now apply sane_istype.
       - now apply sane_istype.
@@ -336,24 +336,24 @@ Proof.
 
     (* TermProjOne *)
     - { capply TermProjOne.
-        - now apply (ptt_sane_isterm G p (SimProd A B)), sane_isterm.
-        - now apply (TySimProdInversion G A B),
-                    (ptt_sane_isterm G p (SimProd A B)),
+        - now apply (ptt_sane_isterm G p (BinaryProd A B)), sane_isterm.
+        - now apply (TyBinaryProdInversion G A B),
+                    (ptt_sane_isterm G p (BinaryProd A B)),
                     sane_isterm.
-        - now apply (TySimProdInversion G A B),
-                    (ptt_sane_isterm G p (SimProd A B)),
+        - now apply (TyBinaryProdInversion G A B),
+                    (ptt_sane_isterm G p (BinaryProd A B)),
                     sane_isterm.
         - now apply sane_isterm.
       }
 
     (* TermProjTwo *)
     - { capply TermProjTwo.
-        - now apply (ptt_sane_isterm G p (SimProd A B)), sane_isterm.
-        - now apply (TySimProdInversion G A B),
-                    (ptt_sane_isterm G p (SimProd A B)),
+        - now apply (ptt_sane_isterm G p (BinaryProd A B)), sane_isterm.
+        - now apply (TyBinaryProdInversion G A B),
+                    (ptt_sane_isterm G p (BinaryProd A B)),
                     sane_isterm.
-        - now apply (TySimProdInversion G A B),
-                    (ptt_sane_isterm G p (SimProd A B)),
+        - now apply (TyBinaryProdInversion G A B),
+                    (ptt_sane_isterm G p (BinaryProd A B)),
                     sane_isterm.
         - now apply sane_isterm.
       }
@@ -395,15 +395,15 @@ Proof.
         now apply sane_isctx.
       }
 
-    (* TermUniSimProd *)
-    - { capply TermUniSimProd.
+    (* TermUniBinaryProd *)
+    - { capply TermUniBinaryProd.
         - now apply sane_isterm.
         - now apply sane_isterm.
         - now apply (ptt_sane_isterm G a (Uni (uni n))), sane_isterm.
       }
 
-    (* TermUniSimProdProp *)
-    - { capply TermUniSimProdProp.
+    (* TermUniBinaryProdProp *)
+    - { capply TermUniBinaryProdProp.
         - now apply sane_isterm.
         - now apply sane_isterm.
         - now apply (ptt_sane_isterm G a (Uni prop)), sane_isterm.
@@ -746,8 +746,8 @@ Proof.
       - now apply (@ptt_sane_eqsubst sbs sbt G D), sane_eqsubst.
     }
 
-    (* CongSimProd *)
-    { capply CongSimProd.
+    (* CongBinaryProd *)
+    { capply CongBinaryProd.
       - now apply (ptt_sane_eqtype G A1 A2), sane_eqtype.
       - now apply (ptt_sane_eqtype G A1 A2), sane_eqtype.
       - now apply (ptt_sane_eqtype G A1 A2), sane_eqtype.
@@ -757,8 +757,8 @@ Proof.
       - now apply sane_eqtype.
     }
 
-    (* EqTySubstSimProd *)
-    { config apply @EqTySubstSimProd with (D := D).
+    (* EqTySubstBinaryProd *)
+    { config apply @EqTySubstBinaryProd with (D := D).
       - now apply (ptt_sane_issubst sbs G D), sane_issubst.
       - now apply (ptt_sane_istype D A), sane_istype.
       - now apply sane_issubst.
@@ -818,15 +818,15 @@ Proof.
       now apply sane_isctx.
     }
 
-    (* ElSimProd *)
-    { config apply @ElSimProd.
+    (* ElBinaryProd *)
+    { config apply @ElBinaryProd.
       - now apply sane_isterm.
       - now apply sane_isterm.
       - now apply (ptt_sane_isterm G a (Uni (uni n))), sane_isterm.
     }
 
-    (* ElSimProdProp *)
-    { config apply @ElSimProdProp.
+    (* ElBinaryProdProp *)
+    { config apply @ElBinaryProdProp.
       - now apply sane_isterm.
       - now apply sane_isterm.
       - now apply (ptt_sane_isterm G a (Uni prop)), sane_isterm.
@@ -1253,8 +1253,8 @@ Proof.
         - now apply (ptt_sane_eqtype G A1 A2), sane_eqtype.
         - now apply (ptt_sane_eqtype G B1 B2), sane_eqtype.
         - now apply (ptt_sane_eqtype G B1 B2), sane_eqtype.
-        - now apply (ptt_sane_eqterm G p1 p2 (SimProd A1 B1)), sane_eqterm.
-        - now apply (ptt_sane_eqterm G p1 p2 (SimProd A1 B1)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G p1 p2 (BinaryProd A1 B1)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G p1 p2 (BinaryProd A1 B1)), sane_eqterm.
       }
 
     (* CongProjTwo *)
@@ -1267,8 +1267,8 @@ Proof.
         - now apply (ptt_sane_eqtype G A1 A2), sane_eqtype.
         - now apply (ptt_sane_eqtype G B1 B2), sane_eqtype.
         - now apply (ptt_sane_eqtype G B1 B2), sane_eqtype.
-        - now apply (ptt_sane_eqterm G p1 p2 (SimProd A1 B1)), sane_eqterm.
-        - now apply (ptt_sane_eqterm G p1 p2 (SimProd A1 B1)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G p1 p2 (BinaryProd A1 B1)), sane_eqterm.
+        - now apply (ptt_sane_eqterm G p1 p2 (BinaryProd A1 B1)), sane_eqterm.
       }
 
     (* EqSubstPair *)
@@ -1291,11 +1291,11 @@ Proof.
         - now apply sane_isterm.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
-        - now apply (TySimProdInversion D A B),
-                    (ptt_sane_isterm D p (SimProd A B)),
+        - now apply (TyBinaryProdInversion D A B),
+                    (ptt_sane_isterm D p (BinaryProd A B)),
                     sane_isterm.
-        - now apply (TySimProdInversion D A B),
-                    (ptt_sane_isterm D p (SimProd A B)),
+        - now apply (TyBinaryProdInversion D A B),
+                    (ptt_sane_isterm D p (BinaryProd A B)),
                     sane_isterm.
       }
 
@@ -1305,11 +1305,11 @@ Proof.
         - now apply sane_isterm.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
-        - now apply (TySimProdInversion D A B),
-                    (ptt_sane_isterm D p (SimProd A B)),
+        - now apply (TyBinaryProdInversion D A B),
+                    (ptt_sane_isterm D p (BinaryProd A B)),
                     sane_isterm.
-        - now apply (TySimProdInversion D A B),
-                    (ptt_sane_isterm D p (SimProd A B)),
+        - now apply (TyBinaryProdInversion D A B),
+                    (ptt_sane_isterm D p (BinaryProd A B)),
                     sane_isterm.
       }
 
@@ -1394,8 +1394,8 @@ Proof.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
       }
 
-    (* EqSubstUniSimProd *)
-    - { config apply @EqSubstUniSimProd with (D := D).
+    (* EqSubstUniBinaryProd *)
+    - { config apply @EqSubstUniBinaryProd with (D := D).
         - now apply sane_issubst.
         - now apply sane_isterm.
         - now apply sane_isterm.
@@ -1403,8 +1403,8 @@ Proof.
         - now apply (ptt_sane_issubst sbs G D), sane_issubst.
       }
 
-    (* EqSubstUniSimProdProp *)
-    - { config apply @EqSubstUniSimProdProp with (D := D).
+    (* EqSubstUniBinaryProdProp *)
+    - { config apply @EqSubstUniBinaryProdProp with (D := D).
         - now apply sane_issubst.
         - now apply sane_isterm.
         - now apply sane_isterm.
@@ -1478,8 +1478,8 @@ Proof.
         - now apply (ptt_sane_eqterm G a1 a2 (Uni n)), sane_eqterm.
       }
 
-    (* CongUniSimProd *)
-    - { capply CongUniSimProd.
+    (* CongUniBinaryProd *)
+    - { capply CongUniBinaryProd.
         - now apply sane_eqterm.
         - now apply sane_eqterm.
         - now apply (ptt_sane_eqterm G a1 a2 (Uni (uni n))), sane_eqterm.
@@ -1489,8 +1489,8 @@ Proof.
         - now apply (ptt_sane_eqterm G b1 b2 (Uni (uni m))), sane_eqterm.
       }
 
-    (* CongUniSimProdProp *)
-    - { capply CongUniSimProdProp.
+    (* CongUniBinaryProdProp *)
+    - { capply CongUniBinaryProdProp.
         - now apply sane_eqterm.
         - now apply sane_eqterm.
         - now apply (ptt_sane_eqterm G a1 a2 (Uni prop)), sane_eqterm.

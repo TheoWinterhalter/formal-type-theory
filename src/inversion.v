@@ -6,7 +6,7 @@ Section InversionPrinciples.
 
 Context `{configPrecondition : config.Precondition}.
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
@@ -36,9 +36,9 @@ Class HaveTyProdInversion := {
                       isctx G * istype G A * istype (ctxextend G A) B
 }.
 
-Class HaveTySimProdInversion := {
-  TySimProdInversion : forall G A B,
-                         istype G (SimProd A B) ->
+Class HaveTyBinaryProdInversion := {
+  TyBinaryProdInversion : forall G A B,
+                         istype G (BinaryProd A B) ->
                          isctx G * istype G A * istype G B
 }.
 
