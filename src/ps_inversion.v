@@ -109,16 +109,16 @@ Defined.
 
 Local Instance LocSyntax : syntax.Syntax := Syntax.
 
-Local Instance haveCtxExtendInversionInstance : inversion.HaveCtxExtendInversion
+Local Instance haveCtxExtendInversion : inversion.HaveCtxExtendInversion
   := {| inversion.CtxExtendInversion := CtxExtendInversion |}.
 
-Local Instance haveTyIdInversionInstance : inversion.HaveTyIdInversion
+Local Instance haveTyIdInversion : inversion.HaveTyIdInversion
   := {| inversion.TyIdInversion := TyIdInversion |}.
 
-Local Instance haveTyProdInversionInstance : inversion.HaveTyProdInversion
+Local Instance haveTyProdInversion : inversion.HaveTyProdInversion
   := {| inversion.TyProdInversion := TyProdInversion |}.
 
-Local Instance haveTySimProdInversionInstance : inversion.HaveTySimProdInversion
+Local Instance haveTySimProdInversion : inversion.HaveTySimProdInversion
   := {| inversion.TySimProdInversion := TySimProdInversion |}.
 
 End ParanoidSyntaxInversion.

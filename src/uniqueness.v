@@ -2,14 +2,15 @@
 
 Require config.
 Require Import config_tactics.
-
 Require Import syntax.
+
+Require paranoid_syntax.
 Require Import tt.
 Require ett ptt.
 Require ptt2ett ett2ptt.
 Require ptt_admissible.
 Require ett_sanity ptt_sanity.
-Require ptt_inversion.
+Require ps_inversion.
 Require Import tactics config_tactics.
 
 Section Uniqueness.
@@ -17,14 +18,20 @@ Section Uniqueness.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context `{configUniverses : config.Universes}.
+Context `{configWithProp : config.WithProp}.
+Context `{configId : config.IdentityTypes}.
+Context `{configWithJ : config.WithJ}.
+Context `{configEmpty : config.WithEmpty}.
+Context `{configUnit : config.WithUnit}.
+Context `{configBool : config.WithBool}.
+Context `{configPi : config.WithPi}.
+
+Local Existing Instance paranoid_syntax.Syntax.
+Local Existing Instance ps_inversion.haveCtxExtendInversion.
+Local Existing Instance ps_inversion.haveTyIdInversion.
+Local Existing Instance ps_inversion.haveTyProdInversion.
+Local Existing Instance ps_inversion.haveTySimProdInversion.
 
 (* Auxiliary inversion lemmas. *)
 
@@ -51,11 +58,11 @@ Proof.
       - exists G, A. repeat split.
         + capply CtxRefl.
           eapply ptt2ett.sane_isctx.
-          apply (ptt_inversion.CtxExtendInversion G A).
+          apply (ps_inversion.CtxExtendInversion G A).
           now eapply ett2ptt.sane_isctx.
         + capply EqTyRefl.
           eapply ptt2ett.sane_istype.
-          apply (ptt_inversion.CtxExtendInversion G A).
+          apply (ps_inversion.CtxExtendInversion G A).
           now eapply ett2ptt.sane_isctx.
 
       (* CtxSym *)
@@ -86,11 +93,11 @@ Proof.
       - exists G, A. repeat split.
         + capply CtxRefl.
           eapply ptt2ett.sane_isctx.
-          apply (ptt_inversion.CtxExtendInversion G A).
+          apply (ps_inversion.CtxExtendInversion G A).
           now eapply ett2ptt.sane_isctx.
         + capply EqTyRefl.
           eapply ptt2ett.sane_istype.
-          apply (ptt_inversion.CtxExtendInversion G A).
+          apply (ps_inversion.CtxExtendInversion G A).
           now eapply ett2ptt.sane_isctx.
 
       (* CtxSym *)
