@@ -4,13 +4,13 @@ Require config.
 Require Import config_tactics.
 Require Import syntax.
 
-Require paranoid_syntax.
+Require annotated_syntax.
 Require Import tt.
 Require ett ptt.
 Require ptt2ett ett2ptt.
 Require ptt_admissible.
 Require ett_sanity ptt_sanity.
-Require ps_inversion.
+Require annotated_inversion.
 Require Import tactics config_tactics.
 
 Section Uniqueness.
@@ -27,11 +27,11 @@ Context `{configUnit : config.WithUnit}.
 Context `{configBool : config.WithBool}.
 Context `{configPi : config.WithPi}.
 
-Local Existing Instance paranoid_syntax.Syntax.
-Local Existing Instance ps_inversion.haveCtxExtendInversion.
-Local Existing Instance ps_inversion.haveTyIdInversion.
-Local Existing Instance ps_inversion.haveTyProdInversion.
-Local Existing Instance ps_inversion.haveTySimProdInversion.
+Local Existing Instance annotated_syntax.Syntax.
+Local Existing Instance annotated_inversion.haveCtxExtendInversion.
+Local Existing Instance annotated_inversion.haveTyIdInversion.
+Local Existing Instance annotated_inversion.haveTyProdInversion.
+Local Existing Instance annotated_inversion.haveTySimProdInversion.
 
 (* Auxiliary inversion lemmas. *)
 
@@ -58,11 +58,11 @@ Proof.
       - exists G, A. repeat split.
         + capply CtxRefl.
           eapply ptt2ett.sane_isctx.
-          apply (ps_inversion.CtxExtendInversion G A).
+          apply (annotated_inversion.CtxExtendInversion G A).
           now eapply ett2ptt.sane_isctx.
         + capply EqTyRefl.
           eapply ptt2ett.sane_istype.
-          apply (ps_inversion.CtxExtendInversion G A).
+          apply (annotated_inversion.CtxExtendInversion G A).
           now eapply ett2ptt.sane_isctx.
 
       (* CtxSym *)
@@ -93,11 +93,11 @@ Proof.
       - exists G, A. repeat split.
         + capply CtxRefl.
           eapply ptt2ett.sane_isctx.
-          apply (ps_inversion.CtxExtendInversion G A).
+          apply (annotated_inversion.CtxExtendInversion G A).
           now eapply ett2ptt.sane_isctx.
         + capply EqTyRefl.
           eapply ptt2ett.sane_istype.
-          apply (ps_inversion.CtxExtendInversion G A).
+          apply (annotated_inversion.CtxExtendInversion G A).
           now eapply ett2ptt.sane_isctx.
 
       (* CtxSym *)

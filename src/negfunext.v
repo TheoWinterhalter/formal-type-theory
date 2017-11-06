@@ -8,7 +8,7 @@ Require Import config_tactics.
 
 Require Import syntax inversion.
 Require Import tt.
-Require Import paranoid_syntax.
+Require Import annotated_syntax.
 Require Import checking_tactics.
 
 
@@ -17,22 +17,19 @@ Module Stt.
 
   Section Stt.
 
-  Local Instance hasPrecond : config.Precond
-    := {| config.precondFlag := config.Yes |}.
+  Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
   Context `{configReflection : config.Reflection}.
   Context `{configSimpleProducts : config.SimpleProducts}.
-  Local Instance hasProdEta : config.ProdEta
-    := {| config.prodetaFlag := config.No |}.
+  Local Instance hasProdEta : config.ProdEta := {| config.prodetaFlag := config.No |}.
   Context `{configUniverses : config.Universes}.
-  Local Instance hasProp : config.WithProp
-    := {| config.withpropFlag := config.No |}.
+  Local Instance hasProp : config.WithProp := {| config.withpropFlag := config.No |}.
   Context `{configId : config.IdentityTypes}.
   Context `{configWithJ : config.WithJ}.
   Context `{configEmpty : config.WithEmpty}.
   Context `{configUnit : config.WithUnit}.
   Context `{configBool : config.WithBool}.
-  Local Instance hasPi : config.WithPi
-    := {| config.withpiFlag := config.Yes |}.
+  Local Instance hasPi : config.WithPi := {| config.withpiFlag := config.Yes |}.
+  Local Existing Instance annotated_syntax.Syntax.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -69,6 +66,7 @@ Module Ttt.
     := {| config.withboolFlag := config.Yes |}.
   Local Instance hasPi : config.WithPi
     := {| config.withpiFlag := config.Yes |}.
+  Local Existing Instance annotated_syntax.Syntax.
 
   Definition isctx   := isctx.
   Definition issubst := issubst.
@@ -1228,11 +1226,11 @@ Qed.
 
 (* Stt is consistent if Ttt is. *)
 Theorem relative_consistency :
-  forall bot,
-    Stt.isterm ctxempty bot Empty ->
-    Ttt.isterm ctxempty (trans_term bot) Empty.
+  forall e,
+    Stt.isterm ctxempty e Empty ->
+    Ttt.isterm ctxempty (trans_term e) Empty.
 Proof.
-  intros bot h.
+  intros e h.
   now apply (trans_isterm h).
 Qed.
 

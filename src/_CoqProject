@@ -19,10 +19,9 @@ ett_sanity.v
 
 tactics.v
 
-uniqueness.v
-
 # INSTANCES
-paranoid_syntax.v
-ps_inversion.v
+annotated_syntax.v
+annotated_inversion.v
+annotated_uniqueness.v
 
 negfunext.v

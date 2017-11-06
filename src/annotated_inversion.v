@@ -1,16 +1,17 @@
-(* Paranoid syntax inversion
+(* Annotated syntax inversion
 
    The purpose of this file is to provide the inversion lemmata that are
-   required by sanity on paranoid syntax.
+   required by sanity on annotated syntax.
    These lemmata are proven only in the case of paranoid rules.
 *)
 
 Require config syntax.
+Require Import tt.
 Require inversion.
-Require Import paranoid_syntax.
+Require Import annotated_syntax.
 Require Import config_tactics.
 
-Section ParanoidSyntaxInversion.
+Section AnnotatedSyntaxInversion.
 
 Local Instance hasPrecond : config.Precond := {|
   config.precondFlag := config.Yes
@@ -26,6 +27,8 @@ Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
 Context `{configBool : config.WithBool}.
 Context `{configPi : config.WithPi}.
+
+Local Existing Instance annotated_syntax.Syntax.
 
 Definition CtxExtendInversion G A (H : isctx (ctxextend G A)) :
   isctx G * istype G A.
@@ -121,4 +124,4 @@ Local Instance haveTyProdInversion : inversion.HaveTyProdInversion
 Local Instance haveTySimProdInversion : inversion.HaveTySimProdInversion
   := {| inversion.TySimProdInversion := TySimProdInversion |}.
 
-End ParanoidSyntaxInversion.
+End AnnotatedSyntaxInversion.
