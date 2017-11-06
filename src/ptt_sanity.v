@@ -20,7 +20,7 @@ Context `{configWithJ : config.WithJ}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
 Context `{configBool : config.WithBool}.
-Context `{configPi : config.WithPi}.
+Context `{configProdType : config.ProdType}.
 Context `{configSyntax : syntax.Syntax}.
 
 Axiom cheating : forall A, A.

@@ -28,8 +28,8 @@ Ltac doConfig :=
       let H := fresh "withunitFlag" in intros H
     | withboolFlag =>
       let H := fresh "withboolFlag" in intros H
-    | withpiFlag =>
-      let H := fresh "withpiFlag" in intros H
+    | prodTypeFlag =>
+      let H := fresh "prodTypeFlag" in intros H
     | identitytypesFlag =>
       let H := fresh "identitytypesFlag" in intros H
     | _ => idtac
@@ -48,7 +48,7 @@ Ltac doConfig :=
   | H : withemptyFlag |- withemptyFlag => exact H
   | H : withunitFlag |- withunitFlag => exact H
   | H : withboolFlag |- withboolFlag => exact H
-  | H : withpiFlag |- withpiFlag => exact H
+  | H : prodTypeFlag |- prodTypeFlag => exact H
   | H : identitytypesFlag |- identitytypesFlag => exact H
   | _ => idtac
   end ;
@@ -99,9 +99,9 @@ Ltac doConfig :=
        match goal with
        | R : @withboolFlag F |- _ => specialize (H R)
        end
-     | @withpiFlag ?F =>
+     | @prodTypeFlag ?F =>
        match goal with
-       | R : @withpiFlag F |- _ => specialize (H R)
+       | R : @prodTypeFlag F |- _ => specialize (H R)
        end
      | @identitytypesFlag ?F =>
        match goal with

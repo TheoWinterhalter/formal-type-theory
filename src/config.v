@@ -29,8 +29,8 @@ Class Precondition := {
 }.
 
 (* Dependent products. *)
-Class WithPi := {
-  withpiFlag : Type
+Class ProdType := {
+  prodTypeFlag : Type
 }.
 
 (* Equality reflection. *)

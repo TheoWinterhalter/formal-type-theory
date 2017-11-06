@@ -26,7 +26,7 @@ Context `{configWithJ : config.WithJ}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
 Context `{configBool : config.WithBool}.
-Context `{configPi : config.WithPi}.
+Context `{configProdType : config.ProdType}.
 
 Local Existing Instance annotated_syntax.Syntax.
 

@@ -26,7 +26,7 @@ Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
 Context `{configBool : config.WithBool}.
 Context `{configId : config.IdentityTypes}.
-Context `{configPi : config.WithPi}.
+Context `{configProdType : config.ProdType}.
 Context `{configSyntax : Syntax}.
 
 
@@ -63,7 +63,7 @@ Notation "'withbool' r" :=
   (forall { _ : withboolFlag }, r) (only parsing, at level 97).
 
 Notation "'withpi' r" :=
-  (forall { _ : withpiFlag }, r) (only parsing, at level 97).
+  (forall { _ : prodTypeFlag }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))

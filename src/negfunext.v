@@ -28,7 +28,7 @@ Module Stt.
   Context `{configEmpty : config.WithEmpty}.
   Context `{configUnit : config.WithUnit}.
   Context `{configBool : config.WithBool}.
-  Local Instance hasPi : config.WithPi := {| config.withpiFlag := config.Yes |}.
+  Local Instance hasPi : config.ProdType := {| config.prodTypeFlag := config.Yes |}.
   Local Existing Instance annotated_syntax.Syntax.
 
   Definition isctx   := isctx.
@@ -64,8 +64,8 @@ Module Ttt.
   Context `{configUnit : config.WithUnit}.
   Local Instance hasBool : config.WithBool
     := {| config.withboolFlag := config.Yes |}.
-  Local Instance hasPi : config.WithPi
-    := {| config.withpiFlag := config.Yes |}.
+  Local Instance hasPi : config.ProdType
+    := {| config.prodTypeFlag := config.Yes |}.
   Local Existing Instance annotated_syntax.Syntax.
 
   Definition isctx   := isctx.

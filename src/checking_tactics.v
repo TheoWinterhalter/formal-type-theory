@@ -26,7 +26,7 @@ Context `{configWithJ : config.WithJ}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
 Context `{configBool : config.WithBool}.
-Context `{configPi : config.WithPi}.
+Context `{configProdType : config.ProdType}.
 Context `{configSyntax : syntax.Syntax}.
 
 (* Some tactic to compose substitutions. *)
@@ -154,7 +154,7 @@ Context `{configWithJ : config.WithJ}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
 Context `{configBool : config.WithBool}.
-Context `{configPi : config.WithPi}.
+Context `{configProdType : config.ProdType}.
 Context `{configSyntax : syntax.Syntax}.
 
 Lemma EqCompZero :
@@ -1231,7 +1231,7 @@ Context `{configWithJ : config.WithJ}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
 Context `{configBool : config.WithBool}.
-Context `{configPi : config.WithPi}.
+Context `{configProdType : config.ProdType}.
 Context `{configSyntax : syntax.Syntax}.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
