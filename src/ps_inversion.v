@@ -18,14 +18,14 @@ Local Instance hasPrecond : config.Precond := {|
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context `{configUniverses : config.Universes}.
+Context `{configWithProp : config.WithProp}.
+Context `{configId : config.IdentityTypes}.
+Context `{configWithJ : config.WithJ}.
+Context `{configEmpty : config.WithEmpty}.
+Context `{configUnit : config.WithUnit}.
+Context `{configBool : config.WithBool}.
+Context `{configPi : config.WithPi}.
 
 Definition CtxExtendInversion G A (H : isctx (ctxextend G A)) :
   isctx G * istype G A.
@@ -109,16 +109,16 @@ Defined.
 
 Local Instance LocSyntax : syntax.Syntax := Syntax.
 
-Local Instance CtxExtendInversionInstance : invconfig.CtxExtendInversionClass
+Local Instance haveCtxExtendInversionInstance : invconfig.HaveCtxExtendInversion
   := {| invconfig.CtxExtendInversion := CtxExtendInversion |}.
 
-Local Instance TyIdInversionInstance : invconfig.TyIdInversionClass
+Local Instance haveTyIdInversionInstance : invconfig.HaveTyIdInversion
   := {| invconfig.TyIdInversion := TyIdInversion |}.
 
-Local Instance TyProdInversionInstance : invconfig.TyProdInversionClass
+Local Instance haveTyProdInversionInstance : invconfig.HaveTyProdInversion
   := {| invconfig.TyProdInversion := TyProdInversion |}.
 
-Local Instance TySimProdInversionInstance : invconfig.TySimProdInversionClass
+Local Instance haveTySimProdInversionInstance : invconfig.HaveTySimProdInversion
   := {| invconfig.TySimProdInversion := TySimProdInversion |}.
 
 End ParanoidSyntaxInversion.

@@ -8,42 +8,41 @@ Context `{configPrecond : config.Precond}.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context `{configUniverses : config.Universes}.
+Context `{configWithProp : config.WithProp}.
+Context `{configId : config.IdentityTypes}.
+Context `{configWithJ : config.WithJ}.
+Context `{configEmpty : config.WithEmpty}.
+Context `{configUnit : config.WithUnit}.
+Context `{configBool : config.WithBool}.
+Context `{configPi : config.WithPi}.
+Context `{configSyntax : syntax.Syntax}.
 
-Context `{haveSyntax : syntax.Syntax}.
-
-Class CtxExtendInversionClass := {
+Class HaveCtxExtendInversion := {
   CtxExtendInversion : forall G A,
                          isctx (ctxextend G A) ->
                          isctx G * istype G A
 }.
 
-Class TyIdInversionClass := {
+Class HaveTyIdInversion := {
   TyIdInversion : forall G A u v,
                     istype G (Id A u v) ->
                     isctx G * istype G A * isterm G u A * isterm G v A
 }.
 
-Class TyProdInversionClass := {
+Class HaveTyProdInversion := {
   TyProdInversion : forall G A B,
                       istype G (Prod A B) ->
                       isctx G * istype G A * istype (ctxextend G A) B
 }.
 
-Class TySimProdInversionClass := {
+Class HaveTySimProdInversion := {
   TySimProdInversion : forall G A B,
                          istype G (SimProd A B) ->
                          isctx G * istype G A * istype G B
 }.
 
-Class EqCtxExtendInversionClass := {
+Class HaveEqCtxExtendInversion := {
   EqCtxExtendInversion : forall G A G' A',
                            eqctx (ctxextend G A) (ctxextend G' A') ->
                            eqctx G G' * eqtype G A A'

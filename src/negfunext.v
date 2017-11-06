@@ -20,17 +20,17 @@ Module Stt.
   Local Instance hasPrecond : config.Precond
     := {| config.precondFlag := config.Yes |}.
   Context `{configReflection : config.Reflection}.
-  Context `{ConfigSimpleProducts : config.SimpleProducts}.
+  Context `{configSimpleProducts : config.SimpleProducts}.
   Local Instance hasProdEta : config.ProdEta
     := {| config.prodetaFlag := config.No |}.
-  Context `{ConfigUniverses : config.Universes}.
+  Context `{configUniverses : config.Universes}.
   Local Instance hasProp : config.WithProp
     := {| config.withpropFlag := config.No |}.
-  Context `{ConfigId : config.IdentityTypes}.
-  Context `{ConfigWithJ : config.WithJ}.
-  Context `{ConfigEmpty : config.WithEmpty}.
-  Context `{ConfigUnit : config.WithUnit}.
-  Context `{ConfigBool : config.WithBool}.
+  Context `{configId : config.IdentityTypes}.
+  Context `{configWithJ : config.WithJ}.
+  Context `{configEmpty : config.WithEmpty}.
+  Context `{configUnit : config.WithUnit}.
+  Context `{configBool : config.WithBool}.
   Local Instance hasPi : config.WithPi
     := {| config.withpiFlag := config.Yes |}.
 
@@ -59,12 +59,12 @@ Module Ttt.
     := {| config.simpleproductsFlag := config.Yes |}.
   Local Instance hasProdEta : config.ProdEta
     := {| config.prodetaFlag := config.No |}.
-  Context `{ConfigUniverses : config.Universes}.
-  Context `{ConfigWithProp : config.WithProp}.
-  Context `{ConfigId : config.IdentityTypes}.
-  Context `{ConfigWithJ : config.WithJ}.
-  Context `{ConfigEmpty : config.WithEmpty}.
-  Context `{ConfigUnit : config.WithUnit}.
+  Context `{configUniverses : config.Universes}.
+  Context `{configWithProp : config.WithProp}.
+  Context `{configId : config.IdentityTypes}.
+  Context `{configWithJ : config.WithJ}.
+  Context `{configEmpty : config.WithEmpty}.
+  Context `{configUnit : config.WithUnit}.
   Local Instance hasBool : config.WithBool
     := {| config.withboolFlag := config.Yes |}.
   Local Instance hasPi : config.WithPi
@@ -87,13 +87,13 @@ Section Translation.
 
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
+Context `{configUniverses : config.Universes}.
+Context `{configWithProp : config.WithProp}.
+Context `{configId : config.IdentityTypes}.
+Context `{configWithJ : config.WithJ}.
+Context `{configEmpty : config.WithEmpty}.
+Context `{configUnit : config.WithUnit}.
+Context `{configBool : config.WithBool}.
 
 Lemma max_0 : forall n m, max (max n m) 0 = max n m.
 Proof.

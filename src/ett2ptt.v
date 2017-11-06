@@ -10,17 +10,16 @@ Section Ett2Ptt.
 
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
-Context `{ConfigProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
-
-Context `{haveSyntax : syntax.Syntax}.
+Context `{configProdEta : config.ProdEta}.
+Context `{configUniverses : config.Universes}.
+Context `{configWithProp : config.WithProp}.
+Context `{configId : config.IdentityTypes}.
+Context `{configWithJ : config.WithJ}.
+Context `{configEmpty : config.WithEmpty}.
+Context `{configUnit : config.WithUnit}.
+Context `{configBool : config.WithBool}.
+Context `{configPi : config.WithPi}.
+Context `{configSyntax : syntax.Syntax}.
 
 (* We need inversion lemmata and we can't prove them since the syntax
    is not necessarilly inductive and thus not necessarilly injective.
@@ -28,10 +27,10 @@ Context `{haveSyntax : syntax.Syntax}.
    We want them for PTT.
 *)
 Existing Instance ptt.hasPrecond.
-Context {ConfigCtxExtendInversion : CtxExtendInversionClass}.
-Context {ConfigTyIdInversion : TyIdInversionClass}.
-Context {ConfigTyProdInversion : TyProdInversionClass}.
-Context {ConfigTySimProdInversion : TySimProdInversionClass}.
+Context {haveCtxExtendInversion : HaveCtxExtendInversion}.
+Context {haveTyIdInversion : HaveTyIdInversion}.
+Context {haveTyProdInversion : HaveTyProdInversion}.
+Context {haveTySimProdInversion : HaveTySimProdInversion}.
 
 (* Renaming ptt_sanity lemmata for readability. *)
 Definition ptt_sane_issubst := ptt_sanity.sane_issubst.
