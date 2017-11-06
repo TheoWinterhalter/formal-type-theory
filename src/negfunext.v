@@ -17,18 +17,18 @@ Module Stt.
 
   Section Stt.
 
-  Local Instance hasPrecondition : config.Precondition := {| config.flagPrecondition := config.Yes |}.
+  Local Instance havePrecondition : config.Precondition := {| config.flagPrecondition := config.Yes |}.
   Context `{configReflection : config.Reflection}.
   Context `{configBinaryProdType : config.BinaryProdType}.
-  Local Instance hasProdEta : config.ProdEta := {| config.flagProdEta := config.No |}.
+  Local Instance haveProdEta : config.ProdEta := {| config.flagProdEta := config.No |}.
   Context `{configUniverses : config.Universes}.
-  Local Instance hasProp : config.PropType := {| config.flagPropType := config.No |}.
+  Local Instance havePropType : config.PropType := {| config.flagPropType := config.No |}.
   Context `{configIdType : config.IdType}.
   Context `{configIdEliminator : config.IdEliminator}.
   Context `{configEmptyType : config.EmptyType}.
   Context `{configUnitType : config.UnitType}.
   Context `{configBoolType : config.BoolType}.
-  Local Instance hasPi : config.ProdType := {| config.flagProdType := config.Yes |}.
+  Local Instance haveProdType : config.ProdType := {| config.flagProdType := config.Yes |}.
   Local Existing Instance annotated_syntax.Syntax.
 
   Definition isctx   := isctx.
@@ -49,18 +49,18 @@ Module Ttt.
 
   Section Ttt.
 
-  Local Instance hasPrecondition : config.Precondition := {| config.flagPrecondition := config.No |}.
+  Local Instance havePrecondition : config.Precondition := {| config.flagPrecondition := config.No |}.
   Context `{configReflection : config.Reflection}.
-  Local Instance hasBinaryProdType : config.BinaryProdType := {| config.flagBinaryProdType := config.Yes |}.
-  Local Instance hasProdEta : config.ProdEta := {| config.flagProdEta := config.No |}.
+  Local Instance haveBinaryProdType : config.BinaryProdType := {| config.flagBinaryProdType := config.Yes |}.
+  Local Instance haveProdEta : config.ProdEta := {| config.flagProdEta := config.No |}.
   Context `{configUniverses : config.Universes}.
   Context `{configPropType : config.PropType}.
   Context `{configIdType : config.IdType}.
   Context `{configIdEliminator : config.IdEliminator}.
   Context `{configEmptyType : config.EmptyType}.
   Context `{configUnitType : config.UnitType}.
-  Local Instance hasBool : config.BoolType := {| config.flagBoolType := config.Yes |}.
-  Local Instance hasPi : config.ProdType := {| config.flagProdType := config.Yes |}.
+  Local Instance haveBoolType : config.BoolType := {| config.flagBoolType := config.Yes |}.
+  Local Instance haveProdType : config.ProdType := {| config.flagProdType := config.Yes |}.
   Local Existing Instance annotated_syntax.Syntax.
 
   Definition isctx   := isctx.

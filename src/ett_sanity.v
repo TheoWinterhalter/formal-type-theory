@@ -28,7 +28,7 @@ Context `{configBoolType : config.BoolType}.
 Context `{configProdType : config.ProdType}.
 Context `{configSyntax : syntax.Syntax}.
 
-Existing Instance ptt.hasPrecondition.
+Existing Instance ptt.havePrecondition.
 Context {haveCtxExtendInversion : HaveCtxExtendInversion}.
 Context {haveTyIdInversion : HaveTyIdInversion}.
 Context {haveTyProdInversion : HaveTyProdInversion}.

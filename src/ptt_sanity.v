@@ -9,7 +9,7 @@ Require Import checking_tactics ptt_admissible.
 
 Section PttSanity.
 
-Local Instance hasPrecondition : config.Precondition := {| config.flagPrecondition := config.Yes |}.
+Local Instance havePrecondition : config.Precondition := {| config.flagPrecondition := config.Yes |}.
 Context `{configReflection : config.Reflection}.
 Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.

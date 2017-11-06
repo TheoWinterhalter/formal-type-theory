@@ -13,7 +13,7 @@ Require Import config_tactics.
 
 Section AnnotatedSyntaxInversion.
 
-Local Instance hasPrecondition : config.Precondition := {|
+Local Instance havePrecondition : config.Precondition := {|
   config.flagPrecondition := config.Yes
 |}.
 Context `{configReflection : config.Reflection}.
