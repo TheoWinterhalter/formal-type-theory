@@ -10,7 +10,7 @@ ptt.v
 checking_tactics.v
 
 ptt_admissible.v
-invconfig.v
+inversion.v
 
 ptt_sanity.v
 ptt2ett.v

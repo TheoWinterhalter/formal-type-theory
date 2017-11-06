@@ -4,7 +4,7 @@ Require Import config_tactics.
 Require Import syntax.
 Require Import tt.
 Require ett ptt ptt_sanity.
-Require Import invconfig.
+Require Import inversion.
 
 Section Ett2Ptt.
 

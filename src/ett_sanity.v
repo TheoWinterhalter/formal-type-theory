@@ -11,7 +11,7 @@ Require ptt.
 Require ptt_sanity.
 Require Import ett.
 Require Import ett2ptt ptt2ett.
-Require Import invconfig.
+Require Import inversion.
 
 Section EttSanity.
 

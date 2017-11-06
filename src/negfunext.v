@@ -6,7 +6,7 @@
 Require config.
 Require Import config_tactics.
 
-Require Import syntax invconfig.
+Require Import syntax inversion.
 Require Import tt.
 Require Import paranoid_syntax.
 Require Import checking_tactics.

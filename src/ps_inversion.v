@@ -6,7 +6,7 @@
 *)
 
 Require config syntax.
-Require invconfig.
+Require inversion.
 Require Import paranoid_syntax.
 Require Import config_tactics.
 
@@ -109,16 +109,16 @@ Defined.
 
 Local Instance LocSyntax : syntax.Syntax := Syntax.
 
-Local Instance haveCtxExtendInversionInstance : invconfig.HaveCtxExtendInversion
-  := {| invconfig.CtxExtendInversion := CtxExtendInversion |}.
+Local Instance haveCtxExtendInversionInstance : inversion.HaveCtxExtendInversion
+  := {| inversion.CtxExtendInversion := CtxExtendInversion |}.
 
-Local Instance haveTyIdInversionInstance : invconfig.HaveTyIdInversion
-  := {| invconfig.TyIdInversion := TyIdInversion |}.
+Local Instance haveTyIdInversionInstance : inversion.HaveTyIdInversion
+  := {| inversion.TyIdInversion := TyIdInversion |}.
 
-Local Instance haveTyProdInversionInstance : invconfig.HaveTyProdInversion
-  := {| invconfig.TyProdInversion := TyProdInversion |}.
+Local Instance haveTyProdInversionInstance : inversion.HaveTyProdInversion
+  := {| inversion.TyProdInversion := TyProdInversion |}.
 
-Local Instance haveTySimProdInversionInstance : invconfig.HaveTySimProdInversion
-  := {| invconfig.TySimProdInversion := TySimProdInversion |}.
+Local Instance haveTySimProdInversionInstance : inversion.HaveTySimProdInversion
+  := {| inversion.TySimProdInversion := TySimProdInversion |}.
 
 End ParanoidSyntaxInversion.
