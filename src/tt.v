@@ -33,7 +33,7 @@ Context `{configSyntax : Syntax}.
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
 Notation "'extensional' r" :=
-  (forall { _ : reflectionFlag }, r) (only parsing, at level 97).
+  (forall { _ : flagReflection }, r) (only parsing, at level 97).
 
 Notation "'binaryproduct' r" :=
   (forall { _ : binaryProdTypeFlag }, r) (only parsing, at level 97).

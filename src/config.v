@@ -50,7 +50,7 @@ Class IdEliminator := {
 
 (* Equality reflection. *)
 Class Reflection := {
-  reflectionFlag : Type
+  flagReflection : Type
 }.
 
 (* Binary products. *)
