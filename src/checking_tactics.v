@@ -783,6 +783,12 @@ Ltac do_try flag :=
   | DontTry => fail "Cannot try"
   end.
 
+Ltac do_shelf flag :=
+  match flag with
+  | DoShelf => idtac
+  | DontShelf => fail "Cannot shelve"
+  end.
+
 Ltac cando token :=
   match token with
   | btrue => idtac
@@ -2154,7 +2160,7 @@ Ltac magicn try shelf tysym debug :=
         assumption
       | myfail debug
       ]
-      else tryif (cando shelf)
+      else tryif (do_shelf shelf)
         then shelve
         else myfail debug
 
@@ -2195,7 +2201,7 @@ Ltac magicn try shelf tysym debug :=
         | myfail debug
         ] ; magicn try shelf tysym debug
       )
-      else tryif (cando shelf)
+      else tryif (do_shelf shelf)
         then shelve
         else myfail debug
 
@@ -2252,7 +2258,7 @@ Ltac magicn try shelf tysym debug :=
       | ceapply TyCtxConv ; [ eassumption | .. ]
       | myfail debug
       ] ; magicn try shelf btrue debug
-      else tryif (cando shelf)
+      else tryif (do_shelf shelf)
         then shelve
         else myfail debug
 
@@ -2425,12 +2431,12 @@ Ltac magicn try shelf tysym debug :=
       first [
         is_var A ; exact H
       | is_var B ; exact H'
-      | cando shelf ; shelve
+      | do_shelf shelf ; shelve
       ]
     | |- isterm ?G ?u ?A =>
       tryif (is_evar u)
       (* If u is an existential variable we don't touch it. *)
-      then tryif (cando shelf)
+      then tryif (do_shelf shelf)
         then shelve
         else myfail debug
       else (
@@ -2445,7 +2451,7 @@ Ltac magicn try shelf tysym debug :=
           ]
         | myfail debug
         ] ; magicn try shelf btrue debug
-        else tryif (cando shelf)
+        else tryif (do_shelf shelf)
           then shelve
           else myfail debug
       )
@@ -2471,7 +2477,7 @@ Ltac magicn try shelf tysym debug :=
       | capply CtxSym ; [ assumption | .. ]
       | myfail debug
       ] ; magicn try shelf btrue debug
-      else tryif (cando shelf)
+      else tryif (do_shelf shelf)
         then shelve
         else myfail debug
 
@@ -2712,7 +2718,7 @@ Ltac magicn try shelf tysym debug :=
         ] ; magicn try shelf btrue debug
       )
       else tryif (is_evar A || is_evar B)
-        then tryif (cando shelf)
+        then tryif (do_shelf shelf)
           then shelve
           else myfail debug
         else myfail debug
@@ -2761,7 +2767,7 @@ Ltac magicn try shelf tysym debug :=
             else first [
               pushsubst1
             | ceapply EqSym ; [ pushsubst1 | .. ]
-            | cando shelf ; shelve
+            | do_shelf shelf ; shelve
             ] ; magicn try shelf btrue debug
           | _ =>
             first [
@@ -2787,11 +2793,11 @@ Ltac magicn try shelf tysym debug :=
               ] ; magicn try shelf btrue debug
             else first [
               pushsubst1
-            | cando shelf ; shelve
+            | do_shelf shelf ; shelve
             ] ; magicn try shelf btrue debug
 
           | ?v =>
-            tryif (is_evar v ; cando shelf)
+            tryif (is_evar v ; do_shelf shelf)
             then shelve
             else first [
               simplify
@@ -2802,7 +2808,7 @@ Ltac magicn try shelf tysym debug :=
       )
       else first [
         pushsubst1
-      | cando shelf ; shelve
+      | do_shelf shelf ; shelve
       ] ; magicn try shelf btrue debug
     | |- eqterm ?G ?u (subst ?v ?sbs) ?A =>
       (* We know how to deal with the symmetric case. *)
@@ -2922,7 +2928,7 @@ Ltac magicn try shelf tysym debug :=
       | myfail debug
       ] ; magicn try shelf btrue debug
       else tryif (is_evar u + is_evar v)
-        then tryif (cando shelf)
+        then tryif (do_shelf shelf)
           then shelve
           else myfail debug
         else myfail debug
@@ -2934,10 +2940,10 @@ Ltac magicn try shelf tysym debug :=
 
 Ltac preop := unfold Arrow in *.
 
-Ltac magic       := preop ; magicn DontTry btrue  btrue btrue.
-Ltac okmagic     := preop ; magicn DontTry btrue  btrue bfalse.
-Ltac trymagic    := preop ; magicn DoTry   btrue  btrue bfalse.
-Ltac strictmagic := preop ; magicn DontTry bfalse btrue btrue.
+Ltac magic       := preop ; magicn DontTry DoShelf   btrue btrue.
+Ltac okmagic     := preop ; magicn DontTry DoShelf   btrue bfalse.
+Ltac trymagic    := preop ; magicn DoTry   DoShelf   btrue bfalse.
+Ltac strictmagic := preop ; magicn DontTry DontShelf btrue btrue.
 
 Ltac compsubst := preop ; compsubst1.
 Ltac pushsubst := preop ; pushsubst1.
