@@ -11,6 +11,12 @@ Require Import syntax.
 Notation "'btrue'" := (Coq.Init.Datatypes.true).
 Notation "'bfalse'" := (Coq.Init.Datatypes.false).
 
+(* Configuration options for the tactics. *)
+Inductive magic_try := DoTry | DontTry.
+Inductive magic_doshelf := DoShelf | DontShelf.
+Inductive magic_dotysym := DoTysym | DontTysym.
+Inductive macic_debug := DoDebug | DontDebug.
+
 Section Checking1.
 
 (* We are as modular as can be *)
@@ -771,6 +777,11 @@ Qed.
 
 End Checking2.
 
+Ltac do_try flag :=
+  match flag with
+  | DoTry => idtac
+  | DontTry => fail "Cannot try"
+  end.
 
 Ltac cando token :=
   match token with
@@ -2918,15 +2929,15 @@ Ltac magicn try shelf tysym debug :=
 
     | _ => myfail debug
     end
-  | cando try
+  | do_try try
   ].
 
 Ltac preop := unfold Arrow in *.
 
-Ltac magic := preop ; magicn bfalse btrue btrue btrue.
-Ltac okmagic := preop ; magicn bfalse btrue btrue bfalse.
-Ltac trymagic := preop ; magicn btrue btrue btrue bfalse.
-Ltac strictmagic := preop ; magicn bfalse bfalse btrue btrue.
+Ltac magic       := preop ; magicn DontTry btrue  btrue btrue.
+Ltac okmagic     := preop ; magicn DontTry btrue  btrue bfalse.
+Ltac trymagic    := preop ; magicn DoTry   btrue  btrue bfalse.
+Ltac strictmagic := preop ; magicn DontTry bfalse btrue btrue.
 
 Ltac compsubst := preop ; compsubst1.
 Ltac pushsubst := preop ; pushsubst1.
