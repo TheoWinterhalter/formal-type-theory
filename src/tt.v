@@ -15,18 +15,21 @@ Require Import config.
 Section TypeTheoryRules.
 (* Notations for writing down inference rules. *)
 
-Context `{ConfigPrecond : config.Precond}.
-Context `{ConfigReflection : config.Reflection}.
-Context `{ConfigSimpleProducts : config.SimpleProducts}.
-Context `{ConfigProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigPi : config.WithPi}.
+Context `{ConfiPrecond : config.Precond}.
+Context `{ConfiReflection : config.Reflection}.
+Context `{ConfiSimpleProducts : config.SimpleProducts}.
+Context `{ConfiProdEta : config.ProdEta}.
+Context `{ConfiUniverses : config.Universes}.
+Context `{ConfiWithProp : config.WithProp}.
+Context `{ConfiWithJ : config.WithJ}.
+Context `{ConfiEmpty : config.WithEmpty}.
+Context `{ConfiUnit : config.WithUnit}.
+Context `{ConfiBool : config.WithBool}.
+Context `{ConfiId : config.IdentityTypes}.
+Context `{ConfiPi : config.WithPi}.
+
+Context `{haveSyntax : Syntax}.
+
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
