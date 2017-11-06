@@ -19,6 +19,8 @@ Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
 Context `{ConfigPi : config.WithPi}.
 
+Context `{haveSyntax : syntax.Syntax}.
+
 (* Renaming ptt_sanity lemmata for readability. *)
 Definition ptt_sane_issubst := ptt_sanity.sane_issubst.
 Definition ptt_sane_istype  := ptt_sanity.sane_istype.

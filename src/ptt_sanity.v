@@ -22,6 +22,8 @@ Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
 Context `{ConfigPi : config.WithPi}.
 
+Context `{haveSyntax : syntax.Syntax}.
+
 Axiom cheating : forall A, A.
 
 Definition sane_issubst sbs G D :

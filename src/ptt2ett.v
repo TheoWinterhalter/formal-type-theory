@@ -19,6 +19,8 @@ Context `{ConfigUnit : config.WithUnit}.
 Context `{ConfigBool : config.WithBool}.
 Context `{ConfigPi : config.WithPi}.
 
+Context `{haveSyntax : syntax.Syntax}.
+
 Fixpoint sane_isctx G (P : ptt.isctx G) : ett.isctx G
 
 with sane_issubst sbs G D (P : ptt.issubst sbs G D) {struct P} : ett.issubst sbs G D
