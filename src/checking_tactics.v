@@ -21,7 +21,7 @@ Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
-Context `{configId : config.IdentityTypes}.
+Context `{configIdType : config.IdType}.
 Context `{configWithJ : config.WithJ}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
@@ -149,7 +149,7 @@ Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
-Context `{configId : config.IdentityTypes}.
+Context `{configIdType : config.IdType}.
 Context `{configWithJ : config.WithJ}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
@@ -1226,7 +1226,7 @@ Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
-Context `{configId : config.IdentityTypes}.
+Context `{configIdType : config.IdType}.
 Context `{configWithJ : config.WithJ}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
@@ -1735,8 +1735,8 @@ Qed.
 Lemma FlexWeakZero :
   forall {G A B u},
     isctx G ->
-    (config.preconditionFlag -> istype G A) ->
-    (config.preconditionFlag -> istype G B) ->
+    (config.flagPrecondition -> istype G A) ->
+    (config.flagPrecondition -> istype G B) ->
     isterm G u A ->
     eqtype G B A ->
     eqsubst (sbcomp (sbweak B) (sbzero A u))

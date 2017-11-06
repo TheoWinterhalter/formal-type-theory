@@ -17,18 +17,18 @@ Module Stt.
 
   Section Stt.
 
-  Local Instance hasPrecondition : config.Precondition := {| config.preconditionFlag := config.Yes |}.
+  Local Instance hasPrecondition : config.Precondition := {| config.flagPrecondition := config.Yes |}.
   Context `{configReflection : config.Reflection}.
   Context `{configBinaryProdType : config.BinaryProdType}.
-  Local Instance hasProdEta : config.ProdEta := {| config.prodetaFlag := config.No |}.
+  Local Instance hasProdEta : config.ProdEta := {| config.flagProdEta := config.No |}.
   Context `{configUniverses : config.Universes}.
   Local Instance hasProp : config.WithProp := {| config.withpropFlag := config.No |}.
-  Context `{configId : config.IdentityTypes}.
+  Context `{configIdType : config.IdType}.
   Context `{configWithJ : config.WithJ}.
   Context `{configEmpty : config.WithEmpty}.
   Context `{configUnit : config.WithUnit}.
   Context `{configBool : config.WithBool}.
-  Local Instance hasPi : config.ProdType := {| config.prodTypeFlag := config.Yes |}.
+  Local Instance hasPi : config.ProdType := {| config.flagProdType := config.Yes |}.
   Local Existing Instance annotated_syntax.Syntax.
 
   Definition isctx   := isctx.
@@ -49,18 +49,18 @@ Module Ttt.
 
   Section Ttt.
 
-  Local Instance hasPrecondition : config.Precondition := {| config.preconditionFlag := config.No |}.
+  Local Instance hasPrecondition : config.Precondition := {| config.flagPrecondition := config.No |}.
   Context `{configReflection : config.Reflection}.
   Local Instance hasBinaryProdType : config.BinaryProdType := {| config.binaryProdTypeFlag := config.Yes |}.
-  Local Instance hasProdEta : config.ProdEta := {| config.prodetaFlag := config.No |}.
+  Local Instance hasProdEta : config.ProdEta := {| config.flagProdEta := config.No |}.
   Context `{configUniverses : config.Universes}.
   Context `{configWithProp : config.WithProp}.
-  Context `{configId : config.IdentityTypes}.
+  Context `{configIdType : config.IdType}.
   Context `{configWithJ : config.WithJ}.
   Context `{configEmpty : config.WithEmpty}.
   Context `{configUnit : config.WithUnit}.
   Local Instance hasBool : config.WithBool := {| config.withboolFlag := config.Yes |}.
-  Local Instance hasPi : config.ProdType := {| config.prodTypeFlag := config.Yes |}.
+  Local Instance hasPi : config.ProdType := {| config.flagProdType := config.Yes |}.
   Local Existing Instance annotated_syntax.Syntax.
 
   Definition isctx   := isctx.
@@ -82,7 +82,7 @@ Context `{configReflection : config.Reflection}.
 Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
-Context `{configId : config.IdentityTypes}.
+Context `{configIdType : config.IdType}.
 Context `{configWithJ : config.WithJ}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
@@ -864,10 +864,10 @@ Proof.
       - { simpl. config apply @EqSubstJ with (D := trans_ctx D).
           - ih.
           - ih.
-          - now apply (trans_istype _ C i5).
-          - now apply (trans_isterm _ _ _ i6).
+          - now apply (trans_istype _ C i4).
+          - now apply (trans_isterm _ _ _ i5).
           - ih.
-          - now apply (trans_isterm _ _ _ i8).
+          - now apply (trans_isterm _ _ _ i7).
         }
 
       (* EqSubstExfalso *)
@@ -946,8 +946,8 @@ Proof.
       (* JRefl *)
       - { simpl. capply @JRefl.
           - ih.
-          - now apply (trans_istype _ _ i3).
-          - now apply (trans_isterm _ _ _ i4).
+          - now apply (trans_istype _ _ i2).
+          - now apply (trans_isterm _ _ _ i3).
         }
 
       (* CongAbs *)

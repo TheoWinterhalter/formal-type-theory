@@ -25,22 +25,22 @@ Inductive No : Type := .
 
 (* Paranoid mode, include preconditions in rules. *)
 Class Precondition := {
-  preconditionFlag : Type
+  flagPrecondition : Type
 }.
 
 (* Dependent products. *)
 Class ProdType := {
-  prodTypeFlag : Type
+  flagProdType : Type
 }.
 
 (* The eta-rule for functions. *)
 Class ProdEta := {
-  prodetaFlag : Type
+  flagProdEta : Type
 }.
 
 (* Identity types. *)
-Class IdentityTypes := {
-  identitytypesFlag : Type
+Class IdType := {
+  flagIdType : Type
 }.
 
 (* J-eliminator. *)

@@ -4,13 +4,13 @@ Require syntax.
 
 Section Ett.
 
-Local Instance hasPrecondition : config.Precondition := {| config.preconditionFlag := config.No |}.
+Local Instance hasPrecondition : config.Precondition := {| config.flagPrecondition := config.No |}.
 Context `{configReflection : config.Reflection}.
 Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
-Context `{configId : config.IdentityTypes}.
+Context `{configIdType : config.IdType}.
 Context `{configWithJ : config.WithJ}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.

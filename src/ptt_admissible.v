@@ -8,13 +8,13 @@ Require Import syntax.
 
 Section PttAdmissible.
 
-Local Instance hasPrecondition : config.Precondition := {| config.preconditionFlag := config.Yes |}.
+Local Instance hasPrecondition : config.Precondition := {| config.flagPrecondition := config.Yes |}.
 Context `{configReflection : config.Reflection}.
 Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
-Context `{configId : config.IdentityTypes}.
+Context `{configIdType : config.IdType}.
 Context `{configWithJ : config.WithJ}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.

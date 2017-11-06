@@ -25,7 +25,7 @@ Context `{configWithJ : config.WithJ}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
 Context `{configBool : config.WithBool}.
-Context `{configId : config.IdentityTypes}.
+Context `{configIdType : config.IdType}.
 Context `{configProdType : config.ProdType}.
 Context `{configSyntax : Syntax}.
 
@@ -39,7 +39,7 @@ Notation "'binaryproduct' r" :=
   (forall { _ : binaryProdTypeFlag }, r) (only parsing, at level 97).
 
 Notation "'prodeta' r" :=
-  (forall { _ : prodetaFlag }, r) (only parsing, at level 97).
+  (forall { _ : flagProdEta }, r) (only parsing, at level 97).
 
 Notation "'universe' r" :=
   (forall { _ : universesFlag }, r) (only parsing, at level 97).
@@ -48,7 +48,7 @@ Notation "'withprop' r" :=
   (forall { _ : withpropFlag }, r) (only parsing, at level 97).
 
 Notation "'identitytype' r" :=
-  (forall { _ : identitytypesFlag }, r) (only parsing, at level 97).
+  (forall { _ : flagIdType }, r) (only parsing, at level 97).
 
 Notation "'withj' r" :=
   (forall { _ : withjFlag }, r) (only parsing, at level 97).
@@ -63,13 +63,13 @@ Notation "'withbool' r" :=
   (forall { _ : withboolFlag }, r) (only parsing, at level 97).
 
 Notation "'withpi' r" :=
-  (forall { _ : prodTypeFlag }, r) (only parsing, at level 97).
+  (forall { _ : flagProdType }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
     (at level 200, x binder, y binder, right associativity, only parsing).
 Notation "'premise:' p q" := (p -> q) (only parsing, at level 95).
-Notation "'precondition:' p q" := ((preconditionFlag -> p) -> q) (only parsing, at level 95).
+Notation "'precondition:' p q" := ((flagPrecondition -> p) -> q) (only parsing, at level 95).
 Notation "'conclusion:' q" := q (no associativity, only parsing, at level 94).
 
 Inductive isctx : context -> Type :=

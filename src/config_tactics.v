@@ -8,14 +8,14 @@ Ltac doConfig :=
     match (eval cbn in P) with
     | Yes => intros _
     | No => let H := fresh "H" in (intros H ; now elim H)
-    | preconditionFlag =>
-      let H := fresh "preconditionFlag" in intros H
+    | flagPrecondition =>
+      let H := fresh "flagPrecondition" in intros H
     | reflectionFlag =>
       let H := fresh "reflectionFlag" in intros H
     | binaryProdTypeFlag =>
       let H := fresh "binaryProdTypeFlag" in intros H
-    | prodetaFlag =>
-      let H := fresh "prodetaFlag" in intros H
+    | flagProdEta =>
+      let H := fresh "flagProdEta" in intros H
     | universesFlag =>
       let H := fresh "universesFlag" in intros H
     | withpropFlag =>
@@ -28,28 +28,28 @@ Ltac doConfig :=
       let H := fresh "withunitFlag" in intros H
     | withboolFlag =>
       let H := fresh "withboolFlag" in intros H
-    | prodTypeFlag =>
-      let H := fresh "prodTypeFlag" in intros H
-    | identitytypesFlag =>
-      let H := fresh "identitytypesFlag" in intros H
+    | flagProdType =>
+      let H := fresh "flagProdType" in intros H
+    | flagIdType =>
+      let H := fresh "flagIdType" in intros H
     | _ => idtac
     end
   | |- ?P =>
     match (eval cbn in P) with
     | Yes => exact yes
     end
-  | H : preconditionFlag |- preconditionFlag => exact H
+  | H : flagPrecondition |- flagPrecondition => exact H
   | H : reflectionFlag |- reflectionFlag => exact H
   | H : binaryProdTypeFlag |- binaryProdTypeFlag => exact H
-  | H : prodetaFlag |- prodetaFlag => exact H
+  | H : flagProdEta |- flagProdEta => exact H
   | H : universesFlag |- universesFlag => exact H
   | H : withpropFlag |- withpropFlag => exact H
   | H : withjFlag |- withjFlag => exact H
   | H : withemptyFlag |- withemptyFlag => exact H
   | H : withunitFlag |- withunitFlag => exact H
   | H : withboolFlag |- withboolFlag => exact H
-  | H : prodTypeFlag |- prodTypeFlag => exact H
-  | H : identitytypesFlag |- identitytypesFlag => exact H
+  | H : flagProdType |- flagProdType => exact H
+  | H : flagIdType |- flagIdType => exact H
   | _ => idtac
   end ;
   (* Configure the hypotheses *)
@@ -59,9 +59,9 @@ Ltac doConfig :=
      match (eval cbn in P) with
      | Yes => specialize (H yes)
      | No => clear H
-     | @preconditionFlag ?F =>
+     | @flagPrecondition ?F =>
        match goal with
-       | R : @preconditionFlag F |- _ => specialize (H R)
+       | R : @flagPrecondition F |- _ => specialize (H R)
        end
      | @reflectionFlag ?F =>
        match goal with
@@ -71,9 +71,9 @@ Ltac doConfig :=
        match goal with
        | R : @binaryProdTypeFlag F |- _ => specialize (H R)
        end
-     | @prodetaFlag ?F =>
+     | @flagProdEta ?F =>
        match goal with
-       | R : @prodetaFlag F |- _ => specialize (H R)
+       | R : @flagProdEta F |- _ => specialize (H R)
        end
      | @universesFlag ?F =>
        match goal with
@@ -99,13 +99,13 @@ Ltac doConfig :=
        match goal with
        | R : @withboolFlag F |- _ => specialize (H R)
        end
-     | @prodTypeFlag ?F =>
+     | @flagProdType ?F =>
        match goal with
-       | R : @prodTypeFlag F |- _ => specialize (H R)
+       | R : @flagProdType F |- _ => specialize (H R)
        end
-     | @identitytypesFlag ?F =>
+     | @flagIdType ?F =>
        match goal with
-       | R : @identitytypesFlag F |- _ => specialize (H R)
+       | R : @flagIdType F |- _ => specialize (H R)
        end
      end
    | H : ?P |- _ =>
