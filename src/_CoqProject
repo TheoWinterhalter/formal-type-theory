@@ -11,6 +11,7 @@ checking_tactics.v
 
 ptt_admissible.v
 # ptt_inversion.v
+invconfig.v
 
 ptt_sanity.v
 ptt2ett.v

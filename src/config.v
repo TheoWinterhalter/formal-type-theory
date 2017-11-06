@@ -5,20 +5,22 @@
 Inductive Yes : Type := yes.
 Inductive No : Type := .
 
-(* Each configurable feature is represented by a type class which contains a type.
+(* Each configurable feature is represented by a type class which contains a
+   type.
 
-   To turn on a configuration, provide a type class instance in which the type is
-   instantiated to `Yes`.
+   To turn on a configuration, provide a type class instance in which the type
+   is instantiated to `Yes`.
 
-   To turn off a configuration, provide a type class instance in which the type is
-   instantiated to `No`.
+   To turn off a configuration, provide a type class instance in which the type
+   is instantiated to `No`.
 
-   To be ambivalent about a configuration, provide a `Context` with an unspecified
-   instance of it. Then your development will be parametrized by it automagically.
+   To be ambivalent about a configuration, provide a `Context` with an
+   unspecified instance of it. Then your development will be parametrized by it
+   automagically.
 
-   You have to make sure that you do not provid *two* instances for the same configuration
-   option. The best way to do this is to always make sure that all the instances are
-   declatered as [Local].
+   You have to make sure that you do not provid *two* instances for the same
+   configuration option. The best way to do this is to always make sure that all
+   the instances are declatered as [Local].
 *)
 
 (* Paranoid mode, include preconditions in rules. *)
