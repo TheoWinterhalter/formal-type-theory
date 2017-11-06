@@ -22,7 +22,7 @@ Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configPropType : config.PropType}.
 Context `{configIdEliminator : config.IdEliminator}.
-Context `{configEmpty : config.WithEmpty}.
+Context `{configEmptyType : config.EmptyType}.
 Context `{configUnit : config.WithUnit}.
 Context `{configBool : config.WithBool}.
 Context `{configIdType : config.IdType}.
@@ -54,7 +54,7 @@ Notation "'withj' r" :=
   (forall { _ : flagIdEliminator }, r) (only parsing, at level 97).
 
 Notation "'withempty' r" :=
-  (forall { _ : withemptyFlag }, r) (only parsing, at level 97).
+  (forall { _ : flagEmptyType }, r) (only parsing, at level 97).
 
 Notation "'withunit' r" :=
   (forall { _ : withunitFlag }, r) (only parsing, at level 97).

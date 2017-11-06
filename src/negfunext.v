@@ -25,7 +25,7 @@ Module Stt.
   Local Instance hasProp : config.PropType := {| config.flagPropType := config.No |}.
   Context `{configIdType : config.IdType}.
   Context `{configIdEliminator : config.IdEliminator}.
-  Context `{configEmpty : config.WithEmpty}.
+  Context `{configEmptyType : config.EmptyType}.
   Context `{configUnit : config.WithUnit}.
   Context `{configBool : config.WithBool}.
   Local Instance hasPi : config.ProdType := {| config.flagProdType := config.Yes |}.
@@ -57,7 +57,7 @@ Module Ttt.
   Context `{configPropType : config.PropType}.
   Context `{configIdType : config.IdType}.
   Context `{configIdEliminator : config.IdEliminator}.
-  Context `{configEmpty : config.WithEmpty}.
+  Context `{configEmptyType : config.EmptyType}.
   Context `{configUnit : config.WithUnit}.
   Local Instance hasBool : config.WithBool := {| config.withboolFlag := config.Yes |}.
   Local Instance hasPi : config.ProdType := {| config.flagProdType := config.Yes |}.
@@ -84,7 +84,7 @@ Context `{configUniverses : config.Universes}.
 Context `{configPropType : config.PropType}.
 Context `{configIdType : config.IdType}.
 Context `{configIdEliminator : config.IdEliminator}.
-Context `{configEmpty : config.WithEmpty}.
+Context `{configEmptyType : config.EmptyType}.
 Context `{configUnit : config.WithUnit}.
 Context `{configBool : config.WithBool}.
 
@@ -1230,4 +1230,3 @@ Proof.
 Qed.
 
 End Translation.
-<

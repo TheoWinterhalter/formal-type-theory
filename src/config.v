@@ -69,8 +69,8 @@ Class PropType := {
 }.
 
 (* Empty type. *)
-Class WithEmpty := {
-  withemptyFlag : Type
+Class EmptyType := {
+  flagEmptyType : Type
 }.
 
 (* Unit type. *)
