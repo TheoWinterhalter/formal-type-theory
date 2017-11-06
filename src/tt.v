@@ -15,7 +15,7 @@ Require Import config.
 Section TypeTheoryRules.
 (* Notations for writing down inference rules. *)
 
-Context `{configPrecond : config.Precond}.
+Context `{configPrecondition : config.Precondition}.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
@@ -69,7 +69,7 @@ Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
     (at level 200, x binder, y binder, right associativity, only parsing).
 Notation "'premise:' p q" := (p -> q) (only parsing, at level 95).
-Notation "'precond:' p q" := ((precondFlag -> p) -> q) (only parsing, at level 95).
+Notation "'precondition:' p q" := ((preconditionFlag -> p) -> q) (only parsing, at level 95).
 Notation "'conclusion:' q" := q (no associativity, only parsing, at level 94).
 
 Inductive isctx : context -> Type :=
@@ -82,7 +82,7 @@ Inductive isctx : context -> Type :=
      | CtxExtend :
        rule
          parameters: {G A},
-         precond: isctx G
+         precondition: isctx G
          premise: istype G A
          conclusion: isctx (ctxextend G A)
        endrule
@@ -94,8 +94,8 @@ with issubst : substitution -> context -> context -> Type :=
        rule
          parameters: {G u A},
          premise: isterm G u A
-         precond: istype G A
-         precond: isctx G
+         precondition: istype G A
+         precondition: isctx G
          conclusion:
            issubst (sbzero A u) G (ctxextend G A)
        endrule
@@ -104,7 +104,7 @@ with issubst : substitution -> context -> context -> Type :=
        rule
          parameters: {G A},
          premise: istype G A
-         precond: isctx G
+         precondition: isctx G
          conclusion:
            issubst (sbweak A) (ctxextend G A) G
        endrule
@@ -114,8 +114,8 @@ with issubst : substitution -> context -> context -> Type :=
          parameters: {G D A sbs},
          premise: issubst sbs G D
          premise: istype D A
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            issubst (sbshift A sbs)
                    (ctxextend G (Subst A sbs))
@@ -134,9 +134,9 @@ with issubst : substitution -> context -> context -> Type :=
          parameters: {G D E sbs sbt},
          premise: issubst sbs G D
          premise: issubst sbt D E
-         precond: isctx G
-         precond: isctx D
-         precond: isctx E
+         precondition: isctx G
+         precondition: isctx D
+         precondition: isctx E
          conclusion:
            issubst (sbcomp sbt sbs) G E
        endrule
@@ -147,10 +147,10 @@ with issubst : substitution -> context -> context -> Type :=
          premise: issubst sbs G1 D1
          premise: eqctx G1 G2
          premise: eqctx D1 D2
-         precond: isctx G1
-         precond: isctx G2
-         precond: isctx D1
-         precond: isctx D2
+         precondition: isctx G1
+         precondition: isctx G2
+         precondition: isctx D1
+         precondition: isctx D2
          conclusion:
            issubst sbs G2 D2
        endrule
@@ -163,8 +163,8 @@ with istype : context -> type -> Type :=
          parameters: {G D A},
          premise: istype G A
          premise: eqctx G D
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            istype D A
        endrule
@@ -174,8 +174,8 @@ with istype : context -> type -> Type :=
          parameters: {G D A sbs},
          premise: issubst sbs G D
          premise: istype D A
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            istype G (Subst A sbs)
        endrule
@@ -184,8 +184,8 @@ with istype : context -> type -> Type :=
        withpi rule
          parameters: {G A B},
          premise: istype (ctxextend G A) B
-         precond: istype G A
-         precond: isctx G
+         precondition: istype G A
+         precondition: isctx G
          conclusion:
            istype G (Prod A B)
        endrule
@@ -193,8 +193,8 @@ with istype : context -> type -> Type :=
      | TyId :
        identitytype rule
          parameters: {G A u v},
-         precond: isctx G
-         precond: istype G A
+         precondition: isctx G
+         precondition: istype G A
          premise: isterm G u A
          premise: isterm G v A
          conclusion:
@@ -228,7 +228,7 @@ with istype : context -> type -> Type :=
      | TySimProd :
        simpleproduct rule
          parameters: {G A B},
-         precond: isctx G
+         precondition: isctx G
          premise: istype G A
          premise: istype G B
          conclusion:
@@ -247,7 +247,7 @@ with istype : context -> type -> Type :=
        universe rule
          parameters: {G a l},
          premise: isterm G a (Uni l)
-         precond: isctx G
+         precondition: isctx G
          conclusion:
            istype G (El l a)
        endrule
@@ -261,9 +261,9 @@ with isterm : context -> term -> type -> Type :=
          parameters: {G A B u},
          premise: isterm G u A
          premise: eqtype G A B
-         precond: isctx G
-         precond: istype G A
-         precond: istype G B
+         precondition: isctx G
+         precondition: istype G A
+         precondition: istype G B
          conclusion:
            isterm G u B
        endrule
@@ -273,9 +273,9 @@ with isterm : context -> term -> type -> Type :=
          parameters: {G D A u},
          premise: isterm G u A
          premise: eqctx G D
-         precond: isctx G
-         precond: isctx D
-         precond: istype G A
+         precondition: isctx G
+         precondition: isctx D
+         precondition: istype G A
          conclusion:
            isterm D u A
        endrule
@@ -285,9 +285,9 @@ with isterm : context -> term -> type -> Type :=
          parameters: {G D A u sbs},
          premise: issubst sbs G D
          premise: isterm D u A
-         precond: isctx G
-         precond: istype D A
-         precond: isctx D
+         precondition: isctx G
+         precondition: istype D A
+         precondition: isctx D
          conclusion:
            isterm G (subst u sbs) (Subst A sbs)
        endrule
@@ -295,7 +295,7 @@ with isterm : context -> term -> type -> Type :=
      | TermVarZero :
        rule
          parameters: {G A},
-         precond: isctx G
+         precondition: isctx G
          premise: istype G A
          conclusion:
            isterm (ctxextend G A) (var 0) (Subst A (sbweak A))
@@ -304,8 +304,8 @@ with isterm : context -> term -> type -> Type :=
      | TermVarSucc :
        rule
          parameters: {G A B k},
-         precond: isctx G
-         precond: istype G A
+         precondition: isctx G
+         precondition: istype G A
          premise: isterm G (var k) A
          premise: istype G B
          conclusion:
@@ -315,9 +315,9 @@ with isterm : context -> term -> type -> Type :=
      | TermAbs :
        withpi rule
          parameters: {G A u B},
-         precond: isctx G
-         precond: istype G A
-         precond: istype (ctxextend G A) B
+         precondition: isctx G
+         precondition: istype G A
+         precondition: istype (ctxextend G A) B
          premise: isterm (ctxextend G A) u B
          conclusion:
            isterm G (lam A B u) (Prod A B)
@@ -326,9 +326,9 @@ with isterm : context -> term -> type -> Type :=
      | TermApp :
        withpi rule
          parameters: {G A B u v},
-         precond: isctx G
-         precond: istype G A
-         precond: istype (ctxextend G A) B
+         precondition: isctx G
+         precondition: istype G A
+         precondition: istype (ctxextend G A) B
          premise: isterm G u (Prod A B)
          premise: isterm G v A
          conclusion:
@@ -338,8 +338,8 @@ with isterm : context -> term -> type -> Type :=
      | TermRefl :
        identitytype rule
          parameters: {G A u},
-         precond: isctx G
-         precond: istype G A
+         precondition: isctx G
+         precondition: istype G A
          premise: isterm G u A
          conclusion:
            isterm G (refl A u) (Id A u u)
@@ -348,8 +348,8 @@ with isterm : context -> term -> type -> Type :=
      | TermJ :
        identitytype withj rule
          parameters: {G A C u v w p},
-         precond: isctx G
-         precond: istype G A
+         precondition: isctx G
+         precondition: istype G A
          premise: isterm G u A
          premise: istype
              (ctxextend
@@ -402,7 +402,7 @@ with isterm : context -> term -> type -> Type :=
      | TermExfalso :
        withempty rule
          parameters: {G A u},
-         precond: isctx G
+         precondition: isctx G
          premise: istype G A
          premise: isterm G u Empty
          conclusion:
@@ -436,7 +436,7 @@ with isterm : context -> term -> type -> Type :=
      | TermCond :
        withbool rule
          parameters: {G C u v w},
-         precond: isctx G
+         precondition: isctx G
          premise: isterm G u Bool
          premise: istype (ctxextend G Bool) C
          premise: isterm G v (Subst C (sbzero Bool true))
@@ -450,9 +450,9 @@ with isterm : context -> term -> type -> Type :=
      | TermPair :
        simpleproduct rule
          parameters: {G A B u v},
-         precond: isctx G
-         precond: istype G A
-         precond: istype G B
+         precondition: isctx G
+         precondition: istype G A
+         precondition: istype G B
          premise: isterm G u A
          premise: isterm G v B
          conclusion:
@@ -462,9 +462,9 @@ with isterm : context -> term -> type -> Type :=
      | TermProjOne :
        simpleproduct rule
          parameters: {G A B p},
-         precond: isctx G
-         precond: istype G A
-         precond: istype G B
+         precondition: isctx G
+         precondition: istype G A
+         precondition: istype G B
          premise: isterm G p (SimProd A B)
          conclusion:
            isterm G (proj1 A B p) A
@@ -473,9 +473,9 @@ with isterm : context -> term -> type -> Type :=
      | TermProjTwo :
        simpleproduct rule
          parameters: {G A B p},
-         precond: isctx G
-         precond: istype G A
-         precond: istype G B
+         precondition: isctx G
+         precondition: istype G A
+         precondition: istype G B
          premise: isterm G p (SimProd A B)
          conclusion:
            isterm G (proj2 A B p) B
@@ -486,7 +486,7 @@ with isterm : context -> term -> type -> Type :=
          parameters: {G a b n m},
          premise: isterm G a (Uni (uni n))
          premise: isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))
-         precond: isctx G
+         precondition: isctx G
          conclusion:
            isterm G (uniProd (uni n) (uni m) a b) (Uni (uni (max n m)))
        endrule
@@ -496,7 +496,7 @@ with isterm : context -> term -> type -> Type :=
          parameters: {G a b l},
          premise: isterm G a (Uni l)
          premise: isterm (ctxextend G (El l a)) b (Uni prop)
-         precond: isctx G
+         precondition: isctx G
          conclusion:
            isterm G (uniProd l prop a b) (Uni prop)
        endrule
@@ -507,7 +507,7 @@ with isterm : context -> term -> type -> Type :=
          premise: isterm G a (Uni n)
          premise: isterm G u (El n a)
          premise: isterm G v (El n a)
-         precond: isctx G
+         precondition: isctx G
          conclusion:
            isterm G (uniId n a u v) (Uni n)
        endrule
@@ -541,7 +541,7 @@ with isterm : context -> term -> type -> Type :=
          parameters: {G a b n m},
          premise: isterm G a (Uni (uni n))
          premise: isterm G b (Uni (uni m))
-         precond: isctx G
+         precondition: isctx G
          conclusion:
            isterm G (uniSimProd (uni n) (uni m) a b) (Uni (uni (max n m)))
        endrule
@@ -551,7 +551,7 @@ with isterm : context -> term -> type -> Type :=
          parameters: {G a b},
          premise: isterm G a (Uni prop)
          premise: isterm G b (Uni prop)
-         precond: isctx G
+         precondition: isctx G
          conclusion:
            isterm G (uniSimProd prop prop a b) (Uni prop)
        endrule
@@ -588,8 +588,8 @@ with eqctx : context -> context -> Type :=
        rule
          parameters: {G D},
          premise: eqctx G D
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqctx D G
        endrule
@@ -597,9 +597,9 @@ with eqctx : context -> context -> Type :=
      | CtxTrans :
        rule
          parameters: {G D E},
-         precond: isctx G
-         precond: isctx D
-         precond: isctx E
+         precondition: isctx G
+         precondition: isctx D
+         precondition: isctx E
          premise: eqctx G D
          premise: eqctx D E
          conclusion:
@@ -615,10 +615,10 @@ with eqctx : context -> context -> Type :=
      | EqCtxExtend :
        rule
          parameters: {G D A B},
-         precond: isctx G
-         precond: isctx D
-         precond: istype G A
-         precond: istype G B
+         precondition: isctx G
+         precondition: isctx D
+         precondition: istype G A
+         precondition: istype G B
          premise: eqctx G D
          premise: eqtype G A B
          conclusion:
@@ -630,8 +630,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | SubstRefl :
        rule
          parameters: {G D sbs},
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          premise: issubst sbs G D
          conclusion:
            eqsubst sbs sbs G D
@@ -641,10 +641,10 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
        rule
          parameters: {G D sbs sbt},
          premise: eqsubst sbs sbt G D
-         precond: issubst sbs G D
-         precond: issubst sbt G D
-         precond: isctx G
-         precond: isctx D
+         precondition: issubst sbs G D
+         precondition: issubst sbt G D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqsubst sbt sbs G D
        endrule
@@ -654,11 +654,11 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
          parameters: {G D sb1 sb2 sb3},
          premise: eqsubst sb1 sb2 G D
          premise: eqsubst sb2 sb3 G D
-         precond: issubst sb1 G D
-         precond: issubst sb2 G D
-         precond: issubst sb3 G D
-         precond: isctx G
-         precond: isctx D
+         precondition: issubst sb1 G D
+         precondition: issubst sb2 G D
+         precondition: issubst sb3 G D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqsubst sb1 sb3 G D
        endrule
@@ -668,11 +668,11 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
          parameters: {G A1 A2 u1 u2},
          premise: eqtype G A1 A2
          premise: eqterm G u1 u2 A1
-         precond: isctx G
-         precond: istype G A1
-         precond: istype G A2
-         precond: isterm G u1 A1
-         precond: isterm G u2 A1
+         precondition: isctx G
+         precondition: istype G A1
+         precondition: istype G A2
+         precondition: isterm G u1 A1
+         precondition: isterm G u2 A1
          conclusion:
            eqsubst (sbzero A1 u1)
                    (sbzero A2 u2)
@@ -684,9 +684,9 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
        rule
          parameters: {G A1 A2},
          premise: eqtype G A1 A2
-         precond: isctx G
-         precond: istype G A1
-         precond: istype G A2
+         precondition: isctx G
+         precondition: istype G A1
+         precondition: istype G A2
          conclusion:
            eqsubst (sbweak A1)
                    (sbweak A2)
@@ -699,12 +699,12 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
          parameters: {G D A1 A2 sbs1 sbs2},
          premise: eqsubst sbs1 sbs2 G D
          premise: eqtype D A1 A2
-         precond: isctx G
-         precond: isctx D
-         precond: istype D A1
-         precond: istype D A2
-         precond: issubst sbs1 G D
-         precond: issubst sbs2 G D
+         precondition: isctx G
+         precondition: isctx D
+         precondition: istype D A1
+         precondition: istype D A2
+         precondition: issubst sbs1 G D
+         precondition: issubst sbs2 G D
          conclusion:
            eqsubst (sbshift A1 sbs1)
                    (sbshift A2 sbs2)
@@ -717,13 +717,13 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
          parameters: {G D E sbs1 sbs2 sbt1 sbt2},
          premise: eqsubst sbs1 sbs2 G D
          premise: eqsubst sbt1 sbt2 D E
-         precond: issubst sbs1 G D
-         precond: issubst sbs2 G D
-         precond: issubst sbt1 D E
-         precond: issubst sbt2 D E
-         precond: isctx G
-         precond: isctx D
-         precond: isctx E
+         precondition: issubst sbs1 G D
+         precondition: issubst sbs2 G D
+         precondition: issubst sbt1 D E
+         precondition: issubst sbt2 D E
+         precondition: isctx G
+         precondition: isctx D
+         precondition: isctx E
          conclusion:
            eqsubst (sbcomp sbt1 sbs1)
                    (sbcomp sbt2 sbs2)
@@ -737,12 +737,12 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
          premise: eqsubst sbs sbt G1 D1
          premise: eqctx G1 G2
          premise: eqctx D1 D2
-         precond: isctx G1
-         precond: isctx G2
-         precond: isctx D1
-         precond: isctx D2
-         precond: issubst sbs G1 D1
-         precond: issubst sbt G1 D1
+         precondition: isctx G1
+         precondition: isctx G2
+         precondition: isctx D1
+         precondition: isctx D2
+         precondition: issubst sbs G1 D1
+         precondition: issubst sbt G1 D1
          conclusion:
            eqsubst sbs sbt G2 D2
        endrule
@@ -753,10 +753,10 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
          premise: issubst sbs G D
          premise: issubst sbt D E
          premise: issubst sbr E F
-         precond: isctx G
-         precond: isctx D
-         precond: isctx E
-         precond: isctx F
+         precondition: isctx G
+         precondition: isctx D
+         precondition: isctx E
+         precondition: isctx F
          conclusion:
            eqsubst (sbcomp sbr (sbcomp sbt sbs))
                    (sbcomp (sbcomp sbr sbt) sbs)
@@ -767,8 +767,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | WeakNat :
        rule
          parameters: {G D A sbs},
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          premise: issubst sbs G D
          premise: istype D A
          conclusion:
@@ -783,8 +783,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | WeakZero :
        rule
          parameters: {G A u},
-         precond: isctx G
-         precond: istype G A
+         precondition: isctx G
+         precondition: istype G A
          premise: isterm G u A
          conclusion:
            eqsubst (sbcomp (sbweak A) (sbzero A u))
@@ -796,9 +796,9 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | ShiftZero :
        rule
          parameters: {G D A u sbs},
-         precond: isctx G
-         precond: isctx D
-         precond: istype D A
+         precondition: isctx G
+         precondition: isctx D
+         precondition: istype D A
          premise: issubst sbs G D
          premise: isterm D u A
          conclusion:
@@ -813,9 +813,9 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | CompShift :
        rule
          parameters: {G D E A sbs sbt},
-         precond: isctx G
-         precond: isctx D
-         precond: isctx E
+         precondition: isctx G
+         precondition: isctx D
+         precondition: isctx E
          premise: issubst sbs G D
          premise: issubst sbt D E
          premise: istype E A
@@ -830,8 +830,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | CompIdRight :
        rule
          parameters: {G D sbs},
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          premise: issubst sbs G D
          conclusion:
            eqsubst (sbcomp sbs sbid) sbs G D
@@ -840,8 +840,8 @@ with eqsubst : substitution -> substitution -> context -> context -> Type :=
      | CompIdLeft :
        rule
          parameters: {G D sbs},
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          premise: issubst sbs G D
          conclusion:
            eqsubst (sbcomp sbid sbs) sbs G D
@@ -855,10 +855,10 @@ with eqtype : context -> type -> type -> Type :=
          parameters: {G D A B},
          premise: eqtype G A B
          premise: eqctx G D
-         precond: istype G A
-         precond: istype G B
-         precond: isctx G
-         precond: isctx D
+         precondition: istype G A
+         precondition: istype G B
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqtype D A B
        endrule
@@ -866,7 +866,7 @@ with eqtype : context -> type -> type -> Type :=
      | EqTyRefl:
        rule
          parameters: {G A},
-         precond: isctx G
+         precondition: isctx G
          premise: istype G A
          conclusion:
            eqtype G A A
@@ -876,9 +876,9 @@ with eqtype : context -> type -> type -> Type :=
        rule
          parameters: {G A B},
          premise: eqtype G A B
-         precond: istype G A
-         precond: istype G B
-         precond: isctx G
+         precondition: istype G A
+         precondition: istype G B
+         precondition: isctx G
          conclusion:
            eqtype G B A
        endrule
@@ -888,10 +888,10 @@ with eqtype : context -> type -> type -> Type :=
          parameters: {G A B C},
          premise: eqtype G A B
          premise: eqtype G B C
-         precond: isctx G
-         precond: istype G A
-         precond: istype G B
-         precond: istype G C
+         precondition: isctx G
+         precondition: istype G A
+         precondition: istype G B
+         precondition: istype G C
          conclusion:
            eqtype G A C
        endrule
@@ -899,7 +899,7 @@ with eqtype : context -> type -> type -> Type :=
      | EqTyIdSubst :
        rule
          parameters: {G A},
-         precond: isctx G
+         precondition: isctx G
          premise: istype G A
          conclusion:
            eqtype G
@@ -913,9 +913,9 @@ with eqtype : context -> type -> type -> Type :=
          premise: istype E A
          premise: issubst sbs G D
          premise: issubst sbt D E
-         precond: isctx G
-         precond: isctx D
-         precond: isctx E
+         precondition: isctx G
+         precondition: isctx D
+         precondition: isctx E
          conclusion:
            eqtype G
                   (Subst (Subst A sbt) sbs)
@@ -927,10 +927,10 @@ with eqtype : context -> type -> type -> Type :=
        withpi rule
          parameters: {G D A B sbs},
          premise: issubst sbs G D
-         precond: istype D A
+         precondition: istype D A
          premise: istype (ctxextend D A) B
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqtype G
                   (Subst (Prod A B) sbs)
@@ -941,11 +941,11 @@ with eqtype : context -> type -> type -> Type :=
        identitytype rule
          parameters: {G D A u v sbs},
          premise: issubst sbs G D
-         precond: istype D A
+         precondition: istype D A
          premise: isterm D u A
          premise: isterm D v A
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqtype G
                   (Subst (Id A u v) sbs)
@@ -956,8 +956,8 @@ with eqtype : context -> type -> type -> Type :=
        withempty rule
          parameters: {G D sbs},
          premise: issubst sbs G D
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqtype G
                   (Subst Empty sbs)
@@ -968,8 +968,8 @@ with eqtype : context -> type -> type -> Type :=
        withunit rule
          parameters: {G D sbs},
          premise: issubst sbs G D
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqtype G
                   (Subst Unit sbs)
@@ -980,8 +980,8 @@ with eqtype : context -> type -> type -> Type :=
        withbool rule
          parameters: {G D sbs},
          premise: issubst sbs G D
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqtype G
                   (Subst Bool sbs)
@@ -991,7 +991,7 @@ with eqtype : context -> type -> type -> Type :=
      | EqTyExfalso :
        withempty rule
          parameters: {G A B u},
-         precond: isctx G
+         precondition: isctx G
          premise: istype G A
          premise: istype G B
          premise: isterm G u Empty
@@ -1002,11 +1002,11 @@ with eqtype : context -> type -> type -> Type :=
      | CongProd :
        withpi rule
          parameters: {G A1 A2 B1 B2},
-         precond: isctx G
-         precond: istype G A1
-         precond: istype (ctxextend G A1) A2
-         precond: istype G B1
-         precond: istype (ctxextend G A1) B2
+         precondition: isctx G
+         precondition: istype G A1
+         precondition: istype (ctxextend G A1) A2
+         precondition: istype G B1
+         precondition: istype (ctxextend G A1) B2
          premise: eqtype G A1 B1
          premise: eqtype (ctxextend G A1) A2 B2
          conclusion:
@@ -1016,13 +1016,13 @@ with eqtype : context -> type -> type -> Type :=
      | CongId :
        identitytype rule
          parameters: {G A B u1 u2 v1 v2},
-         precond: isctx G
-         precond: istype G A
-         precond: istype G B
-         precond: isterm G u1 A
-         precond: isterm G u2 A
-         precond: isterm G v1 A
-         precond: isterm G v2 A
+         precondition: isctx G
+         precondition: istype G A
+         precondition: istype G B
+         precondition: isterm G u1 A
+         precondition: isterm G u2 A
+         precondition: isterm G v1 A
+         precondition: isterm G v2 A
          premise: eqtype G A B
          premise: eqterm G u1 v1 A
          premise: eqterm G u2 v2 A
@@ -1035,12 +1035,12 @@ with eqtype : context -> type -> type -> Type :=
          parameters: {G D A B sbs sbt},
          premise: eqsubst sbs sbt G D
          premise: eqtype D A B
-         precond: isctx G
-         precond: isctx D
-         precond: istype D A
-         precond: istype D B
-         precond: issubst sbs G D
-         precond: issubst sbt G D
+         precondition: isctx G
+         precondition: isctx D
+         precondition: istype D A
+         precondition: istype D B
+         precondition: issubst sbs G D
+         precondition: issubst sbt G D
          conclusion:
            eqtype G (Subst A sbs) (Subst B sbt)
        endrule
@@ -1048,11 +1048,11 @@ with eqtype : context -> type -> type -> Type :=
      | CongSimProd :
        simpleproduct rule
          parameters: {G A1 A2 B1 B2},
-         precond: isctx G
-         precond: istype G A1
-         precond: istype G A2
-         precond: istype G B1
-         precond: istype G B2
+         precondition: isctx G
+         precondition: istype G A1
+         precondition: istype G A2
+         precondition: istype G B1
+         precondition: istype G B2
          premise: eqtype G A1 A2
          premise: eqtype G B1 B2
          conclusion:
@@ -1062,8 +1062,8 @@ with eqtype : context -> type -> type -> Type :=
      | EqTySubstSimProd :
        simpleproduct rule
          parameters: {G D A B sbs},
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          premise: issubst sbs G D
          premise: istype D A
          premise: istype D B
@@ -1077,8 +1077,8 @@ with eqtype : context -> type -> type -> Type :=
        universe rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqtype G
                   (Subst (Uni n) sbs)
@@ -1090,7 +1090,7 @@ with eqtype : context -> type -> type -> Type :=
          parameters: {G a b n m},
          premise: isterm G a (Uni (uni n))
          premise: isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))
-         precond: isctx G
+         precondition: isctx G
          conclusion:
            eqtype G
                   (El (uni (max n m)) (uniProd (uni n) (uni m) a b))
@@ -1102,7 +1102,7 @@ with eqtype : context -> type -> type -> Type :=
          parameters: {G a b l},
          premise: isterm G a (Uni l)
          premise: isterm (ctxextend G (El l a)) b (Uni prop)
-         precond: isctx G
+         precondition: isctx G
          conclusion:
            eqtype G
                   (El prop (uniProd l prop a b))
@@ -1115,7 +1115,7 @@ with eqtype : context -> type -> type -> Type :=
          premise: isterm G a (Uni n)
          premise: isterm G u (El n a)
          premise: isterm G v (El n a)
-         precond: isctx G
+         precondition: isctx G
          conclusion:
            eqtype G
                   (El n (uniId n a u v))
@@ -1127,8 +1127,8 @@ with eqtype : context -> type -> type -> Type :=
          parameters: {G D a n sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni n)
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqtype G
                   (El n (subst a sbs))
@@ -1170,7 +1170,7 @@ with eqtype : context -> type -> type -> Type :=
          parameters: {G a b n m},
          premise: isterm G a (Uni (uni n))
          premise: isterm G b (Uni (uni m))
-         precond: isctx G
+         precondition: isctx G
          conclusion:
            eqtype G
                   (El (uni (max n m)) (uniSimProd (uni n) (uni m) a b))
@@ -1182,7 +1182,7 @@ with eqtype : context -> type -> type -> Type :=
          parameters: {G a b},
          premise: isterm G a (Uni prop)
          premise: isterm G b (Uni prop)
-         precond: isctx G
+         precondition: isctx G
          conclusion:
            eqtype G
                   (El prop (uniSimProd prop prop a b))
@@ -1213,9 +1213,9 @@ with eqtype : context -> type -> type -> Type :=
        universe rule
          parameters: {G a b n},
          premise: eqterm G a b (Uni n)
-         precond: isterm G a (Uni n)
-         precond: isterm G b (Uni n)
-         precond: isctx G
+         precondition: isterm G a (Uni n)
+         precondition: isterm G b (Uni n)
+         precondition: isctx G
          conclusion:
            eqtype G
                   (El n a)
@@ -1230,11 +1230,11 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G A B u v},
          premise: eqterm G u v A
          premise: eqtype G A B
-         precond: isctx G
-         precond: istype G A
-         precond: istype G B
-         precond: isterm G u A
-         precond: isterm G v A
+         precondition: isctx G
+         precondition: istype G A
+         precondition: istype G B
+         precondition: isterm G u A
+         precondition: isterm G v A
          conclusion:
            eqterm G u v B
        endrule
@@ -1242,11 +1242,11 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqCtxConv :
        rule
          parameters: {G D u v A},
-         precond: isctx G
-         precond: isctx D
-         precond: istype G A
-         precond: isterm G u A
-         precond: isterm G v A
+         precondition: isctx G
+         precondition: isctx D
+         precondition: istype G A
+         precondition: isterm G u A
+         precondition: isterm G v A
          premise: eqterm G u v A
          premise: eqctx G D
          conclusion:
@@ -1256,8 +1256,8 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqRefl :
        rule
          parameters: {G A u},
-         precond: isctx G
-         precond: istype G A
+         precondition: isctx G
+         precondition: istype G A
          premise: isterm G u A
          conclusion:
            eqterm G u u A
@@ -1267,10 +1267,10 @@ with eqterm : context -> term -> term -> type -> Type :=
        rule
          parameters: {G A u v},
          premise: eqterm G v u A
-         precond: isterm G u A
-         precond: isterm G v A
-         precond: istype G A
-         precond: isctx G
+         precondition: isterm G u A
+         precondition: isterm G v A
+         precondition: istype G A
+         precondition: isctx G
          conclusion:
            eqterm G u v A
        endrule
@@ -1280,11 +1280,11 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G A u v w},
          premise: eqterm G u v A
          premise: eqterm G v w A
-         precond: isctx G
-         precond: istype G A
-         precond: isterm G u A
-         precond: isterm G v A
-         precond: isterm G w A
+         precondition: isctx G
+         precondition: istype G A
+         precondition: isterm G u A
+         precondition: isterm G v A
+         precondition: isterm G w A
          conclusion:
            eqterm G u w A
        endrule
@@ -1293,8 +1293,8 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqIdSubst :
        rule
          parameters: {G A u},
-         precond: isctx G
-         precond: istype G A
+         precondition: isctx G
+         precondition: istype G A
          premise: isterm G u A
          conclusion:
            eqterm G
@@ -1309,10 +1309,10 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: isterm E u A
          premise: issubst sbs G D
          premise: issubst sbt D E
-         precond: isctx G
-         precond: isctx D
-         precond: isctx E
-         precond: istype E A
+         precondition: isctx G
+         precondition: isctx D
+         precondition: isctx E
+         precondition: istype E A
          conclusion:
            eqterm G
                   (subst (subst u sbt) sbs)
@@ -1323,8 +1323,8 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstWeak :
        rule
          parameters: {G A B k},
-         precond: isctx G
-         precond: istype G A
+         precondition: isctx G
+         precondition: istype G A
          premise: isterm G (var k) A
          premise: istype G B
          conclusion:
@@ -1338,8 +1338,8 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstZeroZero :
        rule
          parameters: {G u A},
-         precond: isctx G
-         precond: istype G A
+         precondition: isctx G
+         precondition: istype G A
          premise: isterm G u A
          conclusion:
            eqterm G
@@ -1351,9 +1351,9 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstZeroSucc :
        rule
          parameters: {G A B u k},
-         precond: isctx G
-         precond: istype G A
-         precond: istype G B
+         precondition: isctx G
+         precondition: istype G A
+         precondition: istype G B
          premise: isterm G (var k) A
          premise: isterm G u B
          conclusion:
@@ -1366,8 +1366,8 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstShiftZero :
        rule
          parameters: {G D A sbs},
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          premise: issubst sbs G D
          premise: istype D A
          conclusion:
@@ -1380,9 +1380,9 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstShiftSucc :
        rule
          parameters: { G D A B sbs k },
-         precond: isctx G
-         precond: isctx D
-         precond: istype D B
+         precondition: isctx G
+         precondition: isctx D
+         precondition: istype D B
          premise: issubst sbs G D
          premise: isterm D (var k) B
          premise: istype D A
@@ -1396,10 +1396,10 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstAbs :
        withpi rule
          parameters: {G D A B u sbs},
-         precond: isctx G
-         precond: isctx D
-         precond: istype D A
-         precond: istype (ctxextend D A) B
+         precondition: isctx G
+         precondition: isctx D
+         precondition: istype D A
+         precondition: istype (ctxextend D A) B
          premise: isterm (ctxextend D A) u B
          premise: issubst sbs G D
          conclusion:
@@ -1417,10 +1417,10 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstApp :
        withpi rule
          parameters: {G D A B u v sbs},
-         precond: isctx G
-         precond: isctx D
-         precond: istype D A
-         precond: istype (ctxextend D A) B
+         precondition: isctx G
+         precondition: isctx D
+         precondition: istype D A
+         precondition: istype (ctxextend D A) B
          premise: isterm D u (Prod A B)
          premise: isterm D v A
          premise: issubst sbs G D
@@ -1440,9 +1440,9 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G D A u sbs},
          premise: issubst sbs G D
          premise: isterm D u A
-         precond: isctx G
-         precond: isctx D
-         precond: istype D A
+         precondition: isctx G
+         precondition: isctx D
+         precondition: istype D A
          conclusion:
            eqterm G
                   (subst (refl A u) sbs)
@@ -1453,9 +1453,9 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstJ :
        identitytype withj rule
          parameters: {G D A C u v w p sbs},
-         precond: isctx G
-         precond: isctx D
-         precond: istype D A
+         precondition: isctx G
+         precondition: isctx D
+         precondition: istype D A
          premise: issubst sbs G D
          premise: isterm D u A
          premise:
@@ -1533,8 +1533,8 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstExfalso :
        withempty rule
          parameters: {G D A u sbs},
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          premise: istype D A
          premise: isterm D u Empty
          premise: issubst sbs G D
@@ -1548,8 +1548,8 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstUnit :
        withunit rule
          parameters: {G D sbs},
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          premise: issubst sbs G D
          conclusion:
            eqterm G
@@ -1562,8 +1562,8 @@ with eqterm : context -> term -> term -> type -> Type :=
        withbool rule
          parameters: {G D sbs},
          premise: issubst sbs G D
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqterm G
                   (subst true sbs)
@@ -1575,8 +1575,8 @@ with eqterm : context -> term -> term -> type -> Type :=
        withbool rule
          parameters: {G D sbs},
          premise: issubst sbs G D
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqterm G
                   (subst false sbs)
@@ -1587,11 +1587,11 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqSubstCond :
        withbool rule
          parameters: {G D C u v w sbs},
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          premise: issubst sbs G D
          premise: isterm D u Bool
-         premise: istype (ctxextend D Bool) C (* TODO: could this be a precond? *)
+         premise: istype (ctxextend D Bool) C (* TODO: could this be a precondition? *)
          premise: isterm D v (Subst C (sbzero Bool true))
          premise: isterm D w (Subst C (sbzero Bool false))
          conclusion:
@@ -1607,8 +1607,8 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqTermExfalso :
        withempty rule
          parameters: {G A u v w},
-         precond: isctx G
-         precond: istype G A
+         precondition: isctx G
+         precondition: istype G A
          premise: isterm G u A
          premise: isterm G v A
          premise: isterm G w Empty
@@ -1619,7 +1619,7 @@ with eqterm : context -> term -> term -> type -> Type :=
      | UnitEta :
        withunit rule
          parameters: {G u v},
-         precond: isctx G
+         precondition: isctx G
          premise: isterm G u Unit
          premise: isterm G v Unit
          conclusion:
@@ -1629,10 +1629,10 @@ with eqterm : context -> term -> term -> type -> Type :=
      | EqReflection :
        extensional identitytype rule
          parameters: {G A u v p},
-         precond: isctx G
-         precond: istype G A
-         precond: isterm G u A
-         precond: isterm G v A
+         precondition: isctx G
+         precondition: istype G A
+         precondition: isterm G u A
+         precondition: isterm G v A
          premise: isterm G p (Id A u v)
          conclusion:
            eqterm G u v A
@@ -1641,9 +1641,9 @@ with eqterm : context -> term -> term -> type -> Type :=
      | ProdBeta :
        withpi rule
          parameters: {G A B u v},
-         precond: isctx G
-         precond: istype G A
-         precond: istype (ctxextend G A) B
+         precondition: isctx G
+         precondition: istype G A
+         precondition: istype (ctxextend G A) B
          premise: isterm (ctxextend G A) u B
          premise: isterm G v A
          conclusion:
@@ -1656,7 +1656,7 @@ with eqterm : context -> term -> term -> type -> Type :=
      | CondTrue :
        withbool rule
          parameters: {G C v w},
-         precond: isctx G
+         precondition: isctx G
          premise: istype (ctxextend G Bool) C
          premise: isterm G v (Subst C (sbzero Bool true))
          premise: isterm G w (Subst C (sbzero Bool false))
@@ -1670,7 +1670,7 @@ with eqterm : context -> term -> term -> type -> Type :=
      | CondFalse :
        withbool rule
          parameters: {G C v w},
-         precond: isctx G
+         precondition: isctx G
          premise: istype (ctxextend G Bool) C
          premise: isterm G v (Subst C (sbzero Bool true))
          premise: isterm G w (Subst C (sbzero Bool false))
@@ -1684,9 +1684,9 @@ with eqterm : context -> term -> term -> type -> Type :=
      | ProdEta :
        prodeta withpi rule
          parameters: {G A B u v},
-         precond: isctx G
-         precond: istype G A
-         precond: istype (ctxextend G A) B
+         precondition: isctx G
+         precondition: istype G A
+         precondition: istype (ctxextend G A) B
          premise: isterm G u (Prod A B)
          premise: isterm G v (Prod A B)
          premise: eqterm (ctxextend G A)
@@ -1706,8 +1706,8 @@ with eqterm : context -> term -> term -> type -> Type :=
      | JRefl :
        identitytype withj rule
          parameters: {G A C u w},
-         precond: isctx G
-         precond: istype G A
+         precondition: isctx G
+         precondition: istype G A
          premise: isterm G u A
          premise: istype
              (ctxextend
@@ -1758,13 +1758,13 @@ with eqterm : context -> term -> term -> type -> Type :=
      | CongAbs :
        withpi rule
          parameters: {G A1 A2 B1 B2 u1 u2},
-         precond: isctx G
-         precond: istype G A1
-         precond: istype G B1
-         precond: istype (ctxextend G A1) A2
-         precond: istype (ctxextend G A1) B2
-         precond: isterm (ctxextend G A1) u1 A2
-         precond: isterm (ctxextend G A1) u2 A2
+         precondition: isctx G
+         precondition: istype G A1
+         precondition: istype G B1
+         precondition: istype (ctxextend G A1) A2
+         precondition: istype (ctxextend G A1) B2
+         precondition: isterm (ctxextend G A1) u1 A2
+         precondition: isterm (ctxextend G A1) u2 A2
          premise: eqtype G A1 B1
          premise: eqtype (ctxextend G A1) A2 B2
          premise: eqterm (ctxextend G A1) u1 u2 A2
@@ -1778,15 +1778,15 @@ with eqterm : context -> term -> term -> type -> Type :=
      | CongApp :
        withpi rule
          parameters: {G A1 A2 B1 B2 u1 u2 v1 v2},
-         precond: isctx G
-         precond: istype G A1
-         precond: istype (ctxextend G A1) A2
-         precond: istype G B1
-         precond: istype (ctxextend G A1) B2
-         precond: isterm G u1 (Prod A1 A2)
-         precond: isterm G v1 (Prod A1 A2)
-         precond: isterm G u2 A1
-         precond: isterm G v2 A1
+         precondition: isctx G
+         precondition: istype G A1
+         precondition: istype (ctxextend G A1) A2
+         precondition: istype G B1
+         precondition: istype (ctxextend G A1) B2
+         precondition: isterm G u1 (Prod A1 A2)
+         precondition: isterm G v1 (Prod A1 A2)
+         precondition: isterm G u2 A1
+         precondition: isterm G v2 A1
          premise: eqtype G A1 B1
          premise: eqtype (ctxextend G A1) A2 B2
          premise: eqterm G u1 v1 (Prod A1 A2)
@@ -1801,11 +1801,11 @@ with eqterm : context -> term -> term -> type -> Type :=
      | CongRefl :
        identitytype rule
          parameters: {G u1 u2 A1 A2},
-         precond: isctx G
-         precond: istype G A1
-         precond: istype G A2
-         precond: isterm G u1 A1
-         precond: isterm G u2 A1
+         precondition: isctx G
+         precondition: istype G A1
+         precondition: istype G A2
+         precondition: isterm G u1 A1
+         precondition: isterm G u2 A1
          premise: eqterm G u1 u2 A1
          premise: eqtype G A1 A2
          conclusion:
@@ -1818,10 +1818,10 @@ with eqterm : context -> term -> term -> type -> Type :=
      | CongJ :
        identitytype withj rule
          parameters: {G A1 A2 C1 C2 u1 u2 v1 v2 w1 w2 p1 p2},
-         precond: isctx G
-         precond: istype G A1
-         precond: istype G A2
-         precond:
+         precondition: isctx G
+         precondition: istype G A1
+         precondition: istype G A2
+         precondition:
            istype
              (ctxextend
                 (ctxextend G A1)
@@ -1832,7 +1832,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                 )
              )
              C1
-         precond:
+         precondition:
            istype
              (ctxextend
                 (ctxextend G A1)
@@ -1843,12 +1843,12 @@ with eqterm : context -> term -> term -> type -> Type :=
                 )
              )
              C2
-         precond: isterm G u1 A1
-         precond: isterm G u2 A1
-         precond: isterm G v1 A1
-         precond: isterm G v2 A1
-         precond: isterm G p1 (Id A1 u1 v1)
-         precond: isterm G p2 (Id A1 u1 v1)
+         precondition: isterm G u1 A1
+         precondition: isterm G u2 A1
+         precondition: isterm G v1 A1
+         precondition: isterm G v2 A1
+         precondition: isterm G p1 (Id A1 u1 v1)
+         precondition: isterm G p2 (Id A1 u1 v1)
          premise: eqtype G A1 A2
          premise: eqterm G u1 u2 A1
          premise:
@@ -1863,7 +1863,7 @@ with eqterm : context -> term -> term -> type -> Type :=
              )
              C1
              C2
-         precond:
+         precondition:
             isterm G
                   w1
                   (Subst
@@ -1880,7 +1880,7 @@ with eqterm : context -> term -> term -> type -> Type :=
                      )
                      (sbzero (Id A1 u1 u1) (refl A1 u1))
                   )
-         precond:
+         precondition:
             isterm G
                   w2
                   (Subst
@@ -1950,15 +1950,15 @@ with eqterm : context -> term -> term -> type -> Type :=
      | CongCond :
        withbool rule
          parameters: {G C1 C2 u1 u2 v1 v2 w1 w2},
-         precond: isctx G
-         precond: istype (ctxextend G Bool) C1
-         precond: istype (ctxextend G Bool) C2
-         precond: isterm G u1 Bool
-         precond: isterm G u2 Bool
-         precond: isterm G v1 (Subst C1 (sbzero Bool true))
-         precond: isterm G v2 (Subst C1 (sbzero Bool true))
-         precond: isterm G w1 (Subst C1 (sbzero Bool false))
-         precond: isterm G w2 (Subst C1 (sbzero Bool false))
+         precondition: isctx G
+         precondition: istype (ctxextend G Bool) C1
+         precondition: istype (ctxextend G Bool) C2
+         precondition: isterm G u1 Bool
+         precondition: isterm G u2 Bool
+         precondition: isterm G v1 (Subst C1 (sbzero Bool true))
+         precondition: isterm G v2 (Subst C1 (sbzero Bool true))
+         precondition: isterm G w1 (Subst C1 (sbzero Bool false))
+         precondition: isterm G w2 (Subst C1 (sbzero Bool false))
          premise: eqterm G u1 u2 Bool
          premise: eqtype (ctxextend G Bool) C1 C2
          premise: eqterm G v1 v2 (Subst C1 (sbzero Bool true))
@@ -1975,13 +1975,13 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G D A u1 u2 sbs sbt},
          premise: eqsubst sbs sbt G D
          premise: eqterm D u1 u2 A
-         precond: isctx G
-         precond: isctx D
-         precond: istype D A
-         precond: isterm D u1 A
-         precond: isterm D u2 A
-         precond: issubst sbs G D
-         precond: issubst sbt G D
+         precondition: isctx G
+         precondition: isctx D
+         precondition: istype D A
+         precondition: isterm D u1 A
+         precondition: isterm D u2 A
+         precondition: issubst sbs G D
+         precondition: issubst sbt G D
          conclusion:
            eqterm G
                   (subst u1 sbs)
@@ -1996,15 +1996,15 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: eqterm G v1 v2 B1
          premise: eqtype G A1 A2
          premise: eqtype G B1 B2
-         precond: isctx G
-         precond: istype G A1
-         precond: istype G A2
-         precond: istype G B1
-         precond: istype G B2
-         precond: isterm G u1 A1
-         precond: isterm G u2 A1
-         precond: isterm G v1 B1
-         precond: isterm G v2 B1
+         precondition: isctx G
+         precondition: istype G A1
+         precondition: istype G A2
+         precondition: istype G B1
+         precondition: istype G B2
+         precondition: isterm G u1 A1
+         precondition: isterm G u2 A1
+         precondition: isterm G v1 B1
+         precondition: isterm G v2 B1
          conclusion:
            eqterm G
                   (pair A1 B1 u1 v1)
@@ -2018,13 +2018,13 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: eqterm G p1 p2 (SimProd A1 B1)
          premise: eqtype G A1 A2
          premise: eqtype G B1 B2
-         precond: isctx G
-         precond: istype G A1
-         precond: istype G A2
-         precond: istype G B1
-         precond: istype G B2
-         precond: isterm G p1 (SimProd A1 B1)
-         precond: isterm G p2 (SimProd A1 B1)
+         precondition: isctx G
+         precondition: istype G A1
+         precondition: istype G A2
+         precondition: istype G B1
+         precondition: istype G B2
+         precondition: isterm G p1 (SimProd A1 B1)
+         precondition: isterm G p2 (SimProd A1 B1)
          conclusion:
            eqterm G
                   (proj1 A1 B1 p1)
@@ -2038,13 +2038,13 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: eqterm G p1 p2 (SimProd A1 B1)
          premise: eqtype G A1 A2
          premise: eqtype G B1 B2
-         precond: isctx G
-         precond: istype G A1
-         precond: istype G A2
-         precond: istype G B1
-         precond: istype G B2
-         precond: isterm G p1 (SimProd A1 B1)
-         precond: isterm G p2 (SimProd A1 B1)
+         precondition: isctx G
+         precondition: istype G A1
+         precondition: istype G A2
+         precondition: istype G B1
+         precondition: istype G B2
+         precondition: isterm G p1 (SimProd A1 B1)
+         precondition: isterm G p2 (SimProd A1 B1)
          conclusion:
            eqterm G
                   (proj2 A1 B1 p1)
@@ -2058,10 +2058,10 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: issubst sbs G D
          premise: isterm D u A
          premise: isterm D v B
-         precond: isctx G
-         precond: isctx D
-         precond: istype D A
-         precond: istype D B
+         precondition: isctx G
+         precondition: isctx D
+         precondition: istype D A
+         precondition: istype D B
          conclusion:
            eqterm G
                   (subst (pair A B u v) sbs)
@@ -2074,10 +2074,10 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G D A B p sbs},
          premise: issubst sbs G D
          premise: isterm D p (SimProd A B)
-         precond: isctx G
-         precond: isctx D
-         precond: istype D A
-         precond: istype D B
+         precondition: isctx G
+         precondition: isctx D
+         precondition: istype D A
+         precondition: istype D B
          conclusion:
            eqterm G
                   (subst (proj1 A B p) sbs)
@@ -2090,10 +2090,10 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G D A B p sbs},
          premise: issubst sbs G D
          premise: isterm D p (SimProd A B)
-         precond: isctx G
-         precond: isctx D
-         precond: istype D A
-         precond: istype D B
+         precondition: isctx G
+         precondition: isctx D
+         precondition: istype D A
+         precondition: istype D B
          conclusion:
            eqterm G
                   (subst (proj2 A B p) sbs)
@@ -2106,9 +2106,9 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G A B u v},
          premise: isterm G u A
          premise: isterm G v B
-         precond: isctx G
-         precond: istype G A
-         precond: istype G B
+         precondition: isctx G
+         precondition: istype G A
+         precondition: istype G B
          conclusion:
            eqterm G
                   (proj1 A B (pair A B u v))
@@ -2121,9 +2121,9 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G A B u v},
          premise: isterm G u A
          premise: isterm G v B
-         precond: isctx G
-         precond: istype G A
-         precond: istype G B
+         precondition: isctx G
+         precondition: istype G A
+         precondition: istype G B
          conclusion:
            eqterm G
                   (proj2 A B (pair A B u v))
@@ -2138,9 +2138,9 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: eqterm G (proj2 A B p) (proj2 A B q) B
          premise: isterm G p (SimProd A B)
          premise: isterm G q (SimProd A B)
-         precond: isctx G
-         precond: istype G A
-         precond: istype G B
+         precondition: isctx G
+         precondition: istype G A
+         precondition: istype G B
          conclusion:
            eqterm G p q (SimProd A B)
        endrule
@@ -2151,8 +2151,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: issubst sbs G D
          premise: isterm D a (Uni (uni n))
          premise: isterm (ctxextend D (El (uni n) a)) b (Uni (uni m))
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqterm G
                   (subst (uniProd (uni n) (uni m) a b) sbs)
@@ -2169,8 +2169,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: issubst sbs G D
          premise: isterm D a (Uni l)
          premise: isterm (ctxextend D (El l a)) b (Uni prop)
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqterm G
                   (subst (uniProd l prop a b) sbs)
@@ -2187,8 +2187,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: isterm D a (Uni n)
          premise: isterm D u (El n a)
          premise: isterm D v (El n a)
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqterm G
                   (subst (uniId n a u v) sbs)
@@ -2200,8 +2200,8 @@ with eqterm : context -> term -> term -> type -> Type :=
        withempty universe rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqterm G
                   (subst (uniEmpty n) sbs)
@@ -2213,8 +2213,8 @@ with eqterm : context -> term -> term -> type -> Type :=
        withunit universe rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqterm G
                   (subst (uniUnit n) sbs)
@@ -2226,8 +2226,8 @@ with eqterm : context -> term -> term -> type -> Type :=
        withbool universe rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqterm G
                   (subst (uniBool n) sbs)
@@ -2241,8 +2241,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: issubst sbs G D
          premise: isterm D a (Uni (uni n))
          premise: isterm D b (Uni (uni m))
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqterm G
                   (subst (uniSimProd (uni n) (uni m) a b) sbs)
@@ -2256,8 +2256,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: issubst sbs G D
          premise: isterm D a (Uni prop)
          premise: isterm D b (Uni prop)
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqterm G
                   (subst (uniSimProd prop prop a b) sbs)
@@ -2269,8 +2269,8 @@ with eqterm : context -> term -> term -> type -> Type :=
        universe rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqterm G
                   (subst (uniUni (uni n)) sbs)
@@ -2282,8 +2282,8 @@ with eqterm : context -> term -> term -> type -> Type :=
        universe withprop rule
          parameters: {G D sbs},
          premise: issubst sbs G D
-         precond: isctx G
-         precond: isctx D
+         precondition: isctx G
+         precondition: isctx D
          conclusion:
            eqterm G
                   (subst (uniUni prop) sbs)
@@ -2296,11 +2296,11 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G a1 a2 b1 b2 n m},
          premise: eqterm G a1 a2 (Uni (uni n))
          premise: eqterm (ctxextend G (El (uni n) a1)) b1 b2 (Uni (uni m))
-         precond: isterm G a1 (Uni (uni n))
-         precond: isterm G a2 (Uni (uni n))
-         precond: isterm (ctxextend G (El (uni n) a1)) b1 (Uni (uni m))
-         precond: isterm (ctxextend G (El (uni n) a1)) b2 (Uni (uni m))
-         precond: isctx G
+         precondition: isterm G a1 (Uni (uni n))
+         precondition: isterm G a2 (Uni (uni n))
+         precondition: isterm (ctxextend G (El (uni n) a1)) b1 (Uni (uni m))
+         precondition: isterm (ctxextend G (El (uni n) a1)) b2 (Uni (uni m))
+         precondition: isctx G
          conclusion:
            eqterm G
                   (uniProd (uni n) (uni m) a1 b1)
@@ -2313,11 +2313,11 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G a1 a2 b1 b2 l},
          premise: eqterm G a1 a2 (Uni l)
          premise: eqterm (ctxextend G (El l a1)) b1 b2 (Uni prop)
-         precond: isterm G a1 (Uni l)
-         precond: isterm G a2 (Uni l)
-         precond: isterm (ctxextend G (El l a1)) b1 (Uni prop)
-         precond: isterm (ctxextend G (El l a1)) b2 (Uni prop)
-         precond: isctx G
+         precondition: isterm G a1 (Uni l)
+         precondition: isterm G a2 (Uni l)
+         precondition: isterm (ctxextend G (El l a1)) b1 (Uni prop)
+         precondition: isterm (ctxextend G (El l a1)) b2 (Uni prop)
+         precondition: isctx G
          conclusion:
            eqterm G
                   (uniProd l prop a1 b1)
@@ -2331,13 +2331,13 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: eqterm G a1 a2 (Uni n)
          premise: eqterm G u1 u2 (El n a1)
          premise: eqterm G v1 v2 (El n a1)
-         precond: isterm G a1 (Uni n)
-         precond: isterm G a2 (Uni n)
-         precond: isterm G u1 (El n a1)
-         precond: isterm G u2 (El n a1)
-         precond: isterm G v1 (El n a1)
-         precond: isterm G v2 (El n a2)
-         precond: isctx G
+         precondition: isterm G a1 (Uni n)
+         precondition: isterm G a2 (Uni n)
+         precondition: isterm G u1 (El n a1)
+         precondition: isterm G u2 (El n a1)
+         precondition: isterm G v1 (El n a1)
+         precondition: isterm G v2 (El n a2)
+         precondition: isctx G
          conclusion:
            eqterm G
                   (uniId n a1 u1 v1)
@@ -2350,11 +2350,11 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G a1 a2 b1 b2 n m},
          premise: eqterm G a1 a2 (Uni (uni n))
          premise: eqterm G b1 b2 (Uni (uni m))
-         precond: isterm G a1 (Uni (uni n))
-         precond: isterm G a2 (Uni (uni n))
-         precond: isterm G b1 (Uni (uni m))
-         precond: isterm G b2 (Uni (uni m))
-         precond: isctx G
+         precondition: isterm G a1 (Uni (uni n))
+         precondition: isterm G a2 (Uni (uni n))
+         precondition: isterm G b1 (Uni (uni m))
+         precondition: isterm G b2 (Uni (uni m))
+         precondition: isctx G
          conclusion:
            eqterm G
                   (uniSimProd (uni n) (uni m) a1 b1)
@@ -2367,11 +2367,11 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G a1 a2 b1 b2},
          premise: eqterm G a1 a2 (Uni prop)
          premise: eqterm G b1 b2 (Uni prop)
-         precond: isterm G a1 (Uni prop)
-         precond: isterm G a2 (Uni prop)
-         precond: isterm G b1 (Uni prop)
-         precond: isterm G b2 (Uni prop)
-         precond: isctx G
+         precondition: isterm G a1 (Uni prop)
+         precondition: isterm G a2 (Uni prop)
+         precondition: isterm G b1 (Uni prop)
+         precondition: isterm G b2 (Uni prop)
+         precondition: isctx G
          conclusion:
            eqterm G
                   (uniSimProd prop prop a1 b1)

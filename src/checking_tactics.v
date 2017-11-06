@@ -15,7 +15,7 @@ Inductive macic_debug := DoDebug | DontDebug.
 Section Checking1.
 
 (* We are as modular as can be *)
-Context `{configPrecond : config.Precond}.
+Context `{configPrecondition : config.Precondition}.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
@@ -143,7 +143,7 @@ Ltac compsubst1 :=
 
 Section Checking2.
 
-Context `{configPrecond : config.Precond}.
+Context `{configPrecondition : config.Precondition}.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
@@ -1220,7 +1220,7 @@ Ltac pushsubst1 := prepushsubst1 DoEqsym.
 
 Section Checking3.
 
-Context `{configPrecond : config.Precond}.
+Context `{configPrecondition : config.Precondition}.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
@@ -1735,8 +1735,8 @@ Qed.
 Lemma FlexWeakZero :
   forall {G A B u},
     isctx G ->
-    (config.precondFlag -> istype G A) ->
-    (config.precondFlag -> istype G B) ->
+    (config.preconditionFlag -> istype G A) ->
+    (config.preconditionFlag -> istype G B) ->
     isterm G u A ->
     eqtype G B A ->
     eqsubst (sbcomp (sbweak B) (sbzero A u))

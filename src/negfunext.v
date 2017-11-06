@@ -17,7 +17,7 @@ Module Stt.
 
   Section Stt.
 
-  Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
+  Local Instance hasPrecondition : config.Precondition := {| config.preconditionFlag := config.Yes |}.
   Context `{configReflection : config.Reflection}.
   Context `{configSimpleProducts : config.SimpleProducts}.
   Local Instance hasProdEta : config.ProdEta := {| config.prodetaFlag := config.No |}.
@@ -49,8 +49,8 @@ Module Ttt.
 
   Section Ttt.
 
-  Local Instance hasPrecond : config.Precond
-    := {| config.precondFlag := config.No |}.
+  Local Instance hasPrecondition : config.Precondition
+    := {| config.preconditionFlag := config.No |}.
   Context `{configReflection : config.Reflection}.
   Local Instance hasSimpleProducts : config.SimpleProducts
     := {| config.simpleproductsFlag := config.Yes |}.

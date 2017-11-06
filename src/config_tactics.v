@@ -8,8 +8,8 @@ Ltac doConfig :=
     match (eval cbn in P) with
     | Yes => intros _
     | No => let H := fresh "H" in (intros H ; now elim H)
-    | precondFlag =>
-      let H := fresh "precondFlag" in intros H
+    | preconditionFlag =>
+      let H := fresh "preconditionFlag" in intros H
     | reflectionFlag =>
       let H := fresh "reflectionFlag" in intros H
     | simpleproductsFlag =>
@@ -38,7 +38,7 @@ Ltac doConfig :=
     match (eval cbn in P) with
     | Yes => exact yes
     end
-  | H : precondFlag |- precondFlag => exact H
+  | H : preconditionFlag |- preconditionFlag => exact H
   | H : reflectionFlag |- reflectionFlag => exact H
   | H : simpleproductsFlag |- simpleproductsFlag => exact H
   | H : prodetaFlag |- prodetaFlag => exact H
@@ -59,9 +59,9 @@ Ltac doConfig :=
      match (eval cbn in P) with
      | Yes => specialize (H yes)
      | No => clear H
-     | @precondFlag ?F =>
+     | @preconditionFlag ?F =>
        match goal with
-       | R : @precondFlag F |- _ => specialize (H R)
+       | R : @preconditionFlag F |- _ => specialize (H R)
        end
      | @reflectionFlag ?F =>
        match goal with

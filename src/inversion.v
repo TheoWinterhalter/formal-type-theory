@@ -4,7 +4,7 @@ Require Import config syntax tt.
 
 Section InversionPrinciples.
 
-Context `{configPrecond : config.Precond}.
+Context `{configPrecondition : config.Precondition}.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.

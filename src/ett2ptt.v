@@ -26,7 +26,7 @@ Context `{configSyntax : syntax.Syntax}.
 
    We want them for PTT.
 *)
-Existing Instance ptt.hasPrecond.
+Existing Instance ptt.hasPrecondition.
 Context {haveCtxExtendInversion : HaveCtxExtendInversion}.
 Context {haveTyIdInversion : HaveTyIdInversion}.
 Context {haveTyProdInversion : HaveTyProdInversion}.

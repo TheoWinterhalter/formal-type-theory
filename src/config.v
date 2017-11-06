@@ -24,8 +24,8 @@ Inductive No : Type := .
 *)
 
 (* Paranoid mode, include preconditions in rules. *)
-Class Precond := {
-  precondFlag : Type
+Class Precondition := {
+  preconditionFlag : Type
 }.
 
 (* Dependent products. *)

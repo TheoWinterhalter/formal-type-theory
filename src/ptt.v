@@ -4,7 +4,7 @@ Require syntax.
 
 Section Ptt.
 
-Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
+Local Instance hasPrecondition : config.Precondition := {| config.preconditionFlag := config.Yes |}.
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
