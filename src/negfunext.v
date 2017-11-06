@@ -26,7 +26,7 @@ Module Stt.
   Context `{configIdType : config.IdType}.
   Context `{configIdEliminator : config.IdEliminator}.
   Context `{configEmptyType : config.EmptyType}.
-  Context `{configUnit : config.WithUnit}.
+  Context `{configUnitType : config.UnitType}.
   Context `{configBool : config.WithBool}.
   Local Instance hasPi : config.ProdType := {| config.flagProdType := config.Yes |}.
   Local Existing Instance annotated_syntax.Syntax.
@@ -58,7 +58,7 @@ Module Ttt.
   Context `{configIdType : config.IdType}.
   Context `{configIdEliminator : config.IdEliminator}.
   Context `{configEmptyType : config.EmptyType}.
-  Context `{configUnit : config.WithUnit}.
+  Context `{configUnitType : config.UnitType}.
   Local Instance hasBool : config.WithBool := {| config.withboolFlag := config.Yes |}.
   Local Instance hasPi : config.ProdType := {| config.flagProdType := config.Yes |}.
   Local Existing Instance annotated_syntax.Syntax.
@@ -85,7 +85,7 @@ Context `{configPropType : config.PropType}.
 Context `{configIdType : config.IdType}.
 Context `{configIdEliminator : config.IdEliminator}.
 Context `{configEmptyType : config.EmptyType}.
-Context `{configUnit : config.WithUnit}.
+Context `{configUnitType : config.UnitType}.
 Context `{configBool : config.WithBool}.
 
 Lemma max_0 : forall n m, max (max n m) 0 = max n m.

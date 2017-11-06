@@ -74,8 +74,8 @@ Class EmptyType := {
 }.
 
 (* Unit type. *)
-Class WithUnit := {
-  withunitFlag : Type
+Class UnitType := {
+  flagUnitType : Type
 }.
 
 (* Boolean type. *)

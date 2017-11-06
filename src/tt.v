@@ -23,7 +23,7 @@ Context `{configUniverses : config.Universes}.
 Context `{configPropType : config.PropType}.
 Context `{configIdEliminator : config.IdEliminator}.
 Context `{configEmptyType : config.EmptyType}.
-Context `{configUnit : config.WithUnit}.
+Context `{configUnitType : config.UnitType}.
 Context `{configBool : config.WithBool}.
 Context `{configIdType : config.IdType}.
 Context `{configProdType : config.ProdType}.
@@ -57,7 +57,7 @@ Notation "'withempty' r" :=
   (forall { _ : flagEmptyType }, r) (only parsing, at level 97).
 
 Notation "'withunit' r" :=
-  (forall { _ : withunitFlag }, r) (only parsing, at level 97).
+  (forall { _ : flagUnitType }, r) (only parsing, at level 97).
 
 Notation "'withbool' r" :=
   (forall { _ : withboolFlag }, r) (only parsing, at level 97).
