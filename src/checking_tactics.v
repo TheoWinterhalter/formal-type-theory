@@ -5,12 +5,6 @@ Require Import config_tactics.
 Require Import tt.
 Require Import syntax.
 
-(* We use these notations to prevent true and false of type term from shadowing
-   the boolean constructors.
- *)
-Notation "'btrue'" := (Coq.Init.Datatypes.true).
-Notation "'bfalse'" := (Coq.Init.Datatypes.false).
-
 (* Configuration options for the tactics. *)
 Inductive magic_try := DoTry | DontTry.
 Inductive magic_doshelf := DoShelf | DontShelf.
@@ -2086,22 +2080,22 @@ Ltac eqtype_subst G A sbs B k try shelf tysym debug :=
           then first [
             ceapply CongTySubst
           | myfail debug
-          ] ; k try shelf btrue debug
+          ] ; k try shelf DoTysym debug
           else first [
             ceapply EqTySym ; [ simplify | .. ]
           | ceapply CongTySubst
           | myfail debug
-          ] ; k try shelf btrue debug
+          ] ; k try shelf DoTysym debug
         )
         else first [
           pushsubst1
         | myfail debug
-        ] ; k try shelf btrue debug
+        ] ; k try shelf DoTysym debug
       | _ =>
         first [
           ceapply CongTySubst
         | myfail debug
-        ] ; k try shelf btrue debug
+        ] ; k try shelf DoTysym debug
       end
     )
     else
@@ -2114,13 +2108,13 @@ Ltac eqtype_subst G A sbs B k try shelf tysym debug :=
             simplify
           | ceapply CongTySubst
           | myfail debug
-          ] ; k try shelf btrue debug
+          ] ; k try shelf DoTysym debug
           else first [
             simplify
           | ceapply EqTySym ; [ simplify | .. ]
           | ceapply CongTySubst
           | myfail debug
-          ] ; k try shelf btrue debug
+          ] ; k try shelf DoTysym debug
         )
         else first [
           (* Should we simplify on the left first? *)
@@ -2128,20 +2122,20 @@ Ltac eqtype_subst G A sbs B k try shelf tysym debug :=
         | simplify
         | do_tysym tysym ; ceapply EqTySym ; [ simplify | .. ]
         | myfail debug
-        ] ; k try shelf btrue debug
+        ] ; k try shelf DoTysym debug
       | _ =>
         first [
           simplify
         | ceapply CongTySubst
         | myfail debug
-        ] ; k try shelf btrue debug
+        ] ; k try shelf DoTysym debug
       end
   )
   else first [
     pushsubst1
   | do_tysym tysym ; ceapply EqTySym ; [ simplify | .. ]
   | myfail debug
-  ] ; k try shelf btrue debug.
+  ] ; k try shelf DoTysym debug.
 
 (* Magic Tactic *)
 (* It is basically a type checker that doesn't do the smart things,
