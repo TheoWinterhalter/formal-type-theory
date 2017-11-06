@@ -13,7 +13,7 @@ Context `{configReflection : config.Reflection}.
 Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
-Context `{configWithProp : config.WithProp}.
+Context `{configPropType : config.PropType}.
 Context `{configIdType : config.IdType}.
 Context `{configIdEliminator : config.IdEliminator}.
 Context `{configEmpty : config.WithEmpty}.

@@ -64,8 +64,8 @@ Class Universes := {
 }.
 
 (* Impredicative universe of propositions. *)
-Class WithProp := {
-  withpropFlag : Type
+Class PropType := {
+  flagPropType : Type
 }.
 
 (* Empty type. *)

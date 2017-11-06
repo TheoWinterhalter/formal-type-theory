@@ -22,7 +22,7 @@ Module Stt.
   Context `{configBinaryProdType : config.BinaryProdType}.
   Local Instance hasProdEta : config.ProdEta := {| config.flagProdEta := config.No |}.
   Context `{configUniverses : config.Universes}.
-  Local Instance hasProp : config.WithProp := {| config.withpropFlag := config.No |}.
+  Local Instance hasProp : config.PropType := {| config.flagPropType := config.No |}.
   Context `{configIdType : config.IdType}.
   Context `{configIdEliminator : config.IdEliminator}.
   Context `{configEmpty : config.WithEmpty}.
@@ -54,7 +54,7 @@ Module Ttt.
   Local Instance hasBinaryProdType : config.BinaryProdType := {| config.flagBinaryProdType := config.Yes |}.
   Local Instance hasProdEta : config.ProdEta := {| config.flagProdEta := config.No |}.
   Context `{configUniverses : config.Universes}.
-  Context `{configWithProp : config.WithProp}.
+  Context `{configPropType : config.PropType}.
   Context `{configIdType : config.IdType}.
   Context `{configIdEliminator : config.IdEliminator}.
   Context `{configEmpty : config.WithEmpty}.
@@ -81,7 +81,7 @@ Section Translation.
 Context `{configReflection : config.Reflection}.
 Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configUniverses : config.Universes}.
-Context `{configWithProp : config.WithProp}.
+Context `{configPropType : config.PropType}.
 Context `{configIdType : config.IdType}.
 Context `{configIdEliminator : config.IdEliminator}.
 Context `{configEmpty : config.WithEmpty}.
@@ -378,7 +378,7 @@ Proof.
           - ih.
           - now apply (trans_istype (ctxextend (ctxextend G A)
             (Id (Subst A (sbweak A)) (subst u (sbweak A)) (var 0))) C).
-          - now apply (trans_isterm G w0
+          - now apply (trans_isterm G w
          (Subst
             (Subst C
                (sbshift (Id (Subst A (sbweak A)) (subst u (sbweak A)) (var 0))
@@ -440,7 +440,7 @@ Proof.
       (* TermUniId *)
       - { simpl. capply @TermUniId.
           - now apply (trans_isterm G a (Uni n)).
-          - now apply (trans_isterm G u0 (El n a)).
+          - now apply (trans_isterm G u (El n a)).
           - now apply (trans_isterm G v (El n a)).
         }
 
@@ -456,7 +456,7 @@ Proof.
       (* TermUniBinaryProd *)
       - { simpl. capply @TermUniBinaryProd.
           - now apply (trans_isterm G a (Uni (uni n))).
-          - now apply (trans_isterm G b0 (Uni (uni m))).
+          - now apply (trans_isterm G b (Uni (uni m))).
         }
 
       (* TermUniUni *)
@@ -639,7 +639,7 @@ Proof.
       (* ElId *)
       - { simpl. capply @ElId.
           - now apply (trans_isterm G a (Uni n)).
-          - now apply (trans_isterm G u0 (El n a)).
+          - now apply (trans_isterm G u (El n a)).
           - now apply (trans_isterm G v (El n a)).
         }
 
@@ -661,7 +661,7 @@ Proof.
       (* ElBinaryProd *)
       - { simpl. capply @ElBinaryProd.
           - now apply (trans_isterm G a (Uni (uni n))).
-          - now apply (trans_isterm G b0 (Uni (uni m))).
+          - now apply (trans_isterm G b (Uni (uni m))).
         }
 
       (* ElUni *)
@@ -1098,7 +1098,7 @@ Proof.
       - { simpl. config apply @EqSubstUniId with (D := trans_ctx D).
           - ih.
           - now apply (trans_isterm D a (Uni n)).
-          - now apply (trans_isterm D u0 (El n a)).
+          - now apply (trans_isterm D u (El n a)).
           - now apply (trans_isterm D v (El n a)).
         }
 
@@ -1115,7 +1115,7 @@ Proof.
       - { simpl. config apply @EqSubstUniBinaryProd with (D := trans_ctx D).
           - ih.
           - now apply (trans_isterm D a (Uni (uni n))).
-          - now apply (trans_isterm D b0 (Uni (uni m))).
+          - now apply (trans_isterm D b (Uni (uni m))).
         }
 
       (* EqSubstUniUni *)
@@ -1230,3 +1230,4 @@ Proof.
 Qed.
 
 End Translation.
+<

@@ -18,8 +18,8 @@ Ltac doConfig :=
       let H := fresh "flagProdEta" in intros H
     | flagUniverses =>
       let H := fresh "flagUniverses" in intros H
-    | withpropFlag =>
-      let H := fresh "withpropFlag" in intros H
+    | flagPropType =>
+      let H := fresh "flagPropType" in intros H
     | flagIdEliminator =>
       let H := fresh "flagIdEliminator" in intros H
     | withemptyFlag =>
@@ -43,7 +43,7 @@ Ltac doConfig :=
   | H : flagBinaryProdType |- flagBinaryProdType => exact H
   | H : flagProdEta |- flagProdEta => exact H
   | H : flagUniverses |- flagUniverses => exact H
-  | H : withpropFlag |- withpropFlag => exact H
+  | H : flagPropType |- flagPropType => exact H
   | H : flagIdEliminator |- flagIdEliminator => exact H
   | H : withemptyFlag |- withemptyFlag => exact H
   | H : withunitFlag |- withunitFlag => exact H
@@ -79,9 +79,9 @@ Ltac doConfig :=
        match goal with
        | R : @flagUniverses F |- _ => specialize (H R)
        end
-     | @withpropFlag ?F =>
+     | @flagPropType ?F =>
        match goal with
-       | R : @withpropFlag F |- _ => specialize (H R)
+       | R : @flagPropType F |- _ => specialize (H R)
        end
      | @flagIdEliminator ?F =>
        match goal with

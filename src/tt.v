@@ -20,7 +20,7 @@ Context `{configReflection : config.Reflection}.
 Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
-Context `{configWithProp : config.WithProp}.
+Context `{configPropType : config.PropType}.
 Context `{configIdEliminator : config.IdEliminator}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
@@ -45,7 +45,7 @@ Notation "'universe' r" :=
   (forall { _ : flagUniverses }, r) (only parsing, at level 97).
 
 Notation "'withprop' r" :=
-  (forall { _ : withpropFlag }, r) (only parsing, at level 97).
+  (forall { _ : flagPropType }, r) (only parsing, at level 97).
 
 Notation "'identitytype' r" :=
   (forall { _ : flagIdType }, r) (only parsing, at level 97).
