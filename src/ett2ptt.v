@@ -14,7 +14,7 @@ Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
 Context `{configIdType : config.IdType}.
-Context `{configWithJ : config.WithJ}.
+Context `{configIdEliminator : config.IdEliminator}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
 Context `{configBool : config.WithBool}.

@@ -24,7 +24,7 @@ Module Stt.
   Context `{configUniverses : config.Universes}.
   Local Instance hasProp : config.WithProp := {| config.withpropFlag := config.No |}.
   Context `{configIdType : config.IdType}.
-  Context `{configWithJ : config.WithJ}.
+  Context `{configIdEliminator : config.IdEliminator}.
   Context `{configEmpty : config.WithEmpty}.
   Context `{configUnit : config.WithUnit}.
   Context `{configBool : config.WithBool}.
@@ -56,7 +56,7 @@ Module Ttt.
   Context `{configUniverses : config.Universes}.
   Context `{configWithProp : config.WithProp}.
   Context `{configIdType : config.IdType}.
-  Context `{configWithJ : config.WithJ}.
+  Context `{configIdEliminator : config.IdEliminator}.
   Context `{configEmpty : config.WithEmpty}.
   Context `{configUnit : config.WithUnit}.
   Local Instance hasBool : config.WithBool := {| config.withboolFlag := config.Yes |}.
@@ -83,7 +83,7 @@ Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
 Context `{configIdType : config.IdType}.
-Context `{configWithJ : config.WithJ}.
+Context `{configIdEliminator : config.IdEliminator}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
 Context `{configBool : config.WithBool}.

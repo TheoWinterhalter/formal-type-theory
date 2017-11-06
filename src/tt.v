@@ -21,7 +21,7 @@ Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
 Context `{configWithProp : config.WithProp}.
-Context `{configWithJ : config.WithJ}.
+Context `{configIdEliminator : config.IdEliminator}.
 Context `{configEmpty : config.WithEmpty}.
 Context `{configUnit : config.WithUnit}.
 Context `{configBool : config.WithBool}.
@@ -51,7 +51,7 @@ Notation "'identitytype' r" :=
   (forall { _ : flagIdType }, r) (only parsing, at level 97).
 
 Notation "'withj' r" :=
-  (forall { _ : withjFlag }, r) (only parsing, at level 97).
+  (forall { _ : flagIdEliminator }, r) (only parsing, at level 97).
 
 Notation "'withempty' r" :=
   (forall { _ : withemptyFlag }, r) (only parsing, at level 97).

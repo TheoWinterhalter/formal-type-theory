@@ -44,8 +44,8 @@ Class IdType := {
 }.
 
 (* J-eliminator. *)
-Class WithJ := {
-  withjFlag : Type
+Class IdEliminator := {
+  flagIdEliminator : Type
 }.
 
 (* Equality reflection. *)
