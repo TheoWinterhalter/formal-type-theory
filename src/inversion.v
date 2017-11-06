@@ -1,4 +1,4 @@
-(* Inversion principles as configurations *)
+(* Statement of inversion principles. *)
 
 Require Import config syntax tt.
 
