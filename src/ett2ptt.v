@@ -17,7 +17,7 @@ Context `{configIdType : config.IdType}.
 Context `{configIdEliminator : config.IdEliminator}.
 Context `{configEmptyType : config.EmptyType}.
 Context `{configUnitType : config.UnitType}.
-Context `{configBool : config.WithBool}.
+Context `{configBoolType : config.BoolType}.
 Context `{configProdType : config.ProdType}.
 Context `{configSyntax : syntax.Syntax}.
 
@@ -1053,7 +1053,7 @@ Proof.
       }
 
     (* EqTermExfalso *)
-    - { config apply @EqTermExfalso with (w := w0).
+    - { config apply @EqTermExfalso with (w := w).
         - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply (ptt_sane_isterm G u A), sane_isterm.
         - now apply sane_isterm.

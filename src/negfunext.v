@@ -27,7 +27,7 @@ Module Stt.
   Context `{configIdEliminator : config.IdEliminator}.
   Context `{configEmptyType : config.EmptyType}.
   Context `{configUnitType : config.UnitType}.
-  Context `{configBool : config.WithBool}.
+  Context `{configBoolType : config.BoolType}.
   Local Instance hasPi : config.ProdType := {| config.flagProdType := config.Yes |}.
   Local Existing Instance annotated_syntax.Syntax.
 
@@ -59,7 +59,7 @@ Module Ttt.
   Context `{configIdEliminator : config.IdEliminator}.
   Context `{configEmptyType : config.EmptyType}.
   Context `{configUnitType : config.UnitType}.
-  Local Instance hasBool : config.WithBool := {| config.withboolFlag := config.Yes |}.
+  Local Instance hasBool : config.BoolType := {| config.flagBoolType := config.Yes |}.
   Local Instance hasPi : config.ProdType := {| config.flagProdType := config.Yes |}.
   Local Existing Instance annotated_syntax.Syntax.
 
@@ -86,7 +86,7 @@ Context `{configIdType : config.IdType}.
 Context `{configIdEliminator : config.IdEliminator}.
 Context `{configEmptyType : config.EmptyType}.
 Context `{configUnitType : config.UnitType}.
-Context `{configBool : config.WithBool}.
+Context `{configBoolType : config.BoolType}.
 
 Lemma max_0 : forall n m, max (max n m) 0 = max n m.
 Proof.
@@ -407,7 +407,7 @@ Proof.
           - now apply (trans_isterm G u Bool).
           - now apply (trans_istype (ctxextend G Bool) C).
           - now apply (trans_isterm G v (Subst C (sbzero Bool true))).
-          - now apply (trans_isterm G w0 (Subst C (sbzero Bool false))).
+          - now apply (trans_isterm G w (Subst C (sbzero Bool false))).
         }
 
       (* TermPair *)
@@ -892,14 +892,14 @@ Proof.
           - now apply (trans_isterm D u Bool).
           - now apply (trans_istype (ctxextend D Bool) C).
           - now apply (trans_isterm D v _ i4).
-          - now apply (trans_isterm D w0 _ i5).
+          - now apply (trans_isterm D w _ i5).
         }
 
       (* EqTermExfalso *)
-      - { config apply @EqTermExfalso with (w := trans_term w0).
+      - { config apply @EqTermExfalso with (w := trans_term w).
           - ih.
           - ih.
-          - now apply (trans_isterm G w0 Empty).
+          - now apply (trans_isterm G w Empty).
         }
 
       (* UnitEta *)
@@ -933,14 +933,14 @@ Proof.
       - { simpl. capply @CondTrue.
           - now apply (trans_istype (ctxextend G Bool) C).
           - now apply (trans_isterm G v (Subst C (sbzero Bool true))).
-          - now apply (trans_isterm G w0 (Subst C (sbzero Bool false))).
+          - now apply (trans_isterm G w (Subst C (sbzero Bool false))).
         }
 
       (* CondFalse *)
       - { simpl. capply @CondFalse.
           - now apply (trans_istype (ctxextend G Bool) C).
           - now apply (trans_isterm G v (Subst C (sbzero Bool true))).
-          - now apply (trans_isterm G w0 (Subst C (sbzero Bool false))).
+          - now apply (trans_isterm G w (Subst C (sbzero Bool false))).
         }
 
       (* JRefl *)

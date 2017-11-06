@@ -79,6 +79,6 @@ Class UnitType := {
 }.
 
 (* Boolean type. *)
-Class WithBool := {
-  withboolFlag : Type
+Class BoolType := {
+  flagBoolType : Type
 }.

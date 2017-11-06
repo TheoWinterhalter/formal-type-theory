@@ -19,7 +19,7 @@ Context `{configIdType : config.IdType}.
 Context `{configIdEliminator : config.IdEliminator}.
 Context `{configEmptyType : config.EmptyType}.
 Context `{configUnitType : config.UnitType}.
-Context `{configBool : config.WithBool}.
+Context `{configBoolType : config.BoolType}.
 Context `{configProdType : config.ProdType}.
 Context `{configSyntax : syntax.Syntax}.
 

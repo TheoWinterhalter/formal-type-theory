@@ -16,7 +16,7 @@ Context `{configIdType : config.IdType}.
 Context `{configIdEliminator : config.IdEliminator}.
 Context `{configEmptyType : config.EmptyType}.
 Context `{configUnitType : config.UnitType}.
-Context `{configBool : config.WithBool}.
+Context `{configBoolType : config.BoolType}.
 Context `{configProdType : config.ProdType}.
 Context `{configSyntax : syntax.Syntax}.
 
@@ -424,7 +424,7 @@ Proof.
       - apply @EqSubstCond with (D := D) ; auto.
 
       (* EqTermExfalso *)
-      - apply @EqTermExfalso with (w := w0) ; auto.
+      - apply @EqTermExfalso with (w := w) ; auto.
 
       (* UnitEta *)
       - apply UnitEta ; auto.
