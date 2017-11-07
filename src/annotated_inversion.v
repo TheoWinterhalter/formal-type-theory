@@ -1,16 +1,17 @@
-(* Paranoid syntax inversion
+(* Annotated syntax inversion
 
    The purpose of this file is to provide the inversion lemmata that are
-   required by sanity on paranoid syntax.
+   required by sanity on annotated syntax.
    These lemmata are proven only in the case of paranoid rules.
 *)
 
 Require config syntax.
-Require invconfig.
-Require Import paranoid_syntax.
+Require Import tt.
+Require inversion.
+Require Import annotated_syntax.
 Require Import config_tactics.
 
-Section ParanoidSyntaxInversion.
+Section AnnotatedSyntaxInversion.
 
 Local Instance hasPrecond : config.Precond := {|
   config.precondFlag := config.Yes
@@ -18,14 +19,16 @@ Local Instance hasPrecond : config.Precond := {|
 Context `{configReflection : config.Reflection}.
 Context `{configSimpleProducts : config.SimpleProducts}.
 Context `{configProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context `{configUniverses : config.Universes}.
+Context `{configWithProp : config.WithProp}.
+Context `{configId : config.IdentityTypes}.
+Context `{configWithJ : config.WithJ}.
+Context `{configEmpty : config.WithEmpty}.
+Context `{configUnit : config.WithUnit}.
+Context `{configBool : config.WithBool}.
+Context `{configPi : config.WithPi}.
+
+Local Existing Instance annotated_syntax.Syntax.
 
 Definition CtxExtendInversion G A (H : isctx (ctxextend G A)) :
   isctx G * istype G A.
@@ -109,16 +112,16 @@ Defined.
 
 Local Instance LocSyntax : syntax.Syntax := Syntax.
 
-Local Instance CtxExtendInversionInstance : invconfig.CtxExtendInversionClass
-  := {| invconfig.CtxExtendInversion := CtxExtendInversion |}.
+Local Instance haveCtxExtendInversion : inversion.HaveCtxExtendInversion
+  := {| inversion.CtxExtendInversion := CtxExtendInversion |}.
 
-Local Instance TyIdInversionInstance : invconfig.TyIdInversionClass
-  := {| invconfig.TyIdInversion := TyIdInversion |}.
+Local Instance haveTyIdInversion : inversion.HaveTyIdInversion
+  := {| inversion.TyIdInversion := TyIdInversion |}.
 
-Local Instance TyProdInversionInstance : invconfig.TyProdInversionClass
-  := {| invconfig.TyProdInversion := TyProdInversion |}.
+Local Instance haveTyProdInversion : inversion.HaveTyProdInversion
+  := {| inversion.TyProdInversion := TyProdInversion |}.
 
-Local Instance TySimProdInversionInstance : invconfig.TySimProdInversionClass
-  := {| invconfig.TySimProdInversion := TySimProdInversion |}.
+Local Instance haveTySimProdInversion : inversion.HaveTySimProdInversion
+  := {| inversion.TySimProdInversion := TySimProdInversion |}.
 
-End ParanoidSyntaxInversion.
+End AnnotatedSyntaxInversion.

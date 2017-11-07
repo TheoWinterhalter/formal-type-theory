@@ -10,7 +10,7 @@ ptt.v
 checking_tactics.v
 
 ptt_admissible.v
-invconfig.v
+inversion.v
 
 ptt_sanity.v
 ptt2ett.v
@@ -20,7 +20,8 @@ ett_sanity.v
 tactics.v
 
 # INSTANCES
-paranoid_syntax.v
-ps_inversion.v
+annotated_syntax.v
+annotated_inversion.v
+annotated_uniqueness.v
 
 negfunext.v

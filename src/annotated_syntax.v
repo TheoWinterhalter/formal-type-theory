@@ -1,33 +1,13 @@
-(* Paranoid Syntax
+(* Fully annotated syntax
 
-   We propose an implementation of syntax that corresponds to the syntax with
-   which this library was designed at first.
-   It features all the specifics of the language as mutual inductive types.
-
-   This includes explicit substitutions, seperate syntaxes for types and terms,
-   optional Tarski universes and so on...
-
-   This syntax is still configurable. For instance, if you decide not to have
-   the Unit type as part of your theory, it will still be part of the syntax,
-   but you won't be able to derive that [Γ ⊢ Unit] type or [Γ ⊢ unit : Unit].
+   A specific syntax in which terms are explicitly tagged with types.
+   This syntax is defined inductively, so we can run inversion tactics on it,
+   which is used in showing uniqueness of typing, for example.
 *)
 
-Require config syntax tt.
+Require tt.
 
-Section ParanoidSyntax.
-
-Context `{configPrecond : config.Precond}.
-Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
-Context `{configProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Section AnnotatedSyntax.
 
 Inductive context : Type :=
      | ctxempty : context
@@ -124,13 +104,4 @@ Local Instance Syntax : syntax.Syntax := {|
   syntax.sbcomp  := sbcomp
 |}.
 
-Definition isctx := tt.isctx.
-Definition issubst := tt.issubst.
-Definition istype := tt.istype.
-Definition isterm := tt.isterm.
-Definition eqctx := tt.eqctx.
-Definition eqsubst := tt.eqsubst.
-Definition eqtype := tt.eqtype.
-Definition eqterm := tt.eqterm.
-
-End ParanoidSyntax.
+End AnnotatedSyntax.
