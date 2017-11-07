@@ -116,31 +116,38 @@ Defined.
 
 Fixpoint TermProdInversion `{ fl : config.universesFlag } G A B U
          (H : isterm G (Prod A B) U) {struct H} :
-  forall {n m}, eqtype G U (Uni (syntax.uni (max n m))) ->
-            isctx G *
-            istype G A *
-            istype (ctxextend G A) B *
-            isterm G A (Uni (syntax.uni n)) *
-            isterm (ctxextend G A) B (Uni (syntax.uni m)).
+  forall {l}, eqtype G U (Uni l) ->
+         { l1 : syntax.level &
+           { l2 : syntax.level &
+             (isctx G *
+             istype G A *
+             istype (ctxextend G A) B *
+             isterm G A (Uni l1) *
+             isterm (ctxextend G A) B (Uni l2))%type
+           }
+         }.
 Proof.
-  intros n m h.
+  intros l h.
   inversion H ; doConfig.
 
-  - { assert (eq : eqtype G A0 (Uni (syntax.uni (Nat.max n m)))).
+  - { assert (eq : eqtype G A0 (Uni l)).
       { ceapply EqTyTrans ; [ eassumption | try assumption .. ].
         apply @TyUni ; assumption.
       }
-      destruct (TermProdInversion G A B A0 X n m eq) as [[[[? ?] ?] ?] ?].
+      destruct (TermProdInversion G A B A0 X l eq)
+        as [l1 [l2 [[[[? ?] ?] ?] ?]]].
+      exists l1, l2.
       repeat split ; assumption.
     }
 
-  - { assert (eq : eqtype G0 U (Uni (syntax.uni (Nat.max n m)))).
+  - { assert (eq : eqtype G0 U (Uni l)).
       { ceapply EqTyCtxConv ; [ eassumption | try assumption .. ].
         - ceapply CtxSym ; assumption.
         - ceapply TyCtxConv ; [ eassumption | assumption .. ].
         - apply @TyUni ; assumption.
       }
-      destruct (TermProdInversion G0 A B U X n m eq) as [[[[? ?] ?] ?] ?].
+      destruct (TermProdInversion G0 A B U X l eq)
+        as [l1 [l2 [[[[? ?] ?] ?] ?]]].
       assert (istype G A).
       { ceapply TyCtxConv ; [ eassumption | assumption .. ]. }
       assert (eqctx (ctxextend G0 A) (ctxextend G A)).
@@ -151,6 +158,7 @@ Proof.
       { capply @CtxExtend ; assumption. }
       assert (isctx (ctxextend G A)).
       { capply @CtxExtend ; assumption. }
+      exists l1, l2.
       repeat split ; try assumption.
       - ceapply TyCtxConv ; [ eassumption | assumption .. ].
       - ceapply TermCtxConv ; [ eassumption | try assumption .. ].
@@ -164,22 +172,34 @@ Proof.
       { pose (tyel := @tt.TyEl hasPrecond configReflection configSimpleProducts configProdEta configUniverses configWithProp configWithJ configEmpty configUnit configBool configId configPi Syntax). cbv in tyel.
         ceapply tyel ; eassumption.
       }
+      exists (syntax.uni n), (syntax.uni m).
       repeat split.
       - assumption.
       - assumption.
       - pose (tyel := @tt.TyEl hasPrecond configReflection configSimpleProducts configProdEta configUniverses configWithProp configWithJ configEmpty configUnit configBool configId configPi Syntax). cbv in tyel.
         ceapply tyel ; try eassumption.
         capply @CtxExtend ; assumption.
-      - (* Here we need injectivity of Uni to apply on h *)
-        admit.
-      - admit.
+      - assumption.
+      - assumption.
     }
 
   - { simpl in *. subst.
-      (* Now we wish to say this case is impossible from h! *)
-      admit.
+      assert (istype G A).
+      { pose (tyel := @tt.TyEl hasPrecond configReflection configSimpleProducts configProdEta configUniverses configWithProp configWithJ configEmpty configUnit configBool configId configPi Syntax). cbv in tyel.
+        ceapply tyel ; eassumption.
+      }
+      exists l0, (syntax.prop).
+      repeat split.
+      - assumption.
+      - assumption.
+      - pose (tyel := @tt.TyEl hasPrecond configReflection configSimpleProducts configProdEta configUniverses configWithProp configWithJ configEmpty configUnit configBool configId configPi Syntax). cbv in tyel.
+        ceapply tyel ; try eassumption.
+        capply @CtxExtend ; assumption.
+      - assumption.
+      - assumption.
     }
-Admitted.
+
+Defined.
 
 Fixpoint TyProdInversion G A B (H : istype G (Prod A B)) {struct H} :
   isctx G * istype G A * istype (ctxextend G A) B.
@@ -217,14 +237,12 @@ Proof.
         - assumption.
         - apply @TyUni ; assumption.
       }
-      destruct l.
-      - (* pose proof (TermProdInversion (fl := X) G A B (Uni (syntax.uni n)) X0 (n := n) X2). *)
-        (* repeat split ; apply X3. *)
-        (* Need to be fixed *)
-        admit.
-      - admit.
+      destruct (TermProdInversion (fl := X) G A B (Uni l) X0 (l := l) X2)
+        as [l1 [l2 ?]].
+      repeat split ; apply p.
+    }
 
-Admitted.
+Defined.
 
 Fixpoint TySimProdInversion G A B (H : istype G (SimProd A B)) {struct H} :
   isctx G * istype G A * istype G B.
