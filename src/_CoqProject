@@ -26,5 +26,6 @@ annotated_uniqueness.v
 
 concise_syntax.v
 concise_inversion.v
+concise_uniqueness.v
 
 negfunext.v
