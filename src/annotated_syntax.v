@@ -89,7 +89,6 @@ Local Instance Syntax : syntax.Syntax := {|
   syntax.proj1      := proj1 ;
   syntax.proj2      := proj2 ;
   syntax.uniProd    := uniProd ;
-  (* syntax.uniId      := uniId ; *)
   syntax.uniId      := uniId ;
   syntax.uniEmpty   := uniEmpty ;
   syntax.uniUnit    := uniUnit ;
