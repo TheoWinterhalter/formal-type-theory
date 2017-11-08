@@ -153,6 +153,9 @@ Defined.
 
 (* Injectivity results *)
 
+Axiom admit : forall {A}, A.
+Tactic Notation "admit" := (exact admit).
+
 Fixpoint injProd_left G A B T
          (H : ett.eqtype G (Prod A B) T) {struct H} :
   { A' : type &
@@ -199,8 +202,32 @@ Proof.
         + capply EqTySym. ceapply EqTyCtxConv.
           * ehyp.
           * capply EqCtxExtend.
-            --
-Admitted.
+            -- capply CtxRefl. tt_sane.
+            -- hyp.
+
+      - destruct (injProd_left _ _ _ _ X) as [A' [B' [[hT hA] hB]]]. subst.
+        destruct (injProd_left _ _ _ _ X0) as [A'' [B'' [[hT' hA'] hB']]].
+        subst.
+        exists A', B'. repeat split.
+        + admit.
+        + admit.
+        + admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+    }
+
+  - admit.
+
+Defined.
+
 
 Fixpoint injProd G A A' B B' (H : ett.eqtype G (Prod A B) (Prod A' B')) {struct H} :
   ett.eqtype G A A' * ett.eqtype (ctxextend G A) B B'.
