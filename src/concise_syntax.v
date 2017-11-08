@@ -22,7 +22,7 @@ with term : Type :=
      | Empty : term
      | Unit : term
      | Bool : term
-     | SimProd : term -> term -> term
+     | BinaryProd : term -> term -> term
      | Uni : syntax.level -> term
      (* Terms *)
      | var : nat -> term
@@ -57,37 +57,37 @@ Local Instance Syntax : syntax.Syntax := {|
   syntax.ctxempty  := ctxempty ;
   syntax.ctxextend := ctxextend ;
 
-  syntax.Prod    := Prod ;
-  syntax.Id      := Id ;
-  syntax.Subst   := subst ;
-  syntax.Empty   := Empty ;
-  syntax.Unit    := Unit ;
-  syntax.Bool    := Bool ;
-  syntax.SimProd := SimProd ;
-  syntax.Uni     := Uni ;
-  syntax.El i T  := T ;
+  syntax.Prod       := Prod ;
+  syntax.Id         := Id ;
+  syntax.Subst      := subst ;
+  syntax.Empty      := Empty ;
+  syntax.Unit       := Unit ;
+  syntax.Bool       := Bool ;
+  syntax.BinaryProd := BinaryProd ;
+  syntax.Uni        := Uni ;
+  syntax.El i T     := T ;
 
-  syntax.var n              := var n ;
-  syntax.lam A B t          := lam A t ;
-  syntax.app u A B v        := app u v ;
-  syntax.refl A u           := refl u ;
-  syntax.j A u C w v p      := j A u C w v p ;
-  syntax.subst u sbs        := subst u sbs ;
-  syntax.exfalso A u        := exfalso A u ;
-  syntax.unit               := unit ;
-  syntax.true               := true  ;
-  syntax.false              := false ;
-  syntax.cond C u v w       := cond C u v w ;
-  syntax.pair A B u v       := pair A B u v ;
-  syntax.proj1 A B p        := proj1 A B p ;
-  syntax.proj2 A B p        := proj2 A B p ;
-  syntax.uniProd i j A B    := Prod A B ;
-  syntax.uniId i A u v      := Id A u v ;
-  syntax.uniEmpty i         := Empty ;
-  syntax.uniUnit i          := Unit ;
-  syntax.uniBool i          := Bool ;
-  syntax.uniSimProd i j A B := SimProd A B ;
-  syntax.uniUni i           := Uni i ;
+  syntax.var n                 := var n ;
+  syntax.lam A B t             := lam A t ;
+  syntax.app u A B v           := app u v ;
+  syntax.refl A u              := refl u ;
+  syntax.j A u C w v p         := j A u C w v p ;
+  syntax.subst u sbs           := subst u sbs ;
+  syntax.exfalso A u           := exfalso A u ;
+  syntax.unit                  := unit ;
+  syntax.true                  := true  ;
+  syntax.false                 := false ;
+  syntax.cond C u v w          := cond C u v w ;
+  syntax.pair A B u v          := pair A B u v ;
+  syntax.proj1 A B p           := proj1 A B p ;
+  syntax.proj2 A B p           := proj2 A B p ;
+  syntax.uniProd i j A B       := Prod A B ;
+  syntax.uniId i A u v         := Id A u v ;
+  syntax.uniEmpty i            := Empty ;
+  syntax.uniUnit i             := Unit ;
+  syntax.uniBool i             := Bool ;
+  syntax.uniBinaryProd i j A B := BinaryProd A B ;
+  syntax.uniUni i              := Uni i ;
 
   syntax.sbzero  := sbzero ;
   syntax.sbweak  := sbweak ;

@@ -13,20 +13,20 @@ Require Import config_tactics.
 
 Section ConciseSyntaxInversion.
 
-Local Instance hasPrecond : config.Precond := {|
-  config.precondFlag := config.Yes
+Local Instance havePrecondition : config.Precondition := {|
+  config.flagPrecondition := config.Yes
 |}.
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
 Context `{configUniverses : config.Universes}.
-Context `{configWithProp : config.WithProp}.
-Context `{configId : config.IdentityTypes}.
-Context `{configWithJ : config.WithJ}.
-Context `{configEmpty : config.WithEmpty}.
-Context `{configUnit : config.WithUnit}.
-Context `{configBool : config.WithBool}.
-Context `{configPi : config.WithPi}.
+Context `{configPropType : config.PropType}.
+Context `{configIdType : config.IdType}.
+Context `{configIdEliminator : config.IdEliminator}.
+Context `{configEmptyType : config.EmptyType}.
+Context `{configUnitType : config.UnitType}.
+Context `{configBoolType : config.BoolType}.
+Context `{configProdType : config.ProdType}.
 
 Local Existing Instance concise_syntax.Syntax.
 
@@ -36,7 +36,7 @@ Proof.
   config inversion H. easy.
 Defined.
 
-Fixpoint TermIdInversion `{ fl : config.universesFlag } G A u v U
+Fixpoint TermIdInversion `{ fl : config.flagUniverses } G A u v U
          (H : isterm G (Id A u v) U) {struct H} :
   forall {l}, eqtype G U (Uni l) ->
          isctx G * istype G A * isterm G A U * isterm G u A * isterm G v A.
@@ -71,7 +71,7 @@ Proof.
     }
 
   - { repeat split ; try assumption.
-      pose (tyel := @tt.TyEl hasPrecond configReflection configSimpleProducts configProdEta configUniverses configWithProp configWithJ configEmpty configUnit configBool configId configPi Syntax). cbv in tyel.
+      pose (tyel := @tt.TyEl havePrecondition configReflection configBinaryProdType configProdEta configUniverses configPropType configIdEliminator configEmptyType configUnitType configBoolType configIdType configProdType Syntax). cbv in tyel.
       ceapply tyel ; eassumption.
     }
 
@@ -114,7 +114,7 @@ Proof.
 
 Defined.
 
-Fixpoint TermProdInversion `{ fl : config.universesFlag } G A B U
+Fixpoint TermProdInversion `{ fl : config.flagUniverses } G A B U
          (H : isterm G (Prod A B) U) {struct H} :
   forall {l}, eqtype G U (Uni l) ->
          { l1 : syntax.level &
@@ -169,14 +169,14 @@ Proof.
 
   - { simpl in *. subst.
       assert (istype G A).
-      { pose (tyel := @tt.TyEl hasPrecond configReflection configSimpleProducts configProdEta configUniverses configWithProp configWithJ configEmpty configUnit configBool configId configPi Syntax). cbv in tyel.
+      { pose (tyel := @tt.TyEl havePrecondition configReflection configBinaryProdType configProdEta configUniverses configPropType configIdEliminator configEmptyType configUnitType configBoolType configIdType configProdType Syntax). cbv in tyel.
         ceapply tyel ; eassumption.
       }
       exists (syntax.uni n), (syntax.uni m).
       repeat split.
       - assumption.
       - assumption.
-      - pose (tyel := @tt.TyEl hasPrecond configReflection configSimpleProducts configProdEta configUniverses configWithProp configWithJ configEmpty configUnit configBool configId configPi Syntax). cbv in tyel.
+      - pose (tyel := @tt.TyEl havePrecondition configReflection configBinaryProdType configProdEta configUniverses configPropType configIdEliminator configEmptyType configUnitType configBoolType configIdType configProdType Syntax). cbv in tyel.
         ceapply tyel ; try eassumption.
         capply @CtxExtend ; assumption.
       - assumption.
@@ -185,14 +185,14 @@ Proof.
 
   - { simpl in *. subst.
       assert (istype G A).
-      { pose (tyel := @tt.TyEl hasPrecond configReflection configSimpleProducts configProdEta configUniverses configWithProp configWithJ configEmpty configUnit configBool configId configPi Syntax). cbv in tyel.
+      { pose (tyel := @tt.TyEl havePrecondition configReflection configBinaryProdType configProdEta configUniverses configPropType configIdEliminator configEmptyType configUnitType configBoolType configIdType configProdType Syntax). cbv in tyel.
         ceapply tyel ; eassumption.
       }
       exists l0, (syntax.prop).
       repeat split.
       - assumption.
       - assumption.
-      - pose (tyel := @tt.TyEl hasPrecond configReflection configSimpleProducts configProdEta configUniverses configWithProp configWithJ configEmpty configUnit configBool configId configPi Syntax). cbv in tyel.
+      - pose (tyel := @tt.TyEl havePrecondition configReflection configBinaryProdType configProdEta configUniverses configPropType configIdEliminator configEmptyType configUnitType configBoolType configIdType configProdType Syntax). cbv in tyel.
         ceapply tyel ; try eassumption.
         capply @CtxExtend ; assumption.
       - assumption.
@@ -244,8 +244,8 @@ Proof.
 
 Defined.
 
-Fixpoint TermSimProdInversion `{ fl : config.universesFlag } G A B U
-         (H : isterm G (SimProd A B) U) {struct H} :
+Fixpoint TermBinaryProdInversion `{ fl : config.flagUniverses } G A B U
+         (H : isterm G (BinaryProd A B) U) {struct H} :
   forall {l}, eqtype G U (Uni l) ->
          { l1 : syntax.level &
            { l2 : syntax.level &
@@ -264,7 +264,7 @@ Proof.
       { ceapply EqTyTrans ; [ eassumption | try assumption .. ].
         apply @TyUni ; assumption.
       }
-      destruct (TermSimProdInversion G A B A0 X l eq)
+      destruct (TermBinaryProdInversion G A B A0 X l eq)
         as [l1 [l2 [[[[? ?] ?] ?] ?]]].
       exists l1, l2.
       repeat split ; assumption.
@@ -276,7 +276,7 @@ Proof.
         - ceapply TyCtxConv ; [ eassumption | assumption .. ].
         - apply @TyUni ; assumption.
       }
-      destruct (TermSimProdInversion G0 A B U X l eq)
+      destruct (TermBinaryProdInversion G0 A B U X l eq)
         as [l1 [l2 [[[[? ?] ?] ?] ?]]].
       assert (istype G A).
       { ceapply TyCtxConv ; [ eassumption | assumption .. ]. }
@@ -299,14 +299,14 @@ Proof.
 
   - { simpl in *. subst.
       assert (istype G A).
-      { pose (tyel := @tt.TyEl hasPrecond configReflection configSimpleProducts configProdEta configUniverses configWithProp configWithJ configEmpty configUnit configBool configId configPi Syntax). cbv in tyel.
+      { pose (tyel := @tt.TyEl havePrecondition configReflection configBinaryProdType configProdEta configUniverses configPropType configIdEliminator configEmptyType configUnitType configBoolType configIdType configProdType Syntax). cbv in tyel.
         ceapply tyel ; eassumption.
       }
       exists (syntax.uni n), (syntax.uni m).
       repeat split.
       - assumption.
       - assumption.
-      - pose (tyel := @tt.TyEl hasPrecond configReflection configSimpleProducts configProdEta configUniverses configWithProp configWithJ configEmpty configUnit configBool configId configPi Syntax). cbv in tyel.
+      - pose (tyel := @tt.TyEl havePrecondition configReflection configBinaryProdType configProdEta configUniverses configPropType configIdEliminator configEmptyType configUnitType configBoolType configIdType configProdType Syntax). cbv in tyel.
         ceapply tyel ; eassumption.
       - assumption.
       - assumption.
@@ -314,14 +314,14 @@ Proof.
 
   - { simpl in *. subst.
       assert (istype G A).
-      { pose (tyel := @tt.TyEl hasPrecond configReflection configSimpleProducts configProdEta configUniverses configWithProp configWithJ configEmpty configUnit configBool configId configPi Syntax). cbv in tyel.
+      { pose (tyel := @tt.TyEl havePrecondition configReflection configBinaryProdType configProdEta configUniverses configPropType configIdEliminator configEmptyType configUnitType configBoolType configIdType configProdType Syntax). cbv in tyel.
         ceapply tyel ; eassumption.
       }
       exists syntax.prop, (syntax.prop).
       repeat split.
       - assumption.
       - assumption.
-      - pose (tyel := @tt.TyEl hasPrecond configReflection configSimpleProducts configProdEta configUniverses configWithProp configWithJ configEmpty configUnit configBool configId configPi Syntax). cbv in tyel.
+      - pose (tyel := @tt.TyEl havePrecondition configReflection configBinaryProdType configProdEta configUniverses configPropType configIdEliminator configEmptyType configUnitType configBoolType configIdType configProdType Syntax). cbv in tyel.
         ceapply tyel ; try eassumption.
       - assumption.
       - assumption.
@@ -329,7 +329,7 @@ Proof.
 
 Defined.
 
-Fixpoint TySimProdInversion G A B (H : istype G (SimProd A B)) {struct H} :
+Fixpoint TyBinaryProdInversion G A B (H : istype G (BinaryProd A B)) {struct H} :
   isctx G * istype G A * istype G B.
 Proof.
   inversion H ; doConfig.
@@ -337,9 +337,9 @@ Proof.
   - { split ; [ split | .. ].
       - assumption.
       - apply @tt.TyCtxConv with (G := G0) ; auto.
-        now apply (TySimProdInversion G0 A B).
+        now apply (TyBinaryProdInversion G0 A B).
       - apply @tt.TyCtxConv with (G := G0) ; auto.
-        now apply (TySimProdInversion G0 A B).
+        now apply (TyBinaryProdInversion G0 A B).
     }
 
   - { split ; [ split | .. ] ; assumption. }
@@ -350,7 +350,7 @@ Proof.
         - assumption.
         - apply @TyUni ; assumption.
       }
-      destruct (TermSimProdInversion (fl := X) G A B (Uni l) X0 (l := l) X2)
+      destruct (TermBinaryProdInversion (fl := X) G A B (Uni l) X0 (l := l) X2)
         as [l1 [l2 ?]].
       repeat split ; apply p.
     }
@@ -367,7 +367,7 @@ Local Instance haveTyIdInversion : inversion.HaveTyIdInversion
 Local Instance haveTyProdInversion : inversion.HaveTyProdInversion
   := {| inversion.TyProdInversion := TyProdInversion |}.
 
-Local Instance haveTySimProdInversion : inversion.HaveTySimProdInversion
-  := {| inversion.TySimProdInversion := TySimProdInversion |}.
+Local Instance haveTyBinaryProdInversion : inversion.HaveTyBinaryProdInversion
+  := {| inversion.TyBinaryProdInversion := TyBinaryProdInversion |}.
 
 End ConciseSyntaxInversion.
