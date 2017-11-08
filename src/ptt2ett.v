@@ -8,16 +8,17 @@ Require ptt ett.
 Section Ptt2Ett.
 
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
-Context `{ConfigProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context `{configBinaryProdType : config.BinaryProdType}.
+Context `{configProdEta : config.ProdEta}.
+Context `{configUniverses : config.Universes}.
+Context `{configPropType : config.PropType}.
+Context `{configIdType : config.IdType}.
+Context `{configIdEliminator : config.IdEliminator}.
+Context `{configEmptyType : config.EmptyType}.
+Context `{configUnitType : config.UnitType}.
+Context `{configBoolType : config.BoolType}.
+Context `{configProdType : config.ProdType}.
+Context `{configSyntax : syntax.Syntax}.
 
 Fixpoint sane_isctx G (P : ptt.isctx G) : ett.isctx G
 
@@ -97,8 +98,8 @@ Proof.
       (* TyBool *)
       - capply TyBool ; auto.
 
-      (* TySimProd *)
-      - capply TySimProd ; auto.
+      (* TyBinaryProd *)
+      - capply TyBinaryProd ; auto.
 
       (* TyUni *)
       - capply TyUni ; auto.
@@ -179,11 +180,11 @@ Proof.
       (* TermUniBool *)
       - apply TermUniBool ; auto.
 
-      (* TermUniSimProd *)
-      - apply TermUniSimProd ; auto.
+      (* TermUniBinaryProd *)
+      - apply TermUniBinaryProd ; auto.
 
-      (* TermUniSimProdProp *)
-      - apply TermUniSimProdProp ; auto.
+      (* TermUniBinaryProdProp *)
+      - apply TermUniBinaryProdProp ; auto.
 
       (* TermUniUni *)
       - apply TermUniUni ; auto.
@@ -308,11 +309,11 @@ Proof.
       (* CongTySubst *)
       - apply @CongTySubst with (D := D) ; auto.
 
-      (* CongSimProd *)
-      - apply CongSimProd ; auto.
+      (* CongBinaryProd *)
+      - apply CongBinaryProd ; auto.
 
-      (* EqTySubstSimProd *)
-      - apply @EqTySubstSimProd with (D := D) ; auto.
+      (* EqTySubstBinaryProd *)
+      - apply @EqTySubstBinaryProd with (D := D) ; auto.
 
       (* EqTySubstUni *)
       - apply @EqTySubstUni with (D := D) ; auto.
@@ -338,11 +339,11 @@ Proof.
       (* ElBool *)
       - eapply ElBool ; eauto.
 
-      (* ElSimProd *)
-      - eapply ElSimProd ; eauto.
+      (* ElBinaryProd *)
+      - eapply ElBinaryProd ; eauto.
 
-      (* ElSimProdProp *)
-      - eapply ElSimProdProp ; eauto.
+      (* ElBinaryProdProp *)
+      - eapply ElBinaryProdProp ; eauto.
 
       (* ElUni *)
       - apply ElUni ; auto.
@@ -423,7 +424,7 @@ Proof.
       - apply @EqSubstCond with (D := D) ; auto.
 
       (* EqTermExfalso *)
-      - apply @EqTermExfalso with (w := w0) ; auto.
+      - apply @EqTermExfalso with (w := w) ; auto.
 
       (* UnitEta *)
       - apply UnitEta ; auto.
@@ -509,11 +510,11 @@ Proof.
       (* EqSubstUniBool *)
       - apply @EqSubstUniBool with (D := D) ; auto.
 
-      (* EqSubstUniSimProd *)
-      - apply @EqSubstUniSimProd with (D := D) ; auto.
+      (* EqSubstUniBinaryProd *)
+      - apply @EqSubstUniBinaryProd with (D := D) ; auto.
 
-      (* EqSubstUniSimProdProp *)
-      - apply @EqSubstUniSimProdProp with (D := D) ; auto.
+      (* EqSubstUniBinaryProdProp *)
+      - apply @EqSubstUniBinaryProdProp with (D := D) ; auto.
 
       (* EqSubstUniUni *)
       - apply @EqSubstUniUni with (D := D) ; auto.
@@ -530,11 +531,11 @@ Proof.
       (* CongUniId *)
       - apply CongUniId ; auto.
 
-      (* CongUniSimProd *)
-      - apply CongUniSimProd ; auto.
+      (* CongUniBinaryProd *)
+      - apply CongUniBinaryProd ; auto.
 
-      (* CongUniSimProdProp *)
-      - apply CongUniSimProdProp ; auto.
+      (* CongUniBinaryProdProp *)
+      - apply CongUniBinaryProdProp ; auto.
     }
 Defined.
 

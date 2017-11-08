@@ -9,18 +9,19 @@ Require Import checking_tactics ptt_admissible.
 
 Section PttSanity.
 
-Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
+Local Instance havePrecondition : config.Precondition := {| config.flagPrecondition := config.Yes |}.
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
-Context `{ConfigProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context `{configBinaryProdType : config.BinaryProdType}.
+Context `{configProdEta : config.ProdEta}.
+Context `{configUniverses : config.Universes}.
+Context `{configPropType : config.PropType}.
+Context `{configIdType : config.IdType}.
+Context `{configIdEliminator : config.IdEliminator}.
+Context `{configEmptyType : config.EmptyType}.
+Context `{configUnitType : config.UnitType}.
+Context `{configBoolType : config.BoolType}.
+Context `{configProdType : config.ProdType}.
+Context `{configSyntax : syntax.Syntax}.
 
 Axiom cheating : forall A, A.
 
@@ -154,10 +155,10 @@ Proof.
   (* TermUniBool *)
   { magic. }
 
-  (* TermUniSimProd *)
+  (* TermUniBinaryProd *)
   { magic. }
 
-  (* TermUniSimProdProp *)
+  (* TermUniBinaryProdProp *)
   { magic. }
 
   (* TermUniUni *)
@@ -263,13 +264,13 @@ Proof.
     - magic.
   }
 
-  (* CongSimProd *)
+  (* CongBinaryProd *)
   { split.
     - magic.
     - magic.
   }
 
-  (* EqTySubstSimProd *)
+  (* EqTySubstBinaryProd *)
   { split.
     - magic.
     - magic.
@@ -323,13 +324,13 @@ Proof.
     - magic.
   }
 
-  (* ElSimProd *)
+  (* ElBinaryProd *)
   { split.
     - magic.
     - magic.
   }
 
-  (* ElSimProdProp *)
+  (* ElBinaryProdProp *)
   { split.
     - magic.
     - magic.
@@ -852,13 +853,13 @@ Proof.
       - magic.
     }
 
-  (* EqSubstUniSimProd *)
+  (* EqSubstUniBinaryProd *)
   - { split.
       - magic.
       - magic.
     }
 
-  (* EqSubstUniSimProdProp *)
+  (* EqSubstUniBinaryProdProp *)
   - { split.
       - magic.
       - magic.
@@ -894,13 +895,13 @@ Proof.
       - magic.
     }
 
-  (* CongUniSimProd *)
+  (* CongUniBinaryProd *)
   - { split.
       - magic.
       - magic.
     }
 
-  (* CongUniSimProdProp *)
+  (* CongUniBinaryProdProp *)
   - { split.
       - magic.
       - magic.

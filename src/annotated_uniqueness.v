@@ -2,29 +2,36 @@
 
 Require config.
 Require Import config_tactics.
-
 Require Import syntax.
+
+Require annotated_syntax.
 Require Import tt.
 Require ett ptt.
 Require ptt2ett ett2ptt.
 Require ptt_admissible.
 Require ett_sanity ptt_sanity.
-Require ptt_inversion.
+Require annotated_inversion.
 Require Import tactics config_tactics.
 
 Section Uniqueness.
 
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context `{configUniverses : config.Universes}.
+Context `{configPropType : config.PropType}.
+Context `{configIdType : config.IdType}.
+Context `{configIdEliminator : config.IdEliminator}.
+Context `{configEmptyType : config.EmptyType}.
+Context `{configUnitType : config.UnitType}.
+Context `{configBoolType : config.BoolType}.
+Context `{configProdType : config.ProdType}.
+
+Local Existing Instance annotated_syntax.Syntax.
+Local Existing Instance annotated_inversion.haveCtxExtendInversion.
+Local Existing Instance annotated_inversion.haveTyIdInversion.
+Local Existing Instance annotated_inversion.haveTyProdInversion.
+Local Existing Instance annotated_inversion.haveTyBinaryProdInversion.
 
 (* Auxiliary inversion lemmas. *)
 
@@ -51,11 +58,11 @@ Proof.
       - exists G, A. repeat split.
         + capply CtxRefl.
           eapply ptt2ett.sane_isctx.
-          apply (ptt_inversion.CtxExtendInversion G A).
+          apply (annotated_inversion.CtxExtendInversion G A).
           now eapply ett2ptt.sane_isctx.
         + capply EqTyRefl.
           eapply ptt2ett.sane_istype.
-          apply (ptt_inversion.CtxExtendInversion G A).
+          apply (annotated_inversion.CtxExtendInversion G A).
           now eapply ett2ptt.sane_isctx.
 
       (* CtxSym *)
@@ -86,11 +93,11 @@ Proof.
       - exists G, A. repeat split.
         + capply CtxRefl.
           eapply ptt2ett.sane_isctx.
-          apply (ptt_inversion.CtxExtendInversion G A).
+          apply (annotated_inversion.CtxExtendInversion G A).
           now eapply ett2ptt.sane_isctx.
         + capply EqTyRefl.
           eapply ptt2ett.sane_istype.
-          apply (ptt_inversion.CtxExtendInversion G A).
+          apply (annotated_inversion.CtxExtendInversion G A).
           now eapply ett2ptt.sane_isctx.
 
       (* CtxSym *)
@@ -448,7 +455,7 @@ Proof.
           - doCtxConv D' unique_term'.
 
           - { capply EqTyRefl.
-              capply TySimProd.
+              capply TyBinaryProd.
               - hyp.
               - hyp.
             }
@@ -544,7 +551,7 @@ Proof.
             }
         }
 
-      (* TermUniSimProd *)
+      (* TermUniBinaryProd *)
       - { inversion_clear H2' ; doConfig.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.
@@ -555,7 +562,7 @@ Proof.
             }
         }
 
-      (* TermUniSimProdProp *)
+      (* TermUniBinaryProdProp *)
       - { inversion_clear H2' ; doConfig.
           - doTyConv unique_term'.
           - doCtxConv D' unique_term'.

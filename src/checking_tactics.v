@@ -5,21 +5,29 @@ Require Import config_tactics.
 Require Import tt.
 Require Import syntax.
 
+(* Configuration options for the tactics. *)
+Inductive magic_try := DoTry | DontTry.
+Inductive magic_doshelf := DoShelf | DontShelf.
+Inductive magic_dotysym := DoTysym | DontTysym.
+Inductive magic_doeqsym := DoEqsym | DontEqsym.
+Inductive macic_debug := DoDebug | DontDebug.
+
 Section Checking1.
 
 (* We are as modular as can be *)
-Context `{configPrecond : config.Precond}.
+Context `{configPrecondition : config.Precondition}.
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context `{configUniverses : config.Universes}.
+Context `{configPropType : config.PropType}.
+Context `{configIdType : config.IdType}.
+Context `{configIdEliminator : config.IdEliminator}.
+Context `{configEmptyType : config.EmptyType}.
+Context `{configUnitType : config.UnitType}.
+Context `{configBoolType : config.BoolType}.
+Context `{configProdType : config.ProdType}.
+Context `{configSyntax : syntax.Syntax}.
 
 (* Some tactic to compose substitutions. *)
 Lemma eqtype_subst_left :
@@ -135,18 +143,19 @@ Ltac compsubst1 :=
 
 Section Checking2.
 
-Context `{configPrecond : config.Precond}.
+Context `{configPrecondition : config.Precondition}.
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context `{configUniverses : config.Universes}.
+Context `{configPropType : config.PropType}.
+Context `{configIdType : config.IdType}.
+Context `{configIdEliminator : config.IdEliminator}.
+Context `{configEmptyType : config.EmptyType}.
+Context `{configUnitType : config.UnitType}.
+Context `{configBoolType : config.BoolType}.
+Context `{configProdType : config.ProdType}.
+Context `{configSyntax : syntax.Syntax}.
 
 Lemma EqCompZero :
   forall {G D A u sbs},
@@ -761,13 +770,35 @@ Qed.
 
 End Checking2.
 
-
-Ltac cando token :=
-  match token with
-  | true => idtac
-  | false => fail "Cannot do" token
+Ltac do_try flag :=
+  match flag with
+  | DoTry => idtac
+  | DontTry => fail "Cannot try"
   end.
 
+Ltac do_shelf flag :=
+  match flag with
+  | DoShelf => idtac
+  | DontShelf => fail "Cannot shelve"
+  end.
+
+Ltac do_tysym flag :=
+  match flag with
+  | DoTysym => idtac
+  | DontTysym => fail "Cannot do TySym"
+  end.
+
+Ltac do_eqsym flag :=
+  match flag with
+  | DoEqsym => idtac
+  | DontEqsym => fail "Cannot do EqSym"
+  end.
+
+Ltac do_debug flag :=
+  match flag with
+  | DoDebug => idtac
+  | DontDebug => fail "Cannot debug"
+  end.
 
 (* Some tactic to push substitutions inside one step. *)
 (* Partial for now. *)
@@ -780,7 +811,7 @@ Ltac prepushsubst1 sym :=
     ceapply EqTyTrans ; [
       ceapply CongTySubst ; [
         ceapply SubstRefl
-      | prepushsubst1 true
+      | prepushsubst1 DoEqsym
       | ..
       ]
     | ..
@@ -813,18 +844,18 @@ Ltac prepushsubst1 sym :=
       ceapply EqTyTrans ; [ ceapply EqTySubstProd | .. ]
     | ..
     ]
-  | |- eqtype ?G (Subst (SimProd ?A ?B) ?sbs) ?C =>
-    ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ]
-  | |- eqtype ?G ?C (Subst (SimProd ?A ?B) ?sbs) =>
+  | |- eqtype ?G (Subst (BinaryProd ?A ?B) ?sbs) ?C =>
+    ceapply EqTyTrans ; [ ceapply EqTySubstBinaryProd | .. ]
+  | |- eqtype ?G ?C (Subst (BinaryProd ?A ?B) ?sbs) =>
     ceapply EqTySym ; [
-      ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ]
+      ceapply EqTyTrans ; [ ceapply EqTySubstBinaryProd | .. ]
     | ..
     ]
-  | |- eqtype ?G (Subst ?A ?sbs) (SimProd ?B ?C) =>
-    ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ]
-  | |- eqtype ?G (SimProd ?A ?B) (Subst ?C ?sbs) =>
+  | |- eqtype ?G (Subst ?A ?sbs) (BinaryProd ?B ?C) =>
+    ceapply EqTyTrans ; [ ceapply EqTySubstBinaryProd | .. ]
+  | |- eqtype ?G (BinaryProd ?A ?B) (Subst ?C ?sbs) =>
     ceapply EqTySym ; [
-      ceapply EqTyTrans ; [ ceapply EqTySubstSimProd | .. ]
+      ceapply EqTyTrans ; [ ceapply EqTySubstBinaryProd | .. ]
     | ..
     ]
   | |- eqtype ?G (Subst ?E ?sbs) Empty =>
@@ -1003,19 +1034,19 @@ Ltac prepushsubst1 sym :=
       | ..
       ]
     ]
-  | |- eqterm ?G (subst (uniSimProd prop prop ?a ?b) ?sbs) _ _ =>
+  | |- eqterm ?G (subst (uniBinaryProd prop prop ?a ?b) ?sbs) _ _ =>
     first [
-      ceapply EqTrans ; [ ceapply EqSubstUniSimProdProp | .. ]
+      ceapply EqTrans ; [ ceapply EqSubstUniBinaryProdProp | .. ]
     | ceapply EqTyConv ; [
-        ceapply EqTrans ; [ ceapply EqSubstUniSimProdProp | .. ]
+        ceapply EqTrans ; [ ceapply EqSubstUniBinaryProdProp | .. ]
       | ..
       ]
     ]
-  | |- eqterm ?G (subst (uniSimProd ?n ?m ?a ?b) ?sbs) _ _ =>
+  | |- eqterm ?G (subst (uniBinaryProd ?n ?m ?a ?b) ?sbs) _ _ =>
     first [
-      ceapply EqTrans ; [ ceapply EqSubstUniSimProd | .. ]
+      ceapply EqTrans ; [ ceapply EqSubstUniBinaryProd | .. ]
     | ceapply EqTyConv ; [
-        ceapply EqTrans ; [ ceapply EqSubstUniSimProd | .. ]
+        ceapply EqTrans ; [ ceapply EqSubstUniBinaryProd | .. ]
       | ..
       ]
     ]
@@ -1179,28 +1210,29 @@ Ltac prepushsubst1 sym :=
     ]
   (* Instead of writing all symmetry cases *)
   | |- eqterm ?G ?u ?v ?A =>
-    tryif (cando sym)
-    then ceapply EqSym ; [ prepushsubst1 false | .. ]
+    tryif (do_eqsym sym)
+    then ceapply EqSym ; [ prepushsubst1 DontEqsym | .. ]
     else fail "Not a goal handled by pushsubst: eqterm" G u v A
   | |- ?G => fail "Not a goal handled by pushsubst" G
   end.
 
-Ltac pushsubst1 := prepushsubst1 true.
+Ltac pushsubst1 := prepushsubst1 DoEqsym.
 
 Section Checking3.
 
-Context `{configPrecond : config.Precond}.
+Context `{configPrecondition : config.Precondition}.
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context `{configUniverses : config.Universes}.
+Context `{configPropType : config.PropType}.
+Context `{configIdType : config.IdType}.
+Context `{configIdEliminator : config.IdEliminator}.
+Context `{configEmptyType : config.EmptyType}.
+Context `{configUnitType : config.UnitType}.
+Context `{configBoolType : config.BoolType}.
+Context `{configProdType : config.ProdType}.
+Context `{configSyntax : syntax.Syntax}.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
    some ZeroShift3 if ever we add a constructor that has three variables. *)
@@ -1703,8 +1735,8 @@ Qed.
 Lemma FlexWeakZero :
   forall {G A B u},
     isctx G ->
-    (config.precondFlag -> istype G A) ->
-    (config.precondFlag -> istype G B) ->
+    (config.flagPrecondition -> istype G A) ->
+    (config.flagPrecondition -> istype G B) ->
     isterm G u A ->
     eqtype G B A ->
     eqsubst (sbcomp (sbweak B) (sbzero A u))
@@ -2021,10 +2053,10 @@ Ltac check_goal :=
   end.
 
 (* My own tactic to fail with the goal information. *)
-Ltac myfail debug :=
+Ltac myfail flag :=
   lazymatch goal with
   | |- ?G =>
-    tryif (cando debug)
+    tryif (do_debug flag)
     then fail 1000 "Cannot solve subgoal" G
     else fail "Cannot solve subgoal" G
   | _ => fail "This shouldn't happen!"
@@ -2045,22 +2077,22 @@ Ltac eqtype_subst G A sbs B k try shelf tysym debug :=
           then first [
             ceapply CongTySubst
           | myfail debug
-          ] ; k try shelf true debug
+          ] ; k try shelf DoTysym debug
           else first [
             ceapply EqTySym ; [ simplify | .. ]
           | ceapply CongTySubst
           | myfail debug
-          ] ; k try shelf true debug
+          ] ; k try shelf DoTysym debug
         )
         else first [
           pushsubst1
         | myfail debug
-        ] ; k try shelf true debug
+        ] ; k try shelf DoTysym debug
       | _ =>
         first [
           ceapply CongTySubst
         | myfail debug
-        ] ; k try shelf true debug
+        ] ; k try shelf DoTysym debug
       end
     )
     else
@@ -2073,34 +2105,34 @@ Ltac eqtype_subst G A sbs B k try shelf tysym debug :=
             simplify
           | ceapply CongTySubst
           | myfail debug
-          ] ; k try shelf true debug
+          ] ; k try shelf DoTysym debug
           else first [
             simplify
           | ceapply EqTySym ; [ simplify | .. ]
           | ceapply CongTySubst
           | myfail debug
-          ] ; k try shelf true debug
+          ] ; k try shelf DoTysym debug
         )
         else first [
           (* Should we simplify on the left first? *)
           pushsubst1
         | simplify
-        | cando tysym ; ceapply EqTySym ; [ simplify | .. ]
+        | do_tysym tysym ; ceapply EqTySym ; [ simplify | .. ]
         | myfail debug
-        ] ; k try shelf true debug
+        ] ; k try shelf DoTysym debug
       | _ =>
         first [
           simplify
         | ceapply CongTySubst
         | myfail debug
-        ] ; k try shelf true debug
+        ] ; k try shelf DoTysym debug
       end
   )
   else first [
     pushsubst1
-  | cando tysym ; ceapply EqTySym ; [ simplify | .. ]
+  | do_tysym tysym ; ceapply EqTySym ; [ simplify | .. ]
   | myfail debug
-  ] ; k try shelf true debug.
+  ] ; k try shelf DoTysym debug.
 
 (* Magic Tactic *)
 (* It is basically a type checker that doesn't do the smart things,
@@ -2124,14 +2156,14 @@ Ltac magicn try shelf tysym debug :=
     | |- isctx ctxempty =>
       capply CtxEmpty
     | |- isctx (ctxextend ?G ?A) =>
-      ceapply CtxExtend ; magicn try shelf true debug
+      ceapply CtxExtend ; magicn try shelf DoTysym debug
     | |- isctx ?G =>
       tryif (is_var G)
       then first [
         assumption
       | myfail debug
       ]
-      else tryif (cando shelf)
+      else tryif (do_shelf shelf)
         then shelve
         else myfail debug
 
@@ -2141,29 +2173,29 @@ Ltac magicn try shelf tysym debug :=
         ceapply SubstZero
       | ceapply SubstCtxConv ; [ ceapply SubstZero | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- issubst (sbweak _) ?G1 ?G2 =>
       first [
         ceapply SubstWeak
       | ceapply SubstCtxConv ; [ ceapply SubstWeak | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- issubst (sbshift _ ?sbs) ?G1 ?G2 =>
       first [
         ceapply SubstShift
       | ceapply SubstCtxConv ; [ ceapply SubstShift | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- issubst sbid ?G1 ?G2 =>
       first [
         ceapply SubstId
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- issubst (sbcomp ?sbt ?sbs) ?G1 ?G2 =>
       first [
         ceapply SubstComp
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- issubst ?sbs ?G1 ?G2 =>
       tryif (is_var sbs) then (
         first [
@@ -2172,7 +2204,7 @@ Ltac magicn try shelf tysym debug :=
         | myfail debug
         ] ; magicn try shelf tysym debug
       )
-      else tryif (cando shelf)
+      else tryif (do_shelf shelf)
         then shelve
         else myfail debug
 
@@ -2181,55 +2213,55 @@ Ltac magicn try shelf tysym debug :=
       first [
         ceapply TySubst
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- istype ?G (Prod ?A ?B) =>
       first [
         ceapply TyProd
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- istype ?G (Id ?A ?u ?v) =>
       first [
         ceapply TyId
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- istype ?G Empty =>
       first [
         ceapply TyEmpty
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- istype ?G Unit =>
       first [
         ceapply TyUnit
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- istype ?G Bool =>
       first [
         ceapply TyBool
       | myfail debug
-      ] ; magicn try shelf true debug
-    | |- istype ?G (SimProd ?A ?B) =>
+      ] ; magicn try shelf DoTysym debug
+    | |- istype ?G (BinaryProd ?A ?B) =>
       first [
-        ceapply TySimProd
+        ceapply TyBinaryProd
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- istype ?G (Uni ?n) =>
       first [
         ceapply TyUni
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- istype ?G (El ?l ?a) =>
       first [
         ceapply TyEl
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- istype ?G ?A =>
       tryif (is_var A)
       then first [
         eassumption
       | ceapply TyCtxConv ; [ eassumption | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
-      else tryif (cando shelf)
+      ] ; magicn try shelf DoTysym debug
+      else tryif (do_shelf shelf)
         then shelve
         else myfail debug
 
@@ -2242,19 +2274,19 @@ Ltac magicn try shelf tysym debug :=
         | ..
         ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm (ctxextend ?G ?A) (var 0) ?T =>
       first [
         ceapply TermVarZero
       | ceapply TermTyConv ; [ ceapply TermVarZero | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm (ctxextend ?G ?B) (var (S ?k)) ?A =>
       first [
         ceapply TermVarSucc
       | ceapply TermTyConv ; [ ceapply TermVarSucc | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (var ?k) ?A =>
       (* In that case, we might shelve, if the don't know the context. *)
       tryif (is_evar G)
@@ -2268,133 +2300,133 @@ Ltac magicn try shelf tysym debug :=
         ceapply TermAbs
       | ceapply TermTyConv ; [ ceapply TermAbs | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (app ?u ?A ?B ?v) ?C =>
       first [
         ceapply TermApp
       | ceapply TermTyConv ; [ ceapply TermApp | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (refl ?A ?u) ?B =>
       first [
         ceapply TermRefl
       | ceapply TermTyConv ; [ ceapply TermRefl | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (j ?A ?u ?C ?w ?v ?p) ?T =>
       first [
         ceapply TermJ
       | ceapply TermTyConv ; [ ceapply TermJ | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (exfalso ?A ?u) _ =>
       first [
         ceapply TermExfalso
       | ceapply TermTyConv ; [ ceapply TermExfalso | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G unit ?A =>
       first [
         ceapply TermUnit
       | ceapply TermTyConv ; [ ceapply TermUnit | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G true ?A =>
       first [
         ceapply TermTrue
       | ceapply TermTyConv ; [ ceapply TermTrue | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G false ?A =>
       first [
         ceapply TermFalse
       | ceapply TermTyConv ; [ ceapply TermFalse | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (cond ?C ?u ?v ?w) ?T =>
       first [
         ceapply TermCond
       | ceapply TermTyConv ; [ ceapply TermCond | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (pair ?A ?B ?u ?v) ?T =>
       first [
         ceapply TermPair
       | ceapply TermTyConv ; [ ceapply TermPair | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (proj1 ?A ?B ?p) ?T =>
       first [
         ceapply TermProjOne
       | ceapply TermTyConv ; [ ceapply TermProjOne | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (proj2 ?A ?B ?p) ?T =>
       first [
         ceapply TermProjTwo
       | ceapply TermTyConv ; [ ceapply TermProjTwo | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (uniProd ?l prop ?a ?b) ?T =>
       first [
         ceapply TermUniProdProp
       | ceapply TermTyConv ; [ ceapply TermUniProdProp | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (uniProd ?n ?m ?a ?b) ?T =>
       first [
         ceapply TermUniProd
       | ceapply TermTyConv ; [ ceapply TermUniProd | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (uniId ?n ?a ?u ?v) ?T =>
       first [
         ceapply TermUniId
       | ceapply TermTyConv ; [ ceapply TermUniId | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (uniEmpty ?n) ?T =>
       first [
         ceapply TermUniEmpty
       | ceapply TermTyConv ; [ ceapply TermUniEmpty | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (uniUnit ?n) ?T =>
       first [
         ceapply TermUniUnit
       | ceapply TermTyConv ; [ ceapply TermUniUnit | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (uniBool ?n) ?T =>
       first [
         ceapply TermUniBool
       | ceapply TermTyConv ; [ ceapply TermUniBool | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
-    | |- isterm ?G (uniSimProd prop prop ?a ?b) ?T =>
+      ] ; magicn try shelf DoTysym debug
+    | |- isterm ?G (uniBinaryProd prop prop ?a ?b) ?T =>
       first [
-        ceapply TermUniSimProdProp
-      | ceapply TermTyConv ; [ ceapply TermUniSimProdProp | .. ]
+        ceapply TermUniBinaryProdProp
+      | ceapply TermTyConv ; [ ceapply TermUniBinaryProdProp | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
-    | |- isterm ?G (uniSimProd ?n ?m ?a ?b) ?T =>
+      ] ; magicn try shelf DoTysym debug
+    | |- isterm ?G (uniBinaryProd ?n ?m ?a ?b) ?T =>
       first [
-        ceapply TermUniSimProd
-      | ceapply TermTyConv ; [ ceapply TermUniSimProd | .. ]
+        ceapply TermUniBinaryProd
+      | ceapply TermTyConv ; [ ceapply TermUniBinaryProd | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (uniUni prop) ?T =>
       first [
         ceapply TermUniProp
       | ceapply TermTyConv ; [ ceapply TermUniProp | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (uniUni ?n) ?T =>
       first [
         ceapply TermUniUni
       | ceapply TermTyConv ; [ ceapply TermUniUni | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | [ H : isterm ?G ?v ?A, H' : isterm ?G ?v ?B |- isterm ?G ?v ?C ] =>
       (* We have several options so we don't take any risk. *)
       (* Eventually this should go away. I don't want to do the assert thing
@@ -2402,12 +2434,12 @@ Ltac magicn try shelf tysym debug :=
       first [
         is_var A ; exact H
       | is_var B ; exact H'
-      | cando shelf ; shelve
+      | do_shelf shelf ; shelve
       ]
     | |- isterm ?G ?u ?A =>
       tryif (is_evar u)
       (* If u is an existential variable we don't touch it. *)
-      then tryif (cando shelf)
+      then tryif (do_shelf shelf)
         then shelve
         else myfail debug
       else (
@@ -2421,8 +2453,8 @@ Ltac magicn try shelf tysym debug :=
           | ..
           ]
         | myfail debug
-        ] ; magicn try shelf true debug
-        else tryif (cando shelf)
+        ] ; magicn try shelf DoTysym debug
+        else tryif (do_shelf shelf)
           then shelve
           else myfail debug
       )
@@ -2435,20 +2467,20 @@ Ltac magicn try shelf tysym debug :=
         ceapply EqCtxExtend
       | capply CtxSym ; [ ceapply EqCtxExtend | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqctx ?G ?G =>
       first [
         ceapply CtxRefl
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqctx ?G ?D =>
       tryif (is_var G ; is_var D)
       then first [
         assumption
       | capply CtxSym ; [ assumption | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
-      else tryif (cando shelf)
+      ] ; magicn try shelf DoTysym debug
+      else tryif (do_shelf shelf)
         then shelve
         else myfail debug
 
@@ -2458,36 +2490,36 @@ Ltac magicn try shelf tysym debug :=
       first [
         ceapply WeakNat
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqsubst (sbcomp ?sbs (sbweak _))
                 (sbcomp (sbweak _) (sbshift _ ?sbs)) ?G ?D =>
       first [
         ceapply SubstSym ; [ ceapply WeakNat | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqsubst (sbzero _ ?u1) (sbzero _ ?u2) ?D ?E =>
       first [
         ceapply CongSubstZero
       | ceapply EqSubstCtxConv ; [ ceapply CongSubstZero | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqsubst (sbweak _) (sbweak _) ?D ?E =>
       first [
         ceapply CongSubstWeak
       | ceapply EqSubstCtxConv ; [ ceapply CongSubstWeak | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqsubst (sbshift _ ?sbs1) (sbshift _ ?sbs2) ?D ?E =>
       first [
         ceapply CongSubstShift
       | ceapply EqSubstCtxConv ; [ ceapply CongSubstShift | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqsubst ?sbs ?sbs ?G ?D =>
       first [
           ceapply SubstRefl
         | myfail debug
-        ] ; magicn try shelf true debug
+        ] ; magicn try shelf DoTysym debug
     (* In case we have syntactically equal substitutions involved,
        we can make a little shortcut. *)
     (* | |- eqsubst (sbcomp ?sbs _) (sbcomp ?sbs _) _ _ => *)
@@ -2498,7 +2530,7 @@ Ltac magicn try shelf tysym debug :=
     (*     | .. *)
     (*     ] *)
     (*   | myfail debug *)
-    (*   ] ; magicn try shelf true debug *)
+    (*   ] ; magicn try shelf DoTysym debug *)
     (* | |- eqsubst (sbcomp _ ?sbs) (sbcomp _ ?sbs) _ _ => *)
     (*   first [ *)
     (*     eapply CongSubstComp ; [ *)
@@ -2506,7 +2538,7 @@ Ltac magicn try shelf tysym debug :=
     (*     | .. *)
     (*     ] *)
     (*   | myfail debug *)
-    (*   ] ; magicn try shelf true debug *)
+    (*   ] ; magicn try shelf DoTysym debug *)
     (* We need to simplify if we are ever going to apply congruence for
        composition. *)
     | |- eqsubst ?sbs ?sbt ?G ?D =>
@@ -2520,25 +2552,25 @@ Ltac magicn try shelf tysym debug :=
         | ..
         ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
       else first [
         ceapply SubstTrans ; [ simplify_subst | .. ]
       | ceapply SubstSym ; [ ceapply SubstTrans ; [ simplify_subst | .. ] | .. ]
       | ceapply CongSubstComp
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
 
     (*! Equality of types !*)
     | |- eqtype ?G (Subst (Subst ?A ?sbs) ?sbt) ?B =>
       first [
         compsubst1
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqtype ?G ?A (Subst (Subst ?B ?sbs) ?sbt) =>
       first [
         compsubst1
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     (* A weird case perhaps. *)
     | |- eqtype ?G (Subst ?A (sbshift ?A2 ?sbs))
                (Subst ?B' (sbcomp ?sbs (sbweak (Subst ?A1 ?sbs)))) =>
@@ -2547,7 +2579,7 @@ Ltac magicn try shelf tysym debug :=
         first [
           instantiate (1 := (Subst B' (sbweak _)))
         | myfail debug
-        ] ; magicn try shelf true debug
+        ] ; magicn try shelf DoTysym debug
       )
       else eqtype_subst G A (sbshift A2 sbs)
                         (Subst B' (sbcomp sbs (sbweak (Subst A1 sbs))))
@@ -2559,7 +2591,7 @@ Ltac magicn try shelf tysym debug :=
         first [
           instantiate (1 := Subst B' (sbweak _))
         | myfail debug
-        ] ; magicn try shelf true debug
+        ] ; magicn try shelf DoTysym debug
       )
       else eqtype_subst G (Subst B' (sbcomp sbs (sbweak A1 sbs)))
                         (Subst A (sbshift A2 sbs))
@@ -2574,7 +2606,7 @@ Ltac magicn try shelf tysym debug :=
         first [
           instantiate (1 := Subst B' (sbweak _))
         | myfail debug
-        ] ; magicn try shelf true debug
+        ] ; magicn try shelf DoTysym debug
       )
       else eqtype_subst G
                         A
@@ -2590,7 +2622,7 @@ Ltac magicn try shelf tysym debug :=
         first [
           instantiate (1 := Subst B' (sbweak _))
         | myfail debug
-        ] ; magicn try shelf true debug
+        ] ; magicn try shelf DoTysym debug
       )
       else eqtype_subst G B' sbs
                         (Subst A (sbcomp (sbshift A1 sbs)
@@ -2605,7 +2637,7 @@ Ltac magicn try shelf tysym debug :=
         first [
           instantiate (1 := Subst (Subst A sbs) (sbweak _))
         | myfail debug
-        ] ; magicn try shelf true debug
+        ] ; magicn try shelf DoTysym debug
       else
         eqtype_subst G A sbs (Subst B (sbzero (Subst A sbs) (subst u sbs)))
                      magicn try shelf tysym debug
@@ -2615,7 +2647,7 @@ Ltac magicn try shelf tysym debug :=
       then first [
         instantiate (1 := Subst B (sbweak _))
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
       else eqtype_subst G A (sbzero B u) B
                         magicn try shelf tysym debug
     | |- eqtype ?G (Subst ?A ?sbs) (Subst ?A ?sbt) =>
@@ -2624,53 +2656,53 @@ Ltac magicn try shelf tysym debug :=
         idtac
       | eapply EqTyRefl
       | ..
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqtype ?G (Subst ?A ?sbs) ?B =>
       (* We should push only if it makes sense. *)
       eqtype_subst G A sbs B magicn try shelf tysym debug
     | |- eqtype ?G ?A (Subst ?B ?sbs) =>
       (* We know how to deal with the symmetric case. *)
-      tryif (cando tysym)
+      tryif (do_tysym tysym)
       then ceapply EqTySym ; [
-        magicn try shelf false debug
-      | magicn try shelf true debug ..
+        magicn try shelf DontTysym debug
+      | magicn try shelf DoTysym debug ..
       ]
       else myfail debug
     | |- eqtype ?G (Id ?A ?u ?v) (Id ?B ?w ?z) =>
       first [
         ceapply CongId
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqtype ?G (Prod ?A ?B) (Prod ?C ?D) =>
       first [
         ceapply CongProd
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqtype ?G Unit Unit =>
       first [
         ceapply EqTyRefl
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqtype ?G Bool Bool =>
       first [
         ceapply EqTyRefl
       | myfail debug
-      ] ; magicn try shelf true debug
-    | |- eqtype ?G (SimProd _ _) (SimProd _ _) =>
+      ] ; magicn try shelf DoTysym debug
+    | |- eqtype ?G (BinaryProd _ _) (BinaryProd _ _) =>
       first [
-        ceapply CongSimProd
+        ceapply CongBinaryProd
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqtype ?G (Uni _) (Uni _) =>
       first [
         ceapply EqTyRefl
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqtype ?G (El ?l ?a) (El ?l' ?b) =>
       first [
         ceapply CongEl
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqtype ?G ?A ?B =>
       tryif (is_var A ; is_var B)
       then (
@@ -2686,10 +2718,10 @@ Ltac magicn try shelf tysym debug :=
           | ..
           ]
         | myfail debug
-        ] ; magicn try shelf true debug
+        ] ; magicn try shelf DoTysym debug
       )
       else tryif (is_evar A || is_evar B)
-        then tryif (cando shelf)
+        then tryif (do_shelf shelf)
           then shelve
           else myfail debug
         else myfail debug
@@ -2699,12 +2731,12 @@ Ltac magicn try shelf tysym debug :=
       first [
         compsubst1
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G ?u (subst (subst ?v ?sbs) ?sbt) ?A =>
       first [
         compsubst1
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G (subst ?u ?sbs) ?v ?A =>
       (* Maybe some type conversion somewhere. *)
       tryif (is_var u)
@@ -2724,7 +2756,7 @@ Ltac magicn try shelf tysym debug :=
                 ]
               | eassumption
               | myfail debug
-              ] ; magicn try shelf true debug
+              ] ; magicn try shelf DoTysym debug
               else first [
                 ceapply EqSym ; [ simplify | .. ]
               | ceapply CongTermSubst
@@ -2733,13 +2765,13 @@ Ltac magicn try shelf tysym debug :=
                 | ..
                 ]
               | myfail debug
-              ] ; magicn try shelf true debug
+              ] ; magicn try shelf DoTysym debug
             )
             else first [
               pushsubst1
             | ceapply EqSym ; [ pushsubst1 | .. ]
-            | cando shelf ; shelve
-            ] ; magicn try shelf true debug
+            | do_shelf shelf ; shelve
+            ] ; magicn try shelf DoTysym debug
           | _ =>
             first [
               ceapply CongTermSubst
@@ -2749,7 +2781,7 @@ Ltac magicn try shelf tysym debug :=
               ]
             | eassumption
             | myfail debug
-            ] ; magicn try shelf true debug
+            ] ; magicn try shelf DoTysym debug
           end
         )
         else (
@@ -2761,49 +2793,49 @@ Ltac magicn try shelf tysym debug :=
               | ceapply CongTermSubst
               | ceapply EqTyConv ; [ ceapply CongTermSubst | .. ]
               | myfail debug
-              ] ; magicn try shelf true debug
+              ] ; magicn try shelf DoTysym debug
             else first [
               pushsubst1
-            | cando shelf ; shelve
-            ] ; magicn try shelf true debug
+            | do_shelf shelf ; shelve
+            ] ; magicn try shelf DoTysym debug
 
           | ?v =>
-            tryif (is_evar v ; cando shelf)
+            tryif (is_evar v ; do_shelf shelf)
             then shelve
             else first [
               simplify
             | myfail debug
-            ] ; magicn try shelf true debug
+            ] ; magicn try shelf DoTysym debug
           end
         )
       )
       else first [
         pushsubst1
-      | cando shelf ; shelve
-      ] ; magicn try shelf true debug
+      | do_shelf shelf ; shelve
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G ?u (subst ?v ?sbs) ?A =>
       (* We know how to deal with the symmetric case. *)
-      tryif (cando tysym)
+      tryif (do_tysym tysym)
       then ceapply EqSym ; [
-        magicn try shelf false debug
-      | magicn try shelf true debug ..
+        magicn try shelf DontTysym debug
+      | magicn try shelf DoTysym debug ..
       ]
       else myfail debug
     | |- eqterm ?G ?u ?u ?A =>
       first [
         ceapply EqRefl
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G ?u ?v Empty =>
       first [
         config eapply @EqTermExfalso with (w := u)
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G ?u ?v Unit =>
       first [
         ceapply UnitEta
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     (* Where should ProdBeta be handled? *)
     (* Same for CondTrue, CondFalse, JRefl *)
     (* ProdEta should come in after CongApp and CongProd probably *)
@@ -2812,79 +2844,79 @@ Ltac magicn try shelf tysym debug :=
         ceapply CongAbs
       | ceapply EqTyConv ; [ ceapply CongAbs | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G (app ?u1 ?A1 ?A2 ?u2) (app ?v1 ?B1 ?B2 ?v2) _ =>
       first [
         ceapply CongApp
       | ceapply EqTyConv ; [ ceapply CongApp | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G (refl ?A1 ?u1) (refl ?A2 ?u2) _ =>
       first [
         ceapply CongRefl
       | ceapply EqTyConv ; [ ceapply CongRefl | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G (j ?A1 ?u1 ?C1 ?w1 ?v1 ?p1) (j ?A2 ?u2 ?C2 ?w2 ?v2 ?p2) _ =>
       first [
         ceapply CongJ
       | ceapply EqTyConv ; [ ceapply CongJ | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G (cond ?C1 ?u1 ?v1 ?w1) (cond ?C2 ?u2 ?v2 ?w2) _ =>
       first [
         ceapply CongCond
       | ceapply EqTyConv ; [ ceapply CongCond | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G (pair _ _ _ _) (pair _ _ _ _) _ =>
       first [
         ceapply CongPair
       | ceapply EqTyConv ; [ ceapply CongPair | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G (proj1 _ _ _ ) (proj1 _ _ _) _ =>
       first [
         ceapply CongProjOne
       | ceapply EqTyConv ; [ ceapply CongProjOne | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G (proj2 _ _ _ ) (proj2 _ _ _) _ =>
       first [
         ceapply CongProjTwo
       | ceapply EqTyConv ; [ ceapply CongProjTwo | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G (uniProd _ prop _ _) (uniProd _ prop _ _) _ =>
       first [
         ceapply CongUniProdProp
       | ceapply EqTyConv ; [ ceapply CongUniProdProp | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G (uniProd _ _ _ _) (uniProd _ _ _ _) _ =>
       first [
         ceapply CongUniProd
       | ceapply EqTyConv ; [ ceapply CongUniProd | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G (uniId _ _ _ _) (uniId _ _ _ _) _ =>
       first [
         ceapply CongUniId
       | ceapply EqTyConv ; [ ceapply CongUniId | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
-    | |- eqterm ?G (uniSimProd prop prop _ _) (uniSimProd prop prop _ _) _ =>
+      ] ; magicn try shelf DoTysym debug
+    | |- eqterm ?G (uniBinaryProd prop prop _ _) (uniBinaryProd prop prop _ _) _ =>
       first [
-        ceapply CongUniSimProdProp
-      | ceapply EqTyConv ; [ ceapply CongUniSimProdProp | .. ]
+        ceapply CongUniBinaryProdProp
+      | ceapply EqTyConv ; [ ceapply CongUniBinaryProdProp | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
-    | |- eqterm ?G (uniSimProd _ _ _ _) (uniSimProd _ _ _ _) _ =>
+      ] ; magicn try shelf DoTysym debug
+    | |- eqterm ?G (uniBinaryProd _ _ _ _) (uniBinaryProd _ _ _ _) _ =>
       first [
-        ceapply CongUniSimProd
-      | ceapply EqTyConv ; [ ceapply CongUniSimProd | .. ]
+        ceapply CongUniBinaryProd
+      | ceapply EqTyConv ; [ ceapply CongUniBinaryProd | .. ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G ?u ?v ?A =>
       tryif (is_var u ; is_var v)
       then first [
@@ -2897,24 +2929,24 @@ Ltac magicn try shelf tysym debug :=
         | ..
         ]
       | myfail debug
-      ] ; magicn try shelf true debug
+      ] ; magicn try shelf DoTysym debug
       else tryif (is_evar u + is_evar v)
-        then tryif (cando shelf)
+        then tryif (do_shelf shelf)
           then shelve
           else myfail debug
         else myfail debug
 
     | _ => myfail debug
     end
-  | cando try
+  | do_try try
   ].
 
 Ltac preop := unfold Arrow in *.
 
-Ltac magic := preop ; magicn false true true true.
-Ltac okmagic := preop ; magicn false true true false.
-Ltac trymagic := preop ; magicn true true true false.
-Ltac strictmagic := preop ; magicn false false true true.
+Ltac magic       := preop ; magicn DontTry DoShelf   DoTysym DoDebug.
+Ltac okmagic     := preop ; magicn DontTry DoShelf   DoTysym DontDebug.
+Ltac trymagic    := preop ; magicn DoTry   DoShelf   DoTysym DontDebug.
+Ltac strictmagic := preop ; magicn DontTry DontShelf DoTysym DoDebug.
 
 Ltac compsubst := preop ; compsubst1.
 Ltac pushsubst := preop ; pushsubst1.

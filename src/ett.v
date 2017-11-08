@@ -1,28 +1,30 @@
 Require config.
-Require Import tt.
+Require tt.
+Require syntax.
 
 Section Ett.
 
-Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.No |}.
+Local Instance havePrecondition : config.Precondition := {| config.flagPrecondition := config.No |}.
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
-Context `{ConfigProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context `{configBinaryProdType : config.BinaryProdType}.
+Context `{configProdEta : config.ProdEta}.
+Context `{configUniverses : config.Universes}.
+Context `{configPropType : config.PropType}.
+Context `{configIdType : config.IdType}.
+Context `{configIdEliminator : config.IdEliminator}.
+Context `{configEmptyType : config.EmptyType}.
+Context `{configUnitType : config.UnitType}.
+Context `{configBoolType : config.BoolType}.
+Context `{configProdType : config.ProdType}.
+Context `{configSyntax : syntax.Syntax}.
 
-Definition isctx := isctx.
-Definition issubst := issubst.
-Definition istype := istype.
-Definition isterm := isterm.
-Definition eqctx := eqctx.
-Definition eqsubst := eqsubst.
-Definition eqtype := eqtype.
-Definition eqterm := eqterm.
+Definition isctx := tt.isctx.
+Definition issubst := tt.issubst.
+Definition istype := tt.istype.
+Definition isterm := tt.isterm.
+Definition eqctx := tt.eqctx.
+Definition eqsubst := tt.eqsubst.
+Definition eqtype := tt.eqtype.
+Definition eqterm := tt.eqterm.
 
 End Ett.

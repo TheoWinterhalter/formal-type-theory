@@ -2,24 +2,25 @@
 
 Require config.
 Require Import config_tactics.
+Require Import checking_tactics.
 Require Import tt.
 Require Import syntax.
-Require Import checking_tactics.
 
 Section PttAdmissible.
 
-Local Instance hasPrecond : config.Precond := {| config.precondFlag := config.Yes |}.
+Local Instance havePrecondition : config.Precondition := {| config.flagPrecondition := config.Yes |}.
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context `{configUniverses : config.Universes}.
+Context `{configPropType : config.PropType}.
+Context `{configIdType : config.IdType}.
+Context `{configIdEliminator : config.IdEliminator}.
+Context `{configEmptyType : config.EmptyType}.
+Context `{configUnitType : config.UnitType}.
+Context `{configBoolType : config.BoolType}.
+Context `{configProdType : config.ProdType}.
+Context `{configSyntax : syntax.Syntax}.
 
 (* Some preliminary lemmata *)
 Lemma EqTyWeakNat :

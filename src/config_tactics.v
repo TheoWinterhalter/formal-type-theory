@@ -8,48 +8,48 @@ Ltac doConfig :=
     match (eval cbn in P) with
     | Yes => intros _
     | No => let H := fresh "H" in (intros H ; now elim H)
-    | precondFlag =>
-      let H := fresh "precondFlag" in intros H
-    | reflectionFlag =>
-      let H := fresh "reflectionFlag" in intros H
-    | simpleproductsFlag =>
-      let H := fresh "simpleproductsFlag" in intros H
-    | prodetaFlag =>
-      let H := fresh "prodetaFlag" in intros H
-    | universesFlag =>
-      let H := fresh "universesFlag" in intros H
-    | withpropFlag =>
-      let H := fresh "withpropFlag" in intros H
-    | withjFlag =>
-      let H := fresh "withjFlag" in intros H
-    | withemptyFlag =>
-      let H := fresh "withemptyFlag" in intros H
-    | withunitFlag =>
-      let H := fresh "withunitFlag" in intros H
-    | withboolFlag =>
-      let H := fresh "withboolFlag" in intros H
-    | withpiFlag =>
-      let H := fresh "withpiFlag" in intros H
-    | identitytypesFlag =>
-      let H := fresh "identitytypesFlag" in intros H
+    | flagPrecondition =>
+      let H := fresh "flagPrecondition" in intros H
+    | flagReflection =>
+      let H := fresh "flagReflection" in intros H
+    | flagBinaryProdType =>
+      let H := fresh "flagBinaryProdType" in intros H
+    | flagProdEta =>
+      let H := fresh "flagProdEta" in intros H
+    | flagUniverses =>
+      let H := fresh "flagUniverses" in intros H
+    | flagPropType =>
+      let H := fresh "flagPropType" in intros H
+    | flagIdEliminator =>
+      let H := fresh "flagIdEliminator" in intros H
+    | flagEmptyType =>
+      let H := fresh "flagEmptyType" in intros H
+    | flagUnitType =>
+      let H := fresh "flagUnitType" in intros H
+    | flagBoolType =>
+      let H := fresh "flagBoolType" in intros H
+    | flagProdType =>
+      let H := fresh "flagProdType" in intros H
+    | flagIdType =>
+      let H := fresh "flagIdType" in intros H
     | _ => idtac
     end
   | |- ?P =>
     match (eval cbn in P) with
     | Yes => exact yes
     end
-  | H : precondFlag |- precondFlag => exact H
-  | H : reflectionFlag |- reflectionFlag => exact H
-  | H : simpleproductsFlag |- simpleproductsFlag => exact H
-  | H : prodetaFlag |- prodetaFlag => exact H
-  | H : universesFlag |- universesFlag => exact H
-  | H : withpropFlag |- withpropFlag => exact H
-  | H : withjFlag |- withjFlag => exact H
-  | H : withemptyFlag |- withemptyFlag => exact H
-  | H : withunitFlag |- withunitFlag => exact H
-  | H : withboolFlag |- withboolFlag => exact H
-  | H : withpiFlag |- withpiFlag => exact H
-  | H : identitytypesFlag |- identitytypesFlag => exact H
+  | H : flagPrecondition |- flagPrecondition => exact H
+  | H : flagReflection |- flagReflection => exact H
+  | H : flagBinaryProdType |- flagBinaryProdType => exact H
+  | H : flagProdEta |- flagProdEta => exact H
+  | H : flagUniverses |- flagUniverses => exact H
+  | H : flagPropType |- flagPropType => exact H
+  | H : flagIdEliminator |- flagIdEliminator => exact H
+  | H : flagEmptyType |- flagEmptyType => exact H
+  | H : flagUnitType |- flagUnitType => exact H
+  | H : flagBoolType |- flagBoolType => exact H
+  | H : flagProdType |- flagProdType => exact H
+  | H : flagIdType |- flagIdType => exact H
   | _ => idtac
   end ;
   (* Configure the hypotheses *)
@@ -59,53 +59,53 @@ Ltac doConfig :=
      match (eval cbn in P) with
      | Yes => specialize (H yes)
      | No => clear H
-     | @precondFlag ?F =>
+     | @flagPrecondition ?F =>
        match goal with
-       | R : @precondFlag F |- _ => specialize (H R)
+       | R : @flagPrecondition F |- _ => specialize (H R)
        end
-     | @reflectionFlag ?F =>
+     | @flagReflection ?F =>
        match goal with
-       | R : @reflectionFlag F |- _ => specialize (H R)
+       | R : @flagReflection F |- _ => specialize (H R)
        end
-     | @simpleproductsFlag ?F =>
+     | @flagBinaryProdType ?F =>
        match goal with
-       | R : @simpleproductsFlag F |- _ => specialize (H R)
+       | R : @flagBinaryProdType F |- _ => specialize (H R)
        end
-     | @prodetaFlag ?F =>
+     | @flagProdEta ?F =>
        match goal with
-       | R : @prodetaFlag F |- _ => specialize (H R)
+       | R : @flagProdEta F |- _ => specialize (H R)
        end
-     | @universesFlag ?F =>
+     | @flagUniverses ?F =>
        match goal with
-       | R : @universesFlag F |- _ => specialize (H R)
+       | R : @flagUniverses F |- _ => specialize (H R)
        end
-     | @withpropFlag ?F =>
+     | @flagPropType ?F =>
        match goal with
-       | R : @withpropFlag F |- _ => specialize (H R)
+       | R : @flagPropType F |- _ => specialize (H R)
        end
-     | @withjFlag ?F =>
+     | @flagIdEliminator ?F =>
        match goal with
-       | R : @withjFlag F |- _ => specialize (H R)
+       | R : @flagIdEliminator F |- _ => specialize (H R)
        end
-     | @withemptyFlag ?F =>
+     | @flagEmptyType ?F =>
        match goal with
-       | R : @withemptyFlag F |- _ => specialize (H R)
+       | R : @flagEmptyType F |- _ => specialize (H R)
        end
-     | @withunitFlag ?F =>
+     | @flagUnitType ?F =>
        match goal with
-       | R : @withunitFlag F |- _ => specialize (H R)
+       | R : @flagUnitType F |- _ => specialize (H R)
        end
-     | @withboolFlag ?F =>
+     | @flagBoolType ?F =>
        match goal with
-       | R : @withboolFlag F |- _ => specialize (H R)
+       | R : @flagBoolType F |- _ => specialize (H R)
        end
-     | @withpiFlag ?F =>
+     | @flagProdType ?F =>
        match goal with
-       | R : @withpiFlag F |- _ => specialize (H R)
+       | R : @flagProdType F |- _ => specialize (H R)
        end
-     | @identitytypesFlag ?F =>
+     | @flagIdType ?F =>
        match goal with
-       | R : @identitytypesFlag F |- _ => specialize (H R)
+       | R : @flagIdType F |- _ => specialize (H R)
        end
      end
    | H : ?P |- _ =>

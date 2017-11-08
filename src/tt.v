@@ -15,59 +15,61 @@ Require Import config.
 Section TypeTheoryRules.
 (* Notations for writing down inference rules. *)
 
-Context `{ConfigPrecond : config.Precond}.
-Context `{ConfigReflection : config.Reflection}.
-Context `{ConfigSimpleProducts : config.SimpleProducts}.
-Context `{ConfigProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigPi : config.WithPi}.
+Context `{configPrecondition : config.Precondition}.
+Context `{configReflection : config.Reflection}.
+Context `{configBinaryProdType : config.BinaryProdType}.
+Context `{configProdEta : config.ProdEta}.
+Context `{configUniverses : config.Universes}.
+Context `{configPropType : config.PropType}.
+Context `{configIdEliminator : config.IdEliminator}.
+Context `{configEmptyType : config.EmptyType}.
+Context `{configUnitType : config.UnitType}.
+Context `{configBoolType : config.BoolType}.
+Context `{configIdType : config.IdType}.
+Context `{configProdType : config.ProdType}.
+Context `{configSyntax : Syntax}.
+
 
 Notation "'rule' r 'endrule'" := (r) (at level 96, only parsing).
 
-Notation "'extensional' r" :=
-  (forall { _ : reflectionFlag }, r) (only parsing, at level 97).
+Notation "'whenReflection' r" :=
+  (forall { _ : flagReflection }, r) (only parsing, at level 97).
 
-Notation "'simpleproduct' r" :=
-  (forall { _ : simpleproductsFlag }, r) (only parsing, at level 97).
+Notation "'whenBinaryProdType' r" :=
+  (forall { _ : flagBinaryProdType }, r) (only parsing, at level 97).
 
-Notation "'prodeta' r" :=
-  (forall { _ : prodetaFlag }, r) (only parsing, at level 97).
+Notation "'whenProdEta' r" :=
+  (forall { _ : flagProdEta }, r) (only parsing, at level 97).
 
-Notation "'universe' r" :=
-  (forall { _ : universesFlag }, r) (only parsing, at level 97).
+Notation "'whenUniverses' r" :=
+  (forall { _ : flagUniverses }, r) (only parsing, at level 97).
 
-Notation "'withprop' r" :=
-  (forall { _ : withpropFlag }, r) (only parsing, at level 97).
+Notation "'whenPropType' r" :=
+  (forall { _ : flagPropType }, r) (only parsing, at level 97).
 
-Notation "'identitytype' r" :=
-  (forall { _ : identitytypesFlag }, r) (only parsing, at level 97).
+Notation "'whenIdType' r" :=
+  (forall { _ : flagIdType }, r) (only parsing, at level 97).
 
-Notation "'withj' r" :=
-  (forall { _ : withjFlag }, r) (only parsing, at level 97).
+Notation "'whenIdEliminator' r" :=
+  (forall { _ : flagIdEliminator }, r) (only parsing, at level 97).
 
-Notation "'withempty' r" :=
-  (forall { _ : withemptyFlag }, r) (only parsing, at level 97).
+Notation "'whenEmptyType' r" :=
+  (forall { _ : flagEmptyType }, r) (only parsing, at level 97).
 
-Notation "'withunit' r" :=
-  (forall { _ : withunitFlag }, r) (only parsing, at level 97).
+Notation "'whenUnitType' r" :=
+  (forall { _ : flagUnitType }, r) (only parsing, at level 97).
 
-Notation "'withbool' r" :=
-  (forall { _ : withboolFlag }, r) (only parsing, at level 97).
+Notation "'whenBoolType' r" :=
+  (forall { _ : flagBoolType }, r) (only parsing, at level 97).
 
-Notation "'withpi' r" :=
-  (forall { _ : withpiFlag }, r) (only parsing, at level 97).
+Notation "'whenProdType' r" :=
+  (forall { _ : flagProdType }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
     (at level 200, x binder, y binder, right associativity, only parsing).
 Notation "'premise:' p q" := (p -> q) (only parsing, at level 95).
-Notation "'precond:' p q" := ((precondFlag -> p) -> q) (only parsing, at level 95).
+Notation "'precond:' p q" := ((flagPrecondition -> p) -> q) (only parsing, at level 95).
 Notation "'conclusion:' q" := q (no associativity, only parsing, at level 94).
 
 Inductive isctx : context -> Type :=
@@ -179,7 +181,7 @@ with istype : context -> type -> Type :=
        endrule
 
      | TyProd :
-       withpi rule
+       whenProdType rule
          parameters: {G A B},
          premise: istype (ctxextend G A) B
          precond: istype G A
@@ -189,7 +191,7 @@ with istype : context -> type -> Type :=
        endrule
 
      | TyId :
-       identitytype rule
+       whenIdType rule
          parameters: {G A u v},
          precond: isctx G
          precond: istype G A
@@ -200,7 +202,7 @@ with istype : context -> type -> Type :=
        endrule
 
      | TyEmpty :
-       withempty rule
+       whenEmptyType rule
          parameters: {G},
          premise: isctx G
          conclusion:
@@ -208,7 +210,7 @@ with istype : context -> type -> Type :=
        endrule
 
      | TyUnit :
-       withunit rule
+       whenUnitType rule
          parameters: {G},
          premise: isctx G
          conclusion:
@@ -216,25 +218,25 @@ with istype : context -> type -> Type :=
        endrule
 
      | TyBool :
-       withbool rule
+       whenBoolType rule
          parameters: {G},
          premise: isctx G
          conclusion:
            istype G Bool
        endrule
 
-     | TySimProd :
-       simpleproduct rule
+     | TyBinaryProd :
+       whenBinaryProdType rule
          parameters: {G A B},
          precond: isctx G
          premise: istype G A
          premise: istype G B
          conclusion:
-           istype G (SimProd A B)
+           istype G (BinaryProd A B)
        endrule
 
      | TyUni :
-       universe rule
+       whenUniverses rule
          parameters: {G n},
          premise: isctx G
          conclusion:
@@ -242,7 +244,7 @@ with istype : context -> type -> Type :=
        endrule
 
      | TyEl :
-       universe rule
+       whenUniverses rule
          parameters: {G a l},
          premise: isterm G a (Uni l)
          precond: isctx G
@@ -311,7 +313,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermAbs :
-       withpi rule
+       whenProdType rule
          parameters: {G A u B},
          precond: isctx G
          precond: istype G A
@@ -322,7 +324,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermApp :
-       withpi rule
+       whenProdType rule
          parameters: {G A B u v},
          precond: isctx G
          precond: istype G A
@@ -334,7 +336,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermRefl :
-       identitytype rule
+       whenIdType rule
          parameters: {G A u},
          precond: isctx G
          precond: istype G A
@@ -344,7 +346,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermJ :
-       identitytype withj rule
+       whenIdType whenIdEliminator rule
          parameters: {G A C u v w p},
          precond: isctx G
          precond: istype G A
@@ -398,7 +400,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermExfalso :
-       withempty rule
+       whenEmptyType rule
          parameters: {G A u},
          precond: isctx G
          premise: istype G A
@@ -408,7 +410,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUnit :
-       withunit rule
+       whenUnitType rule
          parameters: {G},
          premise: isctx G
          conclusion:
@@ -416,7 +418,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermTrue :
-       withbool rule
+       whenBoolType rule
          parameters: {G},
          premise: isctx G
          conclusion:
@@ -424,7 +426,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermFalse :
-       withbool rule
+       whenBoolType rule
          parameters: {G},
          premise: isctx G
          conclusion:
@@ -432,7 +434,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermCond :
-       withbool rule
+       whenBoolType rule
          parameters: {G C u v w},
          precond: isctx G
          premise: isterm G u Bool
@@ -446,7 +448,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermPair :
-       simpleproduct rule
+       whenBinaryProdType rule
          parameters: {G A B u v},
          precond: isctx G
          precond: istype G A
@@ -454,33 +456,33 @@ with isterm : context -> term -> type -> Type :=
          premise: isterm G u A
          premise: isterm G v B
          conclusion:
-           isterm G (pair A B u v) (SimProd A B)
+           isterm G (pair A B u v) (BinaryProd A B)
        endrule
 
      | TermProjOne :
-       simpleproduct rule
+       whenBinaryProdType rule
          parameters: {G A B p},
          precond: isctx G
          precond: istype G A
          precond: istype G B
-         premise: isterm G p (SimProd A B)
+         premise: isterm G p (BinaryProd A B)
          conclusion:
            isterm G (proj1 A B p) A
        endrule
 
      | TermProjTwo :
-       simpleproduct rule
+       whenBinaryProdType rule
          parameters: {G A B p},
          precond: isctx G
          precond: istype G A
          precond: istype G B
-         premise: isterm G p (SimProd A B)
+         premise: isterm G p (BinaryProd A B)
          conclusion:
            isterm G (proj2 A B p) B
        endrule
 
      | TermUniProd :
-       universe withpi rule
+       whenUniverses whenProdType rule
          parameters: {G a b n m},
          premise: isterm G a (Uni (uni n))
          premise: isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))
@@ -490,7 +492,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUniProdProp :
-       universe withprop withpi rule
+       whenUniverses whenPropType whenProdType rule
          parameters: {G a b l},
          premise: isterm G a (Uni l)
          premise: isterm (ctxextend G (El l a)) b (Uni prop)
@@ -500,7 +502,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUniId :
-       universe identitytype rule
+       whenUniverses whenIdType rule
          parameters: {G a u v n},
          premise: isterm G a (Uni n)
          premise: isterm G u (El n a)
@@ -511,7 +513,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUniEmpty :
-       withempty universe rule
+       whenEmptyType whenUniverses rule
          parameters: {G n},
          premise: isctx G
          conclusion:
@@ -519,7 +521,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUniUnit :
-       withunit universe rule
+       whenUnitType whenUniverses rule
          parameters: {G n},
          premise: isctx G
          conclusion:
@@ -527,35 +529,35 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUniBool :
-       withbool universe rule
+       whenBoolType whenUniverses rule
          parameters: {G n},
          premise: isctx G
          conclusion:
            isterm G (uniBool n) (Uni (uni n))
        endrule
 
-     | TermUniSimProd :
-       universe simpleproduct rule
+     | TermUniBinaryProd :
+       whenUniverses whenBinaryProdType rule
          parameters: {G a b n m},
          premise: isterm G a (Uni (uni n))
          premise: isterm G b (Uni (uni m))
          precond: isctx G
          conclusion:
-           isterm G (uniSimProd (uni n) (uni m) a b) (Uni (uni (max n m)))
+           isterm G (uniBinaryProd (uni n) (uni m) a b) (Uni (uni (max n m)))
        endrule
 
-     | TermUniSimProdProp :
-       universe withprop simpleproduct rule
+     | TermUniBinaryProdProp :
+       whenUniverses whenPropType whenBinaryProdType rule
          parameters: {G a b},
          premise: isterm G a (Uni prop)
          premise: isterm G b (Uni prop)
          precond: isctx G
          conclusion:
-           isterm G (uniSimProd prop prop a b) (Uni prop)
+           isterm G (uniBinaryProd prop prop a b) (Uni prop)
        endrule
 
      | TermUniUni :
-       universe rule
+       whenUniverses rule
          parameters: {G n},
          premise: isctx G
          conclusion:
@@ -563,7 +565,7 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      | TermUniProp :
-       universe withprop rule
+       whenUniverses whenPropType rule
          parameters: {G},
          premise: isctx G
          conclusion:
@@ -922,7 +924,7 @@ with eqtype : context -> type -> type -> Type :=
 
 
      | EqTySubstProd :
-       withpi rule
+       whenProdType rule
          parameters: {G D A B sbs},
          premise: issubst sbs G D
          precond: istype D A
@@ -936,7 +938,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | EqTySubstId :
-       identitytype rule
+       whenIdType rule
          parameters: {G D A u v sbs},
          premise: issubst sbs G D
          precond: istype D A
@@ -951,7 +953,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | EqTySubstEmpty :
-       withempty rule
+       whenEmptyType rule
          parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -963,7 +965,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | EqTySubstUnit :
-       withunit rule
+       whenUnitType rule
          parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -975,7 +977,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | EqTySubstBool :
-       withbool rule
+       whenBoolType rule
          parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -987,7 +989,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | EqTyExfalso :
-       withempty rule
+       whenEmptyType rule
          parameters: {G A B u},
          precond: isctx G
          premise: istype G A
@@ -998,7 +1000,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | CongProd :
-       withpi rule
+       whenProdType rule
          parameters: {G A1 A2 B1 B2},
          precond: isctx G
          precond: istype G A1
@@ -1012,7 +1014,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | CongId :
-       identitytype rule
+       whenIdType rule
          parameters: {G A B u1 u2 v1 v2},
          precond: isctx G
          precond: istype G A
@@ -1043,8 +1045,8 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G (Subst A sbs) (Subst B sbt)
        endrule
 
-     | CongSimProd :
-       simpleproduct rule
+     | CongBinaryProd :
+       whenBinaryProdType rule
          parameters: {G A1 A2 B1 B2},
          precond: isctx G
          precond: istype G A1
@@ -1054,11 +1056,11 @@ with eqtype : context -> type -> type -> Type :=
          premise: eqtype G A1 A2
          premise: eqtype G B1 B2
          conclusion:
-           eqtype G (SimProd A1 B1) (SimProd A2 B2)
+           eqtype G (BinaryProd A1 B1) (BinaryProd A2 B2)
        endrule
 
-     | EqTySubstSimProd :
-       simpleproduct rule
+     | EqTySubstBinaryProd :
+       whenBinaryProdType rule
          parameters: {G D A B sbs},
          precond: isctx G
          precond: isctx D
@@ -1067,12 +1069,12 @@ with eqtype : context -> type -> type -> Type :=
          premise: istype D B
          conclusion:
            eqtype G
-                  (Subst (SimProd A B) sbs)
-                  (SimProd (Subst A sbs) (Subst B sbs))
+                  (Subst (BinaryProd A B) sbs)
+                  (BinaryProd (Subst A sbs) (Subst B sbs))
        endrule
 
      | EqTySubstUni :
-       universe rule
+       whenUniverses rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -1084,7 +1086,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElProd :
-       universe withpi rule
+       whenUniverses whenProdType rule
          parameters: {G a b n m},
          premise: isterm G a (Uni (uni n))
          premise: isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))
@@ -1096,7 +1098,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElProdProp :
-       universe withprop withpi rule
+       whenUniverses whenPropType whenProdType rule
          parameters: {G a b l},
          premise: isterm G a (Uni l)
          premise: isterm (ctxextend G (El l a)) b (Uni prop)
@@ -1108,7 +1110,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElId :
-       universe identitytype rule
+       whenUniverses whenIdType rule
          parameters: {G a u v n},
          premise: isterm G a (Uni n)
          premise: isterm G u (El n a)
@@ -1121,7 +1123,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElSubst :
-       universe rule
+       whenUniverses rule
          parameters: {G D a n sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni n)
@@ -1134,7 +1136,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElEmpty :
-       withempty universe rule
+       whenEmptyType whenUniverses rule
          parameters: {G n},
          premise: isctx G
          conclusion:
@@ -1144,7 +1146,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElUnit :
-       withunit universe rule
+       whenUnitType whenUniverses rule
          parameters: {G n},
          premise: isctx G
          conclusion:
@@ -1154,7 +1156,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElBool :
-       withbool universe rule
+       whenBoolType whenUniverses rule
          parameters: {G n},
          premise: isctx G
          conclusion:
@@ -1163,32 +1165,32 @@ with eqtype : context -> type -> type -> Type :=
                   Bool
        endrule
 
-     | ElSimProd :
-       universe simpleproduct rule
+     | ElBinaryProd :
+       whenUniverses whenBinaryProdType rule
          parameters: {G a b n m},
          premise: isterm G a (Uni (uni n))
          premise: isterm G b (Uni (uni m))
          precond: isctx G
          conclusion:
            eqtype G
-                  (El (uni (max n m)) (uniSimProd (uni n) (uni m) a b))
-                  (SimProd (El (uni n) a) (El (uni m) b))
+                  (El (uni (max n m)) (uniBinaryProd (uni n) (uni m) a b))
+                  (BinaryProd (El (uni n) a) (El (uni m) b))
        endrule
 
-     | ElSimProdProp :
-       universe withprop simpleproduct rule
+     | ElBinaryProdProp :
+       whenUniverses whenPropType whenBinaryProdType rule
          parameters: {G a b},
          premise: isterm G a (Uni prop)
          premise: isterm G b (Uni prop)
          precond: isctx G
          conclusion:
            eqtype G
-                  (El prop (uniSimProd prop prop a b))
-                  (SimProd (El prop a) (El prop b))
+                  (El prop (uniBinaryProd prop prop a b))
+                  (BinaryProd (El prop a) (El prop b))
        endrule
 
      | ElUni :
-       universe rule
+       whenUniverses rule
          parameters: {G n},
          premise: isctx G
          conclusion:
@@ -1198,7 +1200,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | ElProp :
-       universe withprop rule
+       whenUniverses whenPropType rule
          parameters: {G},
          premise: isctx G
          conclusion:
@@ -1208,7 +1210,7 @@ with eqtype : context -> type -> type -> Type :=
        endrule
 
      | CongEl :
-       universe rule
+       whenUniverses rule
          parameters: {G a b n},
          premise: eqterm G a b (Uni n)
          precond: isterm G a (Uni n)
@@ -1392,7 +1394,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstAbs :
-       withpi rule
+       whenProdType rule
          parameters: {G D A B u sbs},
          precond: isctx G
          precond: isctx D
@@ -1413,7 +1415,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstApp :
-       withpi rule
+       whenProdType rule
          parameters: {G D A B u v sbs},
          precond: isctx G
          precond: isctx D
@@ -1434,7 +1436,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstRefl :
-       identitytype rule
+       whenIdType rule
          parameters: {G D A u sbs},
          premise: issubst sbs G D
          premise: isterm D u A
@@ -1449,7 +1451,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstJ :
-       identitytype withj rule
+       whenIdType whenIdEliminator rule
          parameters: {G D A C u v w p sbs},
          precond: isctx G
          precond: isctx D
@@ -1529,7 +1531,7 @@ with eqterm : context -> term -> term -> type -> Type :=
 
      (* This rule is subsumed by EqTermExfalso *)
      | EqSubstExfalso :
-       withempty rule
+       whenEmptyType rule
          parameters: {G D A u sbs},
          precond: isctx G
          precond: isctx D
@@ -1544,7 +1546,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUnit :
-       withunit rule
+       whenUnitType rule
          parameters: {G D sbs},
          precond: isctx G
          precond: isctx D
@@ -1557,7 +1559,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstTrue :
-       withbool rule
+       whenBoolType rule
          parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -1570,7 +1572,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstFalse :
-       withbool rule
+       whenBoolType rule
          parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -1583,13 +1585,13 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstCond :
-       withbool rule
+       whenBoolType rule
          parameters: {G D C u v w sbs},
          precond: isctx G
          precond: isctx D
          premise: issubst sbs G D
          premise: isterm D u Bool
-         premise: istype (ctxextend D Bool) C (* TODO: could this be a precond? *)
+         premise: istype (ctxextend D Bool) C (* TODO: could this be a precondition? *)
          premise: isterm D v (Subst C (sbzero Bool true))
          premise: isterm D w (Subst C (sbzero Bool false))
          conclusion:
@@ -1603,7 +1605,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqTermExfalso :
-       withempty rule
+       whenEmptyType rule
          parameters: {G A u v w},
          precond: isctx G
          precond: istype G A
@@ -1615,7 +1617,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | UnitEta :
-       withunit rule
+       whenUnitType rule
          parameters: {G u v},
          precond: isctx G
          premise: isterm G u Unit
@@ -1625,7 +1627,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqReflection :
-       extensional identitytype rule
+       whenReflection whenIdType rule
          parameters: {G A u v p},
          precond: isctx G
          precond: istype G A
@@ -1637,7 +1639,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | ProdBeta :
-       withpi rule
+       whenProdType rule
          parameters: {G A B u v},
          precond: isctx G
          precond: istype G A
@@ -1652,7 +1654,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CondTrue :
-       withbool rule
+       whenBoolType rule
          parameters: {G C v w},
          precond: isctx G
          premise: istype (ctxextend G Bool) C
@@ -1666,7 +1668,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CondFalse :
-       withbool rule
+       whenBoolType rule
          parameters: {G C v w},
          precond: isctx G
          premise: istype (ctxextend G Bool) C
@@ -1680,7 +1682,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | ProdEta :
-       prodeta withpi rule
+       whenProdEta whenProdType rule
          parameters: {G A B u v},
          precond: isctx G
          precond: istype G A
@@ -1702,7 +1704,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | JRefl :
-       identitytype withj rule
+       whenIdType whenIdEliminator rule
          parameters: {G A C u w},
          precond: isctx G
          precond: istype G A
@@ -1754,7 +1756,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongAbs :
-       withpi rule
+       whenProdType rule
          parameters: {G A1 A2 B1 B2 u1 u2},
          precond: isctx G
          precond: istype G A1
@@ -1774,7 +1776,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongApp :
-       withpi rule
+       whenProdType rule
          parameters: {G A1 A2 B1 B2 u1 u2 v1 v2},
          precond: isctx G
          precond: istype G A1
@@ -1797,7 +1799,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongRefl :
-       identitytype rule
+       whenIdType rule
          parameters: {G u1 u2 A1 A2},
          precond: isctx G
          precond: istype G A1
@@ -1814,7 +1816,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongJ :
-       identitytype withj rule
+       whenIdType whenIdEliminator rule
          parameters: {G A1 A2 C1 C2 u1 u2 v1 v2 w1 w2 p1 p2},
          precond: isctx G
          precond: istype G A1
@@ -1946,7 +1948,7 @@ with eqterm : context -> term -> term -> type -> Type :=
      (*              A *)
 
      | CongCond :
-       withbool rule
+       whenBoolType rule
          parameters: {G C1 C2 u1 u2 v1 v2 w1 w2},
          precond: isctx G
          precond: istype (ctxextend G Bool) C1
@@ -1988,7 +1990,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongPair :
-       simpleproduct rule
+       whenBinaryProdType rule
          parameters: {G A1 A2 B1 B2 u1 u2 v1 v2},
          premise: eqterm G u1 u2 A1
          premise: eqterm G v1 v2 B1
@@ -2007,13 +2009,13 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G
                   (pair A1 B1 u1 v1)
                   (pair A2 B2 u2 v2)
-                  (SimProd A1 B1)
+                  (BinaryProd A1 B1)
        endrule
 
      | CongProjOne :
-       simpleproduct rule
+       whenBinaryProdType rule
          parameters: {G A1 A2 B1 B2 p1 p2},
-         premise: eqterm G p1 p2 (SimProd A1 B1)
+         premise: eqterm G p1 p2 (BinaryProd A1 B1)
          premise: eqtype G A1 A2
          premise: eqtype G B1 B2
          precond: isctx G
@@ -2021,8 +2023,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          precond: istype G A2
          precond: istype G B1
          precond: istype G B2
-         precond: isterm G p1 (SimProd A1 B1)
-         precond: isterm G p2 (SimProd A1 B1)
+         precond: isterm G p1 (BinaryProd A1 B1)
+         precond: isterm G p2 (BinaryProd A1 B1)
          conclusion:
            eqterm G
                   (proj1 A1 B1 p1)
@@ -2031,9 +2033,9 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongProjTwo :
-       simpleproduct rule
+       whenBinaryProdType rule
          parameters: {G A1 A2 B1 B2 p1 p2},
-         premise: eqterm G p1 p2 (SimProd A1 B1)
+         premise: eqterm G p1 p2 (BinaryProd A1 B1)
          premise: eqtype G A1 A2
          premise: eqtype G B1 B2
          precond: isctx G
@@ -2041,8 +2043,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          precond: istype G A2
          precond: istype G B1
          precond: istype G B2
-         precond: isterm G p1 (SimProd A1 B1)
-         precond: isterm G p2 (SimProd A1 B1)
+         precond: isterm G p1 (BinaryProd A1 B1)
+         precond: isterm G p2 (BinaryProd A1 B1)
          conclusion:
            eqterm G
                   (proj2 A1 B1 p1)
@@ -2051,7 +2053,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstPair :
-       simpleproduct rule
+       whenBinaryProdType rule
          parameters: {G D A B u v sbs},
          premise: issubst sbs G D
          premise: isterm D u A
@@ -2064,14 +2066,14 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G
                   (subst (pair A B u v) sbs)
                   (pair (Subst A sbs) (Subst B sbs) (subst u sbs) (subst v sbs))
-                  (SimProd (Subst A sbs) (Subst B sbs))
+                  (BinaryProd (Subst A sbs) (Subst B sbs))
        endrule
 
      | EqSubstProjOne :
-       simpleproduct rule
+       whenBinaryProdType rule
          parameters: {G D A B p sbs},
          premise: issubst sbs G D
-         premise: isterm D p (SimProd A B)
+         premise: isterm D p (BinaryProd A B)
          precond: isctx G
          precond: isctx D
          precond: istype D A
@@ -2084,10 +2086,10 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstProjTwo :
-       simpleproduct rule
+       whenBinaryProdType rule
          parameters: {G D A B p sbs},
          premise: issubst sbs G D
-         premise: isterm D p (SimProd A B)
+         premise: isterm D p (BinaryProd A B)
          precond: isctx G
          precond: isctx D
          precond: istype D A
@@ -2100,7 +2102,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | ProjOnePair :
-       simpleproduct rule
+       whenBinaryProdType rule
          parameters: {G A B u v},
          premise: isterm G u A
          premise: isterm G v B
@@ -2115,7 +2117,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | ProjTwoPair :
-       simpleproduct rule
+       whenBinaryProdType rule
          parameters: {G A B u v},
          premise: isterm G u A
          premise: isterm G v B
@@ -2130,21 +2132,21 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | PairEta :
-       simpleproduct rule
+       whenBinaryProdType rule
          parameters: {G A B p q},
          premise: eqterm G (proj1 A B p) (proj1 A B q) A
          premise: eqterm G (proj2 A B p) (proj2 A B q) B
-         premise: isterm G p (SimProd A B)
-         premise: isterm G q (SimProd A B)
+         premise: isterm G p (BinaryProd A B)
+         premise: isterm G q (BinaryProd A B)
          precond: isctx G
          precond: istype G A
          precond: istype G B
          conclusion:
-           eqterm G p q (SimProd A B)
+           eqterm G p q (BinaryProd A B)
        endrule
 
      | EqSubstUniProd :
-       universe withpi rule
+       whenUniverses whenProdType rule
          parameters: {G D a b n m sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni (uni n))
@@ -2162,7 +2164,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUniProdProp :
-       universe withprop withpi rule
+       whenUniverses whenPropType whenProdType rule
          parameters: {G D a b l sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni l)
@@ -2179,7 +2181,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUniId :
-       universe identitytype rule
+       whenUniverses whenIdType rule
          parameters: {G D a u v n sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni n)
@@ -2195,7 +2197,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUniEmpty :
-       withempty universe rule
+       whenEmptyType whenUniverses rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -2208,7 +2210,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUniUnit :
-       withunit universe rule
+       whenUnitType whenUniverses rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -2221,7 +2223,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUniBool :
-       withbool universe rule
+       whenBoolType whenUniverses rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -2233,8 +2235,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Uni (uni n))
        endrule
 
-     | EqSubstUniSimProd :
-       universe simpleproduct rule
+     | EqSubstUniBinaryProd :
+       whenUniverses whenBinaryProdType rule
          parameters: {G D a b n m sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni (uni n))
@@ -2243,13 +2245,13 @@ with eqterm : context -> term -> term -> type -> Type :=
          precond: isctx D
          conclusion:
            eqterm G
-                  (subst (uniSimProd (uni n) (uni m) a b) sbs)
-                  (uniSimProd (uni n) (uni m) (subst a sbs) (subst b sbs))
+                  (subst (uniBinaryProd (uni n) (uni m) a b) sbs)
+                  (uniBinaryProd (uni n) (uni m) (subst a sbs) (subst b sbs))
                   (Uni (uni (max n m)))
        endrule
 
-     | EqSubstUniSimProdProp :
-       universe withprop simpleproduct rule
+     | EqSubstUniBinaryProdProp :
+       whenUniverses whenPropType whenBinaryProdType rule
          parameters: {G D a b sbs},
          premise: issubst sbs G D
          premise: isterm D a (Uni prop)
@@ -2258,13 +2260,13 @@ with eqterm : context -> term -> term -> type -> Type :=
          precond: isctx D
          conclusion:
            eqterm G
-                  (subst (uniSimProd prop prop a b) sbs)
-                  (uniSimProd prop prop (subst a sbs) (subst b sbs))
+                  (subst (uniBinaryProd prop prop a b) sbs)
+                  (uniBinaryProd prop prop (subst a sbs) (subst b sbs))
                   (Uni prop)
        endrule
 
      | EqSubstUniUni :
-       universe rule
+       whenUniverses rule
          parameters: {G D n sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -2277,7 +2279,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | EqSubstUniProp :
-       universe withprop rule
+       whenUniverses whenPropType rule
          parameters: {G D sbs},
          premise: issubst sbs G D
          precond: isctx G
@@ -2290,7 +2292,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongUniProd :
-       universe withpi rule
+       whenUniverses whenProdType rule
          parameters: {G a1 a2 b1 b2 n m},
          premise: eqterm G a1 a2 (Uni (uni n))
          premise: eqterm (ctxextend G (El (uni n) a1)) b1 b2 (Uni (uni m))
@@ -2307,7 +2309,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongUniProdProp :
-       universe withprop withpi rule
+       whenUniverses whenPropType whenProdType rule
          parameters: {G a1 a2 b1 b2 l},
          premise: eqterm G a1 a2 (Uni l)
          premise: eqterm (ctxextend G (El l a1)) b1 b2 (Uni prop)
@@ -2324,7 +2326,7 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 
      | CongUniId :
-       universe identitytype rule
+       whenUniverses whenIdType rule
          parameters: {G a1 a2 u1 u2 v1 v2 n},
          premise: eqterm G a1 a2 (Uni n)
          premise: eqterm G u1 u2 (El n a1)
@@ -2343,8 +2345,8 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Uni n)
        endrule
 
-     | CongUniSimProd :
-       universe simpleproduct rule
+     | CongUniBinaryProd :
+       whenUniverses whenBinaryProdType rule
          parameters: {G a1 a2 b1 b2 n m},
          premise: eqterm G a1 a2 (Uni (uni n))
          premise: eqterm G b1 b2 (Uni (uni m))
@@ -2355,13 +2357,13 @@ with eqterm : context -> term -> term -> type -> Type :=
          precond: isctx G
          conclusion:
            eqterm G
-                  (uniSimProd (uni n) (uni m) a1 b1)
-                  (uniSimProd (uni n) (uni m) a2 b2)
+                  (uniBinaryProd (uni n) (uni m) a1 b1)
+                  (uniBinaryProd (uni n) (uni m) a2 b2)
                   (Uni (uni (max n m)))
        endrule
 
-     | CongUniSimProdProp :
-       universe withprop simpleproduct rule
+     | CongUniBinaryProdProp :
+       whenUniverses whenPropType whenBinaryProdType rule
          parameters: {G a1 a2 b1 b2},
          premise: eqterm G a1 a2 (Uni prop)
          premise: eqterm G b1 b2 (Uni prop)
@@ -2372,8 +2374,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          precond: isctx G
          conclusion:
            eqterm G
-                  (uniSimProd prop prop a1 b1)
-                  (uniSimProd prop prop a2 b2)
+                  (uniBinaryProd prop prop a1 b1)
+                  (uniBinaryProd prop prop a2 b2)
                   (Uni prop)
        endrule
 .

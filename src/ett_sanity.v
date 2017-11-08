@@ -11,20 +11,28 @@ Require ptt.
 Require ptt_sanity.
 Require Import ett.
 Require Import ett2ptt ptt2ett.
+Require Import inversion.
 
 Section EttSanity.
 
 Context `{configReflection : config.Reflection}.
-Context `{configSimpleProducts : config.SimpleProducts}.
+Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
-Context `{ConfigUniverses : config.Universes}.
-Context `{ConfigWithProp : config.WithProp}.
-Context `{ConfigId : config.IdentityTypes}.
-Context `{ConfigWithJ : config.WithJ}.
-Context `{ConfigEmpty : config.WithEmpty}.
-Context `{ConfigUnit : config.WithUnit}.
-Context `{ConfigBool : config.WithBool}.
-Context `{ConfigPi : config.WithPi}.
+Context `{configUniverses : config.Universes}.
+Context `{configPropType : config.PropType}.
+Context `{configIdType : config.IdType}.
+Context `{configIdEliminator : config.IdEliminator}.
+Context `{configEmptyType : config.EmptyType}.
+Context `{configUnitType : config.UnitType}.
+Context `{configBoolType : config.BoolType}.
+Context `{configProdType : config.ProdType}.
+Context `{configSyntax : syntax.Syntax}.
+
+Existing Instance ptt.havePrecondition.
+Context {haveCtxExtendInversion : HaveCtxExtendInversion}.
+Context {haveTyIdInversion : HaveTyIdInversion}.
+Context {haveTyProdInversion : HaveTyProdInversion}.
+Context {haveTyBinaryProdInversion : HaveTyBinaryProdInversion}.
 
 Theorem sane_issubst sbs G D :
   issubst sbs G D -> isctx G * isctx D.
