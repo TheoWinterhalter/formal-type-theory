@@ -24,4 +24,8 @@ annotated_syntax.v
 annotated_inversion.v
 annotated_uniqueness.v
 
+concise_syntax.v
+concise_inversion.v
+# concise_uniqueness.v # Does not work at the moment
+
 negfunext.v
