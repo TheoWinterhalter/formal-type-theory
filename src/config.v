@@ -82,3 +82,8 @@ Class UnitType := {
 Class BoolType := {
   flagBoolType : Type
 }.
+
+(* W types. *)
+Class WType := {
+  flagWType : Type
+}.

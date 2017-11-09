@@ -20,6 +20,7 @@ Class Syntax := {
   Unit : type;
   Bool : type;
   BinaryProd : type -> type -> type;
+  W : type -> type -> type;
   Uni : level -> type;
   El : level -> term -> type;
 
@@ -37,12 +38,15 @@ Class Syntax := {
   pair : type -> type -> term -> term -> term;
   proj1 : type -> type -> term -> term;
   proj2 : type -> type -> term -> term;
+  wsup : type -> type -> term -> term -> term;
+  wrec : type -> type -> type -> term -> term -> term;
   uniProd : level -> level -> term -> term -> term;
   uniId : level -> term -> term -> term -> term;
   uniEmpty : level -> term;
   uniUnit : level -> term;
   uniBool : nat -> term;
   uniBinaryProd : level -> level -> term -> term -> term;
+  uniW : level -> level -> term -> term -> term;
   uniUni : level -> term;
 
   sbzero : type -> term -> substitution;

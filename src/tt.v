@@ -2,10 +2,11 @@
 
 (* Requirements:
 
-   1. Use only letters (no numerals) in rule names, because we define LaTeX macros
-      out of them, and those cannot contain numerals.
+   1. Use only letters (no numerals) in rule names, because we define LaTeX
+      macros out of them, and those cannot contain numerals.
 
-   2. Do not nest comments inside comments, or else the Python script will break.
+   2. Do not nest comments inside comments, or else the Python script will
+      break.
 
 *)
 
@@ -27,6 +28,7 @@ Context `{configUnitType : config.UnitType}.
 Context `{configBoolType : config.BoolType}.
 Context `{configIdType : config.IdType}.
 Context `{configProdType : config.ProdType}.
+Context `{configWType : config.WType}.
 Context `{configSyntax : Syntax}.
 
 
@@ -64,6 +66,9 @@ Notation "'whenBoolType' r" :=
 
 Notation "'whenProdType' r" :=
   (forall { _ : flagProdType }, r) (only parsing, at level 97).
+
+Notation "'whenWType' r" :=
+  (forall { _ : flagWType }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
@@ -233,6 +238,16 @@ with istype : context -> type -> Type :=
          premise: istype G B
          conclusion:
            istype G (BinaryProd A B)
+       endrule
+
+     | TyW :
+       whenWType rule
+         parameters: {G A B},
+         precond: isctx G
+         precond: istype G A
+         premise: istype (ctxextend G A) B
+         conclusion:
+           istype G (W A B)
        endrule
 
      | TyUni :
@@ -480,6 +495,34 @@ with isterm : context -> term -> type -> Type :=
          conclusion:
            isterm G (proj2 A B p) B
        endrule
+
+     | TermWSup :
+       whenWType rule
+         parameters: {G A B a t},
+         precond: isctx G
+         precond: istype G A
+         precond: istype (ctxextend G A) B
+         premise: isterm G a A
+         premise: isterm (ctxextend G (Subst B (sbzero A a)))
+                         t
+                         (Subst (W A B) (sbweak (Subst B (sbzero A a))))
+         conclusion:
+           isterm G (wsup A B a t) (W A B)
+       endrule
+
+     (* I would like to avoid using Π-types to build W-types, is it possible? *)
+     (* | TermWRec : *)
+     (*   whenWType rule *)
+     (*     parameters: {G A B C w c}, *)
+     (*     precond: isctx G *)
+     (*     precond: istype G A *)
+     (*     precond: istype (ctxextend G A) B *)
+     (*     premise: isterm G w (W A B) *)
+     (*     premise: istype (ctxextend G (W A B)) C *)
+     (*     premise: isterm (ctxextend (ctxextend (ctxextend G A) ?) ?) *)
+     (*                     c *)
+     (*                     ? *)
+     (* OTHER RULES TODO! *)
 
      | TermUniProd :
        whenUniverses whenProdType rule
