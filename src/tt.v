@@ -511,17 +511,38 @@ with isterm : context -> term -> type -> Type :=
        endrule
 
      (* I would like to avoid using Π-types to build W-types, is it possible? *)
-     (* | TermWRec : *)
-     (*   whenWType rule *)
-     (*     parameters: {G A B C w c}, *)
-     (*     precond: isctx G *)
-     (*     precond: istype G A *)
-     (*     precond: istype (ctxextend G A) B *)
-     (*     premise: isterm G w (W A B) *)
-     (*     premise: istype (ctxextend G (W A B)) C *)
-     (*     premise: isterm (ctxextend (ctxextend (ctxextend G A) ?) ?) *)
-     (*                     c *)
-     (*                     ? *)
+     | TermWRec :
+       whenWType rule
+         parameters: {G A B C w c},
+         precond: isctx G
+         precond: istype G A
+         precond: istype (ctxextend G A) B
+         premise: isterm G w (W A B)
+         premise: istype (ctxextend G (W A B)) C
+         premise:
+           isterm
+             (ctxextend
+                (ctxextend
+                   (ctxextend G A)
+                   (Arrow
+                      B
+                      (Subst
+                         (W A B)
+                         (sbweak A))))
+                (Prod
+                   (Subst
+                      B
+                      (sbweak
+                         (Arrow
+                            B
+                            (Subst
+                               (W A B)
+                               (sbweak A)))))
+                   (Subst
+                      ?
+                      ?)))
+             c
+             ?
      (* OTHER RULES TODO! *)
 
      | TermUniProd :
