@@ -901,7 +901,546 @@ Proof.
     }
 
   (* forget_eqterm *)
-  - admit.
+  - { destruct H ; doConfig.
+
+      (* EqTyConv *)
+      - { (config apply @EqTyConv with (A := forget_type A)) ; ih. }
+
+      (* EqCtxConv *)
+      - { (config apply @EqCtxConv with (G := forget_ctx G)) ; ih. }
+
+      (* EqRefl *)
+      - { capply EqRefl ; ih. }
+
+      (* EqSym *)
+      - { capply EqSym ; ih. }
+
+      (* EqTrans *)
+      - { (config apply @EqTrans with (v := forget_term v)) ; ih. }
+
+      (* EqIdSubst *)
+      - { simpl. capply @EqIdSubst ; ih. }
+
+      (* EqSubstComp *)
+      - { simpl.
+          (config apply @EqSubstComp with (D := forget_ctx D) (E := forget_ctx E)) ; ih.
+        }
+
+      (* EqSubstWeak *)
+      - { simpl. capply @EqSubstWeak ; try ih.
+          now apply (forget_isterm _ _ _ i1).
+        }
+
+      (* EqSubstZeroZero *)
+      - { simpl. capply @EqSubstZeroZero ; ih. }
+
+      (* EqSubstZeroSucc *)
+      - { simpl. capply @EqSubstZeroSucc ; try ih.
+          now apply (forget_isterm _ _ _ i2).
+        }
+
+      (* EqSubstShiftZero *)
+      - { simpl.
+          (config apply @EqSubstShiftZero with (D := forget_ctx D)) ; ih.
+        }
+
+      (* EqSubstShiftSucc *)
+      - { simpl.
+          (config apply @EqSubstShiftSucc with (D := forget_ctx D)) ; try ih.
+          now apply (forget_isterm _ _ _ i3).
+        }
+
+      (* EqSubstAbs *)
+      - { simpl.
+          pose (P := @EqSubstAbs).
+          specialize P
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) (forget_ctx D) (forget_type A) (forget_type B)
+               (forget_term u) (forget_subst sbs).
+          simpl in P.
+          ceapply P.
+          - ih.
+          - now apply (forget_isctx _ i0).
+          - ih.
+          - now apply (forget_istype _ _ i2).
+          - now apply (forget_isterm _ _ _ i3).
+          - ih.
+        }
+
+      (* EqSubstApp *)
+      - { simpl.
+          pose (P := @EqSubstApp).
+          specialize P
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) (forget_ctx D) (forget_type A) (forget_type B)
+               (forget_term u) (forget_term v) (forget_subst sbs).
+          simpl in P.
+          ceapply P.
+          - ih.
+          - now apply (forget_isctx _ i0).
+          - ih.
+          - now apply (forget_istype _ _ i2).
+          - now apply (forget_isterm _ _ _ i3).
+          - ih.
+          - ih.
+        }
+
+      (* EqSubstRefl *)
+      - { simpl.
+          pose (P := @EqSubstRefl).
+          specialize P
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) (forget_ctx D) (forget_type A)
+               (forget_term u) (forget_subst sbs).
+          simpl in P.
+          ceapply P.
+          - now apply (forget_issubst _ _ _ i).
+          - ih.
+          - ih.
+          - ih.
+          - ih.
+        }
+
+      (* EqSubstJ *)
+      - { simpl. (config apply @EqSubstJ with (D := forget_ctx D)) ; try ih.
+          - now apply (forget_istype _ _ i4).
+          - now apply (forget_isterm _ _ _ i5).
+          - now apply (forget_isterm _ _ _ i7).
+        }
+
+      (* EqSubstExfalso *)
+      - { simpl.
+          (config apply @EqSubstExfalso with (D := forget_ctx D)) ; try ih.
+          now apply (forget_isterm _ _ _ i2).
+        }
+
+      (* EqSubstUnit *)
+      - { simpl. (config apply @EqSubstUnit with (D := forget_ctx D)) ; ih. }
+
+      (* EqSubstTrue *)
+      - { simpl. (config apply @EqSubstTrue with (D := forget_ctx D)) ; ih. }
+
+      (* EqSubstFalse *)
+      - { simpl. (config apply @EqSubstFalse with (D := forget_ctx D)) ; ih. }
+
+      (* EqSubstCond *)
+      - { simpl. (config apply @EqSubstCond with (D := forget_ctx D)) ; try ih.
+          - now apply (forget_isterm _ _ _ i2).
+          - now apply (forget_istype _ _ i3).
+          - now apply (forget_isterm _ _ _ i4).
+          - now apply (forget_isterm _ _ _ i5).
+        }
+
+      (* EqTermExfalso *)
+      - { (config apply @EqTermExfalso with (w := forget_term w)) ; try ih.
+          now apply (forget_isterm _ _ _ i3).
+        }
+
+      (* UnitEta *)
+      - { simpl. capply @UnitEta.
+          - ih.
+          - now apply (forget_isterm _ _ _ i0).
+          - now apply (forget_isterm _ _ _ i1).
+        }
+
+      (* EqReflection *)
+      - { (config apply @EqReflection with (p := forget_term p)) ; try ih.
+          now apply (forget_isterm _ _ _ i3).
+        }
+
+      (* ProdBeta *)
+      - { simpl.
+          pose (P := @ProdBeta).
+          specialize P
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) (forget_type A) (forget_type B)
+               (forget_term u) (forget_term v).
+          simpl in P.
+          ceapply P ; try ih.
+          - now apply (forget_istype _ _ i1).
+          - now apply (forget_isterm _ _ _ i2).
+        }
+
+      (* CondTrue *)
+      - { simpl. capply @CondTrue.
+          - ih.
+          - now apply (forget_istype _ _ i0).
+          - now apply (forget_isterm _ _ _ i1).
+          - now apply (forget_isterm _ _ _ i2).
+        }
+
+      (* CondFalse *)
+      - { simpl. capply @CondFalse.
+          - ih.
+          - now apply (forget_istype _ _ i0).
+          - now apply (forget_isterm _ _ _ i1).
+          - now apply (forget_isterm _ _ _ i2).
+        }
+
+      (* ProdEta *)
+      - { simpl. capply @ProdEta ; try ih.
+          - now apply (forget_istype _ _ i1).
+          - now apply (forget_isterm _ _ _ i2).
+          - now apply (forget_isterm _ _ _ i3).
+          - now apply (forget_eqterm _ _ _ _ H).
+        }
+
+      (* JRefl *)
+      - { simpl. capply @JRefl ; try ih.
+          - now apply (forget_istype _ _ i2).
+          - now apply (forget_isterm _ _ _ i3).
+        }
+
+      (* CongAbs *)
+      - { simpl.
+          pose (P := @CongAbs).
+          specialize P
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) (forget_type A1) (forget_type A2) (forget_type B1)
+               (forget_type B2) (forget_term u1) (forget_term u2).
+          simpl in P.
+          ceapply P ; try ih.
+          - now apply (forget_istype _ _ i2).
+          - now apply (forget_istype _ _ i3).
+          - now apply (forget_isterm _ _ _ i4).
+          - now apply (forget_isterm _ _ _ i5).
+          - now apply (forget_eqtype _ _ _ e0).
+          - now apply (forget_eqterm _ _ _ _ H).
+        }
+
+      (* CongApp *)
+      - { simpl.
+          pose (P := @CongApp).
+          specialize P
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) (forget_type A1) (forget_type A2) (forget_type B1)
+               (forget_type B2) (forget_term u1) (forget_term u2)
+               (forget_term v1) (forget_term v2).
+          simpl in P.
+          ceapply P ; try ih.
+          - now apply (forget_istype _ _ i1).
+          - now apply (forget_istype _ _ i2).
+          - now apply (forget_istype _ _ i3).
+          - now apply (forget_isterm _ _ _ i4).
+          - now apply (forget_isterm _ _ _ i5).
+          - ih.
+          - now apply (forget_eqtype _ _ _ e0).
+          - now apply (forget_eqterm _ _ _ _ H).
+        }
+
+      (* CongRefl *)
+      - { simpl.
+          capply (@CongRefl
+               configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               f (forget_ctx G) (forget_term u1) (forget_term u2)
+               (forget_type A1) (forget_type A2)) ; ih.
+        }
+
+      (* CongJ *)
+      - { simpl. capply @CongJ ; try ih.
+          - now apply (forget_istype _ _ i2).
+          - now apply (forget_istype _ _ i3).
+          - now apply (forget_isterm _ _ _ i8).
+          - now apply (forget_isterm _ _ _ i9).
+          - now apply (forget_eqtype _ _ _ e0).
+          - now apply (forget_isterm _ _ _ i10).
+          - now apply (forget_isterm _ _ _ i11).
+          - now apply (forget_eqterm _ _ _ _ H0).
+          - now apply (forget_eqterm _ _ _ _ H2).
+        }
+
+      (* CongCond *)
+      - { simpl. capply @CongCond.
+          - ih.
+          - now apply (forget_istype _ _ i0).
+          - now apply (forget_istype _ _ i1).
+          - now apply (forget_isterm _ _ _ i2).
+          - now apply (forget_isterm _ _ _ i3).
+          - now apply (forget_isterm _ _ _ i4).
+          - now apply (forget_isterm _ _ _ i5).
+          - now apply (forget_isterm _ _ _ i6).
+          - now apply (forget_isterm _ _ _ i7).
+          - now apply (forget_eqterm _ _ _ _ H).
+          - now apply (forget_eqtype _ _ _ e).
+          - now apply (forget_eqterm _ _ _ _ H0).
+          - now apply (forget_eqterm _ _ _ _ H1).
+        }
+
+      (* CongTermSubst *)
+      - { simpl. (config apply @CongTermSubst with (D := forget_ctx D)) ; ih. }
+
+      (* CongPair *)
+      - { simpl. capply @CongPair ; ih. }
+
+      (* CongProjOne *)
+      - { simpl. capply @CongProjOne ; try ih.
+          - now apply (forget_eqterm _ _ _ _ H).
+          - now apply (forget_isterm _ _ _ i4).
+          - now apply (forget_isterm _ _ _ i5).
+        }
+
+      (* CongProjTwo *)
+      - { simpl. capply @CongProjTwo ; try ih.
+          - now apply (forget_eqterm _ _ _ _ H).
+          - now apply (forget_isterm _ _ _ i4).
+          - now apply (forget_isterm _ _ _ i5).
+        }
+
+      (* EqSubstPair *)
+      - { simpl. (config apply @EqSubstPair with (D := forget_ctx D)) ; ih. }
+
+      (* EqSubstProjOne *)
+      - { simpl.
+          (config apply @EqSubstProjOne with (D := forget_ctx D)) ; try ih.
+          now apply (forget_isterm _ _ _ i0).
+        }
+
+      (* EqSubstProjTwo *)
+      - { simpl.
+          (config apply @EqSubstProjTwo with (D := forget_ctx D)) ; try ih.
+          now apply (forget_isterm _ _ _ i0).
+        }
+
+      (* ProjOnePair *)
+      - { simpl. capply @ProjOnePair ; ih. }
+
+      (* ProjTwoPair *)
+      - { simpl. capply @ProjTwoPair ; ih. }
+
+      (* PairEta *)
+      - { simpl. capply @PairEta ; try ih.
+          - now apply (forget_eqterm _ _ _ _ H).
+          - now apply (forget_eqterm _ _ _ _ H0).
+          - now apply (forget_isterm _ _ _ i).
+          - now apply (forget_isterm _ _ _ i0).
+        }
+
+      (* EqSubstUniProd *)
+      - { simpl.
+          capply (@EqSubstUniProd
+            configPrecondition configReflection configBinaryProdType
+            configProdEta configUniverses configPropType configIdEliminator
+            configEmptyType configUnitType configBoolType configIdType
+            configProdType concise_syntax.Syntax f f0
+            (forget_ctx G) (forget_ctx D) (forget_term a) (forget_term b)
+            n m (forget_subst sbs)
+          ) ; try ih.
+          - now apply (forget_isterm _ _ _ i0).
+          - now apply (forget_isterm _ _ _ i1).
+        }
+
+      (* EqSubstUniProdProp *)
+      - { simpl.
+          capply (@EqSubstUniProdProp
+            configPrecondition configReflection configBinaryProdType
+            configProdEta configUniverses configPropType configIdEliminator
+            configEmptyType configUnitType configBoolType configIdType
+            configProdType concise_syntax.Syntax f f0 f1
+            (forget_ctx G) (forget_ctx D) (forget_term a) (forget_term b)
+            l (forget_subst sbs)
+          ) ; try ih.
+          - now apply (forget_isterm _ _ _ i0).
+          - now apply (forget_isterm _ _ _ i1).
+        }
+
+      (* EqSubstUniId *)
+      - { simpl.
+          capply (@EqSubstUniId
+            configPrecondition configReflection configBinaryProdType
+            configProdEta configUniverses configPropType configIdEliminator
+            configEmptyType configUnitType configBoolType configIdType
+            configProdType concise_syntax.Syntax f f0
+            (forget_ctx G) (forget_ctx D) (forget_term a) (forget_term u)
+            (forget_term v) n (forget_subst sbs)
+          ) ; try ih.
+          - now apply (forget_isterm _ _ _ i0).
+          - now apply (forget_isterm _ _ _ i1).
+          - now apply (forget_isterm _ _ _ i2).
+        }
+
+      (* EqSubstUniEmpty *)
+      - { simpl.
+          capply (@EqSubstUniEmpty
+            configPrecondition configReflection configBinaryProdType
+            configProdEta configUniverses configPropType configIdEliminator
+            configEmptyType configUnitType configBoolType configIdType
+            configProdType concise_syntax.Syntax f f0
+            (forget_ctx G) (forget_ctx D) n (forget_subst sbs)
+          ) ; ih.
+        }
+
+      (* EqSubstUniUnit *)
+      - { simpl.
+          capply (@EqSubstUniUnit
+            configPrecondition configReflection configBinaryProdType
+            configProdEta configUniverses configPropType configIdEliminator
+            configEmptyType configUnitType configBoolType configIdType
+            configProdType concise_syntax.Syntax f f0
+            (forget_ctx G) (forget_ctx D) n (forget_subst sbs)
+          ) ; ih.
+        }
+
+      (* EqSubstUniBool *)
+      - { simpl.
+          capply (@EqSubstUniBool
+            configPrecondition configReflection configBinaryProdType
+            configProdEta configUniverses configPropType configIdEliminator
+            configEmptyType configUnitType configBoolType configIdType
+            configProdType concise_syntax.Syntax f f0
+            (forget_ctx G) (forget_ctx D) n (forget_subst sbs)
+          ) ; ih.
+        }
+
+      (* EqSubstUniBinaryProd *)
+      - { simpl.
+          capply (@EqSubstUniBinaryProd
+            configPrecondition configReflection configBinaryProdType
+            configProdEta configUniverses configPropType configIdEliminator
+            configEmptyType configUnitType configBoolType configIdType
+            configProdType concise_syntax.Syntax f f0
+            (forget_ctx G) (forget_ctx D) (forget_term a) (forget_term b)
+            n m (forget_subst sbs)
+          ) ; try ih.
+          - now apply (forget_isterm _ _ _ i0).
+          - now apply (forget_isterm _ _ _ i1).
+        }
+
+      (* EqSubstUniBinaryProdProp *)
+      - { simpl.
+          capply (@EqSubstUniBinaryProdProp
+            configPrecondition configReflection configBinaryProdType
+            configProdEta configUniverses configPropType configIdEliminator
+            configEmptyType configUnitType configBoolType configIdType
+            configProdType concise_syntax.Syntax f f0 f1
+            (forget_ctx G) (forget_ctx D) (forget_term a) (forget_term b)
+            (forget_subst sbs)
+          ) ; try ih.
+          - now apply (forget_isterm _ _ _ i0).
+          - now apply (forget_isterm _ _ _ i1).
+        }
+
+      (* EqSubstUniUni *)
+      - { simpl. (config apply @EqSubstUniUni with (D := forget_ctx D)) ; ih. }
+
+      (* EqSubstUniProp *)
+      - { simpl. (config apply @EqSubstUniProp with (D := forget_ctx D)) ; ih. }
+
+      (* CongUniProd *)
+      - { simpl.
+          capply (@CongUniProd
+            configPrecondition configReflection configBinaryProdType
+            configProdEta configUniverses configPropType configIdEliminator
+            configEmptyType configUnitType configBoolType configIdType
+            configProdType concise_syntax.Syntax f f0
+            (forget_ctx G) (forget_term a1) (forget_term a2) (forget_term b1)
+            (forget_term b2) n m
+          ) ; try ih.
+          - now apply (forget_eqterm _ _ _ _ H).
+          - now apply (forget_eqterm _ _ _ _ H0).
+          - now apply (forget_isterm _ _ _ i).
+          - now apply (forget_isterm _ _ _ i0).
+          - now apply (forget_isterm _ _ _ i1).
+          - now apply (forget_isterm _ _ _ i2).
+        }
+
+      (* CongUniProdProp *)
+      - { simpl.
+          capply (@CongUniProdProp
+            configPrecondition configReflection configBinaryProdType
+            configProdEta configUniverses configPropType configIdEliminator
+            configEmptyType configUnitType configBoolType configIdType
+            configProdType concise_syntax.Syntax f f0 f1
+            (forget_ctx G) (forget_term a1) (forget_term a2) (forget_term b1)
+            (forget_term b2) l
+          ) ; try ih.
+          - now apply (forget_eqterm _ _ _ _ H).
+          - now apply (forget_eqterm _ _ _ _ H0).
+          - now apply (forget_isterm _ _ _ i).
+          - now apply (forget_isterm _ _ _ i0).
+          - now apply (forget_isterm _ _ _ i1).
+          - now apply (forget_isterm _ _ _ i2).
+        }
+
+      (* CongUniId *)
+      - { simpl.
+          capply (@CongUniId
+            configPrecondition configReflection configBinaryProdType
+            configProdEta configUniverses configPropType configIdEliminator
+            configEmptyType configUnitType configBoolType configIdType
+            configProdType concise_syntax.Syntax f f0
+            (forget_ctx G) (forget_term a1) (forget_term a2)
+            (forget_term u1) (forget_term u2)
+            (forget_term v1) (forget_term v2) n
+          ) ; try ih.
+          - now apply (forget_eqterm _ _ _ _ H).
+          - now apply (forget_eqterm _ _ _ _ H0).
+          - now apply (forget_eqterm _ _ _ _ H1).
+          - now apply (forget_isterm _ _ _ i).
+          - now apply (forget_isterm _ _ _ i0).
+          - now apply (forget_isterm _ _ _ i1).
+          - now apply (forget_isterm _ _ _ i2).
+          - now apply (forget_isterm _ _ _ i3).
+          - now apply (forget_isterm _ _ _ i4).
+        }
+
+      (* CongUniBinaryProd *)
+      - { simpl.
+          capply (@CongUniBinaryProd
+            configPrecondition configReflection configBinaryProdType
+            configProdEta configUniverses configPropType configIdEliminator
+            configEmptyType configUnitType configBoolType configIdType
+            configProdType concise_syntax.Syntax f f0
+            (forget_ctx G) (forget_term a1) (forget_term a2)
+            (forget_term b1) (forget_term b2) n m
+          ) ; try ih.
+          - now apply (forget_eqterm _ _ _ _ H).
+          - now apply (forget_eqterm _ _ _ _ H0).
+          - now apply (forget_isterm _ _ _ i).
+          - now apply (forget_isterm _ _ _ i0).
+          - now apply (forget_isterm _ _ _ i1).
+          - now apply (forget_isterm _ _ _ i2).
+        }
+
+      (* CongUniBinaryProdProp *)
+      - { simpl.
+          capply (@CongUniBinaryProdProp
+            configPrecondition configReflection configBinaryProdType
+            configProdEta configUniverses configPropType configIdEliminator
+            configEmptyType configUnitType configBoolType configIdType
+            configProdType concise_syntax.Syntax f f0 f1
+            (forget_ctx G) (forget_term a1) (forget_term a2)
+            (forget_term b1) (forget_term b2)
+          ) ; try ih.
+          - now apply (forget_eqterm _ _ _ _ H).
+          - now apply (forget_eqterm _ _ _ _ H0).
+          - now apply (forget_isterm _ _ _ i).
+          - now apply (forget_isterm _ _ _ i0).
+          - now apply (forget_isterm _ _ _ i1).
+          - now apply (forget_isterm _ _ _ i2).
+        }
+
+    }
 
   (* forget_eqsubst *)
   - admit.
