@@ -165,9 +165,6 @@ with forget_subst (sbs : Att.substitution) : Ctt.substitution :=
   | A.sbcomp sbs sbt => C.sbcomp (forget_subst sbs) (forget_subst sbt)
   end.
 
-Axiom admit : forall {A}, A.
-Tactic Notation "admit" := (exact admit).
-
 Fixpoint forget_ctx (G : Att.context) : Ctt.context :=
   match G with
   | A.ctxempty => C.ctxempty
