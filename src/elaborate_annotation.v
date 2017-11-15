@@ -18,7 +18,8 @@ Module Ctt.
 
   Section Ctt.
 
-    Context `{configPrecondition : config.Precondition}.
+    Local Instance havePrecondition : config.Precondition :=
+      {| config.flagPrecondition := config.Yes |}.
     Context `{configReflection : config.Reflection}.
     Context `{configBinaryProdType : config.BinaryProdType}.
     Context `{configProdEta : config.ProdEta}.
@@ -53,7 +54,8 @@ Module Att.
 
   Section Att.
 
-    Context `{configPrecondition : config.Precondition}.
+    Local Instance noPrecondition : config.Precondition :=
+      {| config.flagPrecondition := config.No |}.
     Context `{configReflection : config.Reflection}.
     Context `{configBinaryProdType : config.BinaryProdType}.
     Context `{configProdEta : config.ProdEta}.
@@ -85,7 +87,6 @@ Module A := annotated_syntax.
 
 Section Translation.
 
-Context `{configPrecondition : config.Precondition}.
 Context `{configReflection : config.Reflection}.
 Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
@@ -161,10 +162,69 @@ with elab_subst G D sbs (H : Ctt.issubst sbs G D)
 Proof.
 
   (* elab_ctx *)
-  - admit.
+  - { destruct H ; doConfig.
+
+      (* CtxEmpty *)
+      - { exists A.ctxempty.
+          - reflexivity.
+          - constructor.
+        }
+
+      (* CtxExtend *)
+      - { pose (Ge := elab_ctx _ i). destruct (elab_ctx _ i) as [G' eG iG].
+          pose (Ae := elab_type _ _ i0 Ge).
+          destruct (elab_type _ _ i0 Ge) as [A' eA iA].
+          (* A tactic to automatically do the above? *)
+          exists (A.ctxextend G' A').
+          - simpl. rewrite eG. rewrite eA. reflexivity.
+          - now capply @CtxExtend.
+        }
+
+    }
 
   (* elab_type *)
-  - admit.
+  - { destruct H ; doConfig.
+
+      (* TyCtxConv *)
+      - { rename Ge into De'.
+          pose (De := De').
+          destruct De' as [D' eD iD].
+          pose (Ge := elab_ctx _ i).
+          destruct (elab_ctx _ i) as [G' eG iG].
+          pose (Ae := elab_type _ _ H Ge).
+          destruct (elab_type _ _ H Ge) as [A' eA iA].
+          (* We are missing how to translate equalities. *)
+          admit.
+        }
+
+      (* TySubst *)
+      - admit.
+
+      (* TyProd *)
+      - admit.
+
+      (* TyId *)
+      - admit.
+
+      (* TyEmpty *)
+      - admit.
+
+      (* TyUnit *)
+      - admit.
+
+      (* TyBool *)
+      - admit.
+
+      (* TyBinaryProd *)
+      - admit.
+
+      (* TyUni *)
+      - admit.
+
+      (* TyEl *)
+      - admit.
+
+    }
 
   (* elab_term *)
   - admit.
