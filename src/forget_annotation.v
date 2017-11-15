@@ -335,7 +335,262 @@ Proof.
     }
 
   (* forget_isterm *)
-  - admit.
+  - { destruct H ; doConfig.
+
+      (* TermTyConv *)
+      - { (config apply @TermTyConv with (A := forget_type A)) ; ih. }
+
+      (* TermCtxConv *)
+      - { (config apply @TermCtxConv with (G := forget_ctx G)) ; ih. }
+
+      (* TermSubst *)
+      - { simpl. (config apply @TermSubst with (D := forget_ctx D)) ; ih. }
+
+      (* TermVarZero *)
+      - { simpl. (capply @TermVarZero) ; ih. }
+
+      (* TermVarSucc *)
+      - { simpl. capply @TermVarSucc.
+          - ih.
+          - ih.
+          - now apply (forget_isterm G (A.var k) A).
+          - ih.
+        }
+
+      (* TermAbs *)
+      - { simpl.
+          (* Here is an example of where things are annoying as well.
+             Coq can't unify C.lam and syntax.lam as they don't have the same
+             amount of arguments even though they are actually the same in this
+             particular case.
+           *)
+          pose (TA := @TermAbs).
+          specialize TA
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) (forget_type A) (forget_term u) (forget_type B).
+          simpl in TA. capply TA.
+          - ih.
+          - ih.
+          - apply (forget_istype _ _ i1).
+          - apply (forget_isterm _ _ _ H).
+        }
+
+      (* TermApp *)
+      - { simpl.
+          pose (TA := @TermApp).
+          specialize TA
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) (forget_type A) (forget_type B)
+               (forget_term u) (forget_term v).
+          simpl in TA.
+          capply TA.
+          - ih.
+          - ih.
+          - apply (forget_istype _ _ i1).
+          - apply (forget_isterm _ _ _ H).
+          - ih.
+        }
+
+      (* TermRefl *)
+      - { simpl.
+          pose (TR := @TermRefl).
+          specialize TR
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) (forget_type A) (forget_term u).
+          simpl in TR.
+          capply TR ; ih.
+        }
+
+      (* TermJ *)
+      - { simpl. capply @TermJ.
+          - ih.
+          - ih.
+          - ih.
+          - now apply (forget_istype _ _ i1).
+          - now apply (forget_isterm _ _ _ H0).
+          - ih.
+          - now apply (forget_isterm _ _ _ H2).
+        }
+
+      (* TermExfalso *)
+      - { simpl. capply @TermExfalso.
+          - ih.
+          - ih.
+          - now apply (forget_isterm _ _ _ H).
+        }
+
+      (* TermUnit *)
+      - { simpl. capply @TermUnit. ih. }
+
+      (* TermTrue *)
+      - { simpl. capply @TermTrue. ih. }
+
+      (* TermFalse *)
+      - { simpl. capply @TermFalse. ih. }
+
+      (* TermCond *)
+      - { simpl. capply @TermCond.
+          - ih.
+          - now apply (forget_isterm _ _ _ H).
+          - now apply (forget_istype _ _ i0).
+          - now apply (forget_isterm _ _ _ H0).
+          - now apply (forget_isterm _ _ _ H1).
+        }
+
+      (* TermPair *)
+      - { simpl. capply @TermPair ; ih. }
+
+      (* TermProjOne *)
+      - { simpl. capply @TermProjOne.
+          - ih.
+          - ih.
+          - ih.
+          - now apply (forget_isterm _ _ _ H).
+        }
+
+      (* TermProjTwo *)
+      - { simpl. capply @TermProjTwo.
+          - ih.
+          - ih.
+          - ih.
+          - now apply (forget_isterm _ _ _ H).
+        }
+
+      (* TermUniProd *)
+      - { simpl.
+          pose (TU := @TermUniProd).
+          specialize TU
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) (forget_term a) (forget_term b) n m.
+          simpl in TU.
+          capply TU.
+          - now apply (forget_isterm _ _ _ H).
+          - now apply (forget_isterm _ _ _ H0).
+          - ih.
+        }
+
+      (* TermUniProdProp *)
+      - { simpl.
+          pose (TU := @TermUniProdProp).
+          specialize TU
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) (forget_term a) (forget_term b) l.
+          simpl in TU.
+          ceapply TU.
+          - now apply (forget_isterm _ _ _ H).
+          - now apply (forget_isterm _ _ _ H0).
+          - ih.
+        }
+
+      (* TermUniId *)
+      - { simpl.
+          pose (TU := @TermUniId).
+          specialize TU
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) (forget_term a) (forget_term u) (forget_term v) n.
+          simpl in TU.
+          capply TU.
+          - now apply (forget_isterm _ _ _ H).
+          - now apply (forget_isterm _ _ _ H0).
+          - now apply (forget_isterm _ _ _ H1).
+          - ih.
+        }
+
+      (* TermUniEmpty *)
+      - { simpl.
+          pose (TU := @TermUniEmpty).
+          specialize TU
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) n.
+          simpl in TU.
+          capply TU. ih.
+        }
+
+      (* TermUniUnit *)
+      - { simpl.
+          pose (TU := @TermUniUnit).
+          specialize TU
+          with configPrecondition configReflection configBinaryProdType
+                                  configProdEta configUniverses configPropType configIdEliminator
+                                  configEmptyType configUnitType configBoolType configIdType
+                                  configProdType concise_syntax.Syntax
+                                  (forget_ctx G) n.
+          simpl in TU.
+          capply TU. ih.
+        }
+
+      (* TermUniBool *)
+      - { simpl.
+          pose (TU := @TermUniBool).
+          specialize TU
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) n.
+          simpl in TU.
+          capply TU. ih.
+        }
+
+      (* TermUniBinaryProd *)
+      - { simpl.
+          pose (TU := @TermUniBinaryProd).
+          specialize TU
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) (forget_term a) (forget_term b) n m.
+          simpl in TU.
+          capply TU.
+          - now apply (forget_isterm _ _ _ H).
+          - now apply (forget_isterm _ _ _ H0).
+          - ih.
+        }
+
+      (* TermUniBinaryProdProp *)
+      - { simpl.
+          pose (TU := @TermUniBinaryProdProp).
+          specialize TU
+          with configPrecondition configReflection configBinaryProdType
+               configProdEta configUniverses configPropType configIdEliminator
+               configEmptyType configUnitType configBoolType configIdType
+               configProdType concise_syntax.Syntax
+               (forget_ctx G) (forget_term a) (forget_term b).
+          simpl in TU.
+          capply TU.
+          - now apply (forget_isterm _ _ _ H).
+          - now apply (forget_isterm _ _ _ H0).
+          - ih.
+        }
+
+      (* TermUniUni *)
+      - { simpl. capply @TermUniUni. ih. }
+
+      (* TermUniProp *)
+      - { simpl. capply @TermUniProp. ih. }
+    }
 
   (* forget_issubst *)
   - admit.
