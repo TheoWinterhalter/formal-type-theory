@@ -28,4 +28,7 @@ concise_syntax.v
 concise_inversion.v
 # concise_uniqueness.v # Does not work at the moment
 
+# Relation between instances
+forget_annotation.v
+
 negfunext.v

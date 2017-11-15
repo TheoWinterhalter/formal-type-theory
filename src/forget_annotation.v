@@ -1443,7 +1443,55 @@ Proof.
     }
 
   (* forget_eqsubst *)
-  - admit.
+  - { destruct H ; doConfig.
+
+      (* SubstRefl *)
+      - { capply SubstRefl ; ih. }
+
+      (* SubstSym *)
+      - { capply SubstSym ; ih. }
+
+      (* SubstTrans *)
+      - { (config apply @SubstTrans with (sb2 := forget_subst sb2)) ; ih. }
+
+      (* CongSusbtZero *)
+      - { simpl. capply @CongSubstZero ; ih. }
+
+      (* CongSubstWeak *)
+      - { simpl. capply @CongSubstWeak ; ih. }
+
+      (* CongSubstShift *)
+      - { simpl. capply @CongSubstShift ; ih. }
+
+      (* CongSubstComp *)
+      - { simpl. (config apply @CongSubstComp with (D := forget_ctx D)) ; ih. }
+
+      (* EqSubstCtxConv *)
+      - { (config apply @EqSubstCtxConv with (G1 := forget_ctx G1) (D1 := forget_ctx D1)) ; ih. }
+
+      (* CompAssoc *)
+      - { simpl.
+          (config apply @CompAssoc with (D := forget_ctx D) (E := forget_ctx E)) ; ih.
+        }
+
+      (* WeakNat *)
+      - { simpl. capply @WeakNat ; ih. }
+
+      (* WeakZero *)
+      - { simpl. capply @WeakZero ; ih. }
+
+      (* ShiftZero *)
+      - { simpl. capply @ShiftZero ; ih. }
+
+      (* CompShift *)
+      - { simpl. (config apply @CompShift with (D := forget_ctx D)) ; ih. }
+
+      (* CompIdRight *)
+      - { simpl. capply @CompIdRight ; ih. }
+
+      (* CompIdLeft *)
+      - { simpl. capply @CompIdLeft ; ih. }
+    }
 Defined.
 
 End Translation.
