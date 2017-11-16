@@ -157,6 +157,14 @@ Fixpoint coh_ctx G (Ge Ge' : context_elab G) {struct G} :
 
 with coh_type G A (Ge : context_elab G) (Ae Ae' : type_elab A Ge) {struct A} :
   Att.eqtype (ctx Ge) (ty Ae) (ty Ae')
+
+with coh_term G A u (Ge : context_elab G) (Ae : type_elab A Ge)
+              (ue ue' : term_elab u Ae) {struct u} :
+  Att.eqterm (ctx Ge) (tm ue) (tm ue') (ty Ae)
+
+with coh_subst G D σ (Ge : context_elab G) (De : context_elab D)
+               (σe σe' : subst_elab σ Ge De) {struct σ} :
+  Att.eqsubst (sb σe) (sb σe') (ctx Ge) (ctx De)
 .
 Proof.
 
@@ -167,9 +175,11 @@ Proof.
       destruct Gee' as [G'' eG' iG']. fold Ge'.
       destruct G as [| G A].
 
+      (* ctxempty *)
       - simpl. destruct G' ; try discriminate. destruct G'' ; try discriminate.
         capply @EqCtxEmpty.
 
+      (* ctxextend *)
       - simpl. destruct G' ; try discriminate. destruct G'' ; try discriminate.
         (* Making an elab out of G' *)
         assert (eGG : forget_ctx G' = G).
@@ -225,6 +235,69 @@ Proof.
     }
 
   (* coh_type *)
+  - { rename Ge into Gee. pose (Ge := Gee).
+      destruct Gee as [G' eG iG]. fold Ge.
+      rename Ae into Aee, Ae' into Aee'.
+      pose (Ae := Aee). pose (Ae' := Aee').
+      destruct Aee as [A' eA iA]. fold Ae.
+      destruct Aee' as [A'' eA' iA']. fold Ae'.
+
+      destruct A.
+
+      (* Prod *)
+      - { simpl.
+          destruct A' ; try discriminate ; destruct A'' ; try discriminate.
+          (* We seem to have a problem here. Prod isn't the only thing erasing
+             to Prod. *)
+          all:admit.
+        }
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+      - admit.
+
+    }
+
+  (* coh_term *)
+  - admit.
+
+  (* coh_subst *)
   - admit.
 Defined.
 
