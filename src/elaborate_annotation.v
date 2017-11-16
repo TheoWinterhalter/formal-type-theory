@@ -12,6 +12,7 @@ Require syntax.
 Require Import tt.
 Require annotated_syntax concise_syntax.
 Require Import forget_annotation.
+Require Import annotated_inversion.
 
 (* Concise theory *)
 Module Ctt.
@@ -144,6 +145,47 @@ Arguments issb {_ _ _ _ _} _.
 
 Axiom admit : forall {A}, A.
 Tactic Notation "admit" := (exact admit).
+
+(* We first relate different elaborations of the same term *)
+Fixpoint coh_ctx G (Ge Ge' : context_elab G) {struct G} :
+  Att.eqctx (ctx Ge) (ctx Ge')
+
+with coh_type G A (Ge : context_elab G) (Ae Ae' : type_elab A Ge) {struct A} :
+  Att.eqtype (ctx Ge) (ty Ae) (ty Ae')
+.
+Proof.
+
+  (* coh_ctx *)
+  - { rename Ge into Gee, Ge' into Gee'.
+      pose (Ge := Gee). pose (Ge' := Gee').
+      destruct Gee as [G' eG iG]. fold Ge.
+      destruct Gee' as [G'' eG' iG']. fold Ge'.
+      destruct G as [| G A].
+
+      - simpl. destruct G' ; try discriminate. destruct G'' ; try discriminate.
+        capply @EqCtxEmpty.
+
+      - simpl. destruct G' ; try discriminate. destruct G'' ; try discriminate.
+        capply @EqCtxExtend.
+        + assert (eGG : forget_ctx G' = G).
+          { simpl in eG. now inversion eG. }
+          assert (iGG : Att.isctx G').
+          { (* config apply @CtxExtendInversion with (G := G') (A := t). *)
+            (* Need to apply inversion *)
+            admit.
+          }
+          pose (GGe := {| ctx := G' ; eqctx := eGG ; isctx := iGG |}).
+          assert (eGG' : forget_ctx G'' = G).
+          { simpl in eG'. now inversion eG'. }
+          assert (iGG' : Att.isctx G'') by admit.
+          pose (GGe' := {| ctx := G'' ; eqctx := eGG' ; isctx := iGG' |}).
+          apply (coh_ctx _ GGe GGe').
+        + admit.
+    }
+
+  (* coh_type *)
+  - admit.
+Defined.
 
 Fixpoint elab_ctx G (H : Ctt.isctx G) {struct H} :
   context_elab G
