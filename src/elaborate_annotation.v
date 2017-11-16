@@ -132,9 +132,9 @@ Arguments tm {_ _ _ _ _} _.
 Arguments eqtm {_ _ _ _ _} _.
 Arguments istm {_ _ _ _ _} _.
 
-Record subst_elab {G D} sbs (Ge : context_elab G) (De : context_elab D) := {
+Record subst_elab {G D} σ (Ge : context_elab G) (De : context_elab D) := {
   sb : A.substitution ;
-  eqsb : forget_subst sb = sbs ;
+  eqsb : forget_subst sb = σ ;
   issb : Att.issubst sb (ctx Ge) (ctx De)
 }.
 
@@ -155,9 +155,14 @@ with elab_term G A u (H : Ctt.isterm G u A)
                (Ge : context_elab G) (Ae : type_elab A Ge) {struct H} :
   term_elab u Ae
 
-with elab_subst G D sbs (H : Ctt.issubst sbs G D)
+with elab_subst G D σ (H : Ctt.issubst σ G D)
                 (Ge : context_elab G) (De : context_elab D) {struct H} :
-  subst_elab sbs Ge De.
+  subst_elab σ Ge De
+
+with elab_eqctx G D (H : Ctt.eqctx G D)
+                (Ge : context_elab G) (De : context_elab D) {struct H} :
+  Att.eqctx (ctx Ge) (ctx De)
+.
 
 Proof.
 
@@ -193,15 +198,51 @@ Proof.
           destruct (elab_ctx _ i) as [G' eG iG].
           pose (Ae := elab_type _ _ H Ge).
           destruct (elab_type _ _ H Ge) as [A' eA iA].
-          (* We are missing how to translate equalities. *)
-          admit.
+          pose proof (elab_eqctx _ _ e Ge De) as eq.
+          exists A'.
+          - assumption.
+          - simpl. ceapply TyCtxConv.
+            + exact iA.
+            + simpl. exact eq.
         }
 
       (* TySubst *)
-      - admit.
+      - { rename Ge into Ge'. pose (Ge := Ge').
+          destruct Ge' as [G' eG iG]. fold Ge.
+          pose (De' := elab_ctx _ i1). pose (De := De').
+          destruct De' as [D' eD iD].
+          pose (Ae' := elab_type _ _ H De). pose (Ae := Ae').
+          destruct Ae' as [A' eA iA].
+          pose (σe' := elab_subst _ _ _ i Ge De). pose (σe := σe').
+          destruct σe' as [σ' eσ iσ].
+          exists (A.Subst A' σ').
+          - simpl. rewrite eA. rewrite eσ. reflexivity.
+          - ceapply @TySubst.
+            + exact iσ.
+            + assumption.
+        }
 
       (* TyProd *)
-      - admit.
+      - { rename Ge into Ge'. pose (Ge := Ge').
+          destruct Ge' as [G' eG iG]. fold Ge.
+          pose (Ae' := elab_type _ _ i Ge). pose (Ae := Ae').
+          destruct Ae' as [A' eA iA].
+          assert (GAe' : context_elab (C.ctxextend G A)).
+          { exists (A.ctxextend G' A').
+            - simpl. rewrite eG. rewrite eA. reflexivity.
+            - capply @CtxExtend. assumption.
+          }
+          pose (GAe := GAe'). destruct GAe' as [GA' eGA iGA].
+          (* These last operations seem wrong somehow!
+             We forgot who was GA' in the meantime. *)
+          pose (Be' := elab_type _ _ H GAe). pose (Be := Be').
+          destruct Be' as [B' eB iB].
+          exists (A.Prod A' B').
+          - simpl. rewrite eA. rewrite eB. reflexivity.
+          - simpl. capply @TyProd.
+          (* Right, we shouldn't have forgotten GA' was G',A' *)
+            admit.
+        }
 
       (* TyId *)
       - admit.
@@ -231,6 +272,48 @@ Proof.
 
   (* elab_subst *)
   - admit.
+
+  (* elab_eqctx *)
+  - { destruct H ; doConfig.
+
+      (* CtxRefl *)
+      - { destruct Ge as [G' eG iG].
+          destruct De as [D' eD iD].
+          simpl.
+          (* Should we have some result when two expressions erase to the same
+             thing? *)
+          admit.
+        }
+
+      (* CtxSym *)
+      - { capply CtxSym. now apply elab_eqctx. }
+
+      (* CtxTrans *)
+      - { rename De into Ee.
+          pose (De := elab_ctx _ i0).
+          config apply @CtxTrans with (D := ctx De).
+          - now apply elab_eqctx.
+          - now apply elab_eqctx.
+        }
+
+      (* EqCtxEmpty *)
+      - { destruct Ge as [G' eG iG].
+          destruct De as [D' eD iD].
+          simpl.
+          (* We also should be able to conclude that erasing to the empty
+             context implies being the empty context. *)
+          admit.
+        }
+
+      (* EqCtxExtend *)
+      - { destruct Ge as [GA' eGA iGA].
+          destruct De as [DB' eDB iDB].
+          simpl.
+          (* Something similar here. *)
+          admit.
+        }
+
+    }
 
 Defined.
 
