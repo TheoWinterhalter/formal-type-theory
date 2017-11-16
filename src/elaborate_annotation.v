@@ -162,6 +162,10 @@ with elab_subst G D σ (H : Ctt.issubst σ G D)
 with elab_eqctx G D (H : Ctt.eqctx G D)
                 (Ge : context_elab G) (De : context_elab D) {struct H} :
   Att.eqctx (ctx Ge) (ctx De)
+
+with elab_eqtype G A B (H : Ctt.eqtype G A B) (Ge : context_elab G)
+                 (Ae : type_elab A Ge) (Be : type_elab B Ge) {struct H} :
+  Att.eqtype (ctx Ge) (ty Ae) (ty Be)
 .
 
 Proof.
@@ -315,7 +319,136 @@ Proof.
     }
 
   (* elab_term *)
-  - admit.
+  - { destruct H ; doConfig.
+
+      (* TermTyConv *)
+      - { rename Ge into Ge'. pose (Ge := Ge').
+          destruct Ge' as [G' eG iG]. fold Ge in Ae.
+          rename Ae into Be'. pose (Be := Be').
+          destruct Be' as [B' eB iB]. fold Be.
+          pose (Ae' := elab_type _ _ i0 Ge). pose (Ae := Ae').
+          destruct Ae' as [A' eA iA].
+          pose (ue' := elab_term _ _ _ H _ Ae). pose (ue := ue').
+          destruct ue' as [u' eu iu].
+          pose proof (elab_eqtype _ _ _ e Ge Ae Be) as eq.
+          exists u'.
+          - assumption.
+          - simpl. ceapply @TermTyConv.
+            + eassumption.
+            + assumption.
+        }
+
+      (* TermCtxConv *)
+      - { rename Ge into De'. pose (De := De').
+          destruct De' as [D' eD iD]. fold De in Ae.
+          rename Ae into Ae'. pose (Ae := Ae').
+          destruct Ae' as [A' eA iA]. fold Ae.
+          pose (Ge' := elab_ctx _ i). pose (Ge := Ge').
+          destruct Ge' as [G' eG iG].
+          pose proof (elab_eqctx _ _ e Ge De) as eq.
+          assert (iA' : Att.istype (ctx Ge) A').
+          { ceapply @TyCtxConv.
+            - eassumption.
+            - ceapply CtxSym. assumption.
+          }
+          pose (Ae' := {| ty := A' ; eqty := eA ; isty := iA' |}).
+          pose (ue' := elab_term _ _ _ H _ Ae'). pose (ue := ue').
+          destruct ue' as [u' eu iu].
+          exists u'.
+          - assumption.
+          - simpl. ceapply @TermCtxConv.
+            + eassumption.
+            + assumption.
+        }
+
+      (* TermSubst *)
+      - { rename Ge into Ge'. pose (Ge := Ge').
+          destruct Ge' as [G' eG iG]. fold Ge in Ae.
+          rename Ae into Ae'. pose (Aσe := Ae').
+          destruct Ae' as [Aσ' eAσ iAσ]. fold Aσe.
+          pose (De' := elab_ctx _ i2). pose (De := De').
+          destruct De' as [D' eD iD].
+          pose (σe' := elab_subst _ _ _ i Ge De). pose (σe := σe').
+          destruct σe' as [σ' eσ iσ].
+          pose (Ae' := elab_type _ _ i1 De). pose (Ae := Ae').
+          destruct Ae' as [A' eA iA].
+          (* Now we would like to relate Aσe and (Ae, σe). *)
+          admit.
+        }
+
+      (* TermVarZero *)
+      - admit.
+
+      (* TermVarSucc *)
+      - admit.
+
+      (* TermAbs *)
+      - admit.
+
+      (* TermApp *)
+      - admit.
+
+      (* TermRefl *)
+      - admit.
+
+      (* TermJ *)
+      - admit.
+
+      (* TermExfalso *)
+      - admit.
+
+      (* TermUnit *)
+      - admit.
+
+      (* TermTrue *)
+      - admit.
+
+      (* TermFalse *)
+      - admit.
+
+      (* TermCond *)
+      - admit.
+
+      (* TermPair *)
+      - admit.
+
+      (* TermProjOne *)
+      - admit.
+
+      (* TermProjTwo *)
+      - admit.
+
+      (* TermUniProd *)
+      - admit.
+
+      (* TermUniProdProp *)
+      - admit.
+
+      (* TermUniId *)
+      - admit.
+
+      (* TermUniEmpty *)
+      - admit.
+
+      (* TermUniUnit *)
+      - admit.
+
+      (* TermUniBool *)
+      - admit.
+
+      (* TermUniBinaryProd *)
+      - admit.
+
+      (* TermUniBinaryProdProp *)
+      - admit.
+
+      (* TermUniUni *)
+      - admit.
+
+      (* TermUniProp *)
+      - admit.
+
+    }
 
   (* elab_subst *)
   - admit.
@@ -361,6 +494,9 @@ Proof.
         }
 
     }
+
+  (* elab_eqtype *)
+  - admit.
 
 Defined.
 
