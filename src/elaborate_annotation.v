@@ -171,27 +171,57 @@ Proof.
         capply @EqCtxEmpty.
 
       - simpl. destruct G' ; try discriminate. destruct G'' ; try discriminate.
+        (* Making an elab out of G' *)
+        assert (eGG : forget_ctx G' = G).
+        { simpl in eG. now inversion eG. }
+        assert (iGG : Att.isctx G').
+        { paranoid.
+          config apply @CtxExtendInversion with (G := G') (A := t).
+          economic.
+          apply iG.
+        }
+        pose (GGe := {| ctx := G' ; eqctx := eGG ; isctx := iGG |}).
+
+        (* Make an elab out of G'' *)
+        assert (eGG' : forget_ctx G'' = G).
+        { simpl in eG'. now inversion eG'. }
+        assert (iGG' : Att.isctx G'').
+        { paranoid.
+          config apply @CtxExtendInversion with (G := G'') (A := t0).
+          economic.
+          apply iG'.
+        }
+        pose (GGe' := {| ctx := G'' ; eqctx := eGG' ; isctx := iGG' |}).
+
+        pose (ih := coh_ctx _ GGe GGe').
+
         capply @EqCtxExtend.
-        + assert (eGG : forget_ctx G' = G).
+        + exact ih.
+        + (* Make an elab out of t *)
+          assert (et : forget_type t = A).
           { simpl in eG. now inversion eG. }
-          assert (iGG : Att.isctx G').
+          assert (it : Att.istype (ctx GGe) t).
           { paranoid.
             config apply @CtxExtendInversion with (G := G') (A := t).
             economic.
             apply iG.
           }
-          pose (GGe := {| ctx := G' ; eqctx := eGG ; isctx := iGG |}).
-          assert (eGG' : forget_ctx G'' = G).
+          pose (te := {| ty := t ; eqty := et ; isty := it |}).
+
+          (* Make an elab out of t0 *)
+          assert (et0 : forget_type t0 = A).
           { simpl in eG'. now inversion eG'. }
-          assert (iGG' : Att.isctx G'').
-          { paranoid.
-            config apply @CtxExtendInversion with (G := G'') (A := t0).
-            economic.
-            apply iG'.
+          assert (it0 : Att.istype (ctx GGe) t0).
+          { config apply @TyCtxConv with (G := ctx GGe').
+            - paranoid.
+              config apply @CtxExtendInversion with (G := G'') (A := t0).
+              economic.
+              apply iG'.
+            - now capply @CtxSym.
           }
-          pose (GGe' := {| ctx := G'' ; eqctx := eGG' ; isctx := iGG' |}).
-          apply (coh_ctx _ GGe GGe').
-        + admit.
+          pose (t0e := {| ty := t0 ; eqty := et0 ; isty := it0 |}).
+
+          apply (coh_type _ _ _ te t0e).
     }
 
   (* coh_type *)
