@@ -227,43 +227,90 @@ Proof.
           destruct Ge' as [G' eG iG]. fold Ge.
           pose (Ae' := elab_type _ _ i Ge). pose (Ae := Ae').
           destruct Ae' as [A' eA iA].
-          assert (GAe' : context_elab (C.ctxextend G A)).
-          { exists (A.ctxextend G' A').
-            - simpl. rewrite eG. rewrite eA. reflexivity.
-            - capply @CtxExtend. assumption.
-          }
-          pose (GAe := GAe'). destruct GAe' as [GA' eGA iGA].
-          (* These last operations seem wrong somehow!
-             We forgot who was GA' in the meantime. *)
+          assert (eGA : forget_ctx (A.ctxextend G' A') = C.ctxextend G A).
+          { simpl. rewrite eG. rewrite eA. reflexivity. }
+          assert (iGA : Att.isctx (A.ctxextend G' A')).
+          { capply @CtxExtend. assumption. }
+          pose (GAe :=
+                  {| ctx := A.ctxextend G' A' ; eqctx := eGA ; isctx := iGA |}).
+          (* Maybe a preliminary lemma to do the above. *)
           pose (Be' := elab_type _ _ H GAe). pose (Be := Be').
           destruct Be' as [B' eB iB].
           exists (A.Prod A' B').
           - simpl. rewrite eA. rewrite eB. reflexivity.
-          - simpl. capply @TyProd.
-          (* Right, we shouldn't have forgotten GA' was G',A' *)
-            admit.
+          - simpl. capply @TyProd. assumption.
         }
 
       (* TyId *)
-      - admit.
+      - { rename Ge into Ge'. pose (Ge := Ge').
+          destruct Ge' as [G' eG iG]. fold Ge.
+          pose (Ae' := elab_type _ _ i0 Ge). pose (Ae := Ae').
+          destruct Ae' as [A' eA iA].
+          pose (ue' := elab_term _ _ _ i1 _ Ae). pose (ue := ue').
+          destruct ue' as [u' eu iu].
+          pose (ve' := elab_term _ _ _ i2 _ Ae). pose (ve := ve').
+          destruct ve' as [v' ev iv].
+          exists (A.Id A' u' v').
+          - simpl. rewrite eA, eu, ev. reflexivity.
+          - now capply @TyId.
+        }
 
       (* TyEmpty *)
-      - admit.
+      - { rename Ge into Ge'. pose (Ge := Ge').
+          destruct Ge' as [G' eG iG]. fold Ge.
+          exists A.Empty.
+          - simpl. reflexivity.
+          - now capply @TyEmpty.
+        }
 
       (* TyUnit *)
-      - admit.
+      - { rename Ge into Ge'. pose (Ge := Ge').
+          destruct Ge' as [G' eG iG]. fold Ge.
+          exists A.Unit.
+          - simpl. reflexivity.
+          - now capply @TyUnit.
+        }
 
       (* TyBool *)
-      - admit.
+      - { rename Ge into Ge'. pose (Ge := Ge').
+          destruct Ge' as [G' eG iG]. fold Ge.
+          exists A.Bool.
+          - simpl. reflexivity.
+          - now capply @TyBool.
+        }
 
       (* TyBinaryProd *)
-      - admit.
+      - { rename Ge into Ge'. pose (Ge := Ge').
+          destruct Ge' as [G' eG iG]. fold Ge.
+          pose (Ae' := elab_type _ _ H Ge). pose (Ae := Ae').
+          destruct Ae' as [A' eA iA].
+          pose (Be' := elab_type _ _ H0 Ge). pose (Be := Be').
+          destruct Be' as [B' eB iB].
+          exists (A.BinaryProd A' B').
+          - simpl. now rewrite eA, eB.
+          - now capply @TyBinaryProd.
+        }
 
       (* TyUni *)
-      - admit.
+      - { rename Ge into Ge'. pose (Ge := Ge').
+          destruct Ge' as [G' eG iG]. fold Ge.
+          exists (A.Uni n).
+          - now simpl.
+          - now capply @TyUni.
+        }
 
       (* TyEl *)
-      - admit.
+      - { rename Ge into Ge'. pose (Ge := Ge').
+          destruct Ge' as [G' eG iG]. fold Ge.
+          assert (eUni : forget_type (A.Uni l) = C.Uni l) by reflexivity.
+          assert (iUni : Att.istype (ctx Ge) (A.Uni l)) by now capply @TyUni.
+          pose (Ue := {| ty := A.Uni l ; eqty := eUni ; isty := iUni |}).
+          pose (ae' := elab_term _ _ _ i _ Ue). pose (ae := ae').
+          destruct ae' as [a' ea ia].
+          exists (A.El l a').
+          - now simpl.
+          - now capply @TyEl.
+        }
 
     }
 
