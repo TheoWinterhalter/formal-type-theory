@@ -268,3 +268,28 @@ Ltac pex :=
   | |- ett.eqtype _ _ _    => apply ptt2ett.sane_eqtype
   | |- ett.eqterm _ _ _ _  => apply ptt2ett.sane_eqterm
   end.
+
+(* Similar tactic with target specified *)
+Ltac paranoid :=
+  first [
+    apply ptt2ett.sane_isctx |
+    apply ptt2ett.sane_issubst |
+    apply ptt2ett.sane_istype |
+    apply ptt2ett.sane_isterm |
+    apply ptt2ett.sane_eqctx |
+    apply ptt2ett.sane_eqsubst |
+    apply ptt2ett.sane_eqtype |
+    apply ptt2ett.sane_eqterm
+  ].
+
+Ltac economic :=
+  first [
+    apply ett2ptt.sane_isctx |
+    apply ett2ptt.sane_issubst |
+    apply ett2ptt.sane_istype |
+    apply ett2ptt.sane_isterm |
+    apply ett2ptt.sane_eqctx |
+    apply ett2ptt.sane_eqsubst |
+    apply ett2ptt.sane_eqtype |
+    apply ett2ptt.sane_eqterm
+  ].

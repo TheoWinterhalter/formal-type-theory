@@ -6,7 +6,7 @@
  *)
 
 Require config.
-Require Import config_tactics.
+Require Import config_tactics tactics.
 
 Require syntax.
 Require Import tt.
@@ -100,6 +100,11 @@ Context `{configUnitType : config.UnitType}.
 Context `{configBoolType : config.BoolType}.
 Context `{configProdType : config.ProdType}.
 
+Local Existing Instance haveCtxExtendInversion.
+Local Existing Instance haveTyIdInversion.
+Local Existing Instance haveTyProdInversion.
+Local Existing Instance haveTyBinaryProdInversion.
+
 Open Scope type_scope.
 
 (* Notion of elaborations *)
@@ -170,14 +175,20 @@ Proof.
         + assert (eGG : forget_ctx G' = G).
           { simpl in eG. now inversion eG. }
           assert (iGG : Att.isctx G').
-          { (* config apply @CtxExtendInversion with (G := G') (A := t). *)
-            (* Need to apply inversion *)
-            admit.
+          { paranoid.
+            config apply @CtxExtendInversion with (G := G') (A := t).
+            economic.
+            apply iG.
           }
           pose (GGe := {| ctx := G' ; eqctx := eGG ; isctx := iGG |}).
           assert (eGG' : forget_ctx G'' = G).
           { simpl in eG'. now inversion eG'. }
-          assert (iGG' : Att.isctx G'') by admit.
+          assert (iGG' : Att.isctx G'').
+          { paranoid.
+            config apply @CtxExtendInversion with (G := G'') (A := t0).
+            economic.
+            apply iG'.
+          }
           pose (GGe' := {| ctx := G'' ; eqctx := eGG' ; isctx := iGG' |}).
           apply (coh_ctx _ GGe GGe').
         + admit.
