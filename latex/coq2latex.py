@@ -54,6 +54,7 @@ macros = {
     'sbshift' : (2, 'sbshift'),
     'sbid' : (0, 'sbid'),
     'sbcomp' : (2, 'sbcomp'),
+    'sbterminal' : (0, 'sbterminal'),
 
     # Contexts
     'ctxempty' : (0, 'ctxempty'),
