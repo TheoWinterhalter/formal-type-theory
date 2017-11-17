@@ -2196,6 +2196,11 @@ Ltac magicn try shelf tysym debug :=
         ceapply SubstComp
       | myfail debug
       ] ; magicn try shelf DoTysym debug
+    | |- issubst sbterminal ?G1 ?G2 =>
+      first [
+        ceapply SubstTerminal
+      | myfail debug
+      ] ; magicn try shelf DoTysym debug
     | |- issubst ?sbs ?G1 ?G2 =>
       tryif (is_var sbs) then (
         first [

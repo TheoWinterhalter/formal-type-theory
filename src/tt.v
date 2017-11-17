@@ -141,6 +141,13 @@ with issubst : substitution -> context -> context -> Type :=
            issubst (sbcomp sbt sbs) G E
        endrule
 
+     | SubstTerminal :
+       rule
+         parameters: {G},
+         premise: isctx G
+         conclusion: issubst sbterminal G ctxempty
+       endrule
+
      | SubstCtxConv :
        rule
          parameters: {G1 G2 D1 D2 sbs},

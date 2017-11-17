@@ -46,6 +46,7 @@ with substitution : Type :=
      | sbshift : term -> substitution -> substitution
      | sbid : substitution
      | sbcomp : substitution -> substitution -> substitution
+     | sbterminal : substitution
 .
 
 Local Instance Syntax : syntax.Syntax := {|
@@ -89,11 +90,12 @@ Local Instance Syntax : syntax.Syntax := {|
   syntax.uniBinaryProd i j A B := BinaryProd A B ;
   syntax.uniUni i              := Uni i ;
 
-  syntax.sbzero  := sbzero ;
-  syntax.sbweak  := sbweak ;
-  syntax.sbshift := sbshift ;
-  syntax.sbid    := sbid ;
-  syntax.sbcomp  := sbcomp
+  syntax.sbzero     := sbzero ;
+  syntax.sbweak     := sbweak ;
+  syntax.sbshift    := sbshift ;
+  syntax.sbid       := sbid ;
+  syntax.sbcomp     := sbcomp ;
+  syntax.sbterminal := sbterminal
 |}.
 
 End ConciseSyntax.

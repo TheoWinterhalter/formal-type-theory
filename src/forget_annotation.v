@@ -163,6 +163,7 @@ with forget_subst (sbs : Att.substitution) : Ctt.substitution :=
   | A.sbshift A sbs => C.sbshift (forget_type A) (forget_subst sbs)
   | A.sbid => C.sbid
   | A.sbcomp sbs sbt => C.sbcomp (forget_subst sbs) (forget_subst sbt)
+  | A.sbterminal => C.sbterminal
   end.
 
 Axiom admit : forall {A}, A.
@@ -610,6 +611,8 @@ Proof.
       (* SubstComp *)
       - { simpl. (config apply @SubstComp with (D := forget_ctx D)) ; ih. }
 
+      (* SubstTerminal *)
+      - { simpl. capply @SubstTerminal ; ih. }
 
       (* SubstCtxConv *)
       - { (config apply @SubstCtxConv with (G1 := forget_ctx G1) (D1 := forget_ctx D1)) ; ih. }

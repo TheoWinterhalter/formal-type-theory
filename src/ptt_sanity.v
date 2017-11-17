@@ -63,6 +63,12 @@ Proof.
     - assumption.
   }
 
+  (* SubstTerminal *)
+  { split.
+    - assumption.
+    - magic.
+  }
+
   (* SubstCtxConv *)
   { split.
     - assumption.

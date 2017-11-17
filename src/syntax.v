@@ -50,6 +50,7 @@ Class Syntax := {
   sbshift : type -> substitution -> substitution;
   sbid : substitution;
   sbcomp : substitution -> substitution -> substitution;
+  sbterminal : substitution;
 
   Arrow := (fun (A B :  type) => Prod A (Subst B (sbweak A)))
 }.

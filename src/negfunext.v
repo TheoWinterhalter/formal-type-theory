@@ -168,6 +168,7 @@ with trans_subst (sbs : substitution) : substitution :=
   | sbshift A sbs => sbshift (trans_type A) (trans_subst sbs)
   | sbid => sbid
   | sbcomp sbs sbt => sbcomp (trans_subst sbs) (trans_subst sbt)
+  | sbterminal => sbterminal
   end.
 
 Fixpoint trans_ctx (G : context) : context :=
@@ -483,6 +484,9 @@ Proof.
           - ih.
           - ih.
         }
+
+      (* SubstTerminal *)
+      - { simpl. capply @SubstTerminal. ih. }
 
       (* SubstCtxConv *)
       - { config apply @SubstCtxConv with (G1 := trans_ctx G1) (D1 := trans_ctx D1).
