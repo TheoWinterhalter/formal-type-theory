@@ -140,8 +140,8 @@ Module Ttt.
 
   Section Ttt.
 
-  Local Instance havePrecondition : config.Precondition
-    := {| config.flagPrecondition := config.Yes |}.
+  Local Instance noPrecondition : config.Precondition
+    := {| config.flagPrecondition := config.No |}.
   Local Instance noReflection : config.Reflection
     := {| config.flagReflection := config.No |}.
   Local Instance haveBinaryProdType : config.BinaryProdType
@@ -213,5 +213,47 @@ Section Translation.
 (* Proving uniqueness of typing and inversion are going to be challenges.
    Weakening is merely an application of the right substitution.
  *)
+Lemma uniqueness :
+  forall {Γ u T1 T2},
+    Ttt.isterm Γ u T1 ->
+    Ttt.isterm Γ u T2 ->
+    Ttt.eqtype Γ T1 T2.
+
+Definition transport n T1 T2 p t : term :=
+  let s    := Uni (uni n) in
+  let w    := sbweak s in
+  let wT1  := Subst T1 w in
+  let ws   := Subst s w in
+  let ww   := sbweak (Id ws wT1 (var 0)) in
+  let wwT1 := Subst wT1 ww in
+
+  app (j s T1 (Arrow wwT1 (var 1)) (lam T1 (Subst T1 (sbweak T1)) (var 0)) T2 p)
+      T1 (* -> *) T2
+      t.
+
+Lemma TermTransport :
+  forall {Γ n T1 T2 p t},
+    Ttt.isctx Γ ->
+    Ttt.isterm Γ T1 (Uni (uni n)) ->
+    Ttt.isterm Γ T2 (Uni (uni n)) ->
+    Ttt.isterm Γ p (Id (Uni (uni n)) T1 T2) ->
+    Ttt.isterm Γ t T1 ->
+    Ttt.isterm Γ (transport n T1 T2 p t) T2.
+Proof.
+  intros Γ n T1 T2 p t ? ? ? ? ?.
+  unfold transport, Ttt.isterm.
+  assert (Ttt.istype Γ T1).
+  { replace T1 with (El (uni n) T1) by reflexivity.
+    unfold Ttt.istype. magic.
+  }
+  (* magic. *)
+  ceapply TermTyConv ; [ ceapply TermApp | .. ].
+  - ceapply TermTyConv ; [ ceapply TermJ | .. ].
+    + magic.
+    + magic.
+    + ceapply TermTyConv ; [ ceapply TermAbs | .. ].
+      * magic.
+      *
+Abort.
 
 End Translation.
