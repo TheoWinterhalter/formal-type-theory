@@ -225,9 +225,6 @@ Context {transport : nat -> term -> term -> term -> term -> term}.
 Context {
   TermTransport :
     forall {Γ n T1 T2 p t},
-      Ttt.isctx Γ ->
-      Ttt.isterm Γ T1 (Uni (uni n)) ->
-      Ttt.isterm Γ T2 (Uni (uni n)) ->
       Ttt.isterm Γ p (Id (Uni (uni n)) T1 T2) ->
       Ttt.isterm Γ t T1 ->
       Ttt.isterm Γ (transport n T1 T2 p t) T2
