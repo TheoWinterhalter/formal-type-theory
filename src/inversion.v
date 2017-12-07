@@ -16,6 +16,7 @@ Context `{configEmptyType : config.EmptyType}.
 Context `{configUnitType : config.UnitType}.
 Context `{configBoolType : config.BoolType}.
 Context `{configProdType : config.ProdType}.
+Context `{configSumType : config.SumType}.
 Context `{configSyntax : syntax.Syntax}.
 
 Class HaveCtxExtendInversion := {

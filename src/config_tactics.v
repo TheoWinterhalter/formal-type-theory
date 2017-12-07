@@ -32,6 +32,8 @@ Ltac doConfig :=
       let H := fresh "flagProdType" in intros H
     | flagIdType =>
       let H := fresh "flagIdType" in intros H
+    | flagSumType =>
+      let H := fresh "flagSumType" in intros H
     | _ => idtac
     end
   | |- ?P =>
@@ -50,6 +52,7 @@ Ltac doConfig :=
   | H : flagBoolType |- flagBoolType => exact H
   | H : flagProdType |- flagProdType => exact H
   | H : flagIdType |- flagIdType => exact H
+  | H : flagSumType |- flagSumType => exact H
   | _ => idtac
   end ;
   (* Configure the hypotheses *)
@@ -106,6 +109,10 @@ Ltac doConfig :=
      | @flagIdType ?F =>
        match goal with
        | R : @flagIdType F |- _ => specialize (H R)
+       end
+     | @flagSumType ?F =>
+       match goal with
+       | R : @flagSumType F |- _ => specialize (H R)
        end
      end
    | H : ?P |- _ =>

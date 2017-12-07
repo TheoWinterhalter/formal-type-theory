@@ -27,6 +27,7 @@ Context `{configEmptyType : config.EmptyType}.
 Context `{configUnitType : config.UnitType}.
 Context `{configBoolType : config.BoolType}.
 Context `{configProdType : config.ProdType}.
+Context `{configSumType : config.SumType}.
 Context `{configSyntax : syntax.Syntax}.
 
 (* Some tactic to compose substitutions. *)
@@ -155,6 +156,7 @@ Context `{configEmptyType : config.EmptyType}.
 Context `{configUnitType : config.UnitType}.
 Context `{configBoolType : config.BoolType}.
 Context `{configProdType : config.ProdType}.
+Context `{configSumType : config.SumType}.
 Context `{configSyntax : syntax.Syntax}.
 
 Lemma EqCompZero :
@@ -858,6 +860,20 @@ Ltac prepushsubst1 sym :=
       ceapply EqTyTrans ; [ ceapply EqTySubstBinaryProd | .. ]
     | ..
     ]
+  | |- eqtype ?G (Subst (Sum ?A ?B) ?sbs) ?C =>
+    ceapply EqTyTrans ; [ ceapply EqTySubstSum | .. ]
+  | |- eqtype ?G ?C (Subst (Sum ?A ?B) ?sbs) =>
+    ceapply EqTySym ; [
+      ceapply EqTyTrans ; [ ceapply EqTySubstSum | .. ]
+    | ..
+    ]
+  | |- eqtype ?G (Subst ?A ?sbs) (Sum ?B ?C) =>
+    ceapply EqTyTrans ; [ ceapply EqTySubstSum | .. ]
+  | |- eqtype ?G (Sum ?A ?B) (Subst ?C ?sbs) =>
+    ceapply EqTySym ; [
+      ceapply EqTyTrans ; [ ceapply EqTySubstSum | .. ]
+    | ..
+    ]
   | |- eqtype ?G (Subst ?E ?sbs) Empty =>
     ceapply EqTySubstEmpty
   | |- eqtype ?G (Subst Empty ?sbs) ?A =>
@@ -986,6 +1002,20 @@ Ltac prepushsubst1 sym :=
       | ..
       ]
     ]
+  | |- eqterm ?G (subst (ex ?A ?B ?a ?b) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstEx | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstEx | .. ]
+      ]
+    ]
+  | |- eqterm ?G (subst (sumelim ?A ?B ?C ?p ?c) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstSumElim | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstSumElim | .. ]
+      ]
+    ]
   | |- eqterm ?G (subst (uniProd ?l prop ?a ?b) ?sbs) _ _ =>
     first [
       ceapply EqTrans ; [ ceapply EqSubstUniProdProp | .. ]
@@ -1047,6 +1077,22 @@ Ltac prepushsubst1 sym :=
       ceapply EqTrans ; [ ceapply EqSubstUniBinaryProd | .. ]
     | ceapply EqTyConv ; [
         ceapply EqTrans ; [ ceapply EqSubstUniBinaryProd | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (uniSum prop prop ?a ?b) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstUniSumProp | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstUniSumProp | .. ]
+      | ..
+      ]
+    ]
+  | |- eqterm ?G (subst (uniSum ?n ?m ?a ?b) ?sbs) _ _ =>
+    first [
+      ceapply EqTrans ; [ ceapply EqSubstUniSum | .. ]
+    | ceapply EqTyConv ; [
+        ceapply EqTrans ; [ ceapply EqSubstUniSum | .. ]
       | ..
       ]
     ]
@@ -1232,6 +1278,7 @@ Context `{configEmptyType : config.EmptyType}.
 Context `{configUnitType : config.UnitType}.
 Context `{configBoolType : config.BoolType}.
 Context `{configProdType : config.ProdType}.
+Context `{configSumType : config.SumType}.
 Context `{configSyntax : syntax.Syntax}.
 
 (* A lemma to do ZeroShift shifted, it not very robust as we would need
@@ -2244,6 +2291,11 @@ Ltac magicn try shelf tysym debug :=
         ceapply TyBinaryProd
       | myfail debug
       ] ; magicn try shelf DoTysym debug
+    | |- istype ?G (Sum ?A ?B) =>
+      first [
+        ceapply TySum
+      | myfail debug
+      ] ; magicn try shelf DoTysym debug
     | |- istype ?G (Uni ?n) =>
       first [
         ceapply TyUni
@@ -2367,6 +2419,18 @@ Ltac magicn try shelf tysym debug :=
       | ceapply TermTyConv ; [ ceapply TermProjTwo | .. ]
       | myfail debug
       ] ; magicn try shelf DoTysym debug
+    | |- isterm ?G (ex ?A ?B ?a ?b) ?T =>
+      first [
+        ceapply TermEx
+      | ceapply TermTyConv ; [ ceapply TermEx | .. ]
+      | myfail debug
+      ] ; magicn try shelf DoTysym debug
+    | |- isterm ?G (sumelim ?A ?B ?C ?p ?c) ?T =>
+      first [
+        ceapply TermSumElim
+      | ceapply TermTyConv ; [ ceapply TermSumElim | .. ]
+      | myfail debug
+      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (uniProd ?l prop ?a ?b) ?T =>
       first [
         ceapply TermUniProdProp
@@ -2413,6 +2477,18 @@ Ltac magicn try shelf tysym debug :=
       first [
         ceapply TermUniBinaryProd
       | ceapply TermTyConv ; [ ceapply TermUniBinaryProd | .. ]
+      | myfail debug
+      ] ; magicn try shelf DoTysym debug
+    | |- isterm ?G (uniSum prop prop ?a ?b) ?T =>
+      first [
+        ceapply TermUniSumProp
+      | ceapply TermTyConv ; [ ceapply TermUniSumProp | .. ]
+      | myfail debug
+      ] ; magicn try shelf DoTysym debug
+    | |- isterm ?G (uniSum ?n ?m ?a ?b) ?T =>
+      first [
+        ceapply TermUniSum
+      | ceapply TermTyConv ; [ ceapply TermUniSum | .. ]
       | myfail debug
       ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (uniUni prop) ?T =>
@@ -2693,6 +2769,11 @@ Ltac magicn try shelf tysym debug :=
         ceapply CongBinaryProd
       | myfail debug
       ] ; magicn try shelf DoTysym debug
+    | |- eqtype ?G (Sum _ _) (Sum _ _) =>
+      first [
+        ceapply CongSum
+      | myfail debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqtype ?G (Uni _) (Uni _) =>
       first [
         ceapply EqTyRefl
@@ -2887,6 +2968,18 @@ Ltac magicn try shelf tysym debug :=
       | ceapply EqTyConv ; [ ceapply CongProjTwo | .. ]
       | myfail debug
       ] ; magicn try shelf DoTysym debug
+    | |- eqterm ?G (ex _ _ _ _) (ex _ _ _ _) _ =>
+      first [
+        ceapply CongEx
+      | ceapply EqTyConv ; [ ceapply CongEx | .. ]
+      | myfail debug
+      ] ; magicn try shelf DoTysym debug
+    | |- eqterm ?G (sumelim _ _ _ _ _) (sumelim _ _ _ _ _) _ =>
+      first [
+        ceapply CongSumElim
+      | ceapply EqTyConv ; [ ceapply CongSumElim | .. ]
+      | myfail debug
+      ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G (uniProd _ prop _ _) (uniProd _ prop _ _) _ =>
       first [
         ceapply CongUniProdProp
@@ -2915,6 +3008,18 @@ Ltac magicn try shelf tysym debug :=
       first [
         ceapply CongUniBinaryProd
       | ceapply EqTyConv ; [ ceapply CongUniBinaryProd | .. ]
+      | myfail debug
+      ] ; magicn try shelf DoTysym debug
+    | |- eqterm ?G (uniSum prop prop _ _) (uniSum prop prop _ _) _ =>
+      first [
+        ceapply CongUniSumProp
+      | ceapply EqTyConv ; [ ceapply CongUniSumProp | .. ]
+      | myfail debug
+      ] ; magicn try shelf DoTysym debug
+    | |- eqterm ?G (uniSum _ _ _ _) (uniSum _ _ _ _) _ =>
+      first [
+        ceapply CongUniSum
+      | ceapply EqTyConv ; [ ceapply CongUniSum | .. ]
       | myfail debug
       ] ; magicn try shelf DoTysym debug
     | |- eqterm ?G ?u ?v ?A =>

@@ -58,6 +58,11 @@ Class BinaryProdType := {
   flagBinaryProdType : Type
 }.
 
+(* Dependent sums. *)
+Class SumType := {
+  flagSumType : Type
+}.
+
 (* Universes *)
 Class Universes := {
   flagUniverses : Type

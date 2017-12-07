@@ -21,6 +21,7 @@ Context `{configEmptyType : config.EmptyType}.
 Context `{configUnitType : config.UnitType}.
 Context `{configBoolType : config.BoolType}.
 Context `{configProdType : config.ProdType}.
+Context `{configSumType : config.SumType}.
 Context `{configSyntax : syntax.Syntax}.
 
 Axiom cheating : forall A, A.
@@ -137,6 +138,12 @@ Proof.
   (* TermProjTwo *)
   { magic. }
 
+  (* TermEx *)
+  { magic. }
+
+  (* TermSumElim *)
+  { magic. }
+
   (* TermUniProd *)
   { magic. }
 
@@ -158,7 +165,13 @@ Proof.
   (* TermUniBinaryProd *)
   { magic. }
 
+  (* TermUniSum *)
+  { magic. }
+
   (* TermUniBinaryProdProp *)
+  { magic. }
+
+  (* TermUniSumProp *)
   { magic. }
 
   (* TermUniUni *)
@@ -276,6 +289,18 @@ Proof.
     - magic.
   }
 
+  (* CongSum *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* EqTySubstSum *)
+  { split.
+    - magic.
+    - magic.
+  }
+
   (* EqTySubstUni *)
   { split.
     - magic.
@@ -331,6 +356,18 @@ Proof.
   }
 
   (* ElBinaryProdProp *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* ElSum *)
+  { split.
+    - magic.
+    - magic.
+  }
+
+  (* ElSumProp *)
   { split.
     - magic.
     - magic.
@@ -814,6 +851,36 @@ Proof.
       - magic.
     }
 
+  (* CongEx *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* CongSumElim *)
+  - { split.
+      - magic.
+      - magic. (* Might have made a mistake! *)
+    }
+
+  (* EqSubstEx *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* EqSubstSumElim *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* SumElimEx *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
   (* EqSubstUniProd *)
   - { split.
       - magic.
@@ -865,6 +932,18 @@ Proof.
       - magic.
     }
 
+  (* EqSubstUniSum *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* EqSubstUniSumProp *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
   (* EqSubstUniUni *)
   - { split.
       - magic.
@@ -902,6 +981,18 @@ Proof.
     }
 
   (* CongUniBinaryProdProp *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* CongUniSum *)
+  - { split.
+      - magic.
+      - magic.
+    }
+
+  (* CongUniSumProp *)
   - { split.
       - magic.
       - magic.

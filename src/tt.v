@@ -27,6 +27,7 @@ Context `{configUnitType : config.UnitType}.
 Context `{configBoolType : config.BoolType}.
 Context `{configIdType : config.IdType}.
 Context `{configProdType : config.ProdType}.
+Context `{configSumType : config.SumType}.
 Context `{configSyntax : Syntax}.
 
 
@@ -64,6 +65,9 @@ Notation "'whenBoolType' r" :=
 
 Notation "'whenProdType' r" :=
   (forall { _ : flagProdType }, r) (only parsing, at level 97).
+
+Notation "'whenSumType' r" :=
+  (forall { _ : flagSumType }, r) (only parsing, at level 97).
 
 Notation "'parameters:'  x .. y , p" :=
   ((forall x , .. (forall y , p) ..))
@@ -233,6 +237,16 @@ with istype : context -> type -> Type :=
          premise: istype G B
          conclusion:
            istype G (BinaryProd A B)
+       endrule
+
+     | TySum :
+       whenSumType rule
+         parameters: {G A B},
+         premise: istype (ctxextend G A) B
+         precond: istype G A
+         precond: isctx G
+         conclusion:
+           istype G (Sum A B)
        endrule
 
      | TyUni :
@@ -481,6 +495,34 @@ with isterm : context -> term -> type -> Type :=
            isterm G (proj2 A B p) B
        endrule
 
+     | TermEx :
+       whenSumType rule
+         parameters: {G A B a b},
+         premise: isterm G a A
+         premise: isterm G b (Subst B (sbzero A a))
+         precond: istype G A
+         precond: istype (ctxextend G A) B
+         precond: isctx G
+         conclusion:
+           isterm G (ex A B a b) (Sum A B)
+       endrule
+
+     | TermSumElim :
+       whenSumType rule
+         parameters: {G A B C p c},
+         premise: isterm G p (Sum A B)
+         premise: istype (ctxextend G (Sum A B)) C
+         premise:
+           isterm (ctxextend (ctxextend G A) B)
+                  c
+                  (Subst C (sbzero (Sum A B) (ex A B (var 1) (var 0))))
+         precond: istype G A
+         precond: istype (ctxextend G A) B
+         precond: isctx G
+         conclusion:
+           isterm G (sumelim A B C p c) (Subst C (sbzero (Sum A B) p))
+       endrule
+
      | TermUniProd :
        whenUniverses whenProdType rule
          parameters: {G a b n m},
@@ -546,6 +588,16 @@ with isterm : context -> term -> type -> Type :=
            isterm G (uniBinaryProd (uni n) (uni m) a b) (Uni (uni (max n m)))
        endrule
 
+     | TermUniSum :
+       whenUniverses whenSumType rule
+         parameters: {G a b n m},
+         premise: isterm G a (Uni (uni n))
+         premise: isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))
+         precond: isctx G
+         conclusion:
+           isterm G (uniSum (uni n) (uni m) a b) (Uni (uni (max n m)))
+       endrule
+
      | TermUniBinaryProdProp :
        whenUniverses whenPropType whenBinaryProdType rule
          parameters: {G a b},
@@ -554,6 +606,16 @@ with isterm : context -> term -> type -> Type :=
          precond: isctx G
          conclusion:
            isterm G (uniBinaryProd prop prop a b) (Uni prop)
+       endrule
+
+     | TermUniSumProp :
+       whenUniverses whenPropType whenSumType rule
+         parameters: {G a b},
+         premise: isterm G a (Uni prop)
+         premise: isterm (ctxextend G (El prop a)) b (Uni prop)
+         precond: isctx G
+         conclusion:
+           isterm G (uniSum prop prop a b) (Uni prop)
        endrule
 
      | TermUniUni :
@@ -1073,6 +1135,34 @@ with eqtype : context -> type -> type -> Type :=
                   (BinaryProd (Subst A sbs) (Subst B sbs))
        endrule
 
+     | CongSum :
+       whenSumType rule
+         parameters: {G A1 A2 B1 B2},
+         precond: isctx G
+         precond: istype G A1
+         precond: istype (ctxextend G A1) A2
+         precond: istype G B1
+         precond: istype (ctxextend G A1) B2
+         premise: eqtype G A1 B1
+         premise: eqtype (ctxextend G A1) A2 B2
+         conclusion:
+           eqtype G (Sum A1 A2) (Sum B1 B2)
+       endrule
+
+     | EqTySubstSum :
+       whenSumType rule
+         parameters: {G D A B sbs},
+         premise: issubst sbs G D
+         precond: istype D A
+         premise: istype (ctxextend D A) B
+         precond: isctx G
+         precond: isctx D
+         conclusion:
+           eqtype G
+                  (Subst (Sum A B) sbs)
+                  (Sum (Subst A sbs) (Subst B (sbshift A sbs)))
+       endrule
+
      | EqTySubstUni :
        whenUniverses rule
          parameters: {G D n sbs},
@@ -1187,6 +1277,30 @@ with eqtype : context -> type -> type -> Type :=
            eqtype G
                   (El prop (uniBinaryProd prop prop a b))
                   (BinaryProd (El prop a) (El prop b))
+       endrule
+
+     | ElSum :
+       whenUniverses whenSumType rule
+         parameters: {G a b n m},
+         premise: isterm G a (Uni (uni n))
+         premise: isterm (ctxextend G (El (uni n) a)) b (Uni (uni m))
+         precond: isctx G
+         conclusion:
+           eqtype G
+                  (El (uni (max n m)) (uniSum (uni n) (uni m) a b))
+                  (Sum (El (uni n) a) (El (uni m) b))
+       endrule
+
+     | ElSumProp :
+       whenUniverses whenPropType whenSumType rule
+         parameters: {G a b},
+         premise: isterm G a (Uni prop)
+         premise: isterm (ctxextend G (El prop a)) b (Uni prop)
+         precond: isctx G
+         conclusion:
+           eqtype G
+                  (El prop (uniSum prop prop a b))
+                  (Sum (El prop a) (El prop b))
        endrule
 
      | ElUni :
@@ -2145,6 +2259,127 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G p q (BinaryProd A B)
        endrule
 
+     | CongEx :
+       whenSumType rule
+         parameters: {G A1 A2 B1 B2 a1 a2 b1 b2},
+         premise: eqterm G a1 a2 A1
+         premise: eqterm G b1 b2 (Subst B1 (sbzero A1 a1))
+         premise: eqtype G A1 A2
+         premise: eqtype (ctxextend G A1) B1 B2
+         precond: isterm G a1 A1
+         precond: isterm G a2 A1
+         precond: isterm G b1 (Subst B1 (sbzero A1 a1))
+         precond: isterm G b2 (Subst B2 (sbzero A2 a2))
+         precond: istype G A1
+         precond: istype G A2
+         precond: istype (ctxextend G A1) B1
+         precond: istype (ctxextend G A1) B2
+         precond: isctx G
+         conclusion:
+           eqterm G (ex A1 B1 a1 b1) (ex A2 B2 a2 b2) (Sum A1 B1)
+       endrule
+
+     | CongSumElim :
+       whenSumType rule
+         parameters: {G A1 A2 B1 B2 C1 C2 p1 p2 c1 c2},
+         premise: eqterm G p1 p2 (Sum A1 B1)
+         premise: eqtype (ctxextend G (Sum A1 B1)) C1 C2
+         premise: eqterm (ctxextend (ctxextend G A1) B1)
+                         c1 c2
+                         (Subst C1
+                                (sbzero (Sum A1 B1) (ex A1 B1 (var 1) (var 0))))
+         premise: eqtype G A1 A2
+         premise: eqtype (ctxextend G A1) B1 B2
+         precond: isterm G p1 (Sum A1 B1)
+         precond: isterm G p2 (Sum A1 B1)
+         precond: isterm (ctxextend (ctxextend G A1) B1)
+                         c1
+                         (Subst C1
+                                (sbzero (Sum A1 B1) (ex A1 B1 (var 1) (var 0))))
+         precond: isterm (ctxextend (ctxextend G A1) B1)
+                         c2
+                         (Subst C1
+                                (sbzero (Sum A1 B1) (ex A1 B1 (var 1) (var 0))))
+         precond: istype G A1
+         precond: istype G A2
+         precond: istype (ctxextend G A1) B1
+         precond: istype (ctxextend G A1) B2
+         precond: istype (ctxextend G (Sum A1 B1)) C1
+         precond: istype (ctxextend G (Sum A1 B1)) C2
+         precond: isctx G
+         conclusion:
+           eqterm G
+                  (sumelim A1 B1 C1 p1 c1)
+                  (sumelim A2 B2 C2 p2 c2)
+                  (Subst C1 (sbzero (Sum A1 B1) p1))
+       endrule
+
+     | EqSubstEx :
+       whenSumType rule
+         parameters: {G D A B a b sbs},
+         premise: issubst sbs G D
+         premise: isterm D a A
+         premise: isterm D b (Subst B (sbzero A a))
+         precond: istype D A
+         precond: istype (ctxextend D A) B
+         precond: isctx G
+         precond: isctx D
+         conclusion:
+           eqterm G
+                  (subst (ex A B a b) sbs)
+                  (ex (Subst A sbs)
+                      (Subst B (sbshift A sbs))
+                      (subst a sbs)
+                      (subst b sbs))
+                  (Sum (Subst A sbs) (Subst B (sbshift A sbs)))
+       endrule
+
+     | EqSubstSumElim :
+       whenSumType rule
+         parameters: {G D A B C p c sbs},
+         premise: issubst sbs G D
+         premise: isterm D p (Sum A B)
+         premise: istype (ctxextend D (Sum A B)) C
+         premise:
+           isterm (ctxextend (ctxextend D A) B)
+                  c
+                  (Subst C (sbzero (Sum A B) (ex A B (var 1) (var 0))))
+         precond: istype D A
+         precond: istype (ctxextend D A) B
+         precond: isctx G
+         precond: isctx D
+         conclusion:
+           eqterm G
+                  (subst (sumelim A B C p c) sbs)
+                  (sumelim (Subst A sbs)
+                           (Subst B (sbshift A sbs))
+                           (Subst C (sbshift (Sum A B) sbs))
+                           (subst p sbs)
+                           (subst c sbs)
+                  )
+                  (Subst (Subst C (sbzero (Sum A B) p)) sbs)
+       endrule
+
+     | SumElimEx :
+       whenSumType rule
+         parameters: {G A B C a b c},
+         premise: isterm G a A
+         premise: isterm G b (Subst B (sbzero A a))
+         premise: istype (ctxextend G (Sum A B)) C
+         premise:
+           isterm (ctxextend (ctxextend G A) B)
+                  c
+                  (Subst C (sbzero (Sum A B) (ex A B (var 1) (var 0))))
+         precond: istype G A
+         precond: istype (ctxextend G A) B
+         precond: isctx G
+         conclusion:
+           eqterm G
+                  (sumelim A B C (ex A B a b) c)
+                  (subst (subst c (sbzero B b)) (sbzero A a))
+                  (Subst C (sbzero (Sum A B) (ex A B a b)))
+       endrule
+
      | EqSubstUniProd :
        whenUniverses whenProdType rule
          parameters: {G D a b n m sbs},
@@ -2265,6 +2500,41 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Uni prop)
        endrule
 
+     | EqSubstUniSum :
+       whenUniverses whenSumType rule
+         parameters: {G D a b n m sbs},
+         premise: issubst sbs G D
+         premise: isterm D a (Uni (uni n))
+         premise: isterm (ctxextend D (El (uni n) a)) b (Uni (uni m))
+         precond: isctx G
+         precond: isctx D
+         conclusion:
+           eqterm G
+                  (subst (uniSum (uni n) (uni m) a b) sbs)
+                  (uniSum (uni n)
+                           (uni m)
+                           (subst a sbs)
+                           (subst b (sbshift (El (uni n) a) sbs)))
+                  (Uni (uni (max n m)))
+       endrule
+
+     | EqSubstUniSumProp :
+       whenUniverses whenPropType whenSumType rule
+         parameters: {G D a b sbs},
+         premise: issubst sbs G D
+         premise: isterm D a (Uni prop)
+         premise: isterm (ctxextend D (El prop a)) b (Uni prop)
+         precond: isctx G
+         precond: isctx D
+         conclusion:
+           eqterm G
+                  (subst (uniSum prop prop a b) sbs)
+                  (uniSum prop prop
+                           (subst a sbs)
+                           (subst b (sbshift (El prop a) sbs)))
+                  (Uni prop)
+       endrule
+
      | EqSubstUniUni :
        whenUniverses rule
          parameters: {G D n sbs},
@@ -2376,6 +2646,40 @@ with eqterm : context -> term -> term -> type -> Type :=
            eqterm G
                   (uniBinaryProd prop prop a1 b1)
                   (uniBinaryProd prop prop a2 b2)
+                  (Uni prop)
+       endrule
+
+     | CongUniSum :
+       whenUniverses whenSumType rule
+         parameters: {G a1 a2 b1 b2 n m},
+         premise: eqterm G a1 a2 (Uni (uni n))
+         premise: eqterm (ctxextend G (El (uni n) a1)) b1 b2 (Uni (uni m))
+         precond: isterm G a1 (Uni (uni n))
+         precond: isterm G a2 (Uni (uni n))
+         precond: isterm (ctxextend G (El (uni n) a1)) b1 (Uni (uni m))
+         precond: isterm (ctxextend G (El (uni n) a1)) b2 (Uni (uni m))
+         precond: isctx G
+         conclusion:
+           eqterm G
+                  (uniSum (uni n) (uni m) a1 b1)
+                  (uniSum (uni n) (uni m) a2 b2)
+                  (Uni (uni (max n m)))
+       endrule
+
+     | CongUniSumProp :
+       whenUniverses whenPropType whenSumType rule
+         parameters: {G a1 a2 b1 b2},
+         premise: eqterm G a1 a2 (Uni prop)
+         premise: eqterm (ctxextend G (El prop a1)) b1 b2 (Uni prop)
+         precond: isterm G a1 (Uni prop)
+         precond: isterm G a2 (Uni prop)
+         precond: isterm (ctxextend G (El prop a1)) b1 (Uni prop)
+         precond: isterm (ctxextend G (El prop a1)) b2 (Uni prop)
+         precond: isctx G
+         conclusion:
+           eqterm G
+                  (uniSum prop prop a1 b1)
+                  (uniSum prop prop a2 b2)
                   (Uni prop)
        endrule
 .
