@@ -513,9 +513,18 @@ with isterm : context -> term -> type -> Type :=
          premise: isterm G p (Sum A B)
          premise: istype (ctxextend G (Sum A B)) C
          premise:
+           let ww := sbcomp (sbweak A) (sbweak B) in
+           let wws := sbshift (Subst A ww) ww in
            isterm (ctxextend (ctxextend G A) B)
                   c
-                  (Subst C (sbzero (Sum A B) (ex A B (var 1) (var 0))))
+                  (Subst C
+                         (sbcomp (sbshift (Sum A B) ww)
+                                 (sbzero (Sum (Subst A ww)
+                                              (Subst B wws))
+                                         (ex (Subst A ww)
+                                             (Subst B wws)
+                                             (var 1)
+                                             (var 0)))))
          precond: istype G A
          precond: istype (ctxextend G A) B
          precond: isctx G
@@ -2284,22 +2293,49 @@ with eqterm : context -> term -> term -> type -> Type :=
          parameters: {G A1 A2 B1 B2 C1 C2 p1 p2 c1 c2},
          premise: eqterm G p1 p2 (Sum A1 B1)
          premise: eqtype (ctxextend G (Sum A1 B1)) C1 C2
-         premise: eqterm (ctxextend (ctxextend G A1) B1)
-                         c1 c2
-                         (Subst C1
-                                (sbzero (Sum A1 B1) (ex A1 B1 (var 1) (var 0))))
+         premise:
+           let ww := sbcomp (sbweak A1) (sbweak B1) in
+           let wws := sbshift (Subst A1 ww) ww in
+           eqterm (ctxextend (ctxextend G A1) B1)
+                  c1 c2
+                  (Subst C1
+                         (sbcomp (sbshift (Sum A1 B1) ww)
+                                 (sbzero (Sum (Subst A1 ww)
+                                              (Subst B1 wws))
+                                         (ex (Subst A1 ww)
+                                             (Subst B1 wws)
+                                             (var 1)
+                                             (var 0)))))
          premise: eqtype G A1 A2
          premise: eqtype (ctxextend G A1) B1 B2
          precond: isterm G p1 (Sum A1 B1)
          precond: isterm G p2 (Sum A1 B1)
-         precond: isterm (ctxextend (ctxextend G A1) B1)
-                         c1
-                         (Subst C1
-                                (sbzero (Sum A1 B1) (ex A1 B1 (var 1) (var 0))))
-         precond: isterm (ctxextend (ctxextend G A1) B1)
-                         c2
-                         (Subst C1
-                                (sbzero (Sum A1 B1) (ex A1 B1 (var 1) (var 0))))
+         precond:
+           let ww := sbcomp (sbweak A1) (sbweak B1) in
+           let wws := sbshift (Subst A1 ww) ww in
+           isterm (ctxextend (ctxextend G A1) B1)
+                  c1
+                  (Subst C1
+                         (sbcomp (sbshift (Sum A1 B1) ww)
+                                 (sbzero (Sum (Subst A1 ww)
+                                              (Subst B1 wws))
+                                         (ex (Subst A1 ww)
+                                             (Subst B1 wws)
+                                             (var 1)
+                                             (var 0)))))
+         precond:
+           let ww := sbcomp (sbweak A1) (sbweak B1) in
+           let wws := sbshift (Subst A1 ww) ww in
+           isterm (ctxextend (ctxextend G A1) B1)
+                  c2
+                  (Subst C1
+                         (sbcomp (sbshift (Sum A1 B1) ww)
+                                 (sbzero (Sum (Subst A1 ww)
+                                              (Subst B1 wws))
+                                         (ex (Subst A1 ww)
+                                             (Subst B1 wws)
+                                             (var 1)
+                                             (var 0)))))
          precond: istype G A1
          precond: istype G A2
          precond: istype (ctxextend G A1) B1
@@ -2341,9 +2377,18 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: isterm D p (Sum A B)
          premise: istype (ctxextend D (Sum A B)) C
          premise:
+           let ww := sbcomp (sbweak A) (sbweak B) in
+           let wws := sbshift (Subst A ww) ww in
            isterm (ctxextend (ctxextend D A) B)
                   c
-                  (Subst C (sbzero (Sum A B) (ex A B (var 1) (var 0))))
+                  (Subst C
+                         (sbcomp (sbshift (Sum A B) ww)
+                                 (sbzero (Sum (Subst A ww)
+                                              (Subst B wws))
+                                         (ex (Subst A ww)
+                                             (Subst B wws)
+                                             (var 1)
+                                             (var 0)))))
          precond: istype D A
          precond: istype (ctxextend D A) B
          precond: isctx G
@@ -2367,9 +2412,18 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: isterm G b (Subst B (sbzero A a))
          premise: istype (ctxextend G (Sum A B)) C
          premise:
+           let ww := sbcomp (sbweak A) (sbweak B) in
+           let wws := sbshift (Subst A ww) ww in
            isterm (ctxextend (ctxextend G A) B)
                   c
-                  (Subst C (sbzero (Sum A B) (ex A B (var 1) (var 0))))
+                  (Subst C
+                         (sbcomp (sbshift (Sum A B) ww)
+                                 (sbzero (Sum (Subst A ww)
+                                              (Subst B wws))
+                                         (ex (Subst A ww)
+                                             (Subst B wws)
+                                             (var 1)
+                                             (var 0)))))
          precond: istype G A
          precond: istype (ctxextend G A) B
          precond: isctx G

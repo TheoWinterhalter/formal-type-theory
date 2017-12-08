@@ -2181,11 +2181,14 @@ Ltac eqtype_subst G A sbs B k try shelf tysym debug :=
   | myfail debug
   ] ; k try shelf DoTysym debug.
 
+Ltac preop := unfold Arrow in *.
+
 (* Magic Tactic *)
 (* It is basically a type checker that doesn't do the smart things,
    namely type and context conversions (and it doesn't rely on reflection
    obviously). *)
 Ltac magicn try shelf tysym debug :=
+  preop ;
   doConfig ;
   (* We only ever apply magic to suitable goals *)
   check_goal ;
@@ -3046,12 +3049,10 @@ Ltac magicn try shelf tysym debug :=
   | do_try try
   ].
 
-Ltac preop := unfold Arrow in *.
-
-Ltac magic       := preop ; magicn DontTry DoShelf   DoTysym DoDebug.
-Ltac okmagic     := preop ; magicn DontTry DoShelf   DoTysym DontDebug.
-Ltac trymagic    := preop ; magicn DoTry   DoShelf   DoTysym DontDebug.
-Ltac strictmagic := preop ; magicn DontTry DontShelf DoTysym DoDebug.
+Ltac magic       := magicn DontTry DoShelf   DoTysym DoDebug.
+Ltac okmagic     := magicn DontTry DoShelf   DoTysym DontDebug.
+Ltac trymagic    := magicn DoTry   DoShelf   DoTysym DontDebug.
+Ltac strictmagic := magicn DontTry DontShelf DoTysym DoDebug.
 
 Ltac compsubst := preop ; compsubst1.
 Ltac pushsubst := preop ; pushsubst1.
