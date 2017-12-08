@@ -860,7 +860,10 @@ Proof.
   (* CongSumElim *)
   - { split.
       - magic.
-      - magic. (* Might have made a mistake! *)
+      - (* magic. *) (* It doesn't work because it tries to show equality
+                      of substitutions it can't simplify.
+                      This probably shows it's time to have a better notion
+                      of substitution! *)
     }
 
   (* EqSubstEx *)
