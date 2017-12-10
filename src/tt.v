@@ -2,10 +2,11 @@
 
 (* Requirements:
 
-   1. Use only letters (no numerals) in rule names, because we define LaTeX macros
-      out of them, and those cannot contain numerals.
+   1. Use only letters (no numerals) in rule names, because we define LaTeX
+      macros out of them, and those cannot contain numerals.
 
-   2. Do not nest comments inside comments, or else the Python script will break.
+   2. Do not nest comments inside comments, or else the Python script will
+      break.
 
 *)
 
@@ -90,56 +91,80 @@ Inductive isctx : context -> Type :=
 
 with issubst : substitution -> context -> context -> Type :=
 
-     | SubstZero :
+     | SubstNil :
        rule
-         parameters: {G u A},
-         premise: isterm G u A
-         precond: istype G A
-         precond: isctx G
+         parameters: {G},
+         premise: isctx G
          conclusion:
-           issubst (sbzero A u) G (ctxextend G A)
+           issubst sbnil G ctxempty
        endrule
 
-     | SubstWeak :
+     (* σ : Γ → Δ
+        Δ ⊢ x : A
+        Γ ⊢ σ(x) : Aσ
+      *)
+     | SubstCons :
        rule
-         parameters: {G A},
-         premise: istype G A
-         precond: isctx G
-         conclusion:
-           issubst (sbweak A) (ctxextend G A) G
-       endrule
-
-     | SubstShift :
-       rule
-         parameters: {G D A sbs},
+         parameters: {G D A u sbs},
          premise: issubst sbs G D
+         premise: isterm G u (Subst A sbs)
          premise: istype D A
          precond: isctx G
          precond: isctx D
          conclusion:
-           issubst (sbshift A sbs)
-                   (ctxextend G (Subst A sbs))
-                   (ctxextend D A)
+           issubst (sbcons D A sbs) G (ctxextend D A)
        endrule
 
-     | SubstId :
-       rule
-         parameters: {G},
-         premise: isctx G
-         conclusion: issubst sbid G G
-       endrule
+     (* | SubstZero : *)
+     (*   rule *)
+     (*     parameters: {G u A}, *)
+     (*     premise: isterm G u A *)
+     (*     precond: istype G A *)
+     (*     precond: isctx G *)
+     (*     conclusion: *)
+     (*       issubst (sbzero A u) G (ctxextend G A) *)
+     (*   endrule *)
 
-     | SubstComp :
-       rule
-         parameters: {G D E sbs sbt},
-         premise: issubst sbs G D
-         premise: issubst sbt D E
-         precond: isctx G
-         precond: isctx D
-         precond: isctx E
-         conclusion:
-           issubst (sbcomp sbt sbs) G E
-       endrule
+     (* | SubstWeak : *)
+     (*   rule *)
+     (*     parameters: {G A}, *)
+     (*     premise: istype G A *)
+     (*     precond: isctx G *)
+     (*     conclusion: *)
+     (*       issubst (sbweak A) (ctxextend G A) G *)
+     (*   endrule *)
+
+     (* | SubstShift : *)
+     (*   rule *)
+     (*     parameters: {G D A sbs}, *)
+     (*     premise: issubst sbs G D *)
+     (*     premise: istype D A *)
+     (*     precond: isctx G *)
+     (*     precond: isctx D *)
+     (*     conclusion: *)
+     (*       issubst (sbshift A sbs) *)
+     (*               (ctxextend G (Subst A sbs)) *)
+     (*               (ctxextend D A) *)
+     (*   endrule *)
+
+     (* | SubstId : *)
+     (*   rule *)
+     (*     parameters: {G}, *)
+     (*     premise: isctx G *)
+     (*     conclusion: issubst sbid G G *)
+     (*   endrule *)
+
+     (* | SubstComp : *)
+     (*   rule *)
+     (*     parameters: {G D E sbs sbt}, *)
+     (*     premise: issubst sbs G D *)
+     (*     premise: issubst sbt D E *)
+     (*     precond: isctx G *)
+     (*     precond: isctx D *)
+     (*     precond: isctx E *)
+     (*     conclusion: *)
+     (*       issubst (sbcomp sbt sbs) G E *)
+     (*   endrule *)
 
      | SubstCtxConv :
        rule

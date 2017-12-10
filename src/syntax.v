@@ -45,11 +45,22 @@ Class Syntax := {
   uniBinaryProd : level -> level -> term -> term -> term;
   uniUni : level -> term;
 
-  sbzero : type -> term -> substitution;
-  sbweak : type -> substitution;
-  sbshift : type -> substitution -> substitution;
-  sbid : substitution;
-  sbcomp : substitution -> substitution -> substitution;
+  sbnil : substitution;
+  sbcons : type -> term -> substitution -> substitution;
+
+  (* How do you define weakening?
+     We probably should have context be inductive, for instance by having
+     context := list type
+     and then maybe also
+     substitution := list (type * term).
+   *)
+  (* sbweak A := *)
+
+  (* sbzero : type -> term -> substitution; *)
+  (* sbweak : type -> substitution; *)
+  (* sbshift : type -> substitution -> substitution; *)
+  (* sbid : substitution; *)
+  (* sbcomp : substitution -> substitution -> substitution; *)
 
   Arrow := (fun (A B :  type) => Prod A (Subst B (sbweak A)))
 }.
