@@ -1,3 +1,5 @@
+Open Scope list_scope.
+
 (* Universe levels *)
 Inductive level : Type :=
 | uni : nat -> level
@@ -5,13 +7,16 @@ Inductive level : Type :=
 .
 
 Class Syntax := {
-  context : Type;
+  (* context : Type; *)
   type : Type;
   term : Type;
-  substitution : Type;
+  (* substitution : Type; *)
 
-  ctxempty : context;
-  ctxextend : context -> type -> context;
+  context := list type;
+  substitution := list term;
+
+  (* ctxempty : context; *)
+  (* ctxextend : context -> type -> context; *)
 
   Prod : type -> type -> type;
   Id : type -> term -> term -> type;
@@ -45,16 +50,17 @@ Class Syntax := {
   uniBinaryProd : level -> level -> term -> term -> term;
   uniUni : level -> term;
 
-  sbnil : substitution;
-  sbcons : type -> term -> substitution -> substitution;
-
   (* How do you define weakening?
      We probably should have context be inductive, for instance by having
      context := list type
      and then maybe also
      substitution := list (type * term).
    *)
-  (* sbweak A := *)
+  sbweak := fix w (Γ : context) {struct Γ} : substitution :=
+    match Γ with
+    | nil => nil
+    | B :: Δ => var 1 :: w Δ
+    end;
 
   (* sbzero : type -> term -> substitution; *)
   (* sbweak : type -> substitution; *)
@@ -62,5 +68,5 @@ Class Syntax := {
   (* sbid : substitution; *)
   (* sbcomp : substitution -> substitution -> substitution; *)
 
-  Arrow := (fun (A B :  type) => Prod A (Subst B (sbweak A)))
+  Arrow := (fun (A B :  type) => Prod A (Subst B (sbweak )))
 }.
