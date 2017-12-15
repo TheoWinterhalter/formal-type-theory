@@ -94,7 +94,7 @@ Inductive isctx : context -> Type :=
 
 with issubst : substitution -> context -> context -> Type :=
 
-     | SubstCtxempty :
+     | SubstCtxEmpty :
        rule
          parameters: {G sbs},
          premise: isctx G
@@ -110,65 +110,14 @@ with issubst : substitution -> context -> context -> Type :=
      | SubstCtxExtend :
        rule
          parameters: {G D A sbs},
-         premise: issubst sbs G D
-         premise: isterm G (sbs 0) (Subst A sbs)
+         premise: issubst (lift sbs) G D
+         premise: isterm G (sbs 0) (Subst A (lift sbs))
          premise: istype D A
          precond: isctx G
          precond: isctx D
          conclusion:
            issubst sbs G (ctxextend D A)
        endrule
-
-     (* | SubstZero : *)
-     (*   rule *)
-     (*     parameters: {G u A}, *)
-     (*     premise: isterm G u A *)
-     (*     precond: istype G A *)
-     (*     precond: isctx G *)
-     (*     conclusion: *)
-     (*       issubst (sbzero A u) G (ctxextend G A) *)
-     (*   endrule *)
-
-     (* | SubstWeak : *)
-     (*   rule *)
-     (*     parameters: {G A}, *)
-     (*     premise: istype G A *)
-     (*     precond: isctx G *)
-     (*     conclusion: *)
-     (*       issubst (sbweak A) (ctxextend G A) G *)
-     (*   endrule *)
-
-     (* | SubstShift : *)
-     (*   rule *)
-     (*     parameters: {G D A sbs}, *)
-     (*     premise: issubst sbs G D *)
-     (*     premise: istype D A *)
-     (*     precond: isctx G *)
-     (*     precond: isctx D *)
-     (*     conclusion: *)
-     (*       issubst (sbshift A sbs) *)
-     (*               (ctxextend G (Subst A sbs)) *)
-     (*               (ctxextend D A) *)
-     (*   endrule *)
-
-     (* | SubstId : *)
-     (*   rule *)
-     (*     parameters: {G}, *)
-     (*     premise: isctx G *)
-     (*     conclusion: issubst sbid G G *)
-     (*   endrule *)
-
-     (* | SubstComp : *)
-     (*   rule *)
-     (*     parameters: {G D E sbs sbt}, *)
-     (*     premise: issubst sbs G D *)
-     (*     premise: issubst sbt D E *)
-     (*     precond: isctx G *)
-     (*     precond: isctx D *)
-     (*     precond: isctx E *)
-     (*     conclusion: *)
-     (*       issubst (sbcomp sbt sbs) G E *)
-     (*   endrule *)
 
      | SubstCtxConv :
        rule
@@ -2353,5 +2302,81 @@ with eqterm : context -> term -> term -> type -> Type :=
                   (Uni prop)
        endrule
 .
+
+(* Probably a good idea to move it into another file.
+   That happens only once we decided what to do with them.
+ *)
+
+Fixpoint SubstId {Γ} (hΓ : isctx Γ) {struct hΓ} :
+  issubst sbid Γ Γ
+
+with SubstWeak {Γ A} (hΓ : flagPrecondition -> isctx Γ) (hA : istype Γ A)
+               {struct hA} :
+  issubst sbweak (ctxextend Γ A) Γ
+.
+Proof.
+  - destruct hΓ.
+    + apply SubstCtxEmpty. apply CtxEmpty.
+    + apply SubstCtxExtend.
+      * unfold lift, sbid.
+        now apply SubstWeak.
+      * now apply TermVarZero.
+      * assumption.
+      * intro f. now apply CtxExtend.
+      * assumption.
+  - (* Now we would like to apply induction hypothesis on the well-formedness
+       of the context, however, there is no way to do that here. *)
+    admit.
+Admitted.
+
+Lemma SubstZero :
+       rule
+         parameters: {G u A},
+         premise: isterm G u A
+         precond: istype G A
+         precond: isctx G
+         conclusion:
+           issubst (sbzero u) G (ctxextend G A)
+       endrule.
+Proof.
+  intros G u A h1 h2 h3.
+  apply SubstCtxExtend.
+  - unfold lift, sbzero.
+    apply SubstId.
+    (* Same kind of problem here due to preconditions that you would
+       want as premises.
+     *)
+    admit.
+  - cbn. unfold lift, sbzero.
+    (* Here we would need to fact that the type is indeed A.
+       For this, it would be convenient if subst/Subst were computing.
+     *)
+Admitted.
+
+     (* | SubstShift : *)
+     (*   rule *)
+     (*     parameters: {G D A sbs}, *)
+     (*     premise: issubst sbs G D *)
+     (*     premise: istype D A *)
+     (*     precond: isctx G *)
+     (*     precond: isctx D *)
+     (*     conclusion: *)
+     (*       issubst (sbshift A sbs) *)
+     (*               (ctxextend G (Subst A sbs)) *)
+     (*               (ctxextend D A) *)
+     (*   endrule *)
+
+     (* | SubstComp : *)
+     (*   rule *)
+     (*     parameters: {G D E sbs sbt}, *)
+     (*     premise: issubst sbs G D *)
+     (*     premise: issubst sbt D E *)
+     (*     precond: isctx G *)
+     (*     precond: isctx D *)
+     (*     precond: isctx E *)
+     (*     conclusion: *)
+     (*       issubst (sbcomp sbt sbs) G E *)
+     (*   endrule *)
+
 
 End TypeTheoryRules.

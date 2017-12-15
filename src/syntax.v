@@ -50,6 +50,9 @@ Class Syntax := {
   uniBinaryProd : level -> level -> term -> term -> term;
   uniUni : level -> term;
 
+  lift : substitution -> substitution :=
+    fun σ n => σ (S n);
+
   sbzero : term -> substitution :=
     fun (u : term) (n : nat) =>
       match n with
