@@ -15,8 +15,8 @@ Class Syntax := {
 
   substitution := nat -> term;
 
-  (* ctxempty : context; *)
-  (* ctxextend : context -> type -> context; *)
+  ctxempty : context;
+  ctxextend : context -> type -> context;
 
   Prod : type -> type -> type;
   Id : type -> term -> term -> type;
