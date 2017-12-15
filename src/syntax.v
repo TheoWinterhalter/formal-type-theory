@@ -81,6 +81,9 @@ Class Syntax := {
         end
       end;
 
+  sbcomp : substitution -> substitution -> substitution :=
+    fun sbs sbr n => subst (sbr n) sbs;
+
   (* sbzero : type -> term -> substitution; *)
   (* sbweak : type -> substitution; *)
   (* sbshift : type -> substitution -> substitution; *)
