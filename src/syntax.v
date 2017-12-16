@@ -4,8 +4,18 @@ Inductive level : Type :=
 | prop : level
 .
 
-Local Class CONS A B := Cons : A -> B -> B.
-Local Notation "u ⋅ σ" := (Cons u σ) (at level 20).
+Section SyntaxDefinition.
+
+Local Class CONS A B := _sbcons : A -> B -> B.
+Local Notation "u ⋅ σ" := (_sbcons u σ) (at level 20, right associativity).
+
+Local Class SUBST_TYPE substitution type :=
+  _Subst : type -> substitution -> type.
+Local Notation "A [ σ ]" := (_Subst A σ) (at level 0).
+
+Local Class SUBST_TERM substitution term :=
+  _subst : term -> substitution -> term.
+Local Notation "t [ ← σ ]" := (_subst t σ) (at level 0).
 
 Class Syntax := {
   context : Type;
@@ -18,7 +28,7 @@ Class Syntax := {
 
   Prod : type -> type -> type;
   Id : type -> term -> term -> type;
-  Subst : type -> substitution -> type;
+  Subst : SUBST_TYPE substitution type;
   Empty : type;
   Unit : type;
   Bool : type;
@@ -31,7 +41,7 @@ Class Syntax := {
   app : term -> type -> type -> term -> term;
   refl : type -> term -> term;
   j : type -> term -> type -> term -> term -> term -> term;
-  subst : term -> substitution -> term;
+  subst : SUBST_TERM substitution term;
   exfalso : type -> term -> term;
   unit : term;
   true : term;
@@ -56,20 +66,78 @@ Class Syntax := {
   (* Computation rules for substitutions *)
   SubstProd :
     forall {σ A B},
-      Subst (Prod A B) σ = Prod (Subst A σ) (Subst B ((var 0) ⋅ σ));
+      (Prod A B)[σ] = Prod A[σ] B[(var 0) ⋅ σ];
   SubstId :
     forall {σ A u v},
-      Subst (Id A u v) σ = Id (Subst A σ) (subst u σ) (subst v σ);
+      (Id A u v)[σ] = Id A[σ] u[← σ] v[← σ];
   SubstEmpty :
-    forall {σ}, Subst Empty σ = Empty;
+    forall {σ}, Empty[σ] = Empty;
   SubstUnit :
-    forall {σ}, Subst Unit σ = Unit;
+    forall {σ}, Unit[σ] = Unit;
   SubstBool :
-    forall {σ}, Subst Bool σ = Bool;
+    forall {σ}, Bool[σ] = Bool;
   SubstBinaryProd :
     forall {σ A B},
-      Subst (BinaryProd A B) σ = BinaryProd (Subst A σ) (Subst B σ);
-  (* TO BE CONTINUED... *)
+      (BinaryProd A B)[σ] = BinaryProd A[σ] B[σ];
+  SubstUni :
+    forall {σ l},
+      (Uni l)[σ] = Uni l;
+  SubstEl :
+    forall {σ l a},
+      (El l a)[σ] = El l a[← σ];
+
+  substLam :
+    forall {σ A B t},
+      (lam A B t)[← σ] = lam A[σ] B[σ] t[← (var 0) ⋅ σ];
+  substApp :
+    forall {σ A B u v},
+      (app u A B v)[← σ] = app u[← σ] A[σ] B[σ] v[← σ];
+  substRefl :
+    forall {σ A u},
+      (refl A u)[← σ] = refl A[σ] u[← σ];
+  substJ :
+    forall {σ A u C w v p},
+      (j A u C w v p)[← σ] =
+      j A[σ] u[← σ] C[var 0 ⋅ var 0 ⋅ σ] w[← σ] v[← σ] p[← σ];
+  substExfalso :
+    forall {σ A u},
+      (exfalso A u)[← σ] = exfalso A[σ] u[← σ];
+  substUnit :
+    forall {σ}, unit[← σ] = unit;
+  substTrue :
+    forall {σ}, true[← σ] = true;
+  substFalse :
+    forall {σ}, false[← σ] = false;
+  substCond :
+    forall {σ C u v w},
+      (cond C u v w)[← σ] = cond C[var 0 ⋅ σ] u[← σ] v[← σ] w[← σ];
+  substPair :
+    forall {σ A B u v},
+      (pair A B u v)[← σ] = pair A[σ] B[σ] u[← σ] v[← σ];
+  substProjOne :
+    forall {σ A B p},
+      (proj1 A B p)[← σ] = proj1 A[σ] B[σ] p[← σ];
+  substProjTwo :
+    forall {σ A B p},
+      (proj2 A B p)[← σ] = proj2 A[σ] B[σ] p[← σ];
+  substUniProd :
+    forall {σ l1 l2 a b},
+      (uniProd l1 l2 a b)[← σ] =
+      uniProd l1 l2 a[← σ] b[← var 0 ⋅ σ];
+  substUniId :
+    forall {σ l a u v},
+      (uniId l a u v)[← σ] = uniId l a[← σ] u[← σ] v[← σ];
+  substUniEmpty :
+    forall {σ l}, (uniEmpty l)[← σ] = uniEmpty l;
+  substUniUnit :
+    forall {σ l}, (uniUnit l)[← σ] = uniUnit l;
+  substUniBool :
+    forall {σ l}, (uniBool l)[← σ] = uniBool l;
+  substUniBinaryProd :
+    forall {σ l1 l2 a b},
+      (uniBinaryProd l1 l2 a b)[← σ] = uniBinaryProd l1 l2 a[← σ] b[← σ];
+  substUniUni :
+    forall {σ l}, (uniUni l)[← σ] = uniUni l;
 
   (* Should be defined concepts? *)
   (* sbzero : type -> term -> substitution; *)
@@ -81,4 +149,8 @@ Class Syntax := {
   (* Arrow := (fun (A B :  type) => Prod A (Subst B sbweak)) *)
 }.
 
-Global Notation "u ⋅ σ" := (sbcons u σ) (at level 20).
+End SyntaxDefinition.
+
+Notation "u ⋅ σ" := (sbcons u σ) (at level 20).
+Notation "A [ σ ]" := (Subst A σ) (at level 0).
+Notation "t [ ← σ ]" := (subst t σ) (at level 0).
