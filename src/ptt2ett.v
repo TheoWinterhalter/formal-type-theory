@@ -70,6 +70,9 @@ Proof.
       (* SubstComp *)
        - { config apply @SubstComp with (D := D) ; auto. }
 
+       (* SubstTerminal *)
+       - { capply SubstTerminal ; auto. }
+
       (* SubstCtxConv *)
       - { config apply @SubstCtxConv with (G1 := G1) (D1 := D1) ; auto. }
   }

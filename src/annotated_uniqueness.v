@@ -656,6 +656,12 @@ Proof.
        - doSubstConv unique_subst'.
      }
 
+   (* H1: SubstTerminal *)
+   - { inversion_clear H2' ; doConfig.
+       - capply EqCtxEmpty.
+       - doSubstConv unique_subst'.
+     }
+
    (* H1: SubstCtxConv *)
    - config eapply @CtxTrans with (D := D1).
      + ceapply CtxSym. hyp.

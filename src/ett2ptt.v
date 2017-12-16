@@ -124,6 +124,11 @@ Proof.
            now apply sane_issubst.
        }
 
+     (* SubstTerminal *)
+     - { capply SubstTerminal.
+         now apply sane_isctx.
+       }
+
      (* SubstCtxConv *)
      - {
          config apply @SubstCtxConv with (G1 := G1) (D1 := D1).
