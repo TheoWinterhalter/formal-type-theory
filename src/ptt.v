@@ -19,11 +19,9 @@ Context `{configProdType : config.ProdType}.
 Context `{configSyntax : syntax.Syntax}.
 
 Definition isctx := tt.isctx.
-Definition issubst := tt.issubst.
 Definition istype := tt.istype.
 Definition isterm := tt.isterm.
 Definition eqctx := tt.eqctx.
-Definition eqsubst := tt.eqsubst.
 Definition eqtype := tt.eqtype.
 Definition eqterm := tt.eqterm.
 
