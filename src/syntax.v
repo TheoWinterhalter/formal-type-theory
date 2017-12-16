@@ -62,8 +62,25 @@ Class Syntax := {
   sbid : substitution;
   (* sbcons : term -> substitution -> substitution; *)
   sbcons : CONS term substitution;
+  (* Alternative:
+     sbcons : term -> substitution -> substitution;
+     sbcons' := (sbcons : CONS term substitution);
+   *)
+  sbweak : substitution;
 
-  (* Computation rules for substitutions *)
+  (* Computation of substitutions *)
+  sbidterm :
+    forall {t}, t[← sbid] = t;
+  sbidtype :
+    forall {T}, T[sbid] = T;
+  sbconszero :
+    forall {σ u}, (var 0)[← u ⋅ σ] = u;
+  sbconssucc :
+    forall {σ u n}, (var (S n))[← u ⋅ σ] = (var n)[← σ];
+  sbweakvar :
+    forall {n}, (var n)[← sbweak] = var (S n);
+
+  (* Action of substitutions *)
   SubstProd :
     forall {σ A B},
       (Prod A B)[σ] = Prod A[σ] B[(var 0) ⋅ σ];
@@ -138,13 +155,6 @@ Class Syntax := {
       (uniBinaryProd l1 l2 a b)[← σ] = uniBinaryProd l1 l2 a[← σ] b[← σ];
   substUniUni :
     forall {σ l}, (uniUni l)[← σ] = uniUni l;
-
-  (* Should be defined concepts? *)
-  (* sbzero : type -> term -> substitution; *)
-  (* sbweak : type -> substitution; *)
-  (* sbshift : type -> substitution -> substitution; *)
-  (* sbid : substitution; *)
-  (* sbcomp : substitution -> substitution -> substitution; *)
 
   (* Arrow := (fun (A B :  type) => Prod A (Subst B sbweak)) *)
 }.
