@@ -161,6 +161,6 @@ Class Syntax := {
 
 End SyntaxDefinition.
 
-Notation "u ⋅ σ" := (sbcons u σ) (at level 20).
+Notation "u ⋅ σ" := (sbcons u σ) (at level 20, right associativity).
 Notation "A [ σ ]" := (Subst A σ) (at level 0).
 Notation "t [ ← σ ]" := (subst t σ) (at level 0).
