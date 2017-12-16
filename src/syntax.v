@@ -4,6 +4,9 @@ Inductive level : Type :=
 | prop : level
 .
 
+Local Class CONS A B := Cons : A -> B -> B.
+Local Notation "u ⋅ σ" := (Cons u σ) (at level 20).
+
 Class Syntax := {
   context : Type;
   type : Type;
@@ -45,11 +48,37 @@ Class Syntax := {
   uniBinaryProd : level -> level -> term -> term -> term;
   uniUni : level -> term;
 
-  sbzero : type -> term -> substitution;
-  sbweak : type -> substitution;
-  sbshift : type -> substitution -> substitution;
+  (* Substitutions *)
   sbid : substitution;
-  sbcomp : substitution -> substitution -> substitution;
+  (* sbcons : term -> substitution -> substitution; *)
+  sbcons : CONS term substitution;
 
-  Arrow := (fun (A B :  type) => Prod A (Subst B (sbweak A)))
+  (* Computation rules for substitutions *)
+  SubstProd :
+    forall {σ A B},
+      Subst (Prod A B) σ = Prod (Subst A σ) (Subst B ((var 0) ⋅ σ));
+  SubstId :
+    forall {σ A u v},
+      Subst (Id A u v) σ = Id (Subst A σ) (subst u σ) (subst v σ);
+  SubstEmpty :
+    forall {σ}, Subst Empty σ = Empty;
+  SubstUnit :
+    forall {σ}, Subst Unit σ = Unit;
+  SubstBool :
+    forall {σ}, Subst Bool σ = Bool;
+  SubstBinaryProd :
+    forall {σ A B},
+      Subst (BinaryProd A B) σ = BinaryProd (Subst A σ) (Subst B σ);
+  (* TO BE CONTINUED... *)
+
+  (* Should be defined concepts? *)
+  (* sbzero : type -> term -> substitution; *)
+  (* sbweak : type -> substitution; *)
+  (* sbshift : type -> substitution -> substitution; *)
+  (* sbid : substitution; *)
+  (* sbcomp : substitution -> substitution -> substitution; *)
+
+  (* Arrow := (fun (A B :  type) => Prod A (Subst B sbweak)) *)
 }.
+
+Global Notation "u ⋅ σ" := (sbcons u σ) (at level 20).
