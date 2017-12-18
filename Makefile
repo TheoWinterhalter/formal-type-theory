@@ -7,7 +7,7 @@ default: library latex/rules.pdf
 .PHONY: library clean
 
 src/Makefile: src/_CoqProject
-	cd src && $(COQMAKEFILE) -f _CoqProject > Makefile
+	cd src && $(COQMAKEFILE) -f _CoqProject -o Makefile
 
 latex/rules.pdf:
 	$(MAKE) -C $(LATEX_DIR) rules.pdf

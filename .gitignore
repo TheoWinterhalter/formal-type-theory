@@ -192,4 +192,5 @@ TSWLatexianTemp*
 src/*.tex
 /latex/tt.tex
 /src/Makefile
-/src/Makefile.conf
+Makefile.conf
+CoqMakefile.conf

@@ -1,4 +1,4 @@
--R . ""
+-R . FormalTypeTheory
 
 config.v
 config_tactics.v
