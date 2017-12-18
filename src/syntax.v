@@ -26,9 +26,10 @@ Class Syntax := {
   ctxempty : context;
   ctxextend : context -> type -> context;
 
+  Subst : SUBST_TYPE substitution type;
+
   Prod : type -> type -> type;
   Id : type -> term -> term -> type;
-  Subst : SUBST_TYPE substitution type;
   Empty : type;
   Unit : type;
   Bool : type;
@@ -36,12 +37,14 @@ Class Syntax := {
   Uni : level -> type;
   El : level -> term -> type;
 
+
+  subst : SUBST_TERM substitution term;
+
   var : nat -> term;
   lam : type -> type -> term -> term;
   app : term -> type -> type -> term -> term;
   refl : type -> term -> term;
   j : type -> term -> type -> term -> term -> term -> term;
-  subst : SUBST_TERM substitution term;
   exfalso : type -> term -> term;
   unit : term;
   true : term;

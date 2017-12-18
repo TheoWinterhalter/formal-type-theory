@@ -116,6 +116,68 @@ Ltac istermintrorule tac :=
   | |- ?G => fail "Goal" G "isn't handled by tactic istermintrorule"
   end.
 
+Ltac eqctxintrorule tac :=
+  lazymatch goal with
+  | |- eqctx ctxempty ctxempty => tac EqCtxEmpty
+  | |- eqctx (ctxextend ?Γ ?A) (ctxextend ?Δ ?B) => tac EqCtxExtend
+  | |- ?G => fail "Goal" G "isn't handled by tactic eqctxintrorule"
+  end.
+
+Ltac eqtypeintrorule tac :=
+  lazymatch goal with
+  | |- eqtype _ (Prod ?A ?B) (Prod ?C ?D) => tac CongProd
+  | |- eqtype _ (Id ?A ?u ?v) (Id ?B ?w ?z) => tac CongId
+  | |- eqtype _ Empty Empty => tac EqTyRefl
+  | |- eqtype _ Unit Unit => tac EqTyRefl
+  | |- eqtype _ Bool Bool => tac EqTyRefl
+  | |- eqtype _ (BinaryProd ?A ?B) (BinaryProd ?C ?D) => tac CongBinaryProd
+  | |- eqtype _ (Uni ?l) (Uni ?l') => tac EqTyRefl
+  | |- eqtype _ (El ?l ?a) (El ?l' ?b) => tac CongEl
+  | |- ?G => fail "Goal" G "isn't handled by tactic eqtypeintrorule"
+  end.
+
+Ltac eqtermintrorule tac :=
+  lazymatch goal with
+  | |- eqterm _ (var ?n) (var ?n) _ => tac EqRefl
+  | |- eqterm _ (lam ?A ?B ?u) (lam ?C ?D ?v) _ => tac CongAbs
+  | |- eqterm _ (app ?u ?A ?B ?v) (app ?w ?C ?D ?z) _ => tac CongApp
+  | |- eqterm _ (refl ?A ?u) (refl ?B ?v) _ => tac CongRefl
+  | |- eqterm _ (j ?A ?u ?C ?w ?v ?p) (j ?B ?x ?D ?z ?y ?q) _ => tac CongJ
+  | |- eqterm _ (exfalso ?A ?u) (exfalso ?B ?v) _ => tac CongExfalso
+  | |- eqterm _ unit unit _ => tac EqRefl
+  | |- eqterm _ true true _ => tac EqRefl
+  | |- eqterm _ false false _ => tac EqRefl
+  | |- eqterm _ (cond ?C ?u ?v ?w) (cond ?D ?x ?y ?z) _ => tac CongCond
+  | |- eqterm _ (pair ?A ?B ?u ?v) (pair ?C ?D ?w ?z) _ => tac CongPair
+  | |- eqterm _ (proj1 ?A ?B ?p) (proj1 ?C ?D ?q) _ => tac CongProjOne
+  | |- eqterm _ (proj2 ?A ?B ?p) (proj2 ?C ?D ?q) _ => tac CongProjTwo
+  | |- eqterm _ (uniProd (uni _) (uni _) ?A ?B) (uniProd (uni _) (uni _) ?C ?D) _
+    => tac CongUniProd
+  | |- eqterm _ (uniProd ?l prop ?A ?B) (uniProd ?l' prop ?C ?D) _
+    => tac CongUniProdProp
+  | |- eqterm _ (uniId ?l ?A ?u ?v) (uniId ?l' ?B ?w ?z) _ => tac CongUniId
+  | |- eqterm _ (uniEmpty ?l) (uniEmpty ?l') _ => tac EqRefl
+  | |- eqterm _ (uniUnit ?l) (uniUnit ?l') _ => tac EqRefl
+  | |- eqterm _ (uniBool ?n) (uniBool ?m) _ => tac EqRefl
+  | |- eqterm _ (uniBinaryProd (uni _) (uni _) ?A ?B)
+             (uniBinaryProd (uni _) (uni _) ?C ?D) _
+      => tac CongUniBinaryProd
+  | |- eqterm _ (uniBinaryProd prop prop ?A ?B) (uniBinaryProd prop prop ?C ?D) _
+      => tac CongUniBinaryProdProp
+  | |- eqterm _ (uniUni ?l) (uniUni ?l') _ => tac EqRefl
+  | |- ?G => fail "Goal" G "isn't handled by tactic eqtermintrorule"
+  end.
+
+Ltac intro_rule apptac :=
+  lazymatch goal with
+  | |- isctx _ => isctxintrorule apptac
+  | |- istype _ _ => istypeintrorule apptac
+  | |- isterm _ _ _ => istermintrorule apptac
+  | |- eqctx _ _ => eqctxintrorule apptac
+  | |- eqtype _ _ _ => eqtypeintrorule apptac
+  | |- eqterm _ _ _ _ => eqtermintrorule apptac
+  end.
+
 Ltac unfold_syntax :=
   unfold CONS, SUBST_TYPE, SUBST_TERM, Arrow, _sbcons, _Subst, _subst in *.
 
@@ -230,6 +292,23 @@ Ltac check_step_factory debug shelf apsym apptac ktac :=
       | myfail debug
       ] ; ktac debug shelf DoSym apptac
 
+  (* Equality of contexts *)
+  | |- eqctx ?Γ ?Δ =>
+    tryif (is_var Γ ; is_var Δ)
+    then first [
+      assumption
+    | capply CtxSym ; [ assumption | .. ]
+    | myfail debug
+    ]
+    else tryif (is_evar Γ + is_evar Δ)
+      then myshelve debug shelf
+      else first [
+        eqctxintrorule apptac
+      | apptac CtxSym ; [ eqctxintrorule apptac | .. ]
+      | apptac CtxRefl
+      | myfail debug
+      ] ; ktac debug shelf DoSym apptac
+
   (* Unknown goal *)
   | |- ?G => fail "Goal" G "isn't handled by tactic check_step_factory"
   end.
@@ -247,6 +326,9 @@ Ltac check_f debug shelf apsym apptac :=
 
 Ltac app_capply X := capply X.
 Ltac app_ceapply X := ceapply X.
+
+Ltac introrule := intro_rule app_capply.
+Ltac eintrorule := intro_rule app_ceapply.
 
 Ltac checkstep := check_step DoDebug DoShelf DoSym app_capply.
 Ltac echeckstep := check_step DoDebug DoShelf DoSym app_ceapply.
@@ -329,29 +411,11 @@ Ltac magicn try shelf tysym debug :=
       ]
 
     (*! Equality of contexts !*)
-    | |- eqctx ctxempty ctxempty =>
-      capply EqCtxEmpty
-    | |- eqctx (ctxextend ?G ?A) (ctxextend ?D ?B) =>
-      first [
-        ceapply EqCtxExtend
-      | capply CtxSym ; [ ceapply EqCtxExtend | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
     | |- eqctx ?G ?G =>
       first [
         ceapply CtxRefl
       | myfail debug
       ] ; magicn try shelf DoTysym debug
-    | |- eqctx ?G ?D =>
-      tryif (is_var G ; is_var D)
-      then first [
-        assumption
-      | capply CtxSym ; [ assumption | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-      else tryif (do_shelf shelf)
-        then shelve
-        else myfail debug
 
     (*! Equality of types !*)
     | |- eqtype ?G (Id ?A ?u ?v) (Id ?B ?w ?z) =>

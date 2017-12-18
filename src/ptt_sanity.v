@@ -42,93 +42,79 @@ Proof.
   { check. }
 
   (* TermCtxConv *)
-  { checkstep.
-    - cheat.
-    - checkstep.
-    - checkstep.
-  }
-
-  (* TermSubst *)
-  { Fail checkstep.
-    (* We indeed need to handle substitutions. *)
-  }
+  { check. }
 
   (* TermVarZero *)
-  { ceapply TySubst.
-    - now ceapply SubstWeak.
-    - assumption.
-    - magic.
-    - eassumption.
-  }
+  { Fail check. cheat. }
 
   (* TermVarSucc *)
-  { magic. }
+  { Fail check. cheat. }
 
   (* TermAbs *)
-  { now capply (@TyProd). }
+  { check. }
 
   (* TermApp *)
-  { magic. }
+  { Fail check. cheat. }
 
   (* TermRefl *)
-  { now capply TyId. }
+  { check. }
 
   (* TermJ *)
-  { magic. Unshelve. all:strictmagic. }
+  { Fail check. cheat. }
 
   (* TermExfalso *)
-  { assumption. }
+  { check. }
 
   (* TermUnit *)
-  { now capply TyUnit. }
+  { check. }
 
   (* TermTrue *)
-  { now capply TyBool. }
+  { check. }
 
   (* TermFalse *)
-  { now capply TyBool. }
+  { check. }
 
   (* TermCond *)
-  { magic. }
+  { Fail check. cheat. }
 
   (* TermPair *)
-  { magic. }
+  { check. }
 
   (* TermProjOne *)
-  { magic. }
+  { check. }
 
   (* TermProjTwo *)
-  { magic. }
+  { check. }
 
   (* TermUniProd *)
-  { magic. }
+  { check. }
 
   (* TermUniProdProp *)
-  { magic. }
+  { check. }
 
   (* TermUniId *)
-  { magic. }
+  { check. }
 
   (* TermUniEmpty *)
-  { magic. }
+  { check. }
 
   (* TermUniUnit *)
-  { magic. }
+  { check. }
 
   (* TermUniBool *)
-  { magic. }
+  { check. }
 
   (* TermUniBinaryProd *)
-  { magic. }
+  { check. }
 
   (* TermUniBinaryProdProp *)
-  { magic. }
+  { check. }
 
   (* TermUniUni *)
-  { magic. }
+  { check. }
 
   (* TermUniProp *)
-  { magic. }
+  { check. }
 Qed.
 
 

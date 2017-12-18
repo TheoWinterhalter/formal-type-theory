@@ -1015,15 +1015,22 @@ with eqterm : context -> term -> term -> type -> Type :=
                   C1[p1 ⋅ v1 ⋅ sbid]
        endrule
 
-     (* This rule doesn't seem necessary as subsumed by EqTermexfalso! *)
-     (* | CongExfalso : *)
-     (*     parameters: {G A B u v}, *)
-     (*       eqtype G A B -> *)
-     (*       eqterm G u v Empty -> *)
-     (*       eqterm G *)
-     (*              (exfalso A u) *)
-     (*              (exfalso B v) *)
-     (*              A *)
+     | CongExfalso :
+       whenEmptyType rule
+         parameters: {G A B u v},
+         premise: eqtype G A B
+         premise: eqterm G u v Empty
+         precond: isterm G u Empty
+         precond: isterm G v Empty
+         precond: istype G A
+         precond: istype G B
+         precond: isctx G
+         conclusion:
+           eqterm G
+                  (exfalso A u)
+                  (exfalso B v)
+                  A
+       endrule
 
      | CongCond :
        whenBoolType rule
