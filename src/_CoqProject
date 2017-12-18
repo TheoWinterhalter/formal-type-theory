@@ -9,7 +9,6 @@ ptt.v
 
 checking_tactics.v
 
-ptt_admissible.v
 inversion.v
 
 ptt_sanity.v
