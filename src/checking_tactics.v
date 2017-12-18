@@ -129,26 +129,31 @@ Ltac preop :=
 Ltac check_step_factory apptac ktac :=
   preop ;
   lazymatch goal with
-  | |- isctx ?Γ => isctxintrorule apptac ; ktac
-  | |- istype ?Γ ?A => istypeintrorule apptac ; ktac
-  | |- isterm ?Γ ?u ?A => istermintrorule apptac ; ktac
+  | |- isctx ?Γ => isctxintrorule apptac ; ktac apptac
+  | |- istype ?Γ ?A => istypeintrorule apptac ; ktac apptac
+  | |- isterm ?Γ ?u ?A => istermintrorule apptac ; ktac apptac
   | |- ?G => fail "Goal" G "isn't handled by tactic check_step_factory"
   end.
 
+Ltac idktac apptac := idtac.
+
 Ltac check_step apptac :=
-  check_step_factory apptac idtac.
+  check_step_factory apptac idktac.
 
-(* Why can't it be used as a tactic value? *)
-(* Ltac check apptac := *)
-(*   check_step_factory apptac (check apptac). *)
+Ltac check_f apptac :=
+  check_step_factory apptac check_f.
 
-(* I would like to do capply/ceapply instead but it isn't available
-   as a tactic, it is only a tactic notation.
 
-   Are apply/eapply also notations??
- *)
-(* Ltac checkstep := check_step apply. *)
-(* Ltac echeckstep := check_step eapply. *)
+(* Instances *)
+
+Ltac app_capply X := capply X.
+Ltac app_ceapply X := ceapply X.
+
+Ltac checkstep := check_step app_capply.
+Ltac echeckstep := check_step app_ceapply.
+
+Ltac check := check_f app_capply.
+Ltac echeck := check_f app_ceapply.
 
 (*! OLD BELOW !*)
 
