@@ -120,50 +120,12 @@ Ltac unfold_syntax :=
   unfold CONS, SUBST_TYPE, SUBST_TERM, Arrow, _sbcons, _Subst, _subst in *.
 
 
-(* Tactics for type checking. *)
-
-Ltac preop :=
-  unfold_syntax ;
-  rewrite_substs.
-
-Ltac check_step_factory apptac ktac :=
-  preop ;
-  lazymatch goal with
-  | |- isctx ?Γ => isctxintrorule apptac ; ktac apptac
-  | |- istype ?Γ ?A => istypeintrorule apptac ; ktac apptac
-  | |- isterm ?Γ ?u ?A => istermintrorule apptac ; ktac apptac
-  | |- ?G => fail "Goal" G "isn't handled by tactic check_step_factory"
-  end.
-
-Ltac idktac apptac := idtac.
-
-Ltac check_step apptac :=
-  check_step_factory apptac idktac.
-
-Ltac check_f apptac :=
-  check_step_factory apptac check_f.
-
-
-(* Instances *)
-
-Ltac app_capply X := capply X.
-Ltac app_ceapply X := ceapply X.
-
-Ltac checkstep := check_step app_capply.
-Ltac echeckstep := check_step app_ceapply.
-
-Ltac check := check_f app_capply.
-Ltac echeck := check_f app_ceapply.
-
-(*! OLD BELOW !*)
-
 (* Configuration options for the tactics. *)
 Inductive magic_try := DoTry | DontTry.
 Inductive magic_doshelf := DoShelf | DontShelf.
 Inductive magic_dotysym := DoTysym | DontTysym.
 Inductive magic_doeqsym := DoEqsym | DontEqsym.
 Inductive macic_debug := DoDebug | DontDebug.
-
 
 Ltac do_try flag :=
   match flag with
@@ -195,6 +157,111 @@ Ltac do_debug flag :=
   | DontDebug => fail "Cannot debug"
   end.
 
+Ltac myfail flag :=
+  lazymatch goal with
+  | |- ?G =>
+    tryif (do_debug flag)
+    then fail 1000 "Cannot solve subgoal" G
+    else fail "Cannot solve subgoal" G
+  | _ => fail 10000 "This shouldn't happen!"
+  end.
+
+Ltac myshelve debug shelf :=
+  tryif (do_shelf shelf)
+  then shelve
+  else myfail debug.
+
+(* Tactics for type checking. *)
+
+Ltac preop :=
+  doConfig ;
+  unfold_syntax ;
+  rewrite_substs.
+
+Ltac check_step_factory debug shelf apptac ktac :=
+  preop ;
+  lazymatch goal with
+  (* Context well-formedness *)
+  | |- isctx ?Γ =>
+    tryif (is_var Γ)
+    (* If the context is a variable in scope, we try assumption. *)
+    then first [
+      (* TODO: Have this bit depend on whether we use echeck of check. *)
+      assumption
+    | myfail debug
+    ]
+    else tryif (is_evar Γ)
+      (* If it is an existential variable, we shelve it to solve later. *)
+      then myshelve debug shelf
+      (* Otherwise, we try introduction rules. *)
+      else first [
+        isctxintrorule apptac
+      | myfail debug
+      ] ; ktac debug shelf apptac
+
+  (* Type well-formedness *)
+  | |- istype ?Γ ?A =>
+    tryif (is_var A)
+    then first [
+      (* TODO: Have this bit depend on whether we use echeck of check. *)
+      eassumption
+    | ceapply TyCtxConv ; [ eassumption | .. ]
+    | myfail debug
+    ] ; ktac debug shelf apptac
+    else tryif (is_evar A)
+      then myshelve debug shelf
+      else first [
+        istypeintrorule apptac
+      | myfail debug
+      ] ; ktac debug shelf apptac
+
+  (* Typing of terms *)
+  | |- isterm ?Γ ?u ?A =>
+    tryif (is_var u)
+    then first [
+      eassumption
+    | ceapply TermTyConv ; [ eassumption | .. ]
+    | ceapply TermCtxConv ; [ eassumption | .. ]
+    | ceapply TermCtxConv ; [
+        ceapply TermTyConv ; [ eassumption | .. ]
+      | ..
+      ]
+    | myfail debug
+    ] ; ktac debug shelf apptac
+    else tryif (is_evar u)
+      then myshelve debug shelf
+      else first [
+        istermintrorule apptac
+      | ceapply TermTyConv ; [ istermintrorule apptac | ..]
+      | myfail debug
+      ] ; ktac debug shelf apptac
+
+  (* Unknown goal *)
+  | |- ?G => fail "Goal" G "isn't handled by tactic check_step_factory"
+  end.
+
+Ltac idktac debug shelf apptac := idtac.
+
+Ltac check_step debug shelf apptac :=
+  check_step_factory debug shelf apptac idktac.
+
+Ltac check_f debug shelf apptac :=
+  check_step_factory debug shelf apptac check_f.
+
+
+(* Instances *)
+
+Ltac app_capply X := capply X.
+Ltac app_ceapply X := ceapply X.
+
+Ltac checkstep := check_step DoDebug DoShelf app_capply.
+Ltac echeckstep := check_step DoDebug DoShelf app_ceapply.
+
+Ltac check := check_f DoDebug DoShelf app_capply.
+Ltac echeck := check_f DoDebug DoShelf app_ceapply.
+
+(*! OLD BELOW !*)
+
 (* Checking if we're dealing with a suitable goal. *)
 (* This would be interesting in another file maybe? *)
 Ltac check_goal :=
@@ -208,20 +275,6 @@ Ltac check_goal :=
   | |- eqterm ?G ?u ?v ?A => idtac
   | |- ?G => fail "Goal" G " is not a goal meant to be handled by magic."
   end.
-
-(* My own tactic to fail with the goal information. *)
-Ltac myfail flag :=
-  lazymatch goal with
-  | |- ?G =>
-    tryif (do_debug flag)
-    then fail 1000 "Cannot solve subgoal" G
-    else fail "Cannot solve subgoal" G
-  | _ => fail "This shouldn't happen!"
-  end.
-
-(* Factorizing some cases *)
-Ltac eqtype_subst G A sbs B k try shelf tysym debug :=
-  fail "No longer supported!".
 
 (* Magic Tactic *)
 (* It is basically a type checker that doesn't do the smart things,
@@ -241,86 +294,6 @@ Ltac magicn try shelf tysym debug :=
          substitutions to make magic finer!
      *)
     lazymatch goal with
-    (*! Contexts !*)
-    | |- isctx ctxempty =>
-      capply CtxEmpty
-    | |- isctx (ctxextend ?G ?A) =>
-      ceapply CtxExtend ; magicn try shelf DoTysym debug
-    | |- isctx ?G =>
-      tryif (is_var G)
-      then first [
-        assumption
-      | myfail debug
-      ]
-      else tryif (do_shelf shelf)
-        then shelve
-        else myfail debug
-
-    (*! Types !*)
-    | |- istype ?G (Prod ?A ?B) =>
-      first [
-        ceapply TyProd
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- istype ?G (Id ?A ?u ?v) =>
-      first [
-        ceapply TyId
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- istype ?G Empty =>
-      first [
-        ceapply TyEmpty
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- istype ?G Unit =>
-      first [
-        ceapply TyUnit
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- istype ?G Bool =>
-      first [
-        ceapply TyBool
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- istype ?G (BinaryProd ?A ?B) =>
-      first [
-        ceapply TyBinaryProd
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- istype ?G (Uni ?n) =>
-      first [
-        ceapply TyUni
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- istype ?G (El ?l ?a) =>
-      first [
-        ceapply TyEl
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- istype ?G ?A =>
-      tryif (is_var A)
-      then first [
-        eassumption
-      | ceapply TyCtxConv ; [ eassumption | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-      else tryif (do_shelf shelf)
-        then shelve
-        else myfail debug
-
-    (*! Terms !*)
-    | |- isterm (ctxextend ?G ?A) (var 0) ?T =>
-      first [
-        ceapply TermVarZero
-      | ceapply TermTyConv ; [ ceapply TermVarZero | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm (ctxextend ?G ?B) (var (S ?k)) ?A =>
-      first [
-        ceapply TermVarSucc
-      | ceapply TermTyConv ; [ ceapply TermVarSucc | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
     | |- isterm ?G (var ?k) ?A =>
       (* In that case, we might shelve, if the don't know the context. *)
       tryif (is_evar G)
@@ -329,138 +302,6 @@ Ltac magicn try shelf tysym debug :=
         eassumption
       | myfail debug
       ]
-    | |- isterm ?G (lam ?A ?B ?u) ?C =>
-      first [
-        ceapply TermAbs
-      | ceapply TermTyConv ; [ ceapply TermAbs | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (app ?u ?A ?B ?v) ?C =>
-      first [
-        ceapply TermApp
-      | ceapply TermTyConv ; [ ceapply TermApp | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (refl ?A ?u) ?B =>
-      first [
-        ceapply TermRefl
-      | ceapply TermTyConv ; [ ceapply TermRefl | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (j ?A ?u ?C ?w ?v ?p) ?T =>
-      first [
-        ceapply TermJ
-      | ceapply TermTyConv ; [ ceapply TermJ | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (exfalso ?A ?u) _ =>
-      first [
-        ceapply TermExfalso
-      | ceapply TermTyConv ; [ ceapply TermExfalso | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G unit ?A =>
-      first [
-        ceapply TermUnit
-      | ceapply TermTyConv ; [ ceapply TermUnit | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G true ?A =>
-      first [
-        ceapply TermTrue
-      | ceapply TermTyConv ; [ ceapply TermTrue | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G false ?A =>
-      first [
-        ceapply TermFalse
-      | ceapply TermTyConv ; [ ceapply TermFalse | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (cond ?C ?u ?v ?w) ?T =>
-      first [
-        ceapply TermCond
-      | ceapply TermTyConv ; [ ceapply TermCond | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (pair ?A ?B ?u ?v) ?T =>
-      first [
-        ceapply TermPair
-      | ceapply TermTyConv ; [ ceapply TermPair | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (proj1 ?A ?B ?p) ?T =>
-      first [
-        ceapply TermProjOne
-      | ceapply TermTyConv ; [ ceapply TermProjOne | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (proj2 ?A ?B ?p) ?T =>
-      first [
-        ceapply TermProjTwo
-      | ceapply TermTyConv ; [ ceapply TermProjTwo | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (uniProd ?l prop ?a ?b) ?T =>
-      first [
-        ceapply TermUniProdProp
-      | ceapply TermTyConv ; [ ceapply TermUniProdProp | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (uniProd ?n ?m ?a ?b) ?T =>
-      first [
-        ceapply TermUniProd
-      | ceapply TermTyConv ; [ ceapply TermUniProd | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (uniId ?n ?a ?u ?v) ?T =>
-      first [
-        ceapply TermUniId
-      | ceapply TermTyConv ; [ ceapply TermUniId | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (uniEmpty ?n) ?T =>
-      first [
-        ceapply TermUniEmpty
-      | ceapply TermTyConv ; [ ceapply TermUniEmpty | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (uniUnit ?n) ?T =>
-      first [
-        ceapply TermUniUnit
-      | ceapply TermTyConv ; [ ceapply TermUniUnit | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (uniBool ?n) ?T =>
-      first [
-        ceapply TermUniBool
-      | ceapply TermTyConv ; [ ceapply TermUniBool | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (uniBinaryProd prop prop ?a ?b) ?T =>
-      first [
-        ceapply TermUniBinaryProdProp
-      | ceapply TermTyConv ; [ ceapply TermUniBinaryProdProp | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (uniBinaryProd ?n ?m ?a ?b) ?T =>
-      first [
-        ceapply TermUniBinaryProd
-      | ceapply TermTyConv ; [ ceapply TermUniBinaryProd | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (uniUni prop) ?T =>
-      first [
-        ceapply TermUniProp
-      | ceapply TermTyConv ; [ ceapply TermUniProp | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- isterm ?G (uniUni ?n) ?T =>
-      first [
-        ceapply TermUniUni
-      | ceapply TermTyConv ; [ ceapply TermUniUni | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
     | [ H : isterm ?G ?v ?A, H' : isterm ?G ?v ?B |- isterm ?G ?v ?C ] =>
       (* We have several options so we don't take any risk. *)
       (* Eventually this should go away. I don't want to do the assert thing
@@ -470,28 +311,6 @@ Ltac magicn try shelf tysym debug :=
       | is_var B ; exact H'
       | do_shelf shelf ; shelve
       ]
-    | |- isterm ?G ?u ?A =>
-      tryif (is_evar u)
-      (* If u is an existential variable we don't touch it. *)
-      then tryif (do_shelf shelf)
-        then shelve
-        else myfail debug
-      else (
-        tryif (is_var u)
-        then first [
-          eassumption
-        | ceapply TermTyConv ; [ eassumption | .. ]
-        | ceapply TermCtxConv ; [ eassumption | .. ]
-        | ceapply TermCtxConv ; [
-            ceapply TermTyConv ; [ eassumption | .. ]
-          | ..
-          ]
-        | myfail debug
-        ] ; magicn try shelf DoTysym debug
-        else tryif (do_shelf shelf)
-          then shelve
-          else myfail debug
-      )
 
     (*! Equality of contexts !*)
     | |- eqctx ctxempty ctxempty =>

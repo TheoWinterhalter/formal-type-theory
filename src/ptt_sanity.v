@@ -5,11 +5,12 @@ Require Import config_tactics.
 
 Require Import syntax.
 Require Import tt.
-Require Import checking_tactics ptt_admissible.
+Require Import checking_tactics.
 
 Section PttSanity.
 
-Local Instance havePrecondition : config.Precondition := {| config.flagPrecondition := config.Yes |}.
+Local Instance havePrecondition : config.Precondition :=
+  {| config.flagPrecondition := config.Yes |}.
 Context `{configReflection : config.Reflection}.
 Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
@@ -23,57 +24,13 @@ Context `{configBoolType : config.BoolType}.
 Context `{configProdType : config.ProdType}.
 Context `{configSyntax : syntax.Syntax}.
 
-Axiom cheating : forall A, A.
-
-Definition sane_issubst sbs G D :
-  issubst sbs G D -> isctx G * isctx D.
-Proof.
-  intro H ; destruct H ; doConfig.
-
-  (* SubstZero *)
-  { split.
-
-    - assumption.
-    - now capply CtxExtend.
-  }
-
-  (* SubstWeak *)
-  { split.
-
-    - now capply CtxExtend.
-    - assumption.
-  }
-
-  (* SubstShift *)
-  { split.
-
-    - magic.
-    - magic.
-  }
-
-  (* SubstId *)
-  { split.
-    - assumption.
-    - assumption.
-  }
-
-  (* SubstComp *)
-  { split.
-    - assumption.
-    - assumption.
-  }
-
-  (* SubstCtxConv *)
-  { split.
-    - assumption.
-    - assumption.
-  }
-Qed.
+Axiom cheating : forall {A}, A.
+Tactic Notation "cheat" := (exact cheating).
 
 Definition sane_istype G A :
   istype G A -> isctx G.
 Proof.
-  intro H; destruct H ; config assumption.
+  intro H ; destruct H ; config assumption.
 Qed.
 
 Definition sane_isterm' G u A :
@@ -82,13 +39,19 @@ Proof.
   intro H ; destruct H.
 
   (* TermTyConv *)
-  { config assumption. }
+  { check. }
 
   (* TermCtxConv *)
-  { magic. }
+  { checkstep.
+    - cheat.
+    - checkstep.
+    - checkstep.
+  }
 
   (* TermSubst *)
-  { magic. }
+  { Fail checkstep.
+    (* We indeed need to handle substitutions. *)
+  }
 
   (* TermVarZero *)
   { ceapply TySubst.
