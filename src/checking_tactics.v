@@ -184,7 +184,6 @@ Ltac unfold_syntax :=
 
 (* Configuration options for the tactics. *)
 Inductive check_doshelf := DoShelf | DontShelf.
-Inductive check_dosym := DoSym | DontSym.
 Inductive check_debug := DoDebug | DontDebug.
 
 Ltac do_shelf flag :=
@@ -197,12 +196,6 @@ Ltac do_debug flag :=
   match flag with
   | DoDebug => idtac
   | DontDebug => fail "Cannot debug"
-  end.
-
-Ltac do_sym flag :=
-  match flag with
-  | DoSym => idtac
-  | DontSym => fail "Cannot apply symmetry"
   end.
 
 Ltac myfail flag :=
@@ -229,12 +222,10 @@ Ltac preop :=
 (* The parameters are:
    - debug: Whether to display debug message when failing(?).
    - shelf: Whether to allow shelving.
-   - apsym: Whether to apply symmetry rules.
-            This one gets set to DoSym everytime progress is made.
    - apptac: Tactic to replace apply.
    - ktac: Continuation tactic.
  *)
-Ltac check_step_factory debug shelf apsym apptac ktac :=
+Ltac check_step_factory debug shelf apptac ktac :=
   preop ;
   lazymatch goal with
   (* Context well-formedness *)
@@ -253,7 +244,7 @@ Ltac check_step_factory debug shelf apsym apptac ktac :=
       else first [
         isctxintrorule apptac
       | myfail debug
-      ] ; ktac debug shelf DoSym apptac
+      ] ; ktac debug shelf apptac
 
   (* Type well-formedness *)
   | |- istype ?Γ ?A =>
@@ -263,13 +254,13 @@ Ltac check_step_factory debug shelf apsym apptac ktac :=
       eassumption
     | ceapply TyCtxConv ; [ eassumption | .. ]
     | myfail debug
-    ] ; ktac debug shelf DoSym apptac
+    ] ; ktac debug shelf apptac
     else tryif (is_evar A)
       then myshelve debug shelf
       else first [
         istypeintrorule apptac
       | myfail debug
-      ] ; ktac debug shelf DoSym apptac
+      ] ; ktac debug shelf apptac
 
   (* Typing of terms *)
   | |- isterm ?Γ ?u ?A =>
@@ -283,14 +274,14 @@ Ltac check_step_factory debug shelf apsym apptac ktac :=
       | ..
       ]
     | myfail debug
-    ] ; ktac debug shelf DoSym apptac
+    ] ; ktac debug shelf apptac
     else tryif (is_evar u)
       then myshelve debug shelf
       else first [
         istermintrorule apptac
       | ceapply TermTyConv ; [ istermintrorule apptac | ..]
       | myfail debug
-      ] ; ktac debug shelf DoSym apptac
+      ] ; ktac debug shelf apptac
 
   (* Equality of contexts *)
   | |- eqctx ?Γ ?Δ =>
@@ -307,7 +298,7 @@ Ltac check_step_factory debug shelf apsym apptac ktac :=
       | apptac CtxSym ; [ eqctxintrorule apptac | .. ]
       | apptac CtxRefl
       | myfail debug
-      ] ; ktac debug shelf DoSym apptac
+      ] ; ktac debug shelf apptac
 
   (* Equality of types *)
   | |- eqtype ?Γ ?A ?B =>
@@ -324,7 +315,7 @@ Ltac check_step_factory debug shelf apsym apptac ktac :=
           | ..
           ]
     | myfail debug
-    ] ; ktac debug shelf DoSym apptac
+    ] ; ktac debug shelf apptac
     else tryif (is_evar A || is_evar B)
       then myshelve debug shelf
       else first [
@@ -332,7 +323,7 @@ Ltac check_step_factory debug shelf apsym apptac ktac :=
       | apptac EqTySym ; [ eqtypeintrorule apptac | .. ]
       | apptac EqTyRefl
       | myfail debug
-      ] ; ktac debug shelf DoSym apptac
+      ] ; ktac debug shelf apptac
 
   (* Equality of terms *)
   | |- eqterm ?Γ ?u ?v ?A =>
@@ -347,7 +338,7 @@ Ltac check_step_factory debug shelf apsym apptac ktac :=
       | ..
       ]
     | myfail debug
-    ] ; ktac debug shelf DoSym apptac
+    ] ; ktac debug shelf apptac
     else tryif (is_evar u || is_evar v)
       then myshelve debug shelf
       else first [
@@ -360,19 +351,19 @@ Ltac check_step_factory debug shelf apsym apptac ktac :=
         ]
       | apptac EqRefl
       | myfail debug
-      ] ; ktac debug shelf DoSym apptac
+      ] ; ktac debug shelf apptac
 
   (* Unknown goal *)
   | |- ?G => fail "Goal" G "isn't handled by tactic check_step_factory"
   end.
 
-Ltac idktac debug shelf apsym apptac := idtac.
+Ltac idktac debug shelf apptac := idtac.
 
-Ltac check_step debug shelf apsym apptac :=
-  check_step_factory debug shelf apsym apptac idktac.
+Ltac check_step debug shelf apptac :=
+  check_step_factory debug shelf apptac idktac.
 
-Ltac check_f debug shelf apsym apptac :=
-  check_step_factory debug shelf apsym apptac check_f.
+Ltac check_f debug shelf apptac :=
+  check_step_factory debug shelf apptac check_f.
 
 
 (* Instances *)
@@ -383,8 +374,8 @@ Ltac app_ceapply X := ceapply X.
 Ltac introrule := intro_rule app_capply.
 Ltac eintrorule := intro_rule app_ceapply.
 
-Ltac checkstep := check_step DoDebug DoShelf DoSym app_capply.
-Ltac echeckstep := check_step DoDebug DoShelf DoSym app_ceapply.
+Ltac checkstep := check_step DoDebug DoShelf app_capply.
+Ltac echeckstep := check_step DoDebug DoShelf app_ceapply.
 
-Ltac check := check_f DoDebug DoShelf DoSym app_capply.
-Ltac echeck := check_f DoDebug DoShelf DoSym app_ceapply.
+Ltac check := check_f DoDebug DoShelf app_capply.
+Ltac echeck := check_f DoDebug DoShelf app_ceapply.
