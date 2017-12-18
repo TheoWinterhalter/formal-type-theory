@@ -6,6 +6,7 @@ Require Import tt.
 Require Import syntax.
 
 (* Tactics to apply rules of substitutions *)
+
 Ltac rewrite_Subst_action :=
   first [
     rewrite SubstProd
@@ -56,6 +57,61 @@ Ltac rewrite_subst :=
   | rewrite_subst_action
   | rewrite_subst_var
   ].
+
+
+(* Tactics to apply introduction rules of type theory. *)
+
+(* TODO Maybe handle the case "isctx ?Γ" and evars.
+   Fail, debug and shelf as well.
+ *)
+Ltac isctxintrorule tac :=
+  lazymatch goal with
+  | |- isctx ctxempty => tac CtxEmpty
+  | |- isctx (ctxextend ?Γ ?A) => tac CtxExtend
+  | |- ?G => fail "Goal" G "isn't handled by tactic isctxintrorule"
+  end.
+
+Ltac istypeintrorule tac :=
+  lazymatch goal with
+  | |- istype ?Γ (Prod ?A ?B) => tac TyProd
+  | |- istype ?Γ (Id ?A ?u ?v) => tac TyId
+  | |- istype ?Γ Empty => tac TyEmpty
+  | |- istype ?Γ Unit => tac TyUnit
+  | |- istype ?Γ Bool => tac TyBool
+  | |- istype ?Γ (BinaryProd ?A ?B) => tac TyBinaryProd
+  | |- istype ?Γ (Uni ?l) => tac TyUni
+  | |- istype ?Γ (El ?l ?a) => tac TyEl
+  | |- ?G => fail "Goal" G "isn't handled by tactic istypeintrorule"
+  end.
+
+Ltac istermintrorule tac :=
+  lazymatch goal with
+  | |- isterm _ (var 0) _ => tac TermVarZero
+  | |- isterm _ (var (S ?k)) _ => tac TermVarSucc
+  | |- isterm _ (lam ?A ?B ?u) _ => tac TermAbs
+  | |- isterm _ (app ?u ?A ?B ?v) _ => tac TermApp
+  | |- isterm _ (refl ?A ?u) _ => tac TermRefl
+  | |- isterm _ (j ?A ?u ?C ?w ?v ?p) _ => tac TermJ
+  | |- isterm _ (exfalso ?A ?u) _ => tac TermExfalso
+  | |- isterm _ unit _ => tac TermUnit
+  | |- isterm _ true _ => tac TermTrue
+  | |- isterm _ false _ => tac TermFalse
+  | |- isterm _ (cond ?C ?u ?v ?w) _ => tac TermCond
+  | |- isterm _ (pair ?A ?B ?u ?v) _ => tac TermPair
+  | |- isterm _ (proj1 ?A ?B ?p) _ => tac TermProjOne
+  | |- isterm _ (proj2 ?A ?B ?p) _ => tac TermProjTwo
+  | |- isterm _ (uniProd (uni ?n) (uni ?m) ?a ?b) _ => tac TermUniProd
+  | |- isterm _ (uniProd ?l prop ?a ?b) _ => tac TermUniProdProp
+  | |- isterm _ (uniId ?n ?a ?u ?v) _ => tac TermUniId
+  | |- isterm _ (uniEmpty ?l) _ => tac TermUniEmpty
+  | |- isterm _ (uniUnit ?l) _ => tac TermUniUnit
+  | |- isterm _ (uniBool ?n) _ => tac TermUniBool
+  | |- isterm _ (uniBinaryProd (uni ?n) (uni ?m) ?a ?b) _ => tac TermUniBinaryProd
+  | |- isterm _ (uniBinaryProd prop prop ?a ?b) _ => tac TermUniBinaryProdProp
+  | |- isterm _ (uniUni (uni ?n)) _ => tac TermUniUni
+  | |- isterm _ (uniUni prop) _ => tac TermUniProp
+  | |- ?G => fail "Goal" G "isn't handled by tactic istermintrorule"
+  end.
 
 
 (*! OLD BELOW !*)

@@ -158,10 +158,10 @@ with istype : context -> type -> Type :=
 
      | TyUni :
        whenUniverses rule
-         parameters: {G n},
+         parameters: {G l},
          premise: isctx G
          conclusion:
-           istype G (Uni n)
+           istype G (Uni l)
        endrule
 
      | TyEl :
@@ -391,18 +391,18 @@ with isterm : context -> term -> type -> Type :=
 
      | TermUniEmpty :
        whenEmptyType whenUniverses rule
-         parameters: {G n},
+         parameters: {G l},
          premise: isctx G
          conclusion:
-           isterm G (uniEmpty n) (Uni n)
+           isterm G (uniEmpty l) (Uni l)
        endrule
 
      | TermUniUnit :
        whenUnitType whenUniverses rule
-         parameters: {G n},
+         parameters: {G l},
          premise: isctx G
          conclusion:
-           isterm G (uniUnit n) (Uni n)
+           isterm G (uniUnit l) (Uni l)
        endrule
 
      | TermUniBool :
