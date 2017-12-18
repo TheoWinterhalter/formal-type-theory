@@ -201,11 +201,9 @@ Ltac check_goal :=
   doConfig ;
   lazymatch goal with
   | |- isctx ?G => idtac
-  | |- issubst ?sbs ?G ?D => idtac
   | |- istype ?G ?A => idtac
   | |- isterm ?G ?u ?A => idtac
   | |- eqctx ?G ?D => idtac
-  | |- eqsubst ?sbs ?sbt ?G ?D => idtac
   | |- eqtype ?G ?A ?B => idtac
   | |- eqterm ?G ?u ?v ?A => idtac
   | |- ?G => fail "Goal" G " is not a goal meant to be handled by magic."
@@ -258,53 +256,7 @@ Ltac magicn try shelf tysym debug :=
         then shelve
         else myfail debug
 
-    (*! Substitutions !*)
-    | |- issubst (sbzero _ ?u) ?G1 ?G2 =>
-      first [
-        ceapply SubstZero
-      | ceapply SubstCtxConv ; [ ceapply SubstZero | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- issubst (sbweak _) ?G1 ?G2 =>
-      first [
-        ceapply SubstWeak
-      | ceapply SubstCtxConv ; [ ceapply SubstWeak | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- issubst (sbshift _ ?sbs) ?G1 ?G2 =>
-      first [
-        ceapply SubstShift
-      | ceapply SubstCtxConv ; [ ceapply SubstShift | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- issubst sbid ?G1 ?G2 =>
-      first [
-        ceapply SubstId
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- issubst (sbcomp ?sbt ?sbs) ?G1 ?G2 =>
-      first [
-        ceapply SubstComp
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- issubst ?sbs ?G1 ?G2 =>
-      tryif (is_var sbs) then (
-        first [
-          eassumption
-        | ceapply SubstCtxConv
-        | myfail debug
-        ] ; magicn try shelf tysym debug
-      )
-      else tryif (do_shelf shelf)
-        then shelve
-        else myfail debug
-
     (*! Types !*)
-    | |- istype ?G (Subst ?A ?sbs) =>
-      first [
-        ceapply TySubst
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
     | |- istype ?G (Prod ?A ?B) =>
       first [
         ceapply TyProd
@@ -357,15 +309,6 @@ Ltac magicn try shelf tysym debug :=
         else myfail debug
 
     (*! Terms !*)
-    | |- isterm ?G (subst ?u ?sbs) ?A =>
-      first [
-        ceapply TermSubst
-      | ceapply TermTyConv ; [
-          ceapply TermSubst
-        | ..
-        ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
     | |- isterm (ctxextend ?G ?A) (var 0) ?T =>
       first [
         ceapply TermVarZero
@@ -575,190 +518,7 @@ Ltac magicn try shelf tysym debug :=
         then shelve
         else myfail debug
 
-    (*! Equality of substitutions !*)
-    | |- eqsubst (sbcomp (sbweak _) (sbshift _ ?sbs))
-                (sbcomp ?sbs (sbweak _)) ?G ?D =>
-      first [
-        ceapply WeakNat
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- eqsubst (sbcomp ?sbs (sbweak _))
-                (sbcomp (sbweak _) (sbshift _ ?sbs)) ?G ?D =>
-      first [
-        ceapply SubstSym ; [ ceapply WeakNat | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- eqsubst (sbzero _ ?u1) (sbzero _ ?u2) ?D ?E =>
-      first [
-        ceapply CongSubstZero
-      | ceapply EqSubstCtxConv ; [ ceapply CongSubstZero | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- eqsubst (sbweak _) (sbweak _) ?D ?E =>
-      first [
-        ceapply CongSubstWeak
-      | ceapply EqSubstCtxConv ; [ ceapply CongSubstWeak | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- eqsubst (sbshift _ ?sbs1) (sbshift _ ?sbs2) ?D ?E =>
-      first [
-        ceapply CongSubstShift
-      | ceapply EqSubstCtxConv ; [ ceapply CongSubstShift | .. ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- eqsubst ?sbs ?sbs ?G ?D =>
-      first [
-          ceapply SubstRefl
-        | myfail debug
-        ] ; magicn try shelf DoTysym debug
-    (* In case we have syntactically equal substitutions involved,
-       we can make a little shortcut. *)
-    (* | |- eqsubst (sbcomp ?sbs _) (sbcomp ?sbs _) _ _ => *)
-    (*   first [ *)
-    (*     eapply CongSubstComp ; [ *)
-    (*       idtac *)
-    (*     | eapply SubstRefl *)
-    (*     | .. *)
-    (*     ] *)
-    (*   | myfail debug *)
-    (*   ] ; magicn try shelf DoTysym debug *)
-    (* | |- eqsubst (sbcomp _ ?sbs) (sbcomp _ ?sbs) _ _ => *)
-    (*   first [ *)
-    (*     eapply CongSubstComp ; [ *)
-    (*       eapply SubstRefl *)
-    (*     | .. *)
-    (*     ] *)
-    (*   | myfail debug *)
-    (*   ] ; magicn try shelf DoTysym debug *)
-    (* We need to simplify if we are ever going to apply congruence for
-       composition. *)
-    | |- eqsubst ?sbs ?sbt ?G ?D =>
-      tryif (is_var sbs ; is_var sbt)
-      then first [
-        eassumption
-      | ceapply SubstSym ; [ eassumption | .. ]
-      | ceapply EqSubstCtxConv ; [ eassumption | .. ]
-      | ceapply SubstSym ; [
-          ceapply EqSubstCtxConv ; [ eassumption | .. ]
-        | ..
-        ]
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-      else first [
-        ceapply SubstTrans ; [ simplify_subst | .. ]
-      | ceapply SubstSym ; [ ceapply SubstTrans ; [ simplify_subst | .. ] | .. ]
-      | ceapply CongSubstComp
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-
     (*! Equality of types !*)
-    | |- eqtype ?G (Subst (Subst ?A ?sbs) ?sbt) ?B =>
-      first [
-        compsubst1
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- eqtype ?G ?A (Subst (Subst ?B ?sbs) ?sbt) =>
-      first [
-        compsubst1
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    (* A weird case perhaps. *)
-    | |- eqtype ?G (Subst ?A (sbshift ?A2 ?sbs))
-               (Subst ?B' (sbcomp ?sbs (sbweak (Subst ?A1 ?sbs)))) =>
-      tryif (is_evar A ; is_var B')
-      then (
-        first [
-          instantiate (1 := (Subst B' (sbweak _)))
-        | myfail debug
-        ] ; magicn try shelf DoTysym debug
-      )
-      else eqtype_subst G A (sbshift A2 sbs)
-                        (Subst B' (sbcomp sbs (sbweak (Subst A1 sbs))))
-                        magicn try shelf tysym debug
-    | |- eqtype ?G (Subst ?B' (sbcomp ?sbs (sbweak (Subst ?A1 ?sbs))))
-               (Subst ?A (sbshift ?A2 ?sbs)) =>
-      tryif (is_evar A ; is_var B')
-      then (
-        first [
-          instantiate (1 := Subst B' (sbweak _))
-        | myfail debug
-        ] ; magicn try shelf DoTysym debug
-      )
-      else eqtype_subst G (Subst B' (sbcomp sbs (sbweak A1 sbs)))
-                        (Subst A (sbshift A2 sbs))
-                        magicn try shelf tysym debug
-    | |- eqtype ?G
-               (Subst ?A
-                      (sbcomp (sbshift ?A1 ?sbs)
-                              (sbzero ?A2 (subst ?u ?sbs))))
-               (Subst ?B' ?sbs) =>
-      tryif (is_evar A ; is_var B')
-      then (
-        first [
-          instantiate (1 := Subst B' (sbweak _))
-        | myfail debug
-        ] ; magicn try shelf DoTysym debug
-      )
-      else eqtype_subst G
-                        A
-                        (sbcomp (sbshift A1 sbs)
-                                (sbzero A2 (subst u sbs)))
-                        (Subst B' sbs)
-                        magicn try shelf tysym debug
-    | |- eqtype ?G (Subst ?B' ?sbs)
-               (Subst ?A (sbcomp (sbshift ?A1 ?sbs)
-                                 (sbzero ?A2 (subst ?u ?sbs)))) =>
-      tryif (is_evar A ; is_var B')
-      then (
-        first [
-          instantiate (1 := Subst B' (sbweak _))
-        | myfail debug
-        ] ; magicn try shelf DoTysym debug
-      )
-      else eqtype_subst G B' sbs
-                        (Subst A (sbcomp (sbshift A1 sbs)
-                                         (sbzero A2 (subst u sbs))))
-                        magicn try shelf tysym debug
-    (* Another case I'm not sure of. *)
-    | |- eqtype ?G
-               (Subst ?A ?sbs)
-               (Subst ?B (sbzero (Subst ?A ?sbs) (subst ?u ?sbs))) =>
-      tryif (is_var A ; is_evar B)
-      then
-        first [
-          instantiate (1 := Subst (Subst A sbs) (sbweak _))
-        | myfail debug
-        ] ; magicn try shelf DoTysym debug
-      else
-        eqtype_subst G A sbs (Subst B (sbzero (Subst A sbs) (subst u sbs)))
-                     magicn try shelf tysym debug
-    (* One more *)
-    | |- eqtype ?G (Subst ?A (sbzero ?B' ?u)) ?B =>
-      tryif (is_evar A ; is_var B)
-      then first [
-        instantiate (1 := Subst B (sbweak _))
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-      else eqtype_subst G A (sbzero B u) B
-                        magicn try shelf tysym debug
-    | |- eqtype ?G (Subst ?A ?sbs) (Subst ?A ?sbt) =>
-      (* A little shortcut in that case. *)
-      eapply CongTySubst ; [
-        idtac
-      | eapply EqTyRefl
-      | ..
-      ] ; magicn try shelf DoTysym debug
-    | |- eqtype ?G (Subst ?A ?sbs) ?B =>
-      (* We should push only if it makes sense. *)
-      eqtype_subst G A sbs B magicn try shelf tysym debug
-    | |- eqtype ?G ?A (Subst ?B ?sbs) =>
-      (* We know how to deal with the symmetric case. *)
-      tryif (do_tysym tysym)
-      then ceapply EqTySym ; [
-        magicn try shelf DontTysym debug
-      | magicn try shelf DoTysym debug ..
-      ]
-      else myfail debug
     | |- eqtype ?G (Id ?A ?u ?v) (Id ?B ?w ?z) =>
       first [
         ceapply CongId
@@ -818,100 +578,6 @@ Ltac magicn try shelf tysym debug :=
         else myfail debug
 
     (*! Equality of terms !*)
-    | |- eqterm ?G (subst (subst ?u ?sbs) ?sbt) ?v ?A =>
-      first [
-        compsubst1
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- eqterm ?G ?u (subst (subst ?v ?sbs) ?sbt) ?A =>
-      first [
-        compsubst1
-      | myfail debug
-      ] ; magicn try shelf DoTysym debug
-    | |- eqterm ?G (subst ?u ?sbs) ?v ?A =>
-      (* Maybe some type conversion somewhere. *)
-      tryif (is_var u)
-      then (
-        tryif (is_var sbs)
-        then (
-          match v with
-          | subst ?v ?sbt =>
-            tryif (is_var v)
-            then (
-              tryif (is_var sbt)
-              then first [
-                ceapply CongTermSubst
-              | ceapply EqTyConv ; [
-                  ceapply CongTermSubst
-                | ..
-                ]
-              | eassumption
-              | myfail debug
-              ] ; magicn try shelf DoTysym debug
-              else first [
-                ceapply EqSym ; [ simplify | .. ]
-              | ceapply CongTermSubst
-              | ceapply EqTyConv ; [
-                  ceapply CongTermSubst
-                | ..
-                ]
-              | myfail debug
-              ] ; magicn try shelf DoTysym debug
-            )
-            else first [
-              pushsubst1
-            | ceapply EqSym ; [ pushsubst1 | .. ]
-            | do_shelf shelf ; shelve
-            ] ; magicn try shelf DoTysym debug
-          | _ =>
-            first [
-              ceapply CongTermSubst
-            | ceapply EqTyConv ; [
-              ceapply CongTermSubst
-              | ..
-              ]
-            | eassumption
-            | myfail debug
-            ] ; magicn try shelf DoTysym debug
-          end
-        )
-        else (
-          lazymatch v with
-          | subst ?v ?sbt =>
-            tryif (is_var v)
-            then first [
-                simplify
-              | ceapply CongTermSubst
-              | ceapply EqTyConv ; [ ceapply CongTermSubst | .. ]
-              | myfail debug
-              ] ; magicn try shelf DoTysym debug
-            else first [
-              pushsubst1
-            | do_shelf shelf ; shelve
-            ] ; magicn try shelf DoTysym debug
-
-          | ?v =>
-            tryif (is_evar v ; do_shelf shelf)
-            then shelve
-            else first [
-              simplify
-            | myfail debug
-            ] ; magicn try shelf DoTysym debug
-          end
-        )
-      )
-      else first [
-        pushsubst1
-      | do_shelf shelf ; shelve
-      ] ; magicn try shelf DoTysym debug
-    | |- eqterm ?G ?u (subst ?v ?sbs) ?A =>
-      (* We know how to deal with the symmetric case. *)
-      tryif (do_tysym tysym)
-      then ceapply EqSym ; [
-        magicn try shelf DontTysym debug
-      | magicn try shelf DoTysym debug ..
-      ]
-      else myfail debug
     | |- eqterm ?G ?u ?u ?A =>
       first [
         ceapply EqRefl
@@ -1032,15 +698,10 @@ Ltac magicn try shelf tysym debug :=
   | do_try try
   ].
 
-Ltac preop := unfold Arrow in *.
-
 Ltac magic       := preop ; magicn DontTry DoShelf   DoTysym DoDebug.
 Ltac okmagic     := preop ; magicn DontTry DoShelf   DoTysym DontDebug.
 Ltac trymagic    := preop ; magicn DoTry   DoShelf   DoTysym DontDebug.
 Ltac strictmagic := preop ; magicn DontTry DontShelf DoTysym DoDebug.
-
-Ltac compsubst := preop ; compsubst1.
-Ltac pushsubst := preop ; pushsubst1.
 
 (* Tactic to keep judgments *)
 Ltac keep_ju :=
@@ -1056,7 +717,6 @@ Ltac keep_eq :=
   lazymatch goal with
   | |- eqterm _ _ _ _ => idtac
   | |- eqtype _ _ _ => idtac
-  | |- eqsubst _ _ _ _ => idtac
   | |- eqctx _ _ => idtac
   | _ => shelve
   end.
