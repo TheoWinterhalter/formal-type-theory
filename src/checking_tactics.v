@@ -58,6 +58,9 @@ Ltac rewrite_subst :=
   | rewrite_subst_var
   ].
 
+Ltac rewrite_substs :=
+  repeat rewrite_subst.
+
 
 (* Tactics to apply introduction rules of type theory. *)
 
@@ -113,6 +116,39 @@ Ltac istermintrorule tac :=
   | |- ?G => fail "Goal" G "isn't handled by tactic istermintrorule"
   end.
 
+Ltac unfold_syntax :=
+  unfold CONS, SUBST_TYPE, SUBST_TERM, Arrow, _sbcons, _Subst, _subst in *.
+
+
+(* Tactics for type checking. *)
+
+Ltac preop :=
+  unfold_syntax ;
+  rewrite_substs.
+
+Ltac check_step_factory apptac ktac :=
+  preop ;
+  lazymatch goal with
+  | |- isctx ?Γ => isctxintrorule apptac ; ktac
+  | |- istype ?Γ ?A => istypeintrorule apptac ; ktac
+  | |- isterm ?Γ ?u ?A => istermintrorule apptac ; ktac
+  | |- ?G => fail "Goal" G "isn't handled by tactic check_step_factory"
+  end.
+
+Ltac check_step apptac :=
+  check_step_factory apptac idtac.
+
+(* Why can't it be used as a tactic value? *)
+(* Ltac check apptac := *)
+(*   check_step_factory apptac (check apptac). *)
+
+(* I would like to do capply/ceapply instead but it isn't available
+   as a tactic, it is only a tactic notation.
+
+   Are apply/eapply also notations??
+ *)
+(* Ltac checkstep := check_step apply. *)
+(* Ltac echeckstep := check_step eapply. *)
 
 (*! OLD BELOW !*)
 

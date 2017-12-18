@@ -156,7 +156,7 @@ Class Syntax := {
   substUniUni :
     forall {σ l}, (uniUni l)[← σ] = uniUni l;
 
-  (* Arrow := (fun (A B :  type) => Prod A (Subst B sbweak)) *)
+  Arrow := fun (A B :  type) => Prod A B[sbweak]
 }.
 
 End SyntaxDefinition.
