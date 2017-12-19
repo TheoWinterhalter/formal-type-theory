@@ -4,18 +4,18 @@ Inductive level : Type :=
 | prop : level
 .
 
-Section SyntaxDefinition.
+Class CONS A B := _sbcons : A -> B -> B.
+Notation "u ⋅ σ" := (_sbcons u σ) (at level 20, right associativity).
 
-Local Class CONS A B := _sbcons : A -> B -> B.
-Local Notation "u ⋅ σ" := (_sbcons u σ) (at level 20, right associativity).
-
-Local Class SUBST_TYPE substitution type :=
+Class SUBST_TYPE substitution type :=
   _Subst : type -> substitution -> type.
-Local Notation "A [ σ ]" := (_Subst A σ) (at level 0).
+Notation "A [ σ ]" := (_Subst A σ) (at level 0).
 
-Local Class SUBST_TERM substitution term :=
+Class SUBST_TERM substitution term :=
   _subst : term -> substitution -> term.
-Local Notation "t [ ← σ ]" := (_subst t σ) (at level 0).
+Notation "t [ ← σ ]" := (_subst t σ) (at level 0).
+
+Section SyntaxDefinition.
 
 Class Syntax := {
   context : Type;
@@ -26,7 +26,7 @@ Class Syntax := {
   ctxempty : context;
   ctxextend : context -> type -> context;
 
-  Subst : SUBST_TYPE substitution type;
+  Subst :> SUBST_TYPE substitution type;
 
   Prod : type -> type -> type;
   Id : type -> term -> term -> type;
@@ -38,7 +38,7 @@ Class Syntax := {
   El : level -> term -> type;
 
 
-  subst : SUBST_TERM substitution term;
+  subst :> SUBST_TERM substitution term;
 
   var : nat -> term;
   lam : type -> type -> term -> term;
@@ -64,7 +64,7 @@ Class Syntax := {
   (* Substitutions *)
   sbid : substitution;
   (* sbcons : term -> substitution -> substitution; *)
-  sbcons : CONS term substitution;
+  sbcons :> CONS term substitution;
   (* Alternative:
      sbcons : term -> substitution -> substitution;
      sbcons' := (sbcons : CONS term substitution);
@@ -164,6 +164,6 @@ Class Syntax := {
 
 End SyntaxDefinition.
 
-Notation "u ⋅ σ" := (sbcons u σ) (at level 20, right associativity).
-Notation "A [ σ ]" := (Subst A σ) (at level 0).
-Notation "t [ ← σ ]" := (subst t σ) (at level 0).
+(* Notation "u ⋅ σ" := (sbcons u σ) (at level 20, right associativity). *)
+(* Notation "A [ σ ]" := (Subst A σ) (at level 0). *)
+(* Notation "t [ ← σ ]" := (subst t σ) (at level 0). *)
