@@ -5,6 +5,10 @@ Require Import config_tactics.
 Require Import tt.
 Require Import syntax.
 
+(* Examples of apptacs *)
+Ltac app_capply X := capply X.
+Ltac app_ceapply X := ceapply X.
+
 (* Tactics to apply rules of substitutions *)
 
 Ltac rewrite_Subst_action :=
@@ -191,6 +195,30 @@ Ltac contextconversion :=
   | |- ?G => fail "Context conversion doesn't apply to goal" G
   end.
 
+Ltac tt_refl apptac :=
+  lazymatch goal with
+  | |- eqctx ?Γ ?Δ => apptac CtxRefl
+  | |- eqtype ?Γ ?A ?B => apptac EqTyRefl
+  | |- eqterm ?Γ ?u ?v ?A => apptac EqRefl
+  | |- ?G => fail "Type theoretic reflexivity doesn't apply to" G
+  end.
+
+Ltac tt_sym apptac :=
+  lazymatch goal with
+  | |- eqctx ?Γ ?Δ => apptac CtxSym
+  | |- eqtype ?Γ ?A ?B => apptac EqTySym
+  | |- eqterm ?Γ ?u ?v ?A => apptac EqSym
+  | |- ?G => fail "Type theoretic symmetry doesn't apply to" G
+  end.
+
+Ltac tt_trans apptac :=
+  lazymatch goal with
+  | |- eqctx ?Γ ?Δ => apptac CtxTrans
+  | |- eqtype ?Γ ?A ?B => apptac EqTyTrans
+  | |- eqterm ?Γ ?u ?v ?A => apptac EqTrans
+  | |- ?G => fail "Type theoretic transitivity doesn't apply to" G
+  end.
+
 Ltac unfold_syntax :=
   unfold CONS, SUBST_TYPE, SUBST_TERM, Arrow, _sbcons, _Subst, _subst in *.
 
@@ -301,15 +329,15 @@ Ltac check_step_factory debug shelf apptac ktac :=
     tryif (is_var Γ ; is_var Δ)
     then first [
       assumption
-    | capply CtxSym ; [ assumption | .. ]
+    | tt_sym apptac ; [ assumption | .. ]
     | myfail debug
     ]
     else tryif (is_evar Γ || is_evar Δ)
       then myshelve debug shelf
       else first [
         eqctxintrorule apptac
-      | apptac CtxSym ; [ eqctxintrorule apptac | .. ]
-      | apptac CtxRefl
+      | tt_sym apptac ; [ eqctxintrorule apptac | .. ]
+      | tt_refl apptac
       | myfail debug
       ] ; ktac debug shelf apptac
 
@@ -318,12 +346,12 @@ Ltac check_step_factory debug shelf apptac ktac :=
     tryif (is_var A ; is_var B)
     then first [
       eassumption
-    | ceapply EqTyRefl
-    | ceapply EqTySym ; [ eassumption | .. ]
+    | tt_refl app_ceapply
+    | tt_sym app_ceapply ; [ eassumption | .. ]
     | contextconversion ; [
             first [
               eassumption
-            | ceapply EqTySym ; [ eassumption | .. ]
+            | tt_sym app_ceapply ; [ eassumption | .. ]
             ]
           | ..
           ]
@@ -333,8 +361,8 @@ Ltac check_step_factory debug shelf apptac ktac :=
       then myshelve debug shelf
       else first [
         eqtypeintrorule apptac
-      | apptac EqTySym ; [ eqtypeintrorule apptac | .. ]
-      | apptac EqTyRefl
+      | tt_sym apptac ; [ eqtypeintrorule apptac | .. ]
+      | tt_refl apptac
       | myfail debug
       ] ; ktac debug shelf apptac
 
@@ -343,11 +371,11 @@ Ltac check_step_factory debug shelf apptac ktac :=
     tryif (is_var u ; is_var v)
     then first [
       eassumption
-    | ceapply EqRefl
-    | ceapply EqSym ; [ eassumption |.. ]
+    | tt_refl app_ceapply
+    | tt_sym app_ceapply ; [ eassumption |.. ]
     | typeconversion ; [ eassumption | .. ]
     | typeconversion ; [
-        ceapply EqSym ; [ eassumption | .. ]
+        tt_sym app_ceapply ; [ eassumption | .. ]
       | ..
       ]
     | myfail debug
@@ -356,13 +384,13 @@ Ltac check_step_factory debug shelf apptac ktac :=
       then myshelve debug shelf
       else first [
         eqtermintrorule
-      | apptac EqSym ; [ eqtermintrorule apptac | .. ]
+      | tt_sym apptac ; [ eqtermintrorule apptac | .. ]
       | typeconversion ; [ eqtermintrorule apptac | .. ]
       | typeconversion ; [
-          apptac EqSym ; [ eqtermintrorule apptac | .. ]
+          tt_sym apptac ; [ eqtermintrorule apptac | .. ]
         | ..
         ]
-      | apptac EqRefl
+      | tt_refl apptac
       | myfail debug
       ] ; ktac debug shelf apptac
 
@@ -381,11 +409,17 @@ Ltac check_f debug shelf apptac :=
 
 (* Instances *)
 
-Ltac app_capply X := capply X.
-Ltac app_ceapply X := ceapply X.
-
 Ltac introrule := intro_rule app_capply.
 Ltac eintrorule := intro_rule app_ceapply.
+
+Ltac ttrefl := tt_refl app_capply.
+Ltac ettrefl := tt_refl app_ceapply.
+
+Ltac ttsym := tt_sym app_capply.
+Ltac ettsym := tt_sym app_ceapply.
+
+Ltac tttrans := tt_trans app_capply.
+Ltac etttrans := tt_trans app_ceapply.
 
 Ltac checkstep := check_step DoDebug DoShelf app_capply.
 Ltac echeckstep := check_step DoDebug DoShelf app_ceapply.
