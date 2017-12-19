@@ -117,14 +117,14 @@ Ltac istermintrorule tac :=
   | |- ?G => fail "Goal" G "isn't handled by tactic istermintrorule"
   end.
 
-Ltac eqctxintrorule tac :=
+Ltac ctx_cong tac :=
   lazymatch goal with
   | |- eqctx ctxempty ctxempty => tac EqCtxEmpty
   | |- eqctx (ctxextend ?Γ ?A) (ctxextend ?Δ ?B) => tac EqCtxExtend
   | |- ?G => fail "Goal" G "isn't handled by tactic eqctxintrorule"
   end.
 
-Ltac eqtypeintrorule tac :=
+Ltac type_cong tac :=
   lazymatch goal with
   | |- eqtype _ (Prod ?A ?B) (Prod ?C ?D) => tac CongProd
   | |- eqtype _ (Id ?A ?u ?v) (Id ?B ?w ?z) => tac CongId
@@ -137,7 +137,7 @@ Ltac eqtypeintrorule tac :=
   | |- ?G => fail "Goal" G "isn't handled by tactic eqtypeintrorule"
   end.
 
-Ltac eqtermintrorule tac :=
+Ltac term_cong tac :=
   lazymatch goal with
   | |- eqterm _ (var ?n) (var ?n) _ => tac EqRefl
   | |- eqterm _ (lam ?A ?B ?u) (lam ?C ?D ?v) _ => tac CongAbs
@@ -174,9 +174,15 @@ Ltac intro_rule apptac :=
   | |- isctx _ => isctxintrorule apptac
   | |- istype _ _ => istypeintrorule apptac
   | |- isterm _ _ _ => istermintrorule apptac
-  | |- eqctx _ _ => eqctxintrorule apptac
-  | |- eqtype _ _ _ => eqtypeintrorule apptac
-  | |- eqterm _ _ _ _ => eqtermintrorule apptac
+  | |- ?G => fail "Introduction rule not applicable to yield" G
+  end.
+
+Ltac cong_rule apptac :=
+  lazymatch goal with
+  | |- eqctx _ _ => ctx_cong apptac
+  | |- eqtype _ _ _ => type_cong apptac
+  | |- eqterm _ _ _ _ => term_cong apptac
+  | |- ?G => fail "Congruence rule not applicable to yield" G
   end.
 
 Ltac typeconversion :=
@@ -335,8 +341,8 @@ Ltac check_step_factory debug shelf apptac ktac :=
     else tryif (is_evar Γ || is_evar Δ)
       then myshelve debug shelf
       else first [
-        eqctxintrorule apptac
-      | tt_sym apptac ; [ eqctxintrorule apptac | .. ]
+        ctx_cong apptac
+      | tt_sym apptac ; [ ctx_cong apptac | .. ]
       | tt_refl apptac
       | myfail debug
       ] ; ktac debug shelf apptac
@@ -360,8 +366,8 @@ Ltac check_step_factory debug shelf apptac ktac :=
     else tryif (is_evar A || is_evar B)
       then myshelve debug shelf
       else first [
-        eqtypeintrorule apptac
-      | tt_sym apptac ; [ eqtypeintrorule apptac | .. ]
+        type_cong apptac
+      | tt_sym apptac ; [ type_cong apptac | .. ]
       | tt_refl apptac
       | myfail debug
       ] ; ktac debug shelf apptac
@@ -383,11 +389,11 @@ Ltac check_step_factory debug shelf apptac ktac :=
     else tryif (is_evar u || is_evar v)
       then myshelve debug shelf
       else first [
-        eqtermintrorule
-      | tt_sym apptac ; [ eqtermintrorule apptac | .. ]
-      | typeconversion ; [ eqtermintrorule apptac | .. ]
+        term_cong
+      | tt_sym apptac ; [ term_cong apptac | .. ]
+      | typeconversion ; [ term_cong apptac | .. ]
       | typeconversion ; [
-          tt_sym apptac ; [ eqtermintrorule apptac | .. ]
+          tt_sym apptac ; [ term_cong apptac | .. ]
         | ..
         ]
       | tt_refl apptac
@@ -411,6 +417,9 @@ Ltac check_f debug shelf apptac :=
 
 Ltac introrule := intro_rule app_capply.
 Ltac eintrorule := intro_rule app_ceapply.
+
+Ltac congrule := cong_rule app_capply.
+Ltac econgrule := cong_rule app_ceapply.
 
 Ltac ttrefl := tt_refl app_capply.
 Ltac ettrefl := tt_refl app_ceapply.
