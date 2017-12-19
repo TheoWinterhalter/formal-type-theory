@@ -64,9 +64,6 @@ Ltac rewrite_substs :=
 
 (* Tactics to apply introduction rules of type theory. *)
 
-(* TODO Maybe handle the case "isctx ?Γ" and evars.
-   Fail, debug and shelf as well.
- *)
 Ltac isctxintrorule tac :=
   lazymatch goal with
   | |- isctx ctxempty => tac CtxEmpty
@@ -178,6 +175,22 @@ Ltac intro_rule apptac :=
   | |- eqterm _ _ _ _ => eqtermintrorule apptac
   end.
 
+Ltac typeconversion :=
+  lazymatch goal with
+  | |- isterm ?Γ ?u ?A => ceapply TermTyConv
+  | |- eqterm ?Γ ?u ?v ?A => ceapply EqTyConv
+  | |- ?G => fail "Type conversion doesn't apply to goal" G
+  end.
+
+Ltac contextconversion :=
+  lazymatch goal with
+  | |- istype ?Γ ?A => ceapply TyCtxConv
+  | |- isterm ?Γ ?u ?A => ceapply TermCtxConv
+  | |- eqtype ?Γ ?A ?B => ceapply EqTyCtxConv
+  | |- eqterm ?Γ ?u ?v ?A => ceapply EqCtxConv
+  | |- ?G => fail "Context conversion doesn't apply to goal" G
+  end.
+
 Ltac unfold_syntax :=
   unfold CONS, SUBST_TYPE, SUBST_TERM, Arrow, _sbcons, _Subst, _subst in *.
 
@@ -252,7 +265,7 @@ Ltac check_step_factory debug shelf apptac ktac :=
     then first [
       (* TODO: Have this bit depend on whether we use echeck of check. *)
       eassumption
-    | ceapply TyCtxConv ; [ eassumption | .. ]
+    | contextconversion ; [ eassumption | .. ]
     | myfail debug
     ] ; ktac debug shelf apptac
     else tryif (is_evar A)
@@ -267,10 +280,10 @@ Ltac check_step_factory debug shelf apptac ktac :=
     tryif (is_var u)
     then first [
       eassumption
-    | ceapply TermTyConv ; [ eassumption | .. ]
-    | ceapply TermCtxConv ; [ eassumption | .. ]
-    | ceapply TermCtxConv ; [
-        ceapply TermTyConv ; [ eassumption | .. ]
+    | typeconversion ; [ eassumption | .. ]
+    | contextconversion ; [ eassumption | .. ]
+    | contextconversion ; [
+        typeconversion ; [ eassumption | .. ]
       | ..
       ]
     | myfail debug
@@ -279,7 +292,7 @@ Ltac check_step_factory debug shelf apptac ktac :=
       then myshelve debug shelf
       else first [
         istermintrorule apptac
-      | ceapply TermTyConv ; [ istermintrorule apptac | ..]
+      | typeconversion ; [ istermintrorule apptac | ..]
       | myfail debug
       ] ; ktac debug shelf apptac
 
@@ -307,7 +320,7 @@ Ltac check_step_factory debug shelf apptac ktac :=
       eassumption
     | ceapply EqTyRefl
     | ceapply EqTySym ; [ eassumption | .. ]
-    | ceapply EqTyCtxConv ; [
+    | contextconversion ; [
             first [
               eassumption
             | ceapply EqTySym ; [ eassumption | .. ]
@@ -332,8 +345,8 @@ Ltac check_step_factory debug shelf apptac ktac :=
       eassumption
     | ceapply EqRefl
     | ceapply EqSym ; [ eassumption |.. ]
-    | ceapply EqTyConv ; [ eassumption | .. ]
-    | ceapply EqTyConv ; [
+    | typeconversion ; [ eassumption | .. ]
+    | typeconversion ; [
         ceapply EqSym ; [ eassumption | .. ]
       | ..
       ]
@@ -344,8 +357,8 @@ Ltac check_step_factory debug shelf apptac ktac :=
       else first [
         eqtermintrorule
       | apptac EqSym ; [ eqtermintrorule apptac | .. ]
-      | ceapply EqTyConv ; [ eqtermintrorule apptac | .. ]
-      | ceapply EqTyConv ; [
+      | typeconversion ; [ eqtermintrorule apptac | .. ]
+      | typeconversion ; [
           apptac EqSym ; [ eqtermintrorule apptac | .. ]
         | ..
         ]
