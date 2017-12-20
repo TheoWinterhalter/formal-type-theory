@@ -49,6 +49,7 @@ Ltac rewrite_subst_var :=
     rewrite sbconszero
   | rewrite sbconssucc
   | rewrite sbweakvar
+  | rewrite sbdropvar
   ].
 
 Ltac rewrite_subst :=
@@ -95,6 +96,44 @@ Inductive issubst (σ : substitution) (Γ : context) : context -> Type :=
       issubst σ Γ (ctxextend Δ A)
 .
 
+Lemma issubst_ext :
+  forall {Γ Δ},
+    isctx Γ ->
+    isctx Δ ->
+    forall {σ ρ},
+      (forall n, (var n)[← σ] = (var n)[← ρ]) ->
+      issubst σ Γ Δ ->
+      issubst ρ Γ Δ.
+Proof.
+  intros Γ Δ hΓ hΔ.
+  induction hΔ ; intros σ ρ h hσ.
+  - apply SubstNil.
+  - rename G into Δ.
+    inversion hσ.
+    + apply SubstNil.
+    + doConfig. apply SubstCons.
+      * assumption.
+      * (* apply X with (σ := σ ↑). *)
+        (* -- intro n. rewrite_substs. apply h. *)
+        (* -- *)
+        (* Missing injectivity of ctxextend... *)
+Abort.
+
+
+Lemma SubstId :
+  forall {Γ},
+    isctx Γ ->
+    issubst sbid Γ Γ.
+Proof.
+  intros Γ hΓ. induction hΓ.
+  - apply SubstNil.
+  - apply SubstCons.
+    + assumption.
+    +
+  (* rewrite_substs. assumption. *)
+(* Defined. *)
+Abort.
+
 Fixpoint dropCtx Δ (h : isctx Δ) (n : nat) : context.
   destruct n.
   - exact Δ.
@@ -136,20 +175,6 @@ Proof.
 
     + assumption.
     +
-Abort.
-
-Lemma SubstId :
-  forall {Γ},
-    isctx Γ ->
-    issubst sbid Γ Γ.
-Proof.
-  intros Γ hΓ. induction hΓ.
-  - apply SubstNil.
-  - apply SubstCons.
-    + assumption.
-    +
-  (* rewrite_substs. assumption. *)
-(* Defined. *)
 Abort.
 
 Lemma SubstWeak :
