@@ -80,17 +80,46 @@ Context `{configSyntax : syntax.Syntax}.
 (* A substitution is well-formed if it is well-formed on variables.
    The action on types and terms is derived from it.
  *)
-Definition issubst (σ : substitution) (Γ Δ : context) : Type :=
-  forall n A, isterm Δ (var n) A -> isterm Γ (var n)[← σ] A[σ].
+Inductive issubst (σ : substitution) (Γ : context) : context -> Type :=
+| SubstNil :
+    issubst σ Γ ctxempty
+
+| SubstCons :
+    forall {Δ A},
+      istype Δ A ->
+      issubst σ↑ Γ Δ ->
+      isterm Γ (var 0)[← σ] A[σ] ->
+      issubst σ Γ (ctxextend Δ A).
+
+Lemma SubstDrop :
+  forall {Γ Δ A σ},
+    isctx Γ ->
+    isctx Δ ->
+    issubst σ Γ (ctxextend Δ A) ->
+    issubst σ↑ Γ Δ.
+Proof.
+  intros Γ Δ A σ hΓ hΔ h.
+  induction hΔ.
+  - apply SubstNil.
+  - rename A0 into B, G into Δ.
+    apply SubstCons.
+    + assumption.
+    +
+Abort.
 
 Lemma SubstId :
   forall {Γ},
     isctx Γ ->
     issubst sbid Γ Γ.
 Proof.
-  intros Γ hΓ n A h.
-  rewrite_substs. assumption.
-Defined.
+  intros Γ hΓ. induction hΓ.
+  - apply SubstNil.
+  - apply SubstCons.
+    + assumption.
+    +
+  (* rewrite_substs. assumption. *)
+(* Defined. *)
+Abort.
 
 Lemma SubstWeak :
   forall {Γ A},

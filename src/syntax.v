@@ -7,13 +7,16 @@ Inductive level : Type :=
 Class CONS A B := _sbcons : A -> B -> B.
 Notation "u ⋅ σ" := (_sbcons u σ) (at level 20, right associativity).
 
+Class DROP substitution := _sbdrop : substitution -> substitution.
+Notation "σ ↑" := (_sbdrop σ) (at level 3).
+
 Class SUBST_TYPE substitution type :=
   _Subst : type -> substitution -> type.
-Notation "A [ σ ]" := (_Subst A σ) (at level 0).
+Notation "A [ σ ]" := (_Subst A σ) (at level 4).
 
 Class SUBST_TERM substitution term :=
   _subst : term -> substitution -> term.
-Notation "t [ ← σ ]" := (_subst t σ) (at level 0).
+Notation "t [ ← σ ]" := (_subst t σ) (at level 4).
 
 Section SyntaxDefinition.
 
@@ -70,6 +73,7 @@ Class Syntax := {
      sbcons' := (sbcons : CONS term substitution);
    *)
   sbweak : substitution;
+  sbdrop :> DROP substitution;
 
   (* Computation of substitutions *)
   sbidterm :
@@ -82,6 +86,8 @@ Class Syntax := {
     forall {σ u n}, (var (S n))[← u ⋅ σ] = (var n)[← σ];
   sbweakvar :
     forall {n}, (var n)[← sbweak] = var (S n);
+  sbdropvar :
+    forall {σ n}, (var n)[← σ↑] = (var (S n))[← σ];
 
   (* Action of substitutions *)
   SubstProd :
