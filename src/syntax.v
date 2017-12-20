@@ -7,8 +7,9 @@ Inductive level : Type :=
 Class CONS A B := _sbcons : A -> B -> B.
 Notation "u ⋅ σ" := (_sbcons u σ) (at level 20, right associativity).
 
-Class DROP substitution := _sbdrop : substitution -> substitution.
-Notation "σ ↑" := (_sbdrop σ) (at level 3).
+Class DROP substitution := _sbdrop : nat -> substitution -> substitution.
+Notation "σ ↑ n" := (_sbdrop n σ) (at level 3).
+Notation "σ ↑" := (_sbdrop 1 σ) (at level 3).
 
 Class SUBST_TYPE substitution type :=
   _Subst : type -> substitution -> type.
@@ -87,7 +88,7 @@ Class Syntax := {
   sbweakvar :
     forall {n}, (var n)[← sbweak] = var (S n);
   sbdropvar :
-    forall {σ n}, (var n)[← σ↑] = (var (S n))[← σ];
+    forall {σ n m}, (var n)[← σ ↑ m] = (var (n+m))[← σ];
 
   (* Action of substitutions *)
   SubstProd :

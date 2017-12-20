@@ -87,16 +87,23 @@ Inductive issubst (σ : substitution) (Γ : context) : context -> Type :=
 | SubstCons :
     forall {Δ A},
       istype Δ A ->
-      issubst σ↑ Γ Δ ->
+      issubst (σ↑) Γ Δ ->
       isterm Γ (var 0)[← σ] A[σ] ->
       issubst σ Γ (ctxextend Δ A).
+
+(* Fixpoint dropCtx {Δ} (h : isctx Δ) (n : nat) : context. *)
+(*   destruct h. *)
+(*   - exact ctxempty. *)
+(*   - destruct n. *)
+(*     + exact ctxempty. *)
+(*     + exact (dropCtx ?) *)
 
 Lemma SubstDrop :
   forall {Γ Δ A σ},
     isctx Γ ->
     isctx Δ ->
     issubst σ Γ (ctxextend Δ A) ->
-    issubst σ↑ Γ Δ.
+    issubst (σ↑) Γ Δ.
 Proof.
   intros Γ Δ A σ hΓ hΔ h.
   induction hΔ.
