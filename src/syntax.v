@@ -90,6 +90,16 @@ Class Syntax := {
   sbdropvar :
     forall {σ n m}, (var n)[← σ ↑ m] = (var (n+m))[← σ];
 
+  (* Substitution extensionality principle *)
+  sbext :
+    forall {σ ρ},
+      (forall n, (var n)[← σ] = (var n)[← ρ]) ->
+      forall t, t[← σ] = t[← ρ];
+  Sbext :
+    forall {σ ρ},
+      (forall n, (var n)[← σ] = (var n)[← ρ]) ->
+      forall T, T[σ] = T[ρ];
+
   (* Action of substitutions *)
   SubstProd :
     forall {σ A B},
