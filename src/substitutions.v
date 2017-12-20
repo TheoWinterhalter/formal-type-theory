@@ -63,7 +63,10 @@ Ltac rewrite_substs :=
 
 Section Substitutions.
 
-Context `{configPrecondition : config.Precondition}.
+(* Let's do it with preconditions for now *)
+(* Context `{configPrecondition : config.Precondition}. *)
+Local Instance havePrecondition : config.Precondition :=
+  {| config.flagPrecondition := config.Yes |}.
 Context `{configReflection : config.Reflection}.
 Context `{configBinaryProdType : config.BinaryProdType}.
 Context `{configProdEta : config.ProdEta}.
@@ -89,27 +92,48 @@ Inductive issubst (σ : substitution) (Γ : context) : context -> Type :=
       istype Δ A ->
       issubst (σ↑) Γ Δ ->
       isterm Γ (var 0)[← σ] A[σ] ->
-      issubst σ Γ (ctxextend Δ A).
+      issubst σ Γ (ctxextend Δ A)
+.
 
-(* Fixpoint dropCtx {Δ} (h : isctx Δ) (n : nat) : context. *)
-(*   destruct h. *)
-(*   - exact ctxempty. *)
-(*   - destruct n. *)
-(*     + exact ctxempty. *)
-(*     + exact (dropCtx ?) *)
+Fixpoint dropCtx Δ (h : isctx Δ) (n : nat) : context.
+  destruct n.
+  - exact Δ.
+  - destruct h.
+    + exact ctxempty.
+    + doConfig. exact (dropCtx G i n).
+Defined.
 
-Lemma SubstDrop :
-  forall {Γ Δ A σ},
-    isctx Γ ->
-    isctx Δ ->
-    issubst σ Γ (ctxextend Δ A) ->
-    issubst (σ↑) Γ Δ.
+Fact dropCtx0 : forall Δ h, dropCtx Δ h 0 = Δ.
 Proof.
-  intros Γ Δ A σ hΓ hΔ h.
-  induction hΔ.
+  intros Δ h. destruct h ; reflexivity.
+Defined.
+
+Fixpoint SubstConsDrop {Γ Δ σ}
+         (hΓ : isctx Γ) (hΔ : isctx Δ) (hσ : issubst (σ↑) Γ (dropCtx Δ hΔ 1)) :
+  issubst σ Γ Δ.
+Proof.
+  destruct hΔ.
   - apply SubstNil.
-  - rename A0 into B, G into Δ.
+  - rename G into Δ.
     apply SubstCons.
+    + assumption.
+    + simpl in hσ. rewrite dropCtx0 in hσ. assumption.
+    + (* How should we take this into account? *)
+Abort.
+
+Fixpoint SubstDrop {Γ Δ σ n} (hΓ : isctx Γ) (hΔ : isctx Δ) :
+  issubst σ Γ Δ ->
+  issubst (σ ↑ n) Γ (dropCtx Δ hΔ n).
+Proof.
+  intro hσ.
+  destruct hΔ.
+  - simpl. apply SubstNil.
+  - rename G into Δ.
+    destruct n.
+    + simpl. admit. (* This should be assumed I guess. *)
+    + simpl.
+
+
     + assumption.
     +
 Abort.
