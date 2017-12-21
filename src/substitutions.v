@@ -101,7 +101,7 @@ Lemma issubst_ext :
     isctx Γ ->
     isctx Δ ->
     forall {σ ρ},
-      (forall n, (var n)[← σ] = (var n)[← ρ]) ->
+      σ ~ ρ ->
       issubst σ Γ Δ ->
       issubst ρ Γ Δ.
 Proof.
@@ -117,8 +117,51 @@ Proof.
         (* -- intro n. rewrite_substs. apply h. *)
         (* -- *)
         (* Missing injectivity of ctxextend... *)
+Admitted.
+
+Fact eqDropCons : forall {u σ}, (u ⋅ σ) ↑ ~ σ.
+Proof.
+  intros u σ n.
+  now rewrite_substs.
+Defined.
+
+Lemma SubstCons' :
+  forall {Γ Δ A u σ},
+    isctx Γ ->
+    isctx Δ ->
+    issubst σ Γ Δ ->
+    istype Δ A ->
+    isterm Γ u A[σ] ->
+    issubst (u ⋅ σ) Γ (ctxextend Δ A).
+Proof.
+  intros Γ Δ A u σ hΓ hΔ hσ hA hu.
+  apply SubstCons.
+  - assumption.
+  - apply issubst_ext with (σ0 := σ).
+    + assumption.
+    + assumption.
+    + symmetry. apply eqDropCons.
+    + assumption.
+  - rewrite_substs.
+    (* Bug spotted! *)
 Abort.
 
+Lemma SubstWeak :
+  forall {Γ A},
+    isctx Γ ->
+    istype Γ A ->
+    issubst sbweak (ctxextend Γ A) Γ.
+Proof.
+  intros Γ A hΓ.
+  induction hΓ ; intro hA.
+  - apply SubstNil.
+  - doConfig. rename A0 into B, G into Δ.
+    apply SubstCons.
+    + assumption.
+    + admit.
+    + rewrite_substs. capply TermVarSucc.
+      * capply CtxExtend ; assumption.
+      *
 
 Lemma SubstId :
   forall {Γ},
@@ -129,9 +172,7 @@ Proof.
   - apply SubstNil.
   - apply SubstCons.
     + assumption.
-    +
-  (* rewrite_substs. assumption. *)
-(* Defined. *)
+    + doConfig.
 Abort.
 
 Fixpoint dropCtx Δ (h : isctx Δ) (n : nat) : context.
@@ -176,20 +217,6 @@ Proof.
     + assumption.
     +
 Abort.
-
-Lemma SubstWeak :
-  forall {Γ A},
-    (config.flagPrecondition -> isctx Γ) ->
-    istype Γ A ->
-    issubst sbweak (ctxextend Γ A) Γ.
-Proof.
-  intros Γ A hΓ hA n B h.
-  rewrite_substs.
-  capply TermVarSucc.
-  - assumption.
-  - admit. (* Missing hyp *)
-  - assumption.
-Admitted.
 
 Lemma SubstCons :
   forall {σ u Γ Δ A},

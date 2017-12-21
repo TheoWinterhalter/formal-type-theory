@@ -7,9 +7,8 @@ Inductive level : Type :=
 Class CONS A B := _sbcons : A -> B -> B.
 Notation "u ⋅ σ" := (_sbcons u σ) (at level 20, right associativity).
 
-Class DROP substitution := _sbdrop : nat -> substitution -> substitution.
-Notation "σ ↑ n" := (_sbdrop n σ) (at level 3).
-Notation "σ ↑" := (_sbdrop 1 σ) (at level 3).
+Class DROP substitution := _sbdrop : substitution -> substitution.
+Notation "σ ↑" := (_sbdrop σ) (at level 3).
 
 Class SUBST_TYPE substitution type :=
   _Subst : type -> substitution -> type.
@@ -88,7 +87,7 @@ Class Syntax := {
   sbweakvar :
     forall {n}, (var n)[← sbweak] = var (S n);
   sbdropvar :
-    forall {σ n m}, (var n)[← σ ↑ m] = (var (n+m))[← σ];
+    forall {σ n}, (var n)[← σ↑] = (var (S n))[← σ];
 
   (* Substitution extensionality principle *)
   sbext :
@@ -184,3 +183,25 @@ End SyntaxDefinition.
 (* Notation "u ⋅ σ" := (sbcons u σ) (at level 20, right associativity). *)
 (* Notation "A [ σ ]" := (Subst A σ) (at level 0). *)
 (* Notation "t [ ← σ ]" := (subst t σ) (at level 0). *)
+Notation "σ ~ ρ" := (forall n, (var n)[← σ] = (var n)[← ρ]) (at level 10).
+
+Require Import Classes.CRelationClasses.
+
+Instance sbextReflexive `{Syntax} : Reflexive (fun σ ρ => σ ~ ρ).
+Proof.
+  intros σ n. reflexivity.
+Defined.
+
+Instance sbextSymmetric `{Syntax} : Symmetric (fun σ ρ => σ ~ ρ).
+Proof.
+  intros σ ρ h n.
+  symmetry. apply h.
+Defined.
+
+Instance sbextTransitive `{Syntax} : Transitive (fun σ ρ => σ ~ ρ).
+Proof.
+  intros σ ρ θ h1 h2 n.
+  transitivity ((var n)[← ρ]).
+  - apply h1.
+  - apply h2.
+Defined.
