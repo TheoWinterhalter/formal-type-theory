@@ -1,5 +1,7 @@
 (* Handling meta-level substitutions. *)
 
+Require Import Classes.CRelationClasses.
+
 Require config.
 Require Import config_tactics.
 Require Import tt.
@@ -92,7 +94,7 @@ Inductive issubst (σ : substitution) (Γ : context) : context -> Type :=
     forall {Δ A},
       istype Δ A ->
       issubst (σ↑) Γ Δ ->
-      isterm Γ (var 0)[← σ] A[σ] ->
+      isterm Γ (var 0)[← σ] A[σ↑] ->
       issubst σ Γ (ctxextend Δ A)
 .
 
@@ -111,18 +113,31 @@ Proof.
   - rename G into Δ.
     inversion hσ.
     + apply SubstNil.
-    + doConfig. apply SubstCons.
+    + doConfig.
+      (* Missing injectivity of ctxextend... *)
+      assert (Δ0 = Δ) by admit.
+      assert (A0 = A) by admit.
+      subst.
+      apply SubstCons.
       * assumption.
-      * (* apply X with (σ := σ ↑). *)
-        (* -- intro n. rewrite_substs. apply h. *)
-        (* -- *)
-        (* Missing injectivity of ctxextend... *)
+      * apply X with (σ := σ ↑).
+        -- intro n. rewrite_substs. apply h.
+        -- assumption.
+      * (* Some setoid rewrite might help me? *)
+        (* It is true, but I'm lazy for now. *)
+        admit.
 Admitted.
 
 Fact eqDropCons : forall {u σ}, (u ⋅ σ) ↑ ~ σ.
 Proof.
   intros u σ n.
   now rewrite_substs.
+Defined.
+
+Instance sbextSymmetric `{Syntax} : Symmetric sbextR.
+Proof.
+  intros σ ρ h n.
+  symmetry. apply h.
 Defined.
 
 Lemma SubstCons' :
@@ -140,11 +155,17 @@ Proof.
   - apply issubst_ext with (σ0 := σ).
     + assumption.
     + assumption.
-    + symmetry. apply eqDropCons.
+    + (* symmetry. *)
+      intro n. symmetry.
+      apply eqDropCons.
     + assumption.
   - rewrite_substs.
-    (* Bug spotted! *)
-Abort.
+    (* Some setoid rewrite would help us.
+       We'll only deal with those once we are convinced we're on the right
+       tracks.
+     *)
+    admit.
+Admitted.
 
 Lemma SubstWeak :
   forall {Γ A},
@@ -159,9 +180,10 @@ Proof.
     apply SubstCons.
     + assumption.
     + admit.
-    + rewrite_substs. capply TermVarSucc.
-      * capply CtxExtend ; assumption.
-      *
+    + (* rewrite_substs. ceapply TermVarSucc. *)
+      (* * capply CtxExtend ; assumption. *)
+      (* * *)
+Abort.
 
 Lemma SubstId :
   forall {Γ},
@@ -172,8 +194,9 @@ Proof.
   - apply SubstNil.
   - apply SubstCons.
     + assumption.
-    + doConfig.
-Abort.
+    + doConfig. admit.
+    + doConfig. rewrite_substs. admit.
+Admitted. (* It holds as long as we can type weakening. *)
 
 Fixpoint dropCtx Δ (h : isctx Δ) (n : nat) : context.
   destruct n.

@@ -1,3 +1,8 @@
+(* Abstract notion of syntax. *)
+
+Require Import Classes.RelationClasses.
+Require Import Classes.CRelationClasses.
+
 (* Universe levels *)
 Inductive level : Type :=
 | uni : nat -> level
@@ -90,13 +95,14 @@ Class Syntax := {
     forall {σ n}, (var n)[← σ↑] = (var (S n))[← σ];
 
   (* Substitution extensionality principle *)
+  sbextR σ ρ := forall n, (var n)[← σ] = (var n)[← ρ];
   sbext :
     forall {σ ρ},
-      (forall n, (var n)[← σ] = (var n)[← ρ]) ->
+      sbextR σ ρ ->
       forall t, t[← σ] = t[← ρ];
   Sbext :
     forall {σ ρ},
-      (forall n, (var n)[← σ] = (var n)[← ρ]) ->
+      sbextR σ ρ ->
       forall T, T[σ] = T[ρ];
 
   (* Action of substitutions *)
@@ -183,25 +189,29 @@ End SyntaxDefinition.
 (* Notation "u ⋅ σ" := (sbcons u σ) (at level 20, right associativity). *)
 (* Notation "A [ σ ]" := (Subst A σ) (at level 0). *)
 (* Notation "t [ ← σ ]" := (subst t σ) (at level 0). *)
-Notation "σ ~ ρ" := (forall n, (var n)[← σ] = (var n)[← ρ]) (at level 10).
+Notation "σ ~ ρ" := (sbextR σ ρ) (at level 10).
 
-Require Import Classes.CRelationClasses.
-
-Instance sbextReflexive `{Syntax} : Reflexive (fun σ ρ => σ ~ ρ).
+Global Instance sbextRReflexive `{Syntax} : Reflexive sbextR.
 Proof.
   intros σ n. reflexivity.
 Defined.
 
-Instance sbextSymmetric `{Syntax} : Symmetric (fun σ ρ => σ ~ ρ).
+Global Instance sbextRSymmetric `{Syntax} : Symmetric sbextR.
 Proof.
   intros σ ρ h n.
   symmetry. apply h.
 Defined.
 
-Instance sbextTransitive `{Syntax} : Transitive (fun σ ρ => σ ~ ρ).
+Global Instance sbextRTransitive `{Syntax} : Transitive sbextR.
 Proof.
   intros σ ρ θ h1 h2 n.
   transitivity ((var n)[← ρ]).
   - apply h1.
   - apply h2.
 Defined.
+
+Global Instance sbextREquivalence `{Syntax} : Equivalence sbextR.
+Proof.
+  split.
+  - intros σ. Fail reflexivity.
+Abort.
