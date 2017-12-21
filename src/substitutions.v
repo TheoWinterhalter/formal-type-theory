@@ -199,8 +199,11 @@ Proof.
     + rewrite_substs.
 Abort.
 
-(* with shiftbyWeakS Γ h n : *)
-(*   forall m, (var m)[← shiftby Γ h (S n)] = (var m)[] *)
+Fixpoint shiftbyn Γ h n m : (var m)[← shiftby Γ h n] = (var (n+m)).
+Proof.
+  destruct h.
+  - cbn. rewrite_substs.
+Abort.
 
 Fixpoint SubstShiftby Γ (h : isctx Γ) (n : nat) (An : Vector.t type n) :
   isctxextension Γ An ->
