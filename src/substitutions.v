@@ -167,6 +167,15 @@ Proof.
     admit.
 Admitted.
 
+Fixpoint shiftby Δ (h : isctx Δ) (n : nat) : substitution.
+  destruct h.
+  - exact sbid.
+  - doConfig. rename G into Δ.
+    exact (var n ⋅ shiftby Δ i (S n)).
+Defined.
+
+(* How can we type it without telescopes of contexts? *)
+
 (* Fixpoint exsbid Γ (h : isctx Γ) : substitution *)
 
 (* with exsbweak Γ (A : type) (h : isctx Γ) : substitution. *)
