@@ -169,7 +169,7 @@ Admitted.
 
 Fixpoint shiftby Δ (h : isctx Δ) (n : nat) : substitution.
   destruct h.
-  - exact sbid.
+  - exact sbweak.
   - doConfig. rename G into Δ.
     exact (var n ⋅ shiftby Δ i (S n)).
 Defined.
@@ -189,6 +189,18 @@ Fixpoint isctxextension (Γ : context) {n : nat} (An : Vector.t type n) :=
   | cons _ A n An =>
     isctx Γ * isctxextension Γ An
   end)%type.
+
+Fact shiftbyWeak1 Γ h : shiftby Γ h (S 0) ~ sbweak.
+Proof.
+  intro m. destruct h.
+  - cbn. reflexivity.
+  - cbn. destruct m.
+    + rewrite_substs. reflexivity.
+    + rewrite_substs.
+Abort.
+
+(* with shiftbyWeakS Γ h n : *)
+(*   forall m, (var m)[← shiftby Γ h (S n)] = (var m)[] *)
 
 Fixpoint SubstShiftby Γ (h : isctx Γ) (n : nat) (An : Vector.t type n) :
   isctxextension Γ An ->
@@ -220,8 +232,10 @@ Proof.
            ++ apply h'.
            ++ admit. (* Injectivity of ctxextend again *)
     + assumption.
-    + induction n.
-      * (* How did I end up here? Aw isn't the right type... *)
+    + induction An.
+      * cbn in *. admit. (* Assuming it is indeed the weakening. *)
+      * cbn in h'. destruct h' as [h1 [h2 h3]].
+        specialize (IHAn h3).
 Abort.
 
 
