@@ -167,6 +167,38 @@ Proof.
     admit.
 Admitted.
 
+(* Fixpoint exsbid Γ (h : isctx Γ) : substitution *)
+
+(* with exsbweak Γ (A : type) (h : isctx Γ) : substitution. *)
+
+(*   - { destruct h. *)
+(*       - exact sbid. (* Anything would fit really. *) *)
+(*       - rename G into Γ. doConfig. *)
+(*         exact (var 0 ⋅ exsbweak Γ A i). *)
+(*     } *)
+
+(*   - { destruct h. *)
+(*       - exact sbweak. *)
+(*       - rename G into Γ, A0 into B. doConfig. *)
+
+(* Defined. *)
+
+(* Lemma SubstExId : *)
+(*   forall {Γ} (h : isctx Γ), *)
+(*     issubst (exsbid Γ h) Γ Γ. *)
+(* Proof. *)
+(*   intros Γ h. *)
+(*   induction h. *)
+(*   - apply SubstNil. *)
+(*   - rename G into Γ. doConfig. cbn. *)
+(*     apply SubstCons'. *)
+(*     + capply CtxExtend. *)
+(*       * capply i. (* Why didn't doConfig work here? *) *)
+(*       * assumption. *)
+(*     + capply i. *)
+(*     + specialize (X config.yes). *)
+
+
 Lemma SubstWeak :
   forall {Γ A},
     isctx Γ ->
