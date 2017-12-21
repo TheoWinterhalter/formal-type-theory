@@ -174,7 +174,56 @@ Fixpoint shiftby Δ (h : isctx Δ) (n : nat) : substitution.
     exact (var n ⋅ shiftby Δ i (S n)).
 Defined.
 
-(* How can we type it without telescopes of contexts? *)
+Require Import Coq.Vectors.Vector.
+
+Fixpoint ctxextension (Γ : context) {n : nat} (An : Vector.t type n) : context :=
+  match An with
+  | nil _ => Γ
+  | cons _ A n An => ctxextend (ctxextension Γ An) A
+  end.
+
+Fixpoint isctxextension (Γ : context) {n : nat} (An : Vector.t type n) :=
+  (isctx (ctxextension Γ An) *
+  match An with
+  | nil _ => isctx Γ
+  | cons _ A n An =>
+    isctx Γ * isctxextension Γ An
+  end)%type.
+
+Fixpoint SubstShiftby Γ (h : isctx Γ) (n : nat) (An : Vector.t type n) :
+  isctxextension Γ An ->
+  issubst (shiftby Γ h n) (ctxextension Γ An) Γ.
+Proof.
+  intro h'.
+  config destruct h.
+  - apply SubstNil.
+  - simpl. apply SubstCons'.
+    + destruct An ; apply h'.
+    + config assumption.
+    + assert (ctxextension (ctxextend G A) An = ctxextension G (shiftin A An)).
+      { induction An.
+        - cbn. reflexivity.
+        - cbn. f_equal. apply IHAn. cbn in h'.
+          apply h'. (* Ugly because not a lemma. *)
+      }
+      rewrite H. apply SubstShiftby.
+      induction An.
+      * cbn in *. repeat split.
+        -- apply h'.
+        -- config assumption.
+        -- config assumption.
+        -- config assumption.
+      * cbn in *. repeat split.
+        -- rewrite <- H. apply h'.
+        -- config assumption.
+        -- apply IHAn.
+           ++ apply h'.
+           ++ admit. (* Injectivity of ctxextend again *)
+    + assumption.
+    + induction n.
+      * (* How did I end up here? Aw isn't the right type... *)
+Abort.
+
 
 (* Fixpoint exsbid Γ (h : isctx Γ) : substitution *)
 
