@@ -86,16 +86,34 @@ Context `{configSyntax : syntax.Syntax}.
 (* A substitution is well-formed if it is well-formed on variables.
    The action on types and terms is derived from it.
  *)
-Inductive issubst (σ : substitution) (Γ : context) : context -> Type :=
+Inductive issubst : forall (σ : substitution) (Γ : context), context -> Type :=
 | SubstNil :
-    issubst σ Γ ctxempty
+    forall {σ Γ},
+      isctx Γ ->
+      issubst σ Γ ctxempty
 
 | SubstCons :
-    forall {Δ A},
+    forall {σ Γ Δ A},
+      isctx Γ ->
+      isctx Δ ->
       istype Δ A ->
       issubst (σ↑) Γ Δ ->
-      isterm Γ (var 0)[← σ] A[σ↑] ->
+      isterm Γ (var 0)[σ] A[σ↑] ->
       issubst σ Γ (ctxextend Δ A)
+
+(* I'll take them as axioms for now.
+   Hopefully we can show later that these rules are subsumed.
+ *)
+| SubstId :
+    forall {Γ},
+      isctx Γ ->
+      issubst sbid Γ Γ
+
+| SubstWeak :
+    forall {Γ A},
+      isctx Γ ->
+      istype Γ A ->
+      issubst sbweak (ctxextend Γ A) Γ
 .
 
 Lemma issubst_ext :
@@ -109,16 +127,19 @@ Lemma issubst_ext :
 Proof.
   intros Γ Δ hΓ hΔ.
   induction hΔ ; intros σ ρ h hσ.
-  - apply SubstNil.
+  - apply SubstNil. assumption.
   - rename G into Δ.
     inversion hσ.
-    + apply SubstNil.
+    + apply SubstNil. assumption.
     + doConfig.
-      (* Missing injectivity of ctxextend... *)
-      assert (Δ0 = Δ) by admit.
-      assert (A0 = A) by admit.
+      assert (Δ0 = Δ).
+      { eapply ctxextend_inj. apply H2. }
+      assert (A0 = A).
+      { eapply ctxextend_inj. apply H2. }
       subst.
       apply SubstCons.
+      * assumption.
+      * assumption.
       * assumption.
       * apply X with (σ := σ ↑).
         -- intro n. rewrite_substs. apply h.
@@ -126,7 +147,8 @@ Proof.
       * (* Some setoid rewrite might help me? *)
         (* It is true, but I'm lazy for now. *)
         admit.
-Admitted.
+    + subst. (* What can we do now? *)
+Abort. (* Maybe no longer necessary. *)
 
 Fact eqDropCons : forall {u σ}, (u ⋅ σ) ↑ ~ σ.
 Proof.
@@ -199,7 +221,7 @@ Proof.
     + rewrite_substs.
 Abort.
 
-Fixpoint shiftbyn Γ h n m : (var m)[← shiftby Γ h n] = (var (n+m)).
+Fixpoint shiftbyn Γ h n m : (var m)[shiftby Γ h n] = (var (n+m)).
 Proof.
   destruct h.
   - cbn. rewrite_substs.

@@ -263,7 +263,7 @@ with isterm : context -> term -> type -> Type :=
          premise: istype
              (ctxextend
                 (ctxextend G A)
-                (Id A[sbweak] u[← sbweak] (var 0))
+                (Id A[sbweak] u[sbweak] (var 0))
              )
              C
          premise:
@@ -843,7 +843,7 @@ with eqterm : context -> term -> term -> type -> Type :=
          conclusion:
            eqterm G
                   (app (lam A B u) A B v)
-                  u[← v ⋅ sbid]
+                  u[v ⋅ sbid]
                   B[v ⋅ sbid]
        endrule
 
@@ -884,8 +884,8 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: isterm G u (Prod A B)
          premise: isterm G v (Prod A B)
          premise: eqterm (ctxextend G A)
-                         (app u[← sbweak] A[sbweak] B[var 0 ⋅ sbweak] (var 0))
-                         (app v[← sbweak] A[sbweak] B[var 0 ⋅ sbweak] (var 0))
+                         (app u[sbweak] A[sbweak] B[var 0 ⋅ sbweak] (var 0))
+                         (app v[sbweak] A[sbweak] B[var 0 ⋅ sbweak] (var 0))
                          B
          conclusion:
            eqterm G u v (Prod A B)
@@ -900,7 +900,7 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: istype
              (ctxextend
                 (ctxextend G A)
-                (Id A[sbweak] u[← sbweak] (var 0)))
+                (Id A[sbweak] u[sbweak] (var 0)))
              C
          premise: isterm G w C[refl A u ⋅ u ⋅ sbid]
          conclusion:
@@ -980,14 +980,14 @@ with eqterm : context -> term -> term -> type -> Type :=
            istype
              (ctxextend
                 (ctxextend G A1)
-                (Id A1[sbweak] u1[← sbweak] (var 0))
+                (Id A1[sbweak] u1[sbweak] (var 0))
              )
              C1
          precond:
            istype
              (ctxextend
                 (ctxextend G A1)
-                (Id A1[sbweak] u1[← sbweak] (var 0))
+                (Id A1[sbweak] u1[sbweak] (var 0))
              )
              C2
          precond: isterm G u1 A1
@@ -1000,7 +1000,7 @@ with eqterm : context -> term -> term -> type -> Type :=
          premise: eqterm G u1 u2 A1
          premise:
              eqtype
-               (ctxextend (ctxextend G A1) (Id A1[sbweak] u1[← sbweak] (var 0)))
+               (ctxextend (ctxextend G A1) (Id A1[sbweak] u1[sbweak] (var 0)))
                C1
                C2
          precond: isterm G w1 C1[refl A1 u1 ⋅ u1 ⋅ sbid]
