@@ -122,6 +122,43 @@ Proof.
     + assumption.
 Defined.
 
+Lemma issubst_ext :
+  forall {Γ Δ},
+    isctx Γ ->
+    isctx Δ ->
+    forall {σ ρ},
+      σ ~ ρ ->
+      issubst σ Γ Δ ->
+      issubst ρ Γ Δ.
+Proof.
+  intros Γ Δ hΓ hΔ.
+  induction hΔ as [| Δ B hΔ ih hB] ; intros σ ρ h [hΔB hσ].
+  - now exists CtxEmpty.
+  - doConfig.
+    specialize (ih (σ↑) (ρ↑)).
+    assert (hh : σ ↑ ~ ρ ↑).
+    { intro n. rewrite_substs. apply h. }
+    specialize (ih hh).
+    assert (hσ' : issubst σ↑ Γ Δ).
+    {
+
+ (* exists hΔB. inversion hΔB as [| Δ' B' hΔ' hB']. *)
+ (*    + (* Impossible case but true. *) *)
+ (*      subst. easy. *)
+ (*    + cbn. destruct hσ as [hσ hv]. *)
+ (*      split. *)
+ (*      * specialize (ih (σ↑) (ρ↑)). *)
+ (*        assert (hh : σ ↑ ~ ρ ↑). *)
+ (*        { intro n. rewrite_substs. apply h. } *)
+ (*        specialize (ih hh). *)
+ (*        assert (hσ' : issubst σ↑ Γ Δ). *)
+ (*        { *)
+Abort.
+(* Working by induction on the derivation is really annoying when what
+   we really want is to work by induction on contexts.
+ *)
+
+
 Lemma SubstWeak :
   forall {Γ A},
     isctx Γ ->
