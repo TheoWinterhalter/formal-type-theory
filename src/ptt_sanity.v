@@ -5,7 +5,7 @@ Require Import config_tactics.
 
 Require Import syntax.
 Require Import tt.
-Require Import checking_tactics.
+Require Import substitutions checking_tactics.
 
 Section PttSanity.
 
@@ -23,6 +23,8 @@ Context `{configUnitType : config.UnitType}.
 Context `{configBoolType : config.BoolType}.
 Context `{configProdType : config.ProdType}.
 Context `{configSyntax : syntax.Syntax}.
+
+Context {substProp : SubstitutionProperties}.
 
 Axiom cheating : forall {A}, A.
 Tactic Notation "cheat" := (exact cheating).
@@ -45,16 +47,16 @@ Proof.
   { check. }
 
   (* TermVarZero *)
-  { Fail check. cheat. }
+  { Fail check. echeck. }
 
   (* TermVarSucc *)
-  { Fail check. cheat. }
+  { echeck. }
 
   (* TermAbs *)
   { check. }
 
   (* TermApp *)
-  { Fail check. cheat. }
+  { Fail check. Fail echeck. cheat. }
 
   (* TermRefl *)
   { check. }

@@ -28,6 +28,8 @@ Ltac istypeintrorule tac :=
   | |- istype ?Γ (BinaryProd ?A ?B) => tac TyBinaryProd
   | |- istype ?Γ (Uni ?l) => tac TyUni
   | |- istype ?Γ (El ?l ?a) => tac TyEl
+  (* Special case, might be moved. *)
+  | |- istype ?Γ (Subst ?A ?σ) => tac TySubst
   | |- ?G => fail "Goal" G "isn't handled by tactic istypeintrorule"
   end.
 
@@ -57,6 +59,8 @@ Ltac istermintrorule tac :=
   | |- isterm _ (uniBinaryProd prop prop ?a ?b) _ => tac TermUniBinaryProdProp
   | |- isterm _ (uniUni (uni ?n)) _ => tac TermUniUni
   | |- isterm _ (uniUni prop) _ => tac TermUniProp
+  (* Special case, might be moved. *)
+  | |- isterm _ (subst ?u ?σ) _ => tac TermSubst
   | |- ?G => fail "Goal" G "isn't handled by tactic istermintrorule"
   end.
 
@@ -169,7 +173,8 @@ Ltac tt_trans apptac :=
   end.
 
 Ltac unfold_syntax :=
-  unfold CONS, SUBST_TYPE, SUBST_TERM, Arrow, _sbcons, _Subst, _subst in *.
+  unfold CONS, DROP, SUBST, EXTEND, Arrow, _sbcons, _sbdrop, _subst, _extend
+  in *.
 
 
 (* Configuration options for the tactics. *)
@@ -342,6 +347,24 @@ Ltac check_step_factory debug shelf apptac ktac :=
       | tt_refl apptac
       | myfail debug
       ] ; ktac debug shelf apptac
+
+  (* Substitution *)
+  | |- issubst ?σ ?Γ ?Δ =>
+    (* For now, we go ugly *)
+    first [
+      apptac SubstId
+    | apptac SubstWeak
+    | apptac SubstNil
+    | apptac SubstCons
+    | myfail debug
+    ] ; ktac debug shelf apptac
+
+  (* Even uglier *)
+  | |- SubstitutionProperties =>
+    first [
+      assumption
+    | myfail debug
+    ] ; ktac debug shelf apptac
 
   (* Unknown goal *)
   | |- ?G => fail "Goal" G "isn't handled by tactic check_step_factory"
