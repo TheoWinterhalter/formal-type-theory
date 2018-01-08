@@ -101,6 +101,12 @@ Inductive issubst : forall (σ : substitution) (Γ : context), context -> Type :
       issubst (σ↑) Γ Δ ->
       isterm Γ (var 0)[σ] A[σ↑] ->
       issubst σ Γ (ctxextend Δ A)
+
+| SubstCtxConv :
+    forall {σ Γ Δ Δ'},
+      eqctx Δ' Δ ->
+      issubst σ Γ Δ ->
+      issubst σ Γ Δ'
 .
 
 Class SubstitutionProperties := {
@@ -118,20 +124,122 @@ Class SubstitutionProperties := {
 
 Context {substProp : SubstitutionProperties}.
 
-Lemma SubstCtxConv :
-  forall {σ Γ Δ Δ'},
-    eqctx Δ' Δ ->
-    issubst σ Γ Δ ->
-    issubst σ Γ Δ'.
+Lemma SubstTypeExt :
+  config.flagPrecondition ->
+  forall {Δ A},
+    istype Δ A ->
+    forall {σ ρ},
+      σ ~ ρ ->
+      A[σ] = A[ρ].
 Proof.
-  intros σ Γ Δ Δ' eq hσ.
-  induction hσ.
-  -
-Abort.
+  intros fp Δ A hA.
+  config induction hA ; intros σ ρ h.
+  - now apply IHhA.
+  - rewrite_substs. f_equal.
+    + now apply H.
+    + apply IHhA. intros [|n].
+      * now rewrite_substs.
+      * rewrite_substs. apply h.
+  - rewrite_substs. f_equal.
+    + now apply H.
+    + (* Need to be mutual with terms. *)
+Admitted.
 
-(* Even when you admit most of the work is done, it still seems that
-   there are representation problems.
- *)
+Axiom cheating : forall {A}, A.
+Tactic Notation "cheat" := (exact cheating).
 
+Fixpoint TySubst {Γ Δ σ A} (hσ : issubst σ Γ Δ) (hA : istype Δ A)
+  (hΓ : config.flagPrecondition -> isctx Γ) {struct hA} :
+  istype Γ A[σ]
+
+with TermSubst {Γ Δ σ u A} (hσ : issubst σ Γ Δ) (hu : isterm Δ u A)
+  (hΓ : config.flagPrecondition -> isctx Γ) {struct hu} :
+  isterm Γ u[σ] A[σ]
+
+with CongTySubst {Γ Δ σ A B} (hσ : issubst σ Γ Δ) (h : eqtype Δ A B)
+  (hΓ : config.flagPrecondition -> isctx Γ) {struct h} :
+  eqtype Γ A[σ] B[σ]
+.
+Proof.
+  (* TySubst *)
+  - cheat.
+
+  (* TermSubst *)
+  - { config destruct hu.
+
+      (* TermTyConv *)
+      - config apply @TermTyConv with (A := A[σ]).
+        + config apply TermSubst with (Δ := G) ; assumption.
+        + config apply CongTySubst with (Δ := G) ; assumption.
+        + assumption.
+        + (config apply TySubst with (Δ := G)) ; assumption.
+        + (config apply TySubst with (Δ := G)) ; assumption.
+
+      (* TermCtxConv *)
+      - { config apply TermSubst with (Δ := G).
+          - eapply SubstCtxConv ; eassumption.
+          - assumption.
+          - assumption.
+        }
+
+      (* TermVarZero *)
+      - { inversion hσ.
+          - exfalso. eapply ctxextend_notempty. symmetry. eassumption.
+          - destruct (ctxextend_inj H2) as [e1 e2]. subst. clear H2.
+            cheat. (* A[σ ↑] = A[sbweak][σ] but it seems annoying to show. *)
+          - subst.
+            cheat. (* Maybe induction on hσ instead? *)
+        }
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+
+      - cheat.
+    }
+
+  (* CongTySubst *)
+  - cheat.
+Defined.
 
 End Substitutions.

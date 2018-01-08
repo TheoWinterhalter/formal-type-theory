@@ -33,7 +33,10 @@ Class Syntax := {
   ctxempty : context;
   ctxextend :> EXTEND context type;
 
-  (* Some injectivity result seem necessary on the context extension. *)
+  (* Some injectivity result seem necessary on contexts. *)
+  ctxextend_notempty :
+    forall {Γ A},
+      Γ, A = ctxempty -> False;
   ctxextend_inj :
     forall {Γ Δ A B},
       Γ, A = Δ, B -> ((Γ = Δ) * (A = B))%type;
