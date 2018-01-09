@@ -56,24 +56,19 @@ Proof.
   { check. }
 
   (* TermApp *)
-  { Fail echeck.
-    echeckstep.
-    - echeckstep.
-      + echeck.
-      + echeck.
-      + Fail echeck.
-        preop.
-        rewrite_substs.
-        (* What?! How did this happen? *)
-        (* echeck. *)
-
-cheat. }
+  { echeck.
+    (* We have to decide how to deal with the shelf. *)
+    Unshelve. all:check.
+  }
 
   (* TermRefl *)
   { check. }
 
   (* TermJ *)
-  { Fail check. cheat. }
+  { Fail check. Fail echeck.
+    (* echeckstep. *)
+    (* - echeckstep. *)
+cheat. }
 
   (* TermExfalso *)
   { check. }

@@ -30,7 +30,8 @@ Ltac istypeintrorule tac :=
   | |- istype ?Γ (El ?l ?a) => tac TyEl
   (* Special case, might be moved. *)
   (* TODO: Don't use MyTySubst!! *)
-  | |- istype ?Γ (Subst ?A ?σ) => tac MyTySubst
+  (* | |- istype ?Γ (Subst ?A ?σ) => tac MyTySubst *)
+  | |- istype ?Γ ?A[?σ] => tac MyTySubst
   | |- ?G => fail "Goal" G "isn't handled by tactic istypeintrorule"
   end.
 
@@ -61,7 +62,8 @@ Ltac istermintrorule tac :=
   | |- isterm _ (uniUni (uni ?n)) _ => tac TermUniUni
   | |- isterm _ (uniUni prop) _ => tac TermUniProp
   (* Special case, might be moved. *)
-  | |- isterm _ (subst ?u ?σ) _ => tac TermSubst
+  (* | |- isterm _ (subst ?u ?σ) _ => tac TermSubst *)
+  | |- isterm _ ?u[?σ] _ => tac TermSubst
   | |- ?G => fail "Goal" G "isn't handled by tactic istermintrorule"
   end.
 
@@ -184,7 +186,7 @@ Ltac tt_trans apptac :=
   end.
 
 Ltac unfold_syntax :=
-  unfold CONS, SUBST, EXTEND, Arrow, _sbcons, _subst, _extend,
+  unfold CONS, SUBST, EXTEND, Arrow, _sbcons, (* _subst, *) _extend,
          _isctx, _istype, _isterm, _eqctx, _eqtype, _eqterm
   in *.
 
