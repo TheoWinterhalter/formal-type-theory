@@ -64,6 +64,18 @@ Ltac istermintrorule tac :=
   | |- ?G => fail "Goal" G "isn't handled by tactic istermintrorule"
   end.
 
+Ltac issubstintrorule tac :=
+  lazymatch goal with
+  | |- issubst sbid _ _ => tac SubstId
+  | |- issubst sbweak _ _ => tac SubstWeak
+  | |- issubst (sbcons ?u ?σ) _ _ => tac SubstCons
+  (* What must be done in this case? *)
+  (* | |- issubst (sbdrop ?σ) _ _ => ???? *)
+  (* Not really an introduction rule but... *)
+  | |- issubst ?σ ?Γ ctxempty => tac SubstNil
+  | |- ?G => fail "Goal" G "isn't handled by tactic issubstintrorule"
+  end.
+
 Ltac ctx_cong tac :=
   lazymatch goal with
   | |- eqctx ctxempty ctxempty => tac EqCtxEmpty
@@ -121,6 +133,7 @@ Ltac intro_rule apptac :=
   | |- isctx _ => isctxintrorule apptac
   | |- istype _ _ => istypeintrorule apptac
   | |- isterm _ _ _ => istermintrorule apptac
+  | |- issubst _ _ _ => issubstintrorule apptac
   | |- ?G => fail "Introduction rule not applicable to yield" G
   end.
 
@@ -145,6 +158,7 @@ Ltac contextconversion :=
   | |- isterm ?Γ ?u ?A => ceapply TermCtxConv
   | |- eqtype ?Γ ?A ?B => ceapply EqTyCtxConv
   | |- eqterm ?Γ ?u ?v ?A => ceapply EqCtxConv
+  | |- issubst ?σ ?Γ ?Δ => ceapply SubstCtxConv
   | |- ?G => fail "Context conversion doesn't apply to goal" G
   end.
 
@@ -350,16 +364,21 @@ Ltac check_step_factory debug shelf apptac ktac :=
 
   (* Substitution *)
   | |- issubst ?σ ?Γ ?Δ =>
-    (* For now, we go ugly *)
-    first [
-      apptac SubstId
-    | apptac SubstWeak
-    | apptac SubstNil
-    | apptac SubstCons
+    tryif (is_var σ)
+    then first [
+      eassumption
+    | contextconversion ; [ eassumption | .. ]
     | myfail debug
     ] ; ktac debug shelf apptac
+    else tryif (is_evar σ)
+      then myshelve debug shelf
+      else first [
+        issubstintrorule apptac
+      | contextconversion ; [ issubstintrorule | .. ]
+      | myfail debug
+      ] ; ktac debug shelf apptac
 
-  (* Even uglier *)
+  (* Ugly case, this is something that should probably go away! *)
   | |- SubstitutionProperties =>
     first [
       assumption

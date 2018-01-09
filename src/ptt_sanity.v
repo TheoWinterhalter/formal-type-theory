@@ -56,7 +56,16 @@ Proof.
   { check. }
 
   (* TermApp *)
-  { Fail check. Fail echeck. cheat. }
+  { Fail check. Fail echeck.
+    (* echeckstep. *)
+    (* - checkstep. *)
+    (*   + check. *)
+    (*   + check. *)
+    (*   + check. *)
+    (*   +  *)
+    (* - *)
+
+cheat. }
 
   (* TermRefl *)
   { check. }
