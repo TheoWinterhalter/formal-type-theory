@@ -66,8 +66,15 @@ Proof.
 
   (* TermJ *)
   { Fail check. Fail echeck.
-    (* echeckstep. *)
-    (* - echeckstep. *)
+    echeckstep.
+    - echeckstep.
+      + echeck.
+      + echeck.
+      + (* echeckstep. *)
+        (* Problem: rewrite_substs unifies evars with Empty!
+           I would like to avoid this case, which means changing rewrite_substs
+           so that it examines the goal beforehand I suppose.
+         *)
 cheat. }
 
   (* TermExfalso *)
