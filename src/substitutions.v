@@ -24,7 +24,8 @@ Ltac rewrite_Subst_action :=
 
 Ltac rewrite_subst_action :=
   first [
-    rewrite substLam
+    rewrite sbidterm
+  | rewrite substLam
   | rewrite substApp
   | rewrite substRefl
   | rewrite substJ
@@ -43,7 +44,6 @@ Ltac rewrite_subst_action :=
   | rewrite substUniBool
   | rewrite substUniBinaryProd
   | rewrite substUniUni
-  | rewrite sbidterm
   ].
 
 Ltac rewrite_subst_var :=

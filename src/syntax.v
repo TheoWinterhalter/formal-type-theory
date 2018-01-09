@@ -68,9 +68,9 @@ Class Syntax := {
 
   (* Computation of substitutions *)
   sbidterm :
-    forall {t}, t[sbid] = t;
+    forall {t : term}, t[sbid] = t;
   sbidtype :
-    forall {T}, T[sbid] = T;
+    forall {T : type}, T[sbid] = T;
   sbconszero :
     forall {σ u}, (var 0)[u ⋅ σ] = u;
   sbconssucc :

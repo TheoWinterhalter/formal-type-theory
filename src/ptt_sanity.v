@@ -61,7 +61,9 @@ Proof.
     - echeckstep.
       + echeck.
       + echeck.
-      + rewrite_substs.
+      + Fail echeck.
+        preop.
+        rewrite_substs.
         (* What?! How did this happen? *)
         (* echeck. *)
 
