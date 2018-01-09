@@ -1,8 +1,5 @@
 (* Abstract notion of syntax. *)
 
-Require Import Classes.RelationClasses.
-Require Import Classes.CRelationClasses.
-
 (* Universe levels *)
 Inductive level : Type :=
 | uni : nat -> level
@@ -11,9 +8,6 @@ Inductive level : Type :=
 
 Class CONS A B := _sbcons : A -> B -> B.
 Notation "u ⋅ σ" := (_sbcons u σ) (at level 20, right associativity).
-
-(* Class DROP substitution := _sbdrop : substitution -> substitution. *)
-(* Notation "σ ↑" := (_sbdrop σ) (at level 3). *)
 
 Class SUBST substitution tt :=
   _subst : tt -> substitution -> tt.
@@ -31,14 +25,6 @@ Class Syntax := {
 
   ctxempty : context;
   ctxextend :> EXTEND context type;
-
-  (* Some injectivity result seem necessary on contexts. *)
-  (* ctxextend_notempty : *)
-  (*   forall {Γ A}, *)
-  (*     Γ, A = ctxempty -> False; *)
-  (* ctxextend_inj : *)
-  (*   forall {Γ Δ A B}, *)
-  (*     Γ, A = Δ, B -> ((Γ = Δ) * (A = B))%type; *)
 
   Prod : type -> type -> type;
   Id : type -> term -> term -> type;
@@ -79,7 +65,6 @@ Class Syntax := {
   sbid : substitution;
   sbcons :> CONS term substitution;
   sbweak : substitution;
-  (* sbdrop :> DROP substitution; *)
 
   (* Computation of substitutions *)
   sbidterm :
@@ -92,19 +77,6 @@ Class Syntax := {
     forall {σ u n}, (var (S n))[u ⋅ σ] = (var n)[σ];
   sbweakvar :
     forall {n}, (var n)[sbweak] = var (S n);
-  (* sbdropvar : *)
-  (*   forall {σ n}, (var n)[σ↑] = (var (S n))[σ]; *)
-
-  (* Substitution extensionality principle *)
-  (* sbextR σ ρ := forall n, (var n)[σ] = (var n)[ρ]; *)
-  (* sbext : *)
-  (*   forall {σ ρ}, *)
-  (*     sbextR σ ρ -> *)
-  (*     forall t, t[σ] = t[ρ]; *)
-  (* Sbext : *)
-  (*   forall {σ ρ}, *)
-  (*     sbextR σ ρ -> *)
-  (*     forall T, T[σ] = T[ρ]; *)
 
   (* Action of substitutions *)
   SubstProd :
@@ -226,33 +198,3 @@ Class SubstitutionTyping (S : Syntax) (T : TypeTheory S) := {
 }.
 
 End SyntaxDefinition.
-
-(* Notation "u ⋅ σ" := (sbcons u σ) (at level 20, right associativity). *)
-(* Notation "A [ σ ]" := (Subst A σ) (at level 0). *)
-(* Notation "t [ σ ]" := (subst t σ) (at level 0). *)
-(* Notation "σ ~ ρ" := (sbextR σ ρ) (at level 10). *)
-
-(* Global Instance sbextRReflexive `{Syntax} : Reflexive sbextR. *)
-(* Proof. *)
-(*   intros σ n. reflexivity. *)
-(* Defined. *)
-
-(* Global Instance sbextRSymmetric `{Syntax} : Symmetric sbextR. *)
-(* Proof. *)
-(*   intros σ ρ h n. *)
-(*   symmetry. apply h. *)
-(* Defined. *)
-
-(* Global Instance sbextRTransitive `{Syntax} : Transitive sbextR. *)
-(* Proof. *)
-(*   intros σ ρ θ h1 h2 n. *)
-(*   transitivity ((var n)[ρ]). *)
-(*   - apply h1. *)
-(*   - apply h2. *)
-(* Defined. *)
-
-(* Global Instance sbextREquivalence `{Syntax} : Equivalence sbextR. *)
-(* Proof. *)
-(*   split. *)
-(*   - intros σ. Fail reflexivity. *)
-(* Abort. *)

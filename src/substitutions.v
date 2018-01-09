@@ -11,7 +11,8 @@ Require Import syntax.
 
 Ltac rewrite_Subst_action :=
   first [
-    rewrite SubstProd
+    rewrite sbidtype
+  | rewrite SubstProd
   | rewrite SubstId
   | rewrite SubstEmpty
   | rewrite SubstUnit
@@ -19,7 +20,6 @@ Ltac rewrite_Subst_action :=
   | rewrite SubstBinaryProd
   | rewrite SubstUni
   | rewrite SubstEl
-  | rewrite sbidtype
   ].
 
 Ltac rewrite_subst_action :=
@@ -51,7 +51,6 @@ Ltac rewrite_subst_var :=
     rewrite sbconszero
   | rewrite sbconssucc
   | rewrite sbweakvar
-  (* | rewrite sbdropvar *)
   ].
 
 Ltac rewrite_subst :=
