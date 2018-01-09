@@ -51,7 +51,7 @@ Ltac rewrite_subst_var :=
     rewrite sbconszero
   | rewrite sbconssucc
   | rewrite sbweakvar
-  | rewrite sbdropvar
+  (* | rewrite sbdropvar *)
   ].
 
 Ltac rewrite_subst :=

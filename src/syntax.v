@@ -186,43 +186,43 @@ Class Syntax := {
 }.
 
 Class TypeTheory (S : Syntax) := {
-  isctx : context -> Type;
-  istype : context -> type -> Type;
-  isterm : context -> term -> type -> Type;
-  eqctx : context -> context -> Type;
-  eqtype : context -> type -> type -> Type;
-  eqterm : context -> term -> term -> type -> Type
+  _isctx : context -> Type;
+  _istype : context -> type -> Type;
+  _isterm : context -> term -> type -> Type;
+  _eqctx : context -> context -> Type;
+  _eqtype : context -> type -> type -> Type;
+  _eqterm : context -> term -> term -> type -> Type
 }.
 
 Class SubstitutionTyping (S : Syntax) (T : TypeTheory S) := {
   (* Typing of substitutions *)
   issubst : substitution -> context -> context -> Type;
 
-  SubstSbid : forall {Γ}, isctx Γ -> issubst sbid Γ Γ;
-  SubstWeak : forall {Γ A}, isctx Γ -> istype Γ A -> issubst sbweak (Γ,A) Γ;
+  SubstSbid : forall {Γ}, _isctx Γ -> issubst sbid Γ Γ;
+  SubstWeak : forall {Γ A}, _isctx Γ -> _istype Γ A -> issubst sbweak (Γ,A) Γ;
   SubstCtxConv :
     forall {σ Γ Δ Δ'},
-      eqctx Δ' Δ ->
+      _eqctx Δ' Δ ->
       issubst σ Γ Δ ->
       issubst σ Γ Δ';
   SubstCons :
     forall {σ u Γ Δ A},
       issubst σ Γ Δ ->
-      istype Δ A ->
-      isterm Γ u A[σ] ->
+      _istype Δ A ->
+      _isterm Γ u A[σ] ->
       issubst (u ⋅ σ) Γ (Δ, A);
 
   TySubst :
     forall {σ Γ Δ A},
       issubst σ Γ Δ ->
-      istype Δ A ->
-      istype Γ A[σ];
+      _istype Δ A ->
+      _istype Γ A[σ];
   TermSubst :
     forall {σ Γ Δ A u},
       issubst σ Γ Δ ->
-      istype Δ A ->
-      isterm Δ u A ->
-      isterm Γ u[σ] A[σ]
+      _istype Δ A ->
+      _isterm Δ u A ->
+      _isterm Γ u[σ] A[σ]
 }.
 
 End SyntaxDefinition.

@@ -24,7 +24,7 @@ Context `{configBoolType : config.BoolType}.
 Context `{configProdType : config.ProdType}.
 Context `{configSyntax : syntax.Syntax}.
 
-Context {substProp : SubstitutionProperties}.
+Context {configSubstitutions : syntax.SubstitutionTyping configSyntax TT}.
 
 Axiom cheating : forall {A}, A.
 Tactic Notation "cheat" := (exact cheating).
@@ -47,7 +47,7 @@ Proof.
   { check. }
 
   (* TermVarZero *)
-  { Fail check. echeck. }
+  { echeck. }
 
   (* TermVarSucc *)
   { echeck. }
@@ -56,14 +56,14 @@ Proof.
   { check. }
 
   (* TermApp *)
-  { Fail check. Fail echeck.
-    (* echeckstep. *)
-    (* - checkstep. *)
-    (*   + check. *)
-    (*   + check. *)
-    (*   + check. *)
-    (*   +  *)
-    (* - *)
+  { Fail echeck.
+    echeckstep.
+    - echeckstep.
+      + echeck.
+      + echeck.
+      + rewrite_substs.
+        (* What?! How did this happen? *)
+        (* echeck. *)
 
 cheat. }
 

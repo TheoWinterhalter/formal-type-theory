@@ -29,7 +29,8 @@ Ltac istypeintrorule tac :=
   | |- istype ?Γ (Uni ?l) => tac TyUni
   | |- istype ?Γ (El ?l ?a) => tac TyEl
   (* Special case, might be moved. *)
-  | |- istype ?Γ (Subst ?A ?σ) => tac TySubst
+  (* TODO: Don't use MyTySubst!! *)
+  | |- istype ?Γ (Subst ?A ?σ) => tac MyTySubst
   | |- ?G => fail "Goal" G "isn't handled by tactic istypeintrorule"
   end.
 
@@ -66,13 +67,9 @@ Ltac istermintrorule tac :=
 
 Ltac issubstintrorule tac :=
   lazymatch goal with
-  | |- issubst sbid _ _ => tac SubstId
+  | |- issubst sbid _ _ => tac SubstSbid
   | |- issubst sbweak _ _ => tac SubstWeak
   | |- issubst (sbcons ?u ?σ) _ _ => tac SubstCons
-  (* What must be done in this case? *)
-  (* | |- issubst (sbdrop ?σ) _ _ => ???? *)
-  (* Not really an introduction rule but... *)
-  | |- issubst ?σ ?Γ ctxempty => tac SubstNil
   | |- ?G => fail "Goal" G "isn't handled by tactic issubstintrorule"
   end.
 
@@ -187,7 +184,8 @@ Ltac tt_trans apptac :=
   end.
 
 Ltac unfold_syntax :=
-  unfold CONS, DROP, SUBST, EXTEND, Arrow, _sbcons, _sbdrop, _subst, _extend
+  unfold CONS, SUBST, EXTEND, Arrow, _sbcons, _subst, _extend,
+         _isctx, _istype, _isterm, _eqctx, _eqtype, _eqterm
   in *.
 
 
@@ -226,6 +224,7 @@ Ltac myshelve debug shelf :=
 Ltac preop :=
   doConfig ;
   unfold_syntax ;
+  cbn ;
   rewrite_substs.
 
 (* The parameters are:
@@ -378,13 +377,6 @@ Ltac check_step_factory debug shelf apptac ktac :=
       | myfail debug
       ] ; ktac debug shelf apptac
 
-  (* Ugly case, this is something that should probably go away! *)
-  | |- SubstitutionProperties =>
-    first [
-      assumption
-    | myfail debug
-    ] ; ktac debug shelf apptac
-
   (* Unknown goal *)
   | |- ?G => fail "Goal" G "isn't handled by tactic check_step_factory"
   end.
@@ -400,20 +392,20 @@ Ltac check_f debug shelf apptac :=
 
 (* Instances *)
 
-Ltac introrule := intro_rule app_capply.
-Ltac eintrorule := intro_rule app_ceapply.
+Ltac introrule := preop ; intro_rule app_capply.
+Ltac eintrorule := preop ; intro_rule app_ceapply.
 
-Ltac congrule := cong_rule app_capply.
-Ltac econgrule := cong_rule app_ceapply.
+Ltac congrule := preop ; cong_rule app_capply.
+Ltac econgrule := preop ; cong_rule app_ceapply.
 
-Ltac ttrefl := tt_refl app_capply.
-Ltac ettrefl := tt_refl app_ceapply.
+Ltac ttrefl := preop ; tt_refl app_capply.
+Ltac ettrefl := preop ; tt_refl app_ceapply.
 
-Ltac ttsym := tt_sym app_capply.
-Ltac ettsym := tt_sym app_ceapply.
+Ltac ttsym := preop ; tt_sym app_capply.
+Ltac ettsym := preop ; tt_sym app_ceapply.
 
-Ltac tttrans := tt_trans app_capply.
-Ltac etttrans := tt_trans app_ceapply.
+Ltac tttrans := preop ; tt_trans app_capply.
+Ltac etttrans := preop ; tt_trans app_ceapply.
 
 Ltac checkstep := check_step DoDebug DoShelf app_capply.
 Ltac echeckstep := check_step DoDebug DoShelf app_ceapply.

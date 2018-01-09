@@ -1251,4 +1251,26 @@ with eqterm : context -> term -> term -> type -> Type :=
        endrule
 .
 
+Instance TT : TypeTheory configSyntax := {|
+  _isctx := isctx ;
+  _istype := istype ;
+  _isterm := isterm ;
+  _eqctx := eqctx ;
+  _eqtype := eqtype ;
+  _eqterm := eqterm
+|}.
+
+(* We need a workaround! *)
+Definition MyTySubst {SS : SubstitutionTyping configSyntax TT} :
+  forall {σ Γ Δ A},
+    issubst σ Γ Δ ->
+    istype Δ A ->
+    istype Γ A[σ].
+Proof.
+  intros.
+  pose (t := @TySubst).
+  specialize (t configSyntax TT SS).
+  eapply t ; eassumption.
+Defined.
+
 End TypeTheoryRules.
