@@ -9,6 +9,24 @@ Require Import syntax.
 
 (* Tactics to apply rules of substitutions *)
 
+(* Rewrite G[t1] into G[t2] with e ~: t1 = t2 *)
+Ltac smart_rewrite G t1 t2 e :=
+  let Gi := context G[t1] in
+  let Gf := context G[t2] in
+  replace Gi with Gf by (now rewrite e).
+  (* replace Gi with Gf. *)
+
+Ltac smart_rewrite_Subst_action :=
+  lazymatch goal with
+  | |- context G[ ?T[sbid] ] =>
+    (* let Gi := context G[ T[sbid] ] in *)
+    (* let Gf := context G[ T ] in *)
+    (* replace Gi with Gf *)
+    smart_rewrite G T[sbid] T sbidtype
+  | S : Syntax |- context G[ Empty[?σ] ] =>
+    smart_rewrite G Empty[σ] (@Empty S) SubstEmpty
+  end.
+
 Ltac rewrite_Subst_action :=
   first [
     rewrite sbidtype

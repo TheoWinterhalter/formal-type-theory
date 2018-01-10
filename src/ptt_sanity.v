@@ -70,7 +70,10 @@ Proof.
     - echeckstep.
       + echeck.
       + echeck.
-      + (* echeckstep. *)
+      + instantiate (1 := Empty).
+        smart_rewrite_Subst_action.
+
+(* echeckstep. *)
         (* Problem: rewrite_substs unifies evars with Empty!
            I would like to avoid this case, which means changing rewrite_substs
            so that it examines the goal beforehand I suppose.
