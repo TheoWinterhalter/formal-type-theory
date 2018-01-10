@@ -9,22 +9,44 @@ Require Import syntax.
 
 (* Tactics to apply rules of substitutions *)
 
-(* Rewrite G[t1] into G[t2] with e ~: t1 = t2 *)
-Ltac smart_rewrite G t1 t2 e :=
+(* Rewrite G[t1] into G[t2] such that e solves t1 = t2 *)
+Ltac context_rewrite G t1 t2 e :=
   let Gi := context G[t1] in
   let Gf := context G[t2] in
   replace Gi with Gf by (now rewrite e).
-  (* replace Gi with Gf. *)
 
 Ltac smart_rewrite_Subst_action :=
   lazymatch goal with
   | |- context G[ ?T[sbid] ] =>
-    (* let Gi := context G[ T[sbid] ] in *)
-    (* let Gf := context G[ T ] in *)
-    (* replace Gi with Gf *)
-    smart_rewrite G T[sbid] T sbidtype
+    context_rewrite G T[sbid] T sbidtype
+
+  | |- context G[ (Prod ?A ?B)[?σ] ] =>
+    context_rewrite G (Prod A B)[σ] (Prod A[σ] B[var 0 ⋅ σ]) SubstProd
+
+  | |- context G[ (Id ?A ?u ?v)[?σ] ] =>
+    context_rewrite G (Id A u v)[σ] (Id A[σ] u[σ] v[σ]) SubstId
+
   | S : Syntax |- context G[ Empty[?σ] ] =>
-    smart_rewrite G Empty[σ] (@Empty S) SubstEmpty
+    context_rewrite G Empty[σ] (@Empty S) SubstEmpty
+
+  | S : Syntax |- context G[ Unit[?σ] ] =>
+    context_rewrite G Unit[σ] (@Unit S) SubstUnit
+
+  | S : Syntax |- context G[ Bool[?σ] ] =>
+    context_rewrite G Bool[σ] (@Bool S) SubstBool
+
+  | |- context G[ (BinaryProd ?A ?B)[?σ] ] =>
+    context_rewrite G
+                    (BinaryProd A B)[σ]
+                    (BinaryProd A[σ] B[σ])
+                    SubstBinaryProd
+
+  | |- context G[ (Uni ?l)[?σ] ] =>
+    context_rewrite G (Uni l)[σ] (Uni l) SubstUni
+
+  | |- context G[ (El ?l ?a)[?σ] ] =>
+    context_rewrite G (El l a)[σ] (El l a[σ]) SubstEl
+
   end.
 
 Ltac rewrite_Subst_action :=
