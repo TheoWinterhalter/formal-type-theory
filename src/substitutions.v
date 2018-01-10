@@ -15,8 +15,21 @@ Ltac context_rewrite G t1 t2 e :=
   let Gf := context G[t2] in
   replace Gi with Gf by (now rewrite e).
 
-Ltac smart_rewrite_Subst_action :=
-  lazymatch goal with
+(* Ltac rewrite_Subst_action := *)
+(*   first [ *)
+(*     rewrite sbidtype *)
+(*   | rewrite SubstProd *)
+(*   | rewrite SubstId *)
+(*   | rewrite SubstEmpty *)
+(*   | rewrite SubstUnit *)
+(*   | rewrite SubstBool *)
+(*   | rewrite SubstBinaryProd *)
+(*   | rewrite SubstUni *)
+(*   | rewrite SubstEl *)
+(*   ]. *)
+
+Ltac rewrite_Subst_action :=
+  match goal with
   | |- context G[ ?T[sbid] ] =>
     context_rewrite G T[sbid] T sbidtype
 
@@ -49,19 +62,6 @@ Ltac smart_rewrite_Subst_action :=
 
   end.
 
-Ltac rewrite_Subst_action :=
-  first [
-    rewrite sbidtype
-  | rewrite SubstProd
-  | rewrite SubstId
-  | rewrite SubstEmpty
-  | rewrite SubstUnit
-  | rewrite SubstBool
-  | rewrite SubstBinaryProd
-  | rewrite SubstUni
-  | rewrite SubstEl
-  ].
-
 Ltac rewrite_subst_action :=
   first [
     rewrite sbidterm
@@ -85,6 +85,53 @@ Ltac rewrite_subst_action :=
   | rewrite substUniBinaryProd
   | rewrite substUniUni
   ].
+
+Ltac smart_rewrite_subst_action :=
+  match goal with
+  | |- context G[ ?t[sbid] ] =>
+    context_rewrite G t[sbid] t sbidterm
+
+  | |- context G[ (lam ?A ?B ?t)[?σ] ] =>
+    context_rewrite G
+                    (lam A B t)[σ]
+                    (lam A[σ] B[var 0 ⋅ σ] t[var 0 ⋅ σ])
+                    substLam
+
+  | |- context G[ (app ?u ?A ?B ?v)[?σ] ] =>
+    context_rewrite G
+                    (app u A B v)[σ]
+                    (app u[σ] A[σ] B[var 0 ⋅ σ] v[σ])
+                    substApp
+
+  | |- context G[ (refl ?A ?u)[?σ] ] =>
+    context_rewrite G (refl A u)[σ] (refl A[σ] u[σ]) substRefl
+
+  | |- context G[ (j ?A ?u ?C ?w ?v ?p)[?σ] ] =>
+    context_rewrite G
+                    (j A u C w v p)[σ]
+                    (j A[σ] u[σ] C[var 0 ⋅ var 0 ⋅ σ] w[σ] v[σ] p[σ])
+                    substJ
+
+  | |- context G[ (exfalso ?A ?u)[?σ] ] =>
+    context_rewrite G (exfalso A u)[σ] (exfalso A[σ] u[σ]) substExfalso
+
+  | S : Syntax |- context G[ unit[?σ] ] =>
+    context_rewrite G unit[σ] (@unit S) substUnit
+
+  | S : Syntax |- context G[ true[?σ] ] =>
+    context_rewrite G true[σ] (@true S) substTrue
+
+  | S : Syntax |- context G[ false[?σ] ] =>
+    context_rewrite G false[σ] (@false S) substFalse
+
+  | |- context G[ (cond ?C ?u ?v ?w)[?σ] ] =>
+    context_rewrite G
+                    (cond C u v w)[σ]
+                    (cond C[var 0 ⋅ σ] u[σ] v[σ] w[σ])
+                    substCond
+
+  (* | |-  *)
+  end.
 
 Ltac rewrite_subst_var :=
   first [

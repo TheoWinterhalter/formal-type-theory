@@ -103,10 +103,10 @@ Class Syntax := {
 
   substLam :
     forall {σ A B t},
-      (lam A B t)[σ] = lam A[σ] B[σ] t[(var 0) ⋅ σ];
+      (lam A B t)[σ] = lam A[σ] B[var 0 ⋅ σ] t[var 0 ⋅ σ];
   substApp :
     forall {σ A B u v},
-      (app u A B v)[σ] = app u[σ] A[σ] B[σ] v[σ];
+      (app u A B v)[σ] = app u[σ] A[σ] B[var 0 ⋅ σ] v[σ];
   substRefl :
     forall {σ A u},
       (refl A u)[σ] = refl A[σ] u[σ];
